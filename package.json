@@ -13,8 +13,11 @@
   "dependencies": {
     "@nozbe/watermelondb": "^0.24.0",
     "@nozbe/with-observables": "^1.4.0",
+    "@react-native-masked-view/masked-view": "^0.2.6",
     "@react-navigation/drawer": "^6.3.2",
     "@react-navigation/native": "^6.0.8",
+    "@react-navigation/native-stack": "^6.5.2",
+    "formik": "^2.2.9",
     "native-base": "^3.3.7",
     "react": "17.0.2",
     "react-native": "0.67.4",
