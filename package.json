@@ -6,9 +6,10 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
+    "clean": "npm start -- --reset-cache",
     "test": "jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "startAndRun": "concurrently \"npm run start\" \"npm run android\""
+    "start:android": "concurrently \"npm run start\" \"npm run android\""
   },
   "dependencies": {
     "@nozbe/watermelondb": "^0.24.0",
