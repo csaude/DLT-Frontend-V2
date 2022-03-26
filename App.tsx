@@ -27,6 +27,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import { NavigationContainer } from '@react-navigation/native';
 
 const Section: React.FC<{
   title: string;
@@ -64,10 +65,11 @@ const App = () => {
   };
 
   return (
-    
+    <NavigationContainer>
     <NativeBaseProvider>
-       <Button>Testing Text</Button>
+       <Button>Testing Text1</Button>
     </NativeBaseProvider>
+    </NavigationContainer>
   );
 };
 
