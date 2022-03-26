@@ -7,7 +7,7 @@
  *
  * @format
  */
-
+import 'react-native-gesture-handler';
 import React from 'react';
 import {
   SafeAreaView,
@@ -67,7 +67,7 @@ const App = () => {
   return (
     <NavigationContainer>
     <NativeBaseProvider>
-       <Button>Testing Text1</Button>
+       <Button>Testing Text2</Button>
     </NativeBaseProvider>
     </NavigationContainer>
   );

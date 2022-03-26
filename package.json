@@ -13,10 +13,13 @@
   "dependencies": {
     "@nozbe/watermelondb": "^0.24.0",
     "@nozbe/with-observables": "^1.4.0",
+    "@react-navigation/drawer": "^6.3.2",
     "@react-navigation/native": "^6.0.8",
     "native-base": "^3.3.7",
     "react": "17.0.2",
     "react-native": "0.67.4",
+    "react-native-gesture-handler": "^2.3.2",
+    "react-native-reanimated": "^2.5.0",
     "react-native-safe-area-context": "^3.1.9",
     "react-native-screens": "^3.13.1",
     "react-native-svg": "^12.1.0"
