@@ -9,7 +9,7 @@ export default class User extends Model {
         partners: { type: 'belongs_to', key: 'partner_id' },
         profiles: { type: 'belongs_to', key: 'profile_id' },
         us: { type: 'belongs_to', key: 'us_id' },
-    }
+    } as const;
 
     @text("name") name;
     @text("surname") surname;

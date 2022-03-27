@@ -7,7 +7,7 @@ export default class Us extends Model {
 
     static associations = {
         users: { type: 'has_many', foreignKey: 'us_id' },
-    }
+    } as const;
 
     @field("name") name;
     @field("description") description;

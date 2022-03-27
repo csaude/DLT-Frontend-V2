@@ -7,11 +7,11 @@ export default class Locality extends Model {
 
     static associations = {
         users: { type: 'has_many', foreignKey: 'locality_id' },
-    }
+    } as const;
 
-    @text("name") name
-    @text("description") description
-    @field("status") status
+    @text("name") name;
+    @text("description") description;
+    @field("status") status;
 
-    @children('users') users
+    @children('users') users;
 }

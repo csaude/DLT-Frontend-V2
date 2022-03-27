@@ -7,7 +7,7 @@ export default class Partner extends Model {
 
     static associations = {
         users: { type: 'has_many', foreignKey: 'partner_id' },
-    }
+    } as const;
 
     @field("name") name;
     @field("abbreviation") abbreviation;
