@@ -46,7 +46,6 @@ export default appSchema({
           {name: 'username', type: 'string'},
           {name: 'password', type: 'string'},
           {name: 'entry_point', type: 'string'},
-          {name: 'description', type: 'string', isOptional: true},
           {name: 'status', type: 'string'},
           { name: "locality_id", type: "string", isIndexed: true },
           { name: "partner_id", type: "string" },

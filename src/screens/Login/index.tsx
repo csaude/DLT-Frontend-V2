@@ -39,14 +39,14 @@ const Login: React.FC = () => {
 
     return (
         <KeyboardAvoidingView>
-            <ScrollView>
+            <ScrollView contentInsetAdjustmentBehavior="automatic">
                 <Center w="100%" bgColor="white">
                     <Box safeArea p="2" w="90%"  py="8" >
                         <Center >
                                 <Heading mt="1" color="coolGray.600" 
                                                 _dark={{ color: "warmGray.200" }} 
                                                 fontWeight="medium" size="md"  py="5">
-                                    <Text color="warmGray.400">Dreams Layering Tool</Text>
+                                    <Text color="warmGray.400">Dreams Layering Tool 1</Text>
                                 </Heading>
                                 <Heading  color="coolGray.600" 
                                                 _dark={{ color: "warmGray.200" }} 
