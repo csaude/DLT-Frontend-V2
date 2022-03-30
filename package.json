@@ -9,7 +9,9 @@
     "clean": "npm start -- --reset-cache",
     "test": "jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "start:android": "concurrently \"npm run start\" \"npm run android\""
+    "install:web":"cd web && npm i",
+    "start:android": "concurrently \"npm run start\" \"npm run android\"",
+    "start:web":"cd web && npm start"
   },
   "dependencies": {
     "@nozbe/watermelondb": "^0.24.0",
