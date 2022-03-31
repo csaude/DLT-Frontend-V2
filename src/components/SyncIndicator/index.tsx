@@ -5,7 +5,7 @@ import { sync } from '../../database/sync';
 const SyncIndicator = () => {
     const [syncState, setSyncState] = useState<string>('Syncing data...');
 
-    useEffect(() => {
+    useEffect(() => { 
         sync()
           .then(() => setSyncState('Synced Successfully'))
           .catch(() => setSyncState('Sync failed!'));
