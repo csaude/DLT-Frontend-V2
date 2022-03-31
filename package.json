@@ -9,13 +9,14 @@
     "clean": "npm start -- --reset-cache",
     "test": "jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "install:web":"cd web && npm i",
+    "install:web": "cd web && npm i",
     "start:android": "concurrently \"npm run start\" \"npm run android\"",
-    "start:web":"cd web && npm start"
+    "start:web": "cd web && npm start"
   },
   "dependencies": {
     "@nozbe/watermelondb": "^0.24.0",
     "@nozbe/with-observables": "^1.4.0",
+    "@react-native-community/netinfo": "^8.2.0",
     "@react-native-masked-view/masked-view": "^0.2.6",
     "@react-navigation/drawer": "^6.3.2",
     "@react-navigation/native": "^6.0.8",
