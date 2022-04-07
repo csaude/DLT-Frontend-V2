@@ -47,10 +47,11 @@ export default appSchema({
           {name: 'password', type: 'string'},
           {name: 'entry_point', type: 'string'},
           {name: 'status', type: 'string'},
-          { name: "locality_id", type: "string", isIndexed: true },
-          { name: "partner_id", type: "string" },
-          { name: "profile_id", type: "string", isIndexed: true },
-          { name: "us_id", type: "string", isIndexed: true }
+          {name: "locality_id", type: "number", isIndexed: true },
+          {name: "partner_id", type: "number" },
+          {name: "profile_id", type: "number", isIndexed: true },
+          {name: "us_id", type: "number", isIndexed: true },
+          {name: 'online_id', type: 'number',isOptional: true}, // flag to control if entity is synchronized with the backend
         ],
       }),
     ],

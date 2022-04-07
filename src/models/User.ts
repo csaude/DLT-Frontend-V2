@@ -1,6 +1,25 @@
 import { Model } from "@nozbe/watermelondb";
 import { field, text, relation } from "@nozbe/watermelondb/decorators";
 
+export interface UsersModel {
+    id?: string,
+    surname?: string,
+    name?: string,
+    phoneNumber?: string,
+    email?: string,
+    username?: string,
+    password?: string,
+    entryPoint?: any,
+    status?: any,
+    createdBy?: string,
+    dateCreated?: string,
+    updatedBy?: string,
+    dateUpdated?: string,
+    locality?: any,
+    partners?: any,
+    profiles?: any,
+    us?: any
+}
 
 export default class User extends Model {
     static table = 'users'
@@ -18,12 +37,14 @@ export default class User extends Model {
     @text("username") username;     
     @text("password") password;
     @text("entryPoint") entryPoint;     
-   // @text("description") description;
     @field("status") status;   
+    @field("online_id") online_id;   
 
     @relation("localities", "locality_id") locality;
     @relation("partners", "partner_id") partner;
     @relation("profiles", "profile_id") profile;
     @relation("us", "us_id") us;
+
+    
 }
 
