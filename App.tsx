@@ -12,7 +12,7 @@ const App = () => {
   return (
     <>
       <StatusBar />
-      <SyncIndicator />
+
       <NavigationContainer ref={navigationRef}>
         <NativeBaseProvider>
           <AppMain />
