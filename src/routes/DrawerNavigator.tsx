@@ -2,33 +2,60 @@ import * as React from 'react';
 import { Button, View } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
+import CustomDrawer from './components/CustomDrawer';
+import UsersNavigator from './UsersNavigator';
+import { Text } from 'react-native-svg';
+
 
 function HomeScreen({ navigation }: any) {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Button
-        onPress={() => navigation.navigate('Notifications')}
-        title="Go to notifications"
-      />
+      <Text>Dreams Layering Tool </Text>
     </View>
   );
 }
 
-function NotificationsScreen({ navigation }:any) {
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Button onPress={() => navigation.goBack()} title="Go back home" />
-    </View>
-  );
-}
 
 const Drawer = createDrawerNavigator();
 
-export default function App() {
+const DrawerNavigation: React.FC = ({ loggedUser }: any) => {
+
+  const onLogout = (e?: any) => {
+    console.log("logged out");
+  };
+
+
   return (
-      <Drawer.Navigator initialRouteName="Home">
-        <Drawer.Screen name="Home" component={HomeScreen} />
-        <Drawer.Screen name="Notifications" component={NotificationsScreen} />
-      </Drawer.Navigator>
+    <Drawer.Navigator 
+      screenOptions={{
+          headerStyle: {
+              backgroundColor: '#0c4a6e',
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {   
+          fontWeight: 'bold',
+          },
+      }}
+      drawerContent={(props) => <CustomDrawer { ...props } onLogout={onLogout} loggedUser={loggedUser} />}
+    >
+      <Drawer.Screen name="Home" 
+          component={HomeScreen} 
+          options={{                     
+              title: 'Dashboard', 
+              headerTitle: '',
+          }}
+      />
+      <Drawer.Screen name="Users" 
+          component={UsersNavigator}  
+          options={{                     
+              title: 'Utilizadores', 
+              headerTitle: '',
+          }} 
+          initialParams={{ loggedUser }}
+      />
+    
+    </Drawer.Navigator>
   );
 }
+
+export default DrawerNavigation;
