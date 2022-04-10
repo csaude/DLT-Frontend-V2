@@ -9,6 +9,7 @@ export default appSchema({
           {name: 'name', type: 'string'},
           {name: 'description', type: 'string', isOptional: true},
           {name: 'status', type: 'string'},
+          {name: 'online_id', type: 'number',isOptional: true}
         ],
       }),
       tableSchema({
@@ -18,6 +19,7 @@ export default appSchema({
           {name: 'abbreviation', type: 'string'},
           {name: 'description', type: 'string', isOptional: true},
           {name: 'status', type: 'string'},
+          {name: 'online_id', type: 'number',isOptional: true}
         ],
       }),
       tableSchema({
@@ -26,6 +28,7 @@ export default appSchema({
           {name: 'name', type: 'string'},
           {name: 'description', type: 'string', isOptional: true},
           {name: 'status', type: 'string'},
+          {name: 'online_id', type: 'number',isOptional: true}
         ],
       }),
       tableSchema({
@@ -34,6 +37,7 @@ export default appSchema({
           {name: 'name', type: 'string'},
           {name: 'description', type: 'string', isOptional: true},
           {name: 'status', type: 'string'},
+          {name: 'online_id', type: 'number',isOptional: true}
         ],
       }),
       tableSchema({
