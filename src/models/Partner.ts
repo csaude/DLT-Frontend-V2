@@ -13,6 +13,7 @@ export default class Partner extends Model {
     @field("abbreviation") abbreviation;
     @field("description") description;
     @field("status") status;     
+    @field("online_id") online_id;   
 
     @children("users") users;
 }

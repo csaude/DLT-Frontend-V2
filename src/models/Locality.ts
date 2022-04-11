@@ -12,6 +12,7 @@ export default class Locality extends Model {
     @text("name") name;
     @text("description") description;
     @field("status") status;
+    @field("online_id") online_id;   
 
     @children('users') users;
 }

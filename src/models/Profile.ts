@@ -11,7 +11,7 @@ export default class Profile extends Model {
 
     @field("name") name;
     @field("description") description;
-    @field("status") status;
+    @field("online_id") online_id;   
 
     @children("users") users;
 }
