@@ -5,20 +5,16 @@ export interface UsersModel {
     id?: string,
     surname?: string,
     name?: string,
-    phoneNumber?: string,
+    phone_number?: string,
     email?: string,
     username?: string,
     password?: string,
     entryPoint?: any,
     status?: any,
-    createdBy?: string,
-    dateCreated?: string,
-    updatedBy?: string,
-    dateUpdated?: string,
-    locality?: any,
-    partners?: any,
-    profiles?: any,
-    us?: any
+    locality_id?: any,
+    partner_id?: any,
+    profile_id?: any,
+    us_id?: any
 }
 
 export default class User extends Model {

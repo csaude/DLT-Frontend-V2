@@ -118,4 +118,3 @@ const enhance = withObservables([], () => ({
       .query().observe()
 }));
 export default enhance(UsersMain);
-//export default UsersMain;

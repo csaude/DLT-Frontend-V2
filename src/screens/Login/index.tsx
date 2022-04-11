@@ -168,15 +168,15 @@ const Login: React.FC = () => {
                                 <FormControl isRequired isInvalid={'username' in errors}>
                                     <FormControl.Label>Username</FormControl.Label>
              
-                                    <Input onBlur={handleBlur('username')} placeholder="John" onChangeText={handleChange('username')} value={values.username} />
+                                    <Input onBlur={handleBlur('username')} placeholder="Insira o Username" onChangeText={handleChange('username')} value={values.username} />
                                     <FormControl.ErrorMessage>
                                         {errors.username}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
 
-                                <FormControl isInvalid={'password' in errors}>
+                                <FormControl isRequired isInvalid={'password' in errors}>
                                     <FormControl.Label>Password</FormControl.Label>
-                                    <Input onBlur={handleBlur('password')} placeholder="Doe" onChangeText={handleChange('password')} value={values.password} />
+                                    <Input type="password" onBlur={handleBlur('password')} placeholder="Insira o Password" onChangeText={handleChange('password')} value={values.password} />
                                     <FormControl.ErrorMessage>
                                         {errors.password}
                                     </FormControl.ErrorMessage>
