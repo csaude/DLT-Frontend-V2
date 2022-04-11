@@ -71,7 +71,7 @@ const Login: React.FC = () => {
         var checkSynced = await users.query(
             Q.where('_status', 'synced'),
         ).fetchCount(); 
-
+        console.log(checkSynced);
         if(checkSynced == 0){ // checkSynced=0 when db have not synced yet
         
 
@@ -108,9 +108,18 @@ const Login: React.FC = () => {
                     });
        
         } else {
-            var logguedUser = await users.query( Q.where('username', values.username)).fetch();
-           
-            setLoggedUser(logguedUser[0]._raw);
+            var logguedUser = await users.query( Q.where('username', values.username), 
+                                                    Q.where('password', values.password)).fetch();
+            
+            if(!logguedUser.length){
+ 
+                setIsInvalidCredentials(true); 
+            }else{
+
+                setIsInvalidCredentials(false);   
+                setLoggedUser(logguedUser[0]._raw);
+            }
+            
         }
     };
 
