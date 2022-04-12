@@ -57,7 +57,7 @@
     "yup": "0.32.11"
   },
   "devDependencies": {
-    "@types/jest": "^27.4.0",
+    "@types/jest": "^26.0.23",
     "@types/luxon": "2.0.9",
     "@types/node": "17.0.18",
     "@types/react": "17.0.39",
