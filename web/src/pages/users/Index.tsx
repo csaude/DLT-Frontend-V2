@@ -1,15 +1,15 @@
 import React from 'react';
 import {ContentHeader} from '@components';
 
-const SubMenu = () => {
+const Blank = () => {
   return (
     <div>
-      <ContentHeader title="SubMenu Page" />
+      <ContentHeader title="Blank Page" />
       <section className="content">
         <div className="container-fluid">
           <div className="card">
             <div className="card-header">
-              <h3 className="card-title">Title1</h3>
+              <h3 className="card-title">Lista de Usuarios</h3>
               <div className="card-tools">
                 <button
                   type="button"
@@ -42,4 +42,4 @@ const SubMenu = () => {
   );
 };
 
-export default SubMenu;
+export default Blank;

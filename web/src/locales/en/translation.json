@@ -79,7 +79,10 @@
       "profile": "Profile",
       "blank": "Blank",
       "mainMenu": "Main Menu",
-      "subMenu": "Sub Menu"
+      "subMenu": "Sub Menu",
+      "users": "Utilizadores",
+      "usersList": "Lista",
+      "usersForm": "Registar"
     }
   },
   "footer": {
