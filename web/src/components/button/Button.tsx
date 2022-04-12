@@ -45,7 +45,7 @@ const AppButton = ({
   }
 
   return (
-    // eslint-disable-next-line react/button-has-type
+
     <Button {...otherProps} variant={theme} disabled={isLoading || disabled}>
       {iconTemplate}
       {children}
