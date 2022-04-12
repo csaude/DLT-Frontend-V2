@@ -7,6 +7,7 @@ import { Center, Box, Select, Text, Heading, VStack, FormControl,
         Input, Link, Button, CheckIcon, WarningOutlineIcon, HStack, 
         Alert, Flex, Icon}
     from 'native-base';  
+import { stringify } from 'qs';
 import {Picker} from '@react-native-picker/picker';
 import { Formik } from 'formik';
 import { Q } from "@nozbe/watermelondb";
@@ -14,26 +15,30 @@ import { navigate } from '../../../routes/NavigationRef';
 import withObservables from '@nozbe/with-observables';
 import { database } from '../../../database';
 import { MaterialIcons } from "@native-base/icons";
-import { UsersModel } from '../../../models/User';
+import User, { UsersModel } from '../../../models/User';
 
 import styles from './styles';
 
-const UsersRegistrationForm: React.FC = ({ localities, profiles, us, partners }:any) => {
+const UsersRegistrationForm: React.FC = ({ user, localities, profiles, us, partners }:any) => {
+    const [initialValues, setInitialValues] = useState({
+                                                        surname: '',
+                                                        username: '',
+                                                        password: '', 
+                                                        name:'', 
+                                                        email:'', 
+                                                        phone_number:'', 
+                                                        entryPoint:'', 
+                                                        profile_id:'',
+                                                        partner_id: '',
+                                                        locality_id: '',
+                                                        us_id: ''
+                                                    });
     const message = "Este campo é Obrigatório"
-
-    const initialValues = {
-        surname: '',
-        username: '',
-        password: '', 
-        name:'', 
-        email:'', 
-        phone_number:'', 
-        entryPoint:'', 
-        profile_id:'',
-        partner_id: '',
-        locality_id: '',
-        us_id: ''
+  
+    if(user){
+        setInitialValues(user);
     }
+    
 
     const validate = (values: any) => {
         const errors: UsersModel = {}; 
@@ -78,7 +83,18 @@ const UsersRegistrationForm: React.FC = ({ localities, profiles, us, partners }:
     }
 
     const onSubmit = async (values: any) => {
-        console.log(values);
+      
+        const localityName = localities.filter((e)=>{ return e._raw.online_id == values.locality_id})[0]._raw.name;
+        const profileName = profiles.filter((e)=>{ return e._raw.online_id == values.profile_id})[0]._raw.name;
+        const partnerName = partners.filter((e)=>{ return e._raw.online_id == values.partner_id})[0]._raw.description;
+        const usName = us.filter((e)=>{ return e._raw.online_id == values.us_id})[0]._raw.name;
+
+
+       navigate({name: "UserView", params: {user: values, 
+                                                locality: localityName, 
+                                                profile: profileName, 
+                                                partner: partnerName, 
+                                                us: usName }});
     }
 
 
