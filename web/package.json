@@ -66,7 +66,7 @@
     "@types/styled-components": "5.1.23",
     "@types/uuid": "8.3.4",
     "admin-lte": "3.2.0",
-   
+    "jest": "^26.6.0",
     "react-error-overlay": "^6.0.9",
     "typescript": "4.4.4"
   }
