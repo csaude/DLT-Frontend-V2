@@ -1,19 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Platform, View, KeyboardAvoidingView, ScrollView } from 'react-native';
-import { Center, Box, Text, Heading, VStack, FormControl, Input, HStack, InfoIcon, Alert, Button, Image, useToast } from 'native-base';
+import { Center, Box, Text, Heading, VStack, FormControl, Input, HStack, InfoIcon, Alert, Button, Image, useToast, IconButton, CloseIcon } from 'native-base';
 import { navigate } from '../../routes/NavigationRef';
 import { Formik } from 'formik';
 import { Q } from '@nozbe/watermelondb'
 import NetInfo from "@react-native-community/netinfo";
-import SyncIndicator from '../../components/SyncIndicator';
 import { database } from '../../database';
-import { UsersModel } from '../../models/User';
 import { LOGIN_API_URL } from '../../services/api';
 import { sync } from "../../database/sync";
 
 interface LoginData{
     username?: string | undefined;
-    password?: string | undefined;
+    password?: string | undefined; 
 }
 
 const Login: React.FC = () => {
@@ -41,8 +39,44 @@ const Login: React.FC = () => {
         if(loggedUser){
             
             sync({username: loggedUser.username})
-                .then(() => toast.show({description: "Synced Successfully", placement: "top"}))
-                .catch(() => toast.show({description: "Sync failed!", placement: "top"}))
+                .then(() => toast.show({
+                                placement: "top",
+                                render:() => {
+                                    return (
+                                        <Alert w="100%" variant="left-accent" colorScheme="success" status="success">
+                                            <VStack space={2} flexShrink={1} w="100%">
+                                                <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
+                                                    <HStack space={2} flexShrink={1} alignItems="center">
+                                                        <Alert.Icon />
+                                                        <Text color="coolGray.800">
+                                                            Synced Successfully!
+                                                        </Text>
+                                                    </HStack>
+                                                </HStack>
+                                            </VStack>
+                                        </Alert> 
+                                    );
+                                }
+                            }))
+                .catch(() => toast.show({
+                                placement: "top",
+                                render:() => {
+                                    return (
+                                        <Alert w="100%" variant="left-accent" colorScheme="error" status="error">
+                                            <VStack space={2} flexShrink={1} w="100%">
+                                                <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
+                                                    <HStack space={2} flexShrink={1} alignItems="center">
+                                                        <Alert.Icon />
+                                                        <Text color="coolGray.800">
+                                                            Sync Failed!
+                                                        </Text>
+                                                    </HStack>
+                                                </HStack>
+                                            </VStack>
+                                        </Alert> 
+                                    );
+                                }
+                            }))
 
             navigate({name: "Main", params: {loggedUser: loggedUser}});
         }
@@ -65,22 +99,38 @@ const Login: React.FC = () => {
 
     const onSubmit = async (values: any) => {
         setLoading(true);
-        //unsubscribe();
 
         // check if users table is synced
         var checkSynced = await users.query(
             Q.where('_status', 'synced'),
         ).fetchCount(); 
-        console.log(checkSynced);
+       console.log(checkSynced);
         if(checkSynced == 0){ // checkSynced=0 when db have not synced yet
         
-
             if(isOffline){
+                
                 return toast.show({
                     placement: "top",
-                    title: "Sem Conexão a Internet",
-                    status: "warning",
-                    description: "Conecte-se a Internet para o primeiro Login!"
+                    render:() => {
+                        return (
+                            <Alert w="100%" status="warning">
+                                <VStack space={2} flexShrink={1} w="100%">
+                                    <HStack flexShrink={1} space={2} justifyContent="space-between">
+                                        <HStack space={2} flexShrink={1}>
+                                            <Alert.Icon mt="1" />
+                                            <Text fontSize="md" color="coolGray.800">
+                                                Sem Conexão a Internet
+                                            </Text>
+                                        </HStack>
+                                        <IconButton variant="unstyled" _focus={{borderWidth: 0}} icon={<CloseIcon size="3" color="coolGray.600" />} />
+                                    </HStack>
+                                    <Box pl="6" _text={{color: "coolGray.600"}}>
+                                        Conecte-se a Internet para o primeiro Login!
+                                    </Box>
+                                </VStack>
+                            </Alert> 
+                        );
+                    }
                 });
             }
             
@@ -101,10 +151,27 @@ const Login: React.FC = () => {
        
                         return toast.show({
                             placement: "top",
-                            title: "Falha de Conexão",
-                            status: "error",
-                            description: "Por favor contacte o suporte!"
-                          })
+                            render:() => {
+                                return (
+                                    <Alert w="100%" status="error">
+                                        <VStack space={2} flexShrink={1} w="100%">
+                                            <HStack flexShrink={1} space={2} justifyContent="space-between">
+                                                <HStack space={2} flexShrink={1}>
+                                                    <Alert.Icon mt="1" />
+                                                    <Text fontSize="md" color="coolGray.800">
+                                                        Falha de Conexão
+                                                    </Text>
+                                                </HStack>
+                                                <IconButton variant="unstyled" _focus={{borderWidth: 0}} icon={<CloseIcon size="3" color="coolGray.600" />} />
+                                            </HStack>
+                                            <Box pl="6" _text={{color: "coolGray.600"}}>
+                                                Por favor contacte o suporte!
+                                            </Box>
+                                        </VStack>
+                                    </Alert> 
+                                );
+                            }
+                        });
                     });
        
         } else {

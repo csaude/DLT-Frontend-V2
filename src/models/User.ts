@@ -19,12 +19,6 @@ export interface UsersModel {
 
 export default class User extends Model {
     static table = 'users'
-    static associations = {
-        localities: { type: 'belongs_to', key: 'locality_id' },
-        partners: { type: 'belongs_to', key: 'partner_id' },
-        profiles: { type: 'belongs_to', key: 'profile_id' },
-        us: { type: 'belongs_to', key: 'us_id' },
-    } as const;
 
     @text("name") name;
     @text("surname") surname;
@@ -35,12 +29,6 @@ export default class User extends Model {
     @text("entryPoint") entryPoint;     
     @field("status") status;   
     @field("online_id") online_id;   
-
-    @relation("localities", "locality_id") locality;
-    @relation("partners", "partner_id") partner;
-    @relation("profiles", "profile_id") profile;
-    @relation("us", "us_id") us;
-
     
 }
 

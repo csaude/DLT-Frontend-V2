@@ -5,14 +5,9 @@ import { field, children } from "@nozbe/watermelondb/decorators";
 export default class Us extends Model {
     static table = "us";
 
-    static associations = {
-        users: { type: 'has_many', foreignKey: 'us_id' },
-    } as const;
-
     @field("name") name;
     @field("description") description;
     @field("status") status;     
     @field("online_id") online_id;   
 
-    @children("users") users; 
 }
