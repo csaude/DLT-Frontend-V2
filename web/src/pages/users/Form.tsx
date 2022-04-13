@@ -1,202 +1,150 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
-import {ContentHeader, Button} from '@components';
-import Select from 'react-select';
+import {ContentHeader} from '@components';
+import { NativeBaseProvider, Center, Box, Text, Heading, VStack, FormControl, 
+        Input,  Button, Select, WarningOutlineIcon, HStack, Stack, 
+        Alert, Flex, Icon, View, Radio}
+     from 'native-base';
+
+import styles from './styles'; 
 
 const UserForm = () => {
   return (
-    <div>
-      <ContentHeader title="Novo Utilizador do DLT" />
-      <section className="content">
-        <div className="container-fluid">
-          <div className="card" >
-            <div className="card-header">
-              <h3 className="card-title">Registo de novo Utilizador</h3>
-            </div>
-            <div className="card-body">
-                <form className="form-horizontal">
-                    <div className="form-group row">
-                    <label htmlFor="inputApelido" className="col-sm-2 col-form-label">
-                        Apelido
-                    </label>
-                    <div className="col-sm-10">
-                        <input
-                        type="email"
-                        className="form-control"
-                        id="inputApelido"
-                        placeholder="Apelido"
-                        />
-                    </div>
-                    </div>
-                    <div className="form-group row">
-                    <label htmlFor="inputName" className="col-sm-2 col-form-label">
-                        Nome
-                    </label>
-                    <div className="col-sm-10">
-                        <input
-                        type="email"
-                        className="form-control"
-                        id="inputName"
-                        placeholder="Nome"
-                        />
-                    </div>
-                    </div>
-                    <div className="form-group row">
-                    <label htmlFor="inputEmail" className="col-sm-2 col-form-label">
-                        Email
-                    </label>
-                    <div className="col-sm-10">
-                        <input
-                        type="email"
-                        className="form-control"
-                        id="inputEmail"
-                        placeholder="Email"
-                        />
-                    </div>
-                    </div>
-                    <div className="form-group row">
-                    <label htmlFor="inputUsername" className="col-sm-2 col-form-label">
-                        Username
-                    </label>
-                    <div className="col-sm-10">
-                        <input
-                        type="text"
-                        className="form-control"
-                        id="inputUsername"
-                        placeholder="Username"
-                        />
-                    </div>
-                    </div>
-                    <div className="form-group row">
-                    <label htmlFor="inputPassword" className="col-sm-2 col-form-label">
-                    Password
-                    </label>
-                    <div className="col-sm-10">
-                        <input
-                        type="text"
-                        className="form-control"
-                        id="inputPassword"
-                        placeholder="Password"
-                        />
-                    </div>
-                    </div>
-                    <div className="form-group row">
-                    <label htmlFor="inputTelemovel" className="col-sm-2 col-form-label">
-                        Telemóvel
-                    </label>
-                    <div className="col-sm-10">
-                        <input
-                        className="form-control"
-                        id="inputTelemovel"
-                        placeholder="Telemóvel"
-                        />
-                    </div>
-                    </div>
-                    <div className="form-group row">
-                    <label htmlFor="selectPontoDeEntrada" className="col-sm-2 col-form-label">
-                        Ponto De Entrada
-                    </label>
-                    <div className="col-sm-10">  
-                        <Select id="selectPontoDeEntrada" name="selectPontoDeEntrada"
-                            placeholder="Ponto De Entrada"
-                            options={[{value: '1', label: 'One'},
-                                        {value: '2', label: 'Two'}
-                                    ]} />
-                    </div>
-                    </div>
-                    <div className="form-group row">
-                    <label htmlFor="selectParceiro" className="col-sm-2 col-form-label">
-                        Parceiro
-                    </label>
-                    <div className="col-sm-10">  
-                        <Select id="selectParceiro" name="selectParceiro"
-                            placeholder="Parceiro"
-                            options={[{value: '1', label: 'One'},
-                                        {value: '2', label: 'Two'}
-                                    ]} />
-                    </div>
-                    </div>
-                    <div className="form-group row">
-                    <label htmlFor="selectPerfil" className="col-sm-2 col-form-label">
-                        Perfil
-                    </label>
-                    <div className="col-sm-10">  
-                        <Select id="selectPerfil" name="selectPerfil"
-                            placeholder="Perfil"
-                            options={[{value: '1', label: 'One'},
-                                        {value: '2', label: 'Two'}
-                                    ]} />
-                    </div>
-                    </div>
-                    <div className="form-group row">
-                    <label htmlFor="selecLocalidade" className="col-sm-2 col-form-label">
-                        Localidade
-                    </label>
-                    <div className="col-sm-10">  
-                        <Select id="selectLocalidade" name="selectLocalidade"
-                            placeholder="Localidade"
-                            options={[{value: '1', label: 'One'},
-                                        {value: '2', label: 'Two'}
-                                    ]} />
-                    </div>
-                    </div>
-                    <div className="form-group row">
-                    <label htmlFor="selecUS" className="col-sm-2 col-form-label">
-                        US
-                    </label>
-                    <div className="col-sm-10">  
-                        <Select id="selectUS" name="selectUS"
-                            placeholder="US"
-                            options={[{value: '1', label: 'One'},
-                                        {value: '2', label: 'Two'}
-                                    ]} />
-                    </div>
-                    </div>
-                    <div className="form-group row">
-                    <label htmlFor="selecEstado" className="col-sm-2 col-form-label">
-                        Estado
-                    </label>
-                    <div className="col-sm-10">  
-                        <Select id="selectEstado" name="selectEstado"
-                            placeholder="Estado"
-                            options={[{value: '1', label: 'One'},
-                                        {value: '2', label: 'Two'}
-                                    ]} />
-                    </div>
-                    </div>
-                    <div className="form-group row">
-                    <div className="offset-sm-2 col-sm-10">
-                        <div className="icheck-primary">
-                        <input
-                            type="checkbox"
-                            id="agreeTerms"
-                            name="terms"
-                            defaultValue="agree"
-                        />
-                        <label htmlFor="agreeTerms">
-                            <span>Eu aceito os </span>
-                            <Link to="/">termos e condiçoes</Link>
-                        </label>
-                        </div>
-                    </div>
-                    </div>
-                    <div className="form-group row">
-                    <div className="offset-sm-2 col-sm-10">
-                        <Button type="submit" theme="danger">
-                            back
-                        </Button>
-                        <Button type="submit" theme="success">
-                            Gravar
-                        </Button>
-                    </div>
-                    </div>
-                </form>
-            </div>
-            <div className="card-footer">Footer</div>
-          </div>
-        </div>
-      </section>
-    </div>
+    <NativeBaseProvider>
+        <View style={styles.webStyle}>                     
+            <Center w="100%" bgColor="white">
+                <Box safeArea p="2" w="90%" py="8">
+                    <Heading size="lg" color="coolGray.800" 
+                                       _dark={{ color: "warmGray.50"}} 
+                                       fontWeight="semibold"
+                                       marginBottom={5}
+                                       marginTop={0} >
+                        Registo do Utilizador
+                    </Heading>
+                    <Alert  status="info" colorSchem>
+                        <HStack flexShrink={1} space={2} alignItems="center">
+                            <Alert.Icon />
+                            <Text fontSize="xs" fontWeight="medium" color="coolGray.800">
+                                Preencha os campos abaixo para registar novo utilizador!
+                            </Text>
+                        </HStack>
+                    </Alert>                               
+                    <VStack space={3} mt="5">
+                        <FormControl isRequired >
+                            <FormControl.Label>Apelido</FormControl.Label>
+                            <Input variant="filled" 
+                                     placeholder="Insira o seu Apelido" 
+                                    value={ ''}
+                                    onChangeText={value=> {}}/>
+                        </FormControl>
+                        <FormControl isRequired>
+                            <FormControl.Label>Nome</FormControl.Label>
+                            <Input variant="filled" 
+                                    placeholder="Insira o seu Nome"
+                                    value={ '' }
+                                    onChangeText={(value : string)=> {  }}/>
+
+                        </FormControl>
+                        <FormControl>
+                            <FormControl.Label>Email</FormControl.Label>
+                            <Input variant="filled" 
+                                    placeholder="Insira o seu Email"
+                                    value={ '' }
+                                    onChangeText={(value : string)=> { }}/>
+
+                        </FormControl>
+                        <FormControl isRequired >
+                                <FormControl.Label>Username</FormControl.Label>
+                                <Input variant="filled" placeholder="Insira o seu Username"
+                                        value={ '' }
+                                        onChangeText={value => {  }}/>
+                            </FormControl>
+                        <FormControl>
+                            <FormControl.Label>Telemóvel</FormControl.Label>
+                            <Input variant="filled" 
+                                    placeholder="Insira o seu Telemóvel"
+                                    value={ '' }
+                                    onChangeText={(value : string)=> { }}/>
+
+                        </FormControl>
+                        <FormControl isRequired >
+                            <FormControl.Label>Ponto de Entrada</FormControl.Label>
+                            <Select accessibilityLabel="Selecione o Ponto de Entrada" placeholder="Selecione o Ponto de Entrada" >
+                                <Select.Item label="UX Research" value="ux" />
+                                <Select.Item label="Web Development" value="web" />
+                                <Select.Item label="Cross Platform Development" value="cross" />
+                            </Select>
+                        </FormControl>
+                        <FormControl isRequired >
+                            <FormControl.Label>Parceiro</FormControl.Label>
+                            <Select accessibilityLabel="Selecione o Parceiro" placeholder="Selecione o Parceiro" >
+                                <Select.Item label="UX Research" value="ux" />
+                                <Select.Item label="Web Development" value="web" />
+                                <Select.Item label="Cross Platform Development" value="cross" />
+                            </Select>
+                        </FormControl>
+                        <FormControl isRequired>
+                            <FormControl.Label>Perfil</FormControl.Label>
+                            <Select accessibilityLabel="Selecione o Perfil" placeholder="Selecione o Perfil" >
+                                <Select.Item label="UX Research" value="ux" />
+                                <Select.Item label="Web Development" value="web" />
+                                <Select.Item label="Cross Platform Development" value="cross" />
+                            </Select>
+                        </FormControl>
+                        <FormControl isRequired >
+                            <FormControl.Label>Localidade</FormControl.Label>
+                            <Select accessibilityLabel="Selecione a Localidade" placeholder="Selecione a Localidade" >
+                                <Select.Item label="UX Research" value="ux" />
+                                <Select.Item label="Web Development" value="web" />
+                                <Select.Item label="Cross Platform Development" value="cross" />
+                            </Select>
+                        </FormControl>
+                        <FormControl isRequired >
+                            <FormControl.Label>US</FormControl.Label>
+                            <Select accessibilityLabel="Selecione a US" placeholder="Selecione a US" >
+                                <Select.Item label="UX Research" value="ux" />
+                                <Select.Item label="Web Development" value="web" />
+                                <Select.Item label="Cross Platform Development" value="cross" />
+                            </Select>                                   
+                        </FormControl>
+                        <FormControl isRequired>
+                            <FormControl.Label>Estado:</FormControl.Label>
+                            <Radio.Group defaultValue="1" name="rbEstado" accessibilityLabel="Estado">
+                                <Stack direction={{
+                                    base: "column",
+                                    md: "row"
+                                    }} alignItems={{
+                                    base: "flex-start",
+                                    md: "center"
+                                    }} space={4} w="75%" maxW="300px">
+                                    <Radio value="1" my={1}>
+                                        Activo
+                                    </Radio>
+                                    <Radio value="2" my={1}>
+                                        Inactivo
+                                    </Radio>
+                                </Stack>
+                            </Radio.Group>
+                        </FormControl>
+                        <Flex direction="row" mb="2.5" mt="1.5" style={{justifyContent: 'flex-end', }}>
+                            
+                            <Center>
+                                <Button onPress={() => 'navigate({name: "UserList"})'} size={'md'}  bg="warning.400">
+                                    {/* <Icon as={<Ionicons name="play-back-sharp" />} color="white" size={25} /> */}
+                                    Voltar
+                                </Button>
+                            </Center>
+                            <Center>
+                                <Button bg="primary.700" style={{marginLeft:10,}}>
+                                    <Text style={styles.txtSubmit}> Gravar</Text>                                                
+                                </Button>
+                            </Center>                                
+                        </Flex>  
+                    </VStack>                              
+                </Box>  
+            </Center>   
+        </View>
+    </NativeBaseProvider>
   );
 };
 
