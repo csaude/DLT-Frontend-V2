@@ -14,6 +14,8 @@ import Dashboard from '@pages/Dashboard';
 import Blank from '@pages/Blank';
 import SubMenu from '@pages/SubMenu';
 import Profile from '@pages/profile/Profile';
+import Users from '@pages/users/Index';
+import UsersForm from '@pages/users/Form';
 
 import PublicRoute from './routes/PublicRoute';
 import PrivateRoute from './routes/PrivateRoute';
@@ -52,6 +54,9 @@ const App = () => {
             <Route path="/blank" element={<Blank />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/" element={<Dashboard />} />
+            // Rota para Utilizadores
+            <Route path="/usersList" element={<Users />} />
+            <Route path="/usersForm" element={<UsersForm />} />
           </Route>
         </Route>
       </Routes>

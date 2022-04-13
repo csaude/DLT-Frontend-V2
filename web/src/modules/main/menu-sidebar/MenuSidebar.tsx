@@ -31,6 +31,20 @@ export const MENU: IMenuItem[] = [
         path: '/sub-menu-2'
       }
     ]
+  },
+  {
+    name: 'menusidebar.label.users',
+    children: [
+      {
+        name: 'menusidebar.label.usersList',
+        path: '/usersList'
+      },
+
+      {
+        name: 'menusidebar.label.usersForm',
+        path: '/usersForm'
+      }
+    ]
   }
 ];
 
