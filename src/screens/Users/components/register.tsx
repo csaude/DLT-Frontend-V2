@@ -5,7 +5,7 @@ import { View, KeyboardAvoidingView, ScrollView,
     from 'react-native';
 import { Center, Box, Select, Text, Heading, VStack, FormControl, 
         Input, Link, Button, CheckIcon, WarningOutlineIcon, HStack, 
-        Alert, Flex, Icon}
+        Alert, Flex, useToast}
     from 'native-base';  
 import { stringify } from 'qs';
 import {Picker} from '@react-native-picker/picker';
@@ -16,10 +16,14 @@ import withObservables from '@nozbe/with-observables';
 import { database } from '../../../database';
 import { MaterialIcons } from "@native-base/icons";
 import User, { UsersModel } from '../../../models/User';
+import { sync } from "../../../database/sync";
 
 import styles from './styles';
 
 const UsersRegistrationForm: React.FC = ({ user, localities, profiles, us, partners }:any) => {
+    const [loading, setLoading] = useState(false);
+
+    const toast = useToast();
     const [initialValues, setInitialValues] = useState({
                                                         surname: '',
                                                         username: '',
@@ -83,18 +87,41 @@ const UsersRegistrationForm: React.FC = ({ user, localities, profiles, us, partn
     }
 
     const onSubmit = async (values: any) => {
-      
+        setLoading(true);
         const localityName = localities.filter((e)=>{ return e._raw.online_id == values.locality_id})[0]._raw.name;
         const profileName = profiles.filter((e)=>{ return e._raw.online_id == values.profile_id})[0]._raw.name;
         const partnerName = partners.filter((e)=>{ return e._raw.online_id == values.partner_id})[0]._raw.description;
         const usName = us.filter((e)=>{ return e._raw.online_id == values.us_id})[0]._raw.name;
 
+        await database.write(async () => {
+            
+            const newUser = await database.collections.get('users').create((user:any) => {
+                user.name = values.name
+                user.surname = values.surname
+                user.username = values.username
+                user.password = values.password
+                user.email = values.email
+                user.phone_number = values.phone_number
+                user.entry_point = values.entryPoint
+                user.status = "1"
+                user.profile_id = values.profile_id
+                user.locality_id = values.locality_id
+                user.partner_id = values.partner_id
+                user.us_id = values.us_id
+                user.online_id = values.online_id
 
-       navigate({name: "UserView", params: {user: values, 
+            });
+
+            toast.show({placement:"top", title:"saved successfully: "+newUser._raw.id});
+
+        });
+        
+        navigate({name: "UserView", params: {user: values, 
                                                 locality: localityName, 
                                                 profile: profileName, 
                                                 partner: partnerName, 
                                                 us: usName }});
+        setLoading(false);
     }
 
 
@@ -122,7 +149,7 @@ const UsersRegistrationForm: React.FC = ({ user, localities, profiles, us, partn
                             </Alert>
                             
                             <Formik initialValues={initialValues} 
-                                    onSubmit={onSubmit} validate={validate}>
+                                    onSubmit={onSubmit} >
                                 {({
                                     handleChange,
                                     handleBlur,
@@ -280,11 +307,10 @@ const UsersRegistrationForm: React.FC = ({ user, localities, profiles, us, partn
                                             </FormControl.ErrorMessage>
                                         </FormControl>
 
-                                        <Button onPress={handleSubmit} my="10" colorScheme="primary">
-                                            Gravar
+                                        <Button isLoading={loading} isLoadingText="Cadastrando" onPress={handleSubmit} my="10" colorScheme="primary">
+                                            Cadastrar
                                         </Button>
                                     </VStack>
-
                                 }   
                             </Formik>
                         </Box>
