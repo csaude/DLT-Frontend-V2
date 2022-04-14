@@ -19,6 +19,15 @@ const styles = StyleSheet.create({
             }
         })
     },
+    webStyle1:{
+        ...Platform.select({
+            web:{
+                paddingLeft: "5%", 
+                paddingRight: "5%", 
+                backgroundColor: "#CCCCCC",
+            }
+        })
+    },
     containerForm:{
         padding: 30,
         paddingBottom: 70,
