@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {Link} from 'react-router-dom';
+import {useLocation} from 'react-router-dom';
 import {ContentHeader} from '@components';
 import { NativeBaseProvider, Center, Box, Text, Heading, VStack, FormControl, 
         Input,  Button, Select, WarningOutlineIcon, HStack, Stack, 
@@ -79,21 +79,26 @@ interface user {
 }
 
 const UserForm: React.FC = ({ user}:any) => {
-        
+    
+    const {state}:any = useLocation();
+    const paramUser:any = state ? state.user: null;
+    
     const [initialValues, setInitialValues] = useState({
-        surname: '',
-        username: '',
-        password: '', 
-        name:'', 
-        email:'', 
-        phoneNumber:'', 
-        entryPoint:'', 
-        profile_id:'',
-        partner_id: '',
-        locality_id: '',
-        us_id: '',
-        status: ''
+        surname: paramUser ? paramUser.surname : '',
+        username: paramUser ? paramUser.username : '',
+        password: paramUser ? paramUser.password : '',
+        name: paramUser ? paramUser.name : '',
+        email: paramUser ? paramUser.email : '',
+        phoneNumber: paramUser ? paramUser.phoneNumber : '',
+        entryPoint: paramUser ? paramUser.entryPoint : '', 
+        profile_id: paramUser ? String(paramUser.profiles.id) : '',
+        partner_id: paramUser ? String(paramUser.partners.id) : '',
+        locality_id: paramUser ? String(paramUser.locality.id) : '',
+        us_id: paramUser ? String(paramUser.us.id) : '',
+        status: paramUser ? paramUser.status : '',
     });
+
+    console.log(initialValues);
 
     const [ usList, setUsList ] = useState<Locality[]>([]);
     const [ partnersList, setPartnersList ] = useState<Locality[]>([]);
@@ -396,7 +401,7 @@ const UserForm: React.FC = ({ user}:any) => {
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'status' in errors}>
                                     <FormControl.Label>Estado:</FormControl.Label>
-                                    <Radio.Group defaultValue="1" name="status" accessibilityLabel="Estado">
+                                    <Radio.Group defaultValue="1" name="status" accessibilityLabel="Estado" value={String(values.status) || ""}>
                                         <Stack direction={{
                                             base: "column",
                                             md: "row"
@@ -407,7 +412,7 @@ const UserForm: React.FC = ({ user}:any) => {
                                             <Radio value="1" my={1}>
                                                 Activo
                                             </Radio>
-                                            <Radio value="2" my={1}>
+                                            <Radio value="0" my={1}>
                                                 Inactivo
                                             </Radio>
                                         </Stack>
