@@ -1,21 +1,196 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {Link} from 'react-router-dom';
 import {ContentHeader} from '@components';
 import { NativeBaseProvider, Center, Box, Text, Heading, VStack, FormControl, 
         Input,  Button, Select, WarningOutlineIcon, HStack, Stack, 
-        Alert, Flex, Icon, View, Radio}
+        Alert, Flex, Icon, CheckIcon, View, Radio}
      from 'native-base';
+
+import {Formik} from 'formik';
+
+import { allPartners } from '@app/utils/partners';
+import { allProfiles } from '@app/utils/profiles';
+import { allLocality } from '@app/utils/locality';
+import { allUs } from '@app/utils/uSanitaria';
+import { add } from '@app/utils/users';
 
 import styles from './styles'; 
 
-const UserForm = () => {
+interface Us {
+    id: string,
+    usType?: any,
+    code?: string,
+    name: string,
+    abbreviation?: string,
+    description?: string,
+    latitude?: string,
+    longitude?: string,
+    localityId?: string,
+    logo?: string,
+    status?: string,
+    createdBy?: string,
+    updatedBy?: string
+}
+
+interface Partners {
+    id: string,
+    name: string,
+    abbreviation?: string,
+    description?: string,
+    partnerType?: string,
+    logo?: string,
+    status?: string,
+    createdBy?: string,
+    updatedBy?: string,
+    dateCreated: string,
+    dateUpdated: string
+}
+
+interface Profiles {
+    id: string,
+    name: string,
+    description?: string
+}
+
+interface Locality {
+    id: string,
+    district?: any,
+    name: string,
+    description?: string,
+    status?: boolean,
+    createdBy?: string,
+    updatedBy?: string,
+}
+
+interface user {
+    id?: string,
+    surname?: string,
+    name?: string,
+    phoneNumber?: string,
+    email?: string,
+    username?: string,
+    password?: string,
+    entryPoint?: any,
+    status?: any,
+  locality?: any,
+  partners?: any,
+  profiles?: any,
+  us?: any
+}
+
+const UserForm: React.FC = ({ user}:any) => {
+        
+    const [initialValues, setInitialValues] = useState({
+        surname: '',
+        username: '',
+        password: '', 
+        name:'', 
+        email:'', 
+        phoneNumber:'', 
+        entryPoint:'', 
+        profile_id:'',
+        partner_id: '',
+        locality_id: '',
+        us_id: '',
+        status: ''
+    });
+
+    const [ usList, setUsList ] = useState<Locality[]>([]);
+    const [ partnersList, setPartnersList ] = useState<Locality[]>([]);
+    const [ profilesList, setProfilesList ] = useState<Locality[]>([]);
+    const [ localityList, setlocalityList ] = useState<Profiles[]>([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            
+            const dataPartners = await allPartners();
+            const dataProfiles = await allProfiles();
+            const dataLocality = await allLocality();
+            const dataUs = await allUs();
+
+            setPartnersList(dataPartners);
+            setProfilesList(dataProfiles);
+            setlocalityList(dataLocality);
+            setUsList(dataUs);
+        }
+
+        fetchData().catch(error => console.log(error));
+
+    }, []);
+
+    const message = "Este campo é Obrigatório!!!";
+
+    const validate = (values: any) => {
+        const errors: any = {};
+
+        if (!values.surname) {
+            errors.surname = message;
+        }
+
+        if (!values.name) {
+            errors.name = message;
+        }
+
+        if (!values.username) {
+            errors.username = message;
+        }
+
+        if (!values.password) {
+            errors.password = message;
+        }
+
+        if (!values.entryPoint) {
+            errors.entryPoint = message;
+        }
+
+        if (!values.profile_id) {
+            errors.profile_id = message;
+        }
+
+        if (!values.locality_id) {
+            errors.locality_id = message;
+        }
+
+        if (!values.partner_id) {
+            errors.partner_id = message;
+        }
+
+        if (!values.us_id) {
+            errors.us_id = message;
+        }
+        
+        return errors;
+    }
+
+    const onSubmit = async ( values: any) => {
+
+        const user: any = {};
+
+        user.id = values.id;
+        user.surname = values.surname;
+        user.name = values.name;
+        user.phoneNumber = values.phoneNumber;
+        user.email = values.email;
+        user.username = values.username;
+        user.password = values.password;
+        user.entryPoint = values.entryPoint;
+        user.status = values.status;
+        user.locality = {"id": values.locality_id};
+        user.partners = {"id": values.partner_id};
+        user.profiles = {"id": values.profile_id};
+        user.us = {"id": values.us_id};
+        await add(user);
+        console.log(user);
+    
+    }
+
   return (
     <NativeBaseProvider>
-        <View style={styles.webStyle}>                     
+        <View style={styles.webStyle}>              
             <Center w="100%" bgColor="white">
                 <Box safeArea p="2" w="90%" py="8">
-                    <Heading size="lg" color="coolGray.800" 
-                                       _dark={{ color: "warmGray.50"}} 
+                    <Heading size="lg" color="coolGray.800"
+                                       _dark={{ color: "warmGray.50"}}
                                        fontWeight="semibold"
                                        marginBottom={5}
                                        marginTop={0} >
@@ -28,119 +203,233 @@ const UserForm = () => {
                                 Preencha os campos abaixo para registar novo utilizador!
                             </Text>
                         </HStack>
-                    </Alert>                               
-                    <VStack space={3} mt="5">
-                        <FormControl isRequired >
-                            <FormControl.Label>Apelido</FormControl.Label>
-                            <Input variant="filled" 
-                                     placeholder="Insira o seu Apelido" 
-                                    value={ ''}
-                                    onChangeText={value=> {}}/>
-                        </FormControl>
-                        <FormControl isRequired>
-                            <FormControl.Label>Nome</FormControl.Label>
-                            <Input variant="filled" 
-                                    placeholder="Insira o seu Nome"
-                                    value={ '' }
-                                    onChangeText={(value : string)=> {  }}/>
+                    </Alert>
 
-                        </FormControl>
-                        <FormControl>
-                            <FormControl.Label>Email</FormControl.Label>
-                            <Input variant="filled" 
-                                    placeholder="Insira o seu Email"
-                                    value={ '' }
-                                    onChangeText={(value : string)=> { }}/>
+                    <Formik initialValues={initialValues} 
+                            onSubmit={onSubmit} 
+                            // validate={validate}
+                            >
+                        {({
+                            handleChange,
+                            handleBlur,
+                            handleSubmit,
+                            setFieldValue,
+                            values,
+                            errors
+                        }) => <VStack space={3} mt="5">
+                                <FormControl isRequired isInvalid={'surname' in errors}>
+                                    <FormControl.Label>Apelido</FormControl.Label>
+                                    <Input variant="filled" 
+                                            onBlur={handleBlur('surname')}
+                                            onChangeText={handleChange('surname')} 
+                                            placeholder="Insira o seu Apelido" 
+                                            value={values.surname}
+                                            />
+                                </FormControl>
+                                <FormControl isRequired isInvalid={'name' in errors}>
+                                    <FormControl.Label>Nome</FormControl.Label>
+                                    <Input variant="filled" 
+                                            onBlur={handleBlur('name')}
+                                            onChangeText={handleChange('name')}
+                                            placeholder="Insira o seu Nome" 
+                                            value={values.name}
+                                            />
 
-                        </FormControl>
-                        <FormControl isRequired >
-                                <FormControl.Label>Username</FormControl.Label>
-                                <Input variant="filled" placeholder="Insira o seu Username"
-                                        value={ '' }
-                                        onChangeText={value => {  }}/>
-                            </FormControl>
-                        <FormControl>
-                            <FormControl.Label>Telemóvel</FormControl.Label>
-                            <Input variant="filled" 
-                                    placeholder="Insira o seu Telemóvel"
-                                    value={ '' }
-                                    onChangeText={(value : string)=> { }}/>
+                                </FormControl>
+                                <FormControl >
+                                    <FormControl.Label>Email</FormControl.Label>
+                                    <Input variant="filled"
+                                            onBlur={handleBlur('email')}
+                                            onChangeText={handleChange('email')}
+                                            id="email" name="email" 
+                                            placeholder="Insira o seu Email"
+                                            value={values.email}
+                                            />
 
-                        </FormControl>
-                        <FormControl isRequired >
-                            <FormControl.Label>Ponto de Entrada</FormControl.Label>
-                            <Select accessibilityLabel="Selecione o Ponto de Entrada" placeholder="Selecione o Ponto de Entrada" >
-                                <Select.Item label="UX Research" value="ux" />
-                                <Select.Item label="Web Development" value="web" />
-                                <Select.Item label="Cross Platform Development" value="cross" />
-                            </Select>
-                        </FormControl>
-                        <FormControl isRequired >
-                            <FormControl.Label>Parceiro</FormControl.Label>
-                            <Select accessibilityLabel="Selecione o Parceiro" placeholder="Selecione o Parceiro" >
-                                <Select.Item label="UX Research" value="ux" />
-                                <Select.Item label="Web Development" value="web" />
-                                <Select.Item label="Cross Platform Development" value="cross" />
-                            </Select>
-                        </FormControl>
-                        <FormControl isRequired>
-                            <FormControl.Label>Perfil</FormControl.Label>
-                            <Select accessibilityLabel="Selecione o Perfil" placeholder="Selecione o Perfil" >
-                                <Select.Item label="UX Research" value="ux" />
-                                <Select.Item label="Web Development" value="web" />
-                                <Select.Item label="Cross Platform Development" value="cross" />
-                            </Select>
-                        </FormControl>
-                        <FormControl isRequired >
-                            <FormControl.Label>Localidade</FormControl.Label>
-                            <Select accessibilityLabel="Selecione a Localidade" placeholder="Selecione a Localidade" >
-                                <Select.Item label="UX Research" value="ux" />
-                                <Select.Item label="Web Development" value="web" />
-                                <Select.Item label="Cross Platform Development" value="cross" />
-                            </Select>
-                        </FormControl>
-                        <FormControl isRequired >
-                            <FormControl.Label>US</FormControl.Label>
-                            <Select accessibilityLabel="Selecione a US" placeholder="Selecione a US" >
-                                <Select.Item label="UX Research" value="ux" />
-                                <Select.Item label="Web Development" value="web" />
-                                <Select.Item label="Cross Platform Development" value="cross" />
-                            </Select>                                   
-                        </FormControl>
-                        <FormControl isRequired>
-                            <FormControl.Label>Estado:</FormControl.Label>
-                            <Radio.Group defaultValue="1" name="rbEstado" accessibilityLabel="Estado">
-                                <Stack direction={{
-                                    base: "column",
-                                    md: "row"
-                                    }} alignItems={{
-                                    base: "flex-start",
-                                    md: "center"
-                                    }} space={4} w="75%" maxW="300px">
-                                    <Radio value="1" my={1}>
-                                        Activo
-                                    </Radio>
-                                    <Radio value="2" my={1}>
-                                        Inactivo
-                                    </Radio>
-                                </Stack>
-                            </Radio.Group>
-                        </FormControl>
-                        <Flex direction="row" mb="2.5" mt="1.5" style={{justifyContent: 'flex-end', }}>
-                            
-                            <Center>
-                                <Button onPress={() => 'navigate({name: "UserList"})'} size={'md'}  bg="warning.400">
-                                    {/* <Icon as={<Ionicons name="play-back-sharp" />} color="white" size={25} /> */}
-                                    Voltar
-                                </Button>
-                            </Center>
-                            <Center>
-                                <Button bg="primary.700" style={{marginLeft:10,}}>
-                                    <Text style={styles.txtSubmit}> Gravar</Text>                                                
-                                </Button>
-                            </Center>                                
-                        </Flex>  
-                    </VStack>                              
+                                </FormControl>
+                                <FormControl isRequired isInvalid={'username' in errors}>
+                                        <FormControl.Label>Username</FormControl.Label>
+                                        <Input variant="filled" 
+                                            onBlur={handleBlur('username')}
+                                            onChangeText={handleChange('username')}
+                                            id="username" name="username" 
+                                            placeholder="Insira o seu Username"
+                                            value={values.username}
+                                            />
+                                    </FormControl>
+                                <FormControl>
+                                    <FormControl.Label>Telemóvel</FormControl.Label>
+                                    <Input variant="filled" 
+                                            onBlur={handleBlur('phoneNumber')}
+                                            onChangeText={handleChange('phoneNumber')}
+                                            id="phoneNumber" name="phoneNumber" 
+                                            placeholder="Insira o seu Telemóvel"
+                                            value={values.phoneNumber}
+                                            />
+
+                                </FormControl>
+                                <FormControl isRequired isInvalid={'entryPoint' in errors}>
+                                    <FormControl.Label>Ponto de Entrada</FormControl.Label>
+                                    <Select accessibilityLabel="Selecione o Ponto de Entrada"
+                                            selectedValue={values.entryPoint || "0"} 
+                                            onValueChange={(itemValue) => { 
+                                                    if(itemValue != "0"){
+                                                        setFieldValue('entryPoint', itemValue); 
+                                                    }
+                                                }
+                                            }
+                                            _selectedItem={{
+                                                bg: "teal.600",
+                                                endIcon: <CheckIcon size={5} />
+                                              }} mt="1">
+                                        <Select.Item label="-- Seleccione o Ponto de Entrada --" value="0" />
+                                        <Select.Item label="Unidade Sanitaria" value="1" />
+                                        <Select.Item label="Escola" value="2" />
+                                        <Select.Item label="Comunidade" value="3" />
+                                    </Select>
+                                    <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                                        Selecione o ponto de entrada!
+                                    </FormControl.ErrorMessage>
+                                </FormControl>
+                                <FormControl isRequired isInvalid={'partner_id' in errors}>
+                                    <FormControl.Label>Parceiro</FormControl.Label> 
+                                    <Select accessibilityLabel="Selecione o Parceiro"
+                                            selectedValue={values.partner_id || "0"} 
+                                            onValueChange={(itemValue) => { 
+                                                    if(itemValue != "0"){
+                                                        setFieldValue('partner_id', itemValue); 
+                                                    }
+                                                }
+                                            }
+                                            _selectedItem={{
+                                                bg: "teal.600",
+                                                endIcon: <CheckIcon size={5} />
+                                              }} mt="1">
+                                                  
+                                        <Select.Item label="-- Seleccione o Perfil --" value="0" />
+                                        {
+                                            partnersList.map(item => (
+                                                <Select.Item key={String(item.id)} label={item.name} value={String(item.id)} />
+                                            ))
+                                        }
+                                    </Select>
+                                    <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                                        Selecione um Parceiro!
+                                    </FormControl.ErrorMessage>
+                                </FormControl>
+                                <FormControl isRequired isInvalid={'profile_id' in errors}>
+                                    <FormControl.Label>Perfil</FormControl.Label>
+                                    <Select accessibilityLabel="Selecione o Perfil"  
+                                            selectedValue={values.profile_id || "0"} 
+                                            onValueChange={(itemValue) => { 
+                                                    if(itemValue != "0"){
+                                                        setFieldValue('profile_id', ''+itemValue); 
+                                                    }
+                                                }
+                                            }
+                                            _selectedItem={{
+                                                bg: "teal.600",
+                                                endIcon: <CheckIcon size={5} />
+                                              }} mt="1">
+                                                  
+                                        <Select.Item label="-- Seleccione o Perfil --" value="0" />
+                                        {
+                                            profilesList.map(item => (
+                                                <Select.Item key={String(item.id)} label={item.name} value={String(item.id)} />
+                                            ))
+                                        }
+                                    </Select>
+                                    <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                                        Selecione o Perfil!
+                                    </FormControl.ErrorMessage>
+                                </FormControl>
+                                <FormControl isRequired isInvalid={'locality_id' in errors}>
+                                    <FormControl.Label>Localidade</FormControl.Label> 
+                                    <Select accessibilityLabel="Selecione a Localidade"  
+                                            selectedValue={values.locality_id || "0"} 
+                                            onValueChange={(itemValue) => { 
+                                                    if(itemValue != "0"){
+                                                        setFieldValue('locality_id', ''+itemValue); 
+                                                    }
+                                                }
+                                            }
+                                            _selectedItem={{
+                                                bg: "teal.600",
+                                                endIcon: <CheckIcon size={5} />
+                                              }} mt="1">
+                                              
+                                              <Select.Item label="-- Seleccione a Localidade --" value="0" />
+                                        {
+                                            localityList.map(item => (
+                                                <Select.Item key={String(item.id)} label={item.name} value={String(item.id)} />
+                                            ))
+                                        }
+                                    </Select>
+                                    <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                                        Selecione uma Localidade!
+                                    </FormControl.ErrorMessage>
+                                </FormControl>
+                                <FormControl isRequired isInvalid={'us_id' in errors}>
+                                    <FormControl.Label>US</FormControl.Label> 
+                                    <Select accessibilityLabel="Selecione a US"
+                                            selectedValue={values.us_id || "0"} 
+                                            onValueChange={(itemValue) => { 
+                                                    if(itemValue != "0"){ 
+                                                        setFieldValue('us_id', itemValue);
+                                                    }
+                                                }
+                                            }
+                                            _selectedItem={{
+                                                bg: "teal.600",
+                                                endIcon: <CheckIcon size={5} />
+                                              }} mt="1">
+                                        <Select.Item label="-- Seleccione a Unidade Sanitária --" value="0" />
+                                        {
+                                            usList.map(item => (
+                                                <Select.Item key={String(item.id)} label={item.name} value={String(item.id)} />
+                                            ))
+                                        }
+                                    </Select>
+                                    <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                                        Selecione uma Unidade Sanitaria!
+                                    </FormControl.ErrorMessage>                                   
+                                </FormControl>
+                                <FormControl isRequired isInvalid={'status' in errors}>
+                                    <FormControl.Label>Estado:</FormControl.Label>
+                                    <Radio.Group defaultValue="1" name="status" accessibilityLabel="Estado">
+                                        <Stack direction={{
+                                            base: "column",
+                                            md: "row"
+                                            }} alignItems={{
+                                            base: "flex-start",
+                                            md: "center"
+                                            }} space={4} w="75%" maxW="300px">
+                                            <Radio value="1" my={1}>
+                                                Activo
+                                            </Radio>
+                                            <Radio value="2" my={1}>
+                                                Inactivo
+                                            </Radio>
+                                        </Stack>
+                                    </Radio.Group>
+                                </FormControl>
+                                <Flex direction="row" mb="2.5" mt="1.5" style={{justifyContent: 'flex-end', }}>                                    
+                                    <Center>
+                                        <Button onPress={() => 'navigate({name: "UserList"})'} size={'md'}  bg="warning.400">
+                                            {/* <Icon as={<Ionicons name="play-back-sharp" />} color="white" size={25} /> */}
+                                            <Text style={styles.txtSubmit}> Voltar </Text>
+                                        </Button>
+                                    </Center>
+                                    <Center>
+                                        <Button  onPress={(values:any) =>handleSubmit(values)} bg="primary.700" style={{marginLeft:10,}}>
+                                            <Text style={styles.txtSubmit}> Gravar </Text>
+                                        </Button>
+                                        
+                                    </Center>                                
+                                </Flex>  
+                            </VStack> 
+                        }   
+                    </Formik>                             
                 </Box>  
             </Center>   
         </View>
