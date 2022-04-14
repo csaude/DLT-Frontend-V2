@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { View, StyleSheet, TouchableOpacity, TouchableHighlight, ScrollView , Platform} from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { HStack,Text, Avatar, Pressable, Icon, Box, Select,Heading, VStack, FormControl, Input, Link, Button, CheckIcon, WarningOutlineIcon, Center, Flex } from 'native-base';
@@ -7,12 +7,15 @@ import withObservables from '@nozbe/with-observables';
 import { MaterialIcons } from "@native-base/icons";
 import { Q } from "@nozbe/watermelondb";
 import { database } from '../../database';
+import { Context } from '../../routes/DrawerNavigator';
 
 import styles from './styles';
 
 
 const UsersMain: React.FC = ({ users }:any) => {
     const [searchField, setSearchField] = useState('');
+    const loggedUser:any = useContext(Context);
+
 
     const randomHexColor = () => {
         return '#000000'.replace(/0/g, () => {
@@ -76,6 +79,7 @@ const UsersMain: React.FC = ({ users }:any) => {
     );
 
     const handleChange = (e: any) => {
+        console.log(loggedUser);
         setSearchField(e);
     };
 
@@ -105,7 +109,7 @@ const UsersMain: React.FC = ({ users }:any) => {
                 previewOpenDelay={3000}
                 onRowDidOpen={onRowDidOpen}
             />
-            <TouchableOpacity onPress={() => navigate({name: "UserForm", params: {}}) } style={styles.fab}>
+            <TouchableOpacity onPress={() => navigate({name: "UserForm", params: {loggedUser}}) } style={styles.fab}>
                 <Icon as={MaterialIcons} name="add" color="white" />
             </TouchableOpacity>
         </View>

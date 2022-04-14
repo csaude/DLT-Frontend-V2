@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { View, KeyboardAvoidingView, ScrollView,
     TextInput, TouchableOpacity, Platform,
     } 
@@ -17,11 +17,13 @@ import { database } from '../../../database';
 import { MaterialIcons } from "@native-base/icons";
 import User, { UsersModel } from '../../../models/User';
 import { sync } from "../../../database/sync";
+import { Context } from '../../../routes/DrawerNavigator';
 
 import styles from './styles';
 
 const UsersRegistrationForm: React.FC = ({ user, localities, profiles, us, partners }:any) => {
     const [loading, setLoading] = useState(false);
+    const loggedUser:any = useContext(Context);
 
     const toast = useToast();
     const [initialValues, setInitialValues] = useState({
@@ -92,7 +94,8 @@ const UsersRegistrationForm: React.FC = ({ user, localities, profiles, us, partn
         const profileName = profiles.filter((e)=>{ return e._raw.online_id == values.profile_id})[0]._raw.name;
         const partnerName = partners.filter((e)=>{ return e._raw.online_id == values.partner_id})[0]._raw.description;
         const usName = us.filter((e)=>{ return e._raw.online_id == values.us_id})[0]._raw.name;
-
+        console.log(loggedUser);
+/*
         await database.write(async () => {
             
             const newUser = await database.collections.get('users').create((user:any) => {
@@ -120,7 +123,7 @@ const UsersRegistrationForm: React.FC = ({ user, localities, profiles, us, partn
                                                 locality: localityName, 
                                                 profile: profileName, 
                                                 partner: partnerName, 
-                                                us: usName }});
+                                                us: usName }});*/
         setLoading(false);
     }
 

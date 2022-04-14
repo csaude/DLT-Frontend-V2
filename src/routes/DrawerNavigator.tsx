@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { createContext } from 'react';
 import { Button, View } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
@@ -16,45 +16,50 @@ function HomeScreen({ navigation }: any) {
 }
 
 
+export const Context = createContext({});
 const Drawer = createDrawerNavigator();
 
-const DrawerNavigation: React.FC = ({ loggedUser }: any) => {
+const DrawerNavigation: React.FC = ({ route }: any) => {
+  const { loggedUser } = route.params;
+
 
   const onLogout = (e?: any) => {
-    console.log("logged out");
+    console.log("logged out", loggedUser);
   };
 
 
   return (
-    <Drawer.Navigator 
-      screenOptions={{
-          headerStyle: {
-              backgroundColor: '#0c4a6e',
-          },
-          headerTintColor: '#fff',
-          headerTitleStyle: {   
-          fontWeight: 'bold',
-          },
-      }}
-      drawerContent={(props) => <CustomDrawer { ...props } onLogout={onLogout} loggedUser={loggedUser} />}
-    >
-      <Drawer.Screen name="Home" 
-          component={HomeScreen} 
-          options={{                     
-              title: 'Dashboard', 
-              headerTitle: '',
-          }}
-      />
-      <Drawer.Screen name="Users" 
-          component={UsersNavigator}  
-          options={{                     
-              title: 'Utilizadores', 
-              headerTitle: '',
-          }} 
-          initialParams={{ loggedUser }}
-      />
-    
-    </Drawer.Navigator>
+    <Context.Provider value={loggedUser}>
+      <Drawer.Navigator 
+        screenOptions={{
+            headerStyle: {
+                backgroundColor: '#0c4a6e',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {   
+            fontWeight: 'bold',
+            },
+        }}
+        drawerContent={(props) => <CustomDrawer { ...props } onLogout={onLogout} /*loggedUser={loggedUser}*/ />}
+      >
+        <Drawer.Screen name="Home" 
+            component={HomeScreen} 
+            options={{                     
+                title: 'Dashboard', 
+                headerTitle: '',
+            }}
+        />
+        <Drawer.Screen name="Users" 
+            component={UsersNavigator}  
+            options={{                     
+                title: 'Utilizadores', 
+                headerTitle: '',
+            }}
+            
+        />
+      
+      </Drawer.Navigator>
+    </Context.Provider>
   );
 }
 

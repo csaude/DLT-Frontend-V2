@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {DrawerContentComponentProps, DrawerItemList, DrawerContentScrollView} from '@react-navigation/drawer';
 import { View, Text, Image,  ActivityIndicator, TouchableOpacity} from 'react-native';
+import { Box } from 'native-base';
+import { Context } from '../DrawerNavigator';
 
 
 interface DrawerProps extends DrawerContentComponentProps{
@@ -8,9 +10,11 @@ interface DrawerProps extends DrawerContentComponentProps{
     loggedUser?: any;
 }
 
-const CustomDrawer: React.FC<DrawerProps> = ({ onLogout, loggedUser, ...props}) => {
+const CustomDrawer: React.FC<DrawerProps> = ({ onLogout, /*loggedUser,*/ ...props}) => {
+    const loggedUser:any = useContext(Context);
 
     return (
+
         <View style={{ flex: 1 }}>
             <DrawerContentScrollView {...props}>
             <View
@@ -24,7 +28,7 @@ const CustomDrawer: React.FC<DrawerProps> = ({ onLogout, loggedUser, ...props}) 
                 }}
             >
                 <View>
-                    <Text>{loggedUser?.name}</Text>
+                    <Text>{`${loggedUser?.name} ${loggedUser?.surname}`}  </Text>
                     <Text>{loggedUser?.email}</Text>
                 </View>
                 <Image
