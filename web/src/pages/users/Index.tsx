@@ -18,11 +18,11 @@ interface UserType {
   id?: string,
 	surname?: string,
 	name?: string,
-	phoneNumber?: string,
+	phone_number?: string,
 	email?: string,
 	username?: string,
 	password?: string,
-	entryPoint?: any,
+	entry_point?: any,
 	status?: any,
 	createdBy?: string,
 	dateCreated?: string,
@@ -88,10 +88,10 @@ const userList = () => {
                                     <td>{ item.name + ' '+ item.surname }</td>
                                     <td>
                                         { 
-                                            (item.entryPoint==="1") ?
+                                            (item.entry_point==="1") ?
                                                 "Unidade Sanitaria"
                                             : 
-                                            (item.entryPoint==="2") ? 
+                                            (item.entry_point==="2") ? 
                                                 "Escola"
                                             : 
                                                 "Comunidade"                                            
@@ -99,7 +99,7 @@ const userList = () => {
                                     </td>
                                     <td>{ item.partners?.name }</td>
                                     <td>{ item.email }</td>
-                                    <td>{ item.phoneNumber }</td>
+                                    <td>{ item.phone_number }</td>
                                     <td>                                         
                                         <Pressable justifyContent="center" 
                                                     onPress={() => navigate("/UserView")} 
