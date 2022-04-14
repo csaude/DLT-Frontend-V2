@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {Link} from 'react-router-dom';
 import {ContentHeader} from '@components';
 import { NativeBaseProvider, Center, Box, Text, Heading, VStack, FormControl, 
@@ -7,12 +7,61 @@ import { NativeBaseProvider, Center, Box, Text, Heading, VStack, FormControl,
      from 'native-base';
 
 import {Formik} from 'formik';
-// import User, { UsersModel } from '../../models/Users';
+
+import { allPartners } from '@app/utils/partners';
+import { allProfiles } from '@app/utils/profiles';
+import { allLocality } from '@app/utils/locality';
+import { allUs } from '@app/utils/uSanitaria';
 
 import styles from './styles'; 
 
+interface Us {
+    id: string,
+    usType?: any,
+    code?: string,
+    name: string,
+    abbreviation?: string,
+    description?: string,
+    latitude?: string,
+    longitude?: string,
+    localityId?: string,
+    logo?: string,
+    status?: string,
+    createdBy?: string,
+    updatedBy?: string
+}
 
-const UserForm: React.FC = ({ user, localities, profiles, us, partners }:any) => {
+interface Partners {
+    id: string,
+    name: string,
+    abbreviation?: string,
+    description?: string,
+    partnerType?: string,
+    logo?: string,
+    status?: string,
+    createdBy?: string,
+    updatedBy?: string,
+    dateCreated: string,
+    dateUpdated: string
+}
+
+interface Profiles {
+    id: string,
+    name: string,
+    description?: string
+}
+
+interface Locality {
+    id: string,
+    district?: any,
+    name: string,
+    description?: string,
+    status?: boolean,
+    createdBy?: string,
+    updatedBy?: string,
+}
+
+const UserForm: React.FC = ({ user}:any) => {
         
     const [initialValues, setInitialValues] = useState({
         surname: '',
@@ -27,6 +76,29 @@ const UserForm: React.FC = ({ user, localities, profiles, us, partners }:any) =>
         locality_id: '',
         us_id: ''
     });
+
+    const [ usList, setUsList ] = useState<Locality[]>([]);
+    const [ partnersList, setPartnersList ] = useState<Locality[]>([]);
+    const [ profilesList, setProfilesList ] = useState<Locality[]>([]);
+    const [ localityList, setlocalityList ] = useState<Profiles[]>([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            
+            const dataPartners = await allPartners();
+            const dataProfiles = await allProfiles();
+            const dataLocality = await allLocality();
+            const dataUs = await allUs();
+
+            setPartnersList(dataPartners);
+            setProfilesList(dataProfiles);
+            setlocalityList(dataLocality);
+            setUsList(dataUs);
+        }
+
+        fetchData().catch(error => console.log(error));
+
+    }, []);
 
     const message = "Este campo é Obrigatório!!!";
 
@@ -74,17 +146,7 @@ const UserForm: React.FC = ({ user, localities, profiles, us, partners }:any) =>
 
     const onSubmit = async (values: any) => {
     
-    //     const localityName = localities.filter((e)=>{ return e._raw.online_id == values.locality_id})[0]._raw.name;
-    //     const profileName = profiles.filter((e)=>{ return e._raw.online_id == values.profile_id})[0]._raw.name;
-    //     const partnerName = partners.filter((e)=>{ return e._raw.online_id == values.partner_id})[0]._raw.description;
-    //     const usName = us.filter((e)=>{ return e._raw.online_id == values.us_id})[0]._raw.name;
-
-
-    //    navigate({name: "UserView", params: {user: values, 
-    //                                             locality: localityName, 
-    //                                             profile: profileName, 
-    //                                             partner: partnerName, 
-    //                                             us: usName }});
+    
     }
 
   return (
@@ -169,39 +231,47 @@ const UserForm: React.FC = ({ user, localities, profiles, us, partners }:any) =>
                                 <FormControl isRequired isInvalid={'entryPoint' in errors}>
                                     <FormControl.Label>Ponto de Entrada</FormControl.Label>
                                     <Select accessibilityLabel="Selecione o Ponto de Entrada"
-                                            placeholder="Selecione o Ponto de Entrada" 
-                                            selectedValue={values.entryPoint} 
+                                            selectedValue={values.entryPoint || "0"} 
                                             onValueChange={(itemValue) => { 
-                                                setFieldValue('entryPoint', itemValue);
+                                                    if(itemValue != "0"){
+                                                        setFieldValue('entryPoint', itemValue); 
+                                                    }
                                                 }
                                             }
                                             _selectedItem={{
                                                 bg: "teal.600",
                                                 endIcon: <CheckIcon size={5} />
                                               }} mt="1">
-                                        <Select.Item label="UX Research" value="ux" />
-                                        <Select.Item label="Web Development" value="web" />
-                                        <Select.Item label="Cross Platform Development" value="cross" />
+                                        <Select.Item label="-- Seleccione o Ponto de Entrada --" value="0" />
+                                        <Select.Item label="Unidade Sanitaria" value="1" />
+                                        <Select.Item label="Escola" value="2" />
+                                        <Select.Item label="Comunidade" value="3" />
                                     </Select>
                                     <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
                                         Selecione o ponto de entrada!
                                     </FormControl.ErrorMessage>
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'partner_id' in errors}>
-                                    <FormControl.Label>Parceiro</FormControl.Label>
-                                    <Select accessibilityLabel="Selecione o Parceiro" placeholder="Selecione o Parceiro"  
-                                            selectedValue={values.partner_id} 
+                                    <FormControl.Label>Parceiro</FormControl.Label> 
+                                    <Select accessibilityLabel="Selecione o Parceiro"
+                                            selectedValue={values.partner_id || "0"} 
                                             onValueChange={(itemValue) => { 
-                                                setFieldValue('partner_id', itemValue);
+                                                    if(itemValue != "0"){
+                                                        setFieldValue('partner_id', itemValue); 
+                                                    }
                                                 }
                                             }
                                             _selectedItem={{
                                                 bg: "teal.600",
                                                 endIcon: <CheckIcon size={5} />
                                               }} mt="1">
-                                        <Select.Item label="UX Research" value="ux" />
-                                        <Select.Item label="Web Development" value="web" />
-                                        <Select.Item label="Cross Platform Development" value="cross" />
+                                                  
+                                        <Select.Item label="-- Seleccione o Perfil --" value="0" />
+                                        {
+                                            partnersList.map(item => (
+                                                <Select.Item key={String(item.id)} label={item.name} value={String(item.id)} />
+                                            ))
+                                        }
                                     </Select>
                                     <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
                                         Selecione um Parceiro!
@@ -209,59 +279,76 @@ const UserForm: React.FC = ({ user, localities, profiles, us, partners }:any) =>
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'profile_id' in errors}>
                                     <FormControl.Label>Perfil</FormControl.Label>
-                                    <Select accessibilityLabel="Selecione o Perfil" placeholder="Selecione o Perfil"  
-                                            selectedValue={values.profile_id} 
+                                    <Select accessibilityLabel="Selecione o Perfil"  
+                                            selectedValue={values.profile_id || "0"} 
                                             onValueChange={(itemValue) => { 
-                                                setFieldValue('profile_id', itemValue);
+                                                    if(itemValue != "0"){
+                                                        setFieldValue('profile_id', ''+itemValue); 
+                                                    }
                                                 }
                                             }
                                             _selectedItem={{
                                                 bg: "teal.600",
                                                 endIcon: <CheckIcon size={5} />
                                               }} mt="1">
-                                        <Select.Item label="UX Research" value="ux" />
-                                        <Select.Item label="Web Development" value="web" />
-                                        <Select.Item label="Cross Platform Development" value="cross" />
+                                                  
+                                        <Select.Item label="-- Seleccione o Perfil --" value="0" />
+                                        {
+                                            profilesList.map(item => (
+                                                <Select.Item key={String(item.id)} label={item.name} value={String(item.id)} />
+                                            ))
+                                        }
                                     </Select>
                                     <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                                        Selecione um Perfil!
+                                        Selecione o Perfil!
                                     </FormControl.ErrorMessage>
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'locality_id' in errors}>
-                                    <FormControl.Label>Localidade</FormControl.Label>
-                                    <Select accessibilityLabel="Selecione a Localidade" placeholder="Selecione a Localidade"   
-                                            selectedValue={values.locality_id} 
+                                    <FormControl.Label>Localidade</FormControl.Label> 
+                                    <Select accessibilityLabel="Selecione a Localidade"  
+                                            selectedValue={values.locality_id || "0"} 
                                             onValueChange={(itemValue) => { 
-                                                setFieldValue('locality_id', itemValue);
+                                                    if(itemValue != "0"){
+                                                        setFieldValue('locality_id', ''+itemValue); 
+                                                    }
                                                 }
                                             }
                                             _selectedItem={{
                                                 bg: "teal.600",
                                                 endIcon: <CheckIcon size={5} />
                                               }} mt="1">
-                                        <Select.Item label="UX Research" value="ux" />
-                                        <Select.Item label="Web Development" value="web" />
-                                        <Select.Item label="Cross Platform Development" value="cross" />
+                                              
+                                              <Select.Item label="-- Seleccione a Localidade --" value="0" />
+                                        {
+                                            localityList.map(item => (
+                                                <Select.Item key={String(item.id)} label={item.name} value={String(item.id)} />
+                                            ))
+                                        }
                                     </Select>
                                     <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
                                         Selecione uma Localidade!
                                     </FormControl.ErrorMessage>
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'us_id' in errors}>
-                                    <FormControl.Label>US</FormControl.Label>
-                                    <Select accessibilityLabel="Selecione a US" placeholder="Selecione a US"   
-                                            selectedValue={values.us_id} 
+                                    <FormControl.Label>US</FormControl.Label> 
+                                    <Select accessibilityLabel="Selecione a US"
+                                            selectedValue={values.us_id || "0"} 
                                             onValueChange={(itemValue) => { 
-                                                setFieldValue('us_id', itemValue);
+                                                    if(itemValue != "0"){ 
+                                                        setFieldValue('us_id', itemValue);
+                                                    }
                                                 }
                                             }
                                             _selectedItem={{
                                                 bg: "teal.600",
                                                 endIcon: <CheckIcon size={5} />
                                               }} mt="1">
-                                        <Select.Item label="UX Research" value="ux" />
-                                        <Select.Item label="Web Development" value="web" />
-                                        <Select.Item label="Cross Platform Development" value="cross" />
+                                        <Select.Item label="-- Seleccione a Unidade Sanitária --" value="0" />
+                                        {
+                                            usList.map(item => (
+                                                <Select.Item key={String(item.id)} label={item.name} value={String(item.id)} />
+                                            ))
+                                        }
                                     </Select>
                                     <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
                                         Selecione uma Unidade Sanitaria!
