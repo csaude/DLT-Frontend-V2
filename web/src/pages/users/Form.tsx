@@ -12,6 +12,7 @@ import { allPartners } from '@app/utils/partners';
 import { allProfiles } from '@app/utils/profiles';
 import { allLocality } from '@app/utils/locality';
 import { allUs } from '@app/utils/uSanitaria';
+import { add } from '@app/utils/users';
 
 import styles from './styles'; 
 
@@ -61,6 +62,22 @@ interface Locality {
     updatedBy?: string,
 }
 
+interface user {
+    id?: string,
+    surname?: string,
+    name?: string,
+    phoneNumber?: string,
+    email?: string,
+    username?: string,
+    password?: string,
+    entryPoint?: any,
+    status?: any,
+  locality?: any,
+  partners?: any,
+  profiles?: any,
+  us?: any
+}
+
 const UserForm: React.FC = ({ user}:any) => {
         
     const [initialValues, setInitialValues] = useState({
@@ -69,12 +86,13 @@ const UserForm: React.FC = ({ user}:any) => {
         password: '', 
         name:'', 
         email:'', 
-        phone_number:'', 
+        phoneNumber:'', 
         entryPoint:'', 
         profile_id:'',
         partner_id: '',
         locality_id: '',
-        us_id: ''
+        us_id: '',
+        status: ''
     });
 
     const [ usList, setUsList ] = useState<Locality[]>([]);
@@ -144,8 +162,25 @@ const UserForm: React.FC = ({ user}:any) => {
         return errors;
     }
 
-    const onSubmit = async (values: any) => {
-    
+    const onSubmit = async ( values: any) => {
+
+        const user: any = {};
+
+        user.id = values.id;
+        user.surname = values.surname;
+        user.name = values.name;
+        user.phoneNumber = values.phoneNumber;
+        user.email = values.email;
+        user.username = values.username;
+        user.password = values.password;
+        user.entryPoint = values.entryPoint;
+        user.status = values.status;
+        user.locality = {"id": values.locality_id};
+        user.partners = {"id": values.partner_id};
+        user.profiles = {"id": values.profile_id};
+        user.us = {"id": values.us_id};
+        await add(user);
+        console.log(user);
     
     }
 
@@ -171,7 +206,9 @@ const UserForm: React.FC = ({ user}:any) => {
                     </Alert>
 
                     <Formik initialValues={initialValues} 
-                            onSubmit={onSubmit} validate={validate}>
+                            onSubmit={onSubmit} 
+                            // validate={validate}
+                            >
                         {({
                             handleChange,
                             handleBlur,
@@ -223,8 +260,11 @@ const UserForm: React.FC = ({ user}:any) => {
                                 <FormControl>
                                     <FormControl.Label>Telemóvel</FormControl.Label>
                                     <Input variant="filled" 
-                                            id="telemovel" name="telemovel" 
+                                            onBlur={handleBlur('phoneNumber')}
+                                            onChangeText={handleChange('phoneNumber')}
+                                            id="phoneNumber" name="phoneNumber" 
                                             placeholder="Insira o seu Telemóvel"
+                                            value={values.phoneNumber}
                                             />
 
                                 </FormControl>
@@ -381,9 +421,10 @@ const UserForm: React.FC = ({ user}:any) => {
                                         </Button>
                                     </Center>
                                     <Center>
-                                        <Button  onPress={() => handleSubmit} bg="primary.700" style={{marginLeft:10,}}>
+                                        <Button  onPress={(values:any) =>handleSubmit(values)} bg="primary.700" style={{marginLeft:10,}}>
                                             <Text style={styles.txtSubmit}> Gravar </Text>
                                         </Button>
+                                        
                                     </Center>                                
                                 </Flex>  
                             </VStack> 
