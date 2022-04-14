@@ -1,10 +1,8 @@
 import React, { useEffect } from 'react';
-import {ContentHeader} from '@components';
-import {Link, useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-import { NativeBaseProvider, Pressable, Center, Box, Text, Heading, VStack, FormControl, 
-  Input,  Button, Select, WarningOutlineIcon, HStack, Stack, 
-  Alert, Flex, Icon, View, Radio}
+import { NativeBaseProvider, Pressable, Center, Box, Heading, 
+  Button, Flex, Icon, View}
 from 'native-base';
 import {Table} from 'react-bootstrap';
 import { MaterialIcons, Ionicons } from "@native-base/icons";
@@ -13,30 +11,11 @@ import styles from './styles';
 import { useState } from 'react';
 
 import { query } from '../../utils/users';
-
-interface UserType {
-  id?: string,
-	surname?: string,
-	name?: string,
-	phoneNumber?: string,
-	email?: string,
-	username?: string,
-	password?: string,
-	entryPoint?: any,
-	status?: any,
-	createdBy?: string,
-	dateCreated?: string,
-	updatedBy?: string,
-	dateUpdated?: string,
-  locality?: any,
-  partners?: any,
-  profiles?: any,
-  us?: any
-}
+import { UserModel } from '../../models/User';
 
 const userList = () => {
 
-  const [ users, setUsers ] = useState<UserType[]>([]);
+  const [ users, setUsers ] = useState<UserModel[]>([]);
 
   const navigate = useNavigate();
 
@@ -102,7 +81,7 @@ const userList = () => {
                                     <td>{ item.phoneNumber }</td>
                                     <td>                                         
                                         <Pressable justifyContent="center" 
-                                                    onPress={() => navigate("/UserView")} 
+                                                    onPress={() => navigate("/usersView", { state: { user: item } } )} 
                                                     _pressed={{opacity: 0.5}}
                                         >
                                             <Icon as={<Ionicons name="eye" />} color="primary.700" /> 
@@ -110,7 +89,7 @@ const userList = () => {
                                     </td>
                                     <td>                                                                                
                                         <Pressable justifyContent="center" 
-                                                    onPress={() => navigate("/usersForm" /*, params: {user: item}}*/)} 
+                                                    onPress={() => navigate("/usersForm", { state: { user: item } } )} 
                                                     _pressed={{opacity: 0.5}}
                                         >
                                             <Icon as={<Ionicons name="pencil" />} color="primary.700" />
@@ -123,8 +102,8 @@ const userList = () => {
                   </Table> 
                   <Flex direction="row" mb="2.5" mt="1.5" style={{justifyContent: 'flex-end', marginRight: "3%",}}>
                       <Center>
-                          <Button onPress={() => '' }  style={{marginTop: 35, marginLeft: 10,}} size={'md'} colorScheme="tertiary">
-                              <Icon as={<MaterialIcons name="add" />} color="white" />
+                          <Button onPress={() => navigate("/usersForm") }  style={{marginTop: 35, marginLeft: 10,}} size={'md'} colorScheme="tertiary">
+                            <Icon as={<MaterialIcons name="add" style={styles.fabIcon} />} />
                           </Button>
                       </Center>
                       
