@@ -4,7 +4,7 @@ import { SwipeListView } from 'react-native-swipe-list-view';
 import { HStack,Text, Avatar, Pressable, Icon, Box, Select,Heading, VStack, FormControl, Input, Link, Button, CheckIcon, WarningOutlineIcon, Center, Flex } from 'native-base';
 import { navigate } from '../../routes/NavigationRef';
 import withObservables from '@nozbe/with-observables';
-import { MaterialIcons } from "@native-base/icons";
+import { MaterialIcons, Ionicons } from "@native-base/icons";
 import { Q } from "@nozbe/watermelondb";
 import { database } from '../../database';
 import { Context } from '../../routes/DrawerNavigator';
@@ -12,10 +12,24 @@ import { Context } from '../../routes/DrawerNavigator';
 import styles from './styles';
 
 
-const UsersMain: React.FC = ({ users }:any) => {
+const UsersMain: React.FC = ({ users, localities, profiles, us, partners }:any) => {
     const [searchField, setSearchField] = useState('');
-    const loggedUser:any = useContext(Context);
+    const loggedUser:any = useContext(Context); 
 
+    const viewUser = (data: any) => {
+
+        const user = data.item._raw;
+        const localityName = localities.filter((e)=>{ return e._raw.online_id == user.locality_id})[0]._raw.name;
+        const profileName = profiles.filter((e)=>{ return e._raw.online_id == user.profile_id})[0]._raw.name;
+        const partnerName = partners.filter((e)=>{ return e._raw.online_id == user.partner_id})[0]._raw.name;
+        const usName = us.filter((e)=>{ return e._raw.online_id == user.us_id})[0]._raw.name;
+
+        navigate({name: "UserView", params: {user: data.item._raw, 
+            locality: localityName, 
+            profile: profileName, 
+            partner: partnerName, 
+            us: usName }});
+    };
 
     const randomHexColor = () => {
         return '#000000'.replace(/0/g, () => {
@@ -36,7 +50,7 @@ const UsersMain: React.FC = ({ users }:any) => {
 
     const renderItem = (data: any) => (
         <TouchableHighlight
-            onPress={() => navigate({name: "UserView", params: {user: data.item}})} 
+            onPress={() => viewUser(data)} 
             style={styles.rowFront}
             underlayColor={'#AAA'}
         >
@@ -60,26 +74,26 @@ const UsersMain: React.FC = ({ users }:any) => {
     
 
     const renderHiddenItem = (data: any, rowMap: any) => (
-
+        
         <HStack flex={1} pl={2}>
             <Pressable px={4} ml="auto" bg="lightBlue.700" justifyContent="center" 
-                            onPress={() => navigate({name: "UserView", params: {user: data.item}})} 
+                            onPress={()=> viewUser(data)} 
                             _pressed={{opacity: 0.5}}
             >
-                <Icon as={MaterialIcons} name="mode-edit" color="gray.200" />
+                <Icon as={MaterialIcons} name="remove-red-eye" size={6} color="gray.200" />
             </Pressable> 
             <Pressable px={4} bg="lightBlue.800" justifyContent="center" 
-                        onPress={() => navigate({name: "UserForm", params: {user: data.item}})}
+                        onPress={() => navigate({name: "UserForm", params: {user: data.item._raw}})} 
                         _pressed={{opacity: 0.5}} 
             >
-                <Icon as={MaterialIcons} name="remove-red-eye" color="gray.200" />
+                <Icon as={MaterialIcons} name="mode-edit" size={6} color="gray.200" />
             </Pressable>
         </HStack>
 
     );
 
     const handleChange = (e: any) => {
-        console.log(loggedUser);
+
         setSearchField(e);
     };
 
@@ -109,8 +123,8 @@ const UsersMain: React.FC = ({ users }:any) => {
                 previewOpenDelay={3000}
                 onRowDidOpen={onRowDidOpen}
             />
-            <TouchableOpacity onPress={() => navigate({name: "UserForm", params: {loggedUser}}) } style={styles.fab}>
-                <Icon as={MaterialIcons} name="add" color="white" />
+            <TouchableOpacity onPress={() => navigate({name: "UserForm", params: {}}) } style={styles.fab}>
+                <Icon as={MaterialIcons} name="add"  size={8}  color="white" />
             </TouchableOpacity>
         </View>
     );
@@ -119,6 +133,18 @@ const UsersMain: React.FC = ({ users }:any) => {
 const enhance = withObservables([], () => ({
     users: database.collections
       .get("users")
+      .query().observe(),
+    localities: database.collections
+      .get("localities")
+      .query().observe(),
+    profiles: database.collections
+      .get("profiles")
+      .query().observe(),
+    partners: database.collections
+      .get("partners")
+      .query().observe(),
+    us: database.collections
+      .get("us")
       .query().observe()
 }));
 export default enhance(UsersMain);

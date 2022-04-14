@@ -13,6 +13,7 @@ import { useState } from 'react';
 import { query } from '../../utils/users';
 import { UserModel } from '../../models/User';
 
+
 const userList = () => {
 
   const [ users, setUsers ] = useState<UserModel[]>([]);
@@ -67,10 +68,10 @@ const userList = () => {
                                     <td>{ item.name + ' '+ item.surname }</td>
                                     <td>
                                         { 
-                                            (item.entryPoint==="1") ?
+                                            (item.entry_point==="1") ?
                                                 "Unidade Sanitaria"
                                             : 
-                                            (item.entryPoint==="2") ? 
+                                            (item.entry_point==="2") ? 
                                                 "Escola"
                                             : 
                                                 "Comunidade"                                            
@@ -78,7 +79,7 @@ const userList = () => {
                                     </td>
                                     <td>{ item.partners?.name }</td>
                                     <td>{ item.email }</td>
-                                    <td>{ item.phoneNumber }</td>
+                                    <td>{ item.phone_number }</td>
                                     <td>                                         
                                         <Pressable justifyContent="center" 
                                                     onPress={() => navigate("/usersView", { state: { user: item } } )} 

@@ -17,7 +17,6 @@ import styles from './styles';
 const ViewUsers: React.FC = ({ route }:any) => {
     const {user, profile, locality, partner, us} = route.params;
 
-   
     return (
         <KeyboardAvoidingView  style={styles.background}>
             <ScrollView>
@@ -30,7 +29,7 @@ const ViewUsers: React.FC = ({ route }:any) => {
                             <Box style={styles.userText}>     
                                 <Text>{ user.username }</Text> 
                                 <Heading style={styles.username}>{ user.name } { user.surname }</Heading>    
-                                <Text>{ user.email }</Text>                                              
+                                <Text>{ user.phone_number }</Text>                                              
                             </Box> 
                         </Box>
                         <Text style={styles.txtLabel}>Detalhes do Utilizador</Text>
@@ -39,14 +38,14 @@ const ViewUsers: React.FC = ({ route }:any) => {
                                 
                             <Text> <Text style={styles.txtLabel}>Parceiro: </Text> {partner} </Text>
 
-                            <Text> <Text style={styles.txtLabel}>Telemóvel: </Text> { user.phoneNumber }</Text>
+                            <Text> <Text style={styles.txtLabel}>Telemóvel: </Text> { user.phone_number }</Text>
 
                             <Text> <Text style={styles.txtLabel}>Ponto de Entrada: </Text>
                             { 
-                                (user.entryPoint==="1") ?
+                                (user.entry_point==="1") ?
                                     "Unidade Sanitaria"
                                     : 
-                                (user.entryPoint==="2") ? 
+                                (user.entry_point==="2") ? 
                                     "Escola"
                                     : 
                                     "Comunidade"                                            
@@ -62,12 +61,12 @@ const ViewUsers: React.FC = ({ route }:any) => {
                         </Flex>
                         <Divider />
 
-                        <Text> <Text style={styles.txtLabel}>Estado: </Text> { (user.status===1)  ? "Activo" : "Inactivo" }</Text>
+                        <Text> <Text style={styles.txtLabel}>Estado: </Text> { (user.status==1)  ? "Activo" : "Inactivo" }</Text>
                     </View>
                 </View>
             </ScrollView>
             <TouchableOpacity onPress={() => navigate({name: "UserForm", params: {user: user}}) } style={styles.fab}>
-                <Icon as={Ionicons} name="pencil" color="white" />
+                <Icon as={Ionicons} name="pencil" size={7} color="white" />
             </TouchableOpacity>
         </KeyboardAvoidingView>
     );

@@ -21,10 +21,12 @@ import { Context } from '../../../routes/DrawerNavigator';
 
 import styles from './styles';
 
-const UsersRegistrationForm: React.FC = ({ user, localities, profiles, us, partners }:any) => {
+const UsersRegistrationForm: React.FC = ({ route, localities, profiles, us, partners }:any) => {
     const [loading, setLoading] = useState(false);
+    const [savedUser, setSavedUser] = useState<any>(null);
     const loggedUser:any = useContext(Context);
-
+    const {user} = route.params;
+    let mounted = true; // prevent error:  state update on an unmounted component
     const toast = useToast();
     const [initialValues, setInitialValues] = useState({
                                                         surname: '',
@@ -33,19 +35,40 @@ const UsersRegistrationForm: React.FC = ({ user, localities, profiles, us, partn
                                                         name:'', 
                                                         email:'', 
                                                         phone_number:'', 
-                                                        entryPoint:'', 
+                                                        entry_point:'', 
                                                         profile_id:'',
                                                         partner_id: '',
                                                         locality_id: '',
                                                         us_id: ''
                                                     });
     const message = "Este campo é Obrigatório"
-  
-    if(user){
-        setInitialValues(user);
-    }
-    
 
+    // when editing user
+    useEffect(() => {
+
+        if(user && mounted){ 
+
+            setInitialValues({
+                surname: user.surname,
+                username: user.username,
+                password: user.password, 
+                name:user.name, 
+                email:user.email, 
+                phone_number:user.phone_number, 
+                entry_point:user.entry_point, 
+                profile_id:user.profile_id,
+                partner_id: user.partner_id,
+                locality_id: user.locality_id,
+                us_id: user.us_id
+            });
+            
+            return () => { // This code runs when component is unmounted 
+                mounted = false; // set it to false if we leave the page
+            }
+        }
+    }, [user]);
+
+  
     const validate = (values: any) => {
         const errors: UsersModel = {}; 
 
@@ -65,8 +88,8 @@ const UsersRegistrationForm: React.FC = ({ user, localities, profiles, us, partn
             errors.password = message;
         }
 
-        if (!values.entryPoint) {
-            errors.entryPoint = message;
+        if (!values.entry_point) {
+            errors.entry_point = message;
         }
 
         if (!values.profile_id) {
@@ -90,41 +113,106 @@ const UsersRegistrationForm: React.FC = ({ user, localities, profiles, us, partn
 
     const onSubmit = async (values: any) => {
         setLoading(true);
+        
         const localityName = localities.filter((e)=>{ return e._raw.online_id == values.locality_id})[0]._raw.name;
         const profileName = profiles.filter((e)=>{ return e._raw.online_id == values.profile_id})[0]._raw.name;
-        const partnerName = partners.filter((e)=>{ return e._raw.online_id == values.partner_id})[0]._raw.description;
+        const partnerName = partners.filter((e)=>{ return e._raw.online_id == values.partner_id})[0]._raw.name;
         const usName = us.filter((e)=>{ return e._raw.online_id == values.us_id})[0]._raw.name;
-        console.log(loggedUser);
-/*
-        await database.write(async () => {
-            
+
+        const isEdit = user && user.id; // new record if it has id
+    
+        const newObject = await database.write(async () => {
+            if(isEdit){
+                const userToUpdate = await database.get('users').find(user.id);
+                const updatedUser = await userToUpdate.update(() => {
+                    user.name = values.name 
+                    user.surname = values.surname
+                    user.username = values.username
+                    user.password = values.password
+                    user.email = values.email
+                    user.phone_number = values.phone_number
+                    user.entry_point = values.entry_point
+                    user.status = "1"
+                    user.profile_id = values.profile_id
+                    user.locality_id = values.locality_id
+                    user.partner_id = values.partner_id 
+                    user.us_id = values.us_id 
+                    user.online_id = values.online_id
+                })
+
+                toast.show({placement:"bottom", title:"User Updated Successfully: "+updatedUser._raw.id});
+
+                return updatedUser;
+            }
             const newUser = await database.collections.get('users').create((user:any) => {
-                user.name = values.name
+                user.name = values.name 
                 user.surname = values.surname
                 user.username = values.username
                 user.password = values.password
                 user.email = values.email
                 user.phone_number = values.phone_number
-                user.entry_point = values.entryPoint
+                user.entry_point = values.entry_point
                 user.status = "1"
                 user.profile_id = values.profile_id
                 user.locality_id = values.locality_id
-                user.partner_id = values.partner_id
-                user.us_id = values.us_id
+                user.partner_id = values.partner_id 
+                user.us_id = values.us_id 
                 user.online_id = values.online_id
 
             });
 
-            toast.show({placement:"top", title:"saved successfully: "+newUser._raw.id});
-
+            toast.show({placement:"bottom", title:"User Saved Successfully: "+newUser._raw.id});
+      
+            return newUser;
         });
-        
-        navigate({name: "UserView", params: {user: values, 
+    
+        navigate({name: "UserView", params: {user: newObject._raw, 
                                                 locality: localityName, 
                                                 profile: profileName, 
                                                 partner: partnerName, 
-                                                us: usName }});*/
+                                                us: usName }});
+        
+                                       
         setLoading(false);
+        sync({username: loggedUser.username})
+                .then(() => toast.show({
+                                placement: "top",
+                                render:() => {
+                                    return (
+                                        <Alert w="100%" variant="left-accent" colorScheme="success" status="success">
+                                            <VStack space={2} flexShrink={1} w="100%">
+                                                <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
+                                                    <HStack space={2} flexShrink={1} alignItems="center">
+                                                        <Alert.Icon />
+                                                        <Text color="coolGray.800">
+                                                            Synced Successfully!
+                                                        </Text>
+                                                    </HStack>
+                                                </HStack>
+                                            </VStack>
+                                        </Alert> 
+                                    );
+                                }
+                            }))
+                .catch(() => toast.show({
+                                placement: "top",
+                                render:() => {
+                                    return (
+                                        <Alert w="100%" variant="left-accent" colorScheme="error" status="error">
+                                            <VStack space={2} flexShrink={1} w="100%">
+                                                <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
+                                                    <HStack space={2} flexShrink={1} alignItems="center">
+                                                        <Alert.Icon />
+                                                        <Text color="coolGray.800">
+                                                            Sync Failed!
+                                                        </Text>
+                                                    </HStack>
+                                                </HStack>
+                                            </VStack>
+                                        </Alert> 
+                                    );
+                                }
+                            }))
     }
 
 
@@ -152,7 +240,7 @@ const UsersRegistrationForm: React.FC = ({ user, localities, profiles, us, partn
                             </Alert>
                             
                             <Formik initialValues={initialValues} 
-                                    onSubmit={onSubmit} >
+                                    onSubmit={onSubmit} validate={validate} enableReinitialize={true}>
                                 {({
                                     handleChange,
                                     handleBlur,
@@ -201,14 +289,14 @@ const UsersRegistrationForm: React.FC = ({ user, localities, profiles, us, partn
                                             <FormControl.Label>Telemóvel</FormControl.Label>
                                             <Input onBlur={handleBlur('phone_number')} placeholder="Insira o seu Telemóvel" onChangeText={handleChange('phone_number')} value={values.phone_number} />
                                         </FormControl>
-                                        <FormControl isRequired isInvalid={'entryPoint' in errors}>
+                                        <FormControl isRequired isInvalid={'entry_point' in errors}>
                                             <FormControl.Label>Ponto de Entrada</FormControl.Label>
                                             <Picker 
                                                 style={styles.dropDownPicker}
-                                                selectedValue={values.entryPoint}
+                                                selectedValue={values.entry_point}
                                                 onValueChange={(itemValue, itemIndex) => { 
                                                         if (itemIndex !== 0){
-                                                            setFieldValue('entryPoint', itemValue);
+                                                            setFieldValue('entry_point', itemValue);
                                                         }
                                                     }
                                                 }>
@@ -218,7 +306,7 @@ const UsersRegistrationForm: React.FC = ({ user, localities, profiles, us, partn
                                                 <Picker.Item label="Comunidade" value="3" />
                                             </Picker>
                                             <FormControl.ErrorMessage>
-                                                {errors.entryPoint}
+                                                {errors.entry_point}
                                             </FormControl.ErrorMessage>
                                         </FormControl>
                                         <FormControl isRequired isInvalid={'profile_id' in errors}>

@@ -77,7 +77,7 @@ const Login: React.FC = () => {
                                     );
                                 }
                             }))
-
+            
             navigate({name: "Main", params: {loggedUser: loggedUser}});
         }
       
@@ -184,7 +184,10 @@ const Login: React.FC = () => {
             }else{
 
                 setIsInvalidCredentials(false);   
+                //console.log(logguedUser[0]._raw);
+                
                 setLoggedUser(logguedUser[0]._raw);
+                navigate({name: "Main", params: {loggedUser: logguedUser[0]._raw}}); 
             }
             
         }
