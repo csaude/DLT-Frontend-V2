@@ -9,7 +9,7 @@ export interface UsersModel {
     email?: string,
     username?: string,
     password?: string,
-    entryPoint?: any,
+    entry_point?: any,
     status?: any,
     locality_id?: any,
     partner_id?: any,
@@ -22,12 +22,16 @@ export default class User extends Model {
 
     @text("name") name;
     @text("surname") surname;
-    @text("phone_number") phoneNumber;     
+    @text("phone_number") phone_number;     
     @text("email") email;
     @text("username") username;     
     @text("password") password;
-    @text("entryPoint") entryPoint;     
+    @text("entry_point") entry_point;     
     @field("status") status;   
+    @field("locality_id") locality_id;   
+    @field("partner_id") partner_id;   
+    @field("profile_id") profile_id;   
+    @field("us_id") us_id;   
     @field("online_id") online_id;   
     
 }
