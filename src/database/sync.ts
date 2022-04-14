@@ -1,7 +1,6 @@
 import {synchronize} from '@nozbe/watermelondb/sync';
 import { database } from './index';
-
-const SYNC_API_URL = 'http://192.168.43.244:8083/sync'; 
+import { SYNC_API_URL } from '../services/api'
 
 export async function sync({ username }) {
     await synchronize({
