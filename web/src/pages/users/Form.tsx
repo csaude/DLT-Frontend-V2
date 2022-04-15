@@ -414,7 +414,7 @@ const UserForm: React.FC = ({ user}:any) => {
                                             <Radio value="1" my={1}>
                                                 Activo
                                             </Radio>
-                                            <Radio value="2" my={1}>
+                                            <Radio value="0" my={1}>
                                                 Inactivo
                                             </Radio>
                                         </Stack>
