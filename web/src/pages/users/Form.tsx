@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {useLocation} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import {ContentHeader} from '@components';
 import { NativeBaseProvider, Center, Box, Text, Heading, VStack, FormControl, 
         Input,  Button, Select, WarningOutlineIcon, HStack, Stack, 
@@ -82,6 +82,8 @@ const UserForm: React.FC = ({ user}:any) => {
     
     const {state}:any = useLocation();
     const paramUser:any = state ? state.user: null;
+
+    const navigate = useNavigate();
     
     const [initialValues, setInitialValues] = useState({
         surname: paramUser ? paramUser.surname : '',
@@ -95,7 +97,7 @@ const UserForm: React.FC = ({ user}:any) => {
         partner_id: paramUser ? String(paramUser.partners.id) : '',
         locality_id: paramUser ? String(paramUser.locality.id) : '',
         us_id: paramUser ? String(paramUser.us.id) : '',
-        status: paramUser ? paramUser.status : '',
+        status: paramUser ? paramUser.status : '1',
     });
 
     console.log(initialValues);
@@ -185,7 +187,7 @@ const UserForm: React.FC = ({ user}:any) => {
         user.profiles = {"id": values.profile_id};
         user.us = {"id": values.us_id};
         await add(user);
-        console.log(user);
+        navigate("/usersView", { state: { user: values } } )
     
     }
 
