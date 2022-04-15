@@ -68,10 +68,10 @@ const userList = () => {
                                     <td>{ item.name + ' '+ item.surname }</td>
                                     <td>
                                         { 
-                                            (item.entry_point==="1") ?
+                                            (item.entryPoint==="1") ?
                                                 "Unidade Sanitaria"
                                             : 
-                                            (item.entry_point==="2") ? 
+                                            (item.entryPoint==="2") ? 
                                                 "Escola"
                                             : 
                                                 "Comunidade"                                            
@@ -79,7 +79,7 @@ const userList = () => {
                                     </td>
                                     <td>{ item.partners?.name }</td>
                                     <td>{ item.email }</td>
-                                    <td>{ item.phone_number }</td>
+                                    <td>{ item.phoneNumber }</td>
                                     <td>                                         
                                         <Pressable justifyContent="center" 
                                                     onPress={() => navigate("/usersView", { state: { user: item } } )} 
