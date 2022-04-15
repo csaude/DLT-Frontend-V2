@@ -12,7 +12,7 @@ import { allPartners } from '@app/utils/partners';
 import { allProfiles } from '@app/utils/profiles';
 import { allLocality } from '@app/utils/locality';
 import { allUs } from '@app/utils/uSanitaria';
-import { add } from '@app/utils/users';
+import { add, edit } from '@app/utils/users';
 
 import styles from './styles'; 
 
@@ -100,8 +100,6 @@ const UserForm: React.FC = ({ user}:any) => {
         status: paramUser ? paramUser.status : '1',
     });
 
-    console.log(initialValues);
-
     const [ usList, setUsList ] = useState<Locality[]>([]);
     const [ partnersList, setPartnersList ] = useState<Locality[]>([]);
     const [ profilesList, setProfilesList ] = useState<Locality[]>([]);
@@ -171,9 +169,9 @@ const UserForm: React.FC = ({ user}:any) => {
 
     const onSubmit = async ( values: any) => {
 
-        const user: any = {};
+        const user: any = paramUser ? paramUser : {};
 
-        user.id = values.id;
+        user.id = paramUser ? paramUser.id : values.id;
         user.surname = values.surname;
         user.name = values.name;
         user.phoneNumber = values.phoneNumber;
@@ -186,7 +184,8 @@ const UserForm: React.FC = ({ user}:any) => {
         user.partners = {"id": values.partner_id};
         user.profiles = {"id": values.profile_id};
         user.us = {"id": values.us_id};
-        await add(user);
+        
+        paramUser ? await edit(user) : await add(user);
         navigate("/usersView", { state: { user: values } } )
     
     }
