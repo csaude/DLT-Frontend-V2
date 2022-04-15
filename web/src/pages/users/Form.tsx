@@ -402,7 +402,7 @@ const UserForm: React.FC = ({ user}:any) => {
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'status' in errors}>
                                     <FormControl.Label>Estado:</FormControl.Label>
-                                    <Radio.Group defaultValue="1" name="status" accessibilityLabel="Estado" value={String(values.status) || ""}>
+                                    <Radio.Group defaultValue={String(values.status) || ""} name="status" accessibilityLabel="Estado">
                                         <Stack direction={{
                                             base: "column",
                                             md: "row"
@@ -421,7 +421,7 @@ const UserForm: React.FC = ({ user}:any) => {
                                 </FormControl>
                                 <Flex direction="row" mb="2.5" mt="1.5" style={{justifyContent: 'flex-end', }}>                                    
                                     <Center>
-                                        <Button onPress={() => 'navigate({name: "UserList"})'} size={'md'}  bg="warning.400">
+                                        <Button onPress={() => navigate("/usersList")} size={'md'}  bg="warning.400">
                                             {/* <Icon as={<Ionicons name="play-back-sharp" />} color="white" size={25} /> */}
                                             <Text style={styles.txtSubmit}> Voltar </Text>
                                         </Button>
