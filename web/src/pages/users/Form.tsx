@@ -402,7 +402,7 @@ const UserForm: React.FC = ({ user}:any) => {
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'status' in errors}>
                                     <FormControl.Label>Estado:</FormControl.Label>
-                                    <Radio.Group defaultValue="1" name="status" accessibilityLabel="Estado" value={String(values.status) || ""}>
+                                    <Radio.Group defaultValue={String(values.status) || ""} name="status" accessibilityLabel="Estado">
                                         <Stack direction={{
                                             base: "column",
                                             md: "row"
