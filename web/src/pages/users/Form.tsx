@@ -421,7 +421,7 @@ const UserForm: React.FC = ({ user}:any) => {
                                 </FormControl>
                                 <Flex direction="row" mb="2.5" mt="1.5" style={{justifyContent: 'flex-end', }}>                                    
                                     <Center>
-                                        <Button onPress={() => 'navigate({name: "UserList"})'} size={'md'}  bg="warning.400">
+                                        <Button onPress={() => navigate("/usersList")} size={'md'}  bg="warning.400">
                                             {/* <Icon as={<Ionicons name="play-back-sharp" />} color="white" size={25} /> */}
                                             <Text style={styles.txtSubmit}> Voltar </Text>
                                         </Button>
