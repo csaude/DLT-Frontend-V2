@@ -6,9 +6,10 @@ import {useFormik} from 'formik';
 import {useTranslation} from 'react-i18next';
 import {loginUser} from '@store/reducers/auth';
 import {Checkbox, Button} from '@components';
-import {faEnvelope, faLock} from '@fortawesome/free-solid-svg-icons';
+import {faEnvelope, faLock, faUser} from '@fortawesome/free-solid-svg-icons';
 import {setWindowClass} from '@app/utils/helpers';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import { Center, Box, Text, Heading, VStack, FormControl, Input, Image } from 'native-base';
 
 import * as Yup from 'yup';
 
@@ -87,22 +88,29 @@ const Login = () => {
 
   return (
     <div className="login-box">
-      <div className="card card-outline card-primary">
+      <div className="card card-outline card-primary"  style={{ }}>
+        <div style={{alignItems  : 'center', width:'50%' }}>
+          <img  style={{  width: "100%", marginLeft: "50%", marginTop:"10%"}}  src={'/img/dreams.png'} />
+        </div>
         <div className="card-header text-center">
-          <Link to="/" className="h1">
-            <b>Admin</b>
-            <span>LTE</span>
-          </Link>
+          <p className="login-box-msg">
+            {/* {t('login.label.signIn')} */}
+            Dreams Layering Tool
+            </p>
         </div>
         <div className="card-body">
-          <p className="login-box-msg">{t('login.label.signIn')}</p>
+          <p className="h1 text-center">
+            <b>Login</b>
+          </p>
+          <p className="login-box-msg">
+          </p>
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <InputGroup className="mb-3">
                 <Form.Control
                   id="email"
                   name="email"
-                  placeholder="Email"
+                  placeholder="username"
                   onChange={handleChange}
                   value={values.email}
                   isValid={touched.email && !errors.email}
@@ -115,7 +123,7 @@ const Login = () => {
                 ) : (
                   <InputGroup.Append>
                     <InputGroup.Text>
-                      <FontAwesomeIcon icon={faEnvelope} />
+                      <FontAwesomeIcon icon={faUser} />
                     </InputGroup.Text>
                   </InputGroup.Append>
                 )}
@@ -148,56 +156,21 @@ const Login = () => {
             </div>
 
             <div className="row">
-              <div className="col-8">
-                <Checkbox type="icheck" checked={false}>
-                  {t('login.label.rememberMe')}
-                </Checkbox>
-              </div>
-              <div className="col-4">
+              <div className="col-12">
                 <Button
                   block
                   type="submit"
                   isLoading={isAuthLoading}
-                  disabled={isFacebookAuthLoading || isGoogleAuthLoading}
                 >
                   {/* @ts-ignore */}
-                  {t('login.button.signIn.label')}
+                  {/* {t('login.button.signIn.label')} */}
+                  Login
                 </Button>
               </div>
             </div>
           </form>
-          <div className="social-auth-links text-center mt-2 mb-3">
-            <Button
-              block
-              icon="facebook"
-              onClick={loginByFacebook}
-              isLoading={isFacebookAuthLoading}
-              disabled={isAuthLoading || isGoogleAuthLoading}
-            >
-              {/* @ts-ignore */}
-              {t('login.button.signIn.social', {
-                what: 'Facebook'
-              })}
-            </Button>
-            <Button
-              block
-              icon="google"
-              theme="danger"
-              onClick={loginByGoogle}
-              isLoading={isGoogleAuthLoading}
-              disabled={isAuthLoading || isFacebookAuthLoading}
-            >
-              {/* @ts-ignore */}
-              {t('login.button.signIn.social', {what: 'Google'})}
-            </Button>
-          </div>
           <p className="mb-1">
             <Link to="/forgot-password">{t('login.label.forgotPass')}</Link>
-          </p>
-          <p className="mb-0">
-            <Link to="/register" className="text-center">
-              {t('login.label.registerNew')}
-            </Link>
           </p>
         </div>
       </div>
