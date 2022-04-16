@@ -10,28 +10,10 @@ export interface IMenuItem {
 }
 
 export const MENU: IMenuItem[] = [
-  {
-    name: 'menusidebar.label.dashboard',
-    path: '/'
-  },
-  {
-    name: 'menusidebar.label.blank',
-    path: '/blank'
-  },
-  {
-    name: 'menusidebar.label.mainMenu',
-    children: [
-      {
-        name: 'menusidebar.label.subMenu',
-        path: '/sub-menu-1'
-      },
-
-      {
-        name: 'menusidebar.label.blank',
-        path: '/sub-menu-2'
-      }
-    ]
-  },
+  // {
+  //   name: 'menusidebar.label.dashboard',
+  //   path: '/'
+  // },
   {
     name: 'menusidebar.label.users',
     children: [
@@ -63,7 +45,7 @@ const MenuSidebar = () => {
           className="brand-image img-circle elevation-3"
           style={{opacity: '.8'}}
         />
-        <span className="brand-text font-weight-light">AdminLTE 3</span>
+        <span className="brand-text font-weight-light">DLT</span>
       </Link>
       <div className="sidebar">
         <div className="user-panel mt-3 pb-3 mb-3 d-flex">
@@ -75,7 +57,7 @@ const MenuSidebar = () => {
             />
           </div>
           <div className="info">
-            <Link to="/profile" className="d-block">
+            <Link to="/usersList" className="d-block">
               {user.email}
             </Link>
           </div>
