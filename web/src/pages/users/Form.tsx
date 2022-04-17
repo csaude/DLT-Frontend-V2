@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {Link} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import {ContentHeader} from '@components';
 import { NativeBaseProvider, Center, Box, Text, Heading, VStack, FormControl, 
         Input,  Button, Select, WarningOutlineIcon, HStack, Stack, 
@@ -12,7 +12,7 @@ import { allPartners } from '@app/utils/partners';
 import { allProfiles } from '@app/utils/profiles';
 import { allLocality } from '@app/utils/locality';
 import { allUs } from '@app/utils/uSanitaria';
-import { add } from '@app/utils/users';
+import { add, edit } from '@app/utils/users';
 
 import styles from './styles'; 
 
@@ -79,20 +79,25 @@ interface user {
 }
 
 const UserForm: React.FC = ({ user}:any) => {
-        
+    
+    const {state}:any = useLocation();
+    const paramUser:any = state ? state.user: null;
+
+    const navigate = useNavigate();
+    
     const [initialValues, setInitialValues] = useState({
-        surname: '',
-        username: '',
-        password: '', 
-        name:'', 
-        email:'', 
-        phoneNumber:'', 
-        entryPoint:'', 
-        profile_id:'',
-        partner_id: '',
-        locality_id: '',
-        us_id: '',
-        status: ''
+        surname: paramUser ? paramUser.surname : '',
+        username: paramUser ? paramUser.username : '',
+        password: paramUser ? paramUser.password : '',
+        name: paramUser ? paramUser.name : '',
+        email: paramUser ? paramUser.email : '',
+        phoneNumber: paramUser ? paramUser.phoneNumber : '',
+        entryPoint: paramUser ? paramUser.entryPoint : '', 
+        profile_id: paramUser ? String(paramUser.profiles.id) : '',
+        partner_id: paramUser ? String(paramUser.partners.id) : '',
+        locality_id: paramUser ? String(paramUser.locality.id) : '',
+        us_id: paramUser ? String(paramUser.us.id) : '',
+        status: paramUser ? paramUser.status : '1',
     });
 
     const [ usList, setUsList ] = useState<Locality[]>([]);
@@ -164,9 +169,9 @@ const UserForm: React.FC = ({ user}:any) => {
 
     const onSubmit = async ( values: any) => {
 
-        const user: any = {};
+        const user: any = paramUser ? paramUser : {};
 
-        user.id = values.id;
+        user.id = paramUser ? paramUser.id : values.id;
         user.surname = values.surname;
         user.name = values.name;
         user.phoneNumber = values.phoneNumber;
@@ -179,8 +184,9 @@ const UserForm: React.FC = ({ user}:any) => {
         user.partners = {"id": values.partner_id};
         user.profiles = {"id": values.profile_id};
         user.us = {"id": values.us_id};
-        await add(user);
-        console.log(user);
+        
+        paramUser ? await edit(user) : await add(user);
+        navigate("/usersView", { state: { user: values } } )
     
     }
 
@@ -396,7 +402,7 @@ const UserForm: React.FC = ({ user}:any) => {
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'status' in errors}>
                                     <FormControl.Label>Estado:</FormControl.Label>
-                                    <Radio.Group defaultValue="1" name="status" accessibilityLabel="Estado">
+                                    <Radio.Group defaultValue={String(values.status) || ""} name="status" accessibilityLabel="Estado">
                                         <Stack direction={{
                                             base: "column",
                                             md: "row"
@@ -407,7 +413,7 @@ const UserForm: React.FC = ({ user}:any) => {
                                             <Radio value="1" my={1}>
                                                 Activo
                                             </Radio>
-                                            <Radio value="2" my={1}>
+                                            <Radio value="0" my={1}>
                                                 Inactivo
                                             </Radio>
                                         </Stack>
@@ -415,7 +421,7 @@ const UserForm: React.FC = ({ user}:any) => {
                                 </FormControl>
                                 <Flex direction="row" mb="2.5" mt="1.5" style={{justifyContent: 'flex-end', }}>                                    
                                     <Center>
-                                        <Button onPress={() => 'navigate({name: "UserList"})'} size={'md'}  bg="warning.400">
+                                        <Button onPress={() => navigate("/usersList")} size={'md'}  bg="warning.400">
                                             {/* <Icon as={<Ionicons name="play-back-sharp" />} color="white" size={25} /> */}
                                             <Text style={styles.txtSubmit}> Voltar </Text>
                                         </Button>

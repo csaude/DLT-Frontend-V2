@@ -16,6 +16,7 @@ import SubMenu from '@pages/SubMenu';
 import Profile from '@pages/profile/Profile';
 import Users from '@pages/users/Index';
 import UsersForm from '@pages/users/Form';
+import UserView from '@pages/users/View';
 
 import PublicRoute from './routes/PublicRoute';
 import PrivateRoute from './routes/PrivateRoute';
@@ -57,6 +58,7 @@ const App = () => {
             // Rota para Utilizadores
             <Route path="/usersList" element={<Users />} />
             <Route path="/usersForm" element={<UsersForm />} />
+            <Route path="/usersView" element={<UserView />} />
           </Route>
         </Route>
       </Routes>
