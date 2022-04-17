@@ -9,8 +9,10 @@ import ControlSidebar from '@app/modules/main/control-sidebar/ControlSidebar';
 import Header from '@app/modules/main/header/Header';
 import MenuSidebar from '@app/modules/main/menu-sidebar/MenuSidebar';
 import Footer from '@app/modules/main/footer/Footer';
+import {useNavigate, useLocation} from 'react-router-dom';
 
 const Main = () => {
+  
   const dispatch = useDispatch();
   const menuSidebarCollapsed = useSelector(
     (state: any) => state.ui.menuSidebarCollapsed
@@ -27,9 +29,10 @@ const Main = () => {
 
   const fetchProfile = async () => {
     try {
+      const email = await localStorage.getItem('userEmail');
       //const response = await Gatekeeper.getProfile();
       const response = {
-        email: 'mail@example.com',
+        email: email,
         picture: null
       }
       dispatch(loadUser(response));

@@ -28,42 +28,15 @@ const Login = () => {
   const login = async (email: string, password: string) => {
     try {
       setAuthLoading(true);
-      const token = await AuthService.loginByAuth(email, password);
+      const data = await AuthService.loginByAuth(email, password);
       toast.success('Login is succeed!');
       setAuthLoading(false);
-      dispatch(loginUser(token));
+      dispatch(loginUser(data.token));
+      console.log(data);
       navigate('/');
     } catch ( error ) {
       setAuthLoading(false);
       toast.error( 'Failed');
-    }
-  };
-
-  const loginByGoogle = async () => {
-    try {
-      setGoogleAuthLoading(true);
-      const token = await AuthService.loginByGoogle();
-      toast.success('Login is succeeded!');
-      setGoogleAuthLoading(false);
-      dispatch(loginUser(token));
-      navigate('/');
-    } catch (error) {
-      setGoogleAuthLoading(false);
-      toast.error('Failed');
-    }
-  };
-
-  const loginByFacebook = async () => {
-    try {
-      setFacebookAuthLoading(true);
-      const token = await AuthService.loginByFacebook();
-      toast.success('Login is succeeded!');
-      setFacebookAuthLoading(false);
-      dispatch(loginUser(token));
-      navigate('/');
-    } catch (error) {
-      setFacebookAuthLoading(false);
-      toast.error('Failed');
     }
   };
 

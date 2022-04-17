@@ -6,9 +6,10 @@ export const loginByAuth = async (email: string, password: string) => {
   const response =  await authenticate({username:email, password:password});
   const { status, data } = response;
   localStorage.setItem('token', data.token);
+  localStorage.setItem('userEmail', data.account.email);
   removeWindowClass('login-page');
   removeWindowClass('hold-transition');
-  return data.token;
+  return data;
   /*const token = await Gatekeeper.loginByAuth(email, password);
   localStorage.setItem('token', token);
   removeWindowClass('login-page');
