@@ -6,7 +6,7 @@ import styled from 'styled-components';
 
 const StyledUserImage = styled.img`
   height: 4.6rem !important;
-  width: 2.2rem !important;
+  width: 7.2rem !important;
   margin-right: 5 !important;
   margin-left: 20px !important;
 `;
@@ -50,10 +50,9 @@ const MenuSidebar = () => {
         <StyledUserImage
           src="/img/dreams.png"
           alt="DREAMS Logo"
-          className="brand-image elevation-3"
+          className=" "
           style={{opacity: '.8'}}
         />
-        <span className="brand-text font-weight-light">DLT</span>
       </Link>
       <div className="sidebar">
         
