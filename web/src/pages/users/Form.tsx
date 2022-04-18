@@ -184,9 +184,10 @@ const UserForm: React.FC = ({ user}:any) => {
         user.partners = {"id": values.partner_id};
         user.profiles = {"id": values.profile_id};
         user.us = {"id": values.us_id};
-        
-        paramUser ? await edit(user) : await add(user);
-        navigate("/usersView", { state: { user: values } } )
+                
+        const account = paramUser ? await edit(user) : await add(user);
+
+        navigate("/usersView", { state: { user: account.data } } )
     
     }
 

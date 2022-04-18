@@ -2,12 +2,13 @@ import React from 'react';
 import {useNavigate, useLocation} from 'react-router-dom';
 
 import { NativeBaseProvider, ScrollView, Center, Box, Text, Heading, 
-  Button, Flex, View, Divider, Avatar}
+    Button, Flex, View, Divider, Avatar}
 from 'native-base';
-import { faEye, faPen, faAdd, faUser} from '@fortawesome/free-solid-svg-icons';
+import { faUser} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 import styles from './styles';
+
 
 const userView = () => {
 
