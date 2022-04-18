@@ -115,20 +115,15 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
     fab: {
-      position: 'absolute',
-      width: 56,
-      height: 56,
-      alignItems: 'center',
-      justifyContent: 'center',
-      right: 20,
-      bottom: 20,
-      backgroundColor: '#0c4a6e',
-      borderRadius: 30,
-      elevation: 8
-    },
-    fabIcon: {
-      fontSize: 40,
-      color: 'white'
+
+        marginTop: 35, 
+        marginLeft: 10,
+        backgroundColor: '#0c4a6e',
+        width: 46,
+        height: 46,
+        alignItems: 'center',
+        color: '#fff',     
+        fontSize: 30, 
     },
 });
 

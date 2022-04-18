@@ -6,6 +6,8 @@ import { NativeBaseProvider, Pressable, Center, Box, Heading,
 from 'native-base';
 import {Table} from 'react-bootstrap';
 import { MaterialIcons, Ionicons } from "@native-base/icons";
+import { faEye, faPen, faAdd} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 import styles from './styles';
 import { useState } from 'react';
@@ -81,11 +83,11 @@ const userList = () => {
                                     <td>{ item.email }</td>
                                     <td>{ item.phoneNumber }</td>
                                     <td>                                         
-                                        <Pressable justifyContent="center" 
+                                        <Pressable justifyContent="center"
                                                     onPress={() => navigate("/usersView", { state: { user: item } } )} 
                                                     _pressed={{opacity: 0.5}}
                                         >
-                                            <Icon as={<Ionicons name="eye" />} color="primary.700" /> 
+                                            <FontAwesomeIcon icon={faEye} />
                                         </Pressable>
                                     </td>
                                     <td>                                                                                
@@ -93,7 +95,7 @@ const userList = () => {
                                                     onPress={() => navigate("/usersForm", { state: { user: item } } )} 
                                                     _pressed={{opacity: 0.5}}
                                         >
-                                            <Icon as={<Ionicons name="pencil" />} color="primary.700" />
+                                            <FontAwesomeIcon icon={faPen} />
                                         </Pressable> 
                                     </td>
                                 </tr>
@@ -103,8 +105,10 @@ const userList = () => {
                   </Table> 
                   <Flex direction="row" mb="2.5" mt="1.5" style={{justifyContent: 'flex-end', marginRight: "3%",}}>
                       <Center>
-                          <Button onPress={() => navigate("/usersForm") }  style={{marginTop: 35, marginLeft: 10,}} size={'md'} colorScheme="tertiary">
-                            <Icon as={<MaterialIcons name="add" style={styles.fabIcon} />} />
+                          <Button onPress={() => navigate("/usersForm") }  size={'md'}  style={styles.fab} >
+                                                       
+                            <FontAwesomeIcon icon={faAdd} />
+                        
                           </Button>
                       </Center>
                       

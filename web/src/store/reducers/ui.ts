@@ -30,8 +30,8 @@ export interface UiState {
 const initialState: UiState = {
   screenSize: calculateWindowSize(window.innerWidth),
   darkMode: false,
-  navbarVariant: 'navbar-light',
-  sidebarSkin: 'sidebar-dark-primary',
+  navbarVariant: 'navbar-primary  navbar-dark',
+  sidebarSkin: 'sidebar-light-primary',
   menuSidebarCollapsed: false,
   controlSidebarCollapsed: true,
   headerBorder: false,
