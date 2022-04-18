@@ -120,7 +120,7 @@ const UsersRegistrationForm: React.FC = ({ route, localities, profiles, us, part
         const usName = us.filter((e)=>{ return e._raw.online_id == values.us_id})[0]._raw.name;
 
         const isEdit = user && user.id; // new record if it has id
-    
+
         const newObject = await database.write(async () => {
             if(isEdit){
                 const userToUpdate = await database.get('users').find(user.id);
@@ -137,11 +137,12 @@ const UsersRegistrationForm: React.FC = ({ route, localities, profiles, us, part
                     user.locality_id = values.locality_id
                     user.partner_id = values.partner_id 
                     user.us_id = values.us_id 
-                    user.online_id = values.online_id
+                    user.online_id =  user.online_id
+                    user._status = "updated"
                 })
 
                 toast.show({placement:"bottom", title:"User Updated Successfully: "+updatedUser._raw.id});
-
+    
                 return updatedUser;
             }
             const newUser = await database.collections.get('users').create((user:any) => {
@@ -162,7 +163,7 @@ const UsersRegistrationForm: React.FC = ({ route, localities, profiles, us, part
             });
 
             toast.show({placement:"bottom", title:"User Saved Successfully: "+newUser._raw.id});
-      
+
             return newUser;
         });
     
@@ -172,11 +173,11 @@ const UsersRegistrationForm: React.FC = ({ route, localities, profiles, us, part
                                                 partner: partnerName, 
                                                 us: usName }});
         
-                                       
+                                        
         setLoading(false);
         sync({username: loggedUser.username})
                 .then(() => toast.show({
-                                placement: "top",
+                                placement: "top", 
                                 render:() => {
                                     return (
                                         <Alert w="100%" variant="left-accent" colorScheme="success" status="success">
@@ -212,7 +213,7 @@ const UsersRegistrationForm: React.FC = ({ route, localities, profiles, us, part
                                         </Alert> 
                                     );
                                 }
-                            }))
+                            })) 
     }
 
 
