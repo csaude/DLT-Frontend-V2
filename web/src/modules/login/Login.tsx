@@ -131,6 +131,7 @@ const Login = () => {
                   block
                   type="submit"
                   isLoading={isAuthLoading}
+                  style={{background:"#0C4A6E"}}
                 >
                   {/* @ts-ignore */}
                   {/* {t('login.button.signIn.label')} */}

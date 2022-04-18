@@ -2,10 +2,9 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { NativeBaseProvider, Pressable, Center, Box, Heading, 
-  Button, Flex, Icon, View}
+  Button, Flex, View}
 from 'native-base';
 import {Table} from 'react-bootstrap';
-import { MaterialIcons, Ionicons } from "@native-base/icons";
 import { faEye, faPen, faAdd} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
