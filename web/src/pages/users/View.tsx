@@ -2,9 +2,10 @@ import React from 'react';
 import {useNavigate, useLocation} from 'react-router-dom';
 
 import { NativeBaseProvider, ScrollView, Center, Box, Text, Heading, 
-  Button, Flex, Icon, View, Divider, Avatar}
+  Button, Flex, View, Divider, Avatar}
 from 'native-base';
-import { Ionicons } from "@native-base/icons";
+import { faEye, faPen, faAdd, faUser} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 import styles from './styles';
 
@@ -22,11 +23,10 @@ const userView = () => {
             <View style={{ alignItems: 'center', justifyContent: 'center',}}>
                 <View style={{marginLeft: "30%", marginRight: "30%", width: 850,}}>
                     <View style={{ marginTop: 85,}}>
-                        {/* <View style={{ width: 850,}}></View> */}
                         <View style={styles.containerForm} >
                             <Box style={styles.userLogo}>
                                 <Avatar color="white" bg={'primary.700'} size={150}>
-                                    <Icon as={<Ionicons name="person-outline" />} color="white" size={70} />
+                                    <FontAwesomeIcon icon={faUser} style={{fontSize: 70}}/>
                                 </Avatar>
                                 <Box style={styles.userText}>     
                                     <Text>{ user.username }</Text> 
@@ -70,12 +70,12 @@ const userView = () => {
                                 
                                 <Center>
                                     <Button onPress={() => navigate("/usersList")} style={{marginTop: 35,}} size={'md'}  bg="warning.400">
-                                        <Icon as={<Ionicons name="play-back-sharp" />} color="white" size={25} />
+                                        Voltar
                                     </Button>
                                 </Center>
                                 <Center>
                                     <Button onPress={() => navigate("/usersForm", { state: { user: user } } )} style={{marginTop: 35, marginLeft: 10,}} size={'md'} bg="primary.700">
-                                        <Icon as={<Ionicons name="pencil-sharp" />} color="white" size={25} />
+                                       Editar
                                     </Button>
                                 </Center>
                                 

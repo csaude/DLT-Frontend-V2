@@ -49,7 +49,7 @@ const UserDropdown = () => {
       }
       menuTemplate={
         <>
-          <li className="user-header bg-primary">
+          <li className="user-header bg-info">
             <img
               src={user.picture || '/img/default-profile.png'}
               className="img-circle elevation-2"
