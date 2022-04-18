@@ -18,8 +18,6 @@ import * as AuthService from '../../services/auth';
 
 const Login = () => {
   const [isAuthLoading, setAuthLoading] = useState(false);
-  const [isGoogleAuthLoading, setGoogleAuthLoading] = useState(false);
-  const [isFacebookAuthLoading, setFacebookAuthLoading] = useState(false);
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
@@ -32,7 +30,6 @@ const Login = () => {
       toast.success('Login is succeed!');
       setAuthLoading(false);
       dispatch(loginUser(data.token));
-      console.log(data);
       navigate('/');
     } catch ( error ) {
       setAuthLoading(false);
