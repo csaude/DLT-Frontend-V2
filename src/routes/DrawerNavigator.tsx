@@ -1,16 +1,24 @@
 import React, { createContext } from 'react';
-import { Button, View } from 'react-native';
+import { Button, View , Text} from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import CustomDrawer from './components/CustomDrawer';
 import UsersNavigator from './UsersNavigator';
-import { Text } from 'react-native-svg';
+// import BeneficiariasNavigator from './BeneficiariasNavigator';
 
 
 function HomeScreen({ navigation }: any) {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Dreams Layering Tool </Text>
+    </View>
+  );
+}
+
+function BeneficiariasNavigator({ navigation }: any) {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Lista de Beneficiárias Dreams </Text>
     </View>
   );
 }
@@ -48,11 +56,19 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
                 title: 'Dashboard', 
                 headerTitle: '',
             }}
+        />        
+        <Drawer.Screen name="Beneficiarias" 
+            component={BeneficiariasNavigator}  
+            options={{                     
+                title: 'Beneficiárias', 
+                headerTitle: '',
+            }}
+            
         />
         <Drawer.Screen name="Users" 
             component={UsersNavigator}  
             options={{                     
-                title: 'Utilizadores', 
+                title: 'Utilizadores1', 
                 headerTitle: '',
             }}
             
