@@ -196,13 +196,14 @@ const Login: React.FC = () => {
     return (
         <KeyboardAvoidingView>
             <ScrollView contentInsetAdjustmentBehavior="automatic">
-            <Box safeArea p="2" w="100%"  py="8" >
+            <Box safeArea p="2" w="100%"  py="8" bgColor="white" >
+            <Image style={{  width: "100%", resizeMode: "contain" }} source={require('../../../assets/dreams.png')} size="100" alt="dreams logo" />
             <VStack space={4} alignItems="center" w="100%" >
                 <Center w="90%" >
                     <Heading mt="1" color="coolGray.600" 
                                     _dark={{ color: "warmGray.200" }} 
                                     fontWeight="medium" size="md"  py="5">
-                        <Text color="warmGray.400">Dreams Layering Tool 1</Text>
+                        <Text color="warmGray.400">Dreams Layering Tool</Text>
                     </Heading>
                     <Heading  color="coolGray.600" 
                                 _dark={{ color: "warmGray.200" }} 
