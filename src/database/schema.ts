@@ -128,7 +128,7 @@ export default appSchema({
         ],
       }),
       tableSchema({
-        name: 'neighborhood',
+        name: 'neighborhoods',
         columns: [
           {name: 'name', type: "string"},
           {name: 'description',type: "string"},
@@ -137,7 +137,7 @@ export default appSchema({
         ],
       }),
       tableSchema({
-        name: 'beneficiaries_vulnerabilities',
+        name: 'beneficiaries_interventions',
         columns: [
           {name: 'beneficiary_id', type: "number", isIndexed: true },
           {name: 'sub_service_id',type: "number", isIndexed: true },
