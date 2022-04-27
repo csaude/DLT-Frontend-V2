@@ -35,23 +35,23 @@ export default class Beneficiarie extends Model {
     @text("name") name;
     @text("nick_name") nick_name;
     @text("date_of_birth") date_of_birth;
-    @text("gender") gender;
+    @field("gender") gender;
     @text("address") address;
     @text("phone_number") phone_number;
     @text("e_mail") e_mail;
-    @text("lives_with") lives_with;
-    @text("is_orphan") is_orphan;
+    @field("lives_with") lives_with;
+    @field("is_orphan") is_orphan;
     @text("via") via;
-    @text("partner_id") partner_id;
-    @text("is_student") is_student;
+    @field("partner_id") partner_id;
+    @field("is_student") is_student;
     @text("grade") grade;
     @text("school_name") school_name;
-    @text("is_deficient") is_deficient;
-    @text("deficiency_type") deficiency_type;
-    @text("entry_point") entry_point;
-    @text("neighbourhood_id") neighbourhood_id;
-    @text("us_id") us_id;
-    @text("status") status;
+    @field("is_deficient") is_deficient;
+    @field("deficiency_type") deficiency_type;
+    @field("entry_point") entry_point;
+    @field("neighbourhood_id") neighbourhood_id;
+    @field("us_id") us_id;
+    @field("status") status;
     
 }
 
