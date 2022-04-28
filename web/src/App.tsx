@@ -17,6 +17,7 @@ import Profile from '@pages/profile/Profile';
 import Users from '@pages/users/Index';
 import UsersForm from '@pages/users/Form';
 import UserView from '@pages/users/View';
+import BeneficiariesList from '@pages/beneficiaries'
 
 import PublicRoute from './routes/PublicRoute';
 import PrivateRoute from './routes/PrivateRoute';
@@ -56,6 +57,7 @@ const App = () => {
             <Route path="/profile" element={<Profile />} />
             <Route path="/" element={<Dashboard />} />
             // Rota para Utilizadores
+            <Route path="/beneficiariesList" element={<BeneficiariesList />} />
             <Route path="/usersList" element={<Users />} />
             <Route path="/usersForm" element={<UsersForm />} />
             <Route path="/usersView" element={<UserView />} />

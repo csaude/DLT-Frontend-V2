@@ -18,10 +18,10 @@ export interface IMenuItem {
 }
 
 export const MENU: IMenuItem[] = [
-  // {
-  //   name: 'menusidebar.label.dashboard',
-  //   path: '/'
-  // },
+  {
+    name: 'menusidebar.label.beneficiariesList',
+    path: '/beneficiariesList'
+  },
   {
     name: 'menusidebar.label.users',
     children: [
