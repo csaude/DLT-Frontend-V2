@@ -7,12 +7,17 @@ import Highlighter from 'react-highlight-words';
 import 'antd/dist/antd.css';
 import { SearchOutlined, EditOutlined } from '@ant-design/icons';
 import moment from 'moment';
+import ViewBeneficiary from './components/View';
 
 
 const BeneficiariesList: React.FC = () => {
     const [ beneficiaries, setBeneficiaries ] = useState<any[]>([]);
     const [ searchText, setSearchText ] = useState('');
     const [ searchedColumn, setSearchedColumn ] = useState('');
+    const [ beneficiary, setBeneficiary] = useState();
+    const [ modalVisible, setModalVisible] = useState<boolean>(false);
+
+
     let searchInput ;
     useEffect(() => {
         const fetchData = async () => {
@@ -24,7 +29,20 @@ const BeneficiariesList: React.FC = () => {
     
     }, []);
 
-    
+    const handleAdd = (record:any) => {
+        console.log(record);
+    }
+
+    const handleViewModalVisible = (flag?: boolean, record?: any) => {
+        setBeneficiary(record);
+        setModalVisible(!!flag);
+        
+    };
+
+    const handleModalVisible = (flag?: boolean) => {
+        setModalVisible(!!flag);
+    };
+
     const getColumnSearchProps = (dataIndex:any) => ({
         filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
             <div style={{ padding: 8 }}>
@@ -86,6 +104,11 @@ const BeneficiariesList: React.FC = () => {
             ) : ( text ),
     });
 
+    const parentMethods = {
+        handleAdd: handleAdd,
+        handleModalVisible: handleModalVisible
+    };
+
     const columns = [
         { title: 'Código do Beneficiário', dataIndex: 'nui', key: 'nui', ...getColumnSearchProps('nui')},
         { title: 'Nome do Beneficiário', dataIndex: 'name', key: 'name' },
@@ -117,7 +140,7 @@ const BeneficiariesList: React.FC = () => {
         },
         { title: 'PE', dataIndex: 'entryPoint', key: 'entryPoint' },
         { title: 'Distrito', dataIndex: 'neighborhood.locality.district.name', key: 'district' },
-        { title: 'Idade', dataIndex: 'grade', key: 'grade' },
+        { title: 'Idade', dataIndex: 'grade', key: 'grade', ...getColumnSearchProps('grade') },
         { title: '#Interv', dataIndex: 'status', key: 'status' },
         { title: 'Criado Por', dataIndex: 'createdBy', key: 'createdBy' },
         { title: 'Actualizado Por', dataIndex: 'updatedBy', key: 'updatedBy' },
@@ -130,7 +153,7 @@ const BeneficiariesList: React.FC = () => {
           key: 'x',
           render: (text, record) => (
             <Fragment>
-              <Button type="primary" icon={<EditOutlined />}>
+              <Button type="primary" icon={<EditOutlined />} onClick={()=>handleViewModalVisible(true, record)}>
               </Button>
             </Fragment>
           ),
@@ -166,7 +189,10 @@ const BeneficiariesList: React.FC = () => {
                     dataSource={beneficiaries}
                 />
             </Card>
-            
+            <ViewBeneficiary 
+                {...parentMethods}
+                beneficiary={beneficiary} 
+                modalVisible={modalVisible} />
         </>
     );
 }
