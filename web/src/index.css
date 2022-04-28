@@ -8,9 +8,34 @@
 
 @import '~react-toastify/dist/ReactToastify.min.css';
 
+@import 'antd/dist/antd.css';
+
 #root {
   width: 100vw;
   height: 100vh;
+}
+
+.ant-table-thead > tr >th{
+  color: white ;
+  background: #3070b9 !important;
+
+}
+
+.ant-table-thead > tr > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 1px;
+  height: 1.6em;
+  background-color: #ccc;
+  transform: translateY(-50%);
+  transition: background-color 0.3s;
+  content: '';
+}
+
+.wrapper .content-wrapper {
+  padding-bottom: calc(3.5rem+ 1px);
+  background: #eee;
 }
 
 .main-header .navbar-nav .nav-item .nav-link {

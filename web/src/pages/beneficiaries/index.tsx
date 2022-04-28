@@ -152,10 +152,10 @@ const BeneficiariesList: React.FC = () => {
     return (
         
         <>
-            <Card  bordered={false} style={{marginBottom:'10px'}}>
+            <Card  bordered={false} style={{marginBottom:'10px', textAlign:"center", fontWeight:"bold", color:"#17a2b8"}} >
             SISTEMA INTEGRADO DE CADASTRO DE ADOLESCENTES E JOVENS
             </Card>
-            <Card title="Lista de Adolescentes e Jovens" bordered={false}>
+            <Card title="Lista de Adolescentes e Jovens" bordered={false} headStyle={{color:"#17a2b8"}}>
                 <Table
                     rowKey="id"
                     columns={columns}
