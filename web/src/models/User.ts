@@ -20,9 +20,9 @@ export interface UserModel {
 
 export function getEntryPoint(value:any){
 
-  if(value === 1){
+  if(value == 1){
     return "Unidade Sanitaria";
-  } else if(value === 2) {
+  } else if(value == 2) {
     return "Escola";
   } 
 

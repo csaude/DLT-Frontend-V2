@@ -5,9 +5,10 @@ import {matchSorter} from "match-sorter";
 import { Badge, Button, Card, Input, Space, Table } from 'antd';
 import Highlighter from 'react-highlight-words';
 import 'antd/dist/antd.css';
-import { SearchOutlined, EditOutlined } from '@ant-design/icons';
+import { SearchOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import ViewBeneficiary from './components/View';
+import ViewBeneficiary, { ViewBenefiaryPanel } from './components/View';
+import { getEntryPoint } from '@app/models/User';
 
 
 const BeneficiariesList: React.FC = () => {
@@ -34,6 +35,7 @@ const BeneficiariesList: React.FC = () => {
     }
 
     const handleViewModalVisible = (flag?: boolean, record?: any) => {
+        console.log(record.interventions);
         setBeneficiary(record);
         setModalVisible(!!flag);
         
@@ -109,6 +111,29 @@ const BeneficiariesList: React.FC = () => {
         handleModalVisible: handleModalVisible
     };
 
+    const interventionColumns = [
+        { title: 'Data', 
+            dataIndex: 'date', 
+            key: 'date',
+            render: (val: string) => <span>{moment(val).format('YYYY-MM-DD')}</span>,
+        },
+        { title: 'Serviço', 
+            dataIndex: '', 
+            key: 'service',
+            render: (text, record)  => record.subService.service.name,
+        },
+        { title: 'Intervenções', 
+            dataIndex: '', 
+            key: 'intervention',
+            render: (text, record)  => record.subService.name,
+        },
+        { title: 'Ponto de Entrada', 
+            dataIndex: '', 
+            key: 'entryPoint',
+            render: (text, record)  => getEntryPoint(record.entryPoint),
+        }
+    ];
+
     const columns = [
         { title: 'Código do Beneficiário', dataIndex: 'nui', key: 'nui', ...getColumnSearchProps('nui')},
         { title: 'Nome do Beneficiário', dataIndex: 'name', key: 'name' },
@@ -138,14 +163,23 @@ const BeneficiariesList: React.FC = () => {
                 );
               },
         },
-        { title: 'PE', dataIndex: 'entryPoint', key: 'entryPoint' },
-        { title: 'Distrito', dataIndex: 'neighborhood.locality.district.name', key: 'district' },
-        { title: 'Idade', dataIndex: 'grade', key: 'grade', ...getColumnSearchProps('grade') },
+        { title: 'PE', dataIndex: '', key: 'entryPoint', render: (text, record)  => getEntryPoint(record.entryPoint) },
+        { title: 'Distrito', dataIndex: '', key: 'district',
+            render: (text, record)  => record.neighborhood.locality.district.name,
+        },
+        { title: 'Idade', dataIndex: 'grade', key: 'grade'},
         { title: '#Interv', dataIndex: 'status', key: 'status' },
-        { title: 'Criado Por', dataIndex: 'createdBy', key: 'createdBy' },
-        { title: 'Actualizado Por', dataIndex: 'updatedBy', key: 'updatedBy' },
+        { title: 'Org', dataIndex: 'partner', key: 'partner',
+            render: (text, record)  => record.partner.abbreviation,
+        },
+        { title: 'Criado Por', dataIndex: '', key: 'createdBy',
+            render: (text, record)  => record.createdBy.username,
+        },
+        { title: 'Atualizado Por', dataIndex: '', key: 'updatedBy',
+            render: (text, record)  => record.updatedBy?.username,
+        },
         { title: 'Criado Em', dataIndex: 'dateCreated', key: 'dateCreated',
-            render: (val: string) => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
+            render: (val: string) => <span>{moment(val).format('YYYY-MM-DD')}</span>,
         },
         {
           title: 'Action',
@@ -183,7 +217,7 @@ const BeneficiariesList: React.FC = () => {
                     rowKey="id"
                     columns={columns}
                     expandable={{
-                        expandedRowRender: record => <p style={{ margin: 0 }}>{record.name}</p>,
+                        expandedRowRender: record =>  <div style={{border:"2px solid #d9edf7", backgroundColor:"white"}}><ViewBenefiaryPanel beneficiary={record} columns={interventionColumns} /></div>,
                         rowExpandable: record => record.name !== 'Not Expandable',
                     }}
                     dataSource={beneficiaries}

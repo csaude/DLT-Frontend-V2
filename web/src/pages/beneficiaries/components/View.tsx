@@ -1,62 +1,60 @@
 import React, { Fragment, useEffect, useState } from 'react'
-import { Modal, Card, Row, Col, Image, Table, Button } from 'antd';
+import { Modal, Card, Row, Col, Image, Table, Button, Drawer } from 'antd';
 import { SearchOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
 import emblema from '../../../assets/emblema.png';
 import moment from 'moment';
-import { getEntryPoint } from '../../../models/User'
+import { getEntryPoint } from '@app/models/User'
+import 'antd/dist/antd.css';
 
+export function ViewBenefiaryPanel({beneficiary, columns}){
+    const [visible, setVisible] = useState<boolean>(false);
 
-const ViewBeneficiary = ({beneficiary, modalVisible, handleAdd, handleModalVisible}) => {
-
-    const okHandle = () => {
-        handleAdd("test");
-    }
-
-    const columns = [
-        { title: 'Data', 
-            dataIndex: 'date', 
-            key: 'date',
-            render: (val: string) => <span>{moment(val).format('YYYY-MM-DD')}</span>,
-        },
-        { title: 'Serviço', 
-            dataIndex: '', 
-            key: 'service',
-            render: (text, record)  => record.subService.service.name,
-        },
-        { title: 'Intervenções', 
-            dataIndex: '', 
-            key: 'intervention',
-            render: (text, record)  => record.subService.name,
-        },
-        { title: 'Ponto de Entrada', 
-            dataIndex: '', 
-            key: 'entryPoint',
-            render: (text, record)  => getEntryPoint(record.entryPoint),
-        },
-        {
-            title: 'Action',
-            dataIndex: '',
-            key: 'x',
-            render: (text, record) => (
-              <Fragment>
-                <Button type="primary" icon={<EyeOutlined />} >
-                </Button>
-              </Fragment>
-            ),
-        },
-    ];
+    const showDrawer = () => {
+        setVisible(true);
+    };
+    
+    const onClose = () => {
+        setVisible(false);
+    };
+    const interventionColumns = columns === undefined ?
+        [
+            { title: 'Data', 
+                dataIndex: 'date', 
+                key: 'date',
+                render: (val: string) => <span>{moment(val).format('YYYY-MM-DD')}</span>,
+            },
+            { title: 'Serviço', 
+                dataIndex: '', 
+                key: 'service',
+                render: (text, record)  => record.subService.service.name,
+            },
+            { title: 'Intervenções', 
+                dataIndex: '', 
+                key: 'intervention',
+                render: (text, record)  => record.subService.name,
+            },
+            { title: 'Ponto de Entrada', 
+                dataIndex: '', 
+                key: 'entryPoint',
+                render: (text, record)  => getEntryPoint(record.entryPoint),
+            },
+            {
+                title: 'Action',
+                dataIndex: '',
+                key: 'x',
+                render: (text, record) => (
+                <Fragment>
+                    <Button type="primary" icon={<EyeOutlined />} onClick={showDrawer} >
+                    </Button>
+                </Fragment>
+                ),
+            },
+        ] : columns;
 
     return (
-
-        <Modal
-            width="950px"
-            destroyOnClose
-            title={` Dados de Registo do Beneficiário: ${beneficiary?.name}`}
-            visible={modalVisible}
-            onOk={okHandle}
-            onCancel={() => handleModalVisible()}
-        >
-            <Card
+        <>
+        <div className="site-drawer-render-in-current-wrapper">
+        <Card
                 //title={` Dados de Registo do Beneficiário: DREAMS1 DREAMS2 ${beneficiary?.name}`}
                 bordered={false} //headStyle={{background:"#17a2b8"}}
                 bodyStyle={{margin:0, marginBottom:"20px",padding:0}}
@@ -141,12 +139,49 @@ const ViewBeneficiary = ({beneficiary, modalVisible, handleAdd, handleModalVisib
             >
                 <Table
                     rowKey="dateCreated"
-                    columns={columns}
+                    pagination={false}
+                    columns={interventionColumns}
                     dataSource={beneficiary?.interventions}
                 />
             </Card>
+            <Drawer
+                title="Basic Drawer"
+                placement="right"
+                closable={false}
+                onClose={onClose}
+                visible={false}
+                getContainer={false}
+                style={{ position: 'absolute' }}
+                >
+                <p>Some contents...</p>
+            </Drawer>
+            </div>
+            </>
+    );
+}
+
+const ViewBeneficiary = ({beneficiary, modalVisible, handleAdd, handleModalVisible}) => {
+
+    const okHandle = () => {
+        handleAdd("test");
+    }
+
+    
+    return (
+
+        <Modal
+            width={1200}
+            centered
+            destroyOnClose
+            title={` Dados de Registo do Beneficiário: ${beneficiary?.name}`}
+            visible={modalVisible}
+            onOk={okHandle}
+            onCancel={() => handleModalVisible()}
+        >
+            <ViewBenefiaryPanel beneficiary={beneficiary} columns={undefined} />
             
         </Modal>
+
 
     );
 }
