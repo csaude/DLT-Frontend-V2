@@ -16,4 +16,15 @@ export interface UserModel {
     partners?: any,
     profiles?: any,
     us?: any
-  }
+}
+
+export function getEntryPoint(value:any){
+
+  if(value === 1){
+    return "Unidade Sanitaria";
+  } else if(value === 2) {
+    return "Escola";
+  } 
+
+  return "Comunidade";
+}

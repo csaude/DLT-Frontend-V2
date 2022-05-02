@@ -3,6 +3,7 @@ import { Modal, Card, Row, Col, Image, Table, Button } from 'antd';
 import { SearchOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
 import emblema from '../../../assets/emblema.png';
 import moment from 'moment';
+import { getEntryPoint } from '../../../models/User'
 
 
 const ViewBeneficiary = ({beneficiary, modalVisible, handleAdd, handleModalVisible}) => {
@@ -12,12 +13,26 @@ const ViewBeneficiary = ({beneficiary, modalVisible, handleAdd, handleModalVisib
     }
 
     const columns = [
-        { title: 'Data', dataIndex: 'date', key: 'date',
-            render: (val: string) => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
+        { title: 'Data', 
+            dataIndex: 'date', 
+            key: 'date',
+            render: (val: string) => <span>{moment(val).format('YYYY-MM-DD')}</span>,
         },
-        { title: 'Serviço', dataIndex: 'subService.service.name', key: 'serv' },
-        { title: 'Intervenções', dataIndex: 'subService.service', key: 'inter' },
-        { title: 'Ponto de Entrada', dataIndex: 'entryPoint', key: 'entryPoint' },
+        { title: 'Serviço', 
+            dataIndex: '', 
+            key: 'service',
+            render: (text, record)  => record.subService.service.name,
+        },
+        { title: 'Intervenções', 
+            dataIndex: '', 
+            key: 'intervention',
+            render: (text, record)  => record.subService.name,
+        },
+        { title: 'Ponto de Entrada', 
+            dataIndex: '', 
+            key: 'entryPoint',
+            render: (text, record)  => getEntryPoint(record.entryPoint),
+        },
         {
             title: 'Action',
             dataIndex: '',
@@ -125,7 +140,7 @@ const ViewBeneficiary = ({beneficiary, modalVisible, handleAdd, handleModalVisib
                 title="Lista de Intervenções DREAMS"
             >
                 <Table
-                    rowKey="subService.id"
+                    rowKey="dateCreated"
                     columns={columns}
                     dataSource={beneficiary?.interventions}
                 />
