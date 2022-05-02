@@ -6,6 +6,8 @@ import moment from 'moment';
 import { getEntryPoint } from '@app/models/User'
 import 'antd/dist/antd.css';
 
+import '../styles.css'
+
 export function ViewBenefiaryPanel({beneficiary, columns}){
     const [visible, setVisible] = useState<boolean>(false);
 
@@ -54,7 +56,7 @@ export function ViewBenefiaryPanel({beneficiary, columns}){
     return (
         <>
         <div className="site-drawer-render-in-current-wrapper">
-        <Card
+            <Card
                 //title={` Dados de Registo do Beneficiário: DREAMS1 DREAMS2 ${beneficiary?.name}`}
                 bordered={false} //headStyle={{background:"#17a2b8"}}
                 bodyStyle={{margin:0, marginBottom:"20px",padding:0}}
@@ -142,21 +144,23 @@ export function ViewBenefiaryPanel({beneficiary, columns}){
                     pagination={false}
                     columns={interventionColumns}
                     dataSource={beneficiary?.interventions}
+                    bordered
+
                 />
             </Card>
             <Drawer
                 title="Basic Drawer"
-                placement="right"
+                placement="top"
                 closable={false}
                 onClose={onClose}
-                visible={false}
+                visible={visible}
                 getContainer={false}
                 style={{ position: 'absolute' }}
                 >
                 <p>Some contents...</p>
             </Drawer>
-            </div>
-            </>
+        </div>
+        </>
     );
 }
 

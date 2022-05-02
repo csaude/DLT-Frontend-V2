@@ -221,6 +221,7 @@ const BeneficiariesList: React.FC = () => {
                         rowExpandable: record => record.name !== 'Not Expandable',
                     }}
                     dataSource={beneficiaries}
+                    bordered
                 />
             </Card>
             <ViewBeneficiary 
