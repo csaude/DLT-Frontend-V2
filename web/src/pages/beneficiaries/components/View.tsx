@@ -4,15 +4,20 @@ import { SearchOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
 import emblema from '../../../assets/emblema.png';
 import moment from 'moment';
 import { getEntryPoint } from '@app/models/User'
+import ViewIntervention from './ViewIntervention';
+
 import 'antd/dist/antd.css';
 
 import '../styles.css'
 
 export function ViewBenefiaryPanel({beneficiary, columns}){
     const [visible, setVisible] = useState<boolean>(false);
+    const [selectedBeneficiary, setSelectedBeneficiary] = useState();
 
-    const showDrawer = () => {
+    const showDrawer = (record:any) => {
+
         setVisible(true);
+        setSelectedBeneficiary(record);
     };
     
     const onClose = () => {
@@ -46,7 +51,7 @@ export function ViewBenefiaryPanel({beneficiary, columns}){
                 key: 'x',
                 render: (text, record) => (
                 <Fragment>
-                    <Button type="primary" icon={<EyeOutlined />} onClick={showDrawer} >
+                    <Button type="primary" icon={<EyeOutlined />} onClick={()=>showDrawer(record)} >
                     </Button>
                 </Fragment>
                 ),
@@ -149,7 +154,7 @@ export function ViewBenefiaryPanel({beneficiary, columns}){
                 />
             </Card>
             <Drawer
-                title="Basic Drawer"
+                title="Intervenções Dreams"
                 placement="top"
                 closable={false}
                 onClose={onClose}
@@ -157,7 +162,7 @@ export function ViewBenefiaryPanel({beneficiary, columns}){
                 getContainer={false}
                 style={{ position: 'absolute' }}
                 >
-                <p>Some contents...</p>
+                <ViewIntervention record={selectedBeneficiary} beneficiary={beneficiary} />
             </Drawer>
         </div>
         </>
