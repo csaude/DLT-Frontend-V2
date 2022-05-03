@@ -1,6 +1,7 @@
 import { Card, Col, Row } from 'antd';
 import moment from 'moment';
 import React, { useState } from 'react'
+import { Button } from 'react-bootstrap';
 
 export default function ViewBenefiaryPanel({record, beneficiary}){
     
@@ -10,10 +11,9 @@ export default function ViewBenefiaryPanel({record, beneficiary}){
             bodyStyle={{margin:0, marginBottom:"20px",padding:0}}
             >
                 <Row gutter={16}>
-                        <Col className="gutter-row" span={4}>
-                            
-                        </Col>
-                        <Col className="gutter-row" span={16}>
+                    <Col className="gutter-row" span={4}>
+                    </Col>
+                    <Col className="gutter-row" span={16}>
                             <Card
                                 title={`${beneficiary.name} ${beneficiary.surname}`}
                                 bordered={true}
@@ -38,11 +38,10 @@ export default function ViewBenefiaryPanel({record, beneficiary}){
                                 </Row>
                                 
                             </Card>
-                        </Col>
-                        <Col className="gutter-row" span={4}>
-                            
-                        </Col>
-                    </Row>
+                    </Col>
+                    <Col className="gutter-row" span={4}>
+                    </Col>
+                </Row>
                      
             </Card>
     );

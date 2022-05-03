@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react'
-import { Modal, Card, Row, Col, Image, Table, Button, Drawer } from 'antd';
+import { Modal, Card, Row, Col, Image, Table, Button, Drawer, Space } from 'antd';
 import { SearchOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
 import emblema from '../../../assets/emblema.png';
 import moment from 'moment';
@@ -161,6 +161,14 @@ export function ViewBenefiaryPanel({beneficiary, columns}){
                 visible={visible}
                 getContainer={false}
                 style={{ position: 'absolute' }}
+                extra={
+                    <Space>
+                      <Button onClick={onClose}>Cancel</Button>
+                      <Button onClick={onClose} type="primary">
+                        Submit
+                      </Button>
+                    </Space>
+                }
                 >
                 <ViewIntervention record={selectedBeneficiary} beneficiary={beneficiary} />
             </Drawer>
