@@ -187,7 +187,7 @@ const BeneficiariesList: React.FC = () => {
           key: 'x',
           render: (text, record) => (
             <Fragment>
-              <Button type="primary" icon={<EditOutlined />} onClick={()=>handleViewModalVisible(true, record)}>
+              <Button type="primary" icon={<EyeOutlined />} onClick={()=>handleViewModalVisible(true, record)}>
               </Button>
             </Fragment>
           ),
