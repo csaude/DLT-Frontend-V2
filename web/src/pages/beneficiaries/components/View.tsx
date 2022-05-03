@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import { Modal, Card, Row, Col, Image, Table, Button, Drawer, Space } from 'antd';
-import { SearchOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
+import { SearchOutlined, ArrowUpOutlined, EyeOutlined, PlusOutlined } from '@ant-design/icons';
 import emblema from '../../../assets/emblema.png';
 import moment from 'moment';
 import { getEntryPoint } from '@app/models/User'
@@ -9,9 +9,11 @@ import ViewIntervention from './ViewIntervention';
 import 'antd/dist/antd.css';
 
 import '../styles.css'
+import InterventionForm from './InterventionForm';
 
 export function ViewBenefiaryPanel({beneficiary, columns}){
     const [visible, setVisible] = useState<boolean>(false);
+    const [isAdd, setIsAdd] = useState<boolean>(false);
     const [selectedBeneficiary, setSelectedBeneficiary] = useState();
 
     const showDrawer = (record:any) => {
@@ -19,9 +21,15 @@ export function ViewBenefiaryPanel({beneficiary, columns}){
         setVisible(true);
         setSelectedBeneficiary(record);
     };
+
+    const onAddIntervention = () => {
+        setVisible(true);
+        setIsAdd(true);
+    };
     
     const onClose = () => {
         setVisible(false);
+        setIsAdd(false);
     };
     const interventionColumns = columns === undefined ?
         [
@@ -143,6 +151,14 @@ export function ViewBenefiaryPanel({beneficiary, columns}){
             </Card>
             <Card
                 title="Lista de Intervenções DREAMS"
+                extra={
+                    <Space>
+                      <Button type='primary' icon={<ArrowUpOutlined />} danger >Referir Beneficiaria</Button>
+                      <Button onClick={onAddIntervention} type="primary" icon={<PlusOutlined />} >
+                        Adicionar Serviço Dreams
+                      </Button>
+                    </Space>
+                }
             >
                 <Table
                     rowKey="dateCreated"
@@ -170,7 +186,9 @@ export function ViewBenefiaryPanel({beneficiary, columns}){
                     </Space>
                 }
                 >
-                <ViewIntervention record={selectedBeneficiary} beneficiary={beneficiary} />
+                {isAdd ? <InterventionForm /> : 
+                    <ViewIntervention record={selectedBeneficiary} beneficiary={beneficiary} />
+                }   
             </Drawer>
         </div>
         </>
