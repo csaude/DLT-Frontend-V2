@@ -12,17 +12,24 @@ import { Context } from '../../routes/DrawerNavigator';
 import styles from './styles';
 
 
-const BeneficiariesMain: React.FC = ({ beneficiaries, users, localities, profiles, us, partners }:any) => {
+const BeneficiariesMain: React.FC = ({ beneficiaries, localities,subServices, beneficiaries_interventions, services }:any) => {
     const [searchField, setSearchField] = useState('');
-    const loggedUser:any = useContext(Context); 
+    const loggedUser:any = useContext(Context);
 
     const viewBeneficiaries = (data: any) => {
 
-        const user = data.item._raw;
-        const localityName = localities.filter((e)=>{ return e._raw.online_id == user.locality_id})[0]._raw.name;
-        const profileName = profiles.filter((e)=>{ return e._raw.online_id == user.profile_id})[0]._raw.name;
-        const partnerName = partners.filter((e)=>{ return e._raw.online_id == user.partner_id})[0]._raw.name;
-        const usName = us.filter((e)=>{ return e._raw.online_id == user.us_id})[0]._raw.name;
+        const beneficiarie = data.item._raw;
+        const beneficiariesInterventionsName = beneficiaries_interventions.filter((e)=>{ return e._raw.beneficiary_id == beneficiarie.nui})[0]._raw.sub_service_id;
+        // const serviceName = services.filter((e)=>{ return e._raw.online_id == beneficiariesInterventionsName.sub_service_id})[0]._raw.name;
+        const subServiceName = subServices.filter((e)=>{ return e._raw.online_id == beneficiariesInterventionsName.sub_service_id});
+
+        navigate({name: "BeneficiariesView", params: {beneficiarie: data.item._raw
+            ,
+            // locality: localityName,
+            beneficiariesInterventionsName: beneficiariesInterventionsName,
+            // services: serviceName,
+            subServices: subServiceName
+        }});
 
     };
 
@@ -45,22 +52,22 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, users, localities, profile
 
     const renderItem = (data: any) => (
         <TouchableHighlight
-            onPress={() => viewBeneficiaries(data)} 
+            onPress={() => viewBeneficiaries(data)}
             style={styles.rowFront}
             underlayColor={'#AAA'}
         >
             <HStack width="100%" px={4}
                     flex={1} space={5} alignItems="center">
-                {/* <Avatar color="white" bg={'warning.600'} > */}              
+                {/* <Avatar color="white" bg={'warning.600'} > */}          
                 <Avatar color="white" bg={randomHexColor()} >
                     {data.item.name.charAt(0).toUpperCase()+data.item.surname.charAt(0).toUpperCase()}
                     {/* {"A"} */}
-                </Avatar>    
+                </Avatar>
                 <View>
                     <Text color="darkBlue.800">{data.item.nui} </Text>
                     <Text color="darkBlue.800">{data.item.name} {data.item.surname}</Text>
                     <Text color="darkBlue.800">{data.item.partners?.name}</Text>
-                </View> 
+                </View>
                 
             </HStack>
 
@@ -133,6 +140,15 @@ const enhance = withObservables([], () => ({
     partners: database.collections
       .get("partners")
       .query().observe(),
+    beneficiaries_interventions: database.collections
+        .get("beneficiaries_interventions")
+        .query().observe(),
+    services: database.collections
+          .get("services")
+          .query().observe(),
+    subServices: database.collections
+        .get("sub_services")
+        .query().observe(),
     us: database.collections
       .get("us")
       .query().observe()
