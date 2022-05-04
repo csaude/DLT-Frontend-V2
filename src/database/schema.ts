@@ -82,6 +82,7 @@ export default appSchema({
           {name: 'neighbourhood_id',  type: "number", isIndexed: true },
           {name: 'us_id',  type: "number", isIndexed: true },
           {name: 'status', type: 'number'},
+          {name: 'online_id', type: 'number',isOptional: true }
         ],
       }),
       tableSchema({
