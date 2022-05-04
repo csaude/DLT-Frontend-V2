@@ -82,6 +82,7 @@ export default appSchema({
           {name: 'neighbourhood_id',  type: "number", isIndexed: true },
           {name: 'us_id',  type: "number", isIndexed: true },
           {name: 'status', type: 'number'},
+          {name: 'online_id', type: 'number',isOptional: true}
         ],
       }),
       tableSchema({
@@ -93,6 +94,7 @@ export default appSchema({
           {name: 'hidden', type: 'number'},
           {name: 'service_type', type: 'string'},
           {name: 'status', type: 'number'},
+          {name: 'online_id', type: 'number',isOptional: true}
         ],
       }),
       tableSchema({
@@ -106,6 +108,7 @@ export default appSchema({
           {name: 'service_id', type: "number", isIndexed: true },
           {name: 'status', type: 'number'},
           {name: 'sort_order', type: 'number'},
+          {name: 'online_id', type: 'number',isOptional: true}
         ],
       }),
       tableSchema({
@@ -114,6 +117,7 @@ export default appSchema({
           {name: 'name', type: 'string'},
           {name: 'description', type: 'string'},
           {name: 'status', type: 'number'},
+          {name: 'online_id', type: 'number',isOptional: true}
         ],
       }),
       tableSchema({
@@ -125,6 +129,7 @@ export default appSchema({
           {name: 'evaluation_date', type: 'string'},
           {name: 'status', type: 'number'},
           {name: 'remarks', type: 'string', isOptional: true},
+          {name: 'online_id', type: 'number',isOptional: true}
         ],
       }),
       tableSchema({
@@ -134,6 +139,7 @@ export default appSchema({
           {name: 'description',type: "string"},
           {name: 'locality_id', type: "number", isIndexed: true },
           {name: 'status', type: 'number'},
+          {name: 'online_id', type: 'number',isOptional: true}
         ],
       }),
       tableSchema({
@@ -149,6 +155,7 @@ export default appSchema({
           {name: 'provider', type: 'string'},
           {name: 'remarks', type: 'string', isOptional: true},
           {name: 'status', type: 'number'},
+          {name: 'online_id', type: 'number',isOptional: true}
         ],
       }),
     ],
