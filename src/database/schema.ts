@@ -82,11 +82,7 @@ export default appSchema({
           {name: 'neighbourhood_id',  type: "number", isIndexed: true },
           {name: 'us_id',  type: "number", isIndexed: true },
           {name: 'status', type: 'number'},
-<<<<<<< HEAD
           {name: 'online_id', type: 'number',isOptional: true}
-=======
-          {name: 'online_id', type: 'number',isOptional: true }
->>>>>>> upstream/master
         ],
       }),
       tableSchema({
