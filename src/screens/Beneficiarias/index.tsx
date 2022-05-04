@@ -18,17 +18,22 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, localities,subServices, be
 
     const viewBeneficiaries = (data: any) => {
 
-        const beneficiarie = data.item._raw;
-        const beneficiariesInterventionsName = beneficiaries_interventions.filter((e)=>{ return e._raw.beneficiary_id == beneficiarie.nui})[0]._raw.sub_service_id;
-        // const serviceName = services.filter((e)=>{ return e._raw.online_id == beneficiariesInterventionsName.sub_service_id})[0]._raw.name;
-        const subServiceName = subServices.filter((e)=>{ return e._raw.online_id == beneficiariesInterventionsName.sub_service_id});
+        const beneficiarie = data.item?._raw;
 
-        navigate({name: "BeneficiariesView", params: {beneficiarie: data.item._raw
-            ,
-            // locality: localityName,
-            beneficiariesInterventionsName: beneficiariesInterventionsName,
-            // services: serviceName,
-            subServices: subServiceName
+        const beneficiariesInterventionsName = beneficiaries_interventions.filter((e)=>{ 
+                return e._raw.beneficiary_id == beneficiarie.online_id}
+            );
+
+        const InterventionNames = beneficiariesInterventionsName.map((e)=>{
+            let subservice = subServices.filter((item)=>{ 
+                return item._raw.online_id == e._raw.sub_service_id
+            })[0];
+            return { id: subservice._raw.online_id, name: subservice._raw.name}
+        });
+
+        navigate({name: "BeneficiariesView", params: {
+            beneficiarie: data.item._raw,
+            subServices: InterventionNames
         }});
 
     };
