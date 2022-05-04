@@ -1,13 +1,14 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { View, StyleSheet, TouchableOpacity, TouchableHighlight, ScrollView , Platform} from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
-import { HStack,Text, Avatar, Pressable, Icon, Box, Select,Heading, VStack, FormControl, Input, Link, Button, CheckIcon, WarningOutlineIcon, Center, Flex } from 'native-base';
+import { useToast, HStack,Text, Avatar, Pressable, Icon, Box, Alert, Select,Heading, VStack, FormControl, Input, Link, Button, CheckIcon, WarningOutlineIcon, Center, Flex } from 'native-base';
 import { navigate } from '../../routes/NavigationRef';
 import withObservables from '@nozbe/with-observables';
 import { MaterialIcons, Ionicons } from "@native-base/icons";
 import { Q } from "@nozbe/watermelondb";
 import { database } from '../../database';
 import { Context } from '../../routes/DrawerNavigator';
+import { sync } from "../../database/sync";
 
 import styles from './styles';
 
@@ -15,7 +16,8 @@ import styles from './styles';
 const UsersMain: React.FC = ({ users, localities, profiles, us, partners }:any) => {
     const [searchField, setSearchField] = useState('');
     const loggedUser:any = useContext(Context); 
-
+    const toast = useToast();
+    
     const viewUser = (data: any) => {
 
         const user = data.item._raw;
@@ -30,6 +32,48 @@ const UsersMain: React.FC = ({ users, localities, profiles, us, partners }:any) 
             partner: partnerName, 
             us: usName }});
     };
+
+    const syncronize = () => {
+        sync({username: loggedUser.username})
+                .then(() => toast.show({
+                                placement: "top",
+                                render:() => {
+                                    return (
+                                        <Alert w="100%" variant="left-accent" colorScheme="success" status="success">
+                                            <VStack space={2} flexShrink={1} w="100%">
+                                                <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
+                                                    <HStack space={2} flexShrink={1} alignItems="center">
+                                                        <Alert.Icon />
+                                                        <Text color="coolGray.800">
+                                                            Synced Successfully!
+                                                        </Text>
+                                                    </HStack>
+                                                </HStack>
+                                            </VStack>
+                                        </Alert> 
+                                    );
+                                }
+                            }))
+                .catch(() => toast.show({
+                                placement: "top",
+                                render:() => {
+                                    return (
+                                        <Alert w="100%" variant="left-accent" colorScheme="error" status="error">
+                                            <VStack space={2} flexShrink={1} w="100%">
+                                                <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
+                                                    <HStack space={2} flexShrink={1} alignItems="center">
+                                                        <Alert.Icon />
+                                                        <Text color="coolGray.800">
+                                                            Sync Failed!
+                                                        </Text>
+                                                    </HStack>
+                                                </HStack>
+                                            </VStack>
+                                        </Alert> 
+                                    );
+                                }
+                            }))
+    }
 
     const randomHexColor = () => {
         return '#000000'.replace(/0/g, () => {
@@ -123,6 +167,9 @@ const UsersMain: React.FC = ({ users, localities, profiles, us, partners }:any) 
                 previewOpenDelay={3000}
                 onRowDidOpen={onRowDidOpen}
             />
+            <TouchableOpacity onPress={syncronize} style={styles.fab1}>
+                <Icon as={MaterialIcons} name="refresh"  size={8}  color="#0c4a6e" />
+            </TouchableOpacity>
             <TouchableOpacity onPress={() => navigate({name: "UserForm", params: {}}) } style={styles.fab}>
                 <Icon as={MaterialIcons} name="add"  size={8}  color="white" />
             </TouchableOpacity>
