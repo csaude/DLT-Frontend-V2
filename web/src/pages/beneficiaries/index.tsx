@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react'
 import { query } from '../../utils/beneficiary';
 import classNames from "classnames";
 import {matchSorter} from "match-sorter";
-import { Badge, Button, Card, Input, Space, Table } from 'antd';
+import { Badge, Button, Card, Input, Space, Table, Typography } from 'antd';
 import Highlighter from 'react-highlight-words';
 import 'antd/dist/antd.css';
 import { SearchOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
@@ -10,6 +10,7 @@ import moment from 'moment';
 import ViewBeneficiary, { ViewBenefiaryPanel } from './components/View';
 import { getEntryPoint } from '@app/models/User';
 
+const { Text } = Typography;
 
 const BeneficiariesList: React.FC = () => {
     const [ beneficiaries, setBeneficiaries ] = useState<any[]>([]);
@@ -135,7 +136,9 @@ const BeneficiariesList: React.FC = () => {
     ];
 
     const columns = [
-        { title: 'Código do Beneficiário', dataIndex: 'nui', key: 'nui', ...getColumnSearchProps('nui')},
+        { title: 'Código do Beneficiário', dataIndex: '', key: 'nui', ...getColumnSearchProps('nui'),
+            render: (text, record)  => (<Text type="danger" >{record.nui}</Text>),
+        },
         { title: 'Nome do Beneficiário', dataIndex: 'name', key: 'name' },
         { title: 'Sexo', dataIndex: 'gender', key: 'gender',
             filters: [
@@ -168,7 +171,13 @@ const BeneficiariesList: React.FC = () => {
             render: (text, record)  => record.neighborhood.locality.district.name,
         },
         { title: 'Idade', dataIndex: 'grade', key: 'grade'},
-        { title: '#Interv', dataIndex: 'status', key: 'status' },
+        { title: '#Interv', dataIndex: 'status', key: 'status', 
+            render(val: any) {
+                return (
+                    <Badge count={val} />
+                );
+            },
+        },
         { title: 'Org', dataIndex: 'partner', key: 'partner',
             render: (text, record)  => record.partner.abbreviation,
         },
@@ -187,7 +196,7 @@ const BeneficiariesList: React.FC = () => {
           key: 'x',
           render: (text, record) => (
             <Fragment>
-              <Button type="primary" icon={<EditOutlined />} onClick={()=>handleViewModalVisible(true, record)}>
+              <Button type="primary" icon={<EyeOutlined />} onClick={()=>handleViewModalVisible(true, record)}>
               </Button>
             </Fragment>
           ),

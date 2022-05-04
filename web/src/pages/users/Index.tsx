@@ -1,121 +1,86 @@
-import React, { useEffect } from 'react';
+import { Card, Table, Button, Space } from 'antd';
 import { useNavigate } from 'react-router-dom';
-
-import { NativeBaseProvider, Pressable, Center, Box, Heading, 
-  Button, Flex, View}
-from 'native-base';
-import {Table} from 'react-bootstrap';
-import { faEye, faPen, faAdd} from '@fortawesome/free-solid-svg-icons';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-
-import styles from './styles';
-import { useState } from 'react';
-
+import React, { Fragment, useEffect, useState } from 'react';
 import { query } from '../../utils/users';
 import { UserModel } from '../../models/User';
+import { SearchOutlined, PlusOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
 
-
-const userList = () => {
-
-  const [ users, setUsers ] = useState<UserModel[]>([]);
-
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await query();
-      setUsers(data);
-    } 
-
-    fetchData().catch(error => console.log(error));
-
-  }, []);
-
-  return (
-    <NativeBaseProvider>
+const UsersList: React.FC = () => {
+    const [ users, setUsers ] = useState<UserModel[]>([]);
     
-      <View style={styles.webStyle1}>                     
-          <Center w="100%" bgColor="white">
-              <Box safeArea p="2" w="90%" py="8">
-                  <Heading size="lg" color="coolGray.800" 
-                                      _dark={{ color: "warmGray.50"}} 
-                                      fontWeight="semibold"
-                                      marginBottom={5}
-                                      marginTop={0} 
-                                      textAlign={'center'}>
-                      Utilizadores
-                  </Heading>
-            
-                  <Table  striped bordered hover /*style={{ borderWidth: 4, borderColor: "#20232a",marginLeft: "3%", marginRight: "3%",}}*/>
-                      <thead style={{ fontWeight: "bold"}}>
-                          <tr>
-                              <td> Tipo de Utilizador</td>
-                              <td> Estado de Utilizador</td>
-                              <td> Username</td>
-                              <td> Nome de Utilizador</td>
-                              <td> Ponto de Entrada</td>
-                              <td> Parceiro</td>
-                              <td> Email</td>
-                              <td> Telefone</td>
-                          </tr>
-                      </thead>
-                      <tbody>
-                        {
-                            users.map((item)=>
-                                <tr>
-                                    <td>{ item.profiles?.description }</td>
-                                    <td>{ (item.status===1)  ? "Activo" : "Inactivo" }</td>
-                                    <td>{ item.username }</td>
-                                    <td>{ item.name + ' '+ item.surname }</td>
-                                    <td>
-                                        { 
-                                            (item.entryPoint==="1") ?
-                                                "Unidade Sanitaria"
-                                            : 
-                                            (item.entryPoint==="2") ? 
-                                                "Escola"
-                                            : 
-                                                "Comunidade"                                            
-                                        }  
-                                    </td>
-                                    <td>{ item.partners?.name }</td>
-                                    <td>{ item.email }</td>
-                                    <td>{ item.phoneNumber }</td>
-                                    <td>                                         
-                                        <Pressable justifyContent="center"
-                                                    onPress={() => navigate("/usersView", { state: { user: item } } )} 
-                                                    _pressed={{opacity: 0.5}}
-                                        >
-                                            <FontAwesomeIcon icon={faEye} />
-                                        </Pressable>
-                                    </td>
-                                    <td>                                                                                
-                                        <Pressable justifyContent="center" 
-                                                    onPress={() => navigate("/usersForm", { state: { user: item } } )} 
-                                                    _pressed={{opacity: 0.5}}
-                                        >
-                                            <FontAwesomeIcon icon={faPen} />
-                                        </Pressable> 
-                                    </td>
-                                </tr>
-                            )
-                        }
-                      </tbody>
-                  </Table> 
-                  <Flex direction="row" mb="2.5" mt="1.5" style={{justifyContent: 'flex-end', marginRight: "3%",}}>
-                      <Center>
-                          <Button onPress={() => navigate("/usersForm") }  size={'md'}  style={styles.fab} >
-                                                       
-                            <FontAwesomeIcon icon={faAdd} />
-                        
-                          </Button>
-                      </Center>
-                      
-                  </Flex>                              
-                </Box>  
-            </Center>  
-      </View>
-    </NativeBaseProvider>
-  )};
+    const navigate = useNavigate();
 
-export default userList;
+    useEffect(() => {
+        const fetchData = async () => {
+          const data = await query();
+          setUsers(data);
+        } 
+    
+        fetchData().catch(error => console.log(error));
+    
+    }, []);
+
+    const columns = [
+        { title: 'Tipo de Utilizador', dataIndex: '', key: 'type', 
+            render: (text, record)  => record.profiles.description,
+        },
+        { title: 'Estado de Utilizador', dataIndex: 'status', key: 'status'},
+        { title: 'Username', dataIndex: 'username', key: 'username'},
+        { title: 'Nome de Utilizador', dataIndex: 'name', key: 'name'},
+        { title: 'Ponto de Entrada', dataIndex: '', key: 'type', 
+            render: (text, record)  => 
+                (record.entryPoint==="1") ?
+                    "Unidade Sanitaria"
+                : 
+                (record.entryPoint==="2") ? 
+                    "Escola"
+                : 
+                    "Comunidade"                                            
+            
+        },
+        { title: 'Parceiro', dataIndex: '', key: 'type', 
+            render: (text, record)  => record.partners?.name,
+        },
+        { title: 'Email', dataIndex: 'email', key: 'email'},
+        { title: 'Telefone', dataIndex: 'phoneNumber', key: 'phoneNumber'},
+        {
+            title: 'Action',
+            dataIndex: '',
+            key: 'x',
+            render: (text, record) => (
+              <Space>
+                <Button type="primary" icon={<EyeOutlined />} onClick={() => navigate("/usersView", { state: { user: record } } )} >
+                </Button>
+                <Button type="primary" icon={<EditOutlined />} onClick={() => navigate("/usersForm", { state: { user: record } } )} >
+                </Button>
+              </Space>
+            ),
+        },
+    ];
+
+    
+    return (
+        <>
+            <Card  bordered={false} style={{marginBottom:'10px', textAlign:"center", fontWeight:"bold", color:"#17a2b8"}} >
+                SISTEMA INTEGRADO DE CADASTRO DE ADOLESCENTES E JOVENS
+            </Card>
+            <Card title="Lista de Utilizadores" bordered={false} headStyle={{color:"#17a2b8"}}
+                extra={
+                    <Space>
+                      <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate("/usersForm")}>
+                        Adicionar Utilizador
+                      </Button>
+                    </Space>
+                }
+            >
+                <Table
+                    rowKey="id"
+                    columns={columns}
+                    dataSource={users}
+                    bordered
+                />
+            </Card>
+        </>
+    );
+}
+export default UsersList;

@@ -4,7 +4,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import CustomDrawer from './components/CustomDrawer';
 import UsersNavigator from './UsersNavigator';
-// import BeneficiariasNavigator from './BeneficiariasNavigator';
+import BeneficiariesNavigator from './BeneficiariesNavigator';
 
 
 function HomeScreen({ navigation }: any) {
@@ -14,15 +14,6 @@ function HomeScreen({ navigation }: any) {
     </View>
   );
 }
-
-function BeneficiariasNavigator({ navigation }: any) {
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Lista de Beneficiárias Dreams </Text>
-    </View>
-  );
-}
-
 
 export const Context = createContext({});
 const Drawer = createDrawerNavigator();
@@ -57,10 +48,10 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
                 headerTitle: '',
             }}
         />        
-        <Drawer.Screen name="Beneficiarias" 
-            component={BeneficiariasNavigator}  
+        <Drawer.Screen name="Beneficiaries" 
+            component={BeneficiariesNavigator}
             options={{                     
-                title: 'Beneficiárias', 
+                title: 'Beneficiárias',
                 headerTitle: '',
             }}
             
@@ -68,7 +59,7 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
         <Drawer.Screen name="Users" 
             component={UsersNavigator}  
             options={{                     
-                title: 'Utilizadores1', 
+                title: 'Utilizadores', 
                 headerTitle: '',
             }}
             
