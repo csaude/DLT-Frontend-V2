@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { View, StyleSheet, TouchableOpacity, TouchableHighlight, ScrollView , Platform} from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
-import { HStack,Text, Avatar, Pressable, Icon, Box, Select,Heading, VStack, FormControl, Input, Link, Button, CheckIcon, WarningOutlineIcon, Center, Flex } from 'native-base';
+import { HStack,Text, Avatar, Pressable, Icon, Box, Select,Heading, VStack, FormControl, Input, Link, Button, CheckIcon, WarningOutlineIcon, Center, Flex, Badge } from 'native-base';
 import { navigate } from '../../routes/NavigationRef';
 import withObservables from '@nozbe/with-observables';
 import { MaterialIcons, Ionicons } from "@native-base/icons";
@@ -71,9 +71,13 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, localities,subServices, be
                 <View>
                     <Text color="darkBlue.800">{data.item.nui} </Text>
                     <Text color="darkBlue.800">{data.item.name} {data.item.surname}</Text>
-                    <Text color="darkBlue.800">{data.item.partners?.name}</Text>
+                    <Badge colorScheme="info">{`Quelimane`}</Badge>
                 </View>
-                
+                <View >
+                    <Text color="darkBlue.800"></Text>
+                    <Text color="darkBlue.800">{'14 Anos'} </Text>
+                    <Badge  bg="cyan.500">{'FGH'}</Badge>
+                </View>
             </HStack>
 
         </TouchableHighlight>
