@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react'
-import { Modal, Card, Row, Col, Image, Table, Button, Drawer, Space } from 'antd';
+import { Form, Modal, Card, Row, Col, Image, Table, Button, Drawer, Space } from 'antd';
 import { SearchOutlined, ArrowUpOutlined, EyeOutlined, PlusOutlined } from '@ant-design/icons';
 import emblema from '../../../assets/emblema.png';
 import moment from 'moment';
@@ -15,6 +15,7 @@ export function ViewBenefiaryPanel({beneficiary, columns}){
     const [visible, setVisible] = useState<boolean>(false);
     const [isAdd, setIsAdd] = useState<boolean>(false);
     const [selectedBeneficiary, setSelectedBeneficiary] = useState();
+    const [form] = Form.useForm();
 
     const showDrawer = (record:any) => {
 
@@ -31,6 +32,19 @@ export function ViewBenefiaryPanel({beneficiary, columns}){
         setVisible(false);
         setIsAdd(false);
     };
+
+    const onSubmit = (value:any) => {
+        
+        //const form = Form.useFormInstance();
+        form.validateFields().then(values => {
+            console.log(values);
+        })
+        .catch(error => {
+            console.log(error);
+        });
+        //console.log(form.getFieldsValue());
+    };
+
     const interventionColumns = columns === undefined ?
         [
             { title: 'Data', 
@@ -176,17 +190,17 @@ export function ViewBenefiaryPanel({beneficiary, columns}){
                 onClose={onClose}
                 visible={visible}
                 getContainer={false}
-                style={{ position: 'absolute' }}
+                style={{ position: 'absolute'}}
                 extra={
                     <Space>
                       <Button onClick={onClose}>Cancel</Button>
-                      <Button onClick={onClose} type="primary">
+                      <Button htmlType="submit" onClick={onSubmit} type="primary">
                         Submit
                       </Button>
                     </Space>
                 }
                 >
-                {isAdd ? <InterventionForm /> : 
+                {isAdd ? <Form form={form} layout="vertical" onFinish={onSubmit}> <InterventionForm /></Form> : 
                     <ViewIntervention record={selectedBeneficiary} beneficiary={beneficiary} />
                 }   
             </Drawer>

@@ -1,10 +1,12 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import { Drawer, Form, Button, Col, Row, Input, Select, DatePicker, Space, Radio } from 'antd';
+import { queryByType, querySubServiceByService } from '@app/utils/service'
+import { allUs } from '@app/utils/uSanitaria'
 
 const { Option } = Select;
 const { TextArea } = Input;
 
-const areaServicos = [{"id":1,"name": "Serviços Clinicos"},{"id":2,"name": "Serviços Comunitarios"}];
+const areaServicos = [{"id":'CLINIC',"name": "Serviços Clinicos"},{"id":'COMMUNITY',"name": "Serviços Comunitarios"}];
 const options = [
   { label: 'US', value: 'US' },
   { label: 'CM', value: 'CM' },
@@ -12,33 +14,45 @@ const options = [
 ];
 
 const InterventionForm = () => {
-    const [services, setServices] = React.useState();
-    const [interventions, setInterventions] = React.useState();
+    const [services, setServices] = React.useState<any>(undefined);
+    const [interventions, setInterventions] = React.useState<any>(undefined);
+    const [us, setUs] = React.useState<any>(undefined);
+    const form = Form.useFormInstance();
 
-/*
     useEffect(() => {
 
       const fetchData = async () => {
-        const data = await query();
-        setBeneficiaries(data);
+        const data = await allUs();
+        setUs(data);
       } 
   
       fetchData().catch(error => console.log(error));
   
     }, []);
-*/
 
-    const onChangeAreaServiço = (value:any) => {
-        console.log(value);
-    };
+
+    const onChangeAreaServiço = async (value:any) => {
+        
+        const data = await queryByType(value);
+        //console.log(value, data);
+        setServices(data);
+    }
+
+    const onChangeServices = async (value:any) => {
+        
+      const data = await querySubServiceByService(value);
+      //console.log(value, data);
+      setInterventions(data);
+    }
 
     return (
-        <Form layout="vertical" hideRequiredMark>
+      
+          <>
             <Row gutter={8}>
               <Col span={8}>
                 <Form.Item
                   name="areaServicos"
-                  label="Área de Serviços *"
+                  label="Área de Serviços"
                   rules={[{ required: true, message: 'This field is required' }]}
                 >
                     <Select placeholder="Select Area Serviço" onChange={onChangeAreaServiço}>
@@ -51,11 +65,11 @@ const InterventionForm = () => {
               <Col span={8}>
                 <Form.Item
                   name="service"
-                  label="Serviço *"
+                  label="Serviço"
                   rules={[{ required: true, message: 'Please enter url' }]}
                 >
-                  <Select placeholder="Select Serviço" onChange={onChangeAreaServiço}>
-                        {areaServicos.map(item => (
+                  <Select placeholder="Select Serviço" onChange={onChangeServices} disabled={services === undefined}>
+                        {services?.map(item => (
                             <Option key={item.id}>{item.name}</Option>
                         ))}
                   </Select>
@@ -67,8 +81,8 @@ const InterventionForm = () => {
                   label="Sub-Serviço/Intervenção"
                   rules={[{ required: true, message: 'Please enter url' }]}
                 >
-                  <Select placeholder="Select Sub Serviço" onChange={onChangeAreaServiço}>
-                        {areaServicos.map(item => (
+                  <Select placeholder="Select Sub Serviço" disabled={interventions === undefined} value={undefined}>
+                        {interventions?.map(item => (
                             <Option key={item.id}>{item.name}</Option>
                         ))}
                   </Select>
@@ -79,12 +93,12 @@ const InterventionForm = () => {
               <Col span={8}>
                 <Form.Item
                   name="entryPoint"
-                  label="Ponto de Entrada *"
+                  label="Ponto de Entrada"
                   rules={[{ required: true, message: 'Please select an owner' }]}
+                  initialValue='US'
                 >
                   <Radio.Group
                     options={options}
-                    defaultValue='US'
                     optionType="button"
                   />
                 </Form.Item>
@@ -92,11 +106,11 @@ const InterventionForm = () => {
               <Col span={8}>
                 <Form.Item
                   name="location"
-                  label="Localização *"
+                  label="Localização"
                   rules={[{ required: true, message: 'Please choose the type' }]}
                 >
-                  <Select placeholder="Select Localização" onChange={onChangeAreaServiço}>
-                        {areaServicos.map(item => (
+                  <Select placeholder="Select Localização">
+                        {us?.map(item => (
                             <Option key={item.id}>{item.name}</Option>
                         ))}
                   </Select>
@@ -105,7 +119,7 @@ const InterventionForm = () => {
               <Col span={8}>
                 <Form.Item
                   name="dataBeneficio"
-                  label="Data Benefício *"
+                  label="Data Benefício"
                   rules={[{ required: true, message: 'Please select an owner' }]}
                 >
                   <DatePicker style={{width: '100%'}} />
@@ -132,8 +146,8 @@ const InterventionForm = () => {
                 </Form.Item>
               </Col>
             </Row>
-           
-          </Form>
+            </>
+    
     );
 }
 

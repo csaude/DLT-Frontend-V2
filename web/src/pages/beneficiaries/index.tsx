@@ -36,7 +36,7 @@ const BeneficiariesList: React.FC = () => {
     }
 
     const handleViewModalVisible = (flag?: boolean, record?: any) => {
-        console.log(record.interventions);
+        //console.log(record.interventions);
         setBeneficiary(record);
         setModalVisible(!!flag);
         
