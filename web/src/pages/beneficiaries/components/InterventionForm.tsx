@@ -8,9 +8,9 @@ const { TextArea } = Input;
 
 const areaServicos = [{"id":'CLINIC',"name": "Serviços Clinicos"},{"id":'COMMUNITY',"name": "Serviços Comunitarios"}];
 const options = [
-  { label: 'US', value: 'US' },
-  { label: 'CM', value: 'CM' },
-  { label: 'ES', value: 'ES' },
+  { label: 'US', value: '1' },
+  { label: 'CM', value: '2' },
+  { label: 'ES', value: '3' },
 ];
 
 const InterventionForm = () => {
@@ -34,14 +34,12 @@ const InterventionForm = () => {
     const onChangeAreaServiço = async (value:any) => {
         
         const data = await queryByType(value);
-        //console.log(value, data);
         setServices(data);
     }
 
     const onChangeServices = async (value:any) => {
         
       const data = await querySubServiceByService(value);
-      //console.log(value, data);
       setInterventions(data);
     }
 

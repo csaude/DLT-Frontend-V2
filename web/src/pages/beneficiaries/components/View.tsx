@@ -1,10 +1,11 @@
 import React, { Fragment, useEffect, useState } from 'react'
-import { Form, Modal, Card, Row, Col, Image, Table, Button, Drawer, Space } from 'antd';
+import { message, Form, Modal, Card, Row, Col, Image, Table, Button, Drawer, Space } from 'antd';
 import { SearchOutlined, ArrowUpOutlined, EyeOutlined, PlusOutlined } from '@ant-design/icons';
 import emblema from '../../../assets/emblema.png';
 import moment from 'moment';
 import { getEntryPoint } from '@app/models/User'
 import ViewIntervention from './ViewIntervention';
+import { addSubService, SubServiceParams } from '@app/utils/service'
 
 import 'antd/dist/antd.css';
 
@@ -15,6 +16,8 @@ export function ViewBenefiaryPanel({beneficiary, columns}){
     const [visible, setVisible] = useState<boolean>(false);
     const [isAdd, setIsAdd] = useState<boolean>(false);
     const [selectedBeneficiary, setSelectedBeneficiary] = useState();
+    const [interventions, setInterventions] = useState(beneficiary?.interventions);
+
     const [form] = Form.useForm();
 
     const showDrawer = (record:any) => {
@@ -33,16 +36,49 @@ export function ViewBenefiaryPanel({beneficiary, columns}){
         setIsAdd(false);
     };
 
-    const onSubmit = (value:any) => {
+    const onSubmit = async (value:any) => {
         
-        //const form = Form.useFormInstance();
-        form.validateFields().then(values => {
-            console.log(values);
+        form.validateFields().then(async (values) => {
+            //console.log(values);
+            //console.log(beneficiary);
+            let payload: SubServiceParams = {
+                beneficiary: {
+                    id: ''+beneficiary.id
+                },
+                subService: {
+                    id:values.subservice
+                },
+                result: "",
+                date: moment(values.dataBeneficio).format('YYYY-MM-DD'),
+                us_id: values.location,
+                activistId: "6",
+                entryPoint: values.entryPoint,
+                provider: values.provider,
+                remarks: values.outros,
+                status: "1",
+                createdBy: "6"
+            };
+            
+            const { data } = await addSubService(payload);
+            
+            setInterventions(interventions => [...interventions, data]);
+
+            message.success({content:'Registado com Sucesso!',className: 'custom-class',
+            style: {
+              marginTop: '10vh',
+            }});
+
+            setVisible(false);
+            setIsAdd(false);
+            form.resetFields();
         })
         .catch(error => {
-            console.log(error);
+            message.error({content:'Não foi possivel associar a Intervenção!',className: 'custom-class',
+            style: {
+              marginTop: '10vh',
+            }});
         });
-        //console.log(form.getFieldsValue());
+
     };
 
     const interventionColumns = columns === undefined ?
@@ -178,7 +214,7 @@ export function ViewBenefiaryPanel({beneficiary, columns}){
                     rowKey="dateCreated"
                     pagination={false}
                     columns={interventionColumns}
-                    dataSource={beneficiary?.interventions}
+                    dataSource={interventions}
                     bordered
 
                 />
@@ -213,6 +249,7 @@ const ViewBeneficiary = ({beneficiary, modalVisible, handleAdd, handleModalVisib
 
     const okHandle = () => {
         handleAdd("test");
+        handleModalVisible();
     }
 
     

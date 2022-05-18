@@ -25,3 +25,25 @@ export async function querySubServiceByService(payload?: any){
     const res = await select(url);
     return res;
 }
+
+export interface SubServiceParams {
+    beneficiary: {
+        id:string
+    },
+    subService: {
+        id:string
+    };
+    result: string;
+    date: string;
+    us_id: string;
+    activistId: string;
+    entryPoint: string;
+    provider: string;
+    remarks: string;
+    status: string;
+    createdBy: string;
+}
+export async function addSubService(payload: SubServiceParams) {
+    const res = await create('/api/beneficiary-intervention', payload);
+    return res;
+}
