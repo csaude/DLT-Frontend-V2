@@ -55,6 +55,19 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, localities,subServices, be
         console.log('This row opened', rowKey);
     };
 
+    const age = (data : any) => {
+        const now = new Date();
+        const birth = new Date(data);
+        const m = now.getMonth() - birth.getMonth();
+        let age = now.getFullYear() - birth.getFullYear();
+    
+        if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) 
+        {
+            age--;
+        }
+
+        return age;
+    };
     const renderItem = (data: any) => (
         <TouchableHighlight
             onPress={() => viewBeneficiaries(data)}
@@ -75,7 +88,7 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, localities,subServices, be
                 </View>
                 <View >
                     <Text color="darkBlue.800"></Text>
-                    <Text color="darkBlue.800">{'14 Anos'} </Text>
+                    <Text color="darkBlue.800">{age(data.item.date_of_birth)+" Anos"} </Text>
                     <Badge  bg="cyan.500">{'FGH'}</Badge>
                 </View>
             </HStack>
