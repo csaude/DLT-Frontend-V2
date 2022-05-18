@@ -19,28 +19,74 @@ const ViewBeneficiaries: React.FC = ({ route }:any) => {
         subServices
         } = route.params;
 
+    const age = (data : any) => {
+        const now = new Date();
+        const birth = new Date(data);
+        const m = now.getMonth() - birth.getMonth();
+        let age = now.getFullYear() - birth.getFullYear();
+    
+        if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) 
+        {
+            age--;
+        }
+
+        return age;
+    };
+
     return (
         <KeyboardAvoidingView  style={styles.background}>
             <ScrollView>
                 <View style={styles.user}>
                     <View style={styles.containerForm}>
                         <Box style={styles.userLogo}>
-                            <Avatar color="white" bg={'primary.700'} size={150}>
-                                <Icon as={Ionicons} name="person-outline" color="white" size={70} />
+                            <Avatar color="white" bg={'primary.500'} size={150}>
+                                {
+                                    (beneficiarie.gender==="1") ?
+                                        <Icon as={Ionicons} name="man" color="white" size={70} />                        
+                                    : 
+                                    (beneficiarie.gender==="2") ? 
+                                        <Icon as={Ionicons} name="woman" color="white" size={70} />                            
+                                    : 
+                                        <Icon as={Ionicons} name="person" color="white" size={70} />                                                                   
+                                }    
                             </Avatar>
                             <Box style={styles.userText}>  
                                 <Text>{ beneficiarie.username }</Text> 
                                 <Heading style={styles.username}>{ beneficiarie.name } { beneficiarie.surname }</Heading>    
-                                <Text>{ beneficiarie.phone_number }</Text>                                              
+                                <Text style={styles.nui}>
+                                    { beneficiarie.nui }  
+                                </Text>                                              
                             </Box> 
                         </Box>
-                        <Text style={styles.txtLabel}>Detalhes do Utilizador</Text>
+                        <Flex direction="column" mb="2.5" _text={{color: "coolGray.800"}}>
+                        
+                        <Box bg="primary.500" p="2" rounded="lg">
+                        <Heading size="md" color="white">Detalhes da Beneficiaria</Heading> 
                         <Divider />
-                        <Flex direction="column" mb="2.5" mt="1.5" _text={{color: "coolGray.800"}}>
+                            <Text style={styles.txtLabelInfo}> 
+                                <Text style={styles.txtLabel}> Idade: </Text> 
+                                {
+                                    age(beneficiarie.date_of_birth)+" Anos"
+                                }
+                            </Text>
 
-                            <Text> <Text style={styles.txtLabel}>Telemóvel: </Text> { beneficiarie.phone_number }</Text>
+                            <Text style={styles.txtLabelInfo}> 
+                                <Text style={styles.txtLabel}> Nivel: </Text> 
+                                {
+                                    beneficiarie.grade+"ª Classe"
+                                }
+                            </Text>
 
-                            <Text> <Text style={styles.txtLabel}>Ponto de Entrada: </Text>
+                            <Text style={styles.txtLabelInfo}> 
+                                <Text style={styles.txtLabel}> Escola: </Text> 
+                                {
+                                    beneficiarie.school_name
+                                }
+                            </Text>
+
+                            <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}>Telemóvel: </Text> { beneficiarie.phone_number }</Text>
+                            
+                            <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}>Ponto de Entrada: </Text>
                             { 
                                 (beneficiarie.entry_point==="1") ?
                                     "Unidade Sanitaria"
@@ -51,27 +97,26 @@ const ViewBeneficiaries: React.FC = ({ route }:any) => {
                                     "Comunidade"                                            
                                 }  
                             </Text>
-                                
-                            {/* <Text> <Text style={styles.txtLabel}>Localidade: </Text> {locality}</Text>
-                                
-                            <Text> <Text style={styles.txtLabel}>US: </Text> {us}</Text>
-                                
-                            <Text> <Text style={styles.txtLabel}>subServices: </Text> {subServices}</Text> */}
+                            </Box>
                         </Flex>
-                        <Divider />
-                        <Heading size="md" mb="2%" mt="5%">Servicos</Heading>                       
-                        
-                        {
-                            subServices.map((item)=>
-                                    <Text>{ item.name }</Text>
-                            )
-                        }
 
-                        <Stack direction="row" space={3}>
-                            <Button mt="5" colorScheme="primary" onPress={() => navigate({name: "BeneficiarieServiceForm", params: {beneficiarie: beneficiarie}})}>
-                                <Icon as={MaterialIcons} name="add" size={5} color="gray.200"/> 
-                            </Button>
-                        </Stack>
+                        <Box bg="primary.500" p="2" rounded="md" mt="1%">
+                        <Heading size="md" color="white">Servicos</Heading> 
+                        <Divider />   
+                        
+                            {
+                                subServices.map((item)=>
+                                        <Text style={styles.subServices}>{ item.name }</Text>
+                                )
+                            }
+
+                            <Stack direction="row" space={3}>
+                                <Button mt="3" colorScheme="success" ml="85%" onPress={() => navigate({name: "BeneficiarieServiceForm", params: {beneficiarie: beneficiarie}})}>
+                                    <Icon as={MaterialIcons} name="add" size={5} color="gray.200"/>
+                                </Button>
+                            </Stack>
+                        </Box>   
+
                     </View>
                     
                 </View>
