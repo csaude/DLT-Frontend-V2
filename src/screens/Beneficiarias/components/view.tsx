@@ -103,10 +103,12 @@ const ViewBeneficiaries: React.FC = ({ route }:any) => {
                         <Box bg="primary.500" p="2" rounded="md" mt="1%">
                         <Heading size="md" color="white">Servicos</Heading> 
                         <Divider />   
-                        
-                            {
+                                
+                            {                                
                                 subServices.map((item)=>
-                                        <Text style={styles.subServices}>{ item.name }</Text>
+                                    <Text style={styles.subServices} key={item.id.toString()}>
+                                        { item.name }
+                                    </Text>
                                 )
                             }
 
