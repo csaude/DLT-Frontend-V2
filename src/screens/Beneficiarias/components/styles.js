@@ -81,11 +81,15 @@ const styles = StyleSheet.create({
     },
     txtLabel:{
         color: 'black',
-        fontSize: 14,
+        fontSize: 16,
         fontWeight: '700',
         marginLeft: '1%',
-        marginTop: 15,
-        marginBottom: 5,
+        color: 'white',
+    },
+    txtLabelInfo:{
+        marginTop: '2%',
+        marginBottom: '2%',
+        color: 'white',
     },
 
     user:{
@@ -104,6 +108,16 @@ const styles = StyleSheet.create({
     username:{
         fontSize: 25,
         fontWeight: '600',
+    },
+    nui:{
+        fontSize: 18,
+        fontWeight: '800',
+        marginBottom: '8%',
+        color: '#008D4C',
+    },
+    subServices:{
+        color: 'white',
+        marginTop: '2%',
     },
     fab: {
       position: 'absolute',

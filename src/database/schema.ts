@@ -92,7 +92,7 @@ export default appSchema({
           {name: 'description', type: 'string'},
           {name: 'core_service', type: 'number'},
           {name: 'hidden', type: 'number'},
-          {name: 'service_type', type: 'string'},
+          {name: 'service_type', type: 'number',isOptional: true},
           {name: 'status', type: 'number'},
           {name: 'online_id', type: 'number',isOptional: true}
         ],
