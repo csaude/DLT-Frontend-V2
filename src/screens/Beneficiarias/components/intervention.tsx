@@ -236,7 +236,7 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                                     errors
                                 }) => <VStack space={3} mt="5">
                                         
-                                        <FormControl>
+                                        <FormControl isRequired isInvalid={'areaServicos_id' in errors}>
                                             <FormControl.Label>Área de Serviços</FormControl.Label>
                                             <Picker 
                                                 style={styles.dropDownPicker}
@@ -255,31 +255,34 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                                                     ))
                                                 }  
                                             </Picker>
+                                            <FormControl.ErrorMessage>
+                                                { errors.areaServicos_id }
+                                            </FormControl.ErrorMessage>
                                         </FormControl>
+
+                                        
                                         <FormControl isRequired isInvalid={'service_id' in errors}>
-                                            <FormControl.Label>Serviços</FormControl.Label>
+                                            <FormControl.Label>Serviço</FormControl.Label>
                                             <Picker 
                                                 style={styles.dropDownPicker}
                                                 selectedValue={values.service_id}
                                                 onValueChange={(itemValue, itemIndex) => { 
                                                         if (itemIndex !== 0){
-                                                            console.log(itemValue);
-                                                            setFieldValue('service_id',''+itemIndex);
+                                                            setFieldValue('service_id', itemValue);
                                                         }
                                                     }
                                                 }>
-
-                                                <Picker.Item label="-- Seleccione o Servico --" value="0" />
-                                                {                                                     
+                                                <Picker.Item label="-- Seleccione o Serviço --" value="0" />
+                                                { 
                                                     services.filter((e)=>{
                                                         return e.service_type == values.areaServicos_id}
                                                     ).map(item => (
-                                                        <Picker.Item key={item.online_id} label={item.name} value={''+item.online_id} />
+                                                        <Picker.Item key={item._raw.online_id} label={item._raw.name} value={parseInt(item._raw.online_id)} />
                                                     ))
                                                 }  
                                             </Picker>
                                             <FormControl.ErrorMessage>
-                                                {errors.service_id}
+                                                { errors.service_id }
                                             </FormControl.ErrorMessage>
                                         </FormControl>
                                         
@@ -287,7 +290,7 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                                             <FormControl.Label>Sub-Serviço/Intervenção</FormControl.Label>
                                             <Picker 
                                                 style={styles.dropDownPicker}
-                                                selectedValue={values.us_id}
+                                                selectedValue={values.sub_service_id}
                                                 onValueChange={(itemValue, itemIndex) => { 
                                                         if (itemIndex !== 0){
                                                             setFieldValue('sub_service_id', itemValue);
@@ -299,7 +302,7 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                                                     subServices.filter((e)=>{
                                                         return e.service_id == values.service_id}
                                                     ).map(item => (
-                                                        <Picker.Item key={item.online_id} label={item.name} value={parseInt(item.online_id)} />
+                                                        <Picker.Item key={item._raw.online_id} label={item._raw.name} value={parseInt(item._raw.online_id)} />
                                                     ))
                                                 }  
                                             </Picker>
