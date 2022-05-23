@@ -18,10 +18,10 @@ export interface BeneficiariesInterventionsModel {
 export default class Beneficiaries_interventions extends Model {
     static table = "beneficiaries_interventions"
 
-    @text("beneficiary_id") beneficiary_id;
-    @text("sub_service_id") sub_service_id;
+    @field("beneficiary_id") beneficiary_id;
+    @field("sub_service_id") sub_service_id;
     @text("result") result;
-    @text("date") date;
+    @field("date") date;
     @field("us_id") us_id;
     @field("activist_id") activist_id;
     @field("entry_point") entry_point;
