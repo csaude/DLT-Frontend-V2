@@ -5,9 +5,10 @@ import { View, KeyboardAvoidingView, ScrollView,
     from 'react-native';
 import { Center, Box, Select, Text, Heading, VStack, FormControl, 
         Input, Link, Button, CheckIcon, WarningOutlineIcon, HStack, 
-        Alert, Flex, useToast, Stack, InputGroup, InputLeftAddon, InputRightAddon}
+        Alert, Flex, useToast, Stack, InputGroup, InputLeftAddon, InputRightAddon, Radio}
     from 'native-base';  
 
+import moment from 'moment';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { stringify } from 'qs';
 import {Picker} from '@react-native-picker/picker';
@@ -27,8 +28,10 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
     const {beneficiarie} = route.params;
 
     const areaServicos = [{"id":'1',"name": "Serviços Clinicos"},{"id":'2',"name": "Serviços Comunitarios"}];
+    const entry_points = [{"id":'1',"name": "US"},{"id":'2',"name": "CM"},{"id":'3',"name": "ES"}];
     const [areaServicos_id, setAreaServicos_id] = useState('');
     const [service_id, setService_id] = useState('');
+    const [entry_point, setEntry_point] = useState('');
 
     const [date, setDate] = useState(new Date());
     const [mode, setMode] = useState('date');
@@ -41,10 +44,8 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
         setDate(currentDate);
 
         let tempDate = new Date(currentDate);
-        let fDate = tempDate.getDate() + '/' + (tempDate.getMonth()+1) + '/' + tempDate.getFullYear();
-        setText(fDate);
-
-        console.log(fDate);
+        setText(moment(tempDate).format('YYYY-MM-DD'));
+        console.log(text);
     }
 
     const showMode = (currentMode) => {
@@ -58,15 +59,14 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
 
     const [loading, setLoading] = useState(false);
     const [savedIntervention, setSavedIntervention] = useState<any>(null);
-    const [savedUser, setSavedUser] = useState<any>(null);
     const loggedUser:any = useContext(Context);
     const intervention = new Beneficiaries_interventions;
-    let mounted = true; // prevent error:  state update on an unmounted component
     const toast = useToast();
+    console.log(intervention);
+    console.log(beneficiarie);
     const [initialValues, setInitialValues] = useState({
                                                         areaServicos_id: '',
                                                         service_id: '',
-
                                                         beneficiary_id: '',
                                                         sub_service_id: '',
                                                         result: '',
@@ -76,7 +76,7 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                                                         entry_point: '',
                                                         provider: '',
                                                         remarks: '',
-                                                        status: ''
+                                                        status: '1'
                                                     });
     const message = "Este campo é Obrigatório"
 
@@ -84,23 +84,20 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
     const validate = (values: any) => {
         const errors: BeneficiariesInterventionsModel = {};
 
-        if (!values.beneficiary_id) {
-            errors.beneficiary_id = message;
-        }
-
+       
         if (!values.service_id) {
-            errors.id = message;                    // Por revisar (Temporario)
+            errors.id = message;                    
         }
 
         if (!values.areaServicos_id) {
-            errors.id = message;                   // Por revisar
+            errors.id = message;                   
         }
 
         if (!values.sub_service_id) {
             errors.sub_service_id = message;
         }
 
-        if (!values.date) {
+        if (!date) {
             errors.date = message;
         }
 
@@ -108,12 +105,13 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
             errors.us_id = message;
         }
         
-        if (!values.activist_id) {
-            errors.activist_id = message;
-        }
-
+        
         if (!values.entry_point) {
             errors.entry_point = message;
+        }
+
+        if (!values.status) {
+            errors.status = message;
         }
 
         return errors;
@@ -121,41 +119,56 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
 
     const onSubmit = async (values: any) => {
         setLoading(true);
-        
-        const localityName = localities.filter((e)=>{ return e._raw.online_id == values.locality_id})[0]._raw.name;
-        const profileName = profiles.filter((e)=>{ return e._raw.online_id == values.profile_id})[0]._raw.name;
-        const partnerName = partners.filter((e)=>{ return e._raw.online_id == values.partner_id})[0]._raw.name;
-        const usName = us.filter((e)=>{ return e._raw.online_id == values.us_id})[0]._raw.name;
 
-        const newObject = await database.write(async () => {
-            
-            const newIntervention = await database.collections.get('beneficiaries_interventions').create((intervention:any) => {
-                
-                intervention.beneficiary_id = values.beneficiary_id
+        const isEdit = intervention && intervention.id; // new record if it has id
+
+        if(isEdit){
+            const interventionToUpdate = await database.get('beneficiaries_interventions').find(intervention.id);
+            const updatedIntervention = await interventionToUpdate.update(() => {
+                intervention.beneficiary_id = beneficiarie.online_id
                 intervention.sub_service_id = values.sub_service_id
                 intervention.result = values.result
-                intervention.date = values.date
+                intervention.date = ''+text
                 intervention.us_id = values.us_id
                 intervention.activist_id = values.activist_id
                 intervention.entry_point = values.entry_point
                 intervention.provider = values.provider
                 intervention.remarks = values.remarks
-                intervention.status = "1"
-                intervention.online_id = values.online_id
+                intervention.status = values.status
+                intervention.online_id =  intervention.online_id
+                // intervention._status = "updated"
+            })
 
+            toast.show({placement:"bottom", title:"Intervention Updated Successfully: "+updatedIntervention._raw.id});
+
+            return updatedIntervention;
+        }
+                
+        const newObject = await database.write(async () => {
+            
+            const newIntervention = await database.collections.get('beneficiaries_interventions').create((intervention:any) => {
+                
+                intervention.beneficiary_id = beneficiarie.online_id
+                intervention.sub_service_id = values.sub_service_id
+                intervention.result = values.result
+                intervention.date = ''+text
+                intervention.us_id = values.us_id
+                intervention.activist_id = values.activist_id
+                intervention.entry_point = values.entry_point
+                intervention.provider = values.provider
+                intervention.remarks = values.remarks
+                intervention.status = values.status
+                intervention.online_id = values.online_id
+                
             });
 
             toast.show({placement:"bottom", title:"Intervention Saved Successfully: "+newIntervention._raw.id});
-
             return newIntervention;
         });
     
-        navigate({name: "BeneficiariesView", params: {intervation: newObject._raw,
-            beneficiarie: beneficiarie,
-            locality: localityName,
-            profile: profileName,
-            partner: partnerName,
-            us: usName }
+        navigate({name: "BeneficiariesList", params: {intervation: newObject._raw,
+            beneficiarie: beneficiarie
+        }
         });
         
                                         
@@ -310,13 +323,81 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                                                 {errors.sub_service_id}
                                             </FormControl.ErrorMessage>
                                         </FormControl>
-                                        <FormControl isRequired isInvalid={'date' in errors}>
-                                            <FormControl.Label>Data</FormControl.Label>
+
+                                        <FormControl isRequired isInvalid={'entry_point' in errors}>
+                                            <FormControl.Label>Ponto de Entrada</FormControl.Label>
+                                            <Picker 
+                                                style={styles.dropDownPicker}
+                                                selectedValue={values.entry_point}
+                                                onValueChange={(itemValue, itemIndex) => { 
+                                                        if (itemIndex !== 0){
+                                                            setFieldValue('entry_point', itemValue);
+                                                        }
+                                                    }
+                                                }>
+
+                                                <Picker.Item label="-- Seleccione o ponto de Entrada --" value="" />
+                                                { 
+                                                    entry_points.map(item => (
+                                                        <Picker.Item key={item.id} label={item.name} value={parseInt(item.id)} />
+                                                    ))
+                                                }  
+                                            </Picker>
+                                            <FormControl.ErrorMessage>
+                                                { errors.entry_point }
+                                            </FormControl.ErrorMessage>
+                                        </FormControl>   
+                                        
+                                        {/* <FormControl isInvalid={'entry_point' in errors}>
+                                            <FormControl.Label>
+                                            Ponto de Entrada
+                                            </FormControl.Label>
+                                                <Radio.Group name="entry_point"  defaultValue={entry_point} onChange={value => {
+                                                setEntry_point(value || "");
+                                                // setFieldValue('entry_point', value);
+                                                console.log("Ponto de entrada : " + entry_point)
+                                            }}>
+                                                <Radio value="1" my="1">
+                                                    US
+                                                </Radio>
+                                                <Radio value="2" my="1">
+                                                    CM
+                                                </Radio>
+                                                <Radio value="3" my="1">
+                                                    ES
+                                                </Radio>
+                                            </Radio.Group>
+                                            <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                                                {errors.entry_point}
+                                            </FormControl.ErrorMessage>
+                                        </FormControl> */}
+
+                                        <FormControl isRequired isInvalid={'us_id' in errors}>
+                                            <FormControl.Label>Localização</FormControl.Label>
+                                            <Picker 
+                                                style={styles.dropDownPicker}
+                                                selectedValue={values.us_id}
+                                                onValueChange={(itemValue, itemIndex) => { 
+                                                        if (itemIndex !== 0){
+                                                            setFieldValue('us_id', itemValue);
+                                                        }
+                                                    }
+                                                }>
+                                                <Picker.Item label="-- Seleccione a US --" value="0" />
+                                                { 
+                                                    us.map(item => (
+                                                        <Picker.Item key={item.online_id} label={item.name} value={parseInt(item.online_id)} />
+                                                    ))
+                                                }  
+                                            </Picker>
+                                            <FormControl.ErrorMessage>
+                                                { errors.us_id }
+                                            </FormControl.ErrorMessage>
+                                        </FormControl>
+
+                                        <FormControl isRequired>
+                                            <FormControl.Label>Data Benefício</FormControl.Label>
                                                 
-                                                {/* <Text>{text}</Text> */}
-                                                {/* <View style={{margin:50, width:10}}>
-                                                    <Button style={{width:10}} title="DataPicker" onPress={() => showDatepicker()}/>
-                                                </View> */}
                                                 {show && (
                                                     <DateTimePicker
                                                     testID="dateTimePicker"
@@ -341,87 +422,49 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                                                                 base: "70%",
                                                                 md: "100%"
                                                             }} value={text}
-                                                            placeholder="dd/M/yyyy" />
+                                                            placeholder="dd-M-yyyy" />
                                                         </InputGroup>
                                                         </Stack>
 
 
-
-
-
-                                            {/* <DatePicker modal date={date} onDateChange={setDate} /> */}
-                                            {/* <Input onClick={() => setOpen(true)}  value={values.name} />
-                                                <DatePicker
-                                                    modal
-                                                    open={open}
-                                                    date={date}
-                                                    onConfirm={(date) => {
-                                                    setOpen(false)
-                                                    setDate(date)
-                                                    }}
-                                                    onCancel={() => {
-                                                    setOpen(false)
-                                                    }}
-                                                /> */}
-
-                                                {/* <Input onBlur={handleBlur('phone_number')} placeholder="Insira o seu Telemóvel" onChangeText={handleChange('phone_number')} value={values.phone_number} /> */}
-                                         
-                                            <FormControl.ErrorMessage>
-                                                {errors.date}
-                                            </FormControl.ErrorMessage>
                                         </FormControl>
-                                        <FormControl isRequired isInvalid={'us_id' in errors}>
-                                            <FormControl.Label>US</FormControl.Label>
-                                            <Picker 
-                                                style={styles.dropDownPicker}
-                                                selectedValue={values.us_id}
-                                                onValueChange={(itemValue, itemIndex) => { 
-                                                        if (itemIndex !== 0){
-                                                            setFieldValue('us_id', itemValue);
-                                                        }
-                                                    }
-                                                }>
-                                                <Picker.Item label="-- Seleccione a US --" value="0" />
-                                                { 
-                                                    us.map(item => (
-                                                        <Picker.Item key={item.online_id} label={item.name} value={parseInt(item.online_id)} />
-                                                    ))
-                                                }  
-                                            </Picker>
-                                            <FormControl.ErrorMessage>
-                                                { errors.us_id }
-                                            </FormControl.ErrorMessage>
-                                        </FormControl>
-                                        <FormControl isRequired isInvalid={'activist_id' in errors}>
-                                            <FormControl.Label>Activist_id</FormControl.Label>
+                                        <FormControl isRequired isInvalid={'provider' in errors}>
+                                            <FormControl.Label>Provedor do Serviço</FormControl.Label>
                     
-                                            <Input onBlur={handleBlur('activist_id')} placeholder="Insira o seu Nome" onChangeText={handleChange('name')} value={values.activist_id} />
+                                            <Input onBlur={handleBlur('provider')} placeholder="Insira o seu Nome" onChangeText={handleChange('provider')} value={values.provider} />
                                             <FormControl.ErrorMessage>
-                                                { errors.activist_id }
-                                            </FormControl.ErrorMessage>
-                                        </FormControl>
-                                        
-                                        <FormControl isRequired isInvalid={'entry_point' in errors}>
-                                            <FormControl.Label>Ponto de Entrada</FormControl.Label>
-                                            <Picker 
-                                                style={styles.dropDownPicker}
-                                                selectedValue={values.entry_point}
-                                                onValueChange={(itemValue, itemIndex) => { 
-                                                        if (itemIndex !== 0){
-                                                            setFieldValue('entry_point', itemValue);
-                                                        }
-                                                    }
-                                                }>
-                                                <Picker.Item label="-- Seleccione o Ponto de Entrada --" value="0" />
-                                                <Picker.Item label="Unidade Sanitaria" value="1" />
-                                                <Picker.Item label="Escola" value="2" />
-                                                <Picker.Item label="Comunidade" value="3" />
-                                            </Picker>
-                                            <FormControl.ErrorMessage>
-                                                {errors.entry_point}
+                                                { errors.provider }
                                             </FormControl.ErrorMessage>
                                         </FormControl>
 
+                                        <FormControl>
+                                            <FormControl.Label>Outras Observações</FormControl.Label>
+                    
+                                            <Input onBlur={handleBlur('remarks')} placeholder="" onChangeText={handleChange('remarks')} value={values.remarks} />
+                                            
+                                        </FormControl>
+
+                                        <FormControl isRequired isInvalid={'status' in errors}>
+                                            <FormControl.Label>Status</FormControl.Label>
+                                            <Picker 
+                                                style={styles.dropDownPicker}
+                                                selectedValue={values.status}
+                                                onValueChange={(itemValue, itemIndex) => { 
+                                                        if (itemIndex !== 0){
+                                                            setFieldValue('status', itemValue);
+                                                        }
+                                                    }
+                                                }>
+
+                                                <Picker.Item value="1" />
+                                                    <Picker.Item key={'1'} label={"Activo"} value={1} />
+                                                    <Picker.Item key={'2'} label={"Cancelado"} value={2} />
+                                            </Picker>
+                                            <FormControl.ErrorMessage>
+                                                { errors.status }
+                                            </FormControl.ErrorMessage>
+                                        </FormControl>                                   
+                                        
                                         <Button isLoading={loading} isLoadingText="Cadastrando" onPress={handleSubmit} my="10" colorScheme="primary">
                                             Cadastrar
                                         </Button>

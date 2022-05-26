@@ -107,7 +107,13 @@ const ViewBeneficiaries: React.FC = ({ route }:any) => {
                             {                                
                                 subServices.map((item)=>
                                     <Text style={styles.subServices} key={item.id.toString()}>
-                                        { item.name }
+                                        { item.name } 
+                                        <Pressable px={4} ml="auto" bg="lightBlue.700" justifyContent="center" 
+                                                        onPress={()=> "viewUser(data)"} 
+                                                        _pressed={{opacity: 0.5}}
+                                        >
+                                            <Icon as={MaterialIcons} name="remove-red-eye" size={6} color="gray.200" />
+                                        </Pressable> 
                                     </Text>
                                 )
                             }
