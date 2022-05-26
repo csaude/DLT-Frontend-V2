@@ -2,22 +2,27 @@ import React, { Fragment, useEffect, useState } from 'react'
 import { query } from '../../utils/beneficiary';
 import classNames from "classnames";
 import {matchSorter} from "match-sorter";
-import { Badge, Button, Card, Input, Space, Table, Typography } from 'antd';
+import { Badge, Button, Card, Input, Space, Table, Typography, Form } from 'antd';
 import Highlighter from 'react-highlight-words';
 import 'antd/dist/antd.css';
-import { SearchOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
+import { SearchOutlined, EditOutlined, PlusOutlined, EyeOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import ViewBeneficiary, { ViewBenefiaryPanel } from './components/View';
 import { getEntryPoint } from '@app/models/User';
+import BeneficiaryForm from './components/BeneficiaryForm';
+import FormBeneficiary from './components/FormBeneficiary';
+
 
 const { Text } = Typography;
 
 const BeneficiariesList: React.FC = () => {
+    const [form] = Form.useForm();
     const [ beneficiaries, setBeneficiaries ] = useState<any[]>([]);
     const [ searchText, setSearchText ] = useState('');
     const [ searchedColumn, setSearchedColumn ] = useState('');
     const [ beneficiary, setBeneficiary] = useState();
     const [ modalVisible, setModalVisible] = useState<boolean>(false);
+    const [ beneficiaryModalVisible, setBeneficiaryModalVisible] = useState<boolean>(false);
 
 
     let searchInput ;
@@ -38,6 +43,11 @@ const BeneficiariesList: React.FC = () => {
     const handleViewModalVisible = (flag?: boolean, record?: any) => {
         setBeneficiary(record);
         setModalVisible(!!flag);
+    };
+
+    const handleBeneficiaryModalVisible = (flag?: boolean) => {
+        
+        setBeneficiaryModalVisible(!!flag);
         
     };
 
@@ -220,7 +230,17 @@ const BeneficiariesList: React.FC = () => {
             <Card  bordered={false} style={{marginBottom:'10px', textAlign:"center", fontWeight:"bold", color:"#17a2b8"}} >
             SISTEMA INTEGRADO DE CADASTRO DE ADOLESCENTES E JOVENS
             </Card>
-            <Card title="Lista de Adolescentes e Jovens" bordered={false} headStyle={{color:"#17a2b8"}}>
+            <Card title="Lista de Adolescentes e Jovens" 
+                    bordered={false} 
+                    headStyle={{color:"#17a2b8"}}
+                    extra={
+                        <Space>
+                          <Button type="primary" onClick={()=>handleBeneficiaryModalVisible(true)} icon={<PlusOutlined />} style={{ background: "#00a65a", borderColor: "#00a65a", borderRadius:'4px' }}>
+                            Adicionar Novo Beneficiário
+                          </Button>
+                        </Space>
+                    }
+            >
                 <Table
                     rowKey="id"
                     columns={columns}
@@ -236,6 +256,10 @@ const BeneficiariesList: React.FC = () => {
                 {...parentMethods}
                 beneficiary={beneficiary} 
                 modalVisible={modalVisible} />
+                
+            <FormBeneficiary form={form} modalVisible={beneficiaryModalVisible}
+                                handleAdd
+                                handleModalVisible={handleBeneficiaryModalVisible} />
         </>
     );
 }

@@ -6,7 +6,7 @@ import { allUs } from '@app/utils/uSanitaria'
 const { Option } = Select;
 const { TextArea } = Input;
 
-const areaServicos = [{"id":'CLINIC',"name": "Serviços Clinicos"},{"id":'COMMUNITY',"name": "Serviços Comunitarios"}];
+const areaServicos = [{ "id": 'CLINIC', "name": "Serviços Clinicos" }, { "id": 'COMMUNITY', "name": "Serviços Comunitarios" }];
 const options = [
   { label: 'US', value: '1' },
   { label: 'CM', value: '2' },
@@ -14,139 +14,139 @@ const options = [
 ];
 
 const InterventionForm = () => {
-    const [services, setServices] = React.useState<any>(undefined);
-    const [interventions, setInterventions] = React.useState<any>(undefined);
-    const [us, setUs] = React.useState<any>(undefined);
-    const form = Form.useFormInstance();
+  const [services, setServices] = React.useState<any>(undefined);
+  const [interventions, setInterventions] = React.useState<any>(undefined);
+  const [us, setUs] = React.useState<any>(undefined);
+  const form = Form.useFormInstance();
 
-    useEffect(() => {
+  useEffect(() => {
 
-      const fetchData = async () => {
-        const data = await allUs();
-        setUs(data);
-      } 
-  
-      fetchData().catch(error => console.log(error));
-  
-    }, []);
-
-
-    const onChangeAreaServiço = async (value:any) => {
-        
-        const data = await queryByType(value);
-        setServices(data);
+    const fetchData = async () => {
+      const data = await allUs();
+      setUs(data);
     }
 
-    const onChangeServices = async (value:any) => {
-        
-      const data = await querySubServiceByService(value);
-      setInterventions(data);
-    }
+    fetchData().catch(error => console.log(error));
 
-    return (
-      
-          <>
-            <Row gutter={8}>
-              <Col span={8}>
-                <Form.Item
-                  name="areaServicos"
-                  label="Área de Serviços"
-                  rules={[{ required: true, message: 'This field is required' }]}
-                >
-                    <Select placeholder="Select Area Serviço" onChange={onChangeAreaServiço}>
-                        {areaServicos.map(item => (
-                            <Option key={item.id}>{item.name}</Option>
-                        ))}
-                    </Select>
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item
-                  name="service"
-                  label="Serviço"
-                  rules={[{ required: true, message: 'Please enter url' }]}
-                >
-                  <Select placeholder="Select Serviço" onChange={onChangeServices} disabled={services === undefined}>
-                        {services?.map(item => (
-                            <Option key={item.id}>{item.name}</Option>
-                        ))}
-                  </Select>
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item
-                  name="subservice"
-                  label="Sub-Serviço/Intervenção"
-                  rules={[{ required: true, message: 'Please enter url' }]}
-                >
-                  <Select placeholder="Select Sub Serviço" disabled={interventions === undefined} value={undefined}>
-                        {interventions?.map(item => (
-                            <Option key={item.id}>{item.name}</Option>
-                        ))}
-                  </Select>
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row gutter={8}>
-              <Col span={8}>
-                <Form.Item
-                  name="entryPoint"
-                  label="Ponto de Entrada"
-                  rules={[{ required: true, message: 'Please select an owner' }]}
-                  initialValue='US'
-                >
-                  <Radio.Group
-                    options={options}
-                    optionType="button"
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item
-                  name="location"
-                  label="Localização"
-                  rules={[{ required: true, message: 'Please choose the type' }]}
-                >
-                  <Select placeholder="Select Localização">
-                        {us?.map(item => (
-                            <Option key={item.id}>{item.name}</Option>
-                        ))}
-                  </Select>
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item
-                  name="dataBeneficio"
-                  label="Data Benefício"
-                  rules={[{ required: true, message: 'Please select an owner' }]}
-                >
-                  <DatePicker style={{width: '100%'}} />
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row gutter={8}>
-              <Col span={8}>
-                <Form.Item
-                  name="provider"
-                  label="Provedor do Serviço"
-                  rules={[{ required: true, message: 'Nome do Provedor do Serviço' }]}
-                >
-                  <Input placeholder="Nome do Provedor do Serviço" />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item
-                  name="outros"
-                  label="Outras Observações"
-                  rules={[{ required: true, message: 'Please ' }]}
-                >
-                  <TextArea rows={2} placeholder="Insira as Observações" maxLength={6} />
-                </Form.Item>
-              </Col>
-            </Row>
-            </>
-    
-    );
+  }, []);
+
+
+  const onChangeAreaServiço = async (value: any) => {
+
+    const data = await queryByType(value);
+    setServices(data);
+  }
+
+  const onChangeServices = async (value: any) => {
+
+    const data = await querySubServiceByService(value);
+    setInterventions(data);
+  }
+
+  return (
+
+    <>
+      <Row gutter={8}>
+        <Col span={8}>
+          <Form.Item
+            name="areaServicos"
+            label="Área de Serviços"
+            rules={[{ required: true, message: 'This field is required' }]}
+          >
+            <Select placeholder="Select Area Serviço" onChange={onChangeAreaServiço}>
+              {areaServicos.map(item => (
+                <Option key={item.id}>{item.name}</Option>
+              ))}
+            </Select>
+          </Form.Item>
+        </Col>
+        <Col span={8}>
+          <Form.Item
+            name="service"
+            label="Serviço"
+            rules={[{ required: true, message: 'Please enter url' }]}
+          >
+            <Select placeholder="Select Serviço" onChange={onChangeServices} disabled={services === undefined}>
+              {services?.map(item => (
+                <Option key={item.id}>{item.name}</Option>
+              ))}
+            </Select>
+          </Form.Item>
+        </Col>
+        <Col span={8}>
+          <Form.Item
+            name="subservice"
+            label="Sub-Serviço/Intervenção"
+            rules={[{ required: true, message: 'Please enter url' }]}
+          >
+            <Select placeholder="Select Sub Serviço" disabled={interventions === undefined} value={undefined}>
+              {interventions?.map(item => (
+                <Option key={item.id}>{item.name}</Option>
+              ))}
+            </Select>
+          </Form.Item>
+        </Col>
+      </Row>
+      <Row gutter={8}>
+        <Col span={8}>
+          <Form.Item
+            name="entryPoint"
+            label="Ponto de Entrada"
+            rules={[{ required: true, message: 'Please select an owner' }]}
+            initialValue='US'
+          >
+            <Radio.Group
+              options={options}
+              optionType="button"
+            />
+          </Form.Item>
+        </Col>
+        <Col span={8}>
+          <Form.Item
+            name="location"
+            label="Localização"
+            rules={[{ required: true, message: 'Please choose the type' }]}
+          >
+            <Select placeholder="Select Localização">
+              {us?.map(item => (
+                <Option key={item.id}>{item.name}</Option>
+              ))}
+            </Select>
+          </Form.Item>
+        </Col>
+        <Col span={8}>
+          <Form.Item
+            name="dataBeneficio"
+            label="Data Benefício"
+            rules={[{ required: true, message: 'Please select an owner' }]}
+          >
+            <DatePicker style={{ width: '100%' }} />
+          </Form.Item>
+        </Col>
+      </Row>
+      <Row gutter={8}>
+        <Col span={8}>
+          <Form.Item
+            name="provider"
+            label="Provedor do Serviço"
+            rules={[{ required: true, message: 'Nome do Provedor do Serviço' }]}
+          >
+            <Input placeholder="Nome do Provedor do Serviço" />
+          </Form.Item>
+        </Col>
+        <Col span={8}>
+          <Form.Item
+            name="outros"
+            label="Outras Observações"
+            rules={[{ required: true, message: 'Please ' }]}
+          >
+            <TextArea rows={2} placeholder="Insira as Observações" maxLength={6} />
+          </Form.Item>
+        </Col>
+      </Row>
+    </>
+
+  );
 }
 
 export default InterventionForm;
