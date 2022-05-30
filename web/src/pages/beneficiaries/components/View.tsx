@@ -264,7 +264,7 @@ const ViewBeneficiary = ({ beneficiary, modalVisible, handleAdd, handleModalVisi
     return (
 
         <Modal
-            width={1200}
+            width={1000}
             centered
             destroyOnClose
             title={` Dados de Registo do Beneficiário: ${beneficiary?.name}`}

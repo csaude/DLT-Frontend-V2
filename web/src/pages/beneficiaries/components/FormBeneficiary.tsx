@@ -2,6 +2,8 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { Badge, Button, Steps, Row, Col, Input, message, Space, Form, Tabs, Modal, DatePicker, Checkbox, Select, Radio, Divider } from 'antd';
 import './index.css';
 import StepDadosPessoais from './StepDadosPessoais';
+import StepVulnerabilidadesGerais from './StepVulnerabilidadesGerais';
+import StepVulnerabilidadesEspecificas from './StepVulnerabilidadesEspecificas';
 const { Option } = Select;
 const { Step } = Steps;
 
@@ -44,15 +46,19 @@ const BeneficiaryForm = ({ form, modalVisible, handleAdd, handleModalVisible }: 
             content: <StepDadosPessoais form={form} />,
         },
         {
-            title: 'Vulnerabilidades',
-            content: 'Second-content',
+            title: 'Critérios de Eligibilidade Gerais',
+            content: <StepVulnerabilidadesGerais form={form} />,
         },
+        {
+            title: ' Critérios de Eligibilidade Específicos',
+            content: <StepVulnerabilidadesEspecificas form={form} />,
+        }
     ];
 
     return (
         <>
             <Modal
-                width={1000}
+                width={1100}
                 bodyStyle={{ overflowY: 'auto', maxHeight: 'calc(100vh - 300px)' }}
                 centered
                 destroyOnClose
@@ -79,13 +85,15 @@ const BeneficiaryForm = ({ form, modalVisible, handleAdd, handleModalVisible }: 
                 </div>}
             >
                 <div>
-                    <Steps current={current}>
-                        {steps.map(item => (
-                            <Step key={item.title} title={item.title} />
-                        ))}
-                    </Steps>
-                    <div className="steps-content">{steps[current].content}</div>
-
+                    <Form form={form} layout="vertical"> 
+                
+                        <Steps current={current}>
+                            {steps.map(item => (
+                                <Step key={item.title} title={item.title} />
+                            ))}
+                        </Steps>
+                        <div className="steps-content">{steps[current].content}</div>
+                    </Form>
                 </div>
             </Modal>
         </>
