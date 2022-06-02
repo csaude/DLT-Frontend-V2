@@ -21,20 +21,24 @@ export default function ViewBenefiaryPanel({record, beneficiary}){
                                 bodyStyle={{paddingLeft:"10px", paddingRight:"10px", textAlign:"left"}}
                             >
                                 <Row gutter={8}>
-                                    <Col className="gutter-row" style={{background:"#f3f4f5", fontWeight:"bold"}} span={12}>Serviço</Col>
-                                    <Col className="gutter-row" style={{background:"#f3f4f5"}} span={12}>{record?.subService?.service.name}</Col>
-                                </Row>
-                                <Row gutter={8} >
-                                    <Col className="gutter-row" span={12} style={{fontWeight:"bold"}}>Sub-Serviço/Intervenção</Col>
-                                    <Col className="gutter-row" span={12}>{record?.subService?.name}</Col>
+                                    <Col className="gutter-row" style={{background:"#f3f4f5", fontWeight:"bold"}} span={12}>Área de Serviço</Col>
+                                    <Col className="gutter-row" style={{background:"#f3f4f5"}} span={12}>{record?.subService?.service.serviceType==0? 'Serviços Clínicos' : 'Serviços Comunitários'}</Col>
                                 </Row>
                                 <Row gutter={8}>
-                                    <Col className="gutter-row" style={{background:"#f3f4f5",fontWeight:"bold"}} span={12}>Código do Beneficiário</Col>
-                                    <Col className="gutter-row" style={{background:"#f3f4f5"}} span={12}>{beneficiary?.nui}</Col>
+                                    <Col className="gutter-row" style={{fontWeight:"bold"}} span={12}>Serviço</Col>
+                                    <Col className="gutter-row" span={12}>{record?.subService?.service.name}</Col>
                                 </Row>
                                 <Row gutter={8} >
-                                    <Col className="gutter-row" span={12} style={{fontWeight:"bold"}}>Data Benefício</Col>
-                                    <Col className="gutter-row" span={12}>{moment(record?.date).format('YYYY-MM-DD')}</Col>
+                                    <Col className="gutter-row" span={12} style={{background:"#f3f4f5", fontWeight:"bold"}}>Sub-Serviço/Intervenção</Col>
+                                    <Col className="gutter-row" style={{background:"#f3f4f5"}} span={12}>{record?.subService?.name}</Col>
+                                </Row>
+                                <Row gutter={8}>
+                                    <Col className="gutter-row" style={{fontWeight:"bold"}} span={12}>Código do Beneficiário</Col>
+                                    <Col className="gutter-row" span={12}>{beneficiary?.nui}</Col>
+                                </Row>
+                                <Row gutter={8} >
+                                    <Col className="gutter-row" span={12} style={{background:"#f3f4f5", fontWeight:"bold"}}>Data Benefício</Col>
+                                    <Col className="gutter-row" style={{background:"#f3f4f5"}} span={12}>{moment(record?.date).format('YYYY-MM-DD')}</Col>
                                 </Row>
                                 
                             </Card>
