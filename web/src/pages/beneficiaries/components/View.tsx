@@ -12,7 +12,7 @@ import 'antd/dist/antd.css';
 import '../styles.css'
 import InterventionForm from './InterventionForm';
 
-export function ViewBenefiaryPanel({beneficiary, columns}){
+export function ViewBenefiaryPanel({ beneficiary, columns }) {
     const [visible, setVisible] = useState<boolean>(false);
     const [isAdd, setIsAdd] = useState<boolean>(false);
     const [selectedBeneficiary, setSelectedBeneficiary] = useState();
@@ -21,7 +21,7 @@ export function ViewBenefiaryPanel({beneficiary, columns}){
 
     const [form] = Form.useForm();
 
-    const showDrawer = (record:any) => {
+    const showDrawer = (record: any) => {
 
         setVisible(true);
         setSelectedBeneficiary(record);
@@ -39,21 +39,21 @@ export function ViewBenefiaryPanel({beneficiary, columns}){
         setIsAdd(true);
         setSelectedIntervention(record);
     };
-    
+
     const onClose = () => {
         setVisible(false);
         setIsAdd(false);
     };
 
-    const onSubmit = async (value:any) => {
-        
+    const onSubmit = async (value: any) => {
+
         form.validateFields().then(async (values) => {
             let payload: SubServiceParams = {
                 beneficiary: {
-                    id: ''+beneficiary.id
+                    id: '' + beneficiary.id
                 },
                 subService: {
-                    id:values.subservice
+                    id: values.subservice
                 },
                 result: "",
                 date: moment(values.dataBeneficio).format('YYYY-MM-DD'),
@@ -67,48 +67,56 @@ export function ViewBenefiaryPanel({beneficiary, columns}){
             };
             
             const { data } = selectedIntervention===undefined? await addSubService(payload) : await updateSubService(payload);
-            
+
             setInterventions(interventions => [...interventions, data]);
 
-            message.success({content:'Registado com Sucesso!',className: 'custom-class',
-            style: {
-              marginTop: '10vh',
-            }});
+            message.success({
+                content: 'Registado com Sucesso!', className: 'custom-class',
+                style: {
+                    marginTop: '10vh',
+                }
+            });
 
             setVisible(false);
             setIsAdd(false);
             form.resetFields();
         })
-        .catch(error => {
-            message.error({content:'Não foi possivel associar a Intervenção!',className: 'custom-class',
-            style: {
-              marginTop: '10vh',
-            }});
-        });
+            .catch(error => {
+                message.error({
+                    content: 'Não foi possivel associar a Intervenção!', className: 'custom-class',
+                    style: {
+                        marginTop: '10vh',
+                    }
+                });
+            });
 
     };
 
     const interventionColumns = columns === undefined ?
         [
-            { title: 'Data', 
-                dataIndex: 'date', 
+            {
+                title: 'Data',
+                dataIndex: 'date',
                 key: 'date',
                 render: (val: string) => <span>{moment(val).format('YYYY-MM-DD')}</span>,
             },
-            { title: 'Serviço', 
-                dataIndex: '', 
+            {
+                title: 'Serviço',
+                dataIndex: '',
                 key: 'service',
-                render: (text, record)  => record.subService.service.name,
+                render: (text, record) => record.subService.service.name,
             },
-            { title: 'Intervenções', 
-                dataIndex: '', 
+            {
+                title: 'Intervenções',
+                dataIndex: '',
                 key: 'intervention',
-                render: (text, record)  => record.subService.name,
+                render: (text, record) => record.subService.name,
             },
-            { title: 'Ponto de Entrada', 
-                dataIndex: '', 
+            {
+                title: 'Ponto de Entrada',
+                dataIndex: '',
                 key: 'entryPoint',
-                render: (text, record)  => getEntryPoint(record.entryPoint),
+                render: (text, record) => getEntryPoint(record.entryPoint),
             },
             {
                 title: 'Action',
@@ -127,123 +135,123 @@ export function ViewBenefiaryPanel({beneficiary, columns}){
 
     return (
         <>
-        <div className="site-drawer-render-in-current-wrapper">
-            <Card
-                //title={` Dados de Registo do Beneficiário: DREAMS1 DREAMS2 ${beneficiary?.name}`}
-                bordered={false} //headStyle={{background:"#17a2b8"}}
-                bodyStyle={{margin:0, marginBottom:"20px",padding:0}}
+            <div className="site-drawer-render-in-current-wrapper">
+                <Card
+                    //title={` Dados de Registo do Beneficiário: DREAMS1 DREAMS2 ${beneficiary?.name}`}
+                    bordered={false} //headStyle={{background:"#17a2b8"}}
+                    bodyStyle={{ margin: 0, marginBottom: "20px", padding: 0 }}
                 >
                     <Row gutter={16}>
                         <Col className="gutter-row" span={8}>
                             <Card
-                               
+
                             >
-                                <div style={{textAlign:"center"}}>
-                                    <Image 
+                                <div style={{ textAlign: "center" }}>
+                                    <Image
                                         width={50}
                                         preview={false}
                                         src={emblema}
-                                    /><br/>
-                                    <span>República de Moçambique</span><br/>
-                                    <span>Ministério da Saúde</span><br/>
-                                    <span>Serviços de Saúde Reprodutiva</span><br/>
-                                    <span>de Adolescente e Jovens</span><br/>
-                                    <span style={{fontWeight:"bold", color:"#17a2b8"}}>
-                                        {beneficiary?.nui}</span><br/>
-                                    <span style={{fontWeight:"bold", textTransform:"uppercase"}}>
-                                        {`${beneficiary?.name} ${beneficiary?.surname}`}</span><br/><br/>
-                                    <span>Ponto de Referencia:</span><br/>
-                                    <span>{beneficiary?.entryPoint}</span><br/>
+                                    /><br />
+                                    <span>República de Moçambique</span><br />
+                                    <span>Ministério da Saúde</span><br />
+                                    <span>Serviços de Saúde Reprodutiva</span><br />
+                                    <span>de Adolescente e Jovens</span><br />
+                                    <span style={{ fontWeight: "bold", color: "#17a2b8" }}>
+                                        {beneficiary?.nui}</span><br />
+                                    <span style={{ fontWeight: "bold", textTransform: "uppercase" }}>
+                                        {`${beneficiary?.name} ${beneficiary?.surname}`}</span><br /><br />
+                                    <span>Ponto de Referencia:</span><br />
+                                    <span>{beneficiary?.entryPoint}</span><br />
                                 </div>
                             </Card>
-                            
+
                         </Col>
                         <Col className="gutter-row" span={8}>
                             <Card
                                 title="Dados Gerais"
                                 bordered={true}
-                                headStyle={{background:"#17a2b8"}}
-                                bodyStyle={{paddingLeft:"10px", paddingRight:"10px", height:"244px"}}
+                                headStyle={{ background: "#17a2b8" }}
+                                bodyStyle={{ paddingLeft: "10px", paddingRight: "10px", height: "244px" }}
                             >
                                 <Row gutter={8}>
-                                    <Col className="gutter-row" style={{background:"#f3f4f5"}} span={12}>Nacionalidade</Col>
-                                    <Col className="gutter-row" style={{background:"#f3f4f5"}} span={12}>Mozambique</Col>
+                                    <Col className="gutter-row" style={{ background: "#f3f4f5" }} span={12}>Nacionalidade</Col>
+                                    <Col className="gutter-row" style={{ background: "#f3f4f5" }} span={12}>Mozambique</Col>
                                 </Row>
                                 <Row gutter={8} >
                                     <Col className="gutter-row" span={12}>Província</Col>
                                     <Col className="gutter-row" span={12}>{beneficiary?.neighborhood.locality.district.province.name}</Col>
                                 </Row>
                                 <Row gutter={8}>
-                                    <Col className="gutter-row" style={{background:"#f3f4f5"}} span={12}>Distrito</Col>
-                                    <Col className="gutter-row" style={{background:"#f3f4f5"}} span={12}>{beneficiary?.neighborhood.locality.district.name}</Col>
+                                    <Col className="gutter-row" style={{ background: "#f3f4f5" }} span={12}>Distrito</Col>
+                                    <Col className="gutter-row" style={{ background: "#f3f4f5" }} span={12}>{beneficiary?.neighborhood.locality.district.name}</Col>
                                 </Row>
                                 <Row gutter={8} >
                                     <Col className="gutter-row" span={12}>Idade</Col>
                                     <Col className="gutter-row" span={12}>{beneficiary?.grade}</Col>
                                 </Row>
                                 <Row gutter={8}>
-                                    <Col className="gutter-row" style={{background:"#f3f4f5"}} span={12}>Sexo</Col>
-                                    <Col className="gutter-row" style={{background:"#f3f4f5"}} span={12}>{beneficiary?.gender === 1 ? 'M':'F'}</Col>
+                                    <Col className="gutter-row" style={{ background: "#f3f4f5" }} span={12}>Sexo</Col>
+                                    <Col className="gutter-row" style={{ background: "#f3f4f5" }} span={12}>{beneficiary?.gender === 1 ? 'M' : 'F'}</Col>
                                 </Row>
                                 <Row gutter={8} >
                                     <Col className="gutter-row" span={12}>Com quem mora?</Col>
                                     <Col className="gutter-row" span={12}>{beneficiary?.livesWith}</Col>
                                 </Row>
-                                
+
                             </Card>
                         </Col>
                         <Col className="gutter-row" span={8}>
                             <Card
-                                
+
                                 title="Contactos"
                                 bordered={true}
-                                headStyle={{background:"#f2dede"}}
+                                headStyle={{ background: "#f2dede" }}
 
                             >
-                                <span>MZ</span><br/>
-                                <span>{`${beneficiary?.neighborhood.description}`}</span><br/>
-                                <span>{beneficiary?.phoneNumber}</span><br/>
+                                <span>MZ</span><br />
+                                <span>{`${beneficiary?.neighborhood.description}`}</span><br />
+                                <span>{beneficiary?.phoneNumber}</span><br />
                             </Card>
                         </Col>
                     </Row>
-                     
-            </Card>
-            <Card
-                title="Lista de Intervenções DREAMS"
-                extra={
-                    <Space>
-                      <Button type='primary' icon={<ArrowUpOutlined />} danger >Referir Beneficiaria</Button>
-                      <Button onClick={onAddIntervention} type="primary" icon={<PlusOutlined />} >
-                        Adicionar Serviço Dreams
-                      </Button>
-                    </Space>
-                }
-            >
-                <Table
-                    rowKey="dateCreated"
-                    pagination={false}
-                    columns={interventionColumns}
-                    dataSource={interventions}
-                    bordered
 
-                />
-            </Card>
-            <Drawer
-                title="Intervenções Dreams"
-                placement="top"
-                closable={false}
-                onClose={onClose}
-                visible={visible}
-                getContainer={false}
-                style={{ position: 'absolute'}}
-                extra={
-                    <Space>
-                      <Button onClick={onClose}>Cancel</Button>
-                      <Button htmlType="submit" onClick={onSubmit} type="primary">
-                        Submit
-                      </Button>
-                    </Space>
-                }
+                </Card>
+                <Card
+                    title="Lista de Intervenções DREAMS"
+                    extra={
+                        <Space>
+                            <Button type='primary' icon={<ArrowUpOutlined />} danger >Referir Beneficiaria</Button>
+                            <Button onClick={onAddIntervention} type="primary" icon={<PlusOutlined />} >
+                                Adicionar Serviço Dreams
+                            </Button>
+                        </Space>
+                    }
+                >
+                    <Table
+                        rowKey="dateCreated"
+                        pagination={false}
+                        columns={interventionColumns}
+                        dataSource={interventions}
+                        bordered
+
+                    />
+                </Card>
+                <Drawer
+                    title="Intervenções Dreams"
+                    placement="top"
+                    closable={false}
+                    onClose={onClose}
+                    visible={visible}
+                    getContainer={false}
+                    style={{ position: 'absolute' }}
+                    extra={
+                        <Space>
+                            <Button onClick={onClose}>Cancel</Button>
+                            <Button htmlType="submit" onClick={onSubmit} type="primary">
+                                Submit
+                            </Button>
+                        </Space>
+                    }
                 >
                 {isAdd ? <Form form={form} layout="vertical" onFinish={onSubmit}> <InterventionForm record={selectedIntervention} /></Form> : 
                     <ViewIntervention record={selectedBeneficiary} beneficiary={beneficiary} />
@@ -254,18 +262,18 @@ export function ViewBenefiaryPanel({beneficiary, columns}){
     );
 }
 
-const ViewBeneficiary = ({beneficiary, modalVisible, handleAdd, handleModalVisible}) => {
+const ViewBeneficiary = ({ beneficiary, modalVisible, handleAdd, handleModalVisible }) => {
 
     const okHandle = () => {
         handleAdd("test");
         handleModalVisible();
     }
 
-    
+
     return (
 
         <Modal
-            width={1200}
+            width={1000}
             centered
             destroyOnClose
             title={` Dados de Registo do Beneficiário: ${beneficiary?.name}`}
@@ -274,7 +282,7 @@ const ViewBeneficiary = ({beneficiary, modalVisible, handleAdd, handleModalVisib
             onCancel={() => handleModalVisible()}
         >
             <ViewBenefiaryPanel beneficiary={beneficiary} columns={undefined} />
-            
+
         </Modal>
 
 

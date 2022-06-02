@@ -7,7 +7,7 @@ import moment from 'moment';
 const { Option } = Select;
 const { TextArea } = Input;
 
-const areaServicos = [{"id":'CLINIC',"name": "Serviços Clinicos"},{"id":'COMMUNITY',"name": "Serviços Comunitarios"}];
+const areaServicos = [{ "id": 'CLINIC', "name": "Serviços Clinicos" }, { "id": 'COMMUNITY', "name": "Serviços Comunitarios" }];
 const options = [
   { label: 'US', value: '1' },
   { label: 'CM', value: '2' },
@@ -57,10 +57,9 @@ const InterventionForm = (record: any) => {
         setServices(data);
     }
 
-    const onChangeServices = async (value:any) => {
-        
-      const data = await querySubServiceByService(value);
-      setInterventions(data);
+    const fetchData = async () => {
+      const data = await allUs();
+      setUs(data);
     }
 
     return (
