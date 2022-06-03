@@ -22,7 +22,7 @@ const BeneficiaryForm = ({ form, modalVisible, handleAdd, handleModalVisible}:an
     return (
         <>
         <Modal
-            width={1000}
+            width={1200}
             bodyStyle={{ overflowY: 'auto', maxHeight: 'calc(100vh - 300px)', marginLeft:'10px', marginRight:'10px' }}
             centered
             destroyOnClose

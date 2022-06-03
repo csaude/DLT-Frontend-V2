@@ -28,7 +28,7 @@ const StepDadosPessoais = ({ form }: any) => {
                 </Col>
                 <Col className="gutter-row" span={12}>
                     <Form.Item
-                        name="nickName"
+                        name="nick_name"
                         label="Nome"
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                     >
@@ -41,7 +41,7 @@ const StepDadosPessoais = ({ form }: any) => {
                     <Row >
                         <Col span={10}>
                             <Form.Item
-                                name="dateOfBirth"
+                                name="date_of_birth"
                                 label="Data Nascimento"
                                 rules={[{ required: isDateRequired, message: RequiredFieldMessage }]}
                             >
@@ -130,7 +130,7 @@ const StepDadosPessoais = ({ form }: any) => {
                 </Col>
                 <Col className="gutter-row" span={8}>
                     <Form.Item
-                        name="entryPoint"
+                        name="entry_point"
                         label="Ponto de Entrada"
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                         style={{ textAlign: 'left' }}
@@ -165,7 +165,7 @@ const StepDadosPessoais = ({ form }: any) => {
             <Row gutter={16}>
                 <Col className="gutter-row" span={12}>
                     <Form.Item
-                        name="phoneNumber"
+                        name="phone_number"
                         label="Telemóvel"
                     >
                         <Input placeholder="Insira o Telemóvel" />
@@ -173,7 +173,7 @@ const StepDadosPessoais = ({ form }: any) => {
                 </Col>
                 <Col className="gutter-row" span={12}>
                     <Form.Item
-                        name="email"
+                        name="e_mail"
                         label="E-mail"
                     >
                         <Input placeholder="Insira o E-mail" />
@@ -183,7 +183,7 @@ const StepDadosPessoais = ({ form }: any) => {
             <Row gutter={16}>
                 <Col className="gutter-row" span={12}>
                     <Form.Item
-                        name="neighborhood"
+                        name="neighbourhood_id"
                         label="Onde Mora"
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                     >

@@ -4,6 +4,10 @@ import './index.css';
 import StepDadosPessoais from './StepDadosPessoais';
 import StepVulnerabilidadesGerais from './StepVulnerabilidadesGerais';
 import StepVulnerabilidadesEspecificas from './StepVulnerabilidadesEspecificas';
+import { add } from '@app/utils/beneficiary';
+import moment from 'moment';
+import { stringify } from 'qs';
+
 const { Option } = Select;
 const { Step } = Steps;
 
@@ -11,17 +15,15 @@ const BeneficiaryForm = ({ form, modalVisible, handleAdd, handleModalVisible }: 
 
     const [current, setCurrent] = useState(0);
 
-
     const next = () => {
-
+        
         form.validateFields().then(async (values) => {
-            console.log("NEXT: ", values);
+
             const inc = current + 1;
             setCurrent(inc);
-        })
-            .catch(error => {
+        }).catch(error => {
 
-            });
+        });
 
 
     }
@@ -35,10 +37,24 @@ const BeneficiaryForm = ({ form, modalVisible, handleAdd, handleModalVisible }: 
         handleModalVisible(false);
     }
 
-    const onSubmit = () => {
+    const onSubmit = async () => {
+        
+       /* form.validateFields().then(async (values) => {
+            console.log(firstStepValues);
+            console.log(secondStepValues);
+            console.log(values);
 
+        });*/
+       /* const beneficiary = form.getFieldsValue(true);
+       
+        beneficiary.date_of_birth = moment(beneficiary.date_of_birth, "YYYY-MM-DD");
+        beneficiary.vblt_lives_with = stringify(beneficiary.vblt_lives_with);
+        //console.log(beneficiary);
+        const data = await add(beneficiary);
+        //console.log(form.getFieldsValue(true));*/
+        handleModalVisible(false);
+        form.resetFields();
     }
-
 
     const steps = [
         {
@@ -85,8 +101,8 @@ const BeneficiaryForm = ({ form, modalVisible, handleAdd, handleModalVisible }: 
                 </div>}
             >
                 <div>
-                    <Form form={form} layout="vertical"> 
-                
+                    <Form form={form} layout="vertical">
+
                         <Steps current={current}>
                             {steps.map(item => (
                                 <Step key={item.title} title={item.title} />

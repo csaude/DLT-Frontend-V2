@@ -13,40 +13,40 @@ const StepVulnerabilidadesEspecificas = ({ form }: any) => {
             <Row gutter={24}>
                 <Col className="gutter-row" span={8}>
                     <Form.Item
-                        name="VbltSexuallyActive"
+                        name="vblt_sexually_active"
                         label="Sexualmente Activa?"
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                         style={{ textAlign: 'left' }}
                     >
                         <Radio.Group>
-                            <Radio.Button value="1">SIM</Radio.Button>
-                            <Radio.Button value="0">NÃO</Radio.Button>
+                            <Radio.Button value={1}>SIM</Radio.Button>
+                            <Radio.Button value={0}>NÃO</Radio.Button>
                         </Radio.Group>
                     </Form.Item>
                 </Col>
                 <Col className="gutter-row" span={8}>
                     <Form.Item
-                        name="VbltMultiplePartners"
+                        name="vblt_multiple_partners"
                         label="Relações Múltiplas e Concorrentes?"
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                         style={{ textAlign: 'left' }}
                     >
                         <Radio.Group>
-                            <Radio.Button value="1">SIM</Radio.Button>
-                            <Radio.Button value="0">NÃO</Radio.Button>
+                            <Radio.Button value={1}>SIM</Radio.Button>
+                            <Radio.Button value={0}>NÃO</Radio.Button>
                         </Radio.Group>
                     </Form.Item>
                 </Col>
                 <Col className="gutter-row" span={8}>
                     <Form.Item
-                        name="VbltIsMigrant"
+                        name="vblt_is_migrant"
                         label="Migrante?"
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                         style={{ textAlign: 'left' }}
                     >
                         <Radio.Group>
-                            <Radio.Button value="1">SIM</Radio.Button>
-                            <Radio.Button value="0">NÃO</Radio.Button>
+                            <Radio.Button value={1}>SIM</Radio.Button>
+                            <Radio.Button value={0}>NÃO</Radio.Button>
                         </Radio.Group>
                     </Form.Item>
                 </Col>
@@ -54,33 +54,33 @@ const StepVulnerabilidadesEspecificas = ({ form }: any) => {
             <Row gutter={24}>
                 <Col className="gutter-row" span={8}>
                     <Form.Item
-                        name="VbltTraffickingVictim"
+                        name="vblt_trafficking_victim"
                         label="Vítima de Tráfico?"
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                         style={{ textAlign: 'left' }}
                     >
                         <Radio.Group>
-                            <Radio.Button value="1">SIM</Radio.Button>
-                            <Radio.Button value="0">NÃO</Radio.Button>
+                            <Radio.Button value={1}>SIM</Radio.Button>
+                            <Radio.Button value={0}>NÃO</Radio.Button>
                         </Radio.Group>
                     </Form.Item>
                 </Col>
                 <Col className="gutter-row" span={8}>
                     <Form.Item
-                        name="VbltSexualExploitation"
+                        name="vblt_sexual_exploitation"
                         label="Vítima de Exploração sexual?"
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                         style={{ textAlign: 'left' }}
                     >
                         <Radio.Group>
-                            <Radio.Button value="1">SIM</Radio.Button>
-                            <Radio.Button value="0">NÃO</Radio.Button>
+                            <Radio.Button value={1}>SIM</Radio.Button>
+                            <Radio.Button value={0}>NÃO</Radio.Button>
                         </Radio.Group>
                     </Form.Item>
                 </Col>
                 <Col className="gutter-row" span={8}>
                     <Form.Item
-                        name="VbltSexploitationTime"
+                        name="vblt_sexploitation_time"
                         label="Tempo"
                         style={{ textAlign: 'left' }}
                     >
@@ -101,20 +101,20 @@ const StepVulnerabilidadesEspecificas = ({ form }: any) => {
             <Row gutter={24}>
                 <Col className="gutter-row" span={8}>
                     <Form.Item
-                        name="VbltVbgVictim"
+                        name="vblt_vbg_victim"
                         label="Vítima de Violéncia Baseada no Gênero?"
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                         style={{ textAlign: 'left' }}
                     >
                         <Radio.Group>
-                            <Radio.Button value="1">SIM</Radio.Button>
-                            <Radio.Button value="0">NÃO</Radio.Button>
+                            <Radio.Button value={1}>SIM</Radio.Button>
+                            <Radio.Button value={0}>NÃO</Radio.Button>
                         </Radio.Group>
                     </Form.Item>
                 </Col>
                 <Col className="gutter-row" span={8}>
                     <Form.Item
-                        name="VbltVgbType"
+                        name="vblt_vbg_type"
                         label="Tipo de Violéncia"
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                         style={{ textAlign: 'left' }}
@@ -134,7 +134,7 @@ const StepVulnerabilidadesEspecificas = ({ form }: any) => {
                 </Col>
                 <Col className="gutter-row" span={8}>
                     <Form.Item
-                        name="VbltVbgTime"
+                        name="vblt_vbg_time"
                         label="Tempo"
                         style={{ textAlign: 'left' }}
                     >
@@ -155,39 +155,39 @@ const StepVulnerabilidadesEspecificas = ({ form }: any) => {
             <Row gutter={24}>
                 <Col className="gutter-row" span={8}>
                     <Form.Item
-                        name="VbltAlcoholDrugsUse"
+                        name="vblt_alcohol_drugs_use"
                         label="Uso de Álcool e Drogas?"
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                         style={{ textAlign: 'left' }}
                     >
                         <Radio.Group>
-                            <Radio.Button value="1">SIM</Radio.Button>
-                            <Radio.Button value="0">NÃO</Radio.Button>
+                            <Radio.Button value={1}>SIM</Radio.Button>
+                            <Radio.Button value={0}>NÃO</Radio.Button>
                         </Radio.Group>
                     </Form.Item>
                 </Col>
                 <Col className="gutter-row" span={8}>
                     <Form.Item
-                        name="VbltStiHistory"
+                        name="vblt_sti_history"
                         label="Histórico de ITS?"
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                         style={{ textAlign: 'left' }}
                     >
                         <Radio.Group>
-                            <Radio.Button value="1">SIM</Radio.Button>
-                            <Radio.Button value="0">NÃO</Radio.Button>
+                            <Radio.Button value={1}>SIM</Radio.Button>
+                            <Radio.Button value={0}>NÃO</Radio.Button>
                         </Radio.Group>
                     </Form.Item>
                 </Col>
                 <Col className="gutter-row" span={8}>
                     <Form.Item
-                        name="VbltSexWorker"
+                        name="vblt_sex_worker"
                         label="Trabalhadora do Sexo"
                         style={{ textAlign: 'left' }}
                     >
                         <Radio.Group>
-                            <Radio.Button value="1">SIM</Radio.Button>
-                            <Radio.Button value="0">NÃO</Radio.Button>
+                            <Radio.Button value={1}>SIM</Radio.Button>
+                            <Radio.Button value={0}>NÃO</Radio.Button>
                         </Radio.Group>
                     </Form.Item>
                 </Col>
