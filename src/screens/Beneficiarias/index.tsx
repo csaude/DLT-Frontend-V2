@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { View, StyleSheet, TouchableOpacity, TouchableHighlight, ScrollView , Platform} from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
-import { HStack,Text, Avatar, Pressable, Icon, Box, Select,Heading, VStack, FormControl, Input, Link, Button, CheckIcon, WarningOutlineIcon, Center, Flex, Badge } from 'native-base';
+import {useToast, Alert, HStack,Text, Avatar, Pressable, Icon, Box, Select,Heading, VStack, FormControl, Input, Link, Button, CheckIcon, WarningOutlineIcon, Center, Flex, Badge } from 'native-base';
 import { navigate } from '../../routes/NavigationRef';
 import withObservables from '@nozbe/with-observables';
 import { MaterialIcons, Ionicons } from "@native-base/icons";
@@ -10,17 +10,61 @@ import { database } from '../../database';
 import { Context } from '../../routes/DrawerNavigator';
 
 import styles from './styles';
+import { sync } from '../../database/sync';
 
 
 const BeneficiariesMain: React.FC = ({ beneficiaries, localities,subServices, beneficiaries_interventions, services }:any) => {
     const [searchField, setSearchField] = useState('');
     const loggedUser:any = useContext(Context);
+    const toast = useToast();
+
+    const syncronize = () => {
+        sync({username: loggedUser.username})
+                .then(() => toast.show({
+                                placement: "top",
+                                render:() => {
+                                    return (
+                                        <Alert w="100%" variant="left-accent" colorScheme="success" status="success">
+                                            <VStack space={2} flexShrink={1} w="100%">
+                                                <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
+                                                    <HStack space={2} flexShrink={1} alignItems="center">
+                                                        <Alert.Icon />
+                                                        <Text color="coolGray.800">
+                                                            Synced Successfully!
+                                                        </Text>
+                                                    </HStack>
+                                                </HStack>
+                                            </VStack>
+                                        </Alert> 
+                                    );
+                                }
+                            }))
+                .catch(() => toast.show({
+                                placement: "top",
+                                render:() => {
+                                    return (
+                                        <Alert w="100%" variant="left-accent" colorScheme="error" status="error">
+                                            <VStack space={2} flexShrink={1} w="100%">
+                                                <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
+                                                    <HStack space={2} flexShrink={1} alignItems="center">
+                                                        <Alert.Icon />
+                                                        <Text color="coolGray.800">
+                                                            Sync Failed!
+                                                        </Text>
+                                                    </HStack>
+                                                </HStack>
+                                            </VStack>
+                                        </Alert> 
+                                    );
+                                }
+                            }))
+    }
 
     const viewBeneficiaries = (data: any) => {
 
         const beneficiarie = data.item?._raw;
 
-        const beneficiariesInterventionsName = beneficiaries_interventions.filter((e)=>{ 
+        /*const beneficiariesInterventionsName = beneficiaries_interventions.filter((e)=>{ 
                 return e._raw.beneficiary_id == beneficiarie.online_id}
             );
 
@@ -30,10 +74,27 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, localities,subServices, be
             })[0];
             return { id: subservice._raw.online_id, name: subservice._raw.name}
         });
-
+        
         navigate({name: "BeneficiariesView", params: {
             beneficiarie: data.item._raw,
             subServices: InterventionNames
+        }});
+        */
+
+        const interventions = beneficiaries_interventions.filter((e)=>{ 
+            return e._raw.beneficiary_id == beneficiarie.online_id}
+        );
+
+        const interventionObjects = interventions.map((e)=>{
+            let subservice = subServices.filter((item)=>{ 
+                return item._raw.online_id == e._raw.sub_service_id
+            })[0];
+            return { id: subservice._raw.online_id, name: subservice._raw.name, intervention: e._raw }
+        });
+
+        navigate({name: "BeneficiariesView", params: {
+            beneficiary: beneficiarie,
+            interventions: interventionObjects
         }});
 
     };
@@ -145,6 +206,9 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, localities,subServices, be
                 previewOpenDelay={3000}
                 onRowDidOpen={onRowDidOpen}
             />
+            <TouchableOpacity onPress={syncronize} style={styles.fab1}>
+                <Icon as={MaterialIcons} name="refresh"  size={8}  color="#0c4a6e" />
+            </TouchableOpacity>
         </View>
     );
 }

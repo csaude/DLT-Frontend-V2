@@ -20,14 +20,14 @@ const styles = StyleSheet.create({
         })
     },
     containerForm:{
-        padding: 30,
+        padding: 10,
         paddingBottom: 70,
         // justifyContent: 'space-around',
-        backgroundColor: '#fff',
+        backgroundColor: '#f9f9fc',
         borderColor:'#CCCCCC',
         borderWidth:1,
         borderRadius: 5,
-        margin: 15,        
+        margin: 5,        
     },
     formTitle:{        
         flexDirection: "row",
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     },
     txtLabelInfo:{
         marginTop: '2%',
-        marginBottom: '2%',
+        //marginBottom: '2%',
         color: 'white',
     },
 
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     },
     subServices:{
         color: 'white',
-        marginTop: '2%',
+        //marginTop: '2%',
     },
     fab: {
       position: 'absolute',
