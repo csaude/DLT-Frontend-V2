@@ -16,3 +16,8 @@ export async function query(payload?: BeneficiaryFilter) {
     const res = await select(url);
     return res;
 }
+
+export async function add(payload: any) {
+  const res = await create('/api/beneficiaries', payload);
+  return res;
+}
