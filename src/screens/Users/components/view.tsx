@@ -61,7 +61,7 @@ const ViewUsers: React.FC = ({ route }:any) => {
                         </Flex>
                         <Divider />
 
-                        <Text> <Text style={styles.txtLabel}>Estado: </Text> { (user.status==1)  ? "Activo" : "Inactivo" }</Text>
+                        <Text> <Text style={styles.txtLabel}>Estado: </Text> { "Activo" /*(user.status===1)  ? "Activo" : "Inactivo" */}</Text>
                     </View>
                 </View>
             </ScrollView>

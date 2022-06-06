@@ -168,8 +168,8 @@ const BeneficiariesList: React.FC = () => {
                     status={val == true ? 'success' : 'warning'}
                     text={
                       val == '1'
-                        ? 'M'
-                        : 'F'
+                        ? 'F'
+                        : 'M'
                     }
                   />
                 );

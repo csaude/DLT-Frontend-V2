@@ -82,7 +82,6 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                 }
                 )[0];
 
-
                 initValues = {
                     areaServicos_id: selService._raw.service_type,
                     service_id: selService._raw.online_id,
@@ -97,7 +96,6 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                     remarks: intervention.remarks,
                     status: '1'
                 }
-
 
             } else {
                 initValues = {
@@ -122,7 +120,7 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
             }
         }
         
-
+        
     }, [intervention]);
 
 
