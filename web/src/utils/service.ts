@@ -43,7 +43,13 @@ export interface SubServiceParams {
     status: string;
     createdBy: string;
 }
+
 export async function addSubService(payload: SubServiceParams) {
     const res = await create('/api/beneficiary-intervention', payload);
+    return res;
+}
+
+export async function updateSubService(payload: SubServiceParams) {
+    const res = await update('/api/beneficiary-intervention', payload);
     return res;
 }

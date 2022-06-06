@@ -1,11 +1,11 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import { message, Form, Modal, Card, Row, Col, Image, Table, Button, Drawer, Space } from 'antd';
-import { SearchOutlined, ArrowUpOutlined, EyeOutlined, PlusOutlined } from '@ant-design/icons';
+import { SearchOutlined, ArrowUpOutlined, EyeOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import emblema from '../../../assets/emblema.png';
 import moment from 'moment';
 import { getEntryPoint } from '@app/models/User'
 import ViewIntervention from './ViewIntervention';
-import { addSubService, SubServiceParams } from '@app/utils/service'
+import { addSubService, updateSubService, SubServiceParams } from '@app/utils/service'
 
 import 'antd/dist/antd.css';
 
@@ -16,6 +16,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
     const [visible, setVisible] = useState<boolean>(false);
     const [isAdd, setIsAdd] = useState<boolean>(false);
     const [selectedBeneficiary, setSelectedBeneficiary] = useState();
+    const [selectedIntervention, setSelectedIntervention] = useState();
     const [interventions, setInterventions] = useState(beneficiary?.interventions);
 
     const [form] = Form.useForm();
@@ -27,8 +28,16 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
     };
 
     const onAddIntervention = () => {
+        form.resetFields();
         setVisible(true);
         setIsAdd(true);
+        setSelectedIntervention(undefined);
+    };
+
+    const onEditIntervention = (record:any) => {
+        setVisible(true);
+        setIsAdd(true);
+        setSelectedIntervention(record);
     };
 
     const onClose = () => {
@@ -39,8 +48,6 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
     const onSubmit = async (value: any) => {
 
         form.validateFields().then(async (values) => {
-            //console.log(values);
-            //console.log(beneficiary);
             let payload: SubServiceParams = {
                 beneficiary: {
                     id: '' + beneficiary.id
@@ -58,8 +65,8 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
                 status: "1",
                 createdBy: "6"
             };
-
-            const { data } = await addSubService(payload);
+            
+            const { data } = selectedIntervention===undefined? await addSubService(payload) : await updateSubService(payload);
 
             setInterventions(interventions => [...interventions, data]);
 
@@ -116,10 +123,12 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
                 dataIndex: '',
                 key: 'x',
                 render: (text, record) => (
-                    <Fragment>
-                        <Button type="primary" icon={<EyeOutlined />} onClick={() => showDrawer(record)} >
-                        </Button>
-                    </Fragment>
+                <Space>
+                    <Button type="primary" icon={<EyeOutlined />} onClick={()=>showDrawer(record)} >
+                    </Button>
+                    <Button type="primary" icon={<EditOutlined />} onClick={()=>onEditIntervention(record)} >
+                    </Button>
+                </Space>
                 ),
             },
         ] : columns;
@@ -244,11 +253,11 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
                         </Space>
                     }
                 >
-                    {isAdd ? <Form form={form} layout="vertical" onFinish={onSubmit}> <InterventionForm /></Form> :
-                        <ViewIntervention record={selectedBeneficiary} beneficiary={beneficiary} />
-                    }
-                </Drawer>
-            </div>
+                {isAdd ? <Form form={form} layout="vertical" onFinish={onSubmit}> <InterventionForm record={selectedIntervention} /></Form> : 
+                    <ViewIntervention record={selectedBeneficiary} beneficiary={beneficiary} />
+                }   
+            </Drawer>
+        </div>
         </>
     );
 }
