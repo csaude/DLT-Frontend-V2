@@ -23,6 +23,10 @@ export const MENU: IMenuItem[] = [
     path: '/beneficiariesList'
   },
   {
+    name: 'menusidebar.label.referenceList',
+    path: '/referenceList'
+  },
+  {
     name: 'menusidebar.label.users',
     children: [
       {
