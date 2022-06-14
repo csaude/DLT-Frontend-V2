@@ -45,14 +45,15 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
         setIsAdd(false);
     };
 
-    const onSubmit = async (value: any) => {
+    const onSubmit = async (intervention: any) => {
 
         form.validateFields().then(async (values) => {
             let payload: SubServiceParams = {
-                beneficiary: {
+                id: intervention?.id,
+                beneficiaries: {
                     id: '' + beneficiary.id
                 },
-                subService: {
+                subServices: {
                     id: values.subservice
                 },
                 result: "",
@@ -67,7 +68,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
             };
 
             const { data } = selectedIntervention === undefined ? await addSubService(payload) : await updateSubService(payload);
-
+            
             setInterventions(interventions => [...interventions, data]);
 
             message.success({
@@ -247,13 +248,13 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
                     extra={
                         <Space>
                             <Button onClick={onClose}>Cancel</Button>
-                            <Button htmlType="submit" onClick={onSubmit} type="primary">
+                            <Button htmlType="submit" onClick={() => onSubmit(selectedIntervention)} type="primary">
                                 Submit
                             </Button>
                         </Space>
                     }
                 >
-                    {isAdd ? <Form form={form} layout="vertical" onFinish={onSubmit}> <InterventionForm record={selectedIntervention} /></Form> :
+                    {isAdd ? <Form form={form} layout="vertical" onFinish={() => onSubmit(selectedIntervention)}> <InterventionForm record={selectedIntervention} /></Form> :
                         <ViewIntervention record={selectedBeneficiary} beneficiary={beneficiary} />
                     }
                 </Drawer>
