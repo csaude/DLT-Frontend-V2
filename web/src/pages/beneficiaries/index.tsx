@@ -29,6 +29,7 @@ const BeneficiariesList: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
           const data = await query();
+
           setBeneficiaries(data);
         } 
     
@@ -130,12 +131,12 @@ const BeneficiariesList: React.FC = () => {
         { title: 'Serviço', 
             dataIndex: '', 
             key: 'service',
-            render: (text, record)  => record.subService.service.name,
+            render: (text, record)  => record.subServices.service.name,
         },
         { title: 'Intervenções', 
             dataIndex: '', 
             key: 'intervention',
-            render: (text, record)  => record.subService.name,
+            render: (text, record)  => record.subServices.name,
         },
         { title: 'Ponto de Entrada', 
             dataIndex: '', 

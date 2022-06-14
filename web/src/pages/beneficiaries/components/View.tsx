@@ -17,7 +17,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
     const [isAdd, setIsAdd] = useState<boolean>(false);
     const [selectedBeneficiary, setSelectedBeneficiary] = useState();
     const [selectedIntervention, setSelectedIntervention] = useState();
-    const [interventions, setInterventions] = useState(beneficiary?.interventions);
+    const [interventions, setInterventions] = useState(beneficiary?.beneficiariesInterventionses);
 
     const [form] = Form.useForm();
 
@@ -34,7 +34,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
         setSelectedIntervention(undefined);
     };
 
-    const onEditIntervention = (record:any) => {
+    const onEditIntervention = (record: any) => {
         setVisible(true);
         setIsAdd(true);
         setSelectedIntervention(record);
@@ -63,10 +63,10 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
                 provider: values.provider,
                 remarks: values.outros,
                 status: "1",
-                createdBy: "6"
+                createdBy: "1"
             };
-            
-            const { data } = selectedIntervention===undefined? await addSubService(payload) : await updateSubService(payload);
+
+            const { data } = selectedIntervention === undefined ? await addSubService(payload) : await updateSubService(payload);
 
             setInterventions(interventions => [...interventions, data]);
 
@@ -104,13 +104,13 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
                 title: 'Serviço',
                 dataIndex: '',
                 key: 'service',
-                render: (text, record) => record.subService.service.name,
+                render: (text, record) => record.subServices.service.name,
             },
             {
                 title: 'Intervenções',
                 dataIndex: '',
                 key: 'intervention',
-                render: (text, record) => record.subService.name,
+                render: (text, record) => record.subServices.name,
             },
             {
                 title: 'Ponto de Entrada',
@@ -123,12 +123,12 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
                 dataIndex: '',
                 key: 'x',
                 render: (text, record) => (
-                <Space>
-                    <Button type="primary" icon={<EyeOutlined />} onClick={()=>showDrawer(record)} >
-                    </Button>
-                    <Button type="primary" icon={<EditOutlined />} onClick={()=>onEditIntervention(record)} >
-                    </Button>
-                </Space>
+                    <Space>
+                        <Button type="primary" icon={<EyeOutlined />} onClick={() => showDrawer(record)} >
+                        </Button>
+                        <Button type="primary" icon={<EditOutlined />} onClick={() => onEditIntervention(record)} >
+                        </Button>
+                    </Space>
                 ),
             },
         ] : columns;
@@ -253,11 +253,11 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
                         </Space>
                     }
                 >
-                {isAdd ? <Form form={form} layout="vertical" onFinish={onSubmit}> <InterventionForm record={selectedIntervention} /></Form> : 
-                    <ViewIntervention record={selectedBeneficiary} beneficiary={beneficiary} />
-                }   
-            </Drawer>
-        </div>
+                    {isAdd ? <Form form={form} layout="vertical" onFinish={onSubmit}> <InterventionForm record={selectedIntervention} /></Form> :
+                        <ViewIntervention record={selectedBeneficiary} beneficiary={beneficiary} />
+                    }
+                </Drawer>
+            </div>
         </>
     );
 }
