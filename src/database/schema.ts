@@ -158,5 +158,23 @@ export default appSchema({
           {name: 'online_id', type: 'string',isOptional: true}
         ],
       }),
+      tableSchema({
+        name: 'references',
+        columns: [
+          {name: 'beneficiary_id', type: 'number', isIndexed: true},
+          {name: 'refer_to', type: 'number', isIndexed: true},
+          {name: 'notify_to', type: 'number', isIndexed: true},
+          {name: 'reference_note', type: 'string'},
+          {name: 'description', type: 'string'},
+          {name: 'book_number', type: 'string'},
+          {name: 'reference_code', type: 'string'},
+          {name: 'service_type', type: 'string'},
+          {name: 'remarks', type: 'string', isOptional: true},
+          {name: 'status_ref', type: 'number'},
+          {name: 'status', type: 'number'},
+          {name: 'cancel_reason', type: 'number', isOptional: true},
+          {name: 'other_reason', type: 'string', isOptional: true},
+        ],
+      }),
     ],
 });
