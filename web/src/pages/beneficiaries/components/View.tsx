@@ -16,7 +16,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
     const [visible, setVisible] = useState<boolean>(false);
     const [isAdd, setIsAdd] = useState<boolean>(false);
     const [selectedBeneficiary, setSelectedBeneficiary] = useState();
-    const [selectedIntervention, setSelectedIntervention] = useState();
+    const [selectedIntervention, setSelectedIntervention] = useState<any>();
     const [interventions, setInterventions] = useState(beneficiary?.beneficiariesInterventionses);
 
     const [form] = Form.useForm();
@@ -46,8 +46,9 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
     };
 
     const onSubmit = async (intervention: any) => {
-
+       
         form.validateFields().then(async (values) => {
+            
             let payload: SubServiceParams = {
                 id: intervention?.id,
                 beneficiaries: {
@@ -58,7 +59,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
                 },
                 result: "",
                 date: moment(values.dataBeneficio).format('YYYY-MM-DD'),
-                us_id: values.location,
+                us: { id: values.location},
                 activistId: "6",
                 entryPoint: values.entryPoint,
                 provider: values.provider,
@@ -69,7 +70,18 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
 
             const { data } = selectedIntervention === undefined ? await addSubService(payload) : await updateSubService(payload);
             
-            setInterventions(interventions => [...interventions, data]);
+            if(selectedIntervention === undefined){
+                setInterventions(interventions => [...interventions, data]);
+            } else {
+                setInterventions(existingItems => {
+                    return existingItems.map((item, j) => {
+                      return    item.id.beneficiaryId === selectedIntervention.id.beneficiaryId && 
+                                item.id.subServiceId === selectedIntervention.id.subServiceId   &&
+                                item.id.date === selectedIntervention.id.date ?
+                                    data : item
+                    })
+                });
+            }
 
             message.success({
                 content: 'Registado com Sucesso!', className: 'custom-class',
@@ -97,9 +109,9 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
         [
             {
                 title: 'Data',
-                dataIndex: 'date',
+                dataIndex: '',
                 key: 'date',
-                render: (val: string) => <span>{moment(val).format('YYYY-MM-DD')}</span>,
+                render: (text, record) => <span>{moment(record.id.date).format('YYYY-MM-DD')}</span>,
             },
             {
                 title: 'Serviço',
