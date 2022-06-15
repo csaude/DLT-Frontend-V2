@@ -48,7 +48,6 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
 
         let tempDate = new Date(currentDate);
         setText(moment(tempDate).format('YYYY-MM-DD'));
-        console.log(text);
     }
 
     const showMode = (currentMode) => {
@@ -64,28 +63,25 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
     const [loading, setLoading] = useState(false);
     const [savedIntervention, setSavedIntervention] = useState<any>(null);
     const loggedUser: any = useContext(Context);
-    //const intervention = new Beneficiaries_interventions;
     const toast = useToast();
-    //console.log(intervention);
-    //console.log(beneficiarie);
 
     useEffect(() => {
-        //console.log(intervention);
+
         if (intervention && mounted) {
             const isEdit = intervention && intervention.id;
             let initValues = {};
-            //console.log(isEdit, intervention);
-            if (isEdit) {
-                console.log(intervention);
 
-                const selService = services.filter((e) => {
-                    
+            if (isEdit) {
+                
+                const selSubService = subServices.filter((e) => {
                     return e._raw.online_id == intervention.sub_service_id
                 })[0];
 
-                
+                const selService = services.filter((e) => {
+                    return e._raw.online_id == selSubService._raw.service_id
+                })[0];
 
-                /*initValues = {
+                initValues = {
                     areaServicos_id: selService._raw.service_type,
                     service_id: selService._raw.online_id,
                     beneficiary_id: beneficiarie.online_id,
@@ -98,7 +94,7 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                     provider: intervention.provider,
                     remarks: intervention.remarks,
                     status: '1'
-                }*/
+                }
 
             } else {
                 initValues = {
@@ -117,7 +113,7 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                 }
             }
 
-            //setInitialValues(initValues);
+            setInitialValues(initValues);
             return () => { // This code runs when component is unmounted 
                 mounted = false; // set it to false if we leave the page
             }
