@@ -57,8 +57,9 @@ const InterventionForm = (record: any) => {
         setServices(data);
     }
 
-    const onChangeServices = async (value: any) => {
 
+    const onChangeServices = async (value:any) => {
+        
       const data = await querySubServiceByService(value);
       setInterventions(data);
     }
