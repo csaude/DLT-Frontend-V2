@@ -97,9 +97,9 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
         [
             {
                 title: 'Data',
-                dataIndex: 'date',
+                dataIndex: '',
                 key: 'date',
-                render: (val: string) => <span>{moment(val).format('YYYY-MM-DD')}</span>,
+                render: (text, record) => <span>{moment(record.id.date).format('YYYY-MM-DD')}</span>,
             },
             {
                 title: 'Serviço',
