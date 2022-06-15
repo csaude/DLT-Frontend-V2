@@ -70,19 +70,22 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
     //console.log(beneficiarie);
 
     useEffect(() => {
-
+        //console.log(intervention);
         if (intervention && mounted) {
             const isEdit = intervention && intervention.id;
-            let initValues;
-            console.log(isEdit, intervention);
+            let initValues = {};
+            //console.log(isEdit, intervention);
             if (isEdit) {
+                console.log(intervention);
 
                 const selService = services.filter((e) => {
+                    
                     return e._raw.online_id == intervention.sub_service_id
-                }
-                )[0];
+                })[0];
 
-                initValues = {
+                
+
+                /*initValues = {
                     areaServicos_id: selService._raw.service_type,
                     service_id: selService._raw.online_id,
                     beneficiary_id: beneficiarie.online_id,
@@ -95,7 +98,7 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                     provider: intervention.provider,
                     remarks: intervention.remarks,
                     status: '1'
-                }
+                }*/
 
             } else {
                 initValues = {
@@ -114,7 +117,7 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                 }
             }
 
-            setInitialValues(initValues);
+            //setInitialValues(initValues);
             return () => { // This code runs when component is unmounted 
                 mounted = false; // set it to false if we leave the page
             }
