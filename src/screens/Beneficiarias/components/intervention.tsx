@@ -96,6 +96,9 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                     status: '1'
                 }
 
+                setText(intervention.date);
+                setDate(new Date(intervention.date));
+
             } else {
                 initValues = {
                     areaServicos_id: '',
@@ -122,10 +125,7 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
         
     }, [intervention]);
 
-
-
     const message = "Este campo é Obrigatório"
-
 
     const validate = (values: any) => {
         const errors: BeneficiariesInterventionsModel = {};
@@ -166,34 +166,32 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
     const onSubmit = async (values: any) => {
         setLoading(true);
 
-
         const isEdit = intervention && intervention.id; // new record if it has id
         //console.log(intervention, isEdit);
 
-
-        if (isEdit) {
-            const interventionToUpdate = await database.get('beneficiaries_interventions').find(intervention.id);
-            const updatedIntervention = await interventionToUpdate.update(() => {
-                intervention.beneficiary_id = beneficiarie.online_id
-                intervention.sub_service_id = values.sub_service_id
-                intervention.result = values.result
-                intervention.date = '' + text
-                intervention.us_id = values.us_id
-                intervention.activist_id = 1 //values.activist_id
-                intervention.entry_point = values.entry_point
-                intervention.provider = values.provider
-                intervention.remarks = values.remarks
-                intervention.status = values.status
-                intervention.online_id = intervention.online_id
-                // intervention._status = "updated"
-            })
-
-            toast.show({ placement: "bottom", title: "Intervention Updated Successfully: " + updatedIntervention._raw.id });
-
-            return updatedIntervention;
-        }
-
         const newObject = await database.write(async () => {
+        
+            if (isEdit) {
+                const interventionToUpdate = await database.get('beneficiaries_interventions').find(intervention.id);
+                const updatedIntervention = await interventionToUpdate.update(() => {
+                    intervention.beneficiary_id = beneficiarie.online_id
+                    intervention.sub_service_id = values.sub_service_id
+                    intervention.result = values.result
+                    intervention.date = '' + text
+                    intervention.us_id = values.us_id
+                    intervention.activist_id = 1 //values.activist_id
+                    intervention.entry_point = values.entry_point
+                    intervention.provider = values.provider
+                    intervention.remarks = values.remarks
+                    intervention.status = values.status
+                    intervention.online_id = intervention.online_id
+                    intervention._status = "updated"
+                })
+
+                toast.show({ placement: "bottom", title: "Intervention Updated Successfully: " + updatedIntervention._raw.id });
+
+                return updatedIntervention;
+            } 
 
             const newIntervention = await database.collections.get('beneficiaries_interventions').create((intervention: any) => {
 
@@ -279,13 +277,13 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                                 fontWeight="semibold"
                                 marginBottom={5}
                                 marginTop={0} >
-                                Prover Servico
+                                Prover Serviço
                             </Heading>
                             <Alert status="info" colorScheme="info">
                                 <HStack flexShrink={1} space={2} alignItems="center">
                                     <Alert.Icon />
                                     <Text fontSize="xs" fontWeight="medium" color="coolGray.800">
-                                        Preencha os campos abaixo para prover um servico a Beneficiaria!
+                                        Preencha os campos abaixo para prover um serviço a Beneficiaria!
                                     </Text>
                                 </HStack>
                             </Alert>
@@ -401,30 +399,6 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                                                 {errors.entry_point}
                                             </FormControl.ErrorMessage>
                                         </FormControl>
-
-                                        {/* <FormControl isInvalid={'entry_point' in errors}>
-                                            <FormControl.Label>
-                                            Ponto de Entrada
-                                            </FormControl.Label>
-                                                <Radio.Group name="entry_point"  defaultValue={entry_point} onChange={value => {
-                                                setEntry_point(value || "");
-                                                // setFieldValue('entry_point', value);
-                                                console.log("Ponto de entrada : " + entry_point)
-                                            }}>
-                                                <Radio value="1" my="1">
-                                                    US
-                                                </Radio>
-                                                <Radio value="2" my="1">
-                                                    CM
-                                                </Radio>
-                                                <Radio value="3" my="1">
-                                                    ES
-                                                </Radio>
-                                            </Radio.Group>
-                                            <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                                                {errors.entry_point}
-                                            </FormControl.ErrorMessage>
-                                        </FormControl> */}
 
                                         <FormControl isRequired isInvalid={'us_id' in errors}>
                                             <FormControl.Label>Localização</FormControl.Label>
