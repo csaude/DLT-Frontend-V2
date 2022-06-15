@@ -27,10 +27,11 @@ export async function querySubServiceByService(payload?: any){
 }
 
 export interface SubServiceParams {
-    beneficiary: {
+    id?:any;
+    beneficiaries: {
         id:string
     },
-    subService: {
+    subServices: {
         id:string
     };
     result: string;
