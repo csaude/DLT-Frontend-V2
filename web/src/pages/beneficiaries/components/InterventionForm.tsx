@@ -20,8 +20,8 @@ const InterventionForm = (record: any) => {
     const [us, setUs] = React.useState<any>(undefined);
     const form = Form.useFormInstance();
     const selectedIntervention = record.record;
-    const serviceType = selectedIntervention?.subService?.service.serviceType;
-
+    const serviceType = selectedIntervention?.subServices?.service.serviceType;
+  
     const selectedOption = options?.filter(o => o.value === selectedIntervention?.entryPoint+'').map(filteredOption => (filteredOption.value))[0];
 
     useEffect(() => {
@@ -32,17 +32,18 @@ const InterventionForm = (record: any) => {
       } 
 
       const fetchServices = async () => {
-        const data = await queryByType(serviceType === 0? 'CLINIC' : 'COMMUNITY');
+        const data = await queryByType(serviceType === '1'? 'CLINIC' : 'COMMUNITY');
         setServices(data);
       }
 
       const fetchSubServices = async () => {
-        const data = await querySubServiceByService(selectedIntervention?.subService?.service.id);
+        const data = await querySubServiceByService(selectedIntervention?.subServices?.service.id);
         setInterventions(data);
       }
 
       if(selectedIntervention !== undefined){
-        fetchServices().catch(error => console.log(error)); 
+        fetchServices().catch(error => console.log(error));
+
         fetchSubServices().catch(error => console.log(error));  
       }
   
@@ -52,13 +53,12 @@ const InterventionForm = (record: any) => {
 
 
     const onChangeAreaServiço = async (value:any) => {
-        
-        const data = await queryByType(value === 0? 'CLINIC' : value === 1? 'COMMUNITY' : value);
+        const data = await queryByType(value);
         setServices(data);
     }
 
-    const onChangeServices = async (value:any) => {
-        
+    const onChangeServices = async (value: any) => {
+
       const data = await querySubServiceByService(value);
       setInterventions(data);
     }
@@ -77,7 +77,7 @@ const InterventionForm = (record: any) => {
                   name="areaServicos"
                   label="Área de Serviços"
                   rules={[{ required: true, message: 'This field is required' }]}
-                  initialValue={serviceType===undefined? undefined : serviceType === 0? 'CLINIC' : 'COMMUNITY'}
+                  initialValue={serviceType===undefined? undefined : serviceType === '1'? 'CLINIC' : 'COMMUNITY'}
                 >
                     <Select placeholder="Select Area Serviço" onChange={onChangeAreaServiço}>
                         {areaServicos.map(item => (
@@ -91,7 +91,7 @@ const InterventionForm = (record: any) => {
                   name="service"
                   label="Serviço"
                   rules={[{ required: true, message: 'Please enter url' }]}
-                  initialValue={selectedIntervention===undefined? undefined : selectedIntervention?.subService?.service.id+''}
+                  initialValue={selectedIntervention===undefined? undefined : selectedIntervention?.subServices?.service.id+''}
                 >
                   <Select placeholder="Select Serviço" onChange={onChangeServices} disabled={services === undefined}>
                         {services?.map(item => (
@@ -105,7 +105,7 @@ const InterventionForm = (record: any) => {
                   name="subservice"
                   label="Sub-Serviço/Intervenção"
                   rules={[{ required: true, message: 'Please enter url' }]}
-                  initialValue={selectedIntervention===undefined? undefined : selectedIntervention?.subService?.id+''}
+                  initialValue={selectedIntervention===undefined? undefined : selectedIntervention?.subServices?.id+''}
                 >
                   <Select placeholder="Select Sub Serviço" disabled={interventions === undefined} value={undefined}>
                         {interventions?.map(item => (
@@ -134,7 +134,7 @@ const InterventionForm = (record: any) => {
                   name="location"
                   label="Localização"
                   rules={[{ required: true, message: 'Please choose the type' }]}
-                  initialValue={selectedIntervention === undefined? undefined : selectedIntervention?.us_id+''}
+                  initialValue={selectedIntervention === undefined? undefined : selectedIntervention?.us.id+''}
                 >
                   <Select placeholder="Select Localização">
                         {us?.map(item => (
@@ -148,7 +148,7 @@ const InterventionForm = (record: any) => {
                   name="dataBeneficio"
                   label="Data Benefício"
                   rules={[{ required: true, message: 'Please select an owner' }]}
-                  initialValue={selectedIntervention === undefined? undefined : moment(selectedIntervention?.date,'YYYY-MM-DD')}
+                  initialValue={selectedIntervention === undefined? undefined : moment(selectedIntervention?.id.date,'YYYY-MM-DD')}
                 >
                   <DatePicker style={{width: '100%'}} />
                   
