@@ -113,7 +113,7 @@ export default appSchema({
           {name: 'description', type: 'string'},
           {name: 'core_service', type: 'number'},
           {name: 'hidden', type: 'number'},
-          {name: 'service_type', type: 'number',isOptional: true},
+          {name: 'service_type', type: 'string',isOptional: true},
           {name: 'status', type: 'number'},
           {name: 'online_id', type: 'number',isOptional: true}
         ],
@@ -151,7 +151,7 @@ export default appSchema({
           {name: 'date', type: 'string'},
           {name: 'us_id', type: "number", isIndexed: true },
           {name: 'activist_id', type: "number", isIndexed: true },
-          {name: 'entry_point', type: 'number'},
+          {name: 'entry_point', type: 'string'},
           {name: 'provider', type: 'string'},
           {name: 'remarks', type: 'string', isOptional: true},
           {name: 'status', type: 'number'},
