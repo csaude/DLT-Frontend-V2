@@ -316,7 +316,7 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                                                 <Picker.Item label="-- Seleccione a Área do Serviço --" value="0" />
                                                 {
                                                     areaServicos.map(item => (
-                                                        <Picker.Item key={item.id} label={item.name} value={parseInt(item.id)} />
+                                                        <Picker.Item key={item.id} label={item.name} value={item.id} />
                                                     ))
                                                 }
                                             </Picker>
@@ -393,7 +393,7 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                                                 <Picker.Item label="-- Seleccione o ponto de Entrada --" value="" />
                                                 {
                                                     entry_points.map(item => (
-                                                        <Picker.Item key={item.id} label={item.name} value={parseInt(item.id)} />
+                                                        <Picker.Item key={item.id} label={item.name} value={item.id} />
                                                     ))
                                                 }
                                             </Picker>
