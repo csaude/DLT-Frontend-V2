@@ -38,7 +38,7 @@ export default function ViewBenefiaryPanel({record, beneficiary}){
                                 </Row>
                                 <Row gutter={8} >
                                     <Col className="gutter-row" span={12} style={{background:"#f3f4f5", fontWeight:"bold"}}>Data Benefício</Col>
-                                    <Col className="gutter-row" style={{background:"#f3f4f5"}} span={12}>{moment(record?.date).format('YYYY-MM-DD')}</Col>
+                                    <Col className="gutter-row" style={{background:"#f3f4f5"}} span={12}>{moment(record?.id.date).format('YYYY-MM-DD')}</Col>
                                 </Row>
                                 
                             </Card>

@@ -36,7 +36,7 @@ export interface SubServiceParams {
     };
     result: string;
     date: string;
-    us_id: string;
+    us: any;
     activistId: string;
     entryPoint: string;
     provider: string;
