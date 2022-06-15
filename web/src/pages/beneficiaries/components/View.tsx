@@ -16,8 +16,8 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
     const [visible, setVisible] = useState<boolean>(false);
     const [isAdd, setIsAdd] = useState<boolean>(false);
     const [selectedBeneficiary, setSelectedBeneficiary] = useState();
-    const [selectedIntervention, setSelectedIntervention] = useState();
-    const [interventions, setInterventions] = useState(beneficiary?.interventions);
+    const [selectedIntervention, setSelectedIntervention] = useState<any>();
+    const [interventions, setInterventions] = useState(beneficiary?.beneficiariesInterventionses);
 
     const [form] = Form.useForm();
 
@@ -34,7 +34,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
         setSelectedIntervention(undefined);
     };
 
-    const onEditIntervention = (record:any) => {
+    const onEditIntervention = (record: any) => {
         setVisible(true);
         setIsAdd(true);
         setSelectedIntervention(record);
@@ -45,30 +45,43 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
         setIsAdd(false);
     };
 
-    const onSubmit = async (value: any) => {
-
+    const onSubmit = async (intervention: any) => {
+       
         form.validateFields().then(async (values) => {
+            
             let payload: SubServiceParams = {
-                beneficiary: {
+                id: intervention?.id,
+                beneficiaries: {
                     id: '' + beneficiary.id
                 },
-                subService: {
+                subServices: {
                     id: values.subservice
                 },
                 result: "",
                 date: moment(values.dataBeneficio).format('YYYY-MM-DD'),
-                us_id: values.location,
+                us: { id: values.location},
                 activistId: "6",
                 entryPoint: values.entryPoint,
                 provider: values.provider,
                 remarks: values.outros,
                 status: "1",
-                createdBy: "6"
+                createdBy: "1"
             };
-            
-            const { data } = selectedIntervention===undefined? await addSubService(payload) : await updateSubService(payload);
 
-            setInterventions(interventions => [...interventions, data]);
+            const { data } = selectedIntervention === undefined ? await addSubService(payload) : await updateSubService(payload);
+            
+            if(selectedIntervention === undefined){
+                setInterventions(interventions => [...interventions, data]);
+            } else {
+                setInterventions(existingItems => {
+                    return existingItems.map((item, j) => {
+                      return    item.id.beneficiaryId === selectedIntervention.id.beneficiaryId && 
+                                item.id.subServiceId === selectedIntervention.id.subServiceId   &&
+                                item.id.date === selectedIntervention.id.date ?
+                                    data : item
+                    })
+                });
+            }
 
             message.success({
                 content: 'Registado com Sucesso!', className: 'custom-class',
@@ -96,21 +109,21 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
         [
             {
                 title: 'Data',
-                dataIndex: 'date',
+                dataIndex: '',
                 key: 'date',
-                render: (val: string) => <span>{moment(val).format('YYYY-MM-DD')}</span>,
+                render: (text, record) => <span>{moment(record.id.date).format('YYYY-MM-DD')}</span>,
             },
             {
                 title: 'Serviço',
                 dataIndex: '',
                 key: 'service',
-                render: (text, record) => record.subService.service.name,
+                render: (text, record) => record.subServices.service.name,
             },
             {
                 title: 'Intervenções',
                 dataIndex: '',
                 key: 'intervention',
-                render: (text, record) => record.subService.name,
+                render: (text, record) => record.subServices.name,
             },
             {
                 title: 'Ponto de Entrada',
@@ -123,12 +136,12 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
                 dataIndex: '',
                 key: 'x',
                 render: (text, record) => (
-                <Space>
-                    <Button type="primary" icon={<EyeOutlined />} onClick={()=>showDrawer(record)} >
-                    </Button>
-                    <Button type="primary" icon={<EditOutlined />} onClick={()=>onEditIntervention(record)} >
-                    </Button>
-                </Space>
+                    <Space>
+                        <Button type="primary" icon={<EyeOutlined />} onClick={() => showDrawer(record)} >
+                        </Button>
+                        <Button type="primary" icon={<EditOutlined />} onClick={() => onEditIntervention(record)} >
+                        </Button>
+                    </Space>
                 ),
             },
         ] : columns;
@@ -247,17 +260,17 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
                     extra={
                         <Space>
                             <Button onClick={onClose}>Cancel</Button>
-                            <Button htmlType="submit" onClick={onSubmit} type="primary">
+                            <Button htmlType="submit" onClick={() => onSubmit(selectedIntervention)} type="primary">
                                 Submit
                             </Button>
                         </Space>
                     }
                 >
-                {isAdd ? <Form form={form} layout="vertical" onFinish={onSubmit}> <InterventionForm record={selectedIntervention} /></Form> : 
-                    <ViewIntervention record={selectedBeneficiary} beneficiary={beneficiary} />
-                }   
-            </Drawer>
-        </div>
+                    {isAdd ? <Form form={form} layout="vertical" onFinish={() => onSubmit(selectedIntervention)}> <InterventionForm record={selectedIntervention} /></Form> :
+                        <ViewIntervention record={selectedBeneficiary} beneficiary={beneficiary} />
+                    }
+                </Drawer>
+            </div>
         </>
     );
 }

@@ -27,15 +27,16 @@ export async function querySubServiceByService(payload?: any){
 }
 
 export interface SubServiceParams {
-    beneficiary: {
+    id?:any;
+    beneficiaries: {
         id:string
     },
-    subService: {
+    subServices: {
         id:string
     };
     result: string;
     date: string;
-    us_id: string;
+    us: any;
     activistId: string;
     entryPoint: string;
     provider: string;
