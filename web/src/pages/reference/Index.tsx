@@ -8,7 +8,6 @@ import { SearchOutlined, PlusOutlined, EditOutlined, EyeOutlined } from '@ant-de
 import { getEntryPoint } from '@app/models/User';
 
 import { useNavigate } from 'react-router-dom';
-import { UserModel } from '../../models/User';
 
 const { Text } = Typography;
 
@@ -21,12 +20,10 @@ const ReferenceList: React.FC = () => {
     const [ reference, setReference] = useState();
     const [ modalVisible, setModalVisible] = useState<boolean>(false);
     const [ referenceModalVisible, setReferenceModalVisible] = useState<boolean>(false);
-
-    const [ users, setUsers ] = useState<UserModel[]>([]);
     
     const navigate = useNavigate();
 
-    let searchInput ;
+    let searchInput;
     useEffect(() => {
         const fetchData = async () => {
           const data = await query();
@@ -50,7 +47,7 @@ const ReferenceList: React.FC = () => {
             title: 'Organização Referente', 
             dataIndex: '', 
             key: 'type',
-            // render: (text, record)  => record.beneficiaries.neighborhood.locality.district.name,
+            render: (text, record)  => record.users.partners.name,
         },
         { 
             title: 'Referido em', 
@@ -77,7 +74,8 @@ const ReferenceList: React.FC = () => {
         { 
             title: 'Contacto', 
             dataIndex: '', 
-            key: ''
+            key: '',
+            render: (text, record)  => record.users.phoneNumber,
         },		
         { 
             title: 'Notificar ao', 
@@ -88,12 +86,14 @@ const ReferenceList: React.FC = () => {
         { 
             title: 'Ref. Para', 
             dataIndex: '', 
-            key: ''
+            key: '',
+            // render: (text, record)  => record.users.name,
         },		
         { 
             title: 'Organização Referida', 
             dataIndex: '', 
-            key: ''
+            key: '',
+            render: (text, record)  => record.users.partners.name,
         },	
         { 
             title: 'Ponto de Entrada para Referência', 
@@ -104,12 +104,24 @@ const ReferenceList: React.FC = () => {
             title: 'Estado', 
             dataIndex: 'statusRef', 
             key: 'statusRef',
+            filters: [
+                {
+                    text: 'Pendente',
+                    value: 0,
+                    },
+                    {
+                    text: 'Atendido',
+                    value: 1,
+                },
+            ],
+            onFilter: (value, record) => record.statusRef == value,
+            filterSearch: true,
             render: (text, record)  => 
                 (record.statusRef==0) ?
-                    "Pendente"
+                    <Text type="danger" >Pendente </Text>
                 :  
                 (record.statusRef==1) ?
-                    "Atendido"
+                    <Text type="success" >Atendido </Text>
                 : 
                     ""
         },
@@ -119,9 +131,9 @@ const ReferenceList: React.FC = () => {
             key: 'x',
             render: (text, record) => (
               <Space>
-                <Button type="primary" icon={<EyeOutlined />} onClick={() => navigate("/usersView", { state: { user: record } } )} >
+                <Button type="primary" icon={<EyeOutlined />} onClick={() => { record } } >
                 </Button>
-                <Button type="primary" icon={<EditOutlined />} onClick={() => navigate("/usersForm", { state: { user: record } } )} >
+                <Button type="primary" icon={<EditOutlined />} onClick={() => { record } } >
                 </Button>
               </Space>
             ),
