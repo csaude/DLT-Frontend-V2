@@ -1,63 +1,144 @@
-import { Card, Table, Button, Space } from 'antd';
-import { useNavigate } from 'react-router-dom';
 import React, { Fragment, useEffect, useState } from 'react';
-import { query } from '../../utils/users';
-import { UserModel } from '../../models/User';
+import { query } from '@app/utils/reference';
+import { Card, Table, Button, Space, Badge, Input, Typography, Form } from 'antd';
+import Highlighter from 'react-highlight-words';
+import 'antd/dist/antd.css';
+import moment from 'moment';
 import { SearchOutlined, PlusOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
+import { getEntryPoint } from '@app/models/User';
+
+import { useNavigate } from 'react-router-dom';
+
+const { Text } = Typography;
 
 const ReferenceList: React.FC = () => {
-    const [ users, setUsers ] = useState<UserModel[]>([]);
+
+    const [ form ] = Form.useForm();
+    const [ references, setReferences ] = useState<any[]>([]);
+    const [ searchText, setSearchText ] = useState('');
+    const [ searchedColumn, setSearchedColumn ] = useState('');
+    const [ reference, setReference] = useState();
+    const [ modalVisible, setModalVisible] = useState<boolean>(false);
+    const [ referenceModalVisible, setReferenceModalVisible] = useState<boolean>(false);
     
     const navigate = useNavigate();
 
+    let searchInput;
     useEffect(() => {
         const fetchData = async () => {
           const data = await query();
-          setUsers(data);
+
+          setReferences(data);
         } 
     
         fetchData().catch(error => console.log(error));
     
     }, []);
 
-    const columns = [
-        { title: 'Tipo de Utilizador', dataIndex: '', key: 'type', 
-            render: (text, record)  => record.profiles.description,
+    
+    const columnsRef = [
+        { 
+            title: 'Distrito', 
+            dataIndex: '', 
+            key: 'type',
+            render: (text, record)  => record.beneficiaries.neighborhood.locality.district.name,
         },
-        { title: 'Estado de Utilizador', dataIndex: 'status', key: 'status'},
-        { title: 'Username', dataIndex: 'username', key: 'username'},
-        { title: 'Nome de Utilizador', dataIndex: 'name', key: 'name'},
-        { title: 'Ponto de Entrada', dataIndex: '', key: 'type', 
+        { 
+            title: 'Organização Referente', 
+            dataIndex: '', 
+            key: 'type',
+            render: (text, record)  => record.users.partners.name,
+        },
+        { 
+            title: 'Referido em', 
+            dataIndex: 'dateCreated', 
+            key: 'dateCreated',
+            render: (val: string) => <span>{moment(val).format('YYYY-MM-DD')}</span>,
+        },
+        { 
+            title: 'Nota Referência', 
+            dataIndex: 'referenceNote', 
+            key: 'referenceNote'
+        }, 
+        { 
+            title: 'Código do Beneficiário', 
+            dataIndex: '', 
+            key: '',
+            render: (text, record)  => record.beneficiaries.nui,
+        },	
+        { 
+            title: 'Referente', 
+            dataIndex: 'createdBy', 
+            key: 'createdBy'
+        },		
+        { 
+            title: 'Contacto', 
+            dataIndex: '', 
+            key: '',
+            render: (text, record)  => record.users.phoneNumber,
+        },		
+        { 
+            title: 'Notificar ao', 
+            dataIndex: '', 
+            key: '',
+            render: (text, record)  => record.users.name,
+        },		
+        { 
+            title: 'Ref. Para', 
+            dataIndex: '', 
+            key: '',
+            // render: (text, record)  => record.users.name,
+        },		
+        { 
+            title: 'Organização Referida', 
+            dataIndex: '', 
+            key: '',
+            render: (text, record)  => record.users.partners.name,
+        },	
+        { 
+            title: 'Ponto de Entrada para Referência', 
+            dataIndex: '', 
+            key: ''
+        },	
+        { 
+            title: 'Estado', 
+            dataIndex: 'statusRef', 
+            key: 'statusRef',
+            filters: [
+                {
+                    text: 'Pendente',
+                    value: 0,
+                    },
+                    {
+                    text: 'Atendido',
+                    value: 1,
+                },
+            ],
+            onFilter: (value, record) => record.statusRef == value,
+            filterSearch: true,
             render: (text, record)  => 
-                (record.entryPoint==="1") ?
-                    "Unidade Sanitaria"
+                (record.statusRef==0) ?
+                    <Text type="danger" >Pendente </Text>
+                :  
+                (record.statusRef==1) ?
+                    <Text type="success" >Atendido </Text>
                 : 
-                (record.entryPoint==="2") ? 
-                    "Escola"
-                : 
-                    "Comunidade"                                            
-            
+                    ""
         },
-        { title: 'Parceiro', dataIndex: '', key: 'type', 
-            render: (text, record)  => record.partners?.name,
-        },
-        { title: 'Email', dataIndex: 'email', key: 'email'},
-        { title: 'Telefone', dataIndex: 'phoneNumber', key: 'phoneNumber'},
         {
             title: 'Action',
             dataIndex: '',
             key: 'x',
             render: (text, record) => (
               <Space>
-                <Button type="primary" icon={<EyeOutlined />} onClick={() => navigate("/usersView", { state: { user: record } } )} >
+                <Button type="primary" icon={<EyeOutlined />} onClick={() => { record } } >
                 </Button>
-                <Button type="primary" icon={<EditOutlined />} onClick={() => navigate("/usersForm", { state: { user: record } } )} >
+                <Button type="primary" icon={<EditOutlined />} onClick={() => { record } } >
                 </Button>
               </Space>
             ),
         },
     ];
-
     
     return (
         <>
@@ -67,8 +148,8 @@ const ReferenceList: React.FC = () => {
             <Card title="Lista de Referências e Contra-Referências" bordered={false} headStyle={{color:"#17a2b8"}}>
                 <Table
                     rowKey="id"
-                    columns={columns}
-                    dataSource={users}
+                    columns={columnsRef}
+                    dataSource={references}
                     bordered
                 />
             </Card>
