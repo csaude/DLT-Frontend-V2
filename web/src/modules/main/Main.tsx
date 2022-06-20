@@ -30,9 +30,11 @@ const Main = () => {
   const fetchProfile = async () => {
     try {
       const email = await localStorage.getItem('userEmail');
+      const role = await localStorage.getItem('userRole');
       //const response = await Gatekeeper.getProfile();
       const response = {
         email: email,
+        role: role,
         picture: null
       }
       dispatch(loadUser(response));

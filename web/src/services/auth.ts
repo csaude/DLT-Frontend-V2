@@ -7,6 +7,7 @@ export const loginByAuth = async (email: string, password: string) => {
   const { status, data } = response;
   localStorage.setItem('token', data.token);
   localStorage.setItem('userEmail', data.account.email);
+  localStorage.setItem('userRole', data.account?.profiles.name)
   removeWindowClass('login-page');
   removeWindowClass('hold-transition');
   return data;
