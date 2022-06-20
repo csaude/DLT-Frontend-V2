@@ -1,4 +1,4 @@
-import { Card, Table, Button, Space } from 'antd';
+import { Card, Table, Button, Space, Badge } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import React, { Fragment, useEffect, useState } from 'react';
 import { query } from '../../utils/users';
@@ -24,7 +24,18 @@ const UsersList: React.FC = () => {
         { title: 'Tipo de Utilizador', dataIndex: '', key: 'type', 
             render: (text, record)  => record.profiles.description,
         },
-        { title: 'Estado de Utilizador', dataIndex: 'status', key: 'status'},
+        { title: 'Estado de Utilizador', dataIndex: '', key: 'status',
+            render: (text, record) => (
+            
+                <Badge
+                    className="site-badge-count-109"
+                    count={record.status == 1 ? 'activo' : 'Inactivo'}
+                    style={ record.status == 1 ? {backgroundColor: '#52c41a'} :
+                                                {backgroundColor: '#f5222d'}
+                }
+                /> 
+            ),
+        },
         { title: 'Username', dataIndex: 'username', key: 'username'},
         { title: 'Nome de Utilizador', dataIndex: 'name', key: 'name'},
         { title: 'Ponto de Entrada', dataIndex: '', key: 'type', 
