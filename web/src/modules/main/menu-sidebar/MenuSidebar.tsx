@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import {Link} from 'react-router-dom';
 import {MenuItem} from '@components';
@@ -14,39 +14,65 @@ const StyledUserImage = styled.img`
 export interface IMenuItem {
   name: string;
   path?: string;
+  role?: string;
+  icon?: string;
   children?: Array<IMenuItem>;
 }
 
 export const MENU: IMenuItem[] = [
   {
     name: 'menusidebar.label.beneficiariesList',
-    path: '/beneficiariesList'
+    path: '/beneficiariesList',
+    icon: 'fas fa-users', // icon set: https://fontawesome.com/v5/search
+    role: 'ADMIN'
   },
   {
     name: 'menusidebar.label.referenceList',
-    path: '/referenceList'
+    path: '/referenceList',
+    icon: 'fas fa-sync',
+    role: 'ADMIN'
   },
   {
     name: 'menusidebar.label.users',
+    role: 'ADMIN',
+    icon: 'fas fa-user',
     children: [
       {
         name: 'menusidebar.label.usersList',
-        path: '/usersList'
+        path: '/usersList',
+        role: 'ADMIN',
       },
 
       {
         name: 'menusidebar.label.usersForm',
-        path: '/usersForm'
+        path: '/usersForm',
+        role: 'ADMIN',
       }
     ]
-  }
+  },
+  {
+    name: 'menusidebar.label.reports',
+    path: '#',
+    icon: 'fas fa-file-alt',
+    role: 'ADMIN'
+  },
+  {
+    name: 'menusidebar.label.configurations',
+    path: '#',
+    icon: 'fas fa-cog',
+    role: 'ADMIN'
+  },
 ];
+
+
+
 
 const MenuSidebar = () => {
   const user = useSelector((state: any) => state.auth.currentUser);
   const sidebarSkin = useSelector((state: any) => state.ui.sidebarSkin);
   const menuItemFlat = useSelector((state: any) => state.ui.menuItemFlat);
   const menuChildIndent = useSelector((state: any) => state.ui.menuChildIndent);
+
 
   return (
     <aside className={`main-sidebar elevation-4 ${sidebarSkin}`}>
@@ -67,9 +93,11 @@ const MenuSidebar = () => {
             }${menuChildIndent ? ' nav-child-indent' : ''}`}
             role="menu"
           >
-            {MENU.map((menuItem: IMenuItem) => (
-              <MenuItem key={menuItem.name} menuItem={menuItem} />
-            ))}
+            {
+              MENU.map((menuItem: IMenuItem) => (
+                menuItem.role == user.role ? <MenuItem key={menuItem.name} menuItem={menuItem} /> : undefined
+              ))
+            }
           </ul>
         </nav>
       </div>
