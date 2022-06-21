@@ -81,10 +81,12 @@
       "mainMenu": "Main Menu",
       "subMenu": "Sub Menu",
       "beneficiariesList": "Beneficiarios",
+      "configurations": "Configurações",
       "users": "Utilizadores",
       "usersList": "Lista",
       "usersForm": "Registar",
-      "referenceList": "Referências"
+      "referenceList": "Referências",
+      "reports": "Relatórios DREAMS"
     }
   },
   "footer": {
