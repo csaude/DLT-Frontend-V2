@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom';
 import {toast} from 'react-toastify';
 import {useTranslation} from 'react-i18next';
 import {Button} from '@components';
-import {faEnvelope, faEye, faEyeSlash, faLock} from '@fortawesome/free-solid-svg-icons';
+import {faEnvelope, faEye, faEyeSlash, faLock, faUser} from '@fortawesome/free-solid-svg-icons';
 import {setWindowClass} from '@app/utils/helpers';
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
@@ -19,17 +19,21 @@ const ForgotPassword = () => {
   const {handleChange, values, handleSubmit, touched, errors} = useFormik({
     initialValues: {
       email: '',
+      username: '',
       password: '',
       rePassword: ''
     },    
     validationSchema: Yup.object({
       email: Yup.string().email('Endereço de email inválido').required('Obrigatório'),
+      username: Yup.string()
+        .min(5, 'Deve conter 5 caracter ou mais')
+        .required('Obrigatório'),
       password: Yup.string()
         .required('Obrigatório')
-        .max(25, 'Deve conter 25 caracter ou menos')
+        .max(25, 'Deve conter 25 caracteres ou menos')
         .matches(/(?=.*\d)/,'Deve conter número')
         .matches(/(?=.*[a-z])/,'Deve conter minúscula')
-        .matches(/(?=.*[A-Z])/, 'Deve conter Maiúsculas')
+        .matches(/(?=.*[A-Z])/, 'Deve conter Maiúscula')
         .matches(/(?=.*[@$!%*#?&])/,'Deve conter caracter especial')
         .min(8, 'Deve conter 8 caracter ou mais'),
       rePassword: Yup.string()
@@ -76,23 +80,23 @@ const ForgotPassword = () => {
             <div className="mb-3">
               <InputGroup className="mb-3">
                 <Form.Control
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="Email"
+                  id="username"
+                  name="username"
+                  type=""
+                  placeholder="Username"
                   onChange={handleChange}
-                  value={values.email}
-                  isValid={touched.email && !errors.email}
-                  isInvalid={touched.email && !!errors.email}
+                  value={values.username}
+                  isValid={touched.username && !errors.username}
+                  isInvalid={touched.username && !!errors.username}
                 />
-                {touched.email && errors.email ? (
+                {touched.username && errors.username ? (
                   <Form.Control.Feedback type="invalid">
-                    {errors.email}
+                    {errors.username}
                   </Form.Control.Feedback>
                 ) : (
                   <InputGroup.Append>
                     <InputGroup.Text>
-                      <FontAwesomeIcon icon={faEnvelope} />
+                      <FontAwesomeIcon icon={faUser} />
                       {/* <i onClick={clickHandler} class={showPass ? 'fas fa-eye-slash' : 'fas fa-eye'}></i> */}
                     </InputGroup.Text>
                   </InputGroup.Append>
