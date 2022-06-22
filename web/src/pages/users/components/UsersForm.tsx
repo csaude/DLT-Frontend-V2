@@ -9,13 +9,13 @@ const FormItem = Form.Item;
 const { Option } = Select;
 const { TextArea } = Input;
 
-const UsersForm = ({form, user, modalVisible, handleModalVisible}) => {
-    const [ partners, setPartners ] = useState<any>([]);
-    const [ profiles, setProfiles ] = useState<any>([]);
-    const [ us, setUs ] = useState<any>([]);
-    const [ provinces, setProvinces ] = useState<any>([]);
-    const [ districts, setDistricts ] = useState<any>(undefined);
-    const [ localities, setLocalities ] = useState<any>(undefined);
+const UsersForm = ({ form, user, modalVisible, handleModalVisible }) => {
+    const [partners, setPartners] = useState<any>([]);
+    const [profiles, setProfiles] = useState<any>([]);
+    const [us, setUs] = useState<any>([]);
+    const [provinces, setProvinces] = useState<any>([]);
+    const [districts, setDistricts] = useState<any>(undefined);
+    const [localities, setLocalities] = useState<any>(undefined);
 
     const RequiredFieldMessage = "Campo é Obrigatório!";
     const okHandle = () => {
@@ -24,18 +24,18 @@ const UsersForm = ({form, user, modalVisible, handleModalVisible}) => {
 
     const formItemLayout = {
         labelCol: {
-          xs: { span: 24 },
-          sm: { span: 6 },
+            xs: { span: 24 },
+            sm: { span: 6 },
         },
         wrapperCol: {
-          xs: { span: 24 },
-          sm: { span: 16 },
+            xs: { span: 24 },
+            sm: { span: 16 },
         },
     };
 
     useEffect(() => {
         const fetchData = async () => {
-            
+
             const dataPartners = await allPartners();
             const dataProfiles = await allProfiles();
             const dataUs = await allUs();
@@ -52,14 +52,14 @@ const UsersForm = ({form, user, modalVisible, handleModalVisible}) => {
 
     }, []);
 
-    const onChangeProvinces = async (values:any) => {
-       // console.log(values); // ['1','5']
-        const dataDistricts = await queryDistrictsByProvinces({provinces: values});
+    const onChangeProvinces = async (values: any) => {
+        // console.log(values); // ['1','5']
+        const dataDistricts = await queryDistrictsByProvinces({ provinces: values });
         setDistricts(dataDistricts);
     }
 
-    const onChangeDistricts = async (values:any) => {
-        const dataLocalities = await queryLocalitiesByDistricts({districts: values});
+    const onChangeDistricts = async (values: any) => {
+        const dataLocalities = await queryLocalitiesByDistricts({ districts: values });
         setLocalities(dataLocalities);
     }
 
@@ -162,7 +162,7 @@ const UsersForm = ({form, user, modalVisible, handleModalVisible}) => {
                             <Select placeholder="Seleccione o Ponto de Entrada" >
                                 <Option key="1">{"Unidade Sanitaria"}</Option>
                                 <Option key="2">{"Escola"}</Option>
-                                <Option key="3">{"Comunidade"}</Option>        
+                                <Option key="3">{"Comunidade"}</Option>
                             </Select>
                         </Form.Item>
                     </Col>
@@ -187,7 +187,7 @@ const UsersForm = ({form, user, modalVisible, handleModalVisible}) => {
                             name="provinces"
                             label="Provincias"
                             rules={[{ required: true, message: RequiredFieldMessage }]}
-                           // initialValue={user?.profiles.id}
+                        // initialValue={user?.profiles.id}
                         >
                             <Select mode="multiple" placeholder="Seleccione Provincias"
                                 onChange={onChangeProvinces}
@@ -203,9 +203,9 @@ const UsersForm = ({form, user, modalVisible, handleModalVisible}) => {
                             name="districts"
                             label="Distritos"
                             rules={[{ required: true, message: RequiredFieldMessage }]}
-                           // initialValue={user?.profiles.id}
+                        // initialValue={user?.profiles.id}
                         >
-                            <Select mode="multiple" placeholder="Seleccione Distritos" disabled={districts==undefined}
+                            <Select mode="multiple" placeholder="Seleccione Distritos" disabled={districts == undefined}
                                 onChange={onChangeDistricts}
                             >
                                 {districts?.map(item => (
@@ -219,21 +219,49 @@ const UsersForm = ({form, user, modalVisible, handleModalVisible}) => {
                             name="localities"
                             label="Localidades"
                             rules={[{ required: true, message: RequiredFieldMessage }]}
-                           // initialValue={user?.profiles.id}
+                        // initialValue={user?.profiles.id}
                         >
                             <Select mode="multiple" placeholder="Seleccione Provincias"
-                                    disabled={localities==undefined}>
+                                disabled={localities == undefined}>
                                 {localities?.map(item => (
                                     <Option key={item.id}>{item.name}</Option>
                                 ))}
                             </Select>
                         </Form.Item>
                     </Col>
-                    
                 </Row>
-                
+                <Row gutter={8}>
+                    <Col span={8}>
+                        <Form.Item
+                            name="profiles"
+                            label="Perfil"
+                            rules={[{ required: true, message: RequiredFieldMessage }]}
+                            initialValue={user?.profiles.id}
+                        >
+                            <Select placeholder="Select Perfil">
+                                {profiles?.map(item => (
+                                    <Option key={item.id}>{item.name}</Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col span={8}>
+                        <Form.Item
+                            name="status"
+                            label="Estado"
+                            rules={[{ required: true, message: RequiredFieldMessage }]}
+                            style={{ textAlign: 'left' }}
+                        >
+                            <Radio.Group defaultValue="1" buttonStyle="solid">
+                                <Radio.Button value="1">Activo</Radio.Button>
+                                <Radio.Button value="0">Inactivo</Radio.Button>
+                            </Radio.Group>
+                        </Form.Item>
+                    </Col>
+                </Row>
+
             </Form>
-            
+
         </Modal>
     );
 }
