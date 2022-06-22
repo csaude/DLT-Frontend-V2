@@ -1,12 +1,17 @@
-import { Card, Table, Button, Space } from 'antd';
+import { Card, Table, Button, Space, Badge, Form } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import React, { Fragment, useEffect, useState } from 'react';
 import { query } from '../../utils/users';
 import { UserModel } from '../../models/User';
 import { SearchOutlined, PlusOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
+import UsersForm from './components/UsersForm';
+
 
 const UsersList: React.FC = () => {
     const [ users, setUsers ] = useState<UserModel[]>([]);
+    const [ usersModalVisible, setUsersModalVisible] = useState<boolean>(false);
+    const [ selectedUser, setSelectedUser] = useState(undefined);
+    const [form] = Form.useForm();
     
     const navigate = useNavigate();
 
@@ -20,11 +25,26 @@ const UsersList: React.FC = () => {
     
     }, []);
 
+    const handleUsersModalVisible = (flag?: boolean) => {
+        setUsersModalVisible(!!flag);
+    };
+
     const columns = [
         { title: 'Tipo de Utilizador', dataIndex: '', key: 'type', 
             render: (text, record)  => record.profiles.description,
         },
-        { title: 'Estado de Utilizador', dataIndex: 'status', key: 'status'},
+        { title: 'Estado de Utilizador', dataIndex: '', key: 'status',
+            render: (text, record) => (
+            
+                <Badge
+                    className="site-badge-count-109"
+                    count={record.status == 1 ? 'activo' : 'Inactivo'}
+                    style={ record.status == 1 ? {backgroundColor: '#52c41a'} :
+                                                {backgroundColor: '#f5222d'}
+                }
+                /> 
+            ),
+        },
         { title: 'Username', dataIndex: 'username', key: 'username'},
         { title: 'Nome de Utilizador', dataIndex: 'name', key: 'name'},
         { title: 'Ponto de Entrada', dataIndex: '', key: 'type', 
@@ -67,7 +87,7 @@ const UsersList: React.FC = () => {
             <Card title="Lista de Utilizadores" bordered={false} headStyle={{color:"#17a2b8"}}
                 extra={
                     <Space>
-                      <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate("/usersForm")}>
+                      <Button type="primary" icon={<PlusOutlined />} onClick={()=>handleUsersModalVisible(true)}>
                         Adicionar Utilizador
                       </Button>
                     </Space>
@@ -80,6 +100,7 @@ const UsersList: React.FC = () => {
                     bordered
                 />
             </Card>
+            <UsersForm form={form} user={selectedUser} modalVisible={usersModalVisible} handleModalVisible={handleUsersModalVisible} />
         </>
     );
 }
