@@ -40,10 +40,29 @@ export async function queryDistrictsByProvinces(payload?: DistrictFilter){
      const param = provs?.join('&');
 
     if(param) {
-        console.log(param);
         url = '/api/provdisctricts?'.concat(param);
     } else {
         url = '/api/provdisctricts';
+    }
+    const res = await select(url);
+    return res;
+}
+
+interface LocalitiesFilter{
+    districts: string[];
+}
+export async function queryLocalitiesByDistricts(payload?: LocalitiesFilter){
+    let url: string;
+
+    let dists = payload?.districts.map((v)=>{
+        return `districts=${v}`
+    });
+     const param = dists?.join('&');
+
+    if(param) {
+        url = '/api/distlocalities?'.concat(param);
+    } else {
+        url = '/api/distlocalities';
     }
     const res = await select(url);
     return res;

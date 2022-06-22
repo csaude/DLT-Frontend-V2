@@ -3,7 +3,7 @@ import React, { Fragment, useEffect, useState } from 'react'
 import { allPartners } from '@app/utils/partners';
 import { allProfiles } from '@app/utils/profiles';
 import { allUs } from '@app/utils/uSanitaria';
-import { allProvinces, queryDistrictsByProvinces } from '@app/utils/locality';
+import { allProvinces, queryDistrictsByProvinces, queryLocalitiesByDistricts } from '@app/utils/locality';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -53,10 +53,14 @@ const UsersForm = ({form, user, modalVisible, handleModalVisible}) => {
     }, []);
 
     const onChangeProvinces = async (values:any) => {
-        console.log(values); // ['1','5']
+       // console.log(values); // ['1','5']
         const dataDistricts = await queryDistrictsByProvinces({provinces: values});
-        console.log(dataDistricts);
         setDistricts(dataDistricts);
+    }
+
+    const onChangeDistricts = async (values:any) => {
+        const dataLocalities = await queryLocalitiesByDistricts({districts: values});
+        setLocalities(dataLocalities);
     }
 
     return (
@@ -201,7 +205,9 @@ const UsersForm = ({form, user, modalVisible, handleModalVisible}) => {
                             rules={[{ required: true, message: RequiredFieldMessage }]}
                            // initialValue={user?.profiles.id}
                         >
-                            <Select mode="multiple" placeholder="Seleccione Distritos" disabled={districts==undefined}>
+                            <Select mode="multiple" placeholder="Seleccione Distritos" disabled={districts==undefined}
+                                onChange={onChangeDistricts}
+                            >
                                 {districts?.map(item => (
                                     <Option key={item.id}>{item.name}</Option>
                                 ))}
@@ -217,7 +223,7 @@ const UsersForm = ({form, user, modalVisible, handleModalVisible}) => {
                         >
                             <Select mode="multiple" placeholder="Seleccione Provincias"
                                     disabled={localities==undefined}>
-                                {provinces?.map(item => (
+                                {localities?.map(item => (
                                     <Option key={item.id}>{item.name}</Option>
                                 ))}
                             </Select>
