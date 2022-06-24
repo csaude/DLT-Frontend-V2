@@ -22,12 +22,12 @@ interface UserParams {
     description: string;
     active: boolean;
 }
-export async function add(payload: UserParams) {
+export async function add(payload: any) {
     const res = await create('/api/users', payload);
     return res;
 }
   
-export async function edit(payload: UserParams) {
+export async function edit(payload: any) {
     const res = await update('/api/users/', payload);
     return res;
 }

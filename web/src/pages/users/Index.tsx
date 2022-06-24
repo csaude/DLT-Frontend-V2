@@ -1,10 +1,11 @@
-import { Card, Table, Button, Space, Badge, Form } from 'antd';
+import { Card, Table, message, Button, Space, Badge, Form } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import React, { Fragment, useEffect, useState } from 'react';
 import { query } from '../../utils/users';
 import { UserModel } from '../../models/User';
 import { SearchOutlined, PlusOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
 import UsersForm from './components/UsersForm';
+import { add, edit } from '@app/utils/users';
 
 
 const UsersList: React.FC = () => {
@@ -28,6 +29,55 @@ const UsersList: React.FC = () => {
     const handleUsersModalVisible = (flag?: boolean) => {
         setUsersModalVisible(!!flag);
     };
+
+    const handleAdd = () => {
+        form.validateFields().then(async (values) => {
+            
+            const user: any = {};
+
+            user.surname = values.surname;
+            user.name = values.name;
+            user.phoneNumber = values.phoneNumber;
+            user.phoneNumber2 = values.phoneNumber2;
+            user.email = values.email;
+            user.username = values.username;
+            user.entryPoint = values.entryPoint;
+            user.status = values.status;
+            user.partners = { "id": values.partners };
+            user.profiles = { "id": values.profiles };
+            user.us = { "id": values.us };
+            user.provinces = values.provinces.map(item => (
+                { "id": item }
+            ));
+            user.districts = values.districts.map(item => (
+                { "id": item }
+            ));
+            user.localities = values.localities.map(item => (
+                { "id": item }
+            ));
+
+            const account =  await add(user);
+            console.log(account);
+
+            message.success({
+                content: 'Registado com Sucesso!', className: 'custom-class',
+                style: {
+                    marginTop: '10vh',
+                }
+            });
+
+        })
+        .catch(error => {
+            message.error({
+                content: 'Não foi possivel Registrar Utilizador!', className: 'custom-class',
+                style: {
+                    marginTop: '10vh',
+                }
+            });
+        });
+
+        handleUsersModalVisible(false);
+    }
 
     const columns = [
         { title: 'Tipo de Utilizador', dataIndex: '', key: 'type', 
@@ -100,7 +150,7 @@ const UsersList: React.FC = () => {
                     bordered
                 />
             </Card>
-            <UsersForm form={form} user={selectedUser} modalVisible={usersModalVisible} handleModalVisible={handleUsersModalVisible} />
+            <UsersForm form={form} user={selectedUser} modalVisible={usersModalVisible} handleModalVisible={handleUsersModalVisible} handleAdd={handleAdd}/>
         </>
     );
 }

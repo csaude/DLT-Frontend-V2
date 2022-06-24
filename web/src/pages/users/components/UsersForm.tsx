@@ -1,4 +1,4 @@
-import { Modal, Form, Input, Select, Button, Col, Row, DatePicker, Space, Radio } from 'antd';
+import { Modal, message, Form, Input, Select, Button, Col, Row, DatePicker, Space, Radio, Divider, Checkbox } from 'antd';
 import React, { Fragment, useEffect, useState } from 'react'
 import { allPartners } from '@app/utils/partners';
 import { allProfiles } from '@app/utils/profiles';
@@ -9,18 +9,17 @@ const FormItem = Form.Item;
 const { Option } = Select;
 const { TextArea } = Input;
 
-const UsersForm = ({ form, user, modalVisible, handleModalVisible }) => {
+const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) => {
     const [partners, setPartners] = useState<any>([]);
     const [profiles, setProfiles] = useState<any>([]);
     const [us, setUs] = useState<any>([]);
     const [provinces, setProvinces] = useState<any>([]);
     const [districts, setDistricts] = useState<any>(undefined);
     const [localities, setLocalities] = useState<any>(undefined);
+    const [isDistrictRequired, setIsDistrictRequired] = useState<any>(true);
+    const [isLocalitiesRequired, setIsLocalitiesRequired] = useState<any>(true);
 
     const RequiredFieldMessage = "Campo é Obrigatório!";
-    const okHandle = () => {
-        //handleAdd("test");
-    }
 
     const formItemLayout = {
         labelCol: {
@@ -52,15 +51,27 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible }) => {
 
     }, []);
 
+    const onCheckDistrict = (e) => {
+        setIsDistrictRequired(!e.target.checked);
+    }
+    const onCheckLocalities = (e) => {
+        setIsLocalitiesRequired(!e.target.checked);
+    }
+
     const onChangeProvinces = async (values: any) => {
-        // console.log(values); // ['1','5']
+         //console.log(values); // ['1','5']
+        if(values.length > 0){
         const dataDistricts = await queryDistrictsByProvinces({ provinces: values });
         setDistricts(dataDistricts);
+        }
     }
 
     const onChangeDistricts = async (values: any) => {
-        const dataLocalities = await queryLocalitiesByDistricts({ districts: values });
-        setLocalities(dataLocalities);
+        if(values.length > 0){
+            const dataLocalities = await queryLocalitiesByDistricts({ districts: values });
+            setLocalities(dataLocalities);
+        }
+        
     }
 
     return (
@@ -70,7 +81,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible }) => {
             destroyOnClose
             title='Dados de Registo do Utilizador'
             visible={modalVisible}
-            onOk={okHandle}
+            onOk={handleAdd}
             onCancel={() => handleModalVisible()}
         >
             <Form form={form} layout="vertical">
@@ -202,31 +213,38 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible }) => {
                         <Form.Item
                             name="districts"
                             label="Distritos"
-                            rules={[{ required: true, message: RequiredFieldMessage }]}
+                            rules={[{ required: isDistrictRequired, message: RequiredFieldMessage }]}
+                            
                         // initialValue={user?.profiles.id}
                         >
-                            <Select mode="multiple" placeholder="Seleccione Distritos" disabled={districts == undefined}
+                            <Select mode="multiple" 
+                                placeholder="Seleccione Distritos" 
+                                disabled={districts == undefined}
                                 onChange={onChangeDistricts}
                             >
                                 {districts?.map(item => (
                                     <Option key={item.id}>{item.name}</Option>
                                 ))}
                             </Select>
+                            <Checkbox onChange={onCheckDistrict} ><span style={{color:'#008d4c', fontWeight:'normal'}}>Indefinido (Não Associar)</span></Checkbox>
                         </Form.Item>
                     </Col>
                     <Col span={8}>
                         <Form.Item
                             name="localities"
                             label="Localidades"
-                            rules={[{ required: true, message: RequiredFieldMessage }]}
+                            rules={[{ required: isLocalitiesRequired, message: RequiredFieldMessage }]}
                         // initialValue={user?.profiles.id}
                         >
-                            <Select mode="multiple" placeholder="Seleccione Provincias"
-                                disabled={localities == undefined}>
+                            <Select mode="multiple"
+                                placeholder="Seleccione Provincias"
+                                disabled={localities == undefined}
+                                >
                                 {localities?.map(item => (
                                     <Option key={item.id}>{item.name}</Option>
                                 ))}
                             </Select>
+                            <Checkbox onChange={onCheckLocalities} ><span style={{color:'#008d4c', fontWeight:'normal'}}>Indefinido (Não Associar)</span></Checkbox>
                         </Form.Item>
                     </Col>
                 </Row>
@@ -251,8 +269,9 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible }) => {
                             label="Estado"
                             rules={[{ required: true, message: RequiredFieldMessage }]}
                             style={{ textAlign: 'left' }}
+                            initialValue='1'
                         >
-                            <Radio.Group defaultValue="1" buttonStyle="solid">
+                            <Radio.Group buttonStyle="solid">
                                 <Radio.Button value="1">Activo</Radio.Button>
                                 <Radio.Button value="0">Inactivo</Radio.Button>
                             </Radio.Group>
