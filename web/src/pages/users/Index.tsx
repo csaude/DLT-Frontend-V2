@@ -56,18 +56,18 @@ const UsersList: React.FC = () => {
                 { "id": item }
             ));
 
-            const account =  await add(user);
-            console.log(account);
+            const { data } =  await add(user);
 
+            setUsers(users => [...users, data]);
+
+            handleUsersModalVisible(false);
+            
             message.success({
                 content: 'Registado com Sucesso!', className: 'custom-class',
                 style: {
                     marginTop: '10vh',
                 }
             });
-
-            handleUsersModalVisible(false);
-
         })
         .catch(error => {
             message.error({

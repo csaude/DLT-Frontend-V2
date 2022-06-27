@@ -125,6 +125,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                             name="phoneNumber"
                             label="Numero de Telemóvel"
                             initialValue={user?.phoneNumber}
+                            rules={[{ required: true, message: RequiredFieldMessage }]}
                         >
                             <Input placeholder="Insira o Telemóvel" />
                         </Form.Item>
