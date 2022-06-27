@@ -146,7 +146,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                             name="partners"
                             label="Parceiro"
                             rules={[{ required: true, message: RequiredFieldMessage }]}
-                            initialValue={user?.partners.id}
+                            initialValue={user?.partners.id + ''}
                         >
                             <Select placeholder="Select Parceiro">
                                 {partners?.map(item => (
@@ -174,7 +174,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                             name="us"
                             label="US"
                             rules={[{ required: true, message: RequiredFieldMessage }]}
-                            initialValue={user?.us.id}
+                            initialValue={user?.us.id + ''}
                         >
                             <Select placeholder="Select US">
                                 {us?.map(item => (

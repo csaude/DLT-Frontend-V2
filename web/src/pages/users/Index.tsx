@@ -1,5 +1,4 @@
 import { Card, Table, message, Button, Space, Badge, Form } from 'antd';
-import { useNavigate } from 'react-router-dom';
 import React, { Fragment, useEffect, useState } from 'react';
 import { query } from '../../utils/users';
 import { UserModel } from '../../models/User';
@@ -13,8 +12,6 @@ const UsersList: React.FC = () => {
     const [usersModalVisible, setUsersModalVisible] = useState<boolean>(false);
     const [selectedUser, setSelectedUser] = useState<any>(undefined);
     const [form] = Form.useForm();
-
-    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -152,7 +149,6 @@ const UsersList: React.FC = () => {
             ),
         },
     ];
-
 
     return (
         <>
