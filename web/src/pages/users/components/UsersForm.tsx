@@ -43,11 +43,34 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
             setProvinces(dataProvinces);
             //setlocalityList(dataLocality);
             setUs(dataUs);
-        }
+        };
+
+        const fetchDistricts = async () => {
+            if (user && user.provinces.length > 0) {
+                const pIds = user.provinces.map(item => {
+                    return item.id + ''
+                });
+                const dataDistricts = await queryDistrictsByProvinces({ provinces: pIds });
+                setDistricts(dataDistricts);
+            }
+        };
+
+        const fetchLocalities = async () => {
+            if (user && user.districts.length > 0) {
+                const dIds = user.districts.map(item => {
+                    return item.id + ''
+                });
+                const dataLocalities = await queryLocalitiesByDistricts({ districts: dIds });
+                setLocalities(dataLocalities);
+            }
+        };
+
 
         fetchData().catch(error => console.log(error));
+        fetchDistricts().catch(error => console.log(error));
+        fetchLocalities().catch(error => console.log(error));
 
-    }, []);
+    }, [user]);
 
     const onChangeProvinces = async (values: any) => {
         //console.log(values); // ['1','5']
@@ -190,7 +213,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                             name="provinces"
                             label="Provincias"
                             rules={[{ required: true, message: RequiredFieldMessage }]}
-                        // initialValue={user?.profiles.id}
+                            initialValue={user?.provinces.map(item => { return item.id + '' })}
                         >
                             <Select mode="multiple" placeholder="Seleccione Provincias"
                                 onChange={onChangeProvinces}
@@ -205,8 +228,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                         <Form.Item
                             name="districts"
                             label="Distritos"
-
-                        // initialValue={user?.profiles.id}
+                            initialValue={user?.districts.map(item => { return item.id + '' })}
                         >
                             <Select mode="multiple"
                                 placeholder="Seleccione Distritos"
@@ -223,7 +245,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                         <Form.Item
                             name="localities"
                             label="Localidades"
-                        // initialValue={user?.profiles.id}
+                            initialValue={user?.localities.map(item => { return item.id + '' })}
                         >
                             <Select mode="multiple"
                                 placeholder="Seleccione Provincias"
@@ -242,7 +264,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                             name="profiles"
                             label="Perfil"
                             rules={[{ required: true, message: RequiredFieldMessage }]}
-                            initialValue={user?.profiles.id}
+                            initialValue={user?.profiles.id + ''}
                         >
                             <Select placeholder="Select Perfil">
                                 {profiles?.map(item => (

@@ -30,6 +30,7 @@ const UsersList: React.FC = () => {
     };
 
     const onEditUser = (record: any) => {
+        //console.log(record);
         form.resetFields();
         setUsersModalVisible(true);
         setSelectedUser(record);
