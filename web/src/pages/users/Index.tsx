@@ -66,6 +66,8 @@ const UsersList: React.FC = () => {
                 }
             });
 
+            handleUsersModalVisible(false);
+
         })
         .catch(error => {
             message.error({
@@ -76,7 +78,7 @@ const UsersList: React.FC = () => {
             });
         });
 
-        handleUsersModalVisible(false);
+        
     }
 
     const columns = [
