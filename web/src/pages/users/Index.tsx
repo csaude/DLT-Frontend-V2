@@ -146,8 +146,6 @@ const UsersList: React.FC = () => {
             key: 'x',
             render: (text, record) => (
                 <Space>
-                    <Button type="primary" icon={<EyeOutlined />} onClick={() => navigate("/usersView", { state: { user: record } })} >
-                    </Button>
                     <Button type="primary" icon={<EditOutlined />} onClick={() => onEditUser(record)} >
                     </Button>
                 </Space>
