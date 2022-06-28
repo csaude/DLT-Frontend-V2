@@ -1,6 +1,7 @@
 import {removeWindowClass} from '@app/utils/helpers';
 import {Gatekeeper} from 'gatekeeper-client-sdk';
 import {authenticate} from '../utils/login';
+import { requestUpdatePassword } from '@app/utils/users';
 
 export const loginByAuth = async (email: string, password: string) => {
   const response =  await authenticate({username:email, password:password});
@@ -19,6 +20,12 @@ export const loginByAuth = async (email: string, password: string) => {
   return token;*/
 
 
+};
+
+export const updatePassword = async (username: string, password: string) => {
+  const response = await requestUpdatePassword({username:username, recoverPassword:password});
+  const { status, data } = response;
+  return data;
 };
 
 export const registerByAuth = async (email: string, password: string) => {
