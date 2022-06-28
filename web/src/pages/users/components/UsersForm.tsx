@@ -126,6 +126,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                         <Form.Item
                             name="email"
                             label="Email (Proprio ou de Supervisor)"
+                            rules={[{ required: true, message: RequiredFieldMessage }]}
                             initialValue={user?.email}
                         >
                             <Input placeholder="Insira o Email" />
@@ -169,7 +170,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                             name="partners"
                             label="Parceiro"
                             rules={[{ required: true, message: RequiredFieldMessage }]}
-                            initialValue={user?.partners.id + ''}
+                            initialValue={user?.partners.id.toString()}
                         >
                             <Select placeholder="Select Parceiro">
                                 {partners?.map(item => (
@@ -197,7 +198,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                             name="us"
                             label="US"
                             rules={[{ required: true, message: RequiredFieldMessage }]}
-                            initialValue={user?.us.id + ''}
+                            initialValue={user?.us.id.toString()}
                         >
                             <Select placeholder="Select US">
                                 {us?.map(item => (
@@ -212,8 +213,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                         <Form.Item
                             name="provinces"
                             label="Provincias"
-                            rules={[{ required: true, message: RequiredFieldMessage }]}
-                            initialValue={user?.provinces.map(item => { return item.id + '' })}
+                            initialValue={user?.provinces.map(item => { return item.id.toString() })}
                         >
                             <Select mode="multiple" placeholder="Seleccione Provincias"
                                 onChange={onChangeProvinces}
@@ -228,7 +228,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                         <Form.Item
                             name="districts"
                             label="Distritos"
-                            initialValue={user?.districts.map(item => { return item.id + '' })}
+                            initialValue={user?.districts.map(item => { return item.id.toString() })}
                         >
                             <Select mode="multiple"
                                 placeholder="Seleccione Distritos"
@@ -245,7 +245,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                         <Form.Item
                             name="localities"
                             label="Localidades"
-                            initialValue={user?.localities.map(item => { return item.id + '' })}
+                            initialValue={user?.localities.map(item => { return item.id.toString() })}
                         >
                             <Select mode="multiple"
                                 placeholder="Seleccione Provincias"
@@ -264,7 +264,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                             name="profiles"
                             label="Perfil"
                             rules={[{ required: true, message: RequiredFieldMessage }]}
-                            initialValue={user?.profiles.id + ''}
+                            initialValue={user?.profiles.id.toString()}
                         >
                             <Select placeholder="Select Perfil">
                                 {profiles?.map(item => (
