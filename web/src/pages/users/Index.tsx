@@ -1,8 +1,9 @@
-import { Card, Table, message, Button, Space, Badge, Form } from 'antd';
+import { Card, Table, message, Button, Space, Badge, Form, Input } from 'antd';
 import React, { Fragment, useEffect, useState } from 'react';
 import { query } from '../../utils/users';
 import { UserModel } from '../../models/User';
 import { SearchOutlined, PlusOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
+import Highlighter from 'react-highlight-words';
 import UsersForm from './components/UsersForm';
 import { add, edit } from '@app/utils/users';
 
@@ -11,7 +12,11 @@ const UsersList: React.FC = () => {
     const [users, setUsers] = useState<UserModel[]>([]);
     const [usersModalVisible, setUsersModalVisible] = useState<boolean>(false);
     const [selectedUser, setSelectedUser] = useState<any>(undefined);
+    const [ searchText, setSearchText ] = useState('');
+    const [ searchedColumn, setSearchedColumn ] = useState('');
     const [form] = Form.useForm();
+
+    let searchInput ;
 
     useEffect(() => {
         const fetchData = async () => {
@@ -36,6 +41,80 @@ const UsersList: React.FC = () => {
         setSelectedUser(record);
     };
 
+    const getColumnSearchProps = (dataIndex:any) => ({
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+            <div style={{ padding: 8 }}>
+                <Input
+                    ref={node => {
+                        searchInput = node;
+                    }}
+                    placeholder={`Search ${dataIndex}`}
+                    value={selectedKeys[0]}
+                    onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                    onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                    style={{ marginBottom: 8, display: 'block' }}
+                    />
+                <Space>
+                <Button
+                    type="primary"
+                    onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                    icon={<SearchOutlined />}
+                    size="small"
+                    style={{ width: 90 }}
+                >
+                    Search
+                </Button>
+                <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+                    Reset
+                </Button>
+                <Button
+                    type="link"
+                    size="small"
+                    onClick={() => {
+                    confirm({ closeDropdown: false });
+                    setSearchText(selectedKeys[0]);
+                    setSearchedColumn(dataIndex);
+                    }}
+                >
+                    Filter
+                </Button>
+                </Space>
+            </div>
+        ),
+        filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+        onFilter: (value, record) =>
+                    record[dataIndex]
+                        ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
+                        : '',
+        onFilterDropdownVisibleChange: visible => {
+                if (visible) {
+                    setTimeout(() => searchInput.select(), 100);
+                }
+        },
+        render: text =>
+            searchedColumn === dataIndex ? (
+                <Highlighter
+                highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+                searchWords={[searchText]}
+                autoEscape
+                textToHighlight={text ? text.toString() : ''}
+                />
+            ) : ( text ),
+    });
+
+    const handleSearch = (selectedKeys, confirm, dataIndex) => {
+        confirm();
+        setSearchText(selectedKeys[0]);
+        setSearchedColumn(dataIndex);
+        
+    };
+
+    const handleReset = clearFilters => {
+        clearFilters();
+        setSearchText(searchText);
+    };
+
+
     const handleAdd = () => {
 
         form.validateFields().then(async (values) => {
@@ -53,13 +132,13 @@ const UsersList: React.FC = () => {
             user.partners = { "id": values.partners };
             user.profiles = { "id": values.profiles };
             user.us = { "id": values.us };
-            user.provinces = values.provinces.map(item => (
+            user.provinces = values.provinces?.map(item => (
                 { "id": item }
             ));
-            user.districts = values.districts.map(item => (
+            user.districts = values.districts?.map(item => (
                 { "id": item }
             ));
-            user.localities = values.localities.map(item => (
+            user.localities = values.localities?.map(item => (
                 { "id": item }
             ));
 
@@ -89,6 +168,7 @@ const UsersList: React.FC = () => {
             });
         })
             .catch(error => {
+                console.log(error);
                 message.error({
                     content: 'Não foi possivel Registrar Utilizador!', className: 'custom-class',
                     style: {
@@ -101,6 +181,25 @@ const UsersList: React.FC = () => {
     }
 
     const columns = [
+        { title: 'Nome de Utilizador', dataIndex: 'name', key: 'name' },
+        { title: 'Username', dataIndex: 'username', key: 'username', ...getColumnSearchProps('username') },
+        {
+            title: 'Ponto de Entrada', dataIndex: '', key: 'type',
+            render: (text, record) =>
+                (record.entryPoint === "1") ?
+                    "Unidade Sanitaria"
+                    :
+                    (record.entryPoint === "2") ?
+                        "Escola"
+                        :
+                        "Comunidade"
+
+        },
+        { title: 'Email', dataIndex: 'email', key: 'email' },
+        {
+            title: 'Parceiro', dataIndex: '', key: 'type',
+            render: (text, record) => record.partners?.name,
+        },
         {
             title: 'Tipo de Utilizador', dataIndex: '', key: 'type',
             render: (text, record) => record.profiles.description,
@@ -118,26 +217,6 @@ const UsersList: React.FC = () => {
                 />
             ),
         },
-        { title: 'Username', dataIndex: 'username', key: 'username' },
-        { title: 'Nome de Utilizador', dataIndex: 'name', key: 'name' },
-        {
-            title: 'Ponto de Entrada', dataIndex: '', key: 'type',
-            render: (text, record) =>
-                (record.entryPoint === "1") ?
-                    "Unidade Sanitaria"
-                    :
-                    (record.entryPoint === "2") ?
-                        "Escola"
-                        :
-                        "Comunidade"
-
-        },
-        {
-            title: 'Parceiro', dataIndex: '', key: 'type',
-            render: (text, record) => record.partners?.name,
-        },
-        { title: 'Email', dataIndex: 'email', key: 'email' },
-        { title: 'Telefone', dataIndex: 'phoneNumber', key: 'phoneNumber' },
         {
             title: 'Action',
             dataIndex: '',
