@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {Link} from 'react-router-dom';
 import {toast} from 'react-toastify';
 import {useTranslation} from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {Button} from '@components';
 import {faEnvelope, faEye, faEyeSlash, faLock, faUser} from '@fortawesome/free-solid-svg-icons';
 import {setWindowClass} from '@app/utils/helpers';
@@ -10,21 +11,35 @@ import {useFormik} from 'formik';
 import {Form, InputGroup} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
+import * as AuthService from '../../services/auth';
+
 const ForgotPassword = () => {
+  const [isAuthLoading, setAuthLoading] = useState(false);
   const [t] = useTranslation();
   const [passwordType, setPasswordType] = useState("password");
   // .matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\[email protected]$!%*#?&]{8,}$/, "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character")
 
+  const navigate = useNavigate();
+
+  const updatePassword = async (username: string, password: string) => {
+    try {
+      setAuthLoading(true);
+      const data = await AuthService.updatePassword(username, password);
+      toast.success('Redefinição de senha submetida com sucesso!');
+      navigate('/');
+    } catch ( error ) {
+      toast.error( 'Failed');
+    }
+  };
+
   
   const {handleChange, values, handleSubmit, touched, errors} = useFormik({
     initialValues: {
-      email: '',
       username: '',
       password: '',
       rePassword: ''
     },    
     validationSchema: Yup.object({
-      email: Yup.string().email('Endereço de email inválido').required('Obrigatório'),
       username: Yup.string()
         .min(5, 'Deve conter 5 caracter ou mais')
         .required('Obrigatório'),
@@ -41,9 +56,7 @@ const ForgotPassword = () => {
         .required('Obrigatório')
     }),
     onSubmit: (values) => {
-
-      console.log(values);
-      toast.warn('Em desenvolvimento!!!');
+      updatePassword(values.username, values.password);
       toast.success('Um email de confirmação foi enviado!');
     }
   });
@@ -165,8 +178,13 @@ const ForgotPassword = () => {
             </div>
             <div className="row">
               <div className="col-12">
-                <Button type="submit" block > 
-                  solicitar
+                <Button 
+                  block 
+                  type="submit"
+                  isLoading={isAuthLoading}
+                  style={{background:"#0C4A6E"}} 
+                > 
+                  Solicitar
                 </Button>
               </div>
             </div>
