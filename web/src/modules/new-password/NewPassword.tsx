@@ -23,7 +23,6 @@ const NewPassword = () => {
 
   const setNewPassword = async (username: string, newPassword: string) => {
     try {
-
       setAuthLoading(true);      
       const data = await AuthService.newPassword(username, newPassword);            
       toast.success('Password alterado com sucesso!');
