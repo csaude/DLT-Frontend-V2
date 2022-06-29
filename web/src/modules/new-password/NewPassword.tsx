@@ -9,12 +9,14 @@ import {Checkbox, Button} from '@components';
 import {faEnvelope, faEye, faEyeSlash, faLock, faUser} from '@fortawesome/free-solid-svg-icons';
 import {setWindowClass} from '@app/utils/helpers';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import { userNewPassword, NewPasswordParams } from '@app/utils/login';
 import { Center, Box, Text, Heading, VStack, FormControl, Input, Image } from 'native-base';
 
 import * as Yup from 'yup';
 
 import {Form, InputGroup} from 'react-bootstrap';
 import * as AuthService from '../../services/auth';
+import { any } from 'react-bootstrap/node_modules/@types/prop-types';
 
 const NewPassword = () => {
   let isNewPassword = localStorage.getItem('isNewPassword');
@@ -25,24 +27,32 @@ const NewPassword = () => {
   const navigate = useNavigate();
   const [t] = useTranslation();
 
-  const login = async (email: string, password: string) => {
+  const setNewPassword = async (username: string, newPassword: string) => {
     try {
-      // setAuthLoading(true);
-      const data = await AuthService.loginByAuth(email, password);
-      toast.success('Login is succeed!');
+      setAuthLoading(true);
+      
+      const data = await AuthService.newPassword(username, newPassword);
+
+      toast.warn('Em desenvolvimento!!!');
+
       setAuthLoading(false);
-      // dispatch(loginUser(data.token));
-      console.log(data);
-      // navigate('/');
+      // console.log(data);
+            
+      toast.success('Password alterado com sucesso!');
+
+      navigate('/');
+
     } catch ( error ) {
       setAuthLoading(false);
       toast.error( 'Failed');
+      console.log(error);
     }
   };
 
   
   const {handleChange, values, handleSubmit, touched, errors} = useFormik({
     initialValues: {
+      userName: localStorage.getItem('username'),
       password: '',
       rePassword: ''
     },    
@@ -59,17 +69,10 @@ const NewPassword = () => {
         .oneOf([Yup.ref('password'), null], 'As senhas devem corresponder')
         .required('Obrigatório')
     }),
-    onSubmit: (values) => {
+    onSubmit: async (values: any) => {
 
-      // Por validar com o endpoint do server
-      localStorage.setItem('isNewPassword', "0");
+      setNewPassword(values.userName, values.password);
 
-      navigate('/');
-      console.log(values);
-      
-      toast.warn('Em desenvolvimento!!!');
-
-      toast.success('Password alterado com sucesso!');
     }
   });
 
