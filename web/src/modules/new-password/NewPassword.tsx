@@ -12,6 +12,7 @@ import * as Yup from 'yup';
 
 import {Form, InputGroup} from 'react-bootstrap';
 import * as AuthService from '../../services/auth';
+import { any } from 'react-bootstrap/node_modules/@types/prop-types';
 
 const NewPassword = () => {
   let isNewPassword = localStorage.getItem('isNewPassword');
@@ -56,9 +57,7 @@ const NewPassword = () => {
         .required('Obrigatório')
     }),
     onSubmit: async (values: any) => {
-
       setNewPassword(values.userName, values.password);
-
     }
   });
 
