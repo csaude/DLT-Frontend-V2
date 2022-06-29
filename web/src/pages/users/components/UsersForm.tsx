@@ -16,8 +16,6 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
     const [provinces, setProvinces] = useState<any>([]);
     const [districts, setDistricts] = useState<any>(undefined);
     const [localities, setLocalities] = useState<any>(undefined);
-    const [isDistrictRequired, setIsDistrictRequired] = useState<any>(true);
-    const [isLocalitiesRequired, setIsLocalitiesRequired] = useState<any>(true);
 
     const RequiredFieldMessage = "Campo é Obrigatório!";
 
@@ -45,33 +43,49 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
             setProvinces(dataProvinces);
             //setlocalityList(dataLocality);
             setUs(dataUs);
-        }
+        };
+
+        const fetchDistricts = async () => {
+            if (user && user.provinces.length > 0) {
+                const pIds = user.provinces.map(item => {
+                    return item.id + ''
+                });
+                const dataDistricts = await queryDistrictsByProvinces({ provinces: pIds });
+                setDistricts(dataDistricts);
+            }
+        };
+
+        const fetchLocalities = async () => {
+            if (user && user.districts.length > 0) {
+                const dIds = user.districts.map(item => {
+                    return item.id + ''
+                });
+                const dataLocalities = await queryLocalitiesByDistricts({ districts: dIds });
+                setLocalities(dataLocalities);
+            }
+        };
+
 
         fetchData().catch(error => console.log(error));
+        fetchDistricts().catch(error => console.log(error));
+        fetchLocalities().catch(error => console.log(error));
 
-    }, []);
-
-    const onCheckDistrict = (e) => {
-        setIsDistrictRequired(!e.target.checked);
-    }
-    const onCheckLocalities = (e) => {
-        setIsLocalitiesRequired(!e.target.checked);
-    }
+    }, [user]);
 
     const onChangeProvinces = async (values: any) => {
-         //console.log(values); // ['1','5']
-        if(values.length > 0){
-        const dataDistricts = await queryDistrictsByProvinces({ provinces: values });
-        setDistricts(dataDistricts);
+        //console.log(values); // ['1','5']
+        if (values.length > 0) {
+            const dataDistricts = await queryDistrictsByProvinces({ provinces: values });
+            setDistricts(dataDistricts);
         }
     }
 
     const onChangeDistricts = async (values: any) => {
-        if(values.length > 0){
+        if (values.length > 0) {
             const dataLocalities = await queryLocalitiesByDistricts({ districts: values });
             setLocalities(dataLocalities);
         }
-        
+
     }
 
     return (
@@ -112,6 +126,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                         <Form.Item
                             name="email"
                             label="Email (Proprio ou de Supervisor)"
+                            rules={[{ required: true, message: RequiredFieldMessage }]}
                             initialValue={user?.email}
                         >
                             <Input placeholder="Insira o Email" />
@@ -134,6 +149,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                             name="phoneNumber"
                             label="Numero de Telemóvel"
                             initialValue={user?.phoneNumber}
+                            rules={[{ required: true, message: RequiredFieldMessage }]}
                         >
                             <Input placeholder="Insira o Telemóvel" />
                         </Form.Item>
@@ -154,7 +170,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                             name="partners"
                             label="Parceiro"
                             rules={[{ required: true, message: RequiredFieldMessage }]}
-                            initialValue={user?.partners.id}
+                            initialValue={user?.partners.id.toString()}
                         >
                             <Select placeholder="Select Parceiro">
                                 {partners?.map(item => (
@@ -182,7 +198,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                             name="us"
                             label="US"
                             rules={[{ required: true, message: RequiredFieldMessage }]}
-                            initialValue={user?.us.id}
+                            initialValue={user?.us.id.toString()}
                         >
                             <Select placeholder="Select US">
                                 {us?.map(item => (
@@ -197,8 +213,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                         <Form.Item
                             name="provinces"
                             label="Provincias"
-                            rules={[{ required: true, message: RequiredFieldMessage }]}
-                        // initialValue={user?.profiles.id}
+                            initialValue={user?.provinces.map(item => { return item.id.toString() })}
                         >
                             <Select mode="multiple" placeholder="Seleccione Provincias"
                                 onChange={onChangeProvinces}
@@ -213,12 +228,10 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                         <Form.Item
                             name="districts"
                             label="Distritos"
-                            rules={[{ required: isDistrictRequired, message: RequiredFieldMessage }]}
-                            
-                        // initialValue={user?.profiles.id}
+                            initialValue={user?.districts.map(item => { return item.id.toString() })}
                         >
-                            <Select mode="multiple" 
-                                placeholder="Seleccione Distritos" 
+                            <Select mode="multiple"
+                                placeholder="Seleccione Distritos"
                                 disabled={districts == undefined}
                                 onChange={onChangeDistricts}
                             >
@@ -226,25 +239,22 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                                     <Option key={item.id}>{item.name}</Option>
                                 ))}
                             </Select>
-                            <Checkbox onChange={onCheckDistrict} ><span style={{color:'#008d4c', fontWeight:'normal'}}>Indefinido (Não Associar)</span></Checkbox>
                         </Form.Item>
                     </Col>
                     <Col span={8}>
                         <Form.Item
                             name="localities"
                             label="Localidades"
-                            rules={[{ required: isLocalitiesRequired, message: RequiredFieldMessage }]}
-                        // initialValue={user?.profiles.id}
+                            initialValue={user?.localities.map(item => { return item.id.toString() })}
                         >
                             <Select mode="multiple"
                                 placeholder="Seleccione Provincias"
                                 disabled={localities == undefined}
-                                >
+                            >
                                 {localities?.map(item => (
                                     <Option key={item.id}>{item.name}</Option>
                                 ))}
                             </Select>
-                            <Checkbox onChange={onCheckLocalities} ><span style={{color:'#008d4c', fontWeight:'normal'}}>Indefinido (Não Associar)</span></Checkbox>
                         </Form.Item>
                     </Col>
                 </Row>
@@ -254,7 +264,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                             name="profiles"
                             label="Perfil"
                             rules={[{ required: true, message: RequiredFieldMessage }]}
-                            initialValue={user?.profiles.id}
+                            initialValue={user?.profiles.id.toString()}
                         >
                             <Select placeholder="Select Perfil">
                                 {profiles?.map(item => (

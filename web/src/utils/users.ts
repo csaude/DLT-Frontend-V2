@@ -17,10 +17,8 @@ export async function query(payload?: UsersFilter) {
 }
 
 interface UserParams {
-    id: string,
-    name: string;
-    description: string;
-    active: boolean;
+    username: string;
+    recoverPassword: string;
 }
 export async function add(payload: any) {
     const res = await create('/api/users', payload);
@@ -29,5 +27,10 @@ export async function add(payload: any) {
   
 export async function edit(payload: any) {
     const res = await update('/api/users/', payload);
+    return res;
+}
+
+export async function requestUpdatePassword(payload: UserParams) {
+    const res = await update('/users/update-password', payload);
     return res;
 }

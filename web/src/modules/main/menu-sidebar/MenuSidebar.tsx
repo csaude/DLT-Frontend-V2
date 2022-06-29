@@ -30,13 +30,14 @@ export const MENU: IMenuItem[] = [
     name: 'menusidebar.label.referenceList',
     path: '/referenceList',
     icon: 'fas fa-sync',
-    role: 'ADMIN'
+    role: 'M&E'
   },
   {
     name: 'menusidebar.label.users',
+    path: '/usersList',
     role: 'ADMIN',
     icon: 'fas fa-user',
-    children: [
+    /*children: [
       {
         name: 'menusidebar.label.usersList',
         path: '/usersList',
@@ -48,7 +49,7 @@ export const MENU: IMenuItem[] = [
         path: '/usersForm',
         role: 'ADMIN',
       }
-    ]
+    ]*/
   },
   {
     name: 'menusidebar.label.reports',
