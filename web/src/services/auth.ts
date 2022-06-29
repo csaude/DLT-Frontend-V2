@@ -6,6 +6,7 @@ export const loginByAuth = async (email: string, password: string) => {
   const response =  await authenticate({username:email, password:password});
   const { status, data } = response;
   localStorage.setItem('token', data.token);
+  localStorage.setItem('username', data.account.username);
   localStorage.setItem('userEmail', data.account.email);
   localStorage.setItem('userRole', data.account?.profiles.name);
   localStorage.setItem('isNewPassword', data.account.newPassword);
