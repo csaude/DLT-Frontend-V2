@@ -24,12 +24,9 @@ export const loginByAuth = async (email: string, password: string) => {
 };
 
 export const newPassword = async (username: string, newPassword: string) => {
-  const response =  await userNewPassword({username: username, newPassword: newPassword});
+  const response =  await userNewPassword({username: username, recoverPassword: newPassword});
   const { status, data } = response;
-
-  localStorage.setItem('token', data.token);
-  localStorage.setItem('username', data.account.username);
-  localStorage.setItem('isNewPassword', data.account.newPassword);
+  localStorage.setItem('isNewPassword', '0');
   return data;
  };
 
@@ -44,7 +41,7 @@ export const registerByAuth = async (email: string, password: string) => {
   localStorage.setItem('token', token);
   removeWindowClass('register-page');
   removeWindowClass('hold-transition');
-  return token;
+  return token; 
 };
 
 export const loginByGoogle = async () => {

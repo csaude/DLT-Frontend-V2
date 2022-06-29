@@ -1,16 +1,12 @@
 import React, {useState} from 'react';
-import {useDispatch} from 'react-redux';
-import {Link, Navigate, Outlet, useNavigate} from 'react-router-dom';
+import {Link, Navigate, useNavigate} from 'react-router-dom';
 import {toast} from 'react-toastify';
 import {useFormik} from 'formik';
 import {useTranslation} from 'react-i18next';
-import {loginUser} from '@store/reducers/auth';
-import {Checkbox, Button} from '@components';
-import {faEnvelope, faEye, faEyeSlash, faLock, faUser} from '@fortawesome/free-solid-svg-icons';
+import { Button} from '@components';
+import {faEye, faEyeSlash} from '@fortawesome/free-solid-svg-icons';
 import {setWindowClass} from '@app/utils/helpers';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import { userNewPassword, NewPasswordParams } from '@app/utils/login';
-import { Center, Box, Text, Heading, VStack, FormControl, Input, Image } from 'native-base';
 
 import * as Yup from 'yup';
 
@@ -22,24 +18,16 @@ const NewPassword = () => {
   let isNewPassword = localStorage.getItem('isNewPassword');
   const [isAuthLoading, setAuthLoading] = useState(false);
   const [passwordType, setPasswordType] = useState("password");
-  const dispatch = useDispatch();
 
   const navigate = useNavigate();
   const [t] = useTranslation();
 
   const setNewPassword = async (username: string, newPassword: string) => {
     try {
-      setAuthLoading(true);
-      
-      const data = await AuthService.newPassword(username, newPassword);
-
-      toast.warn('Em desenvolvimento!!!');
-
-      setAuthLoading(false);
-      // console.log(data);
-            
+      setAuthLoading(true);      
+      const data = await AuthService.newPassword(username, newPassword);            
       toast.success('Password alterado com sucesso!');
-
+      setAuthLoading(false);
       navigate('/');
 
     } catch ( error ) {
@@ -48,7 +36,6 @@ const NewPassword = () => {
       console.log(error);
     }
   };
-
   
   const {handleChange, values, handleSubmit, touched, errors} = useFormik({
     initialValues: {
@@ -70,9 +57,7 @@ const NewPassword = () => {
         .required('Obrigatório')
     }),
     onSubmit: async (values: any) => {
-
       setNewPassword(values.userName, values.password);
-
     }
   });
 
@@ -85,8 +70,6 @@ const NewPassword = () => {
     }
     setPasswordType("password")
   };
-
-
 
   setWindowClass('hold-transition login-page');
 
@@ -178,7 +161,7 @@ const NewPassword = () => {
                     </div>
                     <div className="row">
                       <div className="col-12">
-                        <Button type="submit" block > 
+                        <Button type="submit" block isLoading={isAuthLoading} > 
                           Submit
                         </Button>
                       </div>

@@ -8,7 +8,7 @@ interface LoginParams {
 
 export interface NewPasswordParams{
     username: string,
-    newPassword: string;
+    recoverPassword: string;
 }
 
 export async function authenticate(payload: LoginParams) {
