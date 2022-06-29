@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import {useDispatch} from 'react-redux';
 import {Link, Navigate, useNavigate} from 'react-router-dom';
 import {toast} from 'react-toastify';
 import {useFormik} from 'formik';
@@ -13,7 +12,6 @@ import * as Yup from 'yup';
 
 import {Form, InputGroup} from 'react-bootstrap';
 import * as AuthService from '../../services/auth';
-import { any } from 'react-bootstrap/node_modules/@types/prop-types';
 
 const NewPassword = () => {
   let isNewPassword = localStorage.getItem('isNewPassword');
