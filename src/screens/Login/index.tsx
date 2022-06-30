@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Platform, View, KeyboardAvoidingView, ScrollView } from 'react-native';
-import { Center, Box, Text, Heading, VStack, FormControl, Input, HStack, InfoIcon, Alert, Button, Image, useToast, IconButton, CloseIcon } from 'native-base';
+import { Center, Box, Text, Heading, VStack, FormControl, Input, HStack, InfoIcon, Alert, Button, Image, useToast, IconButton, CloseIcon, Link, Modal, InputGroup } from 'native-base';
 import { navigate } from '../../routes/NavigationRef';
-import { Formik } from 'formik';
+import { Formik, useFormik } from 'formik';
+import * as Yup from 'yup';
 import { Q } from '@nozbe/watermelondb'
 import NetInfo from "@react-native-community/netinfo";
 import { database } from '../../database';
@@ -10,8 +11,10 @@ import { LOGIN_API_URL } from '../../services/api';
 import { sync } from "../../database/sync";
 
 interface LoginData{
+    email?: string | undefined;
     username?: string | undefined;
     password?: string | undefined; 
+    rePassword?: string | undefined; 
 }
 
 const Login: React.FC = () => {
@@ -20,9 +23,50 @@ const Login: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [isOffline, setIsOffline] = useState(false);
 
+    const [showModal, setShowModal] = useState(false);
+    const [passwordType, setPasswordType] = useState("password");
+
     const toast = useToast();
 
     const users = database.collections.get('users');
+
+    // Inicio Do Reset
+
+  const {handleChange, values, handleSubmit, touched, errors} = useFormik({
+    initialValues: {
+      email: '',
+      password: '',
+      rePassword: ''
+    },    
+    validationSchema: Yup.object({
+      email: Yup.string().email('Endereço de email inválido').required('Obrigatório'),
+      password: Yup.string()
+        .required('Obrigatório')
+        .max(25, 'Deve conter 25 caracteres ou menos')
+        .matches(/(?=.*\d)/,'Deve conter número')
+        .matches(/(?=.*[a-z])/,'Deve conter minúscula')
+        .matches(/(?=.*[A-Z])/, 'Deve conter Maiúscula')
+        .matches(/(?=.*[@$!%*#?&])/,'Deve conter caracter especial')
+        .min(8, 'Deve conter 8 caracter ou mais'),
+      rePassword: Yup.string()
+        .oneOf([Yup.ref('password'), null], 'As senhas devem corresponder')
+        .required('Obrigatório')
+    }),
+    onSubmit: (values) => {
+
+      console.log(values);
+    }
+  });
+
+    const togglePassword =()=>{
+
+        if(passwordType==="password")
+        {
+         setPasswordType("")
+         return;
+        }
+        setPasswordType("password")
+      };
 
 
     useEffect(() => {
@@ -200,13 +244,13 @@ const Login: React.FC = () => {
             <Image style={{  width: "100%", resizeMode: "contain" }} source={require('../../../assets/dreams.png')} size="100" alt="dreams logo" />
             <VStack space={4} alignItems="center" w="100%" >
                 <Center w="90%" >
-                    <Heading mt="1" color="coolGray.600" 
-                                    _dark={{ color: "warmGray.200" }} 
+                    <Heading mt="1" color="coolGray.600"
+                                    _dark={{ color: "warmGray.200" }}
                                     fontWeight="medium" size="md"  py="5">
                         <Text color="warmGray.400">Dreams Layering Tool</Text>
                     </Heading>
-                    <Heading  color="coolGray.600" 
-                                _dark={{ color: "warmGray.200" }} 
+                    <Heading  color="coolGray.600"
+                                _dark={{ color: "warmGray.200" }}
                                 fontWeight="medium" size="lg" py="2">
                         <Text color="darkBlue.800">Login  </Text>
                     </Heading>
@@ -256,86 +300,160 @@ const Login: React.FC = () => {
                                 <Button onPress={handleSubmit} my="10" colorScheme="primary">
                                     Login
                                 </Button>
+                                <Link 
+                                // href="https://nativebase.io" 
+                                onPress={() => setShowModal(true)}  
+                                isExternal _text={{
+                                        color: "blue.400"
+                                    }} mt={-0.5} _web={{
+                                        mb: -1
+                                    }}>
+                                    I forgot my password
+                                </Link>
                             </VStack>
                         }
                     </Formik>
                 </Center>
             </VStack>
-            </Box>    
+            </Box>  
+
+            <Center>
+            {/* <Button onPress={() => setShowModal(true)}>Button</Button> */}
+            <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+                <Modal.Content width="100%"  style={{ marginBottom: 0,marginTop: "auto"}}>
+
+                    <Formik initialValues={{
+                        email: '',
+                        password: '',
+                        rePassword: ''
+                        }} onSubmit={onSubmit} validate={validate}>
+                        {({
+                            handleChange,
+                            handleBlur,
+                            handleSubmit,
+                            values,
+                            errors
+                        }) =>  <VStack space={3} w="100%">
+                        <Modal.CloseButton />
+                        <Modal.Header>Reset Password</Modal.Header>
+                        <Modal.Body>
+
+
+
+                            <FormControl isRequired isInvalid={'email' in errors}>
+                                <FormControl.Label>Email</FormControl.Label>
+                                <Input placeholder="Email" onChangeText={handleChange} value={values.email} />
+                                <FormControl.ErrorMessage>
+                                    {errors.email}
+                                </FormControl.ErrorMessage>
+                            </FormControl> 
+
+                            {/* <div className="mb-3">
+                                <InputGroup>
+                                <Form.Control
+                                    id="password"
+                                    name="password"
+                                    type={passwordType}
+                                    placeholder="New Password"
+                                    onChange={handleChange}
+                                    value={values.password}
+                                    isValid={touched.password && !errors.password}
+                                    isInvalid={touched.password && !!errors.password}
+                                />
+                                {touched.password && errors.password ? (
+                                    <Form.Control.Feedback type="invalid">
+                                    {errors.password}
+                                    </Form.Control.Feedback>
+                                ) : (
+                                    <InputGroup.Append>
+                                    <InputGroup.Text>
+                                        { 
+                                        passwordType==="password"? 
+                                            // <FontAwesomeIcon icon={faEyeSlash} onClick={togglePassword} />
+                                        :
+                                            // <FontAwesomeIcon icon={faEye} onClick={togglePassword} />
+                                        }
+                                    </InputGroup.Text>
+                                    </InputGroup.Append>
+                                )}
+                                </InputGroup>
+                            </div>
+
+                            <div className="mb-3">
+                                <InputGroup className="mb-3">
+                                <Form.Control
+                                    id="rePassword"
+                                    name="rePassword"
+                                    type={passwordType}
+                                    placeholder="Confirm Password"
+                                    onChange={handleChange}
+                                    value={values.rePassword}
+                                    isValid={touched.rePassword && !errors.rePassword}
+                                    isInvalid={touched.rePassword && !!errors.rePassword}
+                                />
+                                {touched.rePassword && errors.rePassword ? (
+                                    <Form.Control.Feedback type="invalid">
+                                    {errors.rePassword}
+                                    </Form.Control.Feedback>
+                                ) : (
+                                    <InputGroup.Append>
+                                    <InputGroup.Text>{ 
+                                        passwordType==="password"? 
+                                            <FontAwesomeIcon icon={faEyeSlash} onClick={togglePassword} />
+                                        :
+                                            <FontAwesomeIcon icon={faEye} onClick={togglePassword} />
+                                        }
+                                    </InputGroup.Text>
+                                    </InputGroup.Append>
+                                )}
+                                </InputGroup>
+                            </div> */}
+                            {/* <div className="row">
+                                <div className="col-12">
+                                <Button type="submit" block > 
+                                    solicitar
+                                </Button>
+                                </div>
+                            </div> */}
+                            {/* </Form> */}
+
+
+
+                            <FormControl>
+                                <FormControl.Label>Name</FormControl.Label>
+                                    <Input />
+                                </FormControl>
+                                <FormControl mt="3">
+                                    <FormControl.Label>Email</FormControl.Label>
+                                <Input />
+                            </FormControl>
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button.Group space={2}>
+                                <Button variant="ghost" colorScheme="blueGray" onPress={() => {
+                                setShowModal(false);
+                                }}>
+                                    Cancel
+                                </Button>
+                                <Button onPress={() => {
+                                setShowModal(false);
+                                }}>
+                                    Save
+                                </Button>
+                            </Button.Group>
+                        </Modal.Footer>
+                        </VStack>
+                        }
+                    </Formik>
+                </Modal.Content>
+            </Modal>
+            </Center>
+
             </ScrollView>
         </KeyboardAvoidingView>
+
+        
     );
 };
-
-/*
-<KeyboardAvoidingView>
-            <ScrollView contentInsetAdjustmentBehavior="automatic">
-
-                <Center w="100%" bgColor="white">
-                    <Box safeArea p="2" w="90%"  py="8" >
-                        <Center >
-                                <Heading mt="1" color="coolGray.600" 
-                                                _dark={{ color: "warmGray.200" }} 
-                                                fontWeight="medium" size="md"  py="5">
-                                    <Text color="warmGray.400">Dreams Layering Tool 1</Text>
-                                </Heading>
-                                <Heading  color="coolGray.600" 
-                                                _dark={{ color: "warmGray.200" }} 
-                                                fontWeight="medium" size="lg" px="10">
-                                    <Text color="darkBlue.800">Login  </Text>
-                                </Heading>
-                        </Center>
-                        {isNotLogged ?
-                            <Alert w="100%" status='error'>
-                                
-                                    <HStack space={4} flexShrink={1}>
-                                        <Alert.Icon mt="1" />
-                                        <Text fontSize="sm" color="coolGray.800">
-                                            Senha ou Password Invalido!
-                                        </Text>
-                                    </HStack>
-                    
-                            </Alert> : <></>
-                        }
-                        <Formik initialValues={{
-                            username: '',
-                            password: ''
-                            }} onSubmit={onSubmit} validate={validate}>
-                                {({
-                                    handleChange,
-                                    handleBlur,
-                                    handleSubmit,
-                                    values,
-                                    errors
-                                }) => <VStack space={3} mt="5">
-                                    <FormControl isRequired isInvalid={'username' in errors}>
-                                        <FormControl.Label>Username</FormControl.Label>
-             
-                                        <Input onBlur={handleBlur('username')} placeholder="John" onChangeText={handleChange('username')} value={values.username} />
-                                        <FormControl.ErrorMessage>
-                                        {errors.username}
-                                        </FormControl.ErrorMessage>
-                                    </FormControl>
-
-                                    <FormControl isInvalid={'password' in errors}>
-                                        <FormControl.Label>Password</FormControl.Label>
-                                        <Input onBlur={handleBlur('password')} placeholder="Doe" onChangeText={handleChange('password')} value={values.password} />
-                                        <FormControl.ErrorMessage>
-                                        {errors.password}
-                                        </FormControl.ErrorMessage>
-                                    </FormControl>
-
-                                    <Button onPress={handleSubmit} colorScheme="primary">
-                                        Login
-                                    </Button>
-                                </VStack>
-                            }
-                        </Formik>
-                        
-                    </Box>
-                </Center>
-            </ScrollView>
-        </KeyboardAvoidingView>
-*/
 
 export default Login;

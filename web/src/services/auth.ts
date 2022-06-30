@@ -1,12 +1,13 @@
 import {removeWindowClass} from '@app/utils/helpers';
 import {Gatekeeper} from 'gatekeeper-client-sdk';
-import {authenticate} from '../utils/login';
+import {authenticate, userNewPassword} from '../utils/login';
 import { requestUpdatePassword } from '@app/utils/users';
 
 export const loginByAuth = async (email: string, password: string) => {
   const response =  await authenticate({username:email, password:password});
   const { status, data } = response;
   localStorage.setItem('token', data.token);
+  localStorage.setItem('username', data.account.username);
   localStorage.setItem('userEmail', data.account.email);
   localStorage.setItem('userRole', data.account?.profiles.name);
   localStorage.setItem('isNewPassword', data.account.newPassword);
@@ -22,6 +23,13 @@ export const loginByAuth = async (email: string, password: string) => {
 
 };
 
+export const newPassword = async (username: string, newPassword: string) => {
+  const response =  await userNewPassword({username: username, recoverPassword: newPassword});
+  const { status, data } = response;
+  localStorage.setItem('isNewPassword', '0');
+  return data;
+ };
+
 export const updatePassword = async (username: string, password: string) => {
   const response = await requestUpdatePassword({username:username, recoverPassword:password});
   const { status, data } = response;
@@ -33,7 +41,7 @@ export const registerByAuth = async (email: string, password: string) => {
   localStorage.setItem('token', token);
   removeWindowClass('register-page');
   removeWindowClass('hold-transition');
-  return token;
+  return token; 
 };
 
 export const loginByGoogle = async () => {

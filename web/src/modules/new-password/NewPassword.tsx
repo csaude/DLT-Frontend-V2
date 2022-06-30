@@ -1,48 +1,45 @@
 import React, {useState} from 'react';
-import {useDispatch} from 'react-redux';
-import {Link, Navigate, Outlet, useNavigate} from 'react-router-dom';
+import {Link, Navigate, useNavigate} from 'react-router-dom';
 import {toast} from 'react-toastify';
 import {useFormik} from 'formik';
 import {useTranslation} from 'react-i18next';
-import {loginUser} from '@store/reducers/auth';
-import {Checkbox, Button} from '@components';
-import {faEnvelope, faEye, faEyeSlash, faLock, faUser} from '@fortawesome/free-solid-svg-icons';
+import { Button} from '@components';
+import {faEye, faEyeSlash} from '@fortawesome/free-solid-svg-icons';
 import {setWindowClass} from '@app/utils/helpers';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import { Center, Box, Text, Heading, VStack, FormControl, Input, Image } from 'native-base';
 
 import * as Yup from 'yup';
 
 import {Form, InputGroup} from 'react-bootstrap';
 import * as AuthService from '../../services/auth';
+import { any } from 'react-bootstrap/node_modules/@types/prop-types';
 
 const NewPassword = () => {
   let isNewPassword = localStorage.getItem('isNewPassword');
   const [isAuthLoading, setAuthLoading] = useState(false);
   const [passwordType, setPasswordType] = useState("password");
-  const dispatch = useDispatch();
 
   const navigate = useNavigate();
   const [t] = useTranslation();
 
-  const login = async (email: string, password: string) => {
+  const setNewPassword = async (username: string, newPassword: string) => {
     try {
-      // setAuthLoading(true);
-      const data = await AuthService.loginByAuth(email, password);
-      toast.success('Login is succeed!');
+      setAuthLoading(true);      
+      const data = await AuthService.newPassword(username, newPassword);            
+      toast.success('Password alterado com sucesso!');
       setAuthLoading(false);
-      // dispatch(loginUser(data.token));
-      console.log(data);
-      // navigate('/');
+      navigate('/');
+
     } catch ( error ) {
       setAuthLoading(false);
       toast.error( 'Failed');
+      console.log(error);
     }
   };
-
   
   const {handleChange, values, handleSubmit, touched, errors} = useFormik({
     initialValues: {
+      userName: localStorage.getItem('username'),
       password: '',
       rePassword: ''
     },    
@@ -59,17 +56,8 @@ const NewPassword = () => {
         .oneOf([Yup.ref('password'), null], 'As senhas devem corresponder')
         .required('Obrigatório')
     }),
-    onSubmit: (values) => {
-
-      // Por validar com o endpoint do server
-      localStorage.setItem('isNewPassword', "0");
-
-      navigate('/');
-      console.log(values);
-      
-      toast.warn('Em desenvolvimento!!!');
-
-      toast.success('Password alterado com sucesso!');
+    onSubmit: async (values: any) => {
+      setNewPassword(values.userName, values.password);
     }
   });
 
@@ -82,8 +70,6 @@ const NewPassword = () => {
     }
     setPasswordType("password")
   };
-
-
 
   setWindowClass('hold-transition login-page');
 
@@ -175,7 +161,7 @@ const NewPassword = () => {
                     </div>
                     <div className="row">
                       <div className="col-12">
-                        <Button type="submit" block > 
+                        <Button type="submit" block isLoading={isAuthLoading} > 
                           Submit
                         </Button>
                       </div>
