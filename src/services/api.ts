@@ -1,4 +1,5 @@
-const URL = "http://192.168.43.244:8083";
+const URL = "http://10.10.2.119:8083";
 
 export const LOGIN_API_URL = `${URL}/api/login`;
 export const SYNC_API_URL = `${URL}/sync`; 
+export const UPDATE_PASSWORD_URL = `${URL}/users/update-password`; 

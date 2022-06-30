@@ -57,9 +57,7 @@ const NewPassword = () => {
         .required('Obrigatório')
     }),
     onSubmit: async (values: any) => {
-
       setNewPassword(values.userName, values.password);
-
     }
   });
 
