@@ -7,8 +7,11 @@ import * as Yup from 'yup';
 import { Q } from '@nozbe/watermelondb'
 import NetInfo from "@react-native-community/netinfo";
 import { database } from '../../database';
-import { LOGIN_API_URL } from '../../services/api';
+import { LOGIN_API_URL, UPDATE_PASSWORD_URL } from '../../services/api';
 import { sync } from "../../database/sync";
+import {toast} from 'react-toastify';
+
+// import * as AuthService from '../../../web/src/services/auth';
 
 interface LoginData{
     email?: string | undefined;
@@ -26,15 +29,34 @@ const Login: React.FC = () => {
     const [showModal, setShowModal] = useState(false);
     const [passwordType, setPasswordType] = useState("password");
 
-    const toast = useToast();
+    const toasty = useToast();
 
     const users = database.collections.get('users');
 
     // Inicio Do Reset
 
+  const updatePassword = async (username: string, password: string) => {
+    try {
+        const data = await fetch(`${UPDATE_PASSWORD_URL}`, {
+            method: 'PUT',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: username,
+                recoverPassword: password
+            })
+        });
+      toast.success('Redefinição de senha submetida com sucesso!');
+    } catch ( error ) {
+      toast.error( 'Failed');
+    }
+  };
+
   const {handleChange, values, handleSubmit, touched, errors} = useFormik({
     initialValues: {
-      email: '',
+      username: '',
       password: '',
       rePassword: ''
     },    
@@ -53,8 +75,8 @@ const Login: React.FC = () => {
         .required('Obrigatório')
     }),
     onSubmit: (values) => {
-
-      console.log(values);
+        updatePassword(values.username, values.password);
+        toast.success('Um email de confirmação foi enviado!');
     }
   });
 
@@ -83,7 +105,7 @@ const Login: React.FC = () => {
         if(loggedUser){
             
             sync({username: loggedUser.username})
-                .then(() => toast.show({
+                .then(() => toasty.show({
                                 placement: "top",
                                 render:() => {
                                     return (
@@ -102,7 +124,7 @@ const Login: React.FC = () => {
                                     );
                                 }
                             }))
-                .catch(() => toast.show({
+                .catch(() => toasty.show({
                                 placement: "top",
                                 render:() => {
                                     return (
@@ -153,7 +175,7 @@ const Login: React.FC = () => {
         
             if(isOffline){
                 
-                return toast.show({
+                return toasty.show({
                     placement: "top",
                     render:() => {
                         return (
@@ -193,7 +215,7 @@ const Login: React.FC = () => {
                     })
                     .catch(error =>{
        
-                        return toast.show({
+                        return toasty.show({
                             placement: "top",
                             render:() => {
                                 return (
@@ -323,7 +345,7 @@ const Login: React.FC = () => {
                 <Modal.Content width="100%"  style={{ marginBottom: 0,marginTop: "auto"}}>
 
                     <Formik initialValues={{
-                        email: '',
+                        username: '',
                         password: '',
                         rePassword: ''
                         }} onSubmit={onSubmit} validate={validate}>
@@ -335,18 +357,34 @@ const Login: React.FC = () => {
                             errors
                         }) =>  <VStack space={3} w="100%">
                         <Modal.CloseButton />
-                        <Modal.Header>Reset Password</Modal.Header>
+                        <Modal.Header>Redefinir a Senha</Modal.Header>
                         <Modal.Body>
 
 
 
-                            <FormControl isRequired isInvalid={'email' in errors}>
-                                <FormControl.Label>Email</FormControl.Label>
-                                <Input placeholder="Email" onChangeText={handleChange} value={values.email} />
+                            <FormControl isRequired isInvalid={'username' in errors}>
+            
+                                <Input onBlur={handleBlur('username')} placeholder="Username" onChangeText={handleChange('username')} value={values.username} />
                                 <FormControl.ErrorMessage>
-                                    {errors.email}
+                                    {errors.username}
                                 </FormControl.ErrorMessage>
-                            </FormControl> 
+                            </FormControl>
+
+                            <FormControl isRequired isInvalid={'password' in errors}>
+                                <FormControl.Label />
+                                <Input type="password" onBlur={handleBlur('password')} placeholder="Nova senha" onChangeText={handleChange('password')} value={values.password} />
+                                <FormControl.ErrorMessage>
+                                    {errors.password}
+                                </FormControl.ErrorMessage>
+                            </FormControl>
+
+                            <FormControl isRequired isInvalid={'rePassword' in errors}>
+                                <FormControl.Label />
+                                <Input type="password" onBlur={handleBlur('rePassword')} placeholder="Repita nova senha" onChangeText={handleChange('rePassword')} value={values.rePassword} />
+                                <FormControl.ErrorMessage>
+                                    {errors.rePassword}
+                                </FormControl.ErrorMessage>
+                            </FormControl>
 
                             {/* <div className="mb-3">
                                 <InputGroup>
@@ -419,14 +457,7 @@ const Login: React.FC = () => {
 
 
 
-                            <FormControl>
-                                <FormControl.Label>Name</FormControl.Label>
-                                    <Input />
-                                </FormControl>
-                                <FormControl mt="3">
-                                    <FormControl.Label>Email</FormControl.Label>
-                                <Input />
-                            </FormControl>
+                            
                         </Modal.Body>
                         <Modal.Footer>
                             <Button.Group space={2}>
@@ -436,7 +467,9 @@ const Login: React.FC = () => {
                                     Cancel
                                 </Button>
                                 <Button onPress={() => {
-                                setShowModal(false);
+                                    updatePassword(values.username, values.password);
+                                    toast.success('Um email de confirmação foi enviado!');
+                                    setShowModal(false);
                                 }}>
                                     Save
                                 </Button>
