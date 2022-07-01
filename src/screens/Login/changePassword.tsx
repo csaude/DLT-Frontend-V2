@@ -38,8 +38,7 @@ const ChangePassword: React.FC = ({ route }: any) => {
     const onSubmit = async (values: any) => {
 
         console.log("Username:");
-        console.log(values.username);
-    
+        console.log(values.username);    
     
         try {
             const data = await fetch(`${CHANGE_PASSWORD_URL}`, {
@@ -49,13 +48,16 @@ const ChangePassword: React.FC = ({ route }: any) => {
                   'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    username: loggedUser.username,
+                    username: values.username,
                     recoverPassword: values.password
                 })
             });
             // toast.success('Senha alterada com sucesso!');
+
+        console.log("Alterado com sucesso");
         } catch (error) {
             // toast.error('Failed');
+        console.log(error);
         }
 
         // console.log(loggedUser);
