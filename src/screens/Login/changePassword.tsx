@@ -116,7 +116,6 @@ const ChangePassword: React.FC = ({ route }: any) => {
                                 values,
                                 errors
                             }) => <VStack space={3} w="100%">
-
                                 <FormControl isRequired isInvalid={'password' in errors}>
                                     <FormControl.Label>Password</FormControl.Label>
              
