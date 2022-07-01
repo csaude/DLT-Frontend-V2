@@ -32,8 +32,7 @@ const ChangePassword: React.FC = ({ route }: any) => {
         }
 
         return errors;
-    };
-    
+    };    
 
     const onSubmit = async (values: any) => {
 
@@ -45,24 +44,24 @@ const ChangePassword: React.FC = ({ route }: any) => {
                 method: 'PUT',
                 headers: {
                   Accept: 'application/json',
-                  'Content-Type': 'application/json'
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${params.token}`
                 },
+                
                 body: JSON.stringify({
                     username: values.username,
                     recoverPassword: values.password
                 })
             });
-            // toast.success('Senha alterada com sucesso!');
 
-        console.log("Alterado com sucesso");
+            console.log(data);
+            console.log("Alterado com sucesso");
+            navigate({ name: "Main", params: { loggedUser: loggedUser } });
+
         } catch (error) {
-            // toast.error('Failed');
-        console.log(error);
+            console.log(error);
+            console.log("Erro a alterar a senha.");
         }
-
-        // console.log(loggedUser);
-        navigate({ name: "Main", params: { loggedUser: loggedUser } });
-
         
     };
 
