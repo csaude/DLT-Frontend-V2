@@ -96,7 +96,6 @@ const ChangePassword: React.FC = ({ route }: any) => {
                         onSubmit={onSubmit} 
                         validate={validate}
                         validationSchema={Yup.object({
-                            email: Yup.string().email('Endereço de email inválido').required('Obrigatório'),
                             password: Yup.string()
                                 .required('Obrigatório')
                                 .max(25, 'Deve conter 25 caracteres ou menos')
