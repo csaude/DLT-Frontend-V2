@@ -25,6 +25,7 @@ const Login: React.FC = () => {
     const [isInvalidCredentials, setIsInvalidCredentials] = useState(false);
     const [loading, setLoading] = useState(false);
     const [isOffline, setIsOffline] = useState(false);
+    const [isFirstLogin, setIsFirstLogin] = useState();
 
     const [showModal, setShowModal] = useState(false);
     const [passwordType, setPasswordType] = useState("password");
@@ -116,7 +117,11 @@ const Login: React.FC = () => {
                     }
                 }))
 
-            navigate({ name: "Main", params: { loggedUser: loggedUser } });
+            if(isFirstLogin === '1'){
+                navigate({ name: "Main", params: { loggedUser: loggedUser } });
+            }else{ 
+                navigate({ name: "ChangePassword", params: { loggedUser: loggedUser } });
+            }
         }
 
     }, [loggedUser]);
@@ -183,6 +188,9 @@ const Login: React.FC = () => {
 
                         setIsInvalidCredentials(false);
                         setLoggedUser(response.account);
+                        setIsFirstLogin(response.account.newPassword);
+                        console.log(isFirstLogin);
+
                     }
                 })
                 .catch(error => {
