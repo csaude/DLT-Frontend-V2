@@ -130,11 +130,11 @@ const Login: React.FC = () => {
         const errors: LoginData = {};
 
         if (!values.username) {
-            errors.username = 'Required';
+            errors.username = 'Obrigatório';
         }
 
         if (!values.password) {
-            errors.password = 'Required';
+            errors.password = 'Obrigatório';
         }
 
         return errors;
@@ -295,7 +295,7 @@ const Login: React.FC = () => {
 
                                         <FormControl isRequired isInvalid={'password' in errors}>
                                             <FormControl.Label>Password</FormControl.Label>
-                                            <Input type="password" onBlur={handleBlur('password')} placeholder="Insira o Password" onChangeText={handleChange('password')} value={values.password} />
+                                            <Input type="password" onBlur={handleBlur('password')} placeholder="Insira a Password" onChangeText={handleChange('password')} value={values.password} />
                                             <FormControl.ErrorMessage>
                                                 {errors.password}
                                             </FormControl.ErrorMessage>
@@ -312,7 +312,7 @@ const Login: React.FC = () => {
                                             }} mt={-0.5} _web={{
                                                 mb: -1
                                             }}>
-                                            I forgot my password
+                                            Esqueceu a password?
                                         </Link>
                                     </VStack>
                                 }
@@ -342,7 +342,7 @@ const Login: React.FC = () => {
                                         .matches(/(?=.*[a-z])/, 'Deve conter minúscula')
                                         .matches(/(?=.*[A-Z])/, 'Deve conter Maiúscula')
                                         .matches(/(?=.*[@$!%*#?&])/, 'Deve conter caracter especial')
-                                        .min(8, 'Deve conter 8 caracter ou mais'),
+                                        .min(8, 'Deve conter 8 caracteres ou mais'),
                                     rePassword: Yup.string()
                                         .oneOf([Yup.ref('password'), null], 'As senhas devem corresponder')
                                         .required('Obrigatório')
@@ -361,24 +361,24 @@ const Login: React.FC = () => {
 
 
                                             <FormControl isRequired isInvalid={'username' in errors}>
-
-                                                <Input onBlur={handleBlur('username')} placeholder="Username" onChangeText={handleChange('username')} value={values.username} />
+                                            <FormControl.Label>Username</FormControl.Label>
+                                                <Input onBlur={handleBlur('username')} placeholder="Insira o Username" onChangeText={handleChange('username')} value={values.username} />
                                                 <FormControl.ErrorMessage>
                                                     {errors.username}
                                                 </FormControl.ErrorMessage>
                                             </FormControl>
 
                                             <FormControl isRequired isInvalid={'password' in errors}>
-                                                <FormControl.Label />
-                                                <Input type="password" onBlur={handleBlur('password')} placeholder="Nova senha" onChangeText={handleChange('password')} value={values.password} />
+                                            <FormControl.Label>Nova Password</FormControl.Label>
+                                                <Input type="password" onBlur={handleBlur('password')} placeholder="Insira a nova password" onChangeText={handleChange('password')} value={values.password} />
                                                 <FormControl.ErrorMessage>
                                                     {errors.password}
                                                 </FormControl.ErrorMessage>
                                             </FormControl>
 
                                             <FormControl isRequired isInvalid={'rePassword' in errors}>
-                                                <FormControl.Label />
-                                                <Input type="password" onBlur={handleBlur('rePassword')} placeholder="Repita nova senha" onChangeText={handleChange('rePassword')} value={values.rePassword} />
+                                            <FormControl.Label>Repetir a nova Password</FormControl.Label>
+                                                <Input type="password" onBlur={handleBlur('rePassword')} placeholder="Repita a nova password" onChangeText={handleChange('rePassword')} value={values.rePassword} />
                                                 <FormControl.ErrorMessage>
                                                     {errors.rePassword}
                                                 </FormControl.ErrorMessage>
@@ -386,17 +386,13 @@ const Login: React.FC = () => {
                                         </Modal.Body>
                                         <Modal.Footer>
                                             <Button.Group space={2}>
-                                                <Button variant="ghost" colorScheme="blueGray" onPress={() => {
-                                                    setShowModal(false);
-                                                }}>
-                                                    Cancel
-                                                </Button>
+                                                
                                                 <Button onPress={() => {
                                                     updatePassword(values.username, values.password);
                                                     toast.success('Um email de confirmação foi enviado!');
                                                     setShowModal(false);
                                                 }}>
-                                                    Save
+                                                    Solicitar
                                                 </Button>
                                             </Button.Group>
                                         </Modal.Footer>
