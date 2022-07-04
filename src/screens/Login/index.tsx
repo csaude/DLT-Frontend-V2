@@ -28,6 +28,7 @@ const Login: React.FC = () => {
 
     const [showModal, setShowModal] = useState(false);
     const [passwordType, setPasswordType] = useState("password");
+    const [token, setToken] = useState();
 
     const toasty = useToast();
 
@@ -116,7 +117,11 @@ const Login: React.FC = () => {
                     }
                 }))
 
-            navigate({ name: "Main", params: { loggedUser: loggedUser } });
+            if(loggedUser.newPassword == '1'){
+                navigate({ name: "ChangePassword", params: { loggedUser: loggedUser , token: token} });
+            }else{ 
+                navigate({ name: "Main", params: { loggedUser: loggedUser } });
+            }
         }
 
     }, [loggedUser]);
@@ -183,6 +188,7 @@ const Login: React.FC = () => {
 
                         setIsInvalidCredentials(false);
                         setLoggedUser(response.account);
+                        setToken(response.token);
                     }
                 })
                 .catch(error => {
