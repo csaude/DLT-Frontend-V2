@@ -181,7 +181,12 @@ const UsersList: React.FC = () => {
     }
 
     const columns = [
-        { title: 'Nome de Utilizador', dataIndex: 'name', key: 'name' },
+        { title: 'Nome de Utilizador', dataIndex: 'name', key: 'name',
+        render: (text, record) => (
+            <div>
+                {record.name} {record.surname}
+            </div>
+        ), },
         { title: 'Username', dataIndex: 'username', key: 'username', ...getColumnSearchProps('username') },
         {
             title: 'Ponto de Entrada', dataIndex: '', key: 'type',
