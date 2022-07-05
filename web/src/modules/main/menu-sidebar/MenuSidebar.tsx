@@ -33,6 +33,18 @@ export const MENU: IMenuItem[] = [
     role: 'M&E'
   },
   {
+    name: 'menusidebar.label.reports',
+    path: '#',
+    icon: 'fas fa-file-alt',
+    role: 'ADMIN'
+  },
+  {
+    name: 'menusidebar.label.configurations',
+    path: '#',
+    icon: 'fas fa-cog',
+    role: 'ADMIN'
+  },
+  {
     name: 'menusidebar.label.users',
     path: '/usersList',
     role: 'ADMIN',
@@ -50,18 +62,6 @@ export const MENU: IMenuItem[] = [
         role: 'ADMIN',
       }
     ]*/
-  },
-  {
-    name: 'menusidebar.label.reports',
-    path: '#',
-    icon: 'fas fa-file-alt',
-    role: 'ADMIN'
-  },
-  {
-    name: 'menusidebar.label.configurations',
-    path: '#',
-    icon: 'fas fa-cog',
-    role: 'ADMIN'
   },
 ];
 

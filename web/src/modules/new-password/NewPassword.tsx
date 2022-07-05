@@ -96,7 +96,7 @@ const NewPassword = () => {
                   </Link>
                 </div>
                 <div className="card-body">
-                  <p className="login-box-msg">Redefinir a senha</p>
+                  <p className="login-box-msg">A alteração da password é obrigatória no primeiro login</p>
                   <form onSubmit={handleSubmit}>              
                     <div className="mb-3">
                       <InputGroup className="mb-3">
@@ -104,7 +104,7 @@ const NewPassword = () => {
                           id="password"
                           name="password"
                           type={passwordType}
-                          placeholder="New Password"
+                          placeholder="Insira a nova password"
                           onChange={handleChange}
                           value={values.password}
                           isValid={touched.password && !errors.password}
@@ -135,7 +135,7 @@ const NewPassword = () => {
                           id="rePassword"
                           name="rePassword"
                           type={passwordType}
-                          placeholder="Confirm Password"
+                          placeholder="Repita a nova password"
                           onChange={handleChange}
                           value={values.rePassword}
                           isValid={touched.rePassword && !errors.rePassword}
@@ -161,7 +161,7 @@ const NewPassword = () => {
                     <div className="row">
                       <div className="col-12">
                         <Button type="submit" block isLoading={isAuthLoading} > 
-                          Submit
+                          Submeter
                         </Button>
                       </div>
                     </div>
