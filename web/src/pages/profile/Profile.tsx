@@ -1,18 +1,13 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {ContentHeader, Button} from '@components';
-import ActivityTab from './ActivityTab';
-import TimelineTab from './TimelineTab';
-import SettingsTab from './SettingsTab';
+import {ContentHeader, Button} from '@components'
 import PasswordTab from './PasswordTab';
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState('PASSWORD');
-  const [t] = useTranslation();
-
-  const toggle = (tab: string) => {
-    if (activeTab !== tab) setActiveTab(tab);
-  };
+  let userRole = localStorage.getItem('userRole');
+  let username = localStorage.getItem('username');
+  let userEmail = localStorage.getItem('userEmail');
 
   return (
     <>
@@ -31,23 +26,27 @@ const Profile = () => {
                     />
                   </div>
                   <h3 className="profile-username text-center">
-                    Nome do utilizador
+                    {username}
                   </h3>
-                  <p className="text-muted text-center">Tipo de utilizador</p>
+                  <p className="text-muted text-center"> 
+                    {userEmail} 
+                  </p>
                   <hr />
                   
                   <strong>
                     <i className="fas fa-map-marker-alt mr-1" />
                     Alocação
                   </strong>
-                  <p className="text-muted">Distrito, Provincia</p>
+                  <p className="text-muted"> 
+                    {userRole} 
+                  </p>
                   <hr />
                   <strong>
                     <i className="far fa-file-alt mr-1" />
                     Organização
                   </strong>
                   <p className="text-muted">
-                    Etiam fermentum enim neque.
+                    {userEmail} 
                   </p>
                 </div>
                 {/* /.card-body */}
