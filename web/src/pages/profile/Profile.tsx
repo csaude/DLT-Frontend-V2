@@ -4,9 +4,10 @@ import {ContentHeader, Button} from '@components';
 import ActivityTab from './ActivityTab';
 import TimelineTab from './TimelineTab';
 import SettingsTab from './SettingsTab';
+import PasswordTab from './PasswordTab';
 
 const Profile = () => {
-  const [activeTab, setActiveTab] = useState('ACTIVITY');
+  const [activeTab, setActiveTab] = useState('PASSWORD');
   const [t] = useTranslation();
 
   const toggle = (tab: string) => {
@@ -30,118 +31,37 @@ const Profile = () => {
                     />
                   </div>
                   <h3 className="profile-username text-center">
-                    Nina Mcintire
+                    Nome do utilizador
                   </h3>
-                  <p className="text-muted text-center">Software Engineer</p>
-                  <ul className="list-group list-group-unbordered mb-3">
-                    <li className="list-group-item">
-                      <b>{t('header.user.followers')}</b>
-
-                      <span className="float-right">1,322</span>
-                    </li>
-                    <li className="list-group-item">
-                      <b>{t('views.user.following')}</b>
-                      <span className="float-right">543</span>
-                    </li>
-                    <li className="list-group-item">
-                      <b>{t('header.user.friends')}</b>
-                      <span className="float-right">13,287</span>
-                    </li>
-                  </ul>
-                  <Button block>
-                    {/* @ts-ignore */}
-                    {t('main.label.follow')}
-                  </Button>
-                </div>
-                {/* /.card-body */}
-              </div>
-              <div className="card card-primary">
-                <div className="card-header">
-                  <h3 className="card-title">{t('main.label.aboutMe')}</h3>
-                </div>
-                <div className="card-body">
-                  <strong>
-                    <i className="fas fa-book mr-1" />
-                    {t('main.label.education')}
-                  </strong>
-                  <p className="text-muted">
-                    B.S. in Computer Science from the University of Tennessee at
-                    Knoxville
-                  </p>
+                  <p className="text-muted text-center">Tipo de utilizador</p>
                   <hr />
+                  
                   <strong>
                     <i className="fas fa-map-marker-alt mr-1" />
-                    {t('main.label.location')}
+                    Alocação
                   </strong>
-                  <p className="text-muted">Malibu, California</p>
-                  <hr />
-                  <strong>
-                    <i className="fas fa-pencil-alt mr-1" />
-                    {t('main.label.skills')}
-                  </strong>
-                  <p className="text-muted">
-                    <span className="tag tag-danger">UI Design</span>
-                    <span className="tag tag-success">Coding</span>
-                    <span className="tag tag-info">Javascript</span>
-                    <span className="tag tag-warning">PHP</span>
-                    <span className="tag tag-primary">Node.js</span>
-                  </p>
+                  <p className="text-muted">Distrito, Provincia</p>
                   <hr />
                   <strong>
                     <i className="far fa-file-alt mr-1" />
-                    {t('main.label.notes')}
+                    Organização
                   </strong>
                   <p className="text-muted">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                     Etiam fermentum enim neque.
                   </p>
                 </div>
+                {/* /.card-body */}
               </div>
+              
             </div>
             <div className="col-md-9">
-              <div className="card">
-                <div className="card-header p-2">
-                  <ul className="nav nav-pills">
-                    <li className="nav-item">
-                      <button
-                        type="button"
-                        className={`nav-link ${
-                          activeTab === 'ACTIVITY' ? 'active' : ''
-                        }`}
-                        onClick={() => toggle('ACTIVITY')}
-                      >
-                        {t('main.label.activity')}
-                      </button>
-                    </li>
-                    <li className="nav-item">
-                      <button
-                        type="button"
-                        className={`nav-link ${
-                          activeTab === 'TIMELINE' ? 'active' : ''
-                        }`}
-                        onClick={() => toggle('TIMELINE')}
-                      >
-                        {t('main.label.timeline')}
-                      </button>
-                    </li>
-                    <li className="nav-item">
-                      <button
-                        type="button"
-                        className={`nav-link ${
-                          activeTab === 'SETTINGS' ? 'active' : ''
-                        }`}
-                        onClick={() => toggle('SETTINGS')}
-                      >
-                        {t('main.label.settings')}
-                      </button>
-                    </li>
-                  </ul>
+              <div className="card card-primary">
+                <div className="card-header p-8">
+                  <h2 className="card-title"> Alteração da Password</h2>
                 </div>
                 <div className="card-body">
                   <div className="tab-content">
-                    <ActivityTab isActive={activeTab === 'ACTIVITY'} />
-                    <TimelineTab isActive={activeTab === 'TIMELINE'} />
-                    <SettingsTab isActive={activeTab === 'SETTINGS'} />
+                    <PasswordTab isActive={activeTab === 'PASSWORD'} />
                   </div>
                 </div>
               </div>
