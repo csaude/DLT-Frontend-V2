@@ -209,6 +209,9 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, localities,subServices, be
             <TouchableOpacity onPress={syncronize} style={styles.fab1}>
                 <Icon as={MaterialIcons} name="refresh"  size={8}  color="#0c4a6e" />
             </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigate({name: "BeneficiaryForm", params: {}}) } style={styles.fab}>
+                <Icon as={MaterialIcons} name="add"  size={8}  color="white" />
+            </TouchableOpacity>
         </View>
     );
 }
