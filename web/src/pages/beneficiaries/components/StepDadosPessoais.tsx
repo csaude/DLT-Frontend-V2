@@ -1,14 +1,79 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Badge, Button, Steps, Row, Col, Input, message, Space, Form, Tabs, Modal, DatePicker, Checkbox, Select, Radio, Divider } from 'antd';
+import { allProvinces, queryDistrictsByProvinces, queryLocalitiesByDistricts, queryNeighborhoodsByLocalities } from '@app/utils/locality';
 import './index.css';
 const { Option } = Select;
 const { Step } = Steps;
 
-const StepDadosPessoais = ({ form }: any) => {
+const StepDadosPessoais = ({ form, beneficiary }: any) => {
     const [isDateRequired, setIsDateRequired] = useState<any>(true);
+    const [provinces, setProvinces] = useState<any>([]);
+    const [districts, setDistricts] = useState<any>(undefined);
+    const [localities, setLocalities] = useState<any>(undefined);
+    const [neighborhoods, setNeighborhoods] = useState<any>(undefined);
 
-    const RequiredFieldMessage = "Campo Obrigatório!";
+    let userEntryPoint = localStorage.getItem('entryPoint');
+
+    const RequiredFieldMessage = "Obrigatório!";
     const Idades = ['9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24'];
+
+    useEffect(() => {
+        const fetchData = async () => {
+
+            const dataProvinces = await allProvinces();
+
+            setProvinces(dataProvinces);
+        };
+
+        const fetchDistricts = async () => {
+            if (beneficiary && beneficiary.province.length > 0) {
+                const pIds = beneficiary.provinces.map(item => {
+                    return item.id + ''
+                });
+                const dataDistricts = await queryDistrictsByProvinces({ provinces: pIds });
+                setDistricts(dataDistricts);
+            }
+        };
+
+        const fetchLocalities = async () => {
+            if (beneficiary && beneficiary.district.length > 0) {
+                const dIds = beneficiary.districts.map(item => {
+                    return item.id + ''
+                });
+                const dataLocalities = await queryLocalitiesByDistricts({ districts: dIds });
+                setLocalities(dataLocalities);
+            }
+        };
+
+
+        fetchData().catch(error => console.log(error));
+        fetchDistricts().catch(error => console.log(error));
+        fetchLocalities().catch(error => console.log(error));
+
+    }, [beneficiary]);
+
+    const onChangeProvinces = async (values: any) => {
+        if (values.length > 0) {
+            const dataDistricts = await queryDistrictsByProvinces({ provinces: [values + ""] });
+            setDistricts(dataDistricts);
+        }
+    }
+
+    const onChangeDistricts = async (values: any) => {
+        if (values.length > 0) {
+            const dataLocalities = await queryLocalitiesByDistricts({ districts: [values + ""] });
+            setLocalities(dataLocalities);
+        }
+
+    }
+
+    const onChangeLocality = async (values: any) => {
+        if (values.length > 0) {
+            const dataNeighborhood = await queryNeighborhoodsByLocalities({ localities: [values + ""] });
+            setNeighborhoods(dataNeighborhood);
+        }
+
+    }
 
     const onChangeCheckbox = (e) => {
         setIsDateRequired(!e.target.checked);
@@ -23,16 +88,16 @@ const StepDadosPessoais = ({ form }: any) => {
                         label="Apelido"
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                     >
-                        <Input placeholder="Insira o apelido do Beneficiário" />
+                        <Input placeholder="Insira o apelido da Beneficiária" />
                     </Form.Item>
                 </Col>
                 <Col className="gutter-row" span={12}>
                     <Form.Item
-                        name="nick_name"
+                        name="name"
                         label="Nome"
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                     >
-                        <Input placeholder="Insira o nome do Beneficiário" />
+                        <Input placeholder="Insira o nome da Beneficiária" />
                     </Form.Item>
                 </Col>
             </Row>
@@ -82,12 +147,14 @@ const StepDadosPessoais = ({ form }: any) => {
             <Row gutter={16}>
                 <Col className="gutter-row" span={8}>
                     <Form.Item
-                        name="provice"
+                        name="province"
                         label="Provincia"
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                     >
-                        <Select placeholder="Seleccione a Provincia" >
-                            <Option key='1'>Maputo</Option>
+                        <Select placeholder="Seleccione a Provincia" onChange={onChangeProvinces}>
+                            {provinces?.map(item => (
+                                <Option key={item.id}>{item.name}</Option>
+                            ))}
                         </Select>
                     </Form.Item>
                 </Col>
@@ -97,8 +164,13 @@ const StepDadosPessoais = ({ form }: any) => {
                         label="Distrito"
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                     >
-                        <Select placeholder="Seleccione o Distrito" >
-                            <Option key='1'>Ka Mavota</Option>
+                        <Select placeholder="Seleccione o Distrito" 
+                                disabled={districts == undefined}
+                                onChange={onChangeDistricts}
+                        >
+                            {districts?.map(item => (
+                                <Option key={item.id}>{item.name}</Option>
+                            ))}
                         </Select>
                     </Form.Item>
                 </Col>
@@ -108,14 +180,19 @@ const StepDadosPessoais = ({ form }: any) => {
                         label="Posto Administrativo"
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                     >
-                        <Select placeholder="Seleccione o Posto Administrativo" >
-                            <Option key='1'>Bairro Central</Option>
+                        <Select placeholder="Seleccione o Posto Administrativo" 
+                            disabled={localities == undefined}
+                            onChange={onChangeLocality}
+                        >
+                            {localities?.map(item => (
+                                <Option key={item.id}>{item.name}</Option>
+                            ))}
                         </Select>
                     </Form.Item>
                 </Col>
             </Row>
             <Row gutter={16}>
-                <Col className="gutter-row" span={8}>
+                {/* <Col className="gutter-row" span={8}>
                     <Form.Item
                         name="gender"
                         label="Sexo"
@@ -127,7 +204,7 @@ const StepDadosPessoais = ({ form }: any) => {
                             <Radio.Button value="0">M</Radio.Button>
                         </Radio.Group>
                     </Form.Item>
-                </Col>
+                </Col> */}
                 <Col className="gutter-row" span={8}>
                     <Form.Item
                         name="entry_point"
@@ -135,7 +212,7 @@ const StepDadosPessoais = ({ form }: any) => {
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                         style={{ textAlign: 'left' }}
                     >
-                        <Radio.Group defaultValue="1" buttonStyle="solid">
+                        <Radio.Group defaultValue={userEntryPoint} buttonStyle="solid">
                             <Radio.Button value="1">US</Radio.Button>
                             <Radio.Button value="2">CM</Radio.Button>
                             <Radio.Button value="3">ES</Radio.Button>
@@ -147,7 +224,7 @@ const StepDadosPessoais = ({ form }: any) => {
             <Row gutter={16}>
                 <Col className="gutter-row" span={12}>
                     <Form.Item
-                        name="schoolName"
+                        name="nick_name"
                         label="Alcunha"
                     >
                         <Input placeholder="Insira a alcunha" />
@@ -156,7 +233,7 @@ const StepDadosPessoais = ({ form }: any) => {
                 <Col className="gutter-row" span={12}>
                     <Form.Item
                         name="address"
-                        label="Morada (Bairro)"
+                        label="Endereço (Ponto de Referência)"
                     >
                         <Input placeholder="Insira a morada" />
                     </Form.Item>
@@ -184,16 +261,20 @@ const StepDadosPessoais = ({ form }: any) => {
                 <Col className="gutter-row" span={12}>
                     <Form.Item
                         name="neighbourhood_id"
-                        label="Onde Mora"
+                        label="Bairro"
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                     >
-                        <Select placeholder="Seleccione o Bairro" >
-                            <Option key='1'>Bairro 1</Option>
+                        <Select placeholder="Seleccione o Bairro"  
+                            disabled={neighborhoods == undefined}
+                        >
+                            {neighborhoods?.map(item => (
+                                <Option key={item.id}>{item.name}</Option>
+                            ))}
                         </Select>
                     </Form.Item>
                 </Col>
             </Row>
-            <Row gutter={16}>
+            {/* <Row gutter={16}>
                 <Col className="gutter-row" span={8}>
                     <Form.Item
                         name="status"
@@ -207,7 +288,7 @@ const StepDadosPessoais = ({ form }: any) => {
                         </Radio.Group>
                     </Form.Item>
                 </Col>
-            </Row>
+            </Row> */}
         </>
     );
 }
