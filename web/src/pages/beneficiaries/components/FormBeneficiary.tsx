@@ -11,9 +11,10 @@ import { stringify } from 'qs';
 const { Option } = Select;
 const { Step } = Steps;
 
-const BeneficiaryForm = ({ form, modalVisible, handleAdd, handleModalVisible }: any) => {
+const BeneficiaryForm = ({ form, modalVisible, handleAdd, handleUpdate, handleModalVisible }: any) => {
 
     const [current, setCurrent] = useState(0);
+    const [firstStepValues, setFirstStepValues] = useState();
 
     const next = () => {
         
@@ -21,6 +22,7 @@ const BeneficiaryForm = ({ form, modalVisible, handleAdd, handleModalVisible }: 
 
             const inc = current + 1;
             setCurrent(inc);
+            setFirstStepValues(values);
         }).catch(error => {
 
         });
@@ -39,21 +41,15 @@ const BeneficiaryForm = ({ form, modalVisible, handleAdd, handleModalVisible }: 
 
     const onSubmit = async () => {
         
-       /* form.validateFields().then(async (values) => {
-            console.log(firstStepValues);
-            console.log(secondStepValues);
-            console.log(values);
+        handleAdd(firstStepValues)
+        //TODO: Go to next page only if above instruction succeeds
+        const inc = current + 1;
+        setCurrent(inc);
+    }
 
-        });*/
-       /* const beneficiary = form.getFieldsValue(true);
-       
-        beneficiary.date_of_birth = moment(beneficiary.date_of_birth, "YYYY-MM-DD");
-        beneficiary.vblt_lives_with = stringify(beneficiary.vblt_lives_with);
-        //console.log(beneficiary);
-        const data = await add(beneficiary);
-        //console.log(form.getFieldsValue(true));*/
-        handleModalVisible(false);
-        form.resetFields();
+    const onUpdate = async () => {
+        
+        handleUpdate();
     }
 
     const steps = [
@@ -78,23 +74,28 @@ const BeneficiaryForm = ({ form, modalVisible, handleAdd, handleModalVisible }: 
                 bodyStyle={{ overflowY: 'auto', maxHeight: 'calc(100vh - 300px)' }}
                 centered
                 destroyOnClose
-                title={` Registo de Beneficiário`}
+                title={` Registo de Beneficiária`}
                 visible={modalVisible}
                 onCancel={() => handleModalVisible(false)}
                 footer={<div className="steps-action">
-                    {current > 0 && (
+                    {current === 1 && (
                         <Button style={{ marginLeft: 8 }} onClick={() => prev()}>
-                            Previous
+                            Anterior
                         </Button>
                     )}
-                    {current < steps.length - 1 && (
+                    {current < steps.length - 2 && (
                         <Button type="primary" onClick={() => next()}>
-                            Next
+                            Próximo
                         </Button>
                     )}
-                    {current === steps.length - 1 && (
+                    {(current === steps.length - 2)  && (
                         <Button type="primary" onClick={() => onSubmit()}>
-                            Done
+                            Salvar
+                        </Button>
+                    )}
+                    {(current === steps.length - 1) && (
+                        <Button type="primary" onClick={() => onUpdate()}>
+                            Actualizar
                         </Button>
                     )}
 
