@@ -6,7 +6,7 @@ const { Step } = Steps;
 
 const StepVulnerabilidadesEspecificas = ({ form }: any) => {
 
-    const RequiredFieldMessage = "Campo Obrigatório!";
+    const RequiredFieldMessage = "Obrigatório!";
 
     return (
         <>
@@ -126,7 +126,7 @@ const StepVulnerabilidadesEspecificas = ({ form }: any) => {
                             //onChange={handleChange}
                             style={{width: '100%',}}
                         >
-                            {['Fisica','Sexual', 'Psicologica'].map(item => (
+                            {['Física','Sexual', 'Psicológica'].map(item => (
                                 <Option key={item}>{item}</Option>
                             ))}
                         </Select>

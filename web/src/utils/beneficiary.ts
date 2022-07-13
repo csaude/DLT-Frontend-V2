@@ -18,6 +18,12 @@ export async function query(payload?: BeneficiaryFilter) {
 }
 
 export async function add(payload: any) {
+  console.log(payload);
   const res = await create('/api/beneficiaries', payload);
+  return res;
+}
+
+export async function edit(payload: any) {
+  const res = await update('/api/beneficiaries', payload);
   return res;
 }

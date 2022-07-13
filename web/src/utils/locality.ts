@@ -28,9 +28,11 @@ export async function allProvinces(payload?: any){
     const res = await select(url);
     return res;
 }
+
 interface DistrictFilter{
     provinces: string[];
 }
+
 export async function queryDistrictsByProvinces(payload?: DistrictFilter){
     let url: string;
 
@@ -51,6 +53,7 @@ export async function queryDistrictsByProvinces(payload?: DistrictFilter){
 interface LocalitiesFilter{
     districts: string[];
 }
+
 export async function queryLocalitiesByDistricts(payload?: LocalitiesFilter){
     let url: string;
 
@@ -63,6 +66,27 @@ export async function queryLocalitiesByDistricts(payload?: LocalitiesFilter){
         url = '/api/distlocalities?'.concat(param);
     } else {
         url = '/api/distlocalities';
+    }
+    const res = await select(url);
+    return res;
+}
+
+interface NeighborhoodsFilter{
+    localities: string[];
+}
+
+export async function queryNeighborhoodsByLocalities(payload?: NeighborhoodsFilter){
+    let url: string;
+
+    let dists = payload?.localities.map((v)=>{
+        return `localities=${v}`
+    });
+     const param = dists?.join('&');
+
+    if(param) {
+        url = '/api/localneighborhoods?'.concat(param);
+    } else {
+        url = '/api/localneighborhoods';
     }
     const res = await select(url);
     return res;

@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react'
 import { query } from '../../utils/beneficiary';
 import classNames from "classnames";
 import {matchSorter} from "match-sorter";
-import { Badge, Button, Card, Input, Space, Table, Typography, Form } from 'antd';
+import { Badge, Button, message, Card, Input, Space, Table, Typography, Form } from 'antd';
 import Highlighter from 'react-highlight-words';
 import 'antd/dist/antd.css';
 import { SearchOutlined, EditOutlined, PlusOutlined, EyeOutlined } from '@ant-design/icons';
@@ -11,6 +11,8 @@ import ViewBeneficiary, { ViewBenefiaryPanel } from './components/View';
 import { getEntryPoint } from '@app/models/User';
 import BeneficiaryForm from './components/BeneficiaryForm';
 import FormBeneficiary from './components/FormBeneficiary';
+import { add, edit } from '../../utils/beneficiary';
+import { stringify } from 'qs';
 
 
 const { Text } = Typography;
@@ -20,7 +22,7 @@ const BeneficiariesList: React.FC = () => {
     const [ beneficiaries, setBeneficiaries ] = useState<any[]>([]);
     const [ searchText, setSearchText ] = useState('');
     const [ searchedColumn, setSearchedColumn ] = useState('');
-    const [ beneficiary, setBeneficiary] = useState();
+    const [ beneficiary, setBeneficiary] = useState<any>(undefined);
     const [ modalVisible, setModalVisible] = useState<boolean>(false);
     const [ beneficiaryModalVisible, setBeneficiaryModalVisible] = useState<boolean>(false);
 
@@ -37,9 +39,117 @@ const BeneficiariesList: React.FC = () => {
     
     }, []);
 
-    const handleAdd = (record:any) => {
-        console.log(record);
+    const handleAdd = (values:any) => {
+
+        form.validateFields().then(async (vblts) => {
+            const ben: any = beneficiary ? beneficiary : {};
+
+            ben.surname = values.surname;
+            ben.name = values.name;
+            ben.nickName = values.nick_name;
+            ben.dateOfBirth = moment(values.date_of_birth).format('YYYY-MM-DD');
+            ben.age = values.age;
+            ben.gender="1";
+            ben.address = values.address;
+            ben.EMail = values.e_mail;
+            ben.phoneNumber = values.phone_number;
+            ben.entryPoint = values.entry_point;
+            ben.neighborhood = { "id": values.neighbourhood_id };
+            ben.partner = { "id": localStorage.organization };
+            ben.organizationId = localStorage.organization;
+            ben.us = { "id": localStorage.us };
+            ben.vbltChildren = vblts.vblt_children;
+            ben.vbltDeficiencyType = vblts.vblt_deficiency_type;
+            ben.vbltHouseSustainer = vblts.vblt_house_sustainer;
+            ben.vbltIsDeficient = vblts.vblt_is_deficient;
+            ben.vbltIsEmployed = vblts.vblt_is_employed;
+            ben.vbltIsOrphan = vblts.vblt_is_orphan;
+            ben.vbltIsStudent = vblts.vblt_is_student;
+            ben.vbltLivesWith = vblts.vblt_lives_with.toString();
+            ben.vbltMarriedBefore = vblts.vblt_married_before;
+            ben.vbltPregnantBefore = vblts.vblt_pregnant_before;
+            ben.vbltPregnantOrBreastfeeding = vblts.vblt_pregnant_or_breastfeeding;
+            ben.vbltSchoolGrade = vblts.vblt_school_grade;
+            ben.vbltSchoolName = vblts.vblt_school_name;
+            ben.vbltTestedHiv = vblts.vblt_tested_hiv;
+            ben.status="1";
+            ben.createdBy = localStorage.user;
+
+            if (beneficiary === undefined) {
+                const { data } = await add(ben);
+                setBeneficiaries(beneficiaries => [...beneficiaries, data]);
+                setBeneficiary(data);
+            } else {
+                const { data } = await edit(ben);
+                setBeneficiaries(existingItems => {
+                    return existingItems.map((item, j) => {
+                        return item.id === beneficiary.id ?
+                            data : item
+                    })
+                });
+            }
+
+            message.success({
+                content: 'Registado com Sucesso!', className: 'custom-class',
+                style: {
+                    marginTop: '10vh',
+                }
+            });
+        })
+        .catch(error => {
+            console.log(error);
+            message.error({
+                content: 'Não foi possivel Registrar a Beneficiária!', className: 'custom-class',
+                style: {
+                    marginTop: '10vh',
+                }
+            });
+        });
     }
+    
+    const handleUpdate = () => {
+        form.validateFields().then(async (values) => {
+            beneficiary.vbltSexuallyActive = values.vblt_sexually_active;
+            beneficiary.vbltMultiplePartners = values.vblt_multiple_partners;
+            beneficiary.vbltIsMigrant = values.vblt_is_migrant;
+            beneficiary.vbltTraffickingVictim = values.vblt_trafficking_victim;
+            beneficiary.vbltSexualExploitation = values.vblt_sexual_exploitation;
+            beneficiary.vbltSexploitationTime = values.vblt_sexploitation_time;
+            beneficiary.vbltVbgVictim = values.vblt_vbg_victim;
+            beneficiary.vbltVbgType = values.vblt_vbg_type;
+            beneficiary.vbltVbgTime = values.vblt_vbg_time;
+            beneficiary.vbltAlcoholDrugsUse = values.vblt_alcohol_drugs_use;
+            beneficiary.vbltStiHistory = values.vblt_sti_history;
+            beneficiary.vbltSexWorker = values.vblt_sex_worker;
+            beneficiary.updatedBy = localStorage.user;
+
+            const { data } = await edit(beneficiary);
+            setBeneficiaries(existingItems => {
+                return existingItems.map((item, j) => {
+                    return item.id === beneficiary.id ?
+                        data : item
+                })
+            });
+
+            setBeneficiaryModalVisible(false);
+
+            message.success({
+                content: 'Actualizado com Sucesso!', className: 'custom-class',
+                style: {
+                    marginTop: '10vh',
+                }
+            });
+        })
+        .catch(error => {
+            console.log(error);
+            message.error({
+                content: 'Não foi possivel Actualizar a Beneficiária!', className: 'custom-class',
+                style: {
+                    marginTop: '10vh',
+                }
+            });
+        });
+    };
 
     const handleViewModalVisible = (flag?: boolean, record?: any) => {
         setBeneficiary(record);
@@ -47,9 +157,9 @@ const BeneficiariesList: React.FC = () => {
     };
 
     const handleBeneficiaryModalVisible = (flag?: boolean) => {
-        
+        // form.resetFields();
+        setBeneficiary(undefined);
         setBeneficiaryModalVisible(!!flag);
-        
     };
 
     const handleModalVisible = (flag?: boolean) => {
@@ -149,7 +259,13 @@ const BeneficiariesList: React.FC = () => {
         { title: 'Código do Beneficiário', dataIndex: '', key: 'nui', ...getColumnSearchProps('nui'),
             render: (text, record)  => (<Text type="danger" >{record.nui}</Text>),
         },
-        { title: 'Nome do Beneficiário', dataIndex: 'name', key: 'name' },
+        { title: 'Nome do Beneficiário', dataIndex: 'name', key: 'name',
+            render: (text, record) => (
+                <div>
+                    {record.name} {record.surname}
+                </div>
+            ), 
+        },
         { title: 'Sexo', dataIndex: 'gender', key: 'gender',
             filters: [
             {
@@ -259,7 +375,8 @@ const BeneficiariesList: React.FC = () => {
                 modalVisible={modalVisible} />
                 
             <FormBeneficiary form={form} modalVisible={beneficiaryModalVisible}
-                                handleAdd
+                                handleAdd={handleAdd}
+                                handleUpdate={handleUpdate}
                                 handleModalVisible={handleBeneficiaryModalVisible} />
         </>
     );

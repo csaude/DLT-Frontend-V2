@@ -11,6 +11,10 @@ export const loginByAuth = async (email: string, password: string) => {
   localStorage.setItem('userEmail', data.account.email);
   localStorage.setItem('userRole', data.account?.profiles.name);
   localStorage.setItem('isNewPassword', data.account.newPassword);
+  localStorage.setItem('entryPoint', data.account.entryPoint);
+  localStorage.setItem('organization', data.account.partners.id);
+  localStorage.setItem('us', data.account.us.id);
+  localStorage.setItem('user', data.account.id);
   removeWindowClass('login-page');
   removeWindowClass('hold-transition');
   return data;
