@@ -7,7 +7,13 @@ const { Step } = Steps;
 const StepVulnerabilidadesGerais = ({ form }: any) => {
     const [isDateRequired, setIsDateRequired] = useState<any>(true);
 
-    const RequiredFieldMessage = "Campo Obrigatório!";
+    let vblt_is_deficient = undefined;
+
+    const onIsDeficientChange = async (values: any) => {
+        vblt_is_deficient = values.target.value;
+    }
+
+    const RequiredFieldMessage = "Obrigatório!";
     const LivesWith = ['Pais', 'Avós', 'Parceiro', 'Sozinho', 'Outros Familiares'];
 
     return (
@@ -112,7 +118,8 @@ const StepVulnerabilidadesGerais = ({ form }: any) => {
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                         style={{ textAlign: 'left' }}
                     >
-                        <Radio.Group>
+                        <Radio.Group 
+                            onChange={onIsDeficientChange}>
                             <Radio.Button value={1}>SIM</Radio.Button>
                             <Radio.Button value={0}>NÃO</Radio.Button>
                         </Radio.Group>
@@ -127,9 +134,10 @@ const StepVulnerabilidadesGerais = ({ form }: any) => {
                         <Select
                             size='middle'
                             placeholder="Please select"
+                            // disabled={vblt_is_deficient != 1}
                             //defaultValue={['a10', 'c12']}
-                            //onChange={handleChange}
-                            style={{width: '100%',}}
+                            // onChange={handleChange}
+                            style={{width: '100%',}} 
                         >
                             {['Não Anda','Não Fala','Não Vê','Não Ouve','Tem Algum Membro Amputado ou Deformado'].map(item => (
                                 <Option key={item}>{item}</Option>
