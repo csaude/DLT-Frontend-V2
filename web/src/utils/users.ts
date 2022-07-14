@@ -8,7 +8,7 @@ interface UsersFilter{
 export async function query(payload?: UsersFilter) {
     let url: string;
     if (payload) {
-      url = '/api/users?'.concat(stringify(payload));
+      url = '/api/users/' + payload;
     } else {
       url = '/api/users';
     }

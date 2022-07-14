@@ -107,7 +107,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                         initialValue={beneficiary?.surname}
                     >
-                        <Input placeholder="Insira o apelido da Beneficiária" />
+                        <Input placeholder="Insira o apelido" />
                     </Form.Item>
                 </Col>
                 <Col className="gutter-row" span={12}>
@@ -117,7 +117,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                         initialValue={beneficiary?.name}
                     >
-                        <Input placeholder="Insira o nome da Beneficiária" />
+                        <Input placeholder="Insira o nome" />
                     </Form.Item>
                 </Col>
             </Row>
@@ -228,19 +228,6 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                 </Col>
             </Row>
             <Row gutter={16}>
-                {/* <Col className="gutter-row" span={8}>
-                    <Form.Item
-                        name="gender"
-                        label="Sexo"
-                        rules={[{ required: true, message: RequiredFieldMessage }]}
-                        style={{ textAlign: 'left' }}
-                    >
-                        <Radio.Group defaultValue="1" buttonStyle="solid">
-                            <Radio.Button value="1">F</Radio.Button>
-                            <Radio.Button value="0">M</Radio.Button>
-                        </Radio.Group>
-                    </Form.Item>
-                </Col> */}
                 <Col className="gutter-row" span={8}>
                     <Form.Item
                         name="entry_point"
@@ -316,21 +303,6 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                     </Form.Item>
                 </Col>
             </Row>
-            {/* <Row gutter={16}>
-                <Col className="gutter-row" span={8}>
-                    <Form.Item
-                        name="status"
-                        label="Status"
-                        rules={[{ required: true, message: RequiredFieldMessage }]}
-                        style={{ textAlign: 'left' }}
-                    >
-                        <Radio.Group defaultValue="1" buttonStyle="solid">
-                            <Radio.Button value="1">Activo</Radio.Button>
-                            <Radio.Button value="0">Inactivo</Radio.Button>
-                        </Radio.Group>
-                    </Form.Item>
-                </Col>
-            </Row> */}
         </>
     );
 }
