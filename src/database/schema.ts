@@ -4,6 +4,13 @@ export default appSchema({
     version: 1,
     tables: [
       tableSchema({
+        name: 'sequences',
+        columns: [
+          {name: 'prefix', type: 'string'},
+          {name: 'last_nui', type: 'string', isOptional: true}
+        ],
+      }),
+      tableSchema({
         name: 'localities',
         columns: [
           {name: 'name', type: 'string'},
