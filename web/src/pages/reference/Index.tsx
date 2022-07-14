@@ -1,7 +1,6 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { query } from '@app/utils/reference';
 import { Card, Table, Button, Space, Badge, Input, Typography, Form } from 'antd';
-import Highlighter from 'react-highlight-words';
 import 'antd/dist/antd.css';
 import moment from 'moment';
 import { SearchOutlined, PlusOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';

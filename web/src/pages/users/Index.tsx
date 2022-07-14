@@ -142,8 +142,6 @@ const UsersList: React.FC = () => {
                 { "id": item }
             ));
 
-            const { data } = selectedUser ? await edit(user) : await add(user);
-
             if (selectedUser === undefined) {
                 const { data } = await add(user);
                 setUsers(users => [...users, data]);
