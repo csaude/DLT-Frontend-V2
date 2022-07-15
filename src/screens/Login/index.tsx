@@ -7,7 +7,7 @@ import * as Yup from 'yup';
 import { Q } from '@nozbe/watermelondb'
 import NetInfo from "@react-native-community/netinfo";
 import { database } from '../../database';
-import { LOGIN_API_URL, UPDATE_PASSWORD_URL } from '../../services/api';
+import { LOGIN_API_URL, SYNC_API_URL_PREFIX, UPDATE_PASSWORD_URL } from '../../services/api';
 import { sync } from "../../database/sync";
 import { toast } from 'react-toastify';
 
@@ -19,6 +19,7 @@ interface LoginData {
     password?: string | undefined;
     rePassword?: string | undefined;
 }
+
 
 const Login: React.FC = () => {
     const [loggedUser, setLoggedUser] = useState<any>(undefined);
@@ -33,6 +34,7 @@ const Login: React.FC = () => {
     const toasty = useToast();
 
     const users = database.collections.get('users');
+    const sequences = database.collections.get('sequences');
 
     // Inicio Do Reset
 
@@ -41,8 +43,8 @@ const Login: React.FC = () => {
             const data = await fetch(`${UPDATE_PASSWORD_URL}`, {
                 method: 'PUT',
                 headers: {
-                  Accept: 'application/json',
-                  'Content-Type': 'application/json'
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     username: username,
@@ -55,6 +57,31 @@ const Login: React.FC = () => {
         }
     };
 
+    const fetchPrefix = async (username: string): Promise<any> => {
+        // fetch the prefix 
+        await fetch(`${SYNC_API_URL_PREFIX}?username=${username}`)
+            .then(response => response.json())
+            .then(async (response) => {
+                if (response.status && response.status !== 200) { // unauthorized
+
+                    setIsInvalidCredentials(true);
+                } else {
+
+                    await database.write(async () => {
+                        await sequences.create((sequence: any) => {
+                            sequence.prefix = response.sequence
+                            sequence.last_nui = '11111'
+                        });
+                    });
+                }
+            })
+            .catch(error => {
+                showToast('Falha de Conexão', 'Por favor contacte o suporte!');
+                return undefined;
+            });
+    }
+
+
     const togglePassword = () => {
 
         if (passwordType === "password") {
@@ -63,6 +90,32 @@ const Login: React.FC = () => {
         }
         setPasswordType("password")
     };
+
+    const showToast = (message, description) => {
+        return toasty.show({
+            placement: "top",
+            render: () => {
+                return (
+                    <Alert w="100%" status="error">
+                        <VStack space={2} flexShrink={1} w="100%">
+                            <HStack flexShrink={1} space={2} justifyContent="space-between">
+                                <HStack space={2} flexShrink={1}>
+                                    <Alert.Icon mt="1" />
+                                    <Text fontSize="md" color="coolGray.800">
+                                        {message}
+                                    </Text>
+                                </HStack>
+                                <IconButton variant="unstyled" _focus={{ borderWidth: 0 }} icon={<CloseIcon size="3" color="coolGray.600" />} />
+                            </HStack>
+                            <Box pl="6" _text={{ color: "coolGray.600" }}>
+                                {description}
+                            </Box>
+                        </VStack>
+                    </Alert>
+                );
+            }
+        });
+    }
 
     useEffect(() => {
         const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
@@ -117,9 +170,9 @@ const Login: React.FC = () => {
                     }
                 }))
 
-            if(loggedUser.newPassword == '1'){
-                navigate({ name: "ChangePassword", params: { loggedUser: loggedUser , token: token} });
-            }else{ 
+            if (loggedUser.newPassword == '1') {
+                navigate({ name: "ChangePassword", params: { loggedUser: loggedUser, token: token } });
+            } else {
                 navigate({ name: "Main", params: { loggedUser: loggedUser } });
             }
         }
@@ -151,72 +204,29 @@ const Login: React.FC = () => {
         if (checkSynced == 0) { // checkSynced=0 when db have not synced yet
 
             if (isOffline) {
-
-                return toasty.show({
-                    placement: "top",
-                    render: () => {
-                        return (
-                            <Alert w="100%" status="warning">
-                                <VStack space={2} flexShrink={1} w="100%">
-                                    <HStack flexShrink={1} space={2} justifyContent="space-between">
-                                        <HStack space={2} flexShrink={1}>
-                                            <Alert.Icon mt="1" />
-                                            <Text fontSize="md" color="coolGray.800">
-                                                Sem Conexão a Internet
-                                            </Text>
-                                        </HStack>
-                                        <IconButton variant="unstyled" _focus={{ borderWidth: 0 }} icon={<CloseIcon size="3" color="coolGray.600" />} />
-                                    </HStack>
-                                    <Box pl="6" _text={{ color: "coolGray.600" }}>
-                                        Conecte-se a Internet para o primeiro Login!
-                                    </Box>
-                                </VStack>
-                            </Alert>
-                        );
-                    }
-                });
+                return showToast('Sem Conexão a Internet', 'Conecte-se a Internet para o primeiro Login!');
             }
 
             await fetch(`${LOGIN_API_URL}?username=${values.username}&password=${values.password}`)
                 .then(response => response.json())
-                .then(response => {
+                .then(async (response) => {
 
                     if (response.status && response.status !== 200) { // unauthorized
 
                         setIsInvalidCredentials(true);
                     } else {
 
+                        await fetchPrefix(values.username);
+
                         setIsInvalidCredentials(false);
                         setLoggedUser(response.account);
                         setToken(response.token);
+
                     }
                 })
-                .catch(error => {
+                .catch(error => showToast('Falha de Conexão', 'Por favor contacte o suporte!'));
 
-                    return toasty.show({
-                        placement: "top",
-                        render: () => {
-                            return (
-                                <Alert w="100%" status="error">
-                                    <VStack space={2} flexShrink={1} w="100%">
-                                        <HStack flexShrink={1} space={2} justifyContent="space-between">
-                                            <HStack space={2} flexShrink={1}>
-                                                <Alert.Icon mt="1" />
-                                                <Text fontSize="md" color="coolGray.800">
-                                                    Falha de Conexão
-                                                </Text>
-                                            </HStack>
-                                            <IconButton variant="unstyled" _focus={{ borderWidth: 0 }} icon={<CloseIcon size="3" color="coolGray.600" />} />
-                                        </HStack>
-                                        <Box pl="6" _text={{ color: "coolGray.600" }}>
-                                            Por favor contacte o suporte!
-                                        </Box>
-                                    </VStack>
-                                </Alert>
-                            );
-                        }
-                    });
-                });
+
 
         } else {
             var logguedUser = await users.query(Q.where('username', values.username),
@@ -361,7 +371,7 @@ const Login: React.FC = () => {
 
 
                                             <FormControl isRequired isInvalid={'username' in errors}>
-                                            <FormControl.Label>Username</FormControl.Label>
+                                                <FormControl.Label>Username</FormControl.Label>
                                                 <Input onBlur={handleBlur('username')} placeholder="Insira o Username" onChangeText={handleChange('username')} value={values.username} />
                                                 <FormControl.ErrorMessage>
                                                     {errors.username}
@@ -369,7 +379,7 @@ const Login: React.FC = () => {
                                             </FormControl>
 
                                             <FormControl isRequired isInvalid={'password' in errors}>
-                                            <FormControl.Label>Nova Password</FormControl.Label>
+                                                <FormControl.Label>Nova Password</FormControl.Label>
                                                 <Input type="password" onBlur={handleBlur('password')} placeholder="Insira a nova password" onChangeText={handleChange('password')} value={values.password} />
                                                 <FormControl.ErrorMessage>
                                                     {errors.password}
@@ -377,7 +387,7 @@ const Login: React.FC = () => {
                                             </FormControl>
 
                                             <FormControl isRequired isInvalid={'rePassword' in errors}>
-                                            <FormControl.Label>Repetir a nova Password</FormControl.Label>
+                                                <FormControl.Label>Repetir a nova Password</FormControl.Label>
                                                 <Input type="password" onBlur={handleBlur('rePassword')} placeholder="Repita a nova password" onChangeText={handleChange('rePassword')} value={values.rePassword} />
                                                 <FormControl.ErrorMessage>
                                                     {errors.rePassword}
@@ -386,7 +396,7 @@ const Login: React.FC = () => {
                                         </Modal.Body>
                                         <Modal.Footer>
                                             <Button.Group space={2}>
-                                                
+
                                                 <Button onPress={() => {
                                                     updatePassword(values.username, values.password);
                                                     toast.success('Um email de confirmação foi enviado!');

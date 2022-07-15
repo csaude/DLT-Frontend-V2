@@ -9,8 +9,9 @@ import Sub_services from './Sub_services'
 import Neighborhoods from './Neighborhoods'
 import Beneficiaries_interventions from './Beneficiaries_interventions'
 import References from './References'
+import Sequences from './Sequences'
 
 export const dbModels = [Locality, Partner, Profile, Us, User, 
                         Beneficiaries, Services, Sub_services,
                         Neighborhoods, 
-                        Beneficiaries_interventions, References];
+                        Beneficiaries_interventions, References, Sequences];
