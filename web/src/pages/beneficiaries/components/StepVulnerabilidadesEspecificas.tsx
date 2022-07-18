@@ -5,6 +5,19 @@ const { Option } = Select;
 const { Step } = Steps;
 
 const StepVulnerabilidadesEspecificas = ({ form, beneficiary }: any) => {
+    const [gbvTypeEnabled, setGbvTypeEnabled] = useState<any>(true);
+    const [gbvTimeEnabled, setGbvTimeEnabled] = useState<any>(true);
+
+    const gbvVictimChange = async (values: any) => {
+        setGbvTypeEnabled(values.target.value != 1);
+        if (values.target.value != 1) {
+            setGbvTimeEnabled(true);
+        }
+    }
+
+    const gbvTypeChange = async (values: any) => {
+        setGbvTimeEnabled(values == undefined);
+    }
 
     const RequiredFieldMessage = "Obrigatório!";
 
@@ -113,7 +126,7 @@ const StepVulnerabilidadesEspecificas = ({ form, beneficiary }: any) => {
                         style={{ textAlign: 'left' }}
                         initialValue={beneficiary?.vbltVbgVictim}
                     >
-                        <Radio.Group>
+                        <Radio.Group onChange={gbvVictimChange}>
                             <Radio.Button value={1}>SIM</Radio.Button>
                             <Radio.Button value={0}>NÃO</Radio.Button>
                         </Radio.Group>
@@ -123,15 +136,16 @@ const StepVulnerabilidadesEspecificas = ({ form, beneficiary }: any) => {
                     <Form.Item
                         name="vblt_vbg_type"
                         label="Tipo de Violéncia"
-                        rules={[{ required: true, message: RequiredFieldMessage }]}
+                        rules={[{ required: !gbvTypeEnabled, message: RequiredFieldMessage }]}
                         style={{ textAlign: 'left' }}
                         initialValue={beneficiary?.vbltVbgType}
                     >
                         <Select
                             size='middle'
                             placeholder="Please select"
+                            disabled={gbvTypeEnabled}
                             //defaultValue={['a10', 'c12']}
-                            //onChange={handleChange}
+                            onChange={gbvTypeChange}
                             style={{width: '100%',}}
                         >
                             {['Física','Sexual', 'Psicológica'].map(item => (
@@ -144,12 +158,14 @@ const StepVulnerabilidadesEspecificas = ({ form, beneficiary }: any) => {
                     <Form.Item
                         name="vblt_vbg_time"
                         label="Tempo"
+                        rules={[{ required: !gbvTimeEnabled, message: RequiredFieldMessage }]}
                         style={{ textAlign: 'left' }}
                         initialValue={beneficiary?.vbltVbgTime}
                     >
                        <Select
                             size='middle'
                             placeholder="Please select"
+                            disabled={gbvTimeEnabled}
                             //defaultValue={['a10', 'c12']}
                             //onChange={handleChange}
                             style={{width: '100%',}}
