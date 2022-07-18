@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { Badge, Button, Steps, Row, Col, Input, message, InputNumber, Form, Tabs, Modal, DatePicker, Checkbox, Select, Radio, Divider, SelectProps } from 'antd';
+import { Badge, Button, Steps, Row, Col, Input, message, InputNumber, Form, DatePicker, Checkbox, Select, Radio, Divider, SelectProps } from 'antd';
 import { allProvinces, queryDistrictsByProvinces, queryLocalitiesByDistricts, queryNeighborhoodsByLocalities } from '@app/utils/locality';
 import './index.css';
 import moment from 'moment';
