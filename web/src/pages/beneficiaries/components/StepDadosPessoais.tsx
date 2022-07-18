@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { Badge, Button, Steps, Row, Col, Input, message, Space, Form, Tabs, Modal, DatePicker, Checkbox, Select, Radio, Divider, SelectProps } from 'antd';
+import { Badge, Button, Steps, Row, Col, Input, message, InputNumber, Form, Tabs, Modal, DatePicker, Checkbox, Select, Radio, Divider, SelectProps } from 'antd';
 import { allProvinces, queryDistrictsByProvinces, queryLocalitiesByDistricts, queryNeighborhoodsByLocalities } from '@app/utils/locality';
 import './index.css';
 import moment from 'moment';
@@ -329,8 +329,9 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                         name="phone_number"
                         label="Telemóvel"
                         initialValue={beneficiary?.phoneNumber}
+                        rules={[{ type: 'number', min: 10000001, max:999999999, message: 'O numero inserido não é válido!' }]}
                     >
-                        <Input placeholder="Insira o Telemóvel" />
+                        <InputNumber prefix="+258  " style={{width: '100%',}} placeholder="Insira o Telemóvel" />
                     </Form.Item>
                 </Col>
                 <Col className="gutter-row" span={12}>
@@ -338,6 +339,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                         name="e_mail"
                         label="E-mail"
                         initialValue={beneficiary?.email}
+                        rules={[{ type: 'email', message: 'O email inserido não é válido!' }]}
                     >
                         <Input placeholder="Insira o E-mail" />
                     </Form.Item>
