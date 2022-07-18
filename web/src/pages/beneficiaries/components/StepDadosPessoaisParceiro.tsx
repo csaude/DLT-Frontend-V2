@@ -15,8 +15,6 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
     const [districts, setDistricts] = useState<any>(undefined);
     const [localities, setLocalities] = useState<any>(undefined);
     const [neighborhoods, setNeighborhoods] = useState<any>(undefined);
-    const [age, setAge] = useState<any>(undefined);
-    const [birthDate, setBirthDate] = useState<any>(undefined);
 
     let userEntryPoint = localStorage.getItem('entryPoint');
 
@@ -99,28 +97,6 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
         setIsDateRequired(!e.target.checked);
     }
 
-    const onChangeBirthDate = (value:any) => {
-        var today = new Date();
-        var bday = moment(value).format('YYYY-MM-DD')
-        var birthDate = new Date(bday);
-        var age = today.getFullYear() - birthDate.getFullYear();
-        var m = today.getMonth() - birthDate.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) 
-        {
-            age--;
-        }
-        // var index = Idades.indexOf(age+'');
-        // console.log(index);
-        setAge(age+'');
-    }
-
-    const onChangeAge = (value:any) => {
-        var today = new Date();
-        var birthYear = today.getFullYear() - value;
-        var birthDate = new Date(birthYear + "/01/01");
-        setBirthDate(birthDate);
-    }
-
     return (
         <>
             <Row gutter={16}>
@@ -131,7 +107,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                         initialValue={beneficiary?.surname}
                     >
-                        <Input placeholder="Insira o apelido da Beneficiária" />
+                        <Input placeholder="Insira o apelido" />
                     </Form.Item>
                 </Col>
                 <Col className="gutter-row" span={12}>
@@ -141,7 +117,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                         initialValue={beneficiary?.name}
                     >
-                        <Input placeholder="Insira o nome da Beneficiária" />
+                        <Input placeholder="Insira o nome" />
                     </Form.Item>
                 </Col>
             </Row>
@@ -153,9 +129,9 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                                 name="date_of_birth"
                                 label="Data Nascimento"
                                 rules={[{ required: isDateRequired, message: RequiredFieldMessage }]}
-                                initialValue={birthDate ? moment(birthDate,'YYYY-MM-DD') : beneficiary ? moment(beneficiary?.dateOfBirth,'YYYY-MM-DD') : ''}
+                                initialValue={beneficiary ? moment(beneficiary?.dateOfBirth,'YYYY-MM-DD') : ''}
                             >
-                                <DatePicker disabled={!isDateRequired} onChange={onChangeBirthDate} style={{ width: '100%' }} placeholder="Selecione a data" />
+                                <DatePicker disabled={!isDateRequired} style={{ width: '100%' }} placeholder="Selecione a data" />
                             </Form.Item>
                         </Col>
                         <Col span={14}>
@@ -168,9 +144,9 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                         name="age"
                         label="Idade (em anos)"
                         rules={[{ required: !isDateRequired, message: RequiredFieldMessage }]}
-                        // initialValue={age}
+                        initialValue={beneficiary?.age}
                     >
-                        <Select disabled={isDateRequired} /*onChange={onChangeAge}*/ defaultValue={age} placeholder="Seleccione a Idade" >
+                        <Select disabled={isDateRequired} placeholder="Seleccione a Idade" >
                             {Idades.map(item => (
                                 <Option key={item}>{item}</Option>
                             ))}
@@ -252,19 +228,6 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                 </Col>
             </Row>
             <Row gutter={16}>
-                {/* <Col className="gutter-row" span={8}>
-                    <Form.Item
-                        name="gender"
-                        label="Sexo"
-                        rules={[{ required: true, message: RequiredFieldMessage }]}
-                        style={{ textAlign: 'left' }}
-                    >
-                        <Radio.Group defaultValue="1" buttonStyle="solid">
-                            <Radio.Button value="1">F</Radio.Button>
-                            <Radio.Button value="0">M</Radio.Button>
-                        </Radio.Group>
-                    </Form.Item>
-                </Col> */}
                 <Col className="gutter-row" span={8}>
                     <Form.Item
                         name="entry_point"
@@ -340,21 +303,6 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                     </Form.Item>
                 </Col>
             </Row>
-            {/* <Row gutter={16}>
-                <Col className="gutter-row" span={8}>
-                    <Form.Item
-                        name="status"
-                        label="Status"
-                        rules={[{ required: true, message: RequiredFieldMessage }]}
-                        style={{ textAlign: 'left' }}
-                    >
-                        <Radio.Group defaultValue="1" buttonStyle="solid">
-                            <Radio.Button value="1">Activo</Radio.Button>
-                            <Radio.Button value="0">Inactivo</Radio.Button>
-                        </Radio.Group>
-                    </Form.Item>
-                </Col>
-            </Row> */}
         </>
     );
 }

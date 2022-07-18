@@ -1,9 +1,8 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Badge, Button, Steps, Row, Col, Input, message, Space, Form, Tabs, Modal, DatePicker, Checkbox, Select, Radio, Divider } from 'antd';
 import './index.css';
-import StepDadosPessoais from './StepDadosPessoais';
-import StepVulnerabilidadesGerais from './StepVulnerabilidadesGerais';
-import StepVulnerabilidadesEspecificas from './StepVulnerabilidadesEspecificas';
+import StepDadosPessoais from './StepDadosPessoaisParceiro';
+import StepVulnerabilidadesGerais from './StepVulnerabilidadesGeraisParceiro';
 import { add } from '@app/utils/beneficiary';
 import moment from 'moment';
 import { stringify } from 'qs';
@@ -11,11 +10,10 @@ import { stringify } from 'qs';
 const { Option } = Select;
 const { Step } = Steps;
 
-const BeneficiaryForm = ({ form, beneficiary, modalVisible, handleAdd, handleUpdate, handleModalVisible }: any) => {
+const BeneficiaryPartnerForm = ({ form, beneficiary, modalVisible, handleAdd, handleModalVisible }: any) => {
 
     const [current, setCurrent] = useState(0);
     const [firstStepValues, setFirstStepValues] = useState();
-    const [secondStepValues, setSecondStepValues] = useState();
 
     const next = () => {
         
@@ -23,7 +21,7 @@ const BeneficiaryForm = ({ form, beneficiary, modalVisible, handleAdd, handleUpd
 
             const inc = current + 1;
             setCurrent(inc);
-            current === 0 ? setFirstStepValues(values) : setSecondStepValues(values);
+            setFirstStepValues(values);
         }).catch(error => {
 
         });
@@ -42,18 +40,9 @@ const BeneficiaryForm = ({ form, beneficiary, modalVisible, handleAdd, handleUpd
 
     const onSubmit = async () => {
         
-        handleAdd(firstStepValues,"1")
-        //TODO: Go to next page only if above instruction succeeds
-        const inc = current + 1;
-        setCurrent(inc);
-    }
-
-    const onUpdate = async () => {
-        
-        handleUpdate(firstStepValues, secondStepValues);
-        // TODO: Perform actions only if above instruction succeeds
-        // setCurrent(0);
-        // form.resetFields();
+        handleAdd(firstStepValues,"0")
+        //TODO: Perform action only if above instruction succeeds
+        handleModalVisible(false);
     }
 
     const steps = [
@@ -64,10 +53,6 @@ const BeneficiaryForm = ({ form, beneficiary, modalVisible, handleAdd, handleUpd
         {
             title: 'Critérios de Eligibilidade Gerais',
             content: <StepVulnerabilidadesGerais form={form} beneficiary={beneficiary} />,
-        },
-        {
-            title: ' Critérios de Eligibilidade Específicos',
-            content: <StepVulnerabilidadesEspecificas form={form} beneficiary={beneficiary} />,
         }
     ];
 
@@ -78,28 +63,23 @@ const BeneficiaryForm = ({ form, beneficiary, modalVisible, handleAdd, handleUpd
                 bodyStyle={{ overflowY: 'auto', maxHeight: 'calc(100vh - 300px)' }}
                 centered
                 destroyOnClose
-                title={` Registo de Beneficiária`}
+                title={` Registo de Parceiro de Beneficiária`}
                 visible={modalVisible}
                 onCancel={() => handleModalVisible(false)}
                 footer={<div className="steps-action">
-                    {(current === 1 || (current === 2 && beneficiary != undefined)) && (
-                        <Button style={{ marginLeft: 8 }} onClick={() => prev()}>
-                            Anterior
-                        </Button>
-                    )}
-                    {(current < steps.length - 2 || (current === 1 && beneficiary != undefined)) && (
+                    {(current === 0) && (
                         <Button type="primary" onClick={() => next()}>
                             Próximo
                         </Button>
                     )}
-                    {(current === steps.length - 2 && beneficiary === undefined)  && (
-                        <Button type="primary" onClick={() => onSubmit()}>
-                            Salvar
+                    {(current === 1) && (
+                        <Button style={{ marginLeft: 8 }} onClick={() => prev()}>
+                            Anterior
                         </Button>
                     )}
-                    {(current === steps.length - 1) && (
-                        <Button type="primary" onClick={() => onUpdate()}>
-                            Actualizar
+                    {(current === 1) && (
+                        <Button type="primary" onClick={() => onSubmit()}>
+                            Salvar
                         </Button>
                     )}
 
@@ -120,4 +100,4 @@ const BeneficiaryForm = ({ form, beneficiary, modalVisible, handleAdd, handleUpd
         </>
     );
 }
-export default BeneficiaryForm;
+export default BeneficiaryPartnerForm;
