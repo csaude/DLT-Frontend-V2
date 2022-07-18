@@ -4,7 +4,20 @@ import './index.css';
 const { Option } = Select;
 const { Step } = Steps;
 
-const StepVulnerabilidadesEspecificas = ({ form }: any) => {
+const StepVulnerabilidadesEspecificas = ({ form, beneficiary }: any) => {
+    const [gbvTypeEnabled, setGbvTypeEnabled] = useState<any>(true);
+    const [gbvTimeEnabled, setGbvTimeEnabled] = useState<any>(true);
+
+    const gbvVictimChange = async (values: any) => {
+        setGbvTypeEnabled(values.target.value != 1);
+        if (values.target.value != 1) {
+            setGbvTimeEnabled(true);
+        }
+    }
+
+    const gbvTypeChange = async (values: any) => {
+        setGbvTimeEnabled(values == undefined);
+    }
 
     const RequiredFieldMessage = "Obrigatório!";
 
@@ -17,6 +30,7 @@ const StepVulnerabilidadesEspecificas = ({ form }: any) => {
                         label="Sexualmente Activa?"
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                         style={{ textAlign: 'left' }}
+                        initialValue={beneficiary?.vbltSexuallyActive}
                     >
                         <Radio.Group>
                             <Radio.Button value={1}>SIM</Radio.Button>
@@ -30,6 +44,7 @@ const StepVulnerabilidadesEspecificas = ({ form }: any) => {
                         label="Relações Múltiplas e Concorrentes?"
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                         style={{ textAlign: 'left' }}
+                        initialValue={beneficiary?.vbltMultiplePartners}
                     >
                         <Radio.Group>
                             <Radio.Button value={1}>SIM</Radio.Button>
@@ -43,6 +58,7 @@ const StepVulnerabilidadesEspecificas = ({ form }: any) => {
                         label="Migrante?"
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                         style={{ textAlign: 'left' }}
+                        initialValue={beneficiary?.vbltIsMigrant}
                     >
                         <Radio.Group>
                             <Radio.Button value={1}>SIM</Radio.Button>
@@ -58,6 +74,7 @@ const StepVulnerabilidadesEspecificas = ({ form }: any) => {
                         label="Vítima de Tráfico?"
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                         style={{ textAlign: 'left' }}
+                        initialValue={beneficiary?.vbltTraffickingVictim}
                     >
                         <Radio.Group>
                             <Radio.Button value={1}>SIM</Radio.Button>
@@ -71,6 +88,7 @@ const StepVulnerabilidadesEspecificas = ({ form }: any) => {
                         label="Vítima de Exploração sexual?"
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                         style={{ textAlign: 'left' }}
+                        initialValue={beneficiary?.vbltSexualExploitation}
                     >
                         <Radio.Group>
                             <Radio.Button value={1}>SIM</Radio.Button>
@@ -83,6 +101,7 @@ const StepVulnerabilidadesEspecificas = ({ form }: any) => {
                         name="vblt_sexploitation_time"
                         label="Tempo"
                         style={{ textAlign: 'left' }}
+                        initialValue={beneficiary?.vbltSexploitationTime}
                     >
                        <Select
                             size='middle'
@@ -105,8 +124,9 @@ const StepVulnerabilidadesEspecificas = ({ form }: any) => {
                         label="Vítima de Violéncia Baseada no Gênero?"
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                         style={{ textAlign: 'left' }}
+                        initialValue={beneficiary?.vbltVbgVictim}
                     >
-                        <Radio.Group>
+                        <Radio.Group onChange={gbvVictimChange}>
                             <Radio.Button value={1}>SIM</Radio.Button>
                             <Radio.Button value={0}>NÃO</Radio.Button>
                         </Radio.Group>
@@ -116,14 +136,16 @@ const StepVulnerabilidadesEspecificas = ({ form }: any) => {
                     <Form.Item
                         name="vblt_vbg_type"
                         label="Tipo de Violéncia"
-                        rules={[{ required: true, message: RequiredFieldMessage }]}
+                        rules={[{ required: !gbvTypeEnabled, message: RequiredFieldMessage }]}
                         style={{ textAlign: 'left' }}
+                        initialValue={beneficiary?.vbltVbgType}
                     >
                         <Select
                             size='middle'
                             placeholder="Please select"
+                            disabled={gbvTypeEnabled}
                             //defaultValue={['a10', 'c12']}
-                            //onChange={handleChange}
+                            onChange={gbvTypeChange}
                             style={{width: '100%',}}
                         >
                             {['Física','Sexual', 'Psicológica'].map(item => (
@@ -136,11 +158,14 @@ const StepVulnerabilidadesEspecificas = ({ form }: any) => {
                     <Form.Item
                         name="vblt_vbg_time"
                         label="Tempo"
+                        rules={[{ required: !gbvTimeEnabled, message: RequiredFieldMessage }]}
                         style={{ textAlign: 'left' }}
+                        initialValue={beneficiary?.vbltVbgTime}
                     >
                        <Select
                             size='middle'
                             placeholder="Please select"
+                            disabled={gbvTimeEnabled}
                             //defaultValue={['a10', 'c12']}
                             //onChange={handleChange}
                             style={{width: '100%',}}
@@ -159,6 +184,7 @@ const StepVulnerabilidadesEspecificas = ({ form }: any) => {
                         label="Uso de Álcool e Drogas?"
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                         style={{ textAlign: 'left' }}
+                        initialValue={beneficiary?.vbltAlcoholDrugsUse}
                     >
                         <Radio.Group>
                             <Radio.Button value={1}>SIM</Radio.Button>
@@ -172,6 +198,7 @@ const StepVulnerabilidadesEspecificas = ({ form }: any) => {
                         label="Histórico de ITS?"
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                         style={{ textAlign: 'left' }}
+                        initialValue={beneficiary?.vbltStiHistory}
                     >
                         <Radio.Group>
                             <Radio.Button value={1}>SIM</Radio.Button>
@@ -184,6 +211,7 @@ const StepVulnerabilidadesEspecificas = ({ form }: any) => {
                         name="vblt_sex_worker"
                         label="Trabalhadora do Sexo"
                         style={{ textAlign: 'left' }}
+                        initialValue={beneficiary?.vbltSexWorker}
                     >
                         <Radio.Group>
                             <Radio.Button value={1}>SIM</Radio.Button>
