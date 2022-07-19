@@ -4,6 +4,7 @@ import { allProvinces, queryDistrictsByProvinces, queryLocalitiesByDistricts, qu
 import './index.css';
 import moment from 'moment';
 import { query } from '@app/utils/users';
+import { calculateAge } from '@app/models/Utils';
 
 const { Option } = Select;
 const { Step } = Steps;
@@ -98,17 +99,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
     }
 
     const onChangeBirthDate = (value:any) => {
-        var today = new Date();
-        var bday = moment(value).format('YYYY-MM-DD')
-        var birthDate = new Date(bday);
-        var age = today.getFullYear() - birthDate.getFullYear();
-        var m = today.getMonth() - birthDate.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) 
-        {
-            age--;
-        }
-
-        setAge(age+'');
+        setAge(calculateAge(value)+'');
     }
 
 
@@ -273,19 +264,6 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                 </Col>
             </Row>
             <Row gutter={16}>
-                {/* <Col className="gutter-row" span={8}>
-                    <Form.Item
-                        name="gender"
-                        label="Sexo"
-                        rules={[{ required: true, message: RequiredFieldMessage }]}
-                        style={{ textAlign: 'left' }}
-                    >
-                        <Radio.Group defaultValue="1" buttonStyle="solid">
-                            <Radio.Button value="1">F</Radio.Button>
-                            <Radio.Button value="0">M</Radio.Button>
-                        </Radio.Group>
-                    </Form.Item>
-                </Col> */}
                 <Col className="gutter-row" span={8}>
                     <Form.Item
                         name="entry_point"
@@ -372,21 +350,6 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                     </Form.Item>
                 </Col>
             </Row>
-            {/* <Row gutter={16}>
-                <Col className="gutter-row" span={8}>
-                    <Form.Item
-                        name="status"
-                        label="Status"
-                        rules={[{ required: true, message: RequiredFieldMessage }]}
-                        style={{ textAlign: 'left' }}
-                    >
-                        <Radio.Group defaultValue="1" buttonStyle="solid">
-                            <Radio.Button value="1">Activo</Radio.Button>
-                            <Radio.Button value="0">Inactivo</Radio.Button>
-                        </Radio.Group>
-                    </Form.Item>
-                </Col>
-            </Row> */}
         </>
     );
 }
