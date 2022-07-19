@@ -362,6 +362,15 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                         </Select>
                     </Form.Item>
                 </Col>
+                <Col className="gutter-row" span={12}>
+                    <Form.Item
+                        name="partner_nui"
+                        label="NUI do Parceiro"
+                        initialValue={beneficiary?.partnerNUI}
+                    >
+                        <Input placeholder="Insira o NUI do parceiro" />
+                    </Form.Item>
+                </Col>
             </Row>
             {/* <Row gutter={16}>
                 <Col className="gutter-row" span={8}>
