@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import { query } from '../../utils/beneficiary';
+import { query as queryUser } from '../../utils/users';
 import classNames from "classnames";
 import {matchSorter} from "match-sorter";
 import { Badge, Button, message, Card, Input, Space, Table, Typography, Form } from 'antd';
@@ -8,7 +9,8 @@ import 'antd/dist/antd.css';
 import { SearchOutlined, EditOutlined, PlusOutlined, EyeOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import ViewBeneficiary, { ViewBenefiaryPanel } from './components/View';
-import { getEntryPoint } from '@app/models/User';
+import { getEntryPoint, UserModel } from '@app/models/User';
+import { calculateAge } from '@app/models/Utils';
 import BeneficiaryForm from './components/BeneficiaryForm';
 import FormBeneficiary from './components/FormBeneficiary';
 import FormBeneficiaryPartner from './components/FormBeneficiaryPartner';
@@ -20,6 +22,7 @@ const { Text } = Typography;
 
 const BeneficiariesList: React.FC = () => {
     const [form] = Form.useForm();
+    const [users, setUsers] = useState<UserModel[]>([]);
     const [ beneficiaries, setBeneficiaries ] = useState<any[]>([]);
     const [ searchText, setSearchText ] = useState('');
     const [ searchedColumn, setSearchedColumn ] = useState('');
@@ -36,8 +39,14 @@ const BeneficiariesList: React.FC = () => {
 
           setBeneficiaries(data);
         } 
+
+        const fetchUsers = async () => {
+            const users = await queryUser();
+            setUsers(users);
+        }
     
         fetchData().catch(error => console.log(error));
+        fetchUsers().catch(error => console.log(error));
     
     }, []);
 
@@ -59,9 +68,6 @@ const BeneficiariesList: React.FC = () => {
             ben.nationality = values.nationality;
             ben.entryPoint = values.entry_point;
             ben.neighborhood = { "id": values.neighbourhood_id };
-            ben.partner = { "id": localStorage.organization };
-            ben.organizationId = localStorage.organization;
-            ben.us = { "id": localStorage.us };
             ben.partnerNUI = values.partner_nui;
             ben.vbltChildren = vblts.vblt_children;
             ben.vbltDeficiencyType = vblts.vblt_deficiency_type;
@@ -78,9 +84,14 @@ const BeneficiariesList: React.FC = () => {
             ben.vbltSchoolName = vblts.vblt_school_name;
             ben.vbltTestedHiv = vblts.vblt_tested_hiv;
             ben.status="1";
-            ben.createdBy = localStorage.user;
+            
 
             if (beneficiary === undefined) {
+                ben.createdBy = localStorage.user;
+                ben.partner = { "id": localStorage.organization };
+                ben.organizationId = localStorage.organization;
+                ben.us = { "id": localStorage.us };
+
                 const { data } = await add(ben);
                 setBeneficiaries(beneficiaries => [...beneficiaries, data]);
                 setBeneficiary(data);
@@ -204,10 +215,23 @@ const BeneficiariesList: React.FC = () => {
         setModalVisible(!!flag);
     };
 
+    const fetchPartner = async (record: any) => {
+        const data = await query(record.partnerId);
+        record.partnerNUI = data.nui;
+    }
+
     const onEditBeneficiary = (record: any) => {
-        console.log(record);
+        
         form.resetFields();
-        record.gender === "1" ? setBeneficiaryModalVisible(true) : setBeneficiaryPartnerModalVisible(true);
+        if (record.gender === "1") {
+            if (record.partnerId != null) {
+                fetchPartner(record).catch(error => console.log(error));;
+            }
+            setBeneficiaryModalVisible(true)
+        }
+        else {
+            setBeneficiaryPartnerModalVisible(true);
+        }
         setBeneficiary(record);
     };
 
@@ -302,7 +326,10 @@ const BeneficiariesList: React.FC = () => {
 
     const columns = [
         { title: 'Código do Beneficiário', dataIndex: '', key: 'nui', ...getColumnSearchProps('nui'),
-            render: (text, record)  => (<Text type="danger" >{record.nui}</Text>),
+            render: (text, record)  => (
+                <Text type="danger" >
+                    {record.neighborhood.locality.district.code}/{record.nui}
+                </Text>),
         },
         { title: 'Nome do Beneficiário', dataIndex: 'name', key: 'name',
             render: (text, record) => (
@@ -315,11 +342,11 @@ const BeneficiariesList: React.FC = () => {
             filters: [
             {
                 text: 'Masculino',
-                value: '1',
+                value: '0',
                 },
                 {
                 text: 'Feminino',
-                value: '2',
+                value: '1',
             },
             ],
             onFilter: (value, record) => record.gender == value,
@@ -341,7 +368,9 @@ const BeneficiariesList: React.FC = () => {
         { title: 'Distrito', dataIndex: '', key: 'district',
             render: (text, record)  => record.neighborhood.locality.district.name,
         },
-        { title: 'Idade', dataIndex: 'grade', key: 'grade'},
+        { title: 'Idade', dataIndex: 'age', key: 'age',
+            render: (text, record) => calculateAge(record.dateOfBirth)
+        },
         { title: '#Interv', dataIndex: 'status', key: 'status', 
             render(val: any) {
                 return (
@@ -353,10 +382,10 @@ const BeneficiariesList: React.FC = () => {
             render: (text, record)  => record.partner.abbreviation,
         },
         { title: 'Criado Por', dataIndex: '', key: 'createdBy',
-            render: (text, record)  => record.createdBy.username,
+            render: (text, record)  => users.filter(user => record.createdBy == user.id).map(filteredUser => filteredUser.username)[0],
         },
         { title: 'Atualizado Por', dataIndex: '', key: 'updatedBy',
-            render: (text, record)  => record.updatedBy?.username,
+            render: (text, record)  => users.filter(user => record.updatedBy == user.id).map(filteredUser => filteredUser.username)[0],
         },
         { title: 'Criado Em', dataIndex: 'dateCreated', key: 'dateCreated',
             render: (val: string) => <span>{moment(val).format('YYYY-MM-DD')}</span>,
@@ -366,10 +395,6 @@ const BeneficiariesList: React.FC = () => {
           dataIndex: '',
           key: 'x',
           render: (text, record) => (
-            // <Fragment>
-            //   <Button type="primary" icon={<EyeOutlined />} onClick={()=>handleViewModalVisible(true, record)}>
-            //   </Button>
-            // </Fragment>
                 <Space>
                     <Button type="primary" icon={<EyeOutlined />} onClick={()=>handleViewModalVisible(true, record)}>
                     </Button>
