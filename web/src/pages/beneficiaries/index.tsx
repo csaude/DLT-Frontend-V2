@@ -62,6 +62,7 @@ const BeneficiariesList: React.FC = () => {
             ben.partner = { "id": localStorage.organization };
             ben.organizationId = localStorage.organization;
             ben.us = { "id": localStorage.us };
+            ben.partnerNUI = values.partner_nui;
             ben.vbltChildren = vblts.vblt_children;
             ben.vbltDeficiencyType = vblts.vblt_deficiency_type;
             ben.vbltHouseSustainer = vblts.vblt_house_sustainer;
@@ -125,6 +126,7 @@ const BeneficiariesList: React.FC = () => {
             beneficiary.nationality = firstStepValues.nationality;
             beneficiary.entryPoint = firstStepValues.entry_point;
             beneficiary.neighborhood = { "id": firstStepValues.neighbourhood_id };
+            beneficiary.partnerNUI = values.partner_nui;
             beneficiary.vbltChildren = secondStepValues.vblt_children;
             beneficiary.vbltDeficiencyType = secondStepValues.vblt_deficiency_type;
             beneficiary.vbltHouseSustainer = secondStepValues.vblt_house_sustainer;
