@@ -4,6 +4,7 @@ import {allPartners} from '@app/utils/partners';
 import { Card, Table, Button, Space, Badge, Input, Typography, Form } from 'antd';
 import 'antd/dist/antd.css';
 import moment from 'moment';
+import Highlighter from 'react-highlight-words';
 import { SearchOutlined, PlusOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
 import { getEntryPoint } from '@app/models/User';
 
@@ -37,13 +38,85 @@ const ReferenceList: React.FC = () => {
     
         fetchData().catch(error => console.log(error));
     
-    }, []);
-    
+    }, []);    
    
-    const filterData = data => formatter => data.map( item => ({
+    const filterPartner = data => formatter => data.map( item => ({
         text: formatter(item),
         value: formatter(item)
     }));
+
+    const getColumnSearchProps = (dataIndex:any) => ({
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+            <div style={{ padding: 8 }}>
+                <Input
+                    ref={node => {
+                        searchInput = node;
+                    }}
+                    placeholder={`Pesquisar pelo nui da Beneficiária`}
+                    value={selectedKeys[0]}
+                    onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                    onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                    style={{ marginBottom: 8, display: 'block' }}
+                    />
+                <Space>
+                <Button
+                    type="primary"
+                    onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                    icon={<SearchOutlined />}
+                    size="small"
+                    style={{ width: 90 }}
+                >
+                    Pesquisar
+                </Button>
+                <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+                    Reset
+                </Button>
+                <Button
+                    type="link"
+                    size="small"
+                    onClick={() => {
+                    confirm({ closeDropdown: false });
+                    setSearchText(selectedKeys[0]);
+                    setSearchedColumn(dataIndex);
+                    }}
+                >
+                    Filter
+                </Button>
+                </Space>
+            </div>
+        ),
+        filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+        onFilter: (value, record) =>
+                    record[dataIndex]
+                        ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
+                        : '',
+        onFilterDropdownVisibleChange: visible => {
+                if (visible) {
+                    setTimeout(() => searchInput.select(), 100);
+                }
+        },
+        render: text =>
+            searchedColumn === dataIndex ? (
+                <Highlighter
+                highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+                searchWords={[searchText]}
+                autoEscape
+                textToHighlight={text ? text.toString() : ''}
+                />
+            ) : ( text ),
+    });
+
+    const handleSearch = (selectedKeys, confirm, dataIndex) => {
+        confirm();
+        setSearchText(selectedKeys[0]);
+        setSearchedColumn(dataIndex);
+        
+    };
+
+    const handleReset = clearFilters => {
+        clearFilters();
+        setSearchText(searchText);
+    };
     
     const columnsRef = [
         { 
@@ -57,6 +130,10 @@ const ReferenceList: React.FC = () => {
             dataIndex: '', 
             key: 'type',
             render: (text, record)  => record.users.partners.name,
+            filters: filterPartner(partners)(i => i.name),
+            onFilter: (value, record) => record.users.partners.name == value,
+            filterSearch: true,
+           
         },
         { 
             title: 'Referido em', 
@@ -74,6 +151,7 @@ const ReferenceList: React.FC = () => {
             dataIndex: '', 
             key: '',
             render: (text, record)  => record.beneficiaries.nui,
+            //  ...getColumnSearchProps('references.beneficiaries.nui') 
         },	
         { 
             title: 'Referente', 
@@ -103,7 +181,7 @@ const ReferenceList: React.FC = () => {
             dataIndex: '', 
             key: '',
             render: (text, record)  => record.users.partners.name,
-            filters: filterData(partners)(i => i.name),
+            filters: filterPartner(partners)(i => i.name),
             onFilter: (value, record) => record.users.partners.name == value,
             filterSearch: true,
            
