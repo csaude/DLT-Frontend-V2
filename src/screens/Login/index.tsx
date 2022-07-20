@@ -10,8 +10,9 @@ import { database } from '../../database';
 import { LOGIN_API_URL, SYNC_API_URL_PREFIX, UPDATE_PASSWORD_URL } from '../../services/api';
 import { sync } from "../../database/sync";
 import { toast } from 'react-toastify';
-
-// import * as AuthService from '../../../web/src/services/auth';
+import bcrypt from 'bcryptjs';
+import Spinner from 'react-native-loading-spinner-overlay';
+import styles from './style'
 
 interface LoginData {
     email?: string | undefined;
@@ -26,7 +27,7 @@ const Login: React.FC = () => {
     const [isInvalidCredentials, setIsInvalidCredentials] = useState(false);
     const [loading, setLoading] = useState(false);
     const [isOffline, setIsOffline] = useState(false);
-
+    const [spinner, setSpinner] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [passwordType, setPasswordType] = useState("password");
     const [token, setToken] = useState();
@@ -196,10 +197,11 @@ const Login: React.FC = () => {
     const onSubmit = async (values: any) => {
         setLoading(true);
 
-        // check if users table is synced
+        // check if users table is synced 
         var checkSynced = await users.query(
             Q.where('_status', 'synced'),
         ).fetchCount();
+
         console.log(checkSynced);
         if (checkSynced == 0) { // checkSynced=0 when db have not synced yet
 
@@ -221,36 +223,38 @@ const Login: React.FC = () => {
                         setIsInvalidCredentials(false);
                         setLoggedUser(response.account);
                         setToken(response.token);
-
                     }
+                    setLoading(false);
                 })
                 .catch(error => showToast('Falha de Conexão', 'Por favor contacte o suporte!'));
 
 
 
         } else {
-            var logguedUser = await users.query(Q.where('username', values.username),
-                Q.where('password', values.password)).fetch();
+            var logguedUser: any = (await users.query(Q.where('username', values.username)).fetch())[0];
 
-            if (!logguedUser.length) {
+            var authenticated = bcrypt.compareSync(values.password, logguedUser?._raw.password);
 
+            if (!authenticated) {
                 setIsInvalidCredentials(true);
+
             } else {
-
                 setIsInvalidCredentials(false);
-                //console.log(logguedUser[0]._raw);
-
-                setLoggedUser(logguedUser[0]._raw);
-                navigate({ name: "Main", params: { loggedUser: logguedUser[0]._raw } });
+                setLoggedUser(logguedUser._raw);
+                navigate({ name: "Main", params: { loggedUser: logguedUser._raw } });
             }
-
+            setLoading(false);
         }
     };
 
     return (
-        <KeyboardAvoidingView>
-            <ScrollView contentInsetAdjustmentBehavior="automatic">
+
+
+        <KeyboardAvoidingView style={styles.container}>
+            <ScrollView contentInsetAdjustmentBehavior="automatic" >
+
                 <Box safeArea p="2" w="100%" py="8" bgColor="white" >
+
                     <Image style={{ width: "100%", resizeMode: "contain" }} source={require('../../../assets/dreams.png')} size="100" alt="dreams logo" />
                     <VStack space={4} alignItems="center" w="100%" >
                         <Center w="90%" >
@@ -310,8 +314,15 @@ const Login: React.FC = () => {
                                                 {errors.password}
                                             </FormControl.ErrorMessage>
                                         </FormControl>
+                                        {loading ?
+                                            <Spinner
+                                                visible={true}
+                                                textContent={'Autenticando...'}
+                                                textStyle={styles.spinnerTextStyle}
+                                            /> : undefined
 
-                                        <Button onPress={handleSubmit} my="10" colorScheme="primary">
+                                        }
+                                        <Button isLoading={loading} isLoadingText="Autenticando" onPress={handleSubmit} my="10" colorScheme="primary">
                                             Login
                                         </Button>
                                         <Link
@@ -329,10 +340,10 @@ const Login: React.FC = () => {
                             </Formik>
                         </Center>
                     </VStack>
+
                 </Box>
 
                 <Center>
-                    {/* <Button onPress={() => setShowModal(true)}>Button</Button> */}
                     <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
                         <Modal.Content width="100%" style={{ marginBottom: 0, marginTop: "auto" }}>
 
