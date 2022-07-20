@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { query } from '@app/utils/reference';
+import {allPartners} from '@app/utils/partners';
 import { Card, Table, Button, Space, Badge, Input, Typography, Form } from 'antd';
 import 'antd/dist/antd.css';
 import moment from 'moment';
@@ -19,6 +20,8 @@ const ReferenceList: React.FC = () => {
     const [ reference, setReference] = useState();
     const [ modalVisible, setModalVisible] = useState<boolean>(false);
     const [ referenceModalVisible, setReferenceModalVisible] = useState<boolean>(false);
+
+    const [ partners, setPartners] = useState();
     
     const navigate = useNavigate();
 
@@ -33,7 +36,21 @@ const ReferenceList: React.FC = () => {
         fetchData().catch(error => console.log(error));
     
     }, []);
+    
+    const fetchPartner = async () => {
+        const Allpartners = await allPartners();
 
+        setPartners(Allpartners);
+    };
+
+   
+
+    const filterData = data => formatter => data.map( item => ({
+        text: formatter(item),
+        value: formatter(item)
+    }));
+
+    console.log(partners);
     
     const columnsRef = [
         { 
@@ -93,6 +110,10 @@ const ReferenceList: React.FC = () => {
             dataIndex: '', 
             key: '',
             render: (text, record)  => record.users.partners.name,
+            filters: filterData(references)(i => i.users.partners.name),
+            onFilter: (value, record) => record.users.partners.name == value,
+            filterSearch: true,
+           
         },	
         { 
             title: 'Ponto de Entrada para Referência', 
