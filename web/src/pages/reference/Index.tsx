@@ -21,7 +21,7 @@ const ReferenceList: React.FC = () => {
     const [ modalVisible, setModalVisible] = useState<boolean>(false);
     const [ referenceModalVisible, setReferenceModalVisible] = useState<boolean>(false);
 
-    const [ partners, setPartners] = useState();
+    const [ partners, setPartners] = useState<any[]>([]);
     
     const navigate = useNavigate();
 
@@ -29,28 +29,21 @@ const ReferenceList: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
           const data = await query();
+          const data1 = await allPartners();
 
           setReferences(data);
+          setPartners(data1);
         } 
     
         fetchData().catch(error => console.log(error));
     
     }, []);
     
-    const fetchPartner = async () => {
-        const Allpartners = await allPartners();
-
-        setPartners(Allpartners);
-    };
-
    
-
     const filterData = data => formatter => data.map( item => ({
         text: formatter(item),
         value: formatter(item)
     }));
-
-    console.log(partners);
     
     const columnsRef = [
         { 
@@ -110,7 +103,7 @@ const ReferenceList: React.FC = () => {
             dataIndex: '', 
             key: '',
             render: (text, record)  => record.users.partners.name,
-            filters: filterData(references)(i => i.users.partners.name),
+            filters: filterData(partners)(i => i.name),
             onFilter: (value, record) => record.users.partners.name == value,
             filterSearch: true,
            
