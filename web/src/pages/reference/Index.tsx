@@ -150,21 +150,21 @@ const ReferenceList: React.FC = () => {
         ),
         filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
         onFilter: (value, record) =>
-                    record[dataIndex]
-                        ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
-                        : '',
+                    record.beneficiaries?.nui
+                        ? record.beneficiaries?.nui.toString().toLowerCase().includes(value.toLowerCase())
+                        : '',                        
         onFilterDropdownVisibleChange: visible => {
                 if (visible) {
                     setTimeout(() => searchInput.select(), 100);
                 }
         },
-        render: (value, record) =>
+        render: (value , record) =>
             searchedColumn === dataIndex ? (
                 <Highlighter
                 highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
                 searchWords={[searchText]}
                 autoEscape
-                textToHighlight={value ? value.toString() : ''}
+                textToHighlight={value  ? '' : record.beneficiaries?.nui}
                 />
             ) : ( record.beneficiaries.nui),
 
