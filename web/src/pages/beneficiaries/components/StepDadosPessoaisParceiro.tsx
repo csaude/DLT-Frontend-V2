@@ -1,9 +1,10 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { Badge, Button, Steps, Row, Col, Input, message, Space, Form, Tabs, Modal, DatePicker, Checkbox, Select, Radio, Divider } from 'antd';
+import { Badge, Button, Steps, Row, Col, Input, message, InputNumber, Form, DatePicker, Checkbox, Select, Radio, Divider, SelectProps } from 'antd';
 import { allProvinces, queryDistrictsByProvinces, queryLocalitiesByDistricts, queryNeighborhoodsByLocalities } from '@app/utils/locality';
 import './index.css';
 import moment from 'moment';
 import { query } from '@app/utils/users';
+import { calculateAge } from '@app/models/Utils';
 
 const { Option } = Select;
 const { Step } = Steps;
@@ -15,6 +16,8 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
     const [districts, setDistricts] = useState<any>(undefined);
     const [localities, setLocalities] = useState<any>(undefined);
     const [neighborhoods, setNeighborhoods] = useState<any>(undefined);
+    const [age, setAge] = useState<any>(undefined);
+    const [birthDate, setBirthDate] = useState<any>(undefined);
 
     let userEntryPoint = localStorage.getItem('entryPoint');
 
@@ -82,7 +85,6 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
             const dataLocalities = await queryLocalitiesByDistricts({ districts: [values + ""] });
             setLocalities(dataLocalities);
         }
-
     }
 
     const onChangeLocality = async (values: any) => {
@@ -90,11 +92,50 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
             const dataNeighborhood = await queryNeighborhoodsByLocalities({ localities: [values + ""] });
             setNeighborhoods(dataNeighborhood);
         }
-
     }
 
     const onChangeCheckbox = (e) => {
         setIsDateRequired(!e.target.checked);
+    }
+
+    const onChangeBirthDate = (value:any) => {
+        setAge(calculateAge(value)+'');
+    }
+
+
+    const IdadeSelect: React.FC<SelectProps> = ({ value, onChange, defaultValue }: SelectProps) => {
+        
+        const onchangeAge = (value: any) =>{
+            var today = new Date();
+            var birthYear = today.getFullYear() - value;
+            var birthDate = new Date(birthYear + "/01/01");
+            setBirthDate(birthDate);
+
+            setAge(value);
+        }
+
+        useEffect(() => {
+            if(age != undefined){
+                form.setFieldsValue({
+                    age: age
+                });
+            }
+
+            if(birthDate != undefined){
+                form.setFieldsValue({
+                    date_of_birth: moment(birthDate,'YYYY-MM-DD')
+                });
+            }
+
+        }, [age, birthDate]);
+
+        return (
+            <Select disabled={isDateRequired} onChange={onchangeAge} value={age} placeholder="Seleccione a Idade" >
+                {Idades.map(item => (
+                    <Option key={item} value={item}>{item}</Option>
+                ))}
+            </Select>
+        );
     }
 
     return (
@@ -129,9 +170,9 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                                 name="date_of_birth"
                                 label="Data Nascimento"
                                 rules={[{ required: isDateRequired, message: RequiredFieldMessage }]}
-                                initialValue={beneficiary ? moment(beneficiary?.dateOfBirth,'YYYY-MM-DD') : ''}
+                                initialValue={birthDate ? moment(birthDate,'YYYY-MM-DD') : beneficiary ? moment(beneficiary?.dateOfBirth,'YYYY-MM-DD') : ''}
                             >
-                                <DatePicker disabled={!isDateRequired} style={{ width: '100%' }} placeholder="Selecione a data" />
+                                <DatePicker disabled={!isDateRequired} onChange={onChangeBirthDate} style={{ width: '100%' }} placeholder="Selecione a data" />
                             </Form.Item>
                         </Col>
                         <Col span={14}>
@@ -144,13 +185,8 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                         name="age"
                         label="Idade (em anos)"
                         rules={[{ required: !isDateRequired, message: RequiredFieldMessage }]}
-                        initialValue={beneficiary?.age}
                     >
-                        <Select disabled={isDateRequired} placeholder="Seleccione a Idade" >
-                            {Idades.map(item => (
-                                <Option key={item}>{item}</Option>
-                            ))}
-                        </Select>
+                        <IdadeSelect />
                     </Form.Item>
                 </Col>
             </Row>
@@ -271,8 +307,9 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                         name="phone_number"
                         label="Telemóvel"
                         initialValue={beneficiary?.phoneNumber}
+                        rules={[{ type: 'number', min: 10000001, max:999999999, message: 'O numero inserido não é válido!' }]}
                     >
-                        <Input placeholder="Insira o Telemóvel" />
+                        <InputNumber prefix="+258  " style={{width: '100%',}} placeholder="Insira o Telemóvel" />
                     </Form.Item>
                 </Col>
                 <Col className="gutter-row" span={12}>
@@ -280,6 +317,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                         name="e_mail"
                         label="E-mail"
                         initialValue={beneficiary?.email}
+                        rules={[{ type: 'email', message: 'O email inserido não é válido!' }]}
                     >
                         <Input placeholder="Insira o E-mail" />
                     </Form.Item>

@@ -9,7 +9,7 @@ interface BeneficiaryFilter{
 export async function query(payload?: BeneficiaryFilter) {
     let url: string;
     if (payload) {
-      url = '/api/beneficiaries?'.concat(stringify(payload));
+      url = '/api/beneficiaries/' + payload;
     } else {
       url = '/api/beneficiaries';
     }
