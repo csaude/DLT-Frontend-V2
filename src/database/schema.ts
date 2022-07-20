@@ -181,6 +181,7 @@ export default appSchema({
           {name: 'status', type: 'number'},
           {name: 'cancel_reason', type: 'number', isOptional: true},
           {name: 'other_reason', type: 'string', isOptional: true},
+          {name: 'created_by', type: 'number', isIndexed: true},
         ],
       }),
     ],
