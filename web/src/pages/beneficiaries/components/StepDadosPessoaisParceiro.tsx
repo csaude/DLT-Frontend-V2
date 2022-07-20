@@ -148,7 +148,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                         initialValue={beneficiary?.surname}
                     >
-                        <Input placeholder="Insira o apelido da Beneficiária" />
+                        <Input placeholder="Insira o apelido" />
                     </Form.Item>
                 </Col>
                 <Col className="gutter-row" span={12}>
@@ -158,7 +158,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                         initialValue={beneficiary?.name}
                     >
-                        <Input placeholder="Insira o nome da Beneficiária" />
+                        <Input placeholder="Insira o nome" />
                     </Form.Item>
                 </Col>
             </Row>
@@ -338,15 +338,6 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                                 <Option key={item.id}>{item.name}</Option>
                             ))}
                         </Select>
-                    </Form.Item>
-                </Col>
-                <Col className="gutter-row" span={12}>
-                    <Form.Item
-                        name="partner_nui"
-                        label="NUI do Parceiro"
-                        initialValue={beneficiary?.partnerNUI}
-                    >
-                        <Input placeholder="Insira o NUI do parceiro" />
                     </Form.Item>
                 </Col>
             </Row>
