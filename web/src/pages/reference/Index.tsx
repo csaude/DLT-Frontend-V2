@@ -95,7 +95,7 @@ const ReferenceList: React.FC = () => {
                     setTimeout(() => searchInput.select(), 100);
                 }
         },
-        render: text =>
+        render: (text, record) =>
             searchedColumn === dataIndex ? (
                 <Highlighter
                 highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
@@ -103,7 +103,9 @@ const ReferenceList: React.FC = () => {
                 autoEscape
                 textToHighlight={text ? text.toString() : ''}
                 />
-            ) : ( text ),
+            ) : ( record.beneficiaries.nui),
+
+            
     });
 
     const handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -148,10 +150,10 @@ const ReferenceList: React.FC = () => {
         }, 
         { 
             title: 'Código do Beneficiário', 
-            dataIndex: '', 
+            dataIndex: 'beneficiaries.nui', 
             key: '',
+            ...getColumnSearchProps('beneficiaries.nui') ,
             // render: (text, record)  => record.beneficiaries.nui,
-             ...getColumnSearchProps('references') 
         },	
         { 
             title: 'Referente', 
