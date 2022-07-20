@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { query } from '@app/utils/reference';
 import {allPartners} from '@app/utils/partners';
+import { query  as query1} from '@app/utils/users';
 import { Card, Table, Button, Space, Badge, Input, Typography, Form } from 'antd';
 import 'antd/dist/antd.css';
 import moment from 'moment';
@@ -9,6 +10,7 @@ import { SearchOutlined, PlusOutlined, EditOutlined, EyeOutlined } from '@ant-de
 import { getEntryPoint } from '@app/models/User';
 
 import { useNavigate } from 'react-router-dom';
+import Item from 'antd/lib/list/Item';
 
 const { Text } = Typography;
 
@@ -23,6 +25,7 @@ const ReferenceList: React.FC = () => {
     const [ referenceModalVisible, setReferenceModalVisible] = useState<boolean>(false);
 
     const [ partners, setPartners] = useState<any[]>([]);
+    const [ user, setUser] = useState<any[]>([]);
     
     const navigate = useNavigate();
 
@@ -30,10 +33,12 @@ const ReferenceList: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
           const data = await query();
-          const data1 = await allPartners();
+          const data1 = await allPartners();          
+          const data2 = await query1();
 
           setReferences(data);
           setPartners(data1);
+          setUser(data2);
         } 
     
         fetchData().catch(error => console.log(error));
@@ -194,11 +199,14 @@ const ReferenceList: React.FC = () => {
             title: 'Organização Referente', 
             dataIndex: '', 
             key: 'type',
-            render: (text, record)  => record.users.partners.name,
-            filters: filterPartner(partners)(i => i.name),
-            onFilter: (value, record) => record.users.partners.name == value,
-            filterSearch: true,
-           
+            render: (text, record)  => (
+                user.map(data =>(
+                    data.id == record.createdBy ?                        
+                        data.partners.name                        
+                        :
+                        ''
+                ))
+            ),           
         },
         { 
             title: 'Referido em', 
@@ -217,12 +225,19 @@ const ReferenceList: React.FC = () => {
             dataIndex: 'beneficiaries.nui', 
             key: '',
             ...getColumnSearchBenProps('beneficiaries.nui') ,
-            // render: (text, record)  => record.beneficiaries.nui,
         },	
         { 
             title: 'Referente', 
             dataIndex: 'createdBy', 
-            key: 'createdBy'
+            key: 'createdBy',
+            render: (text, record)  => (
+                user.map(data =>(
+                    data.id == record.createdBy ?                        
+                        data.name+' '+data.surname                       
+                        :
+                        ''
+                ))
+            ),
         },		
         { 
             title: 'Contacto', 
@@ -232,15 +247,38 @@ const ReferenceList: React.FC = () => {
         },		
         { 
             title: 'Notificar ao', 
-            dataIndex: '', 
+            dataIndex: 'record.users.name', 
             key: '',
-            render: (text, record)  => record.users.name,
+            render: (text, record)  => record.users.name+' '+record.users.surname,
         },		
         { 
             title: 'Ref. Para', 
-            dataIndex: '', 
-            key: '',
-            // render: (text, record)  => record.users.name,
+            dataIndex: 'record.users.entryPoint', 
+            key: 'record.users.entryPoint',
+            filters: [
+                {
+                    text: 'US',
+                    value: 1,
+                    },
+                    {
+                    text: 'ES',
+                    value: 2,
+                },
+                {
+                    text: 'CM',
+                    value: 3,
+                },
+            ],
+            onFilter: (value, record) => record.users.entryPoint == value,
+            filterSearch: true,
+            render: (text, record)  => 
+                (record.users.entryPoint==1) ?
+                    <Text>US </Text>
+                :  
+                (record.users.entryPoint==2) ?
+                    <Text>ES </Text>
+                : 
+                <Text>CM </Text>
         },		
         { 
             title: 'Organização Referida', 
