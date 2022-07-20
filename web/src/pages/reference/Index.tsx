@@ -150,8 +150,8 @@ const ReferenceList: React.FC = () => {
             title: 'Código do Beneficiário', 
             dataIndex: '', 
             key: '',
-            render: (text, record)  => record.beneficiaries.nui,
-            //  ...getColumnSearchProps('references.beneficiaries.nui') 
+            // render: (text, record)  => record.beneficiaries.nui,
+             ...getColumnSearchProps('references') 
         },	
         { 
             title: 'Referente', 
