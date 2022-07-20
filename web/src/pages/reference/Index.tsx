@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { query } from '@app/utils/reference';
 import {allPartners} from '@app/utils/partners';
 import { query  as query1} from '@app/utils/users';
+import {allUs} from '@app/utils/uSanitaria';
 import { Card, Table, Button, Space, Badge, Input, Typography, Form } from 'antd';
 import 'antd/dist/antd.css';
 import moment from 'moment';
@@ -26,6 +27,7 @@ const ReferenceList: React.FC = () => {
 
     const [ partners, setPartners] = useState<any[]>([]);
     const [ user, setUser] = useState<any[]>([]);
+    const [ us, setUs] = useState<any[]>([]);
     
     const navigate = useNavigate();
 
@@ -34,11 +36,13 @@ const ReferenceList: React.FC = () => {
         const fetchData = async () => {
           const data = await query();
           const data1 = await allPartners();          
-          const data2 = await query1();
+          const data2 = await query1();         
+          const data3 = await allUs();
 
           setReferences(data);
           setPartners(data1);
           setUser(data2);
+          setUs(data3);
         } 
     
         fetchData().catch(error => console.log(error));
@@ -293,7 +297,11 @@ const ReferenceList: React.FC = () => {
         { 
             title: 'Ponto de Entrada para Referência', 
             dataIndex: '', 
-            key: ''
+            key: '',
+            render: (text, record)  => record.users.us.name,
+            filters: filterPartner(us)(i => i.name),
+            onFilter: (value, record) => record.users.us.name == value,
+            filterSearch: true,
         },	
         { 
             title: 'Estado', 
