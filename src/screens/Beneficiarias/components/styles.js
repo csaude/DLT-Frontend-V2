@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     },
     containerForm:{
         padding: 10,
-        paddingBottom: 70,
+        paddingBottom: 10,
         // justifyContent: 'space-around',
         backgroundColor: '#f9f9fc',
         borderColor:'#CCCCCC',
@@ -50,6 +50,14 @@ const styles = StyleSheet.create({
         borderWidth:1,
         marginHorizontal: 5,
         paddingLeft: 10,
+    },
+    rowFront: {
+        alignItems: 'center',
+        backgroundColor: 'white',
+        borderBottomColor: '#ccc',
+        borderBottomWidth: 1,
+        justifyContent: 'center',
+        height: 90,
     },
     dropDownPicker:{
         color: '#222',
@@ -94,7 +102,7 @@ const styles = StyleSheet.create({
 
     user:{
         width: Dimensions.get('window').width,
-        marginTop: 85,
+        marginTop: 100,
 
     },
     userLogo:{
