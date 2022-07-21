@@ -162,7 +162,7 @@ export default appSchema({
           {name: 'provider', type: 'string'},
           {name: 'remarks', type: 'string', isOptional: true},
           {name: 'status', type: 'number'},
-          {name: 'online_id', type: 'string',isOptional: true}
+          {name: 'online_id', type: 'number',isOptional: true}
         ],
       }),
       tableSchema({
@@ -182,6 +182,7 @@ export default appSchema({
           {name: 'cancel_reason', type: 'number', isOptional: true},
           {name: 'other_reason', type: 'string', isOptional: true},
           {name: 'created_by', type: 'number', isIndexed: true},
+          {name: 'online_id', type: 'number',isOptional: true}
         ],
       }),
     ],

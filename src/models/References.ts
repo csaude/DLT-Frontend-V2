@@ -15,7 +15,8 @@ export interface ReferencesModel {
     status_ref?: any,
     status?: any,
     cancel_reason?: any,
-    other_reason?: string
+    other_reason?: string,
+    online_id?: string
 }
 
 export default class References extends Model {
@@ -34,4 +35,5 @@ export default class References extends Model {
     @field("status") status;
     @field("cancel_reason") cancel_reason;
     @text("other_reason") other_reason;
+    @text("online_id") online_id;
 }
