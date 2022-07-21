@@ -110,7 +110,7 @@ export default appSchema({
           {name: 'vblt_sti_history', type: 'number',isOptional: true},
           {name: 'vblt_sex_worker', type: 'number',isOptional: true},
           {name: 'vblt_house_sustainer', type: 'number',isOptional: true},
-
+          {name: 'references', type: 'string',isOptional: true},
         ],
       }),
       tableSchema({
