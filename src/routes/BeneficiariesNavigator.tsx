@@ -5,6 +5,7 @@ import BeneficiariesListScreen from '../screens/Beneficiarias';
 //import BeneficiariesViewScreen from '../screens/Beneficiarias/components/view';
 import BeneficiariesViewStack from '../screens/Beneficiarias/components/BeneficiariesViewStack';
 import BeneficiarieServiceForm from '../screens/Beneficiarias/components/intervention';
+import BeneficiaryForm from '../screens/Beneficiarias/components/beneficiaryForm';
 
 const BeneficiaryStack = createNativeStackNavigator();
 
@@ -22,6 +23,14 @@ const BeneficiariesNavigator: React.FC = () => {
                     headerShown:true
                 }}/>
         <BeneficiaryStack.Screen name="BeneficiarieServiceForm" component={BeneficiarieServiceForm} options={{
+                    headerTitle: (props) => (
+                      <Text {...props} style={{ color: 'black', fontWeight: 'bold' }}>
+                        back
+                      </Text>
+                    ),
+                    headerShown:true
+                }}/>
+        <BeneficiaryStack.Screen name="BeneficiaryForm" component={BeneficiaryForm} options={{
                     headerTitle: (props) => (
                       <Text {...props} style={{ color: 'black', fontWeight: 'bold' }}>
                         back
