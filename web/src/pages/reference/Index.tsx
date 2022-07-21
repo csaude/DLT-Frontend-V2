@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { query } from '@app/utils/reference';
+import {allPartners} from '@app/utils/partners';
+import { query  as query1} from '@app/utils/users';
+import {allUs} from '@app/utils/uSanitaria';
 import { Card, Table, Button, Space, Badge, Input, Typography, Form } from 'antd';
 import 'antd/dist/antd.css';
 import moment from 'moment';
+import Highlighter from 'react-highlight-words';
 import { SearchOutlined, PlusOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
 import { getEntryPoint } from '@app/models/User';
 
 import { useNavigate } from 'react-router-dom';
+import Item from 'antd/lib/list/Item';
 
 const { Text } = Typography;
 
@@ -19,6 +24,10 @@ const ReferenceList: React.FC = () => {
     const [ reference, setReference] = useState();
     const [ modalVisible, setModalVisible] = useState<boolean>(false);
     const [ referenceModalVisible, setReferenceModalVisible] = useState<boolean>(false);
+
+    const [ partners, setPartners] = useState<any[]>([]);
+    const [ user, setUser] = useState<any[]>([]);
+    const [ us, setUs] = useState<any[]>([]);
     
     const navigate = useNavigate();
 
@@ -26,14 +35,162 @@ const ReferenceList: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
           const data = await query();
+          const data1 = await allPartners();          
+          const data2 = await query1();         
+          const data3 = await allUs();
 
           setReferences(data);
+          setPartners(data1);
+          setUser(data2);
+          setUs(data3);
         } 
     
         fetchData().catch(error => console.log(error));
     
-    }, []);
+    }, []);    
+   
+    const filterPartner = data => formatter => data.map( item => ({
+        text: formatter(item),
+        value: formatter(item)
+    }));
 
+    const getColumnSearchProps = (dataIndex:any) => ({
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+            <div style={{ padding: 8 }}>
+                <Input
+                    ref={node => {
+                        searchInput = node;
+                    }}
+                    placeholder={`Pesquisar `}
+                    value={selectedKeys[0]}
+                    onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                    onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                    style={{ marginBottom: 8, display: 'block' }}
+                    />
+                <Space>
+                <Button
+                    type="primary"
+                    onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                    icon={<SearchOutlined />}
+                    size="small"
+                    style={{ width: 90 }}
+                >
+                    Pesquisar
+                </Button>
+                <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+                    Reset
+                </Button>
+                <Button
+                    type="link"
+                    size="small"
+                    onClick={() => {
+                    confirm({ closeDropdown: false });
+                    setSearchText(selectedKeys[0]);
+                    setSearchedColumn(dataIndex);
+                    }}
+                >
+                    Filter
+                </Button>
+                </Space>
+            </div>
+        ),
+        filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+        onFilter: (value, record) =>
+                    record[dataIndex]
+                        ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
+                        : '',
+        onFilterDropdownVisibleChange: visible => {
+                if (visible) {
+                    setTimeout(() => searchInput.select(), 100);
+                }
+        },
+        render: (value, record) =>
+            searchedColumn === dataIndex ? (
+                <Highlighter
+                highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+                searchWords={[searchText]}
+                autoEscape
+                textToHighlight={value ? value.toString() : ''}
+                />
+            ) : ( value),
+
+            
+    });
+
+    const getColumnSearchBenProps = (dataIndex:any) => ({
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+            <div style={{ padding: 8 }}>
+                <Input
+                    ref={node => {
+                        searchInput = node;
+                    }}
+                    placeholder={`Pesquisar pelo nui da Beneficiária`}
+                    value={selectedKeys[0]}
+                    onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                    onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                    style={{ marginBottom: 8, display: 'block' }}
+                    />
+                <Space>
+                <Button
+                    type="primary"
+                    onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                    icon={<SearchOutlined />}
+                    size="small"
+                    style={{ width: 90 }}
+                >
+                    Pesquisar
+                </Button>
+                <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+                    Reset
+                </Button>
+                <Button
+                    type="link"
+                    size="small"
+                    onClick={() => {
+                    confirm({ closeDropdown: false });
+                    setSearchText(selectedKeys[0]);
+                    setSearchedColumn(dataIndex);
+                    }}
+                >
+                    Filter
+                </Button>
+                </Space>
+            </div>
+        ),
+        filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+        onFilter: (value, record) =>
+                    record.beneficiaries?.nui
+                        ? record.beneficiaries?.nui.toString().toLowerCase().includes(value.toLowerCase())
+                        : '',                        
+        onFilterDropdownVisibleChange: visible => {
+                if (visible) {
+                    setTimeout(() => searchInput.select(), 100);
+                }
+        },
+        render: (value , record) =>
+            searchedColumn === dataIndex ? (
+                <Highlighter
+                highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+                searchWords={[searchText]}
+                autoEscape
+                textToHighlight={value  ? '' : record.beneficiaries?.nui}
+                />
+            ) : ( record.beneficiaries.nui),
+
+            
+    });
+
+    const handleSearch = (selectedKeys, confirm, dataIndex) => {
+        confirm();
+        setSearchText(selectedKeys[0]);
+        setSearchedColumn(dataIndex);
+        
+    };
+
+    const handleReset = clearFilters => {
+        clearFilters();
+        setSearchText(searchText);
+    };
     
     const columnsRef = [
         { 
@@ -46,7 +203,14 @@ const ReferenceList: React.FC = () => {
             title: 'Organização Referente', 
             dataIndex: '', 
             key: 'type',
-            render: (text, record)  => record.users.partners.name,
+            render: (text, record)  => (
+                user.map(data =>(
+                    data.id == record.createdBy ?                        
+                        data.partners.name                        
+                        :
+                        ''
+                ))
+            ),           
         },
         { 
             title: 'Referido em', 
@@ -57,18 +221,27 @@ const ReferenceList: React.FC = () => {
         { 
             title: 'Nota Referência', 
             dataIndex: 'referenceNote', 
-            key: 'referenceNote'
+            key: '',
+            ...getColumnSearchProps('referenceNote') ,
         }, 
         { 
             title: 'Código do Beneficiário', 
-            dataIndex: '', 
+            dataIndex: 'beneficiaries.nui', 
             key: '',
-            render: (text, record)  => record.beneficiaries.nui,
+            ...getColumnSearchBenProps('beneficiaries.nui') ,
         },	
         { 
             title: 'Referente', 
             dataIndex: 'createdBy', 
-            key: 'createdBy'
+            key: 'createdBy',
+            render: (text, record)  => (
+                user.map(data =>(
+                    data.id == record.createdBy ?                        
+                        data.name+' '+data.surname                       
+                        :
+                        ''
+                ))
+            ),
         },		
         { 
             title: 'Contacto', 
@@ -78,26 +251,57 @@ const ReferenceList: React.FC = () => {
         },		
         { 
             title: 'Notificar ao', 
-            dataIndex: '', 
+            dataIndex: 'record.users.name', 
             key: '',
-            render: (text, record)  => record.users.name,
+            render: (text, record)  => record.users.name+' '+record.users.surname,
         },		
         { 
             title: 'Ref. Para', 
-            dataIndex: '', 
-            key: '',
-            // render: (text, record)  => record.users.name,
+            dataIndex: 'record.users.entryPoint', 
+            key: 'record.users.entryPoint',
+            filters: [
+                {
+                    text: 'US',
+                    value: 1,
+                    },
+                    {
+                    text: 'ES',
+                    value: 2,
+                },
+                {
+                    text: 'CM',
+                    value: 3,
+                },
+            ],
+            onFilter: (value, record) => record.users.entryPoint == value,
+            filterSearch: true,
+            render: (text, record)  => 
+                (record.users.entryPoint==1) ?
+                    <Text>US </Text>
+                :  
+                (record.users.entryPoint==2) ?
+                    <Text>ES </Text>
+                : 
+                <Text>CM </Text>
         },		
         { 
             title: 'Organização Referida', 
             dataIndex: '', 
             key: '',
             render: (text, record)  => record.users.partners.name,
+            filters: filterPartner(partners)(i => i.name),
+            onFilter: (value, record) => record.users.partners.name == value,
+            filterSearch: true,
+           
         },	
         { 
             title: 'Ponto de Entrada para Referência', 
             dataIndex: '', 
-            key: ''
+            key: '',
+            render: (text, record)  => record.users.us.name,
+            filters: filterPartner(us)(i => i.name),
+            onFilter: (value, record) => record.users.us.name == value,
+            filterSearch: true,
         },	
         { 
             title: 'Estado', 
