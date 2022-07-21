@@ -50,17 +50,24 @@ const InterventionsView: React.FC = ({ route }: any) => {
     );
 
     return (
-        <View style={styles.containerForm}>
-            <SwipeListView
-                data={interventions}
-                renderItem={renderItem}
-                renderHiddenItem={renderHiddenItem}
-                rightOpenValue={-80}
-                previewRowKey={'0'}
-                previewOpenValue={-40}
-                previewOpenDelay={3000}
-            />
-        </View>
+        <>
+            { interventions.length > 0 ? 
+                <View style={styles.containerForm}>
+                    <SwipeListView
+                        data={interventions}
+                        renderItem={renderItem}
+                        renderHiddenItem={renderHiddenItem}
+                        rightOpenValue={-80}
+                        previewRowKey={'0'}
+                        previewOpenValue={-40}
+                        previewOpenDelay={3000}
+                    />
+                </View> :
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                    <Text color="coolGray.500" >Não existem Intervenções Registadas!</Text>
+                </View>
+            }
+        </>
 
     );
 }
