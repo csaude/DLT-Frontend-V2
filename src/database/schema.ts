@@ -169,7 +169,7 @@ export default appSchema({
         name: 'references',
         columns: [
           {name: 'beneficiary_id', type: 'number', isIndexed: true},
-          {name: 'refer_to', type: 'number', isIndexed: true},
+          {name: 'refer_to', type: 'string', isIndexed: true},
           {name: 'notify_to', type: 'number', isIndexed: true},
           {name: 'reference_note', type: 'string'},
           {name: 'description', type: 'string'},

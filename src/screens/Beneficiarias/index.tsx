@@ -13,7 +13,7 @@ import styles from './styles';
 import { sync } from '../../database/sync';
 
 
-const BeneficiariesMain: React.FC = ({ beneficiaries, localities,subServices, beneficiaries_interventions, services }:any) => {
+const BeneficiariesMain: React.FC = ({ beneficiaries, references, localities,subServices, beneficiaries_interventions, services }:any) => {
     const [searchField, setSearchField] = useState('');
     const loggedUser:any = useContext(Context);
     const toast = useToast();
@@ -63,23 +63,18 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, localities,subServices, be
     const viewBeneficiaries = (data: any) => {
 
         const beneficiarie = data.item?._raw;
+   
+        let items = beneficiarie.references.split(/[\[(, )\]]/); //split string into an array of elements
+        let referenceIdArray = items.filter(item => item.trim().length > 0); // remove white space elements
 
-        /*const beneficiariesInterventionsName = beneficiaries_interventions.filter((e)=>{ 
-                return e._raw.beneficiary_id == beneficiarie.online_id}
-            );
-
-        const InterventionNames = beneficiariesInterventionsName.map((e)=>{
-            let subservice = subServices.filter((item)=>{ 
-                return item._raw.online_id == e._raw.sub_service_id
-            })[0];
-            return { id: subservice._raw.online_id, name: subservice._raw.name}
+        const beneficiaryReferences = references.filter((e)=>{ 
+            return referenceIdArray.includes("" + e._raw.online_id);
         });
-        
-        navigate({name: "BeneficiariesView", params: {
-            beneficiarie: data.item._raw,
-            subServices: InterventionNames
-        }});
-        */
+
+        const beneficiaryReferencesSerializable = references.map((e)=>{ 
+            return e._raw;
+        });
+        //console.log(beneficiaryReferences.length);
 
         const interventions = beneficiaries_interventions.filter((e)=>{ 
             return e._raw.beneficiary_id == beneficiarie.online_id}
@@ -94,7 +89,8 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, localities,subServices, be
 
         navigate({name: "BeneficiariesView", params: {
             beneficiary: beneficiarie,
-            interventions: interventionObjects
+            interventions: interventionObjects,
+            references: beneficiaryReferencesSerializable
         }});
 
     };
@@ -219,6 +215,9 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, localities,subServices, be
 const enhance = withObservables([], () => ({
     beneficiaries: database.collections
         .get("beneficiaries")
+        .query().observe(),
+    references: database.collections
+        .get("references")
         .query().observe(),
     localities: database.collections
       .get("localities")
