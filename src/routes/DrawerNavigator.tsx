@@ -33,7 +33,7 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
       <Drawer.Navigator 
         screenOptions={{
             headerStyle: {
-                backgroundColor: '#0c4a6e',
+                backgroundColor:'#17a2b8', //'#0c4a6e',
             },
             headerTintColor: '#fff',
             headerTitleStyle: {   
