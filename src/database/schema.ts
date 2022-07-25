@@ -81,6 +81,7 @@ export default appSchema({
           {name: 'partner_id',  type: "number", isIndexed: true },
           {name: 'entry_point',  type: "string", isIndexed: true },
           {name: 'neighbourhood_id',  type: "number", isIndexed: true },
+          {name: 'locality_name',  type: "string", isOptional: true },
           {name: 'us_id',  type: "number", isIndexed: true },
           {name: 'status', type: 'number'},
           {name: 'online_id', type: 'number',isOptional: true},
