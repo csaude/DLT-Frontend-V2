@@ -19,7 +19,7 @@ const ReferenceView: React.FC = ({ route }: any) => {
             underlayColor={'#AAA'}
         >
             <HStack width="100%" px={4} flex={1} space={5} alignItems="center">
-                <Ionicons name="exit" size={50} color="#38bdf8" />
+                <Ionicons name="exit" size={50} color="#0d9488" />
                 <VStack width='200px' >
                     <HStack>
                         <Text _dark={{

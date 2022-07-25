@@ -45,7 +45,7 @@ export default function BeneficiariesViewStack({ route }) {
         // You can return any component that you like here!
         return <Ionicons name={iconName} size={size} color={color} />;
       },
-      tabBarActiveTintColor: 'tomato',
+      tabBarActiveTintColor: '#17a2b8',
       tabBarInactiveTintColor: 'gray',
     })}>
       <Tab.Screen name="Dados Pessoais" component={DadosPessoaisView} options={{ headerShown: false }}

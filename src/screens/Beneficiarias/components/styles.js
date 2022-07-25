@@ -139,6 +139,28 @@ const styles = StyleSheet.create({
       borderRadius: 30,
       elevation: 8
     },
+    fab1: {
+        position: 'absolute',
+        width: 66,
+        height: 66,
+        alignItems: 'center',
+        justifyContent: 'center',
+        right: 20,
+        bottom: 40,
+        backgroundColor: '#e0f2fe',
+        borderRadius: 40,
+        elevation: 8,
+    },
+    fabStagger: {
+        position: 'absolute',
+        width: 56,
+        height: 256,
+        alignItems: 'center',
+        justifyContent: 'center',
+        right: 20,
+        bottom: 20,
+        borderRadius: 40,
+    },
     fabIcon: {
       fontSize: 40,
       color: 'white'
