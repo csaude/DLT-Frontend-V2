@@ -8,9 +8,10 @@ import { MaterialIcons, Ionicons } from "@native-base/icons";
 import { Q } from "@nozbe/watermelondb";
 import { database } from '../../database';
 import { Context } from '../../routes/DrawerNavigator';
-
+import StepperButton from './components/StapperButton';
 import styles from './styles';
 import { sync } from '../../database/sync';
+import { SuccessHandler, ErrorHandler} from "../../components/SyncIndicator";
 
 
 const BeneficiariesMain: React.FC = ({ beneficiaries, references, localities,subServices, beneficiaries_interventions, services }:any) => {
@@ -23,39 +24,13 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, references, localities,sub
                 .then(() => toast.show({
                                 placement: "top",
                                 render:() => {
-                                    return (
-                                        <Alert w="100%" variant="left-accent" colorScheme="success" status="success">
-                                            <VStack space={2} flexShrink={1} w="100%">
-                                                <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
-                                                    <HStack space={2} flexShrink={1} alignItems="center">
-                                                        <Alert.Icon />
-                                                        <Text color="coolGray.800">
-                                                            Synced Successfully!
-                                                        </Text>
-                                                    </HStack>
-                                                </HStack>
-                                            </VStack>
-                                        </Alert> 
-                                    );
+                                    return (<SuccessHandler />);
                                 }
                             }))
                 .catch(() => toast.show({
                                 placement: "top",
                                 render:() => {
-                                    return (
-                                        <Alert w="100%" variant="left-accent" colorScheme="error" status="error">
-                                            <VStack space={2} flexShrink={1} w="100%">
-                                                <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
-                                                    <HStack space={2} flexShrink={1} alignItems="center">
-                                                        <Alert.Icon />
-                                                        <Text color="coolGray.800">
-                                                            Sync Failed!
-                                                        </Text>
-                                                    </HStack>
-                                                </HStack>
-                                            </VStack>
-                                        </Alert> 
-                                    );
+                                    return ( <ErrorHandler /> );
                                 }
                             }))
     }
@@ -188,7 +163,7 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, references, localities,sub
                 <Box alignItems="center" w="80%" bgColor="white" style={{borderRadius: 5,}}>
                     <Input w={{base: "100%",md: "25%"}} onChangeText={handleChange}
                             InputLeftElement={<Icon  as={MaterialIcons} name="search"  size={5} ml="2" color="muted.700"  />} placeholder="Search" 
-                            style={{borderRadius: 45,}}/>
+                            style={{borderRadius: 45}}/>
                 </Box>
 
             </View>
@@ -202,12 +177,11 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, references, localities,sub
                 previewOpenDelay={3000}
                 onRowDidOpen={onRowDidOpen}
             />
-            <TouchableOpacity onPress={syncronize} style={styles.fab1}>
-                <Icon as={MaterialIcons} name="refresh"  size={8}  color="#0c4a6e" />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigate({name: "BeneficiaryForm", params: {}}) } style={styles.fab}>
-                <Icon as={MaterialIcons} name="add"  size={8}  color="white" />
-            </TouchableOpacity>
+            <Center flex={1} px="3" >
+                <StepperButton onAdd={() => navigate({name: "BeneficiaryForm", params: {}})}
+                                onRefresh={syncronize}
+                                isPrincipal={1} />
+            </Center>
         </View>
     );
 }

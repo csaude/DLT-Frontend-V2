@@ -161,6 +161,16 @@ const styles = StyleSheet.create({
         bottom: 20,
         borderRadius: 40,
     },
+    fabPrincipal: {
+        position: 'absolute',
+        width: 76,
+        height: 226,
+        alignItems: 'center',
+        justifyContent: 'center',
+        right: 20,
+        bottom: 20,
+        borderRadius: 40,
+      },
     fabIcon: {
       fontSize: 40,
       color: 'white'
