@@ -16,7 +16,10 @@ export interface ReferencesModel {
     status?: any,
     cancel_reason?: any,
     other_reason?: string,
-    online_id?: string
+    online_id?: string,
+    created_by: any,
+    date_created: string
+
 }
 
 export default class References extends Model {
@@ -36,4 +39,5 @@ export default class References extends Model {
     @field("cancel_reason") cancel_reason;
     @text("other_reason") other_reason;
     @text("online_id") online_id;
+    @text("date_created") date_created;
 }
