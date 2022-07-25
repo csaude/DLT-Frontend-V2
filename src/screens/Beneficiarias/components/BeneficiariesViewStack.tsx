@@ -1,6 +1,6 @@
-import * as React from 'react';
-import { Text, View } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import React from "react";
+import { View } from 'react-native';
+import {  Text } from "native-base";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import DadosPessoaisView from './DadosPessoaisView';
 import InterventionsView from './InterventionsView';
@@ -15,17 +15,10 @@ function VulnerabilitiesScreen() {
   );
 }
 
-function ReferencesScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>References!</Text>
-    </View>
-  );
-}
-
 const Tab = createBottomTabNavigator();
 
 export default function BeneficiariesViewStack({ route }) {
+
   return (
 
     <Tab.Navigator initialRouteName='Dados Pessoais' screenOptions={({ route }) => ({

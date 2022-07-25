@@ -1,17 +1,40 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { View, TouchableHighlight } from 'react-native';
-import { HStack, Text, Icon, VStack, Pressable, Spacer } from "native-base";
+import { useToast, HStack, Text, Icon, VStack, Pressable, Spacer, Stagger, IconButton, Center } from "native-base";
 import { MaterialIcons, Ionicons } from "@native-base/icons";
 import { navigate } from '../../../routes/NavigationRef';
 import styles from './styles';
 import { SwipeListView } from 'react-native-swipe-list-view';
+import StepperButton from './StapperButton';
+import { SuccessHandler, ErrorHandler} from "../../../components/SyncIndicator";
+import { Context } from '../../../routes/DrawerNavigator';
+import { sync } from '../../../database/sync';
 
 const ReferenceView: React.FC = ({ route }: any) => {
 
     const {
         beneficiary,
-        references
+        references,
     } = route.params;
+    const loggedUser:any = useContext(Context);
+    const toast = useToast();
+
+    const syncronize = () => {
+        sync({username: loggedUser.username})
+                .then(() => toast.show({
+                                placement: "top",
+                                render:() => {
+                                    return (<SuccessHandler />);
+                                }
+                            }))
+                .catch(() => toast.show({
+                                placement: "top",
+                                render:() => {
+                                    return (<ErrorHandler />);
+                                }
+                            }))
+    }
+
 
     const renderItem = (data: any) => (
         <TouchableHighlight
@@ -21,39 +44,30 @@ const ReferenceView: React.FC = ({ route }: any) => {
             <HStack width="100%" px={4} flex={1} space={5} alignItems="center">
                 <Ionicons name="exit" size={50} color="#0d9488" />
                 <VStack width='200px' >
+                    <Text _dark={{color: "warmGray.50"}} color="darkBlue.800" >
+                        {data.item.reference_code}
+                    </Text>
                     <HStack>
-                        <Text _dark={{
-                            color: "warmGray.50"
-                        }} color="warmGray.800" >
-                            Codigo: 
+                        <Text color="warmGray.400" _dark={{ color: "warmGray.200" }}>
+                            Referir para:
                         </Text>
-                        <Text _dark={{
-                            color: "warmGray.50"
-                        }} color="darkBlue.800" >
-                            {data.item.reference_note}
+                        <Text color="darkBlue.300" _dark={{ color: "warmGray.200" }}>
+                            {` ${data.item.refer_to}`}
                         </Text>
                     </HStack>
-                    <Text color="darkBlue.300" _dark={{ color: "warmGray.200" }}>
-                        Referir a:{data.item.refer_to}
-                    </Text>
+                    <HStack>
+                        <Text color="warmGray.400" _dark={{ color: "warmGray.200" }}>
+                            Estado:
+                        </Text>
+                        <Text color="darkBlue.300" _dark={{ color: "warmGray.200" }}>
+                            {` ${ data.item.status_ref === 1? 'Atendido' : 'Pendente'}`}
+                        </Text>
+                    </HStack>
                 </VStack>
-                <Text color="coolGray.500" alignSelf="flex-start" marginTop={2}>{data.item.statusRef}</Text>
+                <Text color="coolGray.500" alignSelf="flex-start" marginTop={2}>{data.item.date_created}</Text>
             </HStack>
 
         </TouchableHighlight>
-    );
-
-    const renderHiddenItem = (data: any, rowMap: any) => (
-
-        <HStack flex={1} pl={2}>
-            <Pressable px={4} ml="auto" bg="lightBlue.700" justifyContent="center"
-                //onPress={() => navigate({ name: "BeneficiarieServiceForm", params: { beneficiarie: beneficiary, intervention: data.item.intervention } })}
-                _pressed={{ opacity: 0.5 }}
-            >
-                <Icon as={MaterialIcons} name="mode-edit" size={6} color="gray.200" />
-            </Pressable>
-        </HStack>
-
     );
 
     return (
@@ -63,7 +77,6 @@ const ReferenceView: React.FC = ({ route }: any) => {
                     <SwipeListView
                         data={references}
                         renderItem={renderItem}
-                        //renderHiddenItem={renderHiddenItem}
                         rightOpenValue={-80}
                         previewRowKey={'0'}
                         previewOpenValue={-40}
@@ -74,6 +87,10 @@ const ReferenceView: React.FC = ({ route }: any) => {
                     <Text color="coolGray.500" >Não existem Referencias Registadas!</Text>
                 </View>
             }
+            <Center flex={1} px="3" >
+                <StepperButton onAdd={() => navigate({ name: "BeneficiarieServiceForm", params: { beneficiarie: beneficiary } })}
+                                onRefresh={syncronize} />
+            </Center>
         </>
 
     );
