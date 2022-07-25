@@ -6,9 +6,10 @@ import { navigate } from '../../../routes/NavigationRef';
 import styles from './styles';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import StepperButton from './StapperButton';
-import SyncIndicator from "../../../components/SyncIndicator";
+import { SuccessHandler, ErrorHandler} from "../../../components/SyncIndicator";
 import { Context } from '../../../routes/DrawerNavigator';
 import { sync } from '../../../database/sync';
+
 
 
 const InterventionsView: React.FC = ({ route }: any) => {
@@ -17,7 +18,6 @@ const InterventionsView: React.FC = ({ route }: any) => {
         beneficiary,
         interventions
     } = route.params;
-    const { isOpen, onToggle } = useDisclose();
     const loggedUser:any = useContext(Context);
     const toast = useToast();
 
@@ -26,39 +26,13 @@ const InterventionsView: React.FC = ({ route }: any) => {
                 .then(() => toast.show({
                                 placement: "top",
                                 render:() => {
-                                    return (
-                                        <Alert w="100%" variant="left-accent" colorScheme="success" status="success">
-                                            <VStack space={2} flexShrink={1} w="100%">
-                                                <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
-                                                    <HStack space={2} flexShrink={1} alignItems="center">
-                                                        <Alert.Icon />
-                                                        <Text color="coolGray.800">
-                                                            Synced Successfully!
-                                                        </Text>
-                                                    </HStack>
-                                                </HStack>
-                                            </VStack>
-                                        </Alert> 
-                                    );
+                                    return (<SuccessHandler />);
                                 }
                             }))
                 .catch(() => toast.show({
                                 placement: "top",
                                 render:() => {
-                                    return (
-                                        <Alert w="100%" variant="left-accent" colorScheme="error" status="error">
-                                            <VStack space={2} flexShrink={1} w="100%">
-                                                <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
-                                                    <HStack space={2} flexShrink={1} alignItems="center">
-                                                        <Alert.Icon />
-                                                        <Text color="coolGray.800">
-                                                            Sync Failed!
-                                                        </Text>
-                                                    </HStack>
-                                                </HStack>
-                                            </VStack>
-                                        </Alert> 
-                                    );
+                                    return (<ErrorHandler />);
                                 }
                             }))
     }
