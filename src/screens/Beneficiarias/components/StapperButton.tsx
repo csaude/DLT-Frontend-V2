@@ -3,7 +3,7 @@ import { HStack, Text, Icon, VStack, Pressable, useDisclose, Center, Box, Stagge
 import { MaterialIcons, Ionicons, MaterialCommunityIcons } from "@native-base/icons";
 import styles from './styles';
 
-const StapperButton: React.FC<any> = ({onAdd, onRefresh}:any)=> {
+const StapperButton: React.FC<any> = ({isPrincipal, onAdd, onRefresh}:any)=> {
     const { isOpen, onToggle } = useDisclose();
     
     const handleRefresh = () =>{
@@ -11,7 +11,7 @@ const StapperButton: React.FC<any> = ({onAdd, onRefresh}:any)=> {
 
     }
 
-    return <Center style={styles.fabStagger}>
+    return <Center style={isPrincipal ? styles.fabPrincipal : styles.fabStagger}>
         <Box alignItems="center" minH="120">
             <Stagger visible={isOpen} initial={{
                 opacity: 0,
@@ -52,7 +52,7 @@ const StapperButton: React.FC<any> = ({onAdd, onRefresh}:any)=> {
         </Box>
 
         <HStack alignItems="center" >
-            <IconButton style={{ elevation: 12 }} variant="solid" borderRadius="full" size="lg" onPress={onToggle} bg="#17a2b8" icon={<Icon as={MaterialCommunityIcons} size="7" name="dots-horizontal" color="warmGray.50" _dark={{
+            <IconButton style={{ elevation: 12 }} variant="solid" borderRadius="full" size="lg" onPress={onToggle} bg="#17a2b8" icon={<Icon as={MaterialCommunityIcons} size={isPrincipal ? 9:7} name="dots-horizontal" color="warmGray.50" _dark={{
                 color: "warmGray.50"
             }} />} />
         </HStack>

@@ -50,9 +50,23 @@ const InterventionsView: React.FC = ({ route }: any) => {
                     }} color="darkBlue.800" >
                         {data.item.name}
                     </Text>
-                    <Text color="darkBlue.300" _dark={{ color: "warmGray.200" }}>
-                        {data.item.intervention.remarks}
-                    </Text>
+                    <HStack>
+                        <Text color="warmGray.400" _dark={{ color: "warmGray.200" }}>
+                            Ponto de Entrada:
+                        </Text>
+                        <Text color="darkBlue.300" _dark={{ color: "warmGray.200" }}>
+                            {` ${
+                                        (data.item.intervention.entry_point === "1") ?
+                                            "US"
+                                            :
+                                            (data.item.intervention.entry_point === "2") ?
+                                                "ES"
+                                                :
+                                                "CM"
+                                    }`}
+                        </Text>
+                    </HStack>
+                    
                 </VStack>
                 <Text color="coolGray.500" alignSelf="flex-start" marginTop={2}>{data.item.intervention.date}</Text>
             </HStack>
