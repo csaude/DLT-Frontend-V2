@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     },
     containerForm:{
         padding: 10,
-        paddingBottom: 70,
+        paddingBottom: 10,
         // justifyContent: 'space-around',
         backgroundColor: '#f9f9fc',
         borderColor:'#CCCCCC',
@@ -50,6 +50,14 @@ const styles = StyleSheet.create({
         borderWidth:1,
         marginHorizontal: 5,
         paddingLeft: 10,
+    },
+    rowFront: {
+        alignItems: 'center',
+        backgroundColor: 'white',
+        borderBottomColor: '#ccc',
+        borderBottomWidth: 1,
+        justifyContent: 'center',
+        height: 90,
     },
     dropDownPicker:{
         color: '#222',
@@ -94,7 +102,7 @@ const styles = StyleSheet.create({
 
     user:{
         width: Dimensions.get('window').width,
-        marginTop: 85,
+        marginTop: 100,
 
     },
     userLogo:{
@@ -131,6 +139,38 @@ const styles = StyleSheet.create({
       borderRadius: 30,
       elevation: 8
     },
+    fab1: {
+        position: 'absolute',
+        width: 66,
+        height: 66,
+        alignItems: 'center',
+        justifyContent: 'center',
+        right: 20,
+        bottom: 40,
+        backgroundColor: '#e0f2fe',
+        borderRadius: 40,
+        elevation: 8,
+    },
+    fabStagger: {
+        position: 'absolute',
+        width: 56,
+        height: 256,
+        alignItems: 'center',
+        justifyContent: 'center',
+        right: 20,
+        bottom: 20,
+        borderRadius: 40,
+    },
+    fabPrincipal: {
+        position: 'absolute',
+        width: 76,
+        height: 226,
+        alignItems: 'center',
+        justifyContent: 'center',
+        right: 20,
+        bottom: 20,
+        borderRadius: 40,
+      },
     fabIcon: {
       fontSize: 40,
       color: 'white'

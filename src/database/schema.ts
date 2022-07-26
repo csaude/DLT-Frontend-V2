@@ -81,6 +81,7 @@ export default appSchema({
           {name: 'partner_id',  type: "number", isIndexed: true },
           {name: 'entry_point',  type: "string", isIndexed: true },
           {name: 'neighbourhood_id',  type: "number", isIndexed: true },
+          {name: 'locality_name',  type: "string", isOptional: true },
           {name: 'us_id',  type: "number", isIndexed: true },
           {name: 'status', type: 'number'},
           {name: 'online_id', type: 'number',isOptional: true},
@@ -110,7 +111,7 @@ export default appSchema({
           {name: 'vblt_sti_history', type: 'number',isOptional: true},
           {name: 'vblt_sex_worker', type: 'number',isOptional: true},
           {name: 'vblt_house_sustainer', type: 'number',isOptional: true},
-
+          {name: 'references', type: 'string',isOptional: true},
         ],
       }),
       tableSchema({
@@ -162,14 +163,14 @@ export default appSchema({
           {name: 'provider', type: 'string'},
           {name: 'remarks', type: 'string', isOptional: true},
           {name: 'status', type: 'number'},
-          {name: 'online_id', type: 'string',isOptional: true}
+          {name: 'online_id', type: 'number',isOptional: true}
         ],
       }),
       tableSchema({
         name: 'references',
         columns: [
           {name: 'beneficiary_id', type: 'number', isIndexed: true},
-          {name: 'refer_to', type: 'number', isIndexed: true},
+          {name: 'refer_to', type: 'string', isIndexed: true},
           {name: 'notify_to', type: 'number', isIndexed: true},
           {name: 'reference_note', type: 'string'},
           {name: 'description', type: 'string'},
@@ -182,6 +183,8 @@ export default appSchema({
           {name: 'cancel_reason', type: 'number', isOptional: true},
           {name: 'other_reason', type: 'string', isOptional: true},
           {name: 'created_by', type: 'number', isIndexed: true},
+          {name: 'date_created', type: 'string', isOptional: true},
+          {name: 'online_id', type: 'number',isOptional: true}
         ],
       }),
     ],
