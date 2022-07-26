@@ -88,7 +88,7 @@ const ReferenceView: React.FC = ({ route }: any) => {
                 </View>
             }
             <Center flex={1} px="3" >
-                <StepperButton onAdd={() => navigate({ name: "BeneficiarieServiceForm", params: { beneficiarie: beneficiary } })}
+                <StepperButton onAdd={() => navigate({ name: "ReferenceForm", params: { } })}
                                 onRefresh={syncronize} />
             </Center>
         </>
