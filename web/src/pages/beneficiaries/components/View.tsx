@@ -11,6 +11,7 @@ import 'antd/dist/antd.css';
 
 import '../styles.css'
 import InterventionForm from './InterventionForm';
+import ReferenceForm from './ReferenceForm';
 
 export function ViewBenefiaryPanel({ beneficiary, columns }) {
     const [visible, setVisible] = useState<boolean>(false);
@@ -25,6 +26,13 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
 
         setVisible(true);
         setSelectedBeneficiary(record);
+    };
+
+    const onAddReference = () => {
+        form.resetFields();
+        setVisible(true);
+        setIsAdd(true);
+        setSelectedIntervention(undefined);
     };
 
     const onAddIntervention = () => {
@@ -233,7 +241,9 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
                     title="Lista de Intervenções DREAMS"
                     extra={
                         <Space>
-                            <Button type='primary' icon={<ArrowUpOutlined />} danger >Referir Beneficiaria</Button>
+                            <Button onClick={onAddReference} type='primary' icon={<ArrowUpOutlined />} danger >
+                                Referir Beneficiaria
+                            </Button>
                             <Button onClick={onAddIntervention} type="primary" icon={<PlusOutlined />} >
                                 Adicionar Serviço Dreams
                             </Button>
@@ -250,6 +260,27 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
                     />
                 </Card>
                 <Drawer
+                    title="Referências Dreams"
+                    placement="top"
+                    closable={false}
+                    onClose={onClose}
+                    visible={visible}
+                    getContainer={false}
+                    style={{ position: 'absolute' }}
+                    extra={
+                        <Space>
+                            <Button onClick={onClose}>Cancel</Button>
+                            <Button htmlType="submit" onClick={() => onSubmit(selectedIntervention)} type="primary">
+                                Submit
+                            </Button>
+                        </Space>
+                    }
+                >
+                    {isAdd ? <Form form={form} layout="vertical" onFinish={() => onSubmit(selectedIntervention)}> <ReferenceForm record={selectedIntervention} /></Form> :
+                        <ViewIntervention record={selectedBeneficiary} beneficiary={beneficiary} />
+                    }
+                </Drawer>
+                {/* <Drawer
                     title="Intervenções Dreams"
                     placement="top"
                     closable={false}
@@ -269,7 +300,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
                     {isAdd ? <Form form={form} layout="vertical" onFinish={() => onSubmit(selectedIntervention)}> <InterventionForm record={selectedIntervention} /></Form> :
                         <ViewIntervention record={selectedBeneficiary} beneficiary={beneficiary} />
                     }
-                </Drawer>
+                </Drawer> */}
             </div>
         </>
     );
