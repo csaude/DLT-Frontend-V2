@@ -3,14 +3,31 @@ import { KeyboardAvoidingView } from 'react-native';
 import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
 import { View, HStack, Text, Avatar, Pressable, Icon, Box, Alert, Select, Heading, VStack, FormControl, Input, Link, Button, CheckIcon, WarningOutlineIcon, Center, Flex } from 'native-base';
 import { Formik, useFormik } from 'formik';
+import { database } from '../../../database';
+import { Q } from "@nozbe/watermelondb";
 import { Picker } from '@react-native-picker/picker';
 import ModalSelector from 'react-native-modal-selector-searchable';
 
 const ReferenceForm: React.FC = ({ }: any) => {
     const [errors, setErrors] = useState(false);
+    const [partners, setPartners ] = useState<any>([]);
+    const [us, setUs ] = useState<any>([]);
+    const [users, setUsers ] = useState<any>([]);
     const areaServicos = [{ "id": '1', "name": "Clinico" }, { "id": '2', "name": "Comunitario" }];
 
     const data = [{ key: 3, label: 'Bloor Apples' }, { key: 4, label: 'Blue Apples' }, { key: 5, label: 'Red Apples' }];
+
+
+    useEffect(() => {
+
+        const fetchUsData = async () => {
+            const getUsList = await database.get('us').query().fetch();
+            const usSerialized = getUsList.map(item => item._raw);
+            setUs(usSerialized);
+        } 
+
+        fetchUsData().catch(error => console.log(error));
+    }, []);
 
     const formik = useFormik({
         initialValues: {
@@ -65,11 +82,33 @@ const ReferenceForm: React.FC = ({ }: any) => {
         if (!values.notify_to) {
             errors.notify_to = 'Obrigatório';
         }
-        
+
         return errors;
     }
 
-    const handleSubmit = async (values?:any) => {
+    const onChangeServiceType = async (value: any) => {
+
+
+        const getPartnerList = await database.get('partners').query(
+            Q.where('partner_type', value)
+        ).fetch();
+        const partnersSerialized = getPartnerList.map(item => item._raw);
+        
+        setPartners(partnersSerialized);
+    }
+
+    const onChangeUs = async (value: any) => {
+
+
+        const getUsersList = await database.get('users').query(
+            Q.where('us_id', value)
+        ).fetch();
+        const usersSerialized = getUsersList.map(item => item._raw);
+        
+        setUsers(usersSerialized);
+    }
+
+    const handleSubmit = async (values?: any) => {
         console.log(formik.values);
     }
 
@@ -85,7 +124,7 @@ const ReferenceForm: React.FC = ({ }: any) => {
                                     <Picker
                                         selectedValue={formik.values.refer_to}
                                         onValueChange={(itemValue, itemIndex) => {
-                                                formik.setFieldValue('refer_to', itemValue);
+                                            formik.setFieldValue('refer_to', itemValue);
                                         }}>
                                         <Picker.Item key="1" label="US" value="1" />
                                         <Picker.Item key="2" label="ES" value="2" />
@@ -116,6 +155,7 @@ const ReferenceForm: React.FC = ({ }: any) => {
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
                                                 formik.setFieldValue('service_type', itemValue);
+                                                onChangeServiceType(itemValue);
                                             }
                                         }
                                         }>
@@ -138,14 +178,15 @@ const ReferenceForm: React.FC = ({ }: any) => {
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
                                                 formik.setFieldValue('partner_id', itemValue);
+
                                             }
                                         }
                                         }>
 
                                         <Picker.Item label="-- Seleccione a Organização --" value="0" />
                                         {
-                                            areaServicos.map(item => (
-                                                <Picker.Item key={item.id} label={item.name} value={item.id} />
+                                            partners.map(item => (
+                                                <Picker.Item key={item.online_id} label={item.abbreviation} value={item.online_id} />
                                             ))
                                         }
                                     </Picker>
@@ -160,14 +201,15 @@ const ReferenceForm: React.FC = ({ }: any) => {
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
                                                 formik.setFieldValue('us_id', itemValue);
+                                                onChangeUs(itemValue);
                                             }
                                         }
                                         }>
 
-                                        <Picker.Item label="-- Seleccione a Organização --" value="0" />
+                                        <Picker.Item label="-- Seleccione o Local --" value="0" />
                                         {
-                                            areaServicos.map(item => (
-                                                <Picker.Item key={item.id} label={item.name} value={item.id} />
+                                            us.map(item => (
+                                                <Picker.Item key={item.online_id} label={item.name} value={item.online_id} />
                                             ))
                                         }
                                     </Picker>
@@ -186,13 +228,15 @@ const ReferenceForm: React.FC = ({ }: any) => {
                                     <FormControl.Label>Notificar ao</FormControl.Label>
 
                                     <ModalSelector
-                                        data={data}
+                                        data={users}
+                                        keyExtractor= {item => item.online_id}
+                                        labelExtractor= {item => `${item.name} ${item.surname}`}
                                         renderItem={undefined}
                                         initValue="Select something yummy!"
                                         accessible={true}
                                         cancelButtonAccessibilityLabel={'Cancel Button'}
-                                        onChange={(option)=>{ formik.setFieldValue('notify_to', option.label);}}>
-                                            <Input type='text' onBlur={formik.handleBlur('notify_to')} placeholder="Insira as Observações" onChangeText={formik.handleChange('notify_to')} value={formik.values.notify_to} />
+                                        onChange={(option) => { console.log(option.online_id); formik.setFieldValue('notify_to', ''+option.online_id); }}>
+                                        <Input type='text' onBlur={formik.handleBlur('notify_to')} placeholder="Insira as Observações" onChangeText={formik.handleChange('notify_to')} value={formik.values.notify_to} />
                                     </ModalSelector>
 
                                     <FormControl.ErrorMessage>
