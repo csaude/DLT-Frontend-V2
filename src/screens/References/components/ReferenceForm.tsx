@@ -23,9 +23,6 @@ const ReferenceForm: React.FC = ({ }: any) => {
 
     const areaServicos = [{ "id": '1', "name": "Clinico" }, { "id": '2', "name": "Comunitario" }];
 
-    const data = [{ key: 3, label: 'Bloor Apples' }, { key: 4, label: 'Blue Apples' }, { key: 5, label: 'Red Apples' }];
-
-
     useEffect(() => {
 
         const fetchUsData = async () => {
@@ -101,6 +98,18 @@ const ReferenceForm: React.FC = ({ }: any) => {
         return errors;
     }
 
+    const onChangePE = (value: any) => {
+
+        var currmonth = new Date().getMonth() + 1;
+        if(value === '1'){
+            formik.setFieldValue('reference_code', 'US-'+currmonth+'-');
+        } else if(value === '2'){
+            formik.setFieldValue('reference_code', 'ES-'+currmonth+'-');
+        } else {
+            formik.setFieldValue('reference_code', 'CM-'+currmonth+'-');
+        }
+    }
+
     const onChangeServiceType = async (value: any) => {
 
 
@@ -127,18 +136,18 @@ const ReferenceForm: React.FC = ({ }: any) => {
         console.log(formik.values);
     }
 
-    const onRemoveService = (value:any) => {
+    const onRemoveService = (value: any) => {
 
         setReferServices(refserv => refserv.filter(item => item.online_id !== value.online_id));
     }
-    
+
     const onSelectService = (value: any) => {
 
         const exists = referServices.some(item => {
             return item.online_id === value.online_id;
         });
 
-        if(!exists){
+        if (!exists) {
             setReferServices(refserv => [...refserv, value]);
         }
     }
@@ -149,7 +158,7 @@ const ReferenceForm: React.FC = ({ }: any) => {
             underlayColor={'#AAA'}
             key={data.online_id}
         >
-            <HStack w="100%" px={4} flex={1}  space={5} alignItems="center" key={data.online_id}>
+            <HStack w="100%" px={4} flex={1} space={5} alignItems="center" key={data.online_id}>
                 <Ionicons name="medkit" size={35} color="#0d9488" />
                 <VStack width='250px' >
                     <Text _dark={{
@@ -158,9 +167,9 @@ const ReferenceForm: React.FC = ({ }: any) => {
                         {data.name}
                     </Text>
                 </VStack>
-                <IconButton size="sm" colorScheme="trueGray" onPress={()=>onRemoveService(data)} icon={<Icon as={Ionicons} name="trash" size="lg" color="trueGray.400" />} />
+                <IconButton size="sm" colorScheme="trueGray" onPress={() => onRemoveService(data)} icon={<Icon as={Ionicons} name="trash" size="lg" color="trueGray.400" />} />
             </HStack>
-            
+
         </TouchableHighlight>
     );
 
@@ -178,6 +187,7 @@ const ReferenceForm: React.FC = ({ }: any) => {
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
                                                 formik.setFieldValue('refer_to', itemValue);
+                                                onChangePE(itemValue);
                                             }
                                         }}>
                                         <Picker.Item label="-- Seleccione o PE --" value="0" />
@@ -344,9 +354,6 @@ const ReferenceForm: React.FC = ({ }: any) => {
                                     </View>
                                 }
                             </View>
-
-
-
 
                         </Box>
                     </ProgressStep>
