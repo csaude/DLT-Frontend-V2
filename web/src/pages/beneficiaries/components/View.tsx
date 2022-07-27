@@ -20,6 +20,10 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
     const [selectedIntervention, setSelectedIntervention] = useState<any>();
     const [interventions, setInterventions] = useState(beneficiary?.beneficiariesInterventionses);
 
+
+    const [refVisible, setRefVisible] = useState<boolean>(false);
+    const [selectedReference, setSelectedReference] = useState<any>();
+
     const [form] = Form.useForm();
 
     const showDrawer = (record: any) => {
@@ -30,9 +34,14 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
 
     const onAddReference = () => {
         form.resetFields();
-        setVisible(true);
+        setRefVisible(true);
         setIsAdd(true);
-        setSelectedIntervention(undefined);
+        setSelectedReference(undefined);
+    };
+    
+    const onRefClose = () => {
+        setRefVisible(false);
+        setIsAdd(false);
     };
 
     const onAddIntervention = () => {
@@ -263,13 +272,13 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
                     title="Referências Dreams"
                     placement="top"
                     closable={false}
-                    onClose={onClose}
-                    visible={visible}
+                    onClose={onRefClose}
+                    visible={refVisible}
                     getContainer={false}
                     style={{ position: 'absolute' }}
                     extra={
                         <Space>
-                            <Button onClick={onClose}>Cancel</Button>
+                            <Button onClick={onRefClose}>Cancel</Button>
                             <Button htmlType="submit" onClick={() => onSubmit(selectedIntervention)} type="primary">
                                 Submit
                             </Button>
@@ -280,7 +289,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
                         <ViewIntervention record={selectedBeneficiary} beneficiary={beneficiary} />
                     }
                 </Drawer>
-                {/* <Drawer
+                <Drawer
                     title="Intervenções Dreams"
                     placement="top"
                     closable={false}
@@ -300,7 +309,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
                     {isAdd ? <Form form={form} layout="vertical" onFinish={() => onSubmit(selectedIntervention)}> <InterventionForm record={selectedIntervention} /></Form> :
                         <ViewIntervention record={selectedBeneficiary} beneficiary={beneficiary} />
                     }
-                </Drawer> */}
+                </Drawer>
             </div>
         </>
     );
