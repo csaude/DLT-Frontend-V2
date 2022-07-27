@@ -112,7 +112,7 @@ export default appSchema({
           {name: 'vblt_sti_history', type: 'number',isOptional: true},
           {name: 'vblt_sex_worker', type: 'number',isOptional: true},
           {name: 'vblt_house_sustainer', type: 'number',isOptional: true},
-          {name: 'references', type: 'string',isOptional: true},
+          {name: 'references_a', type: 'string',isOptional: true},
         ],
       }),
       tableSchema({
@@ -180,12 +180,23 @@ export default appSchema({
           {name: 'service_type', type: 'string'},
           {name: 'remarks', type: 'string', isOptional: true},
           {name: 'status_ref', type: 'number'},
-          {name: 'status', type: 'number'},
+          {name: 'status', type: 'string'},
           {name: 'cancel_reason', type: 'number', isOptional: true},
           {name: 'other_reason', type: 'string', isOptional: true},
           {name: 'created_by', type: 'number', isIndexed: true},
           {name: 'date_created', type: 'string', isOptional: true},
           {name: 'online_id', type: 'number',isOptional: true}
+        ],
+      }),
+      tableSchema({
+        name: 'references_services',
+        columns: [
+          {name: 'reference_id', type: "number", isIndexed: true },
+          {name: 'service_id',type: "number", isIndexed: true },
+          {name: 'description', type: 'string'},
+          {name: 'status', type: 'string'},
+          {name: 'date_created', type: "string", isOptional: true },
+          {name: 'online_id', type: 'number', isOptional: true}
         ],
       }),
     ],

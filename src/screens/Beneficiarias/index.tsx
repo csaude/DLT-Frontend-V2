@@ -14,7 +14,7 @@ import { sync } from '../../database/sync';
 import { SuccessHandler, ErrorHandler } from "../../components/SyncIndicator";
 
 
-const BeneficiariesMain: React.FC = ({ beneficiaries, references, localities, subServices, beneficiaries_interventions, services }: any) => {
+const BeneficiariesMain: React.FC = ({ beneficiaries, references, partners, subServices, beneficiaries_interventions, services }: any) => {
     const [searchField, setSearchField] = useState('');
     const loggedUser: any = useContext(Context);
     const toast = useToast();
@@ -39,7 +39,7 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, references, localities, su
 
         const beneficiarie = data.item?._raw;
 
-        let items = beneficiarie.references.split(/[\[(, )\]]/); //split string into an array of elements
+        let items = beneficiarie.references_a.split(/[\[(, )\]]/); //split string into an array of elements
         let referenceIdArray = items.filter(item => item.trim().length > 0); // remove white space elements
 
         const beneficiaryReferences = references.filter((e) => {

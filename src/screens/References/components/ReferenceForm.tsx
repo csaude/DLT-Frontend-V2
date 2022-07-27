@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { KeyboardAvoidingView } from 'react-native';
 import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
-import { View, HStack, Text, Avatar, Pressable, Icon, Box, Alert, Select, Heading, VStack, FormControl, Input, Link, Button, CheckIcon, WarningOutlineIcon, Center, Flex } from 'native-base';
+import { View, HStack, Text, VStack, FormControl, Input, TextArea } from 'native-base';
 import { Formik, useFormik } from 'formik';
 import { database } from '../../../database';
 import { Q } from "@nozbe/watermelondb";
@@ -10,9 +10,11 @@ import ModalSelector from 'react-native-modal-selector-searchable';
 
 const ReferenceForm: React.FC = ({ }: any) => {
     const [errors, setErrors] = useState(false);
-    const [partners, setPartners ] = useState<any>([]);
-    const [us, setUs ] = useState<any>([]);
-    const [users, setUsers ] = useState<any>([]);
+    const [partners, setPartners] = useState<any>([]);
+    const [us, setUs] = useState<any>([]);
+    const [users, setUsers] = useState<any>([]);
+    const [selectedUser, setSelectedUser] = useState<any>("");
+
     const areaServicos = [{ "id": '1', "name": "Clinico" }, { "id": '2', "name": "Comunitario" }];
 
     const data = [{ key: 3, label: 'Bloor Apples' }, { key: 4, label: 'Blue Apples' }, { key: 5, label: 'Red Apples' }];
@@ -24,7 +26,7 @@ const ReferenceForm: React.FC = ({ }: any) => {
             const getUsList = await database.get('us').query().fetch();
             const usSerialized = getUsList.map(item => item._raw);
             setUs(usSerialized);
-        } 
+        }
 
         fetchUsData().catch(error => console.log(error));
     }, []);
@@ -39,7 +41,7 @@ const ReferenceForm: React.FC = ({ }: any) => {
             us_id: '',
             notify_to: '',
             description: '',
-            status: ''
+            status: 1
         },
         onSubmit: values => console.log(values),
         validate: values => validate(values)
@@ -93,7 +95,7 @@ const ReferenceForm: React.FC = ({ }: any) => {
             Q.where('partner_type', value)
         ).fetch();
         const partnersSerialized = getPartnerList.map(item => item._raw);
-        
+
         setPartners(partnersSerialized);
     }
 
@@ -104,7 +106,7 @@ const ReferenceForm: React.FC = ({ }: any) => {
             Q.where('us_id', value)
         ).fetch();
         const usersSerialized = getUsersList.map(item => item._raw);
-        
+
         setUsers(usersSerialized);
     }
 
@@ -124,8 +126,11 @@ const ReferenceForm: React.FC = ({ }: any) => {
                                     <Picker
                                         selectedValue={formik.values.refer_to}
                                         onValueChange={(itemValue, itemIndex) => {
-                                            formik.setFieldValue('refer_to', itemValue);
+                                            if (itemIndex !== 0) {
+                                                formik.setFieldValue('refer_to', itemValue);
+                                            }
                                         }}>
+                                        <Picker.Item label="-- Seleccione o PE --" value="0" />
                                         <Picker.Item key="1" label="US" value="1" />
                                         <Picker.Item key="2" label="ES" value="2" />
                                         <Picker.Item key="3" label="CM" value="3" />
@@ -217,44 +222,38 @@ const ReferenceForm: React.FC = ({ }: any) => {
                                         {formik.errors.us_id}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl isRequired isInvalid={'description' in formik.errors}>
-                                    <FormControl.Label>Observações</FormControl.Label>
-                                    <Input type='text' onBlur={formik.handleBlur('description')} placeholder="Insira as Observações" onChangeText={formik.handleChange('description')} value={formik.values.description} />
-                                    <FormControl.ErrorMessage>
-                                        {formik.errors.description}
-                                    </FormControl.ErrorMessage>
-                                </FormControl>
                                 <FormControl isRequired isInvalid={'notify_to' in formik.errors}>
                                     <FormControl.Label>Notificar ao</FormControl.Label>
 
                                     <ModalSelector
                                         data={users}
-                                        keyExtractor= {item => item.online_id}
-                                        labelExtractor= {item => `${item.name} ${item.surname}`}
+                                        keyExtractor={item => item.online_id}
+                                        labelExtractor={item => `${item.name} ${item.surname}`}
                                         renderItem={undefined}
                                         initValue="Select something yummy!"
                                         accessible={true}
                                         cancelButtonAccessibilityLabel={'Cancel Button'}
-                                        onChange={(option) => { console.log(option.online_id); formik.setFieldValue('notify_to', ''+option.online_id); }}>
-                                        <Input type='text' onBlur={formik.handleBlur('notify_to')} placeholder="Insira as Observações" onChangeText={formik.handleChange('notify_to')} value={formik.values.notify_to} />
+                                        onChange={(option) => { setSelectedUser(`${option.name} ${option.surname}`); formik.setFieldValue('notify_to', '' + option.online_id); }}>
+                                        <Input type='text' onBlur={formik.handleBlur('notify_to')} placeholder="Insira as Observações" onChangeText={formik.handleChange('notify_to')} value={selectedUser} />
                                     </ModalSelector>
 
                                     <FormControl.ErrorMessage>
                                         {formik.errors.notify_to}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
+                                <FormControl>
+                                    <FormControl.Label>Observações</FormControl.Label>
+                                    <TextArea onBlur={formik.handleBlur('description')} autoCompleteType={false} value={formik.values.description} onChange={formik.handleChange('description')} w="100%" />
 
+                                </FormControl>
                                 <FormControl isRequired isInvalid={'status' in formik.errors}>
                                     <FormControl.Label>Status</FormControl.Label>
                                     <Picker
                                         selectedValue={formik.values.status}
                                         onValueChange={(itemValue, itemIndex) => {
-                                            if (itemIndex !== 0) {
-                                                formik.setFieldValue('status', itemValue);
-                                            }
+                                            formik.setFieldValue('status', itemValue);
                                         }
                                         }>
-                                        <Picker.Item value="1" />
                                         <Picker.Item key={'1'} label={"Activo"} value={1} />
                                         <Picker.Item key={'2'} label={"Cancelado"} value={2} />
                                     </Picker>
@@ -278,7 +277,6 @@ const ReferenceForm: React.FC = ({ }: any) => {
                 </ProgressSteps>
 
             </View>
-
         </>
     );
 }

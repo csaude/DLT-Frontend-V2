@@ -23,7 +23,7 @@ export interface BeneficiariesModel {
     us_id?: any,
     status?: any,
     online_id?:any,
-    references?: any,
+    references_a?: any,
     vblt_lives_with?:any,
     vblt_is_orphan?:any,
     vblt_is_student?:any,
@@ -99,6 +99,6 @@ export default class Beneficiarie extends Model {
     @field("vblt_sti_history") vblt_sti_history;
     @field("vblt_sex_worker") vblt_sex_worker;
     @field("vblt_house_sustainer") vblt_house_sustainer;
-    @field("references") references;
+    @field("references_a") references;
     
 }
