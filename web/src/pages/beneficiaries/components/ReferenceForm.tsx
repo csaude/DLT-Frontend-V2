@@ -21,6 +21,10 @@ const ReferenceForm = (record: any) => {
     const form = Form.useFormInstance();
     const selectedIntervention = record.record;
     const serviceType = selectedIntervention?.subServices?.service.serviceType;
+
+    const selectedReference = record.record;
+    let userId = localStorage.getItem('user');
+    console.log(selectedReference);
   
     const selectedOption = options?.filter(o => o.value === selectedIntervention?.entryPoint+'').map(filteredOption => (filteredOption.value))[0];
 
@@ -74,39 +78,39 @@ const ReferenceForm = (record: any) => {
             <Row gutter={8}>
               <Col span={8}>
                 <Form.Item
-                  name="provider"
+                  name="reference_note"
                   label="Nota Referência"
                   rules={[{ required: true, message: 'Nota Referência' }]}
-                  initialValue={selectedIntervention?.provider}
+                  initialValue={selectedReference?.reference_note}
                 >
-                  <Input placeholder="Nota Referência" />
+                  <Input placeholder="Nota Referência" disabled/>
                 </Form.Item>
               </Col>
               <Col span={8}>
                 <Form.Item
-                  name="provider"
+                  name="beneficiary_id"
                   label="Nº de Beneficiário"
                   rules={[{ required: true, message: 'Nº de Beneficiário' }]}
-                  initialValue={selectedIntervention?.provider}
+                  initialValue={selectedReference?.nui}
                 >
-                  <Input placeholder="Nº de Beneficiário" />
+                  <Input placeholder="Nº de Beneficiário" disabled/>
                 </Form.Item>
               </Col>
               <Col span={8}>
                 <Form.Item
-                  name="provider"
+                  name="refer_to"
                   label="Referente"
                   rules={[{ required: true, message: 'Referente' }]}
-                  initialValue={selectedIntervention?.provider}
+                  initialValue={userId}
                 >
-                  <Input placeholder="Referente" />
+                  <Input placeholder="Referente" disabled/>
                 </Form.Item>
               </Col>
             </Row>
             <Row gutter={8}>
               <Col span={8}>
                 <Form.Item
-                  name="entryPoint"
+                  name="service_type"
                   label="Referir Para"
                   rules={[{ required: true, message: 'Please select an owner' }]}
                   initialValue={selectedOption}
