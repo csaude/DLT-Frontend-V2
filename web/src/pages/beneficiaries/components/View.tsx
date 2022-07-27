@@ -20,7 +20,6 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
     const [selectedIntervention, setSelectedIntervention] = useState<any>();
     const [interventions, setInterventions] = useState(beneficiary?.beneficiariesInterventionses);
 
-
     const [refVisible, setRefVisible] = useState<boolean>(false);
     const [selectedReference, setSelectedReference] = useState<any>();
 
@@ -37,6 +36,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
         setRefVisible(true);
         setIsAdd(true);
         setSelectedReference(undefined);
+        setSelectedIntervention(undefined);
     };
     
     const onRefClose = () => {
@@ -279,13 +279,13 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
                     extra={
                         <Space>
                             <Button onClick={onRefClose}>Cancel</Button>
-                            <Button htmlType="submit" onClick={() => onSubmit(selectedIntervention)} type="primary">
+                            <Button htmlType="submit" onClick={() => onSubmit(selectedReference)} type="primary">
                                 Submit
                             </Button>
                         </Space>
                     }
                 >
-                    {isAdd ? <Form form={form} layout="vertical" onFinish={() => onSubmit(selectedIntervention)}> <ReferenceForm record={selectedIntervention} /></Form> :
+                    {isAdd ? <Form form={form} layout="vertical" onFinish={() => onSubmit(selectedReference)}> <ReferenceForm record={beneficiary} /></Form> :
                         <ViewIntervention record={selectedBeneficiary} beneficiary={beneficiary} />
                     }
                 </Drawer>
