@@ -25,6 +25,7 @@ export default appSchema({
           {name: 'name', type: 'string'},
           {name: 'abbreviation', type: 'string'},
           {name: 'description', type: 'string', isOptional: true},
+          {name: 'partner_type', type: 'string', isOptional: true},
           {name: 'status', type: 'string'},
           {name: 'online_id', type: 'number',isOptional: true}
         ],

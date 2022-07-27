@@ -6,6 +6,7 @@ import BeneficiariesListScreen from '../screens/Beneficiarias';
 import BeneficiariesViewStack from '../screens/Beneficiarias/components/BeneficiariesViewStack';
 import BeneficiarieServiceForm from '../screens/Beneficiarias/components/intervention';
 import BeneficiaryForm from '../screens/Beneficiarias/components/beneficiaryForm';
+import ReferenceForm from '../screens/References/components/ReferenceForm';
 
 const BeneficiaryStack = createNativeStackNavigator();
 
@@ -31,6 +32,14 @@ const BeneficiariesNavigator: React.FC = () => {
                     headerShown:true
                 }}/>
         <BeneficiaryStack.Screen name="BeneficiaryForm" component={BeneficiaryForm} options={{
+                    headerTitle: (props) => (
+                      <Text {...props} style={{ color: 'black', fontWeight: 'bold' }}>
+                        back
+                      </Text>
+                    ),
+                    headerShown:true
+                }}/>
+        <BeneficiaryStack.Screen name="ReferenceForm" component={ReferenceForm} options={{
                     headerTitle: (props) => (
                       <Text {...props} style={{ color: 'black', fontWeight: 'bold' }}>
                         back
