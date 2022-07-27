@@ -1,12 +1,16 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { KeyboardAvoidingView } from 'react-native';
+import { TouchableHighlight, TouchableOpacity } from 'react-native';
 import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
-import { View, HStack, Text, VStack, FormControl, Input, TextArea } from 'native-base';
-import { Formik, useFormik } from 'formik';
+import { View, HStack, Text, VStack, FormControl, Input, TextArea, Center, Icon, Box, IconButton } from 'native-base';
+import { MaterialIcons, Ionicons, MaterialCommunityIcons } from "@native-base/icons";
+import { useFormik } from 'formik';
 import { database } from '../../../database';
 import { Q } from "@nozbe/watermelondb";
 import { Picker } from '@react-native-picker/picker';
+import { SwipeListView } from 'react-native-swipe-list-view';
 import ModalSelector from 'react-native-modal-selector-searchable';
+import StepperButton from '../../Beneficiarias/components/StapperButton';
+import styles from './styles';
 
 const ReferenceForm: React.FC = ({ }: any) => {
     const [errors, setErrors] = useState(false);
@@ -14,6 +18,8 @@ const ReferenceForm: React.FC = ({ }: any) => {
     const [us, setUs] = useState<any>([]);
     const [users, setUsers] = useState<any>([]);
     const [selectedUser, setSelectedUser] = useState<any>("");
+    const [services, setServices] = useState<any>([]);
+    const [referServices, setReferServices] = useState<any>([]);
 
     const areaServicos = [{ "id": '1', "name": "Clinico" }, { "id": '2', "name": "Comunitario" }];
 
@@ -28,7 +34,14 @@ const ReferenceForm: React.FC = ({ }: any) => {
             setUs(usSerialized);
         }
 
+        const fetchServices = async () => {
+            const getServicesList = await database.get('services').query().fetch();
+            const servicesSerialized = getServicesList.map(item => item._raw);
+            setServices(servicesSerialized);
+        }
+
         fetchUsData().catch(error => console.log(error));
+        fetchServices().catch(error => console.log(error));
     }, []);
 
     const formik = useFormik({
@@ -48,14 +61,14 @@ const ReferenceForm: React.FC = ({ }: any) => {
     });
 
     const onNextStep = () => {
-        const errorsList = validate(formik.values);
+        /*const errorsList = validate(formik.values);
         const hasErrors = JSON.stringify(errorsList) !== '{}';
 
         if (hasErrors) {
             setErrors(true);
         } else {
             setErrors(false);
-        }
+        }*/
     };
 
     const validate = (values: any) => {
@@ -113,6 +126,43 @@ const ReferenceForm: React.FC = ({ }: any) => {
     const handleSubmit = async (values?: any) => {
         console.log(formik.values);
     }
+
+    const onRemoveService = (value:any) => {
+
+        setReferServices(refserv => refserv.filter(item => item.online_id !== value.online_id));
+    }
+    
+    const onSelectService = (value: any) => {
+
+        const exists = referServices.some(item => {
+            return item.online_id === value.online_id;
+        });
+
+        if(!exists){
+            setReferServices(refserv => [...refserv, value]);
+        }
+    }
+
+    const renderItem = (data: any) => (
+        <TouchableHighlight
+            style={styles.rowFront}
+            underlayColor={'#AAA'}
+            key={data.online_id}
+        >
+            <HStack w="100%" px={4} flex={1}  space={5} alignItems="center" key={data.online_id}>
+                <Ionicons name="medkit" size={35} color="#0d9488" />
+                <VStack width='250px' >
+                    <Text _dark={{
+                        color: "warmGray.50"
+                    }} color="darkBlue.800" >
+                        {data.name}
+                    </Text>
+                </VStack>
+                <IconButton size="sm" colorScheme="trueGray" onPress={()=>onRemoveService(data)} icon={<Icon as={Ionicons} name="trash" size="lg" color="trueGray.400" />} />
+            </HStack>
+            
+        </TouchableHighlight>
+    );
 
     return (
         <>
@@ -265,9 +315,40 @@ const ReferenceForm: React.FC = ({ }: any) => {
                         </View>
                     </ProgressStep>
                     <ProgressStep label="Serviços Referidos">
-                        <View style={{ alignItems: 'center' }}>
-                            <Text>This is the content within step 2!</Text>
-                        </View>
+                        <Box minH="300" >
+
+                            <View >
+                                <View style={styles.heading}>
+                                    <Box alignItems="center" w="95%" bgColor="white" style={{ borderRadius: 5, }}>
+
+                                        <ModalSelector
+                                            data={services}
+                                            keyExtractor={item => item.online_id}
+                                            labelExtractor={item => item.name}
+                                            renderItem={undefined}
+                                            initValue="Seleccione Serviço a Associar"
+                                            accessible={true}
+                                            cancelButtonAccessibilityLabel={'Cancel Button'}
+                                            onChange={(option) => { onSelectService(option); }}>
+                                            <Input minW={390} InputLeftElement={<Icon as={MaterialIcons} name="add-circle" size={5} ml="2" color="muted.700" />}
+                                                placeholder="Seleccione Serviço a Associar" style={{ borderRadius: 45 }} />
+                                        </ModalSelector>
+                                    </Box>
+
+                                </View>
+                                {referServices.length > 0 ?
+                                    referServices.map((item, itemI) => renderItem(item))
+                                    :
+                                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text color="coolGray.500" >Não existem Serviços Associados!</Text>
+                                    </View>
+                                }
+                            </View>
+
+
+
+
+                        </Box>
                     </ProgressStep>
                     <ProgressStep label="Concluir" onSubmit={handleSubmit}>
                         <View style={{ alignItems: 'center' }}>
