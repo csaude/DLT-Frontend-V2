@@ -1,13 +1,13 @@
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react';
 import { Drawer, Form, Button, Col, Row, Input, Select, DatePicker, Space, Radio } from 'antd';
-import { queryByType, querySubServiceByService } from '@app/utils/service'
-import { allUs } from '@app/utils/uSanitaria'
-import moment from 'moment';
+import {allPartners} from '@app/utils/partners';
+import { queryByType, querySubServiceByService } from '@app/utils/service';
+import { allUs } from '@app/utils/uSanitaria';
 
 const { Option } = Select;
 const { TextArea } = Input;
 
-const areaServicos = [{ "id": 'CLINIC', "name": "Clinico" }, { "id": 'COMMUNITY', "name": "Comunitario" }];
+const areaServicos = [{ "id": '1', "name": "Clínico" }, { "id": '2', "name": "Comunitário" }];
 const options = [
   { label: 'US', value: '1' },
   { label: 'CM', value: '2' },
@@ -22,11 +22,12 @@ const ReferenceForm = (record: any) => {
     const selectedIntervention = record.record;
     const serviceType = selectedIntervention?.subServices?.service.serviceType;
 
+    const [partners, setPartners] = React.useState<any>(undefined);
     const selectedReference = record.record;
+    const partner_type = selectedReference?.serviceType;
     let userId = localStorage.getItem('user');
-    console.log(selectedReference);
   
-    const selectedOption = options?.filter(o => o.value === selectedIntervention?.entryPoint+'').map(filteredOption => (filteredOption.value))[0];
+    const selectedOption = options?.filter(o => o.value === selectedIntervention?.service_type+'').map(filteredOption => (filteredOption.value))[0];
 
     useEffect(() => {
 
@@ -35,8 +36,13 @@ const ReferenceForm = (record: any) => {
         setUs(data);
       } 
 
+      const fetchPartners = async () => {
+        const data = await allPartners();
+        setPartners(data);
+      }
+
       const fetchServices = async () => {
-        const data = await queryByType(serviceType === '1'? 'CLINIC' : 'COMMUNITY');
+        const data = await queryByType(serviceType === '1'? '1' : '2');
         setServices(data);
       }
 
@@ -48,7 +54,9 @@ const ReferenceForm = (record: any) => {
       if(selectedIntervention !== undefined){
         fetchServices().catch(error => console.log(error));
 
-        fetchSubServices().catch(error => console.log(error));  
+        fetchSubServices().catch(error => console.log(error)); 
+
+        fetchPartners().catch(error => console.log(error)); 
       }
   
       fetchData().catch(error => console.log(error));
@@ -56,9 +64,9 @@ const ReferenceForm = (record: any) => {
     }, []);
 
 
-    const onChangeAreaServiço = async (value:any) => {
-        const data = await queryByType(value);
-        setServices(data);
+    const onChangeTipoServiço = async (value:any) => {
+        const data = await allPartners(value);
+        setPartners(data);
     }
 
     const onChangeServices = async (value: any) => {
@@ -80,7 +88,7 @@ const ReferenceForm = (record: any) => {
                 <Form.Item
                   name="reference_note"
                   label="Nota Referência"
-                  rules={[{ required: true, message: 'Nota Referência' }]}
+                  rules={[{ required: true, message: 'Obrigatório' }]}
                   initialValue={selectedReference?.reference_note}
                 >
                   <Input placeholder="Nota Referência" disabled/>
@@ -90,7 +98,7 @@ const ReferenceForm = (record: any) => {
                 <Form.Item
                   name="beneficiary_id"
                   label="Nº de Beneficiário"
-                  rules={[{ required: true, message: 'Nº de Beneficiário' }]}
+                  rules={[{ required: true, message: 'Obrigatório' }]}
                   initialValue={selectedReference?.nui}
                 >
                   <Input placeholder="Nº de Beneficiário" disabled/>
@@ -100,7 +108,7 @@ const ReferenceForm = (record: any) => {
                 <Form.Item
                   name="refer_to"
                   label="Referente"
-                  rules={[{ required: true, message: 'Referente' }]}
+                  rules={[{ required: true, message: 'Obrigatório' }]}
                   initialValue={userId}
                 >
                   <Input placeholder="Referente" disabled/>
@@ -112,7 +120,7 @@ const ReferenceForm = (record: any) => {
                 <Form.Item
                   name="service_type"
                   label="Referir Para"
-                  rules={[{ required: true, message: 'Please select an owner' }]}
+                  rules={[{ required: true, message: 'Obrigatório' }]}
                   initialValue={selectedOption}
                 >
                   <Radio.Group
@@ -123,20 +131,20 @@ const ReferenceForm = (record: any) => {
               </Col>
               <Col span={8}>
                 <Form.Item
-                  name="provider"
+                  name="book_number"
                   label="Nº do Livro"
-                  rules={[{ required: true, message: 'Nº do Livro' }]}
-                  initialValue={selectedIntervention?.provider}
+                  rules={[{ required: true, message: 'Obrigatório' }]}
+                  initialValue={selectedReference?.book_number}
                 >
                   <Input placeholder="Nº do Livro" />
                 </Form.Item>
               </Col>
               <Col span={8}>
                 <Form.Item
-                  name="provider"
+                  name="reference_code"
                   label="Código de Referência no livro"
-                  rules={[{ required: true, message: 'Código de Referência no livro' }]}
-                  initialValue={selectedIntervention?.provider}
+                  rules={[{ required: true, message: 'Obrigatório' }]}
+                  initialValue={selectedReference?.reference_code}
                 >
                   <Input placeholder="Código de Referência no livro" />
                 </Form.Item>
@@ -145,12 +153,12 @@ const ReferenceForm = (record: any) => {
             <Row gutter={8}>
               <Col span={8}>
                 <Form.Item
-                  name="areaServicos"
+                  name="org_type"
                   label="Tipo de Serviço"
-                  rules={[{ required: true, message: 'Tipo de Serviço' }]}
-                  initialValue={serviceType===undefined? undefined : serviceType === '1'? 'CLINIC' : 'COMMUNITY'}
+                  rules={[{ required: true, message: 'Obrigatório' }]}
+                  initialValue={serviceType===undefined? undefined : serviceType === '1'? '1' : '2'}
                 >
-                    <Select placeholder="Select Area Serviço" onChange={onChangeAreaServiço}>
+                    <Select placeholder="Seleccione o Tipo de Serviço" onChange={onChangeTipoServiço}>
                         {areaServicos.map(item => (
                             <Option key={item.id}>{item.name}</Option>
                         ))}
@@ -159,13 +167,13 @@ const ReferenceForm = (record: any) => {
               </Col>
               <Col span={8}>
                 <Form.Item
-                  name="service"
+                  name="partner_id"
                   label="Organização"
-                  rules={[{ required: true, message: 'Organização' }]}
-                  initialValue={selectedIntervention===undefined? undefined : selectedIntervention?.subServices?.service.id+''}
+                  rules={[{ required: true, message: 'Obrigatório' }]}
+                  initialValue={selectedReference===undefined? undefined : selectedReference?.serviceType+''}
                 >
-                  <Select placeholder="Organização" onChange={onChangeServices} disabled={services === undefined}>
-                        {services?.map(item => (
+                  <Select placeholder="Organização" onChange={onChangeServices} disabled={partners === undefined}>
+                        {partners?.map(item => (
                             <Option key={item.id}>{item.name}</Option>
                         ))}
                   </Select>
@@ -173,9 +181,9 @@ const ReferenceForm = (record: any) => {
               </Col>
               <Col span={8}>
                 <Form.Item
-                  name="subservice"
+                  name="local"
                   label="Local"
-                  rules={[{ required: true, message: 'Local' }]}
+                  rules={[{ required: true, message: 'Obrigatório' }]}
                   initialValue={selectedIntervention===undefined? undefined : selectedIntervention?.subServices?.id+''}
                 >
                   <Select placeholder="Local" disabled={interventions === undefined} value={undefined}>
@@ -189,9 +197,9 @@ const ReferenceForm = (record: any) => {
             <Row gutter={8}>
               <Col span={8}>
                 <Form.Item
-                  name="subservice"
+                  name="notify_to"
                   label="Notificar ao"
-                  rules={[{ required: true, message: 'Notificar ao' }]}
+                  rules={[{ required: true, message: 'Obrigatório' }]}
                   initialValue={selectedIntervention===undefined? undefined : selectedIntervention?.subServices?.id+''}
                 >
                   <Select placeholder="Notificar ao" disabled={interventions === undefined} value={undefined}>
@@ -203,9 +211,8 @@ const ReferenceForm = (record: any) => {
               </Col>
               <Col span={16}>
                 <Form.Item
-                  name="outros"
+                  name="remarks"
                   label="Observações"
-                  rules={[{ required: true, message: 'Please ' }]}
                   initialValue={selectedIntervention?.remarks}
                 >
                   <TextArea rows={2} placeholder="Observações" maxLength={6} />
