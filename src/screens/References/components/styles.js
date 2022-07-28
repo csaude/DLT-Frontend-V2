@@ -43,6 +43,18 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    txtLabel:{
+        color: 'black',
+        fontSize: 16,
+        fontWeight: '700',
+        marginLeft: '1%',
+        color: '#002851',
+    },
+    txtLabelInfo:{
+        marginTop: '2%',
+        //marginBottom: '2%',
+        color: '#134e4a',
+    },
 });
 
 export default styles;

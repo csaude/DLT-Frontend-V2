@@ -4,6 +4,9 @@ import { useToast, HStack, Text, Icon, VStack, Pressable, Spacer, Stagger, IconB
 import { MaterialIcons, Ionicons } from "@native-base/icons";
 import { navigate } from '../../../routes/NavigationRef';
 import styles from './styles';
+import { database } from '../../../database';
+import { Q } from "@nozbe/watermelondb";
+import withObservables from '@nozbe/with-observables';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import StepperButton from './StapperButton';
 import { SuccessHandler, ErrorHandler} from "../../../components/SyncIndicator";
@@ -16,6 +19,7 @@ const ReferenceView: React.FC = ({ route }: any) => {
         beneficiary,
         references,
     } = route.params;
+    //const [references, setReferences] = useState<any>([]);
     const loggedUser:any = useContext(Context);
     const toast = useToast();
 
@@ -34,6 +38,19 @@ const ReferenceView: React.FC = ({ route }: any) => {
                                 }
                             }))
     }
+
+    /*useEffect(() => {
+        const fetchRefsData = async () => {
+            const getRefList = await database.get('references').query(
+                Q.where('beneficiary_id', beneficiary.online_id),
+            ).fetch();
+
+            const refListSerialized = getRefList.map(item => item._raw);
+            setReferences(refListSerialized);
+        }
+
+        fetchRefsData().catch(error => console.log(error));
+    }, []);*/
 
 
     const renderItem = (data: any) => (
@@ -88,7 +105,7 @@ const ReferenceView: React.FC = ({ route }: any) => {
                 </View>
             }
             <Center flex={1} px="3" >
-                <StepperButton onAdd={() => navigate({ name: "ReferenceForm", params: { } })}
+                <StepperButton onAdd={() => navigate({ name: "ReferenceForm", params: { beneficiary:  beneficiary, userId: loggedUser.online_id, refs: references.length} })}
                                 onRefresh={syncronize} />
             </Center>
         </>

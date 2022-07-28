@@ -1,18 +1,26 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { TouchableHighlight, TouchableOpacity } from 'react-native';
 import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
-import { View, HStack, Text, VStack, FormControl, Input, TextArea, Center, Icon, Box, IconButton } from 'native-base';
+import { View, HStack, Text, VStack, FormControl, Input, TextArea, Center, Icon, Box, IconButton, Flex, Heading, Divider } from 'native-base';
 import { MaterialIcons, Ionicons, MaterialCommunityIcons } from "@native-base/icons";
 import { useFormik } from 'formik';
 import { database } from '../../../database';
 import { Q } from "@nozbe/watermelondb";
+import { navigate, navigationRef } from '../../../routes/NavigationRef';
 import { Picker } from '@react-native-picker/picker';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import ModalSelector from 'react-native-modal-selector-searchable';
 import StepperButton from '../../Beneficiarias/components/StapperButton';
 import styles from './styles';
 
-const ReferenceForm: React.FC = ({ }: any) => {
+const ReferenceForm: React.FC = ({ route }: any) => {
+
+    const {
+        beneficiary,
+        userId,
+        refs
+    } = route.params;
+
     const [errors, setErrors] = useState(false);
     const [partners, setPartners] = useState<any>([]);
     const [us, setUs] = useState<any>([]);
@@ -133,7 +141,45 @@ const ReferenceForm: React.FC = ({ }: any) => {
     }
 
     const handleSubmit = async (values?: any) => {
-        console.log(formik.values);
+        //console.log(formik.values);
+        //console.log(referServices);
+
+        const beneficiaryId = beneficiary.online_id ? beneficiary.online_id : beneficiary.id;
+        
+        const savedR = await database.write(async () => {
+
+            const newReference = await database.get('references').create((ref:any) => {
+                ref.beneficiary_id = beneficiaryId
+                ref.refer_to = formik.values.refer_to
+                ref.notify_to = formik.values.notify_to
+                ref.reference_note = getNotaRef()
+                ref.description = formik.values.description
+                ref.book_number = formik.values.book_number
+                ref.reference_code = formik.values.reference_code
+                ref.service_type = formik.values.service_type
+                ref.remarks = formik.values.description
+                ref.status_ref = 0
+                ref.status = 1
+                ref.created_by = userId
+            });
+            return newReference;
+        });
+        
+        referServices.forEach(async (element) => {
+            
+            await database.write(async () => {
+                const newRefService= await database.get('references').create((refServ:any) => {
+                    refServ.reference_id = savedR._raw.id
+                    refServ.service_id = element.online_id
+                    refServ.status = element.online_id
+                });
+                return newRefService;
+            });
+
+        });
+
+
+        navigationRef.goBack();
     }
 
     const onRemoveService = (value: any) => {
@@ -150,6 +196,22 @@ const ReferenceForm: React.FC = ({ }: any) => {
         if (!exists) {
             setReferServices(refserv => [...refserv, value]);
         }
+    }
+
+    const getUsName = (usId: any) => {
+
+        const us_a = us.filter(item => item.online_id === usId);
+        return us_a[0]?.name;
+    }
+
+    const getPartnersName = (id: any) => {
+
+        const partners_a = partners.filter(item => item.online_id === id);
+        return partners_a[0]?.name;
+    }
+
+    const getNotaRef = () => {
+        return 'REFDR'+String(userId).padStart(3,'0')+'0'+String(refs+1).padStart(3,'0') ;
     }
 
     const renderItem = (data: any) => (
@@ -358,8 +420,65 @@ const ReferenceForm: React.FC = ({ }: any) => {
                         </Box>
                     </ProgressStep>
                     <ProgressStep label="Concluir" onSubmit={handleSubmit}>
-                        <View style={{ alignItems: 'center' }}>
-                            <Text>This is the content within step 3!</Text>
+                        <View style={styles.containerForm}>
+                            
+                            <Flex direction="column" mb="2.5" _text={{ color: "coolGray.800" }}>
+                            <Box p="2" rounded="lg">
+
+
+
+                                <Heading size="md" color="coolGray.800">Detalhes da Referência</Heading>
+                                <Divider />
+                                <Text style={styles.txtLabelInfo}>
+                                    <Text style={styles.txtLabel}> NID do Beneficiário : </Text>
+                                    {
+                                       beneficiary?.nui
+                                    }
+                                </Text>
+                                <Text style={styles.txtLabelInfo}>
+                                    <Text style={styles.txtLabel}> Nota da Referência: </Text>
+                                    {
+                                       getNotaRef()
+                                    }
+                                </Text>
+                                <Text style={styles.txtLabelInfo}>
+                                    <Text style={styles.txtLabel}> Código da Referência do Livro: </Text>
+                                    {
+                                       formik.values.reference_code
+                                    }
+                                </Text>
+                                <Text style={styles.txtLabelInfo}>
+                                    <Text style={styles.txtLabel}> Referência para: </Text>
+                                    {
+                                       formik.values.refer_to === '1'? 'Unidade Sanitaria' : formik.values.refer_to === '2'? 'Escola' : 'Comunidade'
+                                    }
+                                </Text>
+                                <Text style={styles.txtLabelInfo}>
+                                    <Text style={styles.txtLabel}> Local: </Text>
+                                    {
+                                       getUsName(formik.values.us_id)
+                                    }
+                                </Text>
+                                <Text style={styles.txtLabelInfo}>
+                                    <Text style={styles.txtLabel}> Organização: </Text>
+                                    {
+                                       getPartnersName(formik.values.partner_id)
+                                    }
+                                </Text>
+                                <Text style={styles.txtLabelInfo}>
+                                    <Text style={styles.txtLabel}> Notificar a(o): </Text>
+                                    {
+                                       selectedUser
+                                    }
+                                </Text>
+                                <Text style={styles.txtLabelInfo}>
+                                    <Text style={styles.txtLabel}> Serviços: </Text>
+                                    {
+                                       referServices.length
+                                    }
+                                </Text>
+                            </Box>
+                        </Flex>
                         </View>
                     </ProgressStep>
                 </ProgressSteps>

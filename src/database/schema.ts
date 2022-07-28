@@ -193,7 +193,7 @@ export default appSchema({
         columns: [
           {name: 'reference_id', type: "number", isIndexed: true },
           {name: 'service_id',type: "number", isIndexed: true },
-          {name: 'description', type: 'string'},
+          {name: 'description', type: 'string', isOptional: true},
           {name: 'status', type: 'string'},
           {name: 'date_created', type: "string", isOptional: true },
           {name: 'online_id', type: 'number', isOptional: true}
