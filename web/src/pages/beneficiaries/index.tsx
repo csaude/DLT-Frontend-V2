@@ -305,7 +305,7 @@ const BeneficiariesList: React.FC = () => {
         { title: 'Data', 
             dataIndex: 'date', 
             key: 'date',
-            render: (val: string) => <span>{moment(val).format('YYYY-MM-DD')}</span>,
+            render: (text, record) => <span>{moment(record.dateCreated).format('YYYY-MM-DD')}</span>,
         },
         { title: 'Serviço', 
             dataIndex: '', 
