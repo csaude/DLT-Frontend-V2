@@ -38,22 +38,25 @@ const ReferenceView: React.FC = ({ route }: any) => {
                                 }
                             }))
     }
+    //console.log(references);
 
-    /*useEffect(() => {
+    useEffect(() => {
         const fetchRefsData = async () => {
-            const getRefList = await database.get('references').query(
-                Q.where('beneficiary_id', beneficiary.online_id),
+            const getRefList = await database.get('references_services').query(
             ).fetch();
 
             const refListSerialized = getRefList.map(item => item._raw);
-            setReferences(refListSerialized);
+            console.log("references_services: ",refListSerialized);
+            //setReferences(refListSerialized);
         }
 
         fetchRefsData().catch(error => console.log(error));
-    }, []);*/
+    }, []);
 
 
-    const renderItem = (data: any) => (
+    const renderItem = (data: any) => {
+        //console.log();
+        return  (
         <TouchableHighlight
             style={styles.rowFront}
             underlayColor={'#AAA'}
@@ -85,7 +88,7 @@ const ReferenceView: React.FC = ({ route }: any) => {
             </HStack>
 
         </TouchableHighlight>
-    );
+    )};
 
     return (
         <>
@@ -105,7 +108,9 @@ const ReferenceView: React.FC = ({ route }: any) => {
                 </View>
             }
             <Center flex={1} px="3" >
-                <StepperButton onAdd={() => navigate({ name: "ReferenceForm", params: { beneficiary:  beneficiary, userId: loggedUser.online_id, refs: references.length} })}
+                <StepperButton onAdd={() => navigate({ name: "ReferenceForm", params: { beneficiary:  beneficiary, 
+                                                                                            userId: isNaN(loggedUser.id) ? loggedUser.online_id : loggedUser.id, 
+                                                                                            refs: references.length} })}
                                 onRefresh={syncronize} />
             </Center>
         </>

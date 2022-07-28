@@ -180,7 +180,7 @@ export default appSchema({
           {name: 'service_type', type: 'string'},
           {name: 'remarks', type: 'string', isOptional: true},
           {name: 'status_ref', type: 'number'},
-          {name: 'status', type: 'string'},
+          {name: 'status', type: 'number'},
           {name: 'cancel_reason', type: 'number', isOptional: true},
           {name: 'other_reason', type: 'string', isOptional: true},
           {name: 'created_by', type: 'number', isIndexed: true},
@@ -191,13 +191,13 @@ export default appSchema({
       tableSchema({
         name: 'references_services',
         columns: [
-          {name: 'reference_id', type: "number", isIndexed: true },
+          {name: 'reference_id', type: "string" },
           {name: 'service_id',type: "number", isIndexed: true },
           {name: 'description', type: 'string', isOptional: true},
-          {name: 'status', type: 'string'},
+          {name: 'status', type: "number"},
           {name: 'date_created', type: "string", isOptional: true },
-          {name: 'online_id', type: 'number', isOptional: true}
+          {name: 'online_id', type: 'string', isOptional: true}
         ],
       }),
-    ],
+    ], 
 });

@@ -20,6 +20,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
         userId,
         refs
     } = route.params;
+    // console.log(userId);
 
     const [errors, setErrors] = useState(false);
     const [partners, setPartners] = useState<any>([]);
@@ -109,12 +110,12 @@ const ReferenceForm: React.FC = ({ route }: any) => {
     const onChangePE = (value: any) => {
 
         var currmonth = new Date().getMonth() + 1;
-        if(value === '1'){
-            formik.setFieldValue('reference_code', 'US-'+currmonth+'-');
-        } else if(value === '2'){
-            formik.setFieldValue('reference_code', 'ES-'+currmonth+'-');
+        if (value === '1') {
+            formik.setFieldValue('reference_code', 'US-' + currmonth + '-');
+        } else if (value === '2') {
+            formik.setFieldValue('reference_code', 'ES-' + currmonth + '-');
         } else {
-            formik.setFieldValue('reference_code', 'CM-'+currmonth+'-');
+            formik.setFieldValue('reference_code', 'CM-' + currmonth + '-');
         }
     }
 
@@ -141,14 +142,16 @@ const ReferenceForm: React.FC = ({ route }: any) => {
     }
 
     const handleSubmit = async (values?: any) => {
-        //console.log(formik.values);
-        //console.log(referServices);
+        console.log(formik.values);
+        console.log(referServices);
+        //console.log(getNotaRef());
 
         const beneficiaryId = beneficiary.online_id ? beneficiary.online_id : beneficiary.id;
-        
+
+
         const savedR = await database.write(async () => {
 
-            const newReference = await database.get('references').create((ref:any) => {
+            const newReference = await database.get('references').create((ref: any) => {
                 ref.beneficiary_id = beneficiaryId
                 ref.refer_to = formik.values.refer_to
                 ref.notify_to = formik.values.notify_to
@@ -159,21 +162,22 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                 ref.service_type = formik.values.service_type
                 ref.remarks = formik.values.description
                 ref.status_ref = 0
-                ref.status = 1
+                ref.status = '1'
                 ref.created_by = userId
             });
+
             return newReference;
         });
-        
-        referServices.forEach(async (element) => {
-            
-            await database.write(async () => {
-                const newRefService= await database.get('references').create((refServ:any) => {
+        console.log(savedR._raw.id);
+
+        await database.write(async () => {
+           referServices.forEach(async (element) => {
+                const newRefService = await database.get('references_services').create((refServ: any) => {
                     refServ.reference_id = savedR._raw.id
                     refServ.service_id = element.online_id
-                    refServ.status = element.online_id
+                    refServ.status = '1'
                 });
-                return newRefService;
+                console.log(newRefService);
             });
 
         });
@@ -211,7 +215,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
     }
 
     const getNotaRef = () => {
-        return 'REFDR'+String(userId).padStart(3,'0')+'0'+String(refs+1).padStart(3,'0') ;
+        return 'REFDR' + String(userId).padStart(3, '0') + '0' + String(refs + 1).padStart(3, '0');
     }
 
     const renderItem = (data: any) => (
@@ -355,7 +359,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                                         initValue="Select something yummy!"
                                         accessible={true}
                                         cancelButtonAccessibilityLabel={'Cancel Button'}
-                                        onChange={(option) => { setSelectedUser(`${option.name} ${option.surname}`); formik.setFieldValue('notify_to', '' + option.online_id); }}>
+                                        onChange={(option) => { setSelectedUser(`${option.name} ${option.surname}`); formik.setFieldValue('notify_to', option.online_id); }}>
                                         <Input type='text' onBlur={formik.handleBlur('notify_to')} placeholder="Insira as Observações" onChangeText={formik.handleChange('notify_to')} value={selectedUser} />
                                     </ModalSelector>
 
@@ -421,64 +425,64 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                     </ProgressStep>
                     <ProgressStep label="Concluir" onSubmit={handleSubmit}>
                         <View style={styles.containerForm}>
-                            
+
                             <Flex direction="column" mb="2.5" _text={{ color: "coolGray.800" }}>
-                            <Box p="2" rounded="lg">
+                                <Box p="2" rounded="lg">
 
 
 
-                                <Heading size="md" color="coolGray.800">Detalhes da Referência</Heading>
-                                <Divider />
-                                <Text style={styles.txtLabelInfo}>
-                                    <Text style={styles.txtLabel}> NID do Beneficiário : </Text>
-                                    {
-                                       beneficiary?.nui
-                                    }
-                                </Text>
-                                <Text style={styles.txtLabelInfo}>
-                                    <Text style={styles.txtLabel}> Nota da Referência: </Text>
-                                    {
-                                       getNotaRef()
-                                    }
-                                </Text>
-                                <Text style={styles.txtLabelInfo}>
-                                    <Text style={styles.txtLabel}> Código da Referência do Livro: </Text>
-                                    {
-                                       formik.values.reference_code
-                                    }
-                                </Text>
-                                <Text style={styles.txtLabelInfo}>
-                                    <Text style={styles.txtLabel}> Referência para: </Text>
-                                    {
-                                       formik.values.refer_to === '1'? 'Unidade Sanitaria' : formik.values.refer_to === '2'? 'Escola' : 'Comunidade'
-                                    }
-                                </Text>
-                                <Text style={styles.txtLabelInfo}>
-                                    <Text style={styles.txtLabel}> Local: </Text>
-                                    {
-                                       getUsName(formik.values.us_id)
-                                    }
-                                </Text>
-                                <Text style={styles.txtLabelInfo}>
-                                    <Text style={styles.txtLabel}> Organização: </Text>
-                                    {
-                                       getPartnersName(formik.values.partner_id)
-                                    }
-                                </Text>
-                                <Text style={styles.txtLabelInfo}>
-                                    <Text style={styles.txtLabel}> Notificar a(o): </Text>
-                                    {
-                                       selectedUser
-                                    }
-                                </Text>
-                                <Text style={styles.txtLabelInfo}>
-                                    <Text style={styles.txtLabel}> Serviços: </Text>
-                                    {
-                                       referServices.length
-                                    }
-                                </Text>
-                            </Box>
-                        </Flex>
+                                    <Heading size="md" color="coolGray.800">Detalhes da Referência</Heading>
+                                    <Divider />
+                                    <Text style={styles.txtLabelInfo}>
+                                        <Text style={styles.txtLabel}> NID do Beneficiário : </Text>
+                                        {
+                                            beneficiary?.nui
+                                        }
+                                    </Text>
+                                    <Text style={styles.txtLabelInfo}>
+                                        <Text style={styles.txtLabel}> Nota da Referência: </Text>
+                                        {
+                                            getNotaRef()
+                                        }
+                                    </Text>
+                                    <Text style={styles.txtLabelInfo}>
+                                        <Text style={styles.txtLabel}> Código da Referência do Livro: </Text>
+                                        {
+                                            formik.values.reference_code
+                                        }
+                                    </Text>
+                                    <Text style={styles.txtLabelInfo}>
+                                        <Text style={styles.txtLabel}> Referência para: </Text>
+                                        {
+                                            formik.values.refer_to === '1' ? 'Unidade Sanitaria' : formik.values.refer_to === '2' ? 'Escola' : 'Comunidade'
+                                        }
+                                    </Text>
+                                    <Text style={styles.txtLabelInfo}>
+                                        <Text style={styles.txtLabel}> Local: </Text>
+                                        {
+                                            getUsName(formik.values.us_id)
+                                        }
+                                    </Text>
+                                    <Text style={styles.txtLabelInfo}>
+                                        <Text style={styles.txtLabel}> Organização: </Text>
+                                        {
+                                            getPartnersName(formik.values.partner_id)
+                                        }
+                                    </Text>
+                                    <Text style={styles.txtLabelInfo}>
+                                        <Text style={styles.txtLabel}> Notificar a(o): </Text>
+                                        {
+                                            selectedUser
+                                        }
+                                    </Text>
+                                    <Text style={styles.txtLabelInfo}>
+                                        <Text style={styles.txtLabel}> Serviços: </Text>
+                                        {
+                                            referServices.length
+                                        }
+                                    </Text>
+                                </Box>
+                            </Flex>
                         </View>
                     </ProgressStep>
                 </ProgressSteps>
