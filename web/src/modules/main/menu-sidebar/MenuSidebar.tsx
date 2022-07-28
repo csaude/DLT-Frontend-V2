@@ -30,7 +30,7 @@ export const MENU: IMenuItem[] = [
     name: 'menusidebar.label.referenceList',
     path: '/referenceList',
     icon: 'fas fa-sync',
-    role: 'M&E'
+    role: 'ADMIN'
   },
   {
     name: 'menusidebar.label.reports',

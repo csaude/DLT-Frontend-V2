@@ -18,6 +18,18 @@ export async function sync({ username }) {
             const {changes, timestamp} = await response.json();
        
             return {changes, timestamp};
+
+
+            /* https://github.com/Nozbe/WatermelonDB/issues/7
+               https://github.com/Nozbe/WatermelonDB/issues/216
+
+              import { sanitizedRaw } from 'watermelondb/RawRecord'
+              const contactCollection = database.collections.get('contacts')
+              contactCollection.create(record => {
+                record._raw = sanitizedRaw({ id: c.id, sid: c.id, username: c.username, .... }, contactCollection.schema)
+              })
+
+            */
         },
         pushChanges: async ({changes, lastPulledAt}) => {
             const response = await fetch(`${SYNC_API_URL}?username=${username}`, {
