@@ -1,13 +1,14 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Drawer, Form, Button, Col, Row, Input, Select, DatePicker, Space, Radio } from 'antd';
-import {allPartners} from '@app/utils/partners';
+import {allPartners, allPartnersByType} from '@app/utils/partners';
+import { query } from '@app/utils/users';
 import { queryByType, querySubServiceByService } from '@app/utils/service';
 import { allUs } from '@app/utils/uSanitaria';
 
 const { Option } = Select;
 const { TextArea } = Input;
 
-const areaServicos = [{ "id": '1', "name": "Clínico" }, { "id": '2', "name": "Comunitário" }];
+const areaServicos = [{ "id": 'CLINIC', "name": "Clinico" }, { "id": 'COMMUNITY', "name": "Comunitários" }];
 const options = [
   { label: 'US', value: '1' },
   { label: 'CM', value: '2' },
@@ -23,6 +24,7 @@ const ReferenceForm = (record: any) => {
     const serviceType = selectedIntervention?.subServices?.service.serviceType;
 
     const [partners, setPartners] = React.useState<any>(undefined);
+    const [users, setUsers] = React.useState<any>(undefined);
     const selectedReference = record.record;
     const partner_type = selectedReference?.serviceType;
     let userId = localStorage.getItem('user');
@@ -31,15 +33,20 @@ const ReferenceForm = (record: any) => {
 
     useEffect(() => {
 
-      const fetchData = async () => {
-        const data = await allUs();
-        setUs(data);
-      } 
+      // const fetchData = async () => {
+      //   const data = await allUs();
+      //   setUs(data);
+      // } 
 
-      const fetchPartners = async () => {
-        const data = await allPartners();
-        setPartners(data);
-      }
+      // const fetchUsers = async () => {
+      //   const data = await query();
+      //   setUsers(data);
+      // } 
+
+      // const fetchPartners = async () => {
+      //   const data = await allPartnersByType(partner_type === '1'? 'CLINIC' : 'COMMUNITY');
+      //   setPartners(data);
+      // }
 
       const fetchServices = async () => {
         const data = await queryByType(serviceType === '1'? '1' : '2');
@@ -56,17 +63,26 @@ const ReferenceForm = (record: any) => {
 
         fetchSubServices().catch(error => console.log(error)); 
 
-        fetchPartners().catch(error => console.log(error)); 
+        // fetchPartners().catch(error => console.log(error));
       }
   
-      fetchData().catch(error => console.log(error));
   
     }, []);
 
 
-    const onChangeTipoServiço = async (value:any) => {
-        const data = await allPartners(value);
+    const onChangeTipoServico = async (value:any) => {
+        const data = await allPartnersByType(value);
         setPartners(data);
+    }
+    
+    const onChangeOrganization = async (value:any) => {
+      const data = await allUs(value);
+      setUs(data);
+    }
+
+    const onChangeUs = async (value:any) => {
+      const data = await query(value);
+      setUsers(data);
     }
 
     const onChangeServices = async (value: any) => {
@@ -75,10 +91,10 @@ const ReferenceForm = (record: any) => {
       setInterventions(data);
     }
 
-    const fetchData = async () => {
-      const data = await allUs();
-      setUs(data);
-    }
+    // const fetchData = async () => {
+    //   const data = await allUs();
+    //   setUs(data);
+    // }
 
     return (
       
@@ -156,9 +172,9 @@ const ReferenceForm = (record: any) => {
                   name="org_type"
                   label="Tipo de Serviço"
                   rules={[{ required: true, message: 'Obrigatório' }]}
-                  initialValue={serviceType===undefined? undefined : serviceType === '1'? '1' : '2'}
+                  initialValue={serviceType===undefined? undefined : serviceType === '1'? 'CLINIC' : 'COMMUNITY'}
                 >
-                    <Select placeholder="Seleccione o Tipo de Serviço" onChange={onChangeTipoServiço}>
+                    <Select placeholder="Seleccione o Tipo de Serviço" onChange={onChangeTipoServico}>
                         {areaServicos.map(item => (
                             <Option key={item.id}>{item.name}</Option>
                         ))}
@@ -170,9 +186,9 @@ const ReferenceForm = (record: any) => {
                   name="partner_id"
                   label="Organização"
                   rules={[{ required: true, message: 'Obrigatório' }]}
-                  initialValue={selectedReference===undefined? undefined : selectedReference?.serviceType+''}
+                  initialValue={partner_type===undefined? undefined : partner_type === '1'? 'CLINIC' : 'COMMUNITY'}
                 >
-                  <Select placeholder="Organização" onChange={onChangeServices} disabled={partners === undefined}>
+                  <Select placeholder="Organização" onChange={onChangeOrganization} disabled={partners === undefined}>
                         {partners?.map(item => (
                             <Option key={item.id}>{item.name}</Option>
                         ))}
@@ -186,8 +202,8 @@ const ReferenceForm = (record: any) => {
                   rules={[{ required: true, message: 'Obrigatório' }]}
                   initialValue={selectedIntervention===undefined? undefined : selectedIntervention?.subServices?.id+''}
                 >
-                  <Select placeholder="Local" disabled={interventions === undefined} value={undefined}>
-                        {interventions?.map(item => (
+                  <Select placeholder="Local" onChange={onChangeServices}  disabled={us === undefined} value={undefined}>
+                        {us?.map(item => (
                             <Option key={item.id}>{item.name}</Option>
                         ))}
                   </Select>
@@ -202,8 +218,8 @@ const ReferenceForm = (record: any) => {
                   rules={[{ required: true, message: 'Obrigatório' }]}
                   initialValue={selectedIntervention===undefined? undefined : selectedIntervention?.subServices?.id+''}
                 >
-                  <Select placeholder="Notificar ao" disabled={interventions === undefined} value={undefined}>
-                        {interventions?.map(item => (
+                  <Select placeholder="Notificar ao" disabled={users === undefined} value={undefined}>
+                        {users?.map(item => (
                             <Option key={item.id}>{item.name}</Option>
                         ))}
                   </Select>
