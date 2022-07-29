@@ -12,6 +12,7 @@ import { getEntryPoint } from '@app/models/User';
 
 import { useNavigate } from 'react-router-dom';
 import Item from 'antd/lib/list/Item';
+import ViewReferral from './components/View';
 
 const { Text } = Typography;
 
@@ -48,6 +49,19 @@ const ReferenceList: React.FC = () => {
         fetchData().catch(error => console.log(error));
     
     }, []);    
+
+    const handleViewModalVisible = (flag?: boolean, record?: any) => {
+        setReference(record);
+        setModalVisible(!!flag);
+    }
+
+    const handleAdd = () => {
+        
+    }
+
+    const handleModalVisible = (flag?: boolean) => {
+        setModalVisible(!!flag);
+    };
    
     const filterPartner = data => formatter => data.map( item => ({
         text: formatter(item),
@@ -116,6 +130,11 @@ const ReferenceList: React.FC = () => {
 
             
     });
+
+    const parentMethods = {
+        handleAdd: handleAdd,
+        handleModalVisible: handleModalVisible
+    };
 
     const getColumnSearchBenProps = (dataIndex:any) => ({
         filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
@@ -334,7 +353,7 @@ const ReferenceList: React.FC = () => {
             key: 'x',
             render: (text, record) => (
               <Space>
-                <Button type="primary" icon={<EyeOutlined />} onClick={() => { record } } >
+                <Button type="primary" icon={<EyeOutlined />} onClick={() =>handleViewModalVisible(true, record)} >
                 </Button>
                 <Button type="primary" icon={<EditOutlined />} onClick={() => { record } } >
                 </Button>
@@ -356,6 +375,10 @@ const ReferenceList: React.FC = () => {
                     bordered
                 />
             </Card>
+            <ViewReferral
+                {...parentMethods}
+                reference={reference}
+                modalVisible={modalVisible} />
         </>
     );
 }

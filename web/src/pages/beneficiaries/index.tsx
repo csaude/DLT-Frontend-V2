@@ -220,12 +220,12 @@ const BeneficiariesList: React.FC = () => {
         record.partnerNUI = data.nui;
     }
 
-    const onEditBeneficiary = (record: any) => {
+    const onEditBeneficiary = async (record: any) => {
         
         form.resetFields();
         if (record.gender === "1") {
             if (record.partnerId != null) {
-                fetchPartner(record).catch(error => console.log(error));;
+                await fetchPartner(record).catch(error => console.log(error));;
             }
             setBeneficiaryModalVisible(true)
         }
@@ -305,7 +305,7 @@ const BeneficiariesList: React.FC = () => {
         { title: 'Data', 
             dataIndex: 'date', 
             key: 'date',
-            render: (val: string) => <span>{moment(val).format('YYYY-MM-DD')}</span>,
+            render: (text, record) => <span>{moment(record.dateCreated).format('YYYY-MM-DD')}</span>,
         },
         { title: 'Serviço', 
             dataIndex: '', 
