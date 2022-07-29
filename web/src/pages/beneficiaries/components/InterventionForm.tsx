@@ -20,7 +20,10 @@ const InterventionForm = (record: any) => {
     const [us, setUs] = React.useState<any>(undefined);
     const form = Form.useFormInstance();
     const selectedIntervention = record.record;
-    const serviceType = selectedIntervention?.subServices?.service.serviceType;
+    const serviceType = selectedIntervention?.subServices === undefined? selectedIntervention?.services.serviceType : selectedIntervention?.subServices?.service.serviceType;
+
+    console.log(selectedIntervention);
+    console.log(serviceType);
   
     const selectedOption = options?.filter(o => o.value === selectedIntervention?.entryPoint+'').map(filteredOption => (filteredOption.value))[0];
 
@@ -134,7 +137,7 @@ const InterventionForm = (record: any) => {
                   name="location"
                   label="Localização"
                   rules={[{ required: true, message: 'Please choose the type' }]}
-                  initialValue={selectedIntervention === undefined? undefined : selectedIntervention?.us.id+''}
+                  initialValue={selectedIntervention === undefined? undefined : selectedIntervention?.us?.id+''}
                 >
                   <Select placeholder="Select Localização">
                         {us?.map(item => (
