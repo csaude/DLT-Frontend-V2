@@ -1,8 +1,8 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Drawer, Form, Button, Col, Row, Input, Select, DatePicker, Space, Radio } from 'antd';
-import {allPartners, allPartnersByType} from '@app/utils/partners';
-import { query } from '@app/utils/users';
-import { queryByType, querySubServiceByService } from '@app/utils/service';
+import { allPartnersByType} from '@app/utils/partners';
+import { query, userById, allUsesByUs } from '@app/utils/users';
+import { querySubServiceByService } from '@app/utils/service';
 import { allUs } from '@app/utils/uSanitaria';
 
 const { Option } = Select;
@@ -25,18 +25,21 @@ const ReferenceForm = (record: any) => {
 
     const [partners, setPartners] = React.useState<any>(undefined);
     const [users, setUsers] = React.useState<any>(undefined);
+    const [user, setUser] = React.useState();
     const selectedReference = record.record;
     const partner_type = selectedReference?.serviceType;
     let userId = localStorage.getItem('user');
   
     const selectedOption = options?.filter(o => o.value === selectedIntervention?.service_type+'').map(filteredOption => (filteredOption.value))[0];
 
+    // console.log(user);
     useEffect(() => {
 
-      // const fetchData = async () => {
-      //   const data = await allUs();
-      //   setUs(data);
-      // } 
+      const fetchData = async () => {
+        const data = await userById(userId);
+        setUser(data);
+        console.log(user);
+      } 
 
       // const fetchUsers = async () => {
       //   const data = await query();
@@ -48,22 +51,22 @@ const ReferenceForm = (record: any) => {
       //   setPartners(data);
       // }
 
-      const fetchServices = async () => {
-        const data = await queryByType(serviceType === '1'? '1' : '2');
-        setServices(data);
-      }
+      // const fetchServices = async () => {
+      //   const data = await queryByType(serviceType === '1'? '1' : '2');
+      //   setServices(data);
+      // }
 
-      const fetchSubServices = async () => {
-        const data = await querySubServiceByService(selectedIntervention?.subServices?.service.id);
-        setInterventions(data);
-      }
+      // const fetchSubServices = async () => {
+      //   const data = await querySubServiceByService(selectedIntervention?.subServices?.service.id);
+      //   setInterventions(data);
+      // }
 
       if(selectedIntervention !== undefined){
-        fetchServices().catch(error => console.log(error));
+        // fetchServices().catch(error => console.log(error));
 
-        fetchSubServices().catch(error => console.log(error)); 
+        // fetchSubServices().catch(error => console.log(error)); 
 
-        // fetchPartners().catch(error => console.log(error));
+        fetchData().catch(error => console.log(error));
       }
   
   
@@ -81,15 +84,15 @@ const ReferenceForm = (record: any) => {
     }
 
     const onChangeUs = async (value:any) => {
-      const data = await query(value);
+      const data = await allUsesByUs(value);
       setUsers(data);
     }
 
-    const onChangeServices = async (value: any) => {
+    // const onChangeServices = async (value: any) => {
 
-      const data = await querySubServiceByService(value);
-      setInterventions(data);
-    }
+    //   const data = await querySubServiceByService(value);
+    //   setInterventions(data);
+    // }
 
     // const fetchData = async () => {
     //   const data = await allUs();
@@ -202,7 +205,7 @@ const ReferenceForm = (record: any) => {
                   rules={[{ required: true, message: 'Obrigatório' }]}
                   initialValue={selectedIntervention===undefined? undefined : selectedIntervention?.subServices?.id+''}
                 >
-                  <Select placeholder="Local" onChange={onChangeServices}  disabled={us === undefined} value={undefined}>
+                  <Select placeholder="Local" onChange={onChangeUs}  disabled={us === undefined} value={undefined}>
                         {us?.map(item => (
                             <Option key={item.id}>{item.name}</Option>
                         ))}
