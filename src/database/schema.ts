@@ -11,10 +11,30 @@ export default appSchema({
         ],
       }),
       tableSchema({
+        name: 'provinces',
+        columns: [
+          {name: 'name', type: 'string'},
+          {name: 'code', type: 'string'},
+          {name: 'status', type: 'number'},
+          {name: 'online_id', type: 'number',isOptional: true}
+        ],
+      }),
+      tableSchema({
+        name: 'districts',
+        columns: [
+          {name: 'name', type: 'string'},
+          {name: 'code', type: 'string'},
+          {name: 'province_id', type: 'number'},
+          {name: 'status', type: 'number'},
+          {name: 'online_id', type: 'number',isOptional: true}
+        ],
+      }),
+      tableSchema({
         name: 'localities',
         columns: [
           {name: 'name', type: 'string'},
           {name: 'description', type: 'string', isOptional: true},
+          {name: 'district_id', type: 'number'},
           {name: 'status', type: 'string'},
           {name: 'online_id', type: 'number',isOptional: true}
         ],

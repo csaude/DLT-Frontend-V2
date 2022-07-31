@@ -18,7 +18,7 @@ function VulnerabilitiesScreen() {
 const Tab = createBottomTabNavigator();
 
 export default function BeneficiariesViewStack({ route }) {
-
+  
   return (
 
     <Tab.Navigator initialRouteName='Dados Pessoais' screenOptions={({ route }) => ({

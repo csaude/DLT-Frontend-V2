@@ -2,11 +2,10 @@ import React from 'react';
 import {Text} from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import BeneficiariesListScreen from '../screens/Beneficiarias';
-//import BeneficiariesViewScreen from '../screens/Beneficiarias/components/view';
 import BeneficiariesViewStack from '../screens/Beneficiarias/components/BeneficiariesViewStack';
 import BeneficiarieServiceForm from '../screens/Beneficiarias/components/intervention';
-import BeneficiaryForm from '../screens/Beneficiarias/components/beneficiaryForm';
 import ReferenceForm from '../screens/References/components/ReferenceForm';
+import BeneficiaryForm from '../screens/Beneficiarias/components/BeneficiaryForm';
 
 const BeneficiaryStack = createNativeStackNavigator();
 
