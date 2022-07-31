@@ -11,6 +11,7 @@ import 'antd/dist/antd.css';
 
 import '../styles.css'
 import InterventionForm from './InterventionForm';
+import ReferenceForm from './ReferenceForm';
 
 export function ViewBenefiaryPanel({ beneficiary, columns }) {
     const [visible, setVisible] = useState<boolean>(false);
@@ -19,12 +20,28 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
     const [selectedIntervention, setSelectedIntervention] = useState<any>();
     const [interventions, setInterventions] = useState(beneficiary?.beneficiariesInterventionses);
 
+    const [refVisible, setRefVisible] = useState<boolean>(false);
+    const [selectedReference, setSelectedReference] = useState<any>();
+
     const [form] = Form.useForm();
 
     const showDrawer = (record: any) => {
 
         setVisible(true);
         setSelectedBeneficiary(record);
+    };
+
+    const onAddReference = () => {
+        form.resetFields();
+        setRefVisible(true);
+        setIsAdd(true);
+        setSelectedReference(undefined);
+        setSelectedIntervention(undefined);
+    };
+    
+    const onRefClose = () => {
+        setRefVisible(false);
+        setIsAdd(false);
     };
 
     const onAddIntervention = () => {
@@ -233,7 +250,9 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
                     title="Lista de Intervenções DREAMS"
                     extra={
                         <Space>
-                            <Button type='primary' icon={<ArrowUpOutlined />} danger >Referir Beneficiaria</Button>
+                            <Button onClick={onAddReference} type='primary' icon={<ArrowUpOutlined />} danger >
+                                Referir Beneficiaria
+                            </Button>
                             <Button onClick={onAddIntervention} type="primary" icon={<PlusOutlined />} >
                                 Adicionar Serviço Dreams
                             </Button>
@@ -249,6 +268,27 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
 
                     />
                 </Card>
+                <Drawer
+                    title="Referências Dreams"
+                    placement="top"
+                    closable={false}
+                    onClose={onRefClose}
+                    visible={refVisible}
+                    getContainer={false}
+                    style={{ position: 'absolute' }}
+                    extra={
+                        <Space>
+                            <Button onClick={onRefClose}>Cancel</Button>
+                            <Button htmlType="submit" onClick={() => onSubmit(selectedReference)} type="primary">
+                                Submit
+                            </Button>
+                        </Space>
+                    }
+                >
+                    {isAdd ? <Form form={form} layout="vertical" onFinish={() => onSubmit(selectedReference)}> <ReferenceForm record={beneficiary} /></Form> :
+                        <ViewIntervention record={selectedBeneficiary} beneficiary={beneficiary} />
+                    }
+                </Drawer>
                 <Drawer
                     title="Intervenções Dreams"
                     placement="top"
