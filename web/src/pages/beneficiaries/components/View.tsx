@@ -50,15 +50,18 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
         form.validateFields().then(async (values) => {
             
             let payload: SubServiceParams = {
-                id: intervention?.id,
+                id: {
+                    beneficiaryId: beneficiary.id,
+                    subServiceId: values.subservice,
+                    date: moment(values.dataBeneficio).format('YYYY-MM-DD'),
+                },
                 beneficiaries: {
                     id: '' + beneficiary.id
                 },
                 subServices: {
                     id: values.subservice
                 },
-                result: "",
-                date: moment(values.dataBeneficio).format('YYYY-MM-DD'),
+                result: "", 
                 us: { id: values.location},
                 activistId: "6",
                 entryPoint: values.entryPoint,
