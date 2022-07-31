@@ -37,6 +37,16 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
         fetchProvincesData().catch(error => console.log(error));
     }, []);
 
+    useEffect(() => {
+        const fetchProvincesData = async () => {
+            const getProvsList = await database.get('provinces').query().fetch();
+            const provSerialized = getProvsList.map(item => item._raw);
+            setProvinces(provSerialized);
+        }
+
+        fetchProvincesData().catch(error => console.log(error));
+    }, []);
+
     const formik = useFormik({
         initialValues: {
             surname: '',
@@ -116,7 +126,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
     };
 
     const validate = (values: any) => {
-        console.log("validate");
+        //console.log("validate");
         const errors: any = {};
         let errorMessage = 'Obrigatório';
 
@@ -173,7 +183,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
     const handleSubmit = async (values?: any) => {
         console.log(formik.values);
     }
-
+    
     const showDatepicker = () => {
         setIsDatePickerVisible(true);
     };
