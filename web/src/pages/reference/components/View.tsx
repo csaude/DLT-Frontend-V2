@@ -1,28 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { query  as queryUser} from '@app/utils/users';
-import { query as queryBeneficiry } from "@app/utils/beneficiary";
-import { Button, Card, Col, Drawer, Form, Modal, Row, Space, Table } from "antd";
+import { query as queryBeneficiary } from "@app/utils/beneficiary";
+import { Button, Card, Col, Drawer, Form, message, Modal, Row, Space, Table } from "antd";
 import { SearchOutlined, EditOutlined, PlusOutlined, EyeOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import InterventionForm from "@app/pages/beneficiaries/components/InterventionForm";
+import { addSubService, SubServiceParams } from '@app/utils/service'
 
 export function ViewReferencePanel({reference, columns}) {
     const [visible, setVisible] = useState<boolean>(false);
     const [user, setUser] = useState<any>();
     const [interventions, setInterventions] = useState<any>();
     const [selectedService, setSelectedService] = useState<any>();
+    const [services, setServices] = useState<any>();
 
     const [form] = Form.useForm();
 
-    const services = reference.referencesServiceses;
+    // const services = reference.referencesServiceses;
 
     useEffect(() => {
         const fetchData = async () => {
           const data = await queryUser(reference.createdBy);
-          const data1 = await queryBeneficiry(reference.beneficiaries.id);
+          const data1 = await queryBeneficiary(reference.beneficiaries.id);
 
           setUser(data);
           setInterventions(data1.beneficiariesInterventionses);
+          setServices(reference.referencesServiceses);
         } 
     
         fetchData().catch(error => console.log(error));
@@ -30,25 +33,58 @@ export function ViewReferencePanel({reference, columns}) {
     }, []);
 
     const onAddIntervention = (record: any) => {
-        console.log(record);
         // form.resetFields();
         setVisible(true);
         setSelectedService(record);
     };
 
-    const onSubmit = async (intervention: any) => {
+    const onSubmit = async () => {
        
         form.validateFields().then(async (values) => {
             
+            let payload: SubServiceParams = {
+                id: {
+                    beneficiaryId: reference.beneficiaries.id,
+                    subServiceId: values.subservice,
+                    date: moment(values.dataBeneficio).format('YYYY-MM-DD'),
+                },
+                beneficiaries: {
+                    id: '' + reference.beneficiaries.id
+                },
+                subServices: {
+                    id: values.subservice
+                },
+                result: "",
+                us: { id: values.location},
+                activistId: "6",
+                entryPoint: values.entryPoint,
+                provider: values.provider,
+                remarks: values.outros,
+                status: "1",
+                createdBy: "1"
+            };
+
+            const { data } = await addSubService(payload);
+            setInterventions(interventions => [...interventions, data]);
+
+            message.success({
+                content: 'Registado com Sucesso!', className: 'custom-class',
+                style: {
+                    marginTop: '10vh',
+                }
+            });
+
+            setVisible(false);
+            form.resetFields();
            
         })
             .catch(error => {
-                // message.error({
-                //     content: 'Não foi possivel associar a Intervenção!', className: 'custom-class',
-                //     style: {
-                //         marginTop: '10vh',
-                //     }
-                // });
+                message.error({
+                    content: 'Não foi possivel associar a Intervenção!', className: 'custom-class',
+                    style: {
+                        marginTop: '10vh',
+                    }
+                });
             });
 
     };
@@ -152,7 +188,7 @@ export function ViewReferencePanel({reference, columns}) {
                                     <Col className="gutter-row" span={3}>{user?.partners.name}</Col>
                                     <Col className="gutter-row" span={3}>{reference.referenceCode}</Col>
                                     <Col className="gutter-row" span={3}>{reference.serviceType==1? 'Serviços Clínicos': 'Serviços Comunitários'}</Col>
-                                    <Col className="gutter-row" span={3}>{reference.statusRef==0? 'Pendente': 'Atendido'}</Col>
+                                    <Col className="gutter-row" span={3}>{reference.status==0? 'Pendente': reference.status==1? 'Atendida Parcialmente': 'Atendida'}</Col>
                                 </Row>
                             </Card>
                         </Col>
@@ -171,7 +207,7 @@ export function ViewReferencePanel({reference, columns}) {
                                 bodyStyle={{ paddingLeft: "10px", paddingRight: "10px" }}
                             >
                                 <Table
-                                    rowKey="id"
+                                    rowKey="dateCreated" //{( record? ) => record.id.serviceId}
                                     columns={servicesColumns}
                                     dataSource={services}
                                     pagination={false}
@@ -186,7 +222,7 @@ export function ViewReferencePanel({reference, columns}) {
                                 bodyStyle={{ paddingLeft: "10px", paddingRight: "10px" }}
                             >
                                 <Table
-                                    rowKey="id"
+                                    rowKey="dateCreated" //{( record? ) => record.id.subServiceId}
                                     columns={interventionColumns}
                                     // expandable={{
                                     //     expandedRowRender: record =>  <div style={{border:"2px solid #d9edf7", backgroundColor:"white"}}><ViewBenefiaryPanel beneficiary={record} columns={interventionColumns} /></div>,
@@ -211,13 +247,13 @@ export function ViewReferencePanel({reference, columns}) {
                     extra={
                         <Space>
                             <Button onClick={onClose}>Cancel</Button>
-                            <Button htmlType="submit" onClick={() => onSubmit(selectedService)} type="primary">
+                            <Button htmlType="submit" onClick={() => onSubmit()} type="primary">
                                 Submit
                             </Button>
                         </Space>
                     }
                 >
-                    <Form form={form} layout="vertical" onFinish={() => onSubmit(selectedService)}> 
+                    <Form form={form} layout="vertical" onFinish={() => onSubmit()}> 
                         <InterventionForm record={selectedService} />
                     </Form> 
                 </Drawer>                
