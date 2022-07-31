@@ -324,26 +324,33 @@ const ReferenceList: React.FC = () => {
         },	
         { 
             title: 'Estado', 
-            dataIndex: 'statusRef', 
-            key: 'statusRef',
+            dataIndex: 'status', 
+            key: 'status',
             filters: [
                 {
                     text: 'Pendente',
                     value: 0,
-                    },
-                    {
-                    text: 'Atendido',
+                },
+                {
+                    text: 'Atendida Parcialmente',
                     value: 1,
                 },
+                {
+                    text: 'Atendida',
+                    value: 2,
+                },
             ],
-            onFilter: (value, record) => record.statusRef == value,
+            onFilter: (value, record) => record.status == value,
             filterSearch: true,
             render: (text, record)  => 
-                (record.statusRef==0) ?
+                (record.status==0) ?
                     <Text type="danger" >Pendente </Text>
                 :  
-                (record.statusRef==1) ?
-                    <Text type="success" >Atendido </Text>
+                (record.status==1) ?
+                    <Text type="success" >Atendida Parcialmente </Text>
+                :  
+                (record.status==2) ?
+                    <Text type="success" >Atendida </Text>
                 : 
                     ""
         },

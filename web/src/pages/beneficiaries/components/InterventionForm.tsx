@@ -20,10 +20,7 @@ const InterventionForm = (record: any) => {
     const [us, setUs] = React.useState<any>(undefined);
     const form = Form.useFormInstance();
     const selectedIntervention = record.record;
-    const serviceType = selectedIntervention?.subServices === undefined? selectedIntervention?.services.serviceType : selectedIntervention?.subServices?.service.serviceType;
-
-    console.log(selectedIntervention);
-    console.log(serviceType);
+    const service = selectedIntervention?.subServices === undefined? selectedIntervention?.services : selectedIntervention?.subServices;
   
     const selectedOption = options?.filter(o => o.value === selectedIntervention?.entryPoint+'').map(filteredOption => (filteredOption.value))[0];
 
@@ -35,12 +32,12 @@ const InterventionForm = (record: any) => {
       } 
 
       const fetchServices = async () => {
-        const data = await queryByType(serviceType === '1'? 'CLINIC' : 'COMMUNITY');
+        const data = await queryByType(service.serviceType === '1'? 'CLINIC' : 'COMMUNITY');
         setServices(data);
       }
 
       const fetchSubServices = async () => {
-        const data = await querySubServiceByService(selectedIntervention?.subServices?.service.id);
+        const data = await querySubServiceByService(service.id);
         setInterventions(data);
       }
 
@@ -80,7 +77,7 @@ const InterventionForm = (record: any) => {
                   name="areaServicos"
                   label="Área de Serviços"
                   rules={[{ required: true, message: 'This field is required' }]}
-                  initialValue={serviceType===undefined? undefined : serviceType === '1'? 'CLINIC' : 'COMMUNITY'}
+                  initialValue={service?.serviceType===undefined? undefined : service?.serviceType === '1'? 'CLINIC' : 'COMMUNITY'}
                 >
                     <Select placeholder="Select Area Serviço" onChange={onChangeAreaServiço}>
                         {areaServicos.map(item => (
