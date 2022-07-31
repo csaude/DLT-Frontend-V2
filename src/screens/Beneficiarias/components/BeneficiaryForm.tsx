@@ -14,6 +14,7 @@ import moment from 'moment';
 import styles from './styles';
 
 const BeneficiaryForm: React.FC = ({ route }: any) => {
+
     const [errors, setErrors] = useState(false);
     const [provinces, setProvinces] = useState<any>([]);
     const [districts, setDistricts] = useState<any>([]);
@@ -23,7 +24,6 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
     const [datePickerValue2, setDatePickerValue2] = useState<any>(new Date());
     const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
     const [datePickerValue, setDatePickerValue] = useState<any>(new Date());
-
 
     useEffect(() => {
         const fetchProvincesData = async () => {
@@ -425,6 +425,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                     <FormControl.Label>NUI do Parceiro</FormControl.Label>
                                     <Input onBlur={formik.handleBlur('partner_nui')} placeholder="Insira o NUI do Parceiro" onChangeText={formik.handleChange('partner_nui')} value={formik.values.partner_nui} />
                                 </FormControl>
+
                             </VStack>
                         </View>
                     </ProgressStep>
