@@ -34,3 +34,17 @@ export async function requestUpdatePassword(payload: UserParams) {
     const res = await update('/users/update-password', payload);
     return res;
 }
+
+export async function allUsesByUs(payload?: any){
+    let url: string;
+    url = '/api/users/us/'.concat(payload);
+    const res = await select(url);
+    return res;
+}
+
+export async function userById(payload?: any){
+    let url: string;
+    url = '/api/users/'.concat(payload);
+    const res = await select(url);
+    return res;
+}
