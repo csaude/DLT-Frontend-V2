@@ -2,7 +2,8 @@ import { stringify } from 'qs';
 import { create, select, update } from './crud';
 
 interface PartnersFilter{
-    id: number
+    id: number,
+    partnerType: number
 }
 
 export async function allPartners(payload?: PartnersFilter){
@@ -12,6 +13,12 @@ export async function allPartners(payload?: PartnersFilter){
     } else {
         url = '/api/partners';
     }
+    const res = await select(url);
+    return res;
+}
+export async function allPartnersByType(payload?: any){
+    let url: string;
+    url = '/api/partners/'.concat(payload);
     const res = await select(url);
     return res;
 }
