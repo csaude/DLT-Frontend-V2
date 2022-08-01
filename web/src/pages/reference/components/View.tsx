@@ -7,8 +7,9 @@ import moment from 'moment';
 import InterventionForm from "@app/pages/beneficiaries/components/InterventionForm";
 import { addSubService, SubServiceParams } from '@app/utils/service'
 
-export function ViewReferencePanel({reference, columns}) {
+export function ViewReferencePanel({selectedReference, columns}) {
     const [visible, setVisible] = useState<boolean>(false);
+    const [reference, setReference] = useState<any>();
     const [user, setUser] = useState<any>();
     const [interventions, setInterventions] = useState<any>();
     const [selectedService, setSelectedService] = useState<any>();
@@ -20,12 +21,13 @@ export function ViewReferencePanel({reference, columns}) {
 
     useEffect(() => {
         const fetchData = async () => {
-          const data = await queryUser(reference.createdBy);
-          const data1 = await queryBeneficiary(reference.beneficiaries.id);
+          const data = await queryUser(selectedReference.createdBy);
+          const data1 = await queryBeneficiary(selectedReference.beneficiaries.id);
 
           setUser(data);
           setInterventions(data1.beneficiariesInterventionses);
-          setServices(reference.referencesServiceses);
+          setServices(selectedReference.referencesServiceses);
+          setReference(selectedReference);
         } 
     
         fetchData().catch(error => console.log(error));
@@ -56,16 +58,23 @@ export function ViewReferencePanel({reference, columns}) {
                 },
                 result: "",
                 us: { id: values.location},
-                activistId: "6",
+                activistId: localStorage.user,
                 entryPoint: values.entryPoint,
                 provider: values.provider,
                 remarks: values.outros,
                 status: "1",
-                createdBy: "1"
+                createdBy: localStorage.user
             };
 
             const { data } = await addSubService(payload);
-            setInterventions(interventions => [...interventions, data]);
+            
+            setInterventions(interventions => [...interventions, data.intervention]);
+            const ref = data.references.filter(r => r.id == selectedReference.id);
+            
+            if (ref.length > 0) {
+                setReference(ref[0]);
+                setServices(ref[0].referencesServiceses)
+            }
 
             message.success({
                 content: 'Registado com Sucesso!', className: 'custom-class',
@@ -104,7 +113,7 @@ export function ViewReferencePanel({reference, columns}) {
         { title: 'Cod Referência', 
             dataIndex: 'date', 
             key: 'date',
-            render: (text, record) => reference.referenceCode
+            render: (text, record) => reference?.referenceCode
         },
         { title: 'Serviço', 
             dataIndex: '', 
@@ -146,8 +155,8 @@ export function ViewReferencePanel({reference, columns}) {
         },
         { title: 'Atendido Por', 
             dataIndex: '', 
-            key: 'createdBy',
-            render: (text, record)  => record.createdBy,
+            key: 'provider',
+            render: (text, record)  => record.provider,
         }
     ];
 
@@ -161,7 +170,7 @@ export function ViewReferencePanel({reference, columns}) {
                     <Row gutter={24}>
                         <Col className="gutter-row" span={24}>
                             <Card 
-                                title={reference.referenceNote + ' | ' + reference.beneficiaries.neighborhood.locality.district.code + '/' + reference.beneficiaries.nui}
+                                title={reference?.referenceNote + ' | ' + reference?.beneficiaries.neighborhood.locality.district.code + '/' + reference?.beneficiaries.nui}
                                 bordered={true}
                                 headStyle={{ background: "#17a2b8"}}
                                 bodyStyle={{ paddingLeft: "10px", paddingRight: "10px", height: "120px" }}
@@ -181,14 +190,14 @@ export function ViewReferencePanel({reference, columns}) {
                                     height: '1px',
                                     }}/>
                                 <Row>
-                                    <Col className="gutter-row" span={3}>{moment(reference.dateCreated).format('YYYY-MM-DD HH:MM')}</Col>
+                                    <Col className="gutter-row" span={3}>{moment(reference?.dateCreated).format('YYYY-MM-DD HH:MM')}</Col>
                                     <Col className="gutter-row" span={3}>{user?.name+' '+user?.surname}</Col>
                                     <Col className="gutter-row" span={3}>{user?.phoneNumber}</Col>
-                                    <Col className="gutter-row" span={3}>{reference.bookNumber}</Col>
+                                    <Col className="gutter-row" span={3}>{reference?.bookNumber}</Col>
                                     <Col className="gutter-row" span={3}>{user?.partners.name}</Col>
-                                    <Col className="gutter-row" span={3}>{reference.referenceCode}</Col>
-                                    <Col className="gutter-row" span={3}>{reference.serviceType==1? 'Serviços Clínicos': 'Serviços Comunitários'}</Col>
-                                    <Col className="gutter-row" span={3}>{reference.status==0? 'Pendente': reference.status==1? 'Atendida Parcialmente': 'Atendida'}</Col>
+                                    <Col className="gutter-row" span={3}>{reference?.referenceCode}</Col>
+                                    <Col className="gutter-row" span={3}>{reference?.serviceType==1? 'Serviços Clínicos': 'Serviços Comunitários'}</Col>
+                                    <Col className="gutter-row" span={3}>{reference?.status==0? 'Pendente': reference?.status==1? 'Atendida Parcialmente': 'Atendida'}</Col>
                                 </Row>
                             </Card>
                         </Col>
@@ -279,7 +288,7 @@ const ViewReferral = ({reference, modalVisible, handleModalVisible}) => {
             onOk={okHandle}
             onCancel={() => handleModalVisible()}
         >
-            <ViewReferencePanel reference={reference} columns={undefined} />
+            <ViewReferencePanel selectedReference={reference} columns={undefined} />
         </Modal>
     )
 }
