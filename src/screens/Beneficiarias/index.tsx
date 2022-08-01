@@ -14,7 +14,7 @@ import { sync } from '../../database/sync';
 import { SuccessHandler, ErrorHandler } from "../../components/SyncIndicator";
 
 
-const BeneficiariesMain: React.FC = ({ beneficiaries, references, localities, subServices, beneficiaries_interventions, services }: any) => {
+const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries_interventions }: any) => {
     const [searchField, setSearchField] = useState('');
     const loggedUser: any = useContext(Context);
     const toast = useToast();
@@ -35,16 +35,28 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, references, localities, su
             }))
     }
 
-    const viewBeneficiaries = (data: any) => {
+    const viewBeneficiaries = async (data: any) => {
 
         const beneficiarie = data.item?._raw;
 
-        let items = beneficiarie.references.split(/[\[(, )\]]/); //split string into an array of elements
-        let referenceIdArray = items.filter(item => item.trim().length > 0); // remove white space elements
+        //let items = beneficiarie.references_a.split(/[\[(, )\]]/); //split string into an array of elements
+        //let referenceIdArray = items.filter(item => item.trim().length > 0); // remove white space elements
 
-        const beneficiaryReferences = references.filter((e) => {
+        /*const beneficiaryReferences = references.filter((e) => {
             return referenceIdArray.includes("" + e._raw.online_id);
-        });
+        });*/
+
+
+        const beneficiaryId = beneficiarie.online_id ? beneficiarie.online_id : beneficiarie.id;
+
+        const references = await database.get('references').query(
+            Q.where('beneficiary_id', beneficiaryId),
+        ).fetch();
+
+        
+
+
+        
 
         const beneficiaryReferencesSerializable = references.map((e) => {
             return e._raw;
@@ -223,23 +235,14 @@ const enhance = withObservables([], () => ({
     beneficiaries: database.collections
         .get("beneficiaries")
         .query().observe(),
-    references: database.collections
-        .get("references")
-        .query().observe(),
     localities: database.collections
         .get("localities")
         .query().observe(),
     profiles: database.collections
         .get("profiles")
         .query().observe(),
-    partners: database.collections
-        .get("partners")
-        .query().observe(),
     beneficiaries_interventions: database.collections
         .get("beneficiaries_interventions")
-        .query().observe(),
-    services: database.collections
-        .get("services")
         .query().observe(),
     subServices: database.collections
         .get("sub_services")

@@ -11,10 +11,30 @@ export default appSchema({
         ],
       }),
       tableSchema({
+        name: 'provinces',
+        columns: [
+          {name: 'name', type: 'string'},
+          {name: 'code', type: 'string'},
+          {name: 'status', type: 'number'},
+          {name: 'online_id', type: 'number',isOptional: true}
+        ],
+      }),
+      tableSchema({
+        name: 'districts',
+        columns: [
+          {name: 'name', type: 'string'},
+          {name: 'code', type: 'string'},
+          {name: 'province_id', type: 'number'},
+          {name: 'status', type: 'number'},
+          {name: 'online_id', type: 'number',isOptional: true}
+        ],
+      }),
+      tableSchema({
         name: 'localities',
         columns: [
           {name: 'name', type: 'string'},
           {name: 'description', type: 'string', isOptional: true},
+          {name: 'district_id', type: 'number'},
           {name: 'status', type: 'string'},
           {name: 'online_id', type: 'number',isOptional: true}
         ],
@@ -112,7 +132,7 @@ export default appSchema({
           {name: 'vblt_sti_history', type: 'number',isOptional: true},
           {name: 'vblt_sex_worker', type: 'number',isOptional: true},
           {name: 'vblt_house_sustainer', type: 'number',isOptional: true},
-          {name: 'references', type: 'string',isOptional: true},
+          {name: 'references_a', type: 'string',isOptional: true},
         ],
       }),
       tableSchema({
@@ -188,5 +208,16 @@ export default appSchema({
           {name: 'online_id', type: 'number',isOptional: true}
         ],
       }),
-    ],
+      tableSchema({
+        name: 'references_services',
+        columns: [
+          {name: 'reference_id', type: "string" },
+          {name: 'service_id',type: "number", isIndexed: true },
+          {name: 'description', type: 'string', isOptional: true},
+          {name: 'status', type: "number"},
+          {name: 'date_created', type: "string", isOptional: true },
+          {name: 'online_id', type: 'string', isOptional: true}
+        ],
+      }),
+    ], 
 });

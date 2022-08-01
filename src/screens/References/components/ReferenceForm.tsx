@@ -1,22 +1,36 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { KeyboardAvoidingView } from 'react-native';
+import { TouchableHighlight, TouchableOpacity } from 'react-native';
 import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
-import { View, HStack, Text, Avatar, Pressable, Icon, Box, Alert, Select, Heading, VStack, FormControl, Input, Link, Button, CheckIcon, WarningOutlineIcon, Center, Flex } from 'native-base';
-import { Formik, useFormik } from 'formik';
+import { View, HStack, Text, VStack, FormControl, Input, TextArea, Center, Icon, Box, IconButton, Flex, Heading, Divider } from 'native-base';
+import { MaterialIcons, Ionicons, MaterialCommunityIcons } from "@native-base/icons";
+import { useFormik } from 'formik';
 import { database } from '../../../database';
 import { Q } from "@nozbe/watermelondb";
+import { navigate, navigationRef } from '../../../routes/NavigationRef';
 import { Picker } from '@react-native-picker/picker';
+import { SwipeListView } from 'react-native-swipe-list-view';
 import ModalSelector from 'react-native-modal-selector-searchable';
+import StepperButton from '../../Beneficiarias/components/StapperButton';
+import styles from './styles';
 
-const ReferenceForm: React.FC = ({ }: any) => {
+const ReferenceForm: React.FC = ({ route }: any) => {
+
+    const {
+        beneficiary,
+        userId,
+        refs
+    } = route.params;
+    // console.log(userId);
+
     const [errors, setErrors] = useState(false);
-    const [partners, setPartners ] = useState<any>([]);
-    const [us, setUs ] = useState<any>([]);
-    const [users, setUsers ] = useState<any>([]);
+    const [partners, setPartners] = useState<any>([]);
+    const [us, setUs] = useState<any>([]);
+    const [users, setUsers] = useState<any>([]);
+    const [selectedUser, setSelectedUser] = useState<any>("");
+    const [services, setServices] = useState<any>([]);
+    const [referServices, setReferServices] = useState<any>([]);
+
     const areaServicos = [{ "id": '1', "name": "Clinico" }, { "id": '2', "name": "Comunitario" }];
-
-    const data = [{ key: 3, label: 'Bloor Apples' }, { key: 4, label: 'Blue Apples' }, { key: 5, label: 'Red Apples' }];
-
 
     useEffect(() => {
 
@@ -24,9 +38,16 @@ const ReferenceForm: React.FC = ({ }: any) => {
             const getUsList = await database.get('us').query().fetch();
             const usSerialized = getUsList.map(item => item._raw);
             setUs(usSerialized);
-        } 
+        }
+
+        const fetchServices = async () => {
+            const getServicesList = await database.get('services').query().fetch();
+            const servicesSerialized = getServicesList.map(item => item._raw);
+            setServices(servicesSerialized);
+        }
 
         fetchUsData().catch(error => console.log(error));
+        fetchServices().catch(error => console.log(error));
     }, []);
 
     const formik = useFormik({
@@ -39,21 +60,21 @@ const ReferenceForm: React.FC = ({ }: any) => {
             us_id: '',
             notify_to: '',
             description: '',
-            status: ''
+            status: 1
         },
         onSubmit: values => console.log(values),
         validate: values => validate(values)
     });
 
     const onNextStep = () => {
-        const errorsList = validate(formik.values);
+        /*const errorsList = validate(formik.values);
         const hasErrors = JSON.stringify(errorsList) !== '{}';
 
         if (hasErrors) {
             setErrors(true);
         } else {
             setErrors(false);
-        }
+        }*/
     };
 
     const validate = (values: any) => {
@@ -86,6 +107,18 @@ const ReferenceForm: React.FC = ({ }: any) => {
         return errors;
     }
 
+    const onChangePE = (value: any) => {
+
+        var currmonth = new Date().getMonth() + 1;
+        if (value === '1') {
+            formik.setFieldValue('reference_code', 'US-' + currmonth + '-');
+        } else if (value === '2') {
+            formik.setFieldValue('reference_code', 'ES-' + currmonth + '-');
+        } else {
+            formik.setFieldValue('reference_code', 'CM-' + currmonth + '-');
+        }
+    }
+
     const onChangeServiceType = async (value: any) => {
 
 
@@ -93,7 +126,7 @@ const ReferenceForm: React.FC = ({ }: any) => {
             Q.where('partner_type', value)
         ).fetch();
         const partnersSerialized = getPartnerList.map(item => item._raw);
-        
+
         setPartners(partnersSerialized);
     }
 
@@ -104,13 +137,107 @@ const ReferenceForm: React.FC = ({ }: any) => {
             Q.where('us_id', value)
         ).fetch();
         const usersSerialized = getUsersList.map(item => item._raw);
-        
+
         setUsers(usersSerialized);
     }
 
     const handleSubmit = async (values?: any) => {
         console.log(formik.values);
+        console.log(referServices);
+        //console.log(getNotaRef());
+
+        const beneficiaryId = beneficiary.online_id ? beneficiary.online_id : beneficiary.id;
+
+
+        const savedR = await database.write(async () => {
+
+            const newReference = await database.get('references').create((ref: any) => {
+                ref.beneficiary_id = beneficiaryId
+                ref.refer_to = formik.values.refer_to
+                ref.notify_to = formik.values.notify_to
+                ref.reference_note = getNotaRef()
+                ref.description = formik.values.description
+                ref.book_number = formik.values.book_number
+                ref.reference_code = formik.values.reference_code
+                ref.service_type = formik.values.service_type
+                ref.remarks = formik.values.description
+                ref.status_ref = 0
+                ref.status = '1'
+                ref.created_by = userId
+            });
+
+            return newReference;
+        });
+        console.log(savedR._raw.id);
+
+        await database.write(async () => {
+           referServices.forEach(async (element) => {
+                const newRefService = await database.get('references_services').create((refServ: any) => {
+                    refServ.reference_id = savedR._raw.id
+                    refServ.service_id = element.online_id
+                    refServ.status = '1'
+                });
+                console.log(newRefService);
+            });
+
+        });
+
+
+        navigationRef.goBack();
     }
+
+    const onRemoveService = (value: any) => {
+
+        setReferServices(refserv => refserv.filter(item => item.online_id !== value.online_id));
+    }
+
+    const onSelectService = (value: any) => {
+
+        const exists = referServices.some(item => {
+            return item.online_id === value.online_id;
+        });
+
+        if (!exists) {
+            setReferServices(refserv => [...refserv, value]);
+        }
+    }
+
+    const getUsName = (usId: any) => {
+
+        const us_a = us.filter(item => item.online_id === usId);
+        return us_a[0]?.name;
+    }
+
+    const getPartnersName = (id: any) => {
+
+        const partners_a = partners.filter(item => item.online_id === id);
+        return partners_a[0]?.name;
+    }
+
+    const getNotaRef = () => {
+        return 'REFDR' + String(userId).padStart(3, '0') + '0' + String(refs + 1).padStart(3, '0');
+    }
+
+    const renderItem = (data: any) => (
+        <TouchableHighlight
+            style={styles.rowFront}
+            underlayColor={'#AAA'}
+            key={data.online_id}
+        >
+            <HStack w="100%" px={4} flex={1} space={5} alignItems="center" key={data.online_id}>
+                <Ionicons name="medkit" size={35} color="#0d9488" />
+                <VStack width='250px' >
+                    <Text _dark={{
+                        color: "warmGray.50"
+                    }} color="darkBlue.800" >
+                        {data.name}
+                    </Text>
+                </VStack>
+                <IconButton size="sm" colorScheme="trueGray" onPress={() => onRemoveService(data)} icon={<Icon as={Ionicons} name="trash" size="lg" color="trueGray.400" />} />
+            </HStack>
+
+        </TouchableHighlight>
+    );
 
     return (
         <>
@@ -124,8 +251,12 @@ const ReferenceForm: React.FC = ({ }: any) => {
                                     <Picker
                                         selectedValue={formik.values.refer_to}
                                         onValueChange={(itemValue, itemIndex) => {
-                                            formik.setFieldValue('refer_to', itemValue);
+                                            if (itemIndex !== 0) {
+                                                formik.setFieldValue('refer_to', itemValue);
+                                                onChangePE(itemValue);
+                                            }
                                         }}>
+                                        <Picker.Item label="-- Seleccione o PE --" value="0" />
                                         <Picker.Item key="1" label="US" value="1" />
                                         <Picker.Item key="2" label="ES" value="2" />
                                         <Picker.Item key="3" label="CM" value="3" />
@@ -217,44 +348,38 @@ const ReferenceForm: React.FC = ({ }: any) => {
                                         {formik.errors.us_id}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl isRequired isInvalid={'description' in formik.errors}>
-                                    <FormControl.Label>Observações</FormControl.Label>
-                                    <Input type='text' onBlur={formik.handleBlur('description')} placeholder="Insira as Observações" onChangeText={formik.handleChange('description')} value={formik.values.description} />
-                                    <FormControl.ErrorMessage>
-                                        {formik.errors.description}
-                                    </FormControl.ErrorMessage>
-                                </FormControl>
                                 <FormControl isRequired isInvalid={'notify_to' in formik.errors}>
                                     <FormControl.Label>Notificar ao</FormControl.Label>
 
                                     <ModalSelector
                                         data={users}
-                                        keyExtractor= {item => item.online_id}
-                                        labelExtractor= {item => `${item.name} ${item.surname}`}
+                                        keyExtractor={item => item.online_id}
+                                        labelExtractor={item => `${item.name} ${item.surname}`}
                                         renderItem={undefined}
                                         initValue="Select something yummy!"
                                         accessible={true}
                                         cancelButtonAccessibilityLabel={'Cancel Button'}
-                                        onChange={(option) => { console.log(option.online_id); formik.setFieldValue('notify_to', ''+option.online_id); }}>
-                                        <Input type='text' onBlur={formik.handleBlur('notify_to')} placeholder="Insira as Observações" onChangeText={formik.handleChange('notify_to')} value={formik.values.notify_to} />
+                                        onChange={(option) => { setSelectedUser(`${option.name} ${option.surname}`); formik.setFieldValue('notify_to', option.online_id); }}>
+                                        <Input type='text' onBlur={formik.handleBlur('notify_to')} placeholder="Insira as Observações" onChangeText={formik.handleChange('notify_to')} value={selectedUser} />
                                     </ModalSelector>
 
                                     <FormControl.ErrorMessage>
                                         {formik.errors.notify_to}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
+                                <FormControl>
+                                    <FormControl.Label>Observações</FormControl.Label>
+                                    <TextArea onBlur={formik.handleBlur('description')} autoCompleteType={false} value={formik.values.description} onChange={formik.handleChange('description')} w="100%" />
 
+                                </FormControl>
                                 <FormControl isRequired isInvalid={'status' in formik.errors}>
                                     <FormControl.Label>Status</FormControl.Label>
                                     <Picker
                                         selectedValue={formik.values.status}
                                         onValueChange={(itemValue, itemIndex) => {
-                                            if (itemIndex !== 0) {
-                                                formik.setFieldValue('status', itemValue);
-                                            }
+                                            formik.setFieldValue('status', itemValue);
                                         }
                                         }>
-                                        <Picker.Item value="1" />
                                         <Picker.Item key={'1'} label={"Activo"} value={1} />
                                         <Picker.Item key={'2'} label={"Cancelado"} value={2} />
                                     </Picker>
@@ -266,19 +391,103 @@ const ReferenceForm: React.FC = ({ }: any) => {
                         </View>
                     </ProgressStep>
                     <ProgressStep label="Serviços Referidos">
-                        <View style={{ alignItems: 'center' }}>
-                            <Text>This is the content within step 2!</Text>
-                        </View>
+                        <Box minH="300" >
+
+                            <View >
+                                <View style={styles.heading}>
+                                    <Box alignItems="center" w="95%" bgColor="white" style={{ borderRadius: 5, }}>
+
+                                        <ModalSelector
+                                            data={services}
+                                            keyExtractor={item => item.online_id}
+                                            labelExtractor={item => item.name}
+                                            renderItem={undefined}
+                                            initValue="Seleccione Serviço a Associar"
+                                            accessible={true}
+                                            cancelButtonAccessibilityLabel={'Cancel Button'}
+                                            onChange={(option) => { onSelectService(option); }}>
+                                            <Input minW={390} InputLeftElement={<Icon as={MaterialIcons} name="add-circle" size={5} ml="2" color="muted.700" />}
+                                                placeholder="Seleccione Serviço a Associar" style={{ borderRadius: 45 }} />
+                                        </ModalSelector>
+                                    </Box>
+
+                                </View>
+                                {referServices.length > 0 ?
+                                    referServices.map((item, itemI) => renderItem(item))
+                                    :
+                                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text color="coolGray.500" >Não existem Serviços Associados!</Text>
+                                    </View>
+                                }
+                            </View>
+
+                        </Box>
                     </ProgressStep>
                     <ProgressStep label="Concluir" onSubmit={handleSubmit}>
-                        <View style={{ alignItems: 'center' }}>
-                            <Text>This is the content within step 3!</Text>
+                        <View style={styles.containerForm}>
+
+                            <Flex direction="column" mb="2.5" _text={{ color: "coolGray.800" }}>
+                                <Box p="2" rounded="lg">
+
+
+
+                                    <Heading size="md" color="coolGray.800">Detalhes da Referência</Heading>
+                                    <Divider />
+                                    <Text style={styles.txtLabelInfo}>
+                                        <Text style={styles.txtLabel}> NID do Beneficiário : </Text>
+                                        {
+                                            beneficiary?.nui
+                                        }
+                                    </Text>
+                                    <Text style={styles.txtLabelInfo}>
+                                        <Text style={styles.txtLabel}> Nota da Referência: </Text>
+                                        {
+                                            getNotaRef()
+                                        }
+                                    </Text>
+                                    <Text style={styles.txtLabelInfo}>
+                                        <Text style={styles.txtLabel}> Código da Referência do Livro: </Text>
+                                        {
+                                            formik.values.reference_code
+                                        }
+                                    </Text>
+                                    <Text style={styles.txtLabelInfo}>
+                                        <Text style={styles.txtLabel}> Referência para: </Text>
+                                        {
+                                            formik.values.refer_to === '1' ? 'Unidade Sanitaria' : formik.values.refer_to === '2' ? 'Escola' : 'Comunidade'
+                                        }
+                                    </Text>
+                                    <Text style={styles.txtLabelInfo}>
+                                        <Text style={styles.txtLabel}> Local: </Text>
+                                        {
+                                            getUsName(formik.values.us_id)
+                                        }
+                                    </Text>
+                                    <Text style={styles.txtLabelInfo}>
+                                        <Text style={styles.txtLabel}> Organização: </Text>
+                                        {
+                                            getPartnersName(formik.values.partner_id)
+                                        }
+                                    </Text>
+                                    <Text style={styles.txtLabelInfo}>
+                                        <Text style={styles.txtLabel}> Notificar a(o): </Text>
+                                        {
+                                            selectedUser
+                                        }
+                                    </Text>
+                                    <Text style={styles.txtLabelInfo}>
+                                        <Text style={styles.txtLabel}> Serviços: </Text>
+                                        {
+                                            referServices.length
+                                        }
+                                    </Text>
+                                </Box>
+                            </Flex>
                         </View>
                     </ProgressStep>
                 </ProgressSteps>
 
             </View>
-
         </>
     );
 }
