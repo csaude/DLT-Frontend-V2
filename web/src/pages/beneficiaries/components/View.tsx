@@ -24,7 +24,6 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
 
     const [refVisible, setRefVisible] = useState<boolean>(false);
     const [selectedReference, setSelectedReference] = useState<any>();
-    // const [ referenceModalVisible, setReferenceModalVisible] = useState<boolean>(false);
 
     const [form] = Form.useForm();
 
@@ -36,9 +35,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
 
     const onAddReference = (flag?: boolean, record?: any) => {
 
-        // setReferenceModalVisible(true);
         handleModalVisible(); 
-        // referenceModalVisible = true;  
         handleModalRefVisible(flag, record);  
     };
     
@@ -332,7 +329,6 @@ const ViewBeneficiary = ({ beneficiary, modalVisible, handleAdd, handleModalVisi
         handleAdd("test");
         handleModalVisible();
     }
-
 
     return (
 
