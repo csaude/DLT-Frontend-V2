@@ -43,7 +43,7 @@ const FormReference = ({ form, beneficiary, modalVisible, handleAdd, handleUpdat
     }
     
     const onClose = () => {
-        handleModalRefVisible(false, undefined);
+        handleModalRefVisible(false);
     }
 
     const onSubmit = async () => {
@@ -68,11 +68,11 @@ const FormReference = ({ form, beneficiary, modalVisible, handleAdd, handleUpdat
             content: <StepReference form={form} beneficiary={beneficiary} />,
         },
         {
-            title: ' Intervenções Solicitadas ',
+            title: ' Solicitar Intervenções ',
             content: <StepVulnerabilidadesGerais form={form} beneficiary={beneficiary} />,
         },
         {
-            title: ' Critérios de Eligibilidade Específicos',
+            title: ' Referências',
             content: <StepVulnerabilidadesEspecificas form={form} beneficiary={beneficiary} />,
         }
     ];
