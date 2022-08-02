@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { TouchableHighlight, TouchableOpacity } from 'react-native';
-import { View, HStack, Text, VStack, FormControl, Input, Stack, InputGroup, InputLeftAddon, TextArea, Center, Icon, Box, IconButton, Flex, Heading, Divider, Button, Radio, WarningOutlineIcon } from 'native-base';
+import { View, HStack, Text, VStack, FormControl, Input, Stack, InputGroup, InputLeftAddon, TextArea, Center, Icon, Box, IconButton, Flex, Heading, Divider, Button, Radio, WarningOutlineIcon, Modal, ScrollView, Alert } from 'native-base';
 import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
 import { MaterialIcons, Ionicons, MaterialCommunityIcons } from "@native-base/icons";
 import { useFormik } from 'formik';
@@ -10,13 +10,14 @@ import ModalSelector from 'react-native-modal-selector-searchable';
 import StepperButton from '../../Beneficiarias/components/StapperButton';
 import { database } from '../../../database';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import Spinner from 'react-native-loading-spinner-overlay';
+import { navigate, navigationRef } from '../../../routes/NavigationRef';
 import moment from 'moment';
 import styles from './styles';
 
 const BeneficiaryForm: React.FC = ({ route }: any) => {
-
+    const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState(false);
-    //const [errors2, setErrors2] = useState(false);
     const [provinces, setProvinces] = useState<any>([]);
     const [districts, setDistricts] = useState<any>([]);
     const [localities, setLocalities] = useState<any>([]);
@@ -26,6 +27,8 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
     const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
     const [datePickerValue, setDatePickerValue] = useState<any>(new Date());
     const [step, setStep] = useState(1);
+    const [showModal, setShowModal] = useState(false);
+    const [newNui, setNewNui] = useState();
 
     useEffect(() => {
         const fetchProvincesData = async () => {
@@ -58,6 +61,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             province: '',
             district: '',
             locality: '',
+            locality_name: '',
             entry_point: '',
             nick_name: '',
             address: '',
@@ -98,9 +102,8 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
     });
 
     const onNextStep = () => {
-        //console.log("values", errors)
 
-        /*const errorsList = validate(formik.values);
+        const errorsList = validate(formik.values);
         const hasErrors = JSON.stringify(errorsList) !== '{}';
 
         if (hasErrors) {
@@ -108,21 +111,30 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
         } else {
             setErrors(false);
             setStep(2);
-        }*/
+        }
     };
 
-    const onNextStep2 = () => {
-        //console.log("values2")
+    const onNextStep2 = async () => {
 
-        /*const errorsList = validate(formik.values);
+        const errorsList = validate(formik.values);
         const hasErrors = JSON.stringify(errorsList) !== '{}';
 
         if (hasErrors) {
             setErrors(true);
         } else {
+
+            // save the Beneficiary locally
+            setLoading(true);
+            const ben:any = await handleSaveBeneficiary();
+   
+            setNewNui(ben?._raw.nui);
+            setLoading(false);
+            setShowModal(true);
+
             setErrors(false);
             setStep(3);
-        }*/
+  
+        }
     };
 
     const onPreviousStep = () => {
@@ -232,15 +244,64 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                 errors.vblt_sex_worker = errorMessage;
             }
         }
-        //console.log(step, errors);
 
         return errors;
     }
 
 
+    const handleSaveBeneficiary = async () => {
+
+        // get prefix and nui
+        const getPrefix:any = (await database.get('sequences').query().fetch())[0]?._raw;
+        const newNui = Number(getPrefix.last_nui)+1;
+        const fullNUI = `${getPrefix.prefix}${String(newNui).padStart(7, '0')}`
+        //console.log(Number(formik.values.nationality));
+        const newObject = await database.write(async () => {
+            const newBeneficiary = await database.collections.get('beneficiaries').create((beneficiary: any) => {
+                beneficiary.nui = fullNUI,
+                beneficiary.surname = formik.values.surname, 
+                beneficiary.name = formik.values.name, 
+                beneficiary.nick_name = formik.values.nick_name, 
+                beneficiary.date_of_birth = formik.values.date_of_birth, 
+                beneficiary.gender = '1', 
+                beneficiary.address = formik.values.address, 
+                beneficiary.phone_number = formik.values.phone_number, 
+                beneficiary.e_mail = formik.values.e_mail, 
+                beneficiary.via = 1, 
+                beneficiary.partner_id = 1,  //FIXME: define correctly
+                beneficiary.entry_point = formik.values.entry_point, 
+                beneficiary.neighbourhood_id = formik.values.neighbourhood_id, 
+                beneficiary.us_id = 1, 
+                beneficiary.status = 1, 
+                beneficiary.locality_name = formik.values.locality_name, 
+                beneficiary.nationality = 1,
+                beneficiary.vblt_lives_with = formik.values.vblt_lives_with, 
+                beneficiary.vblt_house_sustainer = Number(formik.values.vblt_house_sustainer),
+                beneficiary.vblt_is_orphan = Number(formik.values.vblt_is_orphan),
+                beneficiary.vblt_is_student = Number(formik.values.vblt_is_student),
+                beneficiary.vblt_is_deficient = Number(formik.values.vblt_is_deficient),
+                beneficiary.vblt_deficiency_type = formik.values.vblt_deficiency_type,
+                beneficiary.vblt_married_before = Number(formik.values.vblt_married_before),
+                beneficiary.vblt_pregnant_before = Number(formik.values.vblt_pregnant_before),
+                beneficiary.vblt_children = Number(formik.values.vblt_children),
+                beneficiary.vblt_pregnant_or_breastfeeding = Number(formik.values.vblt_pregnant_or_breastfeeding),
+                beneficiary.vblt_is_employed = formik.values.vblt_is_employed,
+                beneficiary.vblt_tested_hiv = formik.values.vblt_tested_hiv
+            });
+
+            const sequenceToUpdate = await database.get('sequences').find(getPrefix.id);
+            await sequenceToUpdate.update((sequence:any) => {
+                sequence.last_nui = String(newNui)
+            });
+            return newBeneficiary;
+        });
+
+        return newObject;
+    }
 
     const handleSubmit = async (values?: any) => {
-        console.log(formik.values);
+        //console.log(formik.values);
+        navigationRef.goBack();
     }
 
     const showDatepicker = () => {
@@ -288,9 +349,8 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
     }
 
     const onChangeLocalities = async (locId: any) => {
-
         const getNeiList = await database.get('neighborhoods').query(
-            Q.where('locality_id', locId)
+            Q.where('locality_id', Number(locId))
         ).fetch();
         const neiSerialized = getNeiList.map(item => item._raw);
         setNeighborhoods(neiSerialized);
@@ -300,7 +360,11 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
         <>
             <View style={{ flex: 1, backgroundColor: "white" }}>
                 <ProgressSteps >
-                    <ProgressStep label="Dados Pessoais" onNext={onNextStep} errors={errors} >
+                    <ProgressStep label="Dados Pessoais" onNext={onNextStep} errors={errors}
+                        nextBtnStyle={styles.buttonStyle}
+                        nextBtnTextStyle={styles.buttonTextStyle}
+                        nextBtnText='Proximo >>'
+                    >
                         <View style={{ alignItems: 'center' }}>
                             <VStack space={3} w="90%" >
                                 <FormControl isRequired isInvalid={'surname' in formik.errors}>
@@ -440,11 +504,12 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                 <FormControl isRequired isInvalid={'locality' in formik.errors}>
                                     <FormControl.Label>Posto Administrativo</FormControl.Label>
                                     <Picker
-                                        selectedValue={formik.values.locality}
+                                        selectedValue={`${formik.values.locality},${formik.values.locality_name}`}
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
-                                                formik.setFieldValue('locality', itemValue);
-                                                onChangeLocalities(itemValue);
+                                                formik.setFieldValue('locality', itemValue.split(",")[0]);
+                                                formik.setFieldValue('locality_name', itemValue.split(",")[1]);
+                                                onChangeLocalities(itemValue.split(",")[0]);
                                             }
                                         }
                                         }>
@@ -452,7 +517,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         <Picker.Item label="-- Seleccione o Posto Administrativo --" value="0" />
                                         {
                                             localities.map(item => (
-                                                <Picker.Item key={item.online_id} label={item.name} value={item.online_id} />
+                                                <Picker.Item key={`${item.online_id},${item.name}`} label={item.name} value={`${item.online_id},${item.name}`} />
                                             ))
                                         }
                                     </Picker>
@@ -524,7 +589,14 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                             </VStack>
                         </View>
                     </ProgressStep>
-                    <ProgressStep label="Critérios de Eligibilidade Gerais" onPrevious={onPreviousStep} onNext={onNextStep2} errors={errors} >
+                    <ProgressStep label="Critérios de Eligibilidade Gerais" onPrevious={onPreviousStep} onNext={onNextStep2} errors={errors}
+                        previousBtnStyle={styles.buttonStyle}
+                        previousBtnTextStyle={styles.buttonTextStyle}
+                        nextBtnTextStyle={styles.buttonTextSaveStyle}
+                        nextBtnStyle={styles.buttonSaveStyle}
+                        nextBtnText='Salvar'
+                        previousBtnText='<< Anterior'
+                    >
                         <View style={{ alignItems: 'center' }}>
                             <VStack space={3} w="90%" >
                                 <FormControl isRequired isInvalid={'vblt_lives_with' in formik.errors}>
@@ -793,7 +865,14 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                             </VStack>
                         </View>
                     </ProgressStep>
-                    <ProgressStep label="Critérios de Eligibilidade Específicos" onPrevious={onPreviousStep2} onSubmit={handleSubmit} errors={errors} >
+                    <ProgressStep label="Critérios de Eligibilidade Específicos" onPrevious={onPreviousStep2} onSubmit={handleSubmit} errors={errors}
+                        previousBtnStyle={styles.buttonStyle}
+                        previousBtnTextStyle={styles.buttonTextStyle}
+                        nextBtnTextStyle={styles.buttonTextSaveStyle}
+                        nextBtnStyle={styles.buttonSaveStyle}
+                        finishBtnText='Actualizar'
+                        previousBtnText='<< Anterior'
+                    >
                         <View style={{ alignItems: 'center' }}>
                             <VStack space={3} w="90%" >
                                 <FormControl isRequired isInvalid={'vblt_sexually_active' in formik.errors}>
@@ -1041,6 +1120,68 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                     </ProgressStep>
                 </ProgressSteps>
             </View>
+            {loading ?
+                <Spinner
+                    visible={true}
+                    textContent={'Registando Beneficiario...'}
+                    textStyle={styles.spinnerTextStyle}
+                /> : undefined
+
+            }
+            <Center>
+                <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+                    <Modal.Content maxWidth="400px">
+                        <Modal.CloseButton />
+                        <Modal.Header>Contact Us</Modal.Header>
+                        <Modal.Body>
+                            <ScrollView>
+                                <Box alignItems='center'>
+
+                                <Ionicons name="md-checkmark-circle" size={100} color="#0d9488" />
+                                <Alert w="100%" status="success">
+                                <HStack space={2} flexShrink={1}>
+                                    <Alert.Icon mt="1"  />
+                                    <Text fontSize="sm" color="coolGray.800">
+                                        Beneficiaria Registada com Sucesso!
+                                    </Text>
+                                </HStack>
+                                </Alert>
+                               
+                                    
+                                    <Text marginTop={3} marginBottom={3}>
+                                        NID da Beneficiaria:
+                                        <Text fontWeight='bold' color='#008D4C' >  
+                                        {
+                                            ` ${newNui}`
+                                        }
+                                        </Text>
+                                    </Text>
+                                    <Divider />
+                                    <Text >
+                                        Pretende Registar os Critérios de Eligibilidade Específicos agora?
+                                    </Text>            
+                                </Box>
+                                
+                            </ScrollView>
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button.Group space={2}>
+                                <Button variant="ghost" colorScheme="blueGray" onPress={() => {
+                                    setShowModal(false);
+                                    navigationRef.goBack();
+                                }}>
+                                    Não
+                                </Button>
+                                <Button onPress={() => {
+                                    setShowModal(false);
+                                }}>
+                                    Sim 
+                                </Button>
+                            </Button.Group>
+                        </Modal.Footer>
+                    </Modal.Content>
+                </Modal>
+            </Center>
         </>
     );
 }
