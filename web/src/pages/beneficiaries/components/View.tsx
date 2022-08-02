@@ -301,30 +301,6 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
                     />
                 </Card>
                 <Drawer
-<<<<<<< HEAD
-=======
-                    title="Referências Dreams"
-                    placement="top"
-                    closable={false}
-                    onClose={onRefClose}
-                    visible={refVisible}
-                    getContainer={false}
-                    style={{ position: 'absolute' }}
-                    extra={
-                        <Space>
-                            <Button onClick={onRefClose}>Cancel</Button>
-                            <Button htmlType="submit" onClick={() => onSubmit(selectedReference)} type="primary">
-                                Submit
-                            </Button>
-                        </Space>
-                    }
-                >
-                    {/* {isAdd ? <Form form={form} layout="vertical" onFinish={() => onSubmit(selectedReference)}> <ReferenceForm record={beneficiary} /></Form> :
-                        <ViewIntervention record={selectedBeneficiary} beneficiary={beneficiary} />
-                    } */}
-                </Drawer>
-                <Drawer
->>>>>>> upstream/test
                     title="Intervenções Dreams"
                     placement="top"
                     closable={false}
