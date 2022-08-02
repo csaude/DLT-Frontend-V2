@@ -66,33 +66,59 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
        
         form.validateFields().then(async (values) => {
             
-            let payload: SubServiceParams = {
-                id: {
-                    beneficiaryId: beneficiary.id,
-                    subServiceId: values.subservice,
+            if (selectedIntervention === undefined) {
+                let payload: SubServiceParams = {
+                    id: {
+                        beneficiaryId: beneficiary.id,
+                        subServiceId: values.subservice,
+                        date: moment(values.dataBeneficio).format('YYYY-MM-DD'),
+                    },
+                    beneficiaries: {
+                        id: '' + beneficiary.id
+                    },
+                    subServices: {
+                        id: values.subservice
+                    },
                     date: moment(values.dataBeneficio).format('YYYY-MM-DD'),
-                },
-                beneficiaries: {
-                    id: '' + beneficiary.id
-                },
-                subServices: {
-                    id: values.subservice
-                },
-                result: "", 
-                us: { id: values.location},
-                activistId: "6",
-                entryPoint: values.entryPoint,
-                provider: values.provider,
-                remarks: values.outros,
-                status: "1",
-                createdBy: "1"
-            };
+                    result: "", 
+                    us: { id: values.location},
+                    activistId: localStorage.user,
+                    entryPoint: values.entryPoint,
+                    provider: values.provider,
+                    remarks: values.outros,
+                    status: "1",
+                    createdBy: localStorage.user
+                };
 
-            const { data } = selectedIntervention === undefined ? await addSubService(payload) : await updateSubService(payload);
-            
-            if(selectedIntervention === undefined){
-                setInterventions(interventions => [...interventions, data]);
+                const { data } = await addSubService(payload);
+
+                setInterventions(interventions => [...interventions, data.intervention]);
             } else {
+                let payload: SubServiceParams = {
+                    id: {
+                        beneficiaryId: beneficiary.id,
+                        subServiceId: values.subservice,
+                        date: moment(selectedIntervention.id.date).format('YYYY-MM-DD'),
+                    },
+                    beneficiaries: {
+                        id: '' + beneficiary.id
+                    },
+                    subServices: {
+                        id: values.subservice
+                    },
+                    date: moment(values.dataBeneficio).format('YYYY-MM-DD'),
+                    result: "", 
+                    us: { id: values.location},
+                    activistId: localStorage.user,
+                    entryPoint: values.entryPoint,
+                    provider: values.provider,
+                    remarks: values.outros,
+                    status: selectedIntervention.status,
+                    createdBy: localStorage.user
+                };
+
+                const { data } = await updateSubService(payload);
+
                 setInterventions(existingItems => {
                     return existingItems.map((item, j) => {
                       return    item.id.beneficiaryId === selectedIntervention.id.beneficiaryId && 
@@ -149,7 +175,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
                 title: 'Ponto de Entrada',
                 dataIndex: '',
                 key: 'entryPoint',
-                render: (text, record) => getEntryPoint(record.entryPoint),
+                render: (text, record) => record.us.name,
             },
             {
                 title: 'Action',
@@ -288,9 +314,9 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
                         </Space>
                     }
                 >
-                    {isAdd ? <Form form={form} layout="vertical" onFinish={() => onSubmit(selectedReference)}> <ReferenceForm record={beneficiary} /></Form> :
+                    {/* {isAdd ? <Form form={form} layout="vertical" onFinish={() => onSubmit(selectedReference)}> <ReferenceForm record={beneficiary} /></Form> :
                         <ViewIntervention record={selectedBeneficiary} beneficiary={beneficiary} />
-                    }
+                    } */}
                 </Drawer>
                 <Drawer
                     title="Intervenções Dreams"

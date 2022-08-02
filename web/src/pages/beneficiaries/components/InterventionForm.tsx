@@ -20,7 +20,7 @@ const InterventionForm = (record: any) => {
     const [us, setUs] = React.useState<any>(undefined);
     const form = Form.useFormInstance();
     const selectedIntervention = record.record;
-    const service = selectedIntervention?.subServices === undefined? selectedIntervention?.services : selectedIntervention?.subServices;
+    const service = selectedIntervention?.subServices === undefined? selectedIntervention?.services : selectedIntervention?.subServices.service;
   
     const selectedOption = options?.filter(o => o.value === selectedIntervention?.entryPoint+'').map(filteredOption => (filteredOption.value))[0];
 
@@ -170,10 +170,9 @@ const InterventionForm = (record: any) => {
                 <Form.Item
                   name="outros"
                   label="Outras Observações"
-                  rules={[{ required: true, message: 'Please ' }]}
                   initialValue={selectedIntervention?.remarks}
                 >
-                  <TextArea rows={2} placeholder="Insira as Observações" maxLength={6} />
+                  <TextArea rows={2} placeholder="Insira as Observações" maxLength={50} />
                 </Form.Item>
               </Col>
             </Row>
