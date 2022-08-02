@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { query  as queryUser} from '@app/utils/users';
 import { query as queryBeneficiary } from "@app/utils/beneficiary";
-import { Button, Card, Col, Drawer, Form, message, Modal, Row, Space, Table } from "antd";
-import { SearchOutlined, EditOutlined, PlusOutlined, EyeOutlined } from '@ant-design/icons';
+import { Button, Card, Col, Drawer, Form, message, Modal, Row, Space, Table, Typography } from "antd";
+import { SearchOutlined, EditOutlined, PlusOutlined, EyeOutlined, CloseOutlined, CheckOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import InterventionForm from "@app/pages/beneficiaries/components/InterventionForm";
 import { addSubService, SubServiceParams } from '@app/utils/service'
+
+const { Text } = Typography;
 
 export function ViewReferencePanel({selectedReference, columns}) {
     const [visible, setVisible] = useState<boolean>(false);
@@ -124,7 +126,12 @@ export function ViewReferencePanel({selectedReference, columns}) {
         { title: 'Status', 
             dataIndex: '', 
             key: 'intervention',
-            render: (text, record)  => record.status==0? 'Pendente' : 'Atendido',
+            render: (text, record)  => 
+                (record.status !=2 ) ? 
+                    <Text type="danger" >Pendente </Text>
+                : 
+                    <Text type="success" >Atendido </Text>
+            ,
         },
         { title: 'Atender', 
             dataIndex: '', 
@@ -142,7 +149,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
         { title: 'Data', 
             dataIndex: 'date', 
             key: 'date',
-            render: (text, record) => <span>{moment(record.dateCreated).format('YYYY-MM-DD')}</span>,
+            render: (text, record) => <span>{moment(record.id.date).format('YYYY-MM-DD')}</span>,
         },
         { title: 'Serviço', 
             dataIndex: '', 
@@ -198,7 +205,12 @@ export function ViewReferencePanel({selectedReference, columns}) {
                                     <Col className="gutter-row" span={3}>{user?.partners.name}</Col>
                                     <Col className="gutter-row" span={3}>{reference?.referenceCode}</Col>
                                     <Col className="gutter-row" span={3}>{reference?.serviceType==1? 'Serviços Clínicos': 'Serviços Comunitários'}</Col>
-                                    <Col className="gutter-row" span={3}>{reference?.status==0? 'Pendente': reference?.status==1? 'Atendida Parcialmente': 'Atendida'}</Col>
+                                    <Col className="gutter-row" span={3}>{reference?.status==0?  
+                                                                            <Text type="danger" >Pendente </Text> 
+                                                                        : reference?.status==1? 
+                                                                            <Text type="warning" >Atendida Parcialmente </Text>
+                                                                        : <Text type="success" >Atendida </Text>}
+                                    </Col>
                                 </Row>
                             </Card>
                         </Col>
