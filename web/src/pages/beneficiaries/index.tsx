@@ -16,6 +16,7 @@ import FormBeneficiary from './components/FormBeneficiary';
 import FormBeneficiaryPartner from './components/FormBeneficiaryPartner';
 import { add, edit } from '../../utils/beneficiary';
 import { stringify } from 'qs';
+import FormReference from './components/FormReference';
 
 
 const { Text } = Typography;
@@ -30,7 +31,7 @@ const BeneficiariesList: React.FC = () => {
     const [ modalVisible, setModalVisible] = useState<boolean>(false);
     const [ beneficiaryModalVisible, setBeneficiaryModalVisible] = useState<boolean>(false);
     const [ beneficiaryPartnerModalVisible, setBeneficiaryPartnerModalVisible] = useState<boolean>(false);
-
+    const [ referenceModalVisible, setReferenceModalVisible] = useState<boolean>(false);
 
     let searchInput ;
     useEffect(() => {
@@ -197,6 +198,11 @@ const BeneficiariesList: React.FC = () => {
     const handleViewModalVisible = (flag?: boolean, record?: any) => {
         setBeneficiary(record);
         setModalVisible(!!flag);
+    };
+
+    const handleModalRefVisible = (flag?: boolean, record?: any) => {
+        setBeneficiary(record);
+        setReferenceModalVisible(!!flag);
     };
 
     const handleBeneficiaryModalVisible = (flag?: boolean) => {
@@ -441,7 +447,7 @@ const BeneficiariesList: React.FC = () => {
                     rowKey="id"
                     columns={columns}
                     expandable={{
-                        expandedRowRender: record =>  <div style={{border:"2px solid #d9edf7", backgroundColor:"white"}}><ViewBenefiaryPanel beneficiary={record} columns={interventionColumns} /></div>,
+                        expandedRowRender: record =>  <div style={{border:"2px solid #d9edf7", backgroundColor:"white"}}><ViewBenefiaryPanel beneficiary={record} columns={interventionColumns} handleModalVisible={handleModalVisible} handleModalRefVisible={handleModalRefVisible} /></div>,
                         rowExpandable: record => record.name !== 'Not Expandable',
                     }}
                     dataSource={beneficiaries}
@@ -451,7 +457,8 @@ const BeneficiariesList: React.FC = () => {
             <ViewBeneficiary 
                 {...parentMethods}
                 beneficiary={beneficiary} 
-                modalVisible={modalVisible} />
+                modalVisible={modalVisible} 
+                handleModalRefVisible={handleModalRefVisible}/>
                 
             <FormBeneficiary form={form} beneficiary={beneficiary} modalVisible={beneficiaryModalVisible}
                                 handleAdd={handleAdd}
@@ -461,6 +468,11 @@ const BeneficiariesList: React.FC = () => {
             <FormBeneficiaryPartner form={form} beneficiary={beneficiary} modalVisible={beneficiaryPartnerModalVisible}
                                 handleAdd={handleAdd}
                                 handleModalVisible={handleBeneficiaryPartnerModalVisible} />
+            <FormReference  form={form} beneficiary={beneficiary} 
+                            modalVisible={referenceModalVisible}
+                            handleAdd={handleAdd}   
+                            handleModalRefVisible={handleModalRefVisible} 
+                            />
         </>
     );
 }

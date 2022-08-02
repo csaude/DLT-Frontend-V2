@@ -12,8 +12,10 @@ import 'antd/dist/antd.css';
 import '../styles.css'
 import InterventionForm from './InterventionForm';
 import ReferenceForm from './ReferenceForm';
+import FormReference from './FormReference';
+import StepReference from './StepReferece';
 
-export function ViewBenefiaryPanel({ beneficiary, columns }) {
+export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, handleModalRefVisible}) {
     const [visible, setVisible] = useState<boolean>(false);
     const [isAdd, setIsAdd] = useState<boolean>(false);
     const [selectedBeneficiary, setSelectedBeneficiary] = useState();
@@ -22,6 +24,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
 
     const [refVisible, setRefVisible] = useState<boolean>(false);
     const [selectedReference, setSelectedReference] = useState<any>();
+    // const [ referenceModalVisible, setReferenceModalVisible] = useState<boolean>(false);
 
     const [form] = Form.useForm();
 
@@ -31,12 +34,12 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
         setSelectedBeneficiary(record);
     };
 
-    const onAddReference = () => {
-        form.resetFields();
-        setRefVisible(true);
-        setIsAdd(true);
-        setSelectedReference(undefined);
-        setSelectedIntervention(undefined);
+    const onAddReference = (flag?: boolean, record?: any) => {
+
+        // setReferenceModalVisible(true);
+        handleModalVisible(); 
+        // referenceModalVisible = true;  
+        handleModalRefVisible(flag, record);  
     };
     
     const onRefClose = () => {
@@ -253,7 +256,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
                     title="Lista de Intervenções DREAMS"
                     extra={
                         <Space>
-                            <Button onClick={onAddReference} type='primary' icon={<ArrowUpOutlined />} danger >
+                            <Button onClick={() => onAddReference(true, beneficiary)} type='primary' icon={<ArrowUpOutlined />} danger >
                                 Referir Beneficiaria
                             </Button>
                             <Button onClick={onAddIntervention} type="primary" icon={<PlusOutlined />} >
@@ -271,27 +274,6 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
 
                     />
                 </Card>
-                <Drawer
-                    title="Referências Dreams"
-                    placement="top"
-                    closable={false}
-                    onClose={onRefClose}
-                    visible={refVisible}
-                    getContainer={false}
-                    style={{ position: 'absolute' }}
-                    extra={
-                        <Space>
-                            <Button onClick={onRefClose}>Cancel</Button>
-                            <Button htmlType="submit" onClick={() => onSubmit(selectedReference)} type="primary">
-                                Submit
-                            </Button>
-                        </Space>
-                    }
-                >
-                    {isAdd ? <Form form={form} layout="vertical" onFinish={() => onSubmit(selectedReference)}> <ReferenceForm record={beneficiary} /></Form> :
-                        <ViewIntervention record={selectedBeneficiary} beneficiary={beneficiary} />
-                    }
-                </Drawer>
                 <Drawer
                     title="Intervenções Dreams"
                     placement="top"
@@ -318,7 +300,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
     );
 }
 
-const ViewBeneficiary = ({ beneficiary, modalVisible, handleAdd, handleModalVisible }) => {
+const ViewBeneficiary = ({ beneficiary, modalVisible, handleAdd, handleModalVisible , handleModalRefVisible}) => {
 
     const okHandle = () => {
         handleAdd("test");
@@ -337,10 +319,10 @@ const ViewBeneficiary = ({ beneficiary, modalVisible, handleAdd, handleModalVisi
             onOk={okHandle}
             onCancel={() => handleModalVisible()}
         >
-            <ViewBenefiaryPanel beneficiary={beneficiary} columns={undefined} />
+            
+            <ViewBenefiaryPanel beneficiary={beneficiary} columns={undefined} handleModalVisible={handleModalVisible} handleModalRefVisible={handleModalRefVisible}/>
 
         </Modal>
-
 
     );
 }
