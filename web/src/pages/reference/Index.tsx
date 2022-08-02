@@ -347,7 +347,7 @@ const ReferenceList: React.FC = () => {
                     <Text type="danger" >Pendente </Text>
                 :  
                 (record.status==1) ?
-                    <Text type="success" >Atendida Parcialmente </Text>
+                    <Text type="warning" >Atendida Parcialmente </Text>
                 :  
                 (record.status==2) ?
                     <Text type="success" >Atendida </Text>
