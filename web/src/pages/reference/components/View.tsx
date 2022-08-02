@@ -56,6 +56,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
                 subServices: {
                     id: values.subservice
                 },
+                date: moment(values.dataBeneficio).format('YYYY-MM-DD'),
                 result: "",
                 us: { id: values.location},
                 activistId: localStorage.user,
