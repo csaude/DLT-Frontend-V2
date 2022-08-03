@@ -25,9 +25,11 @@ const StepReference = ({ form, beneficiary }: any) => {
     const [users, setUsers] = React.useState<any>(undefined);
     const [user, setUser] = React.useState();
     const [us, setUs] = React.useState<any>(undefined);
-    const selectedReference = beneficiary?.record;
+    const selectedReference = beneficiary;
     const partner_type = selectedReference?.serviceType;
     let userId = localStorage.getItem('user');
+
+    console.log(beneficiary);
 
 
     const selectedOption = options?.filter(o => o.value === selectedIntervention?.service_type+'').map(filteredOption => (filteredOption.value))[0];
@@ -75,7 +77,7 @@ const StepReference = ({ form, beneficiary }: any) => {
                   rules={[{ required: true, message: 'Obrigatório' }]}
                   initialValue={selectedReference?.reference_note}
                 >
-                  <Input placeholder="Nota Referência" disabled/>
+                  <Input placeholder="Nota Referência"/>
                 </Form.Item>
               </Col>
               <Col span={8}>
