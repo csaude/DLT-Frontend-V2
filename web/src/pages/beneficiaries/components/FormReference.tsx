@@ -2,10 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { Badge, Button, Steps, Row, Col, Input, message, Space, Form, Tabs, Modal, DatePicker, Checkbox, Select, Radio, Divider } from 'antd';
 import './index.css';
 import StepReference from './StepReferece';
-import StepDadosPessoais from './StepDadosPessoais';
-import StepVulnerabilidadesGerais from './StepVulnerabilidadesGerais';
-import StepVulnerabilidadesEspecificas from './StepVulnerabilidadesEspecificas';
-// import { add } from '@app/utils/beneficiary';
+import StepViewReferece from './StepViewReferece';
 import { add } from '@app/utils/reference';
 import moment from 'moment';
 import { stringify } from 'qs';
@@ -49,7 +46,6 @@ const FormReference = ({ form, beneficiary, modalVisible, handleAdd, handleUpdat
     const onSubmit = async () => {
         
         handleAdd(firstStepValues,"1")
-        //TODO: Go to next page only if above instruction succeeds
         const inc = current + 1;
         setCurrent(inc);
     }
@@ -57,9 +53,6 @@ const FormReference = ({ form, beneficiary, modalVisible, handleAdd, handleUpdat
     const onUpdate = async () => {
         
         handleUpdate(firstStepValues, secondStepValues);
-        // TODO: Perform actions only if above instruction succeeds
-        // setCurrent(0);
-        // form.resetFields();
     }
 
     const steps = [
@@ -69,11 +62,11 @@ const FormReference = ({ form, beneficiary, modalVisible, handleAdd, handleUpdat
         },
         {
             title: ' Solicitar Intervenções ',
-            content: <StepVulnerabilidadesGerais form={form} beneficiary={beneficiary} />,
+            content: <StepViewReferece form={form} beneficiary={beneficiary} />,
         },
         {
             title: ' Referências',
-            content: <StepVulnerabilidadesEspecificas form={form} beneficiary={beneficiary} />,
+            content: <StepViewReferece form={form} beneficiary={beneficiary} />,
         }
     ];
 
