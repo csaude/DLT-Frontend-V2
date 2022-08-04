@@ -221,7 +221,6 @@ const ReferenceList: React.FC = () => {
             dataIndex: '', 
             key: 'type',
             render: (text, record)  => record.beneficiaries.neighborhood.locality.district.name,
-
             filters: filterPartner(district)(i => i.name),
             onFilter: (value, record) => record.beneficiaries.neighborhood.locality.district.name == value,
             filterSearch: true,
