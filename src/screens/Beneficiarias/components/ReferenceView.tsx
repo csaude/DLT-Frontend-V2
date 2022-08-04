@@ -46,7 +46,7 @@ const ReferenceView: React.FC = ({ route }: any) => {
             ).fetch();
 
             const refListSerialized = getRefList.map(item => item._raw);
-            console.log("references_services: ",refListSerialized);
+            //console.log("references_services: ",refListSerialized);
             //setReferences(refListSerialized);
         }
 
@@ -55,7 +55,7 @@ const ReferenceView: React.FC = ({ route }: any) => {
 
 
     const renderItem = (data: any) => {
-        //console.log();
+        //console.log(data.item);
         return  (
         <TouchableHighlight
             style={styles.rowFront}
@@ -72,7 +72,7 @@ const ReferenceView: React.FC = ({ route }: any) => {
                             Referir para:
                         </Text>
                         <Text color="darkBlue.300" _dark={{ color: "warmGray.200" }}>
-                            {` ${data.item.refer_to}`}
+                            {` ${data.item.refer_to === '1'?'US': data.item.refer_to === '2'? 'ES':'CM'}`}
                         </Text>
                     </HStack>
                     <HStack>
@@ -80,7 +80,7 @@ const ReferenceView: React.FC = ({ route }: any) => {
                             Estado:
                         </Text>
                         <Text color="darkBlue.300" _dark={{ color: "warmGray.200" }}>
-                            {` ${ data.item.status_ref === 1? 'Atendido' : 'Pendente'}`}
+                            {` ${ data.item.status === 0? 'Pendente' : data.item.status === 1? 'Atendido parcialmente': 'Atendido'}`}
                         </Text>
                     </HStack>
                 </VStack>

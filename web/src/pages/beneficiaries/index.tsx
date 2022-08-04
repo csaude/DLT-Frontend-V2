@@ -77,7 +77,7 @@ const BeneficiariesList: React.FC = () => {
             ben.vbltIsEmployed = vblts.vblt_is_employed;
             ben.vbltIsOrphan = vblts.vblt_is_orphan;
             ben.vbltIsStudent = vblts.vblt_is_student;
-            ben.vbltLivesWith = vblts.vblt_lives_with.toString();
+            ben.vbltLivesWith = vblts.vblt_lives_with?.toString();
             ben.vbltMarriedBefore = vblts.vblt_married_before;
             ben.vbltPregnantBefore = vblts.vblt_pregnant_before;
             ben.vbltPregnantOrBreastfeeding = vblts.vblt_pregnant_or_breastfeeding;
