@@ -206,6 +206,7 @@ const Login: React.FC = () => {
         if (checkSynced == 0) { // checkSynced=0 when db have not synced yet
 
             if (isOffline) {
+                setLoading(false);
                 return showToast('Sem Conexão a Internet', 'Conecte-se a Internet para o primeiro Login!');
             }
 
@@ -221,12 +222,16 @@ const Login: React.FC = () => {
                         await fetchPrefix(values.username);
 
                         setIsInvalidCredentials(false);
+
                         setLoggedUser(response.account);
                         setToken(response.token);
                     }
                     setLoading(false);
                 })
-                .catch(error => showToast('Falha de Conexão', 'Por favor contacte o suporte!'));
+                .catch(error => {
+                    showToast('Falha de Conexão', 'Por favor contacte o suporte!');
+                    setLoading(false);
+                });
 
 
 
