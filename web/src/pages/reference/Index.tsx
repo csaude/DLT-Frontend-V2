@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { query } from '@app/utils/reference';
 import {allPartners} from '@app/utils/partners';
+import {allDistrict} from '@app/utils/district';
 import { query  as query1} from '@app/utils/users';
 import {allUs} from '@app/utils/uSanitaria';
 import { Card, Table, Button, Space, Badge, Input, Typography, Form } from 'antd';
@@ -28,6 +29,7 @@ const ReferenceList: React.FC = () => {
 
     const [ partners, setPartners] = useState<any[]>([]);
     const [ user, setUser] = useState<any[]>([]);
+    const [ district, setDistrict] = useState<any[]>([]);
     const [ us, setUs] = useState<any[]>([]);
     
     const navigate = useNavigate();
@@ -36,14 +38,16 @@ const ReferenceList: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
           const data = await query();
-          const data1 = await allPartners();          
+          const partners = await allPartners();          
           const data2 = await query1();         
-          const data3 = await allUs();
+          const us = await allUs();
+          const districts = await allDistrict();
 
           setReferences(data);
-          setPartners(data1);
+          setPartners(partners);
           setUser(data2);
-          setUs(data3);
+          setUs(us);
+          setDistrict(districts);
         } 
     
         fetchData().catch(error => console.log(error));
@@ -217,6 +221,10 @@ const ReferenceList: React.FC = () => {
             dataIndex: '', 
             key: 'type',
             render: (text, record)  => record.beneficiaries.neighborhood.locality.district.name,
+
+            filters: filterPartner(district)(i => i.name),
+            onFilter: (value, record) => record.beneficiaries.neighborhood.locality.district.name == value,
+            filterSearch: true,
         },
         { 
             title: 'Organização Referente', 
