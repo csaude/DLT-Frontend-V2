@@ -127,8 +127,11 @@ export function ViewReferencePanel({selectedReference, columns}) {
             dataIndex: '', 
             key: 'intervention',
             render: (text, record)  => 
-                (record.status !=2 ) ? 
+                (record.status == 0) ? 
                     <Text type="danger" >Pendente </Text>
+                :
+                (record.status == 1) ? 
+                    <Text type="warning" >Em curso </Text>
                 : 
                     <Text type="success" >Atendido </Text>
             ,
