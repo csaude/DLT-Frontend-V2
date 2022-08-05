@@ -13,7 +13,7 @@ import { sync } from '../../database/sync';
 import styles from './styles';
 
 
-const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners }:any) => {
+const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, services, subServices }:any) => {
     const [searchField, setSearchField] = useState('');
     const loggedUser:any = useContext(Context);
     const toast = useToast();
@@ -37,17 +37,59 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners }
     }
 
     const getStatus = (status:any) => {
-        if (status === 1) {
+        if (status === 0) {
             return "Pendente";
-        } else if (status === 2) {
+        } else if (status === 1) {
             return "Atendida Parcialmente"
+        } else if (status === 2) {
+            return "Atendida"
         } else if (status === 3) {
             return "Cancelada"
         }
     }
 
-    const viewReference = (data:any) => {
-        navigate({name:"ReferenceView", params:{reference:data.item_raw}});
+    const viewReference = async (data:any) => {
+        const reference = data.item?._raw;
+        const beneficiary = getBeneficiary(reference.beneficiary_id)._raw;
+        const referer = getUser(reference.created_by)._raw;
+        const organization = getOrganization(referer.partner_id)._raw.name
+
+        const beneficiaryId = beneficiary.online_id ? beneficiary.online_id : beneficiary.id;
+
+        const interventions = await database.get('beneficiaries_interventions').query(
+            Q.where('beneficiary_id', beneficiaryId),   
+        ).fetch();
+
+        const interventionObjects = interventions.map((e:any) => {
+            let subservice = subServices.filter((item) => {
+                return item._raw.online_id == e._raw.sub_service_id
+            })[0];
+            return { id: subservice._raw.online_id, name: subservice._raw.name, intervention: e._raw }
+        });
+
+        const referenceId = reference.online_id ? reference.online_id : reference.id;
+
+        const referenceServices = await database.get('references_services').query(
+            Q.where('reference_id', referenceId+""),   
+        ).fetch();
+
+        const servicesObjects = referenceServices.map((e:any) => {
+            let service:any = services.filter((item:any) => {
+                return item._raw.online_id == e._raw.service_id
+            })[0];
+            return { id: service._raw.online_id, name: service._raw.name, service: e._raw }
+        });
+
+        navigate({
+            name:"ReferenceView", params: {
+                reference: reference, 
+                beneficiary: beneficiary,
+                referer: referer,
+                organization: organization,
+                services: servicesObjects,
+                interventions: interventionObjects
+            }
+        });
     }
 
     const syncronize = () => {
@@ -117,19 +159,64 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners }
         >
             <HStack width="100%" px={4}
                    flex={1} space={5} alignItems="center">
-                <Avatar color="white" bg={randomHexColor()}>
-                    {getOrganization(getUser(data.item._raw.created_by).partner_id).name.charAt(0).toUpperCase()}
-                </Avatar>
-                <View>
-                    <Text color="darkBlue.800">{getBeneficiary(data.item.beneficiary_id).nui}</Text>
-                    <Text color="darkBlue.800">{getUser(data.item._raw.created_by)?.name + " " + getUser(data.item._raw.created_by)?.surname}</Text>
-                    <Text color="darkBlue.800">{getOrganization(getUser(data.item._raw.created_by).partner_id).name}</Text>
-                </View>
-                <View>
+                <Ionicons name="exit" size={50} color="#0d9488" />
+                <VStack >
+                    <HStack>
+                        <Text color="warmGray.400" _dark={{ color: "warmGray.200" }}>
+                            NUI:
+                        </Text>
+                        <Text color="darkBlue.300" _dark={{ color: "warmGray.200" }}>
+                            {` ${getBeneficiary(data.item.beneficiary_id).nui}`}
+                        </Text>
+                    </HStack>
+                    <HStack>
+                        <Text color="warmGray.400" _dark={{ color: "warmGray.200" }}>
+                            Referente:
+                        </Text>
+                        <Text color="darkBlue.300" _dark={{ color: "warmGray.200" }}>
+                            {` ${getUser(data.item._raw.created_by)?.name + " " + getUser(data.item._raw.created_by)?.surname}`}
+                        </Text>
+                    </HStack>
+                    <HStack>
+                        <Text color="warmGray.400" _dark={{ color: "warmGray.200" }}>
+                            Organização:
+                        </Text>
+                        <Text color="darkBlue.300" _dark={{ color: "warmGray.200" }}>
+                            {` ${getOrganization(getUser(data.item._raw.created_by).partner_id).name}`}
+                        </Text>
+                    </HStack>
+                </VStack>
+                <VStack >
+                    <HStack>
+                        <Text color="warmGray.400" _dark={{ color: "warmGray.200" }}>
+                            Data:
+                        </Text>
+                        <Text color="darkBlue.300" _dark={{ color: "warmGray.200" }}>
+                            {` ${data.item.date_created}`}
+                        </Text>
+                    </HStack>
+                    <HStack>
+                        <Text color="warmGray.400" _dark={{ color: "warmGray.200" }}>
+                            Notificar ao:
+                        </Text>
+                        <Text color="darkBlue.300" _dark={{ color: "warmGray.200" }}>
+                            {` ${getUser(data.item._raw.notify_to).name + " " + getUser(data.item._raw.notify_to).surname}`}
+                        </Text>
+                    </HStack>
+                    <HStack>
+                        <Text color="warmGray.400" _dark={{ color: "warmGray.200" }}>
+                            Status:
+                        </Text>
+                        <Text color="darkBlue.300" _dark={{ color: "warmGray.200" }}>
+                            {` ${getStatus(data.item._raw.status)}`}
+                        </Text>
+                    </HStack>
+                </VStack>
+                {/* <View>
                     <Text color="darkBlue.800">{getUser(data.item._raw.notify_to).name + " " + getUser(data.item._raw.notify_to).surname}</Text>
                     <Text color="darkBlue.800">{getOrganization(getUser(data.item._raw.notify_to).partner_id).name}</Text>
                     <Text color="darkBlue.800">{getStatus(data.item._raw.status)}</Text>
-                </View>
+                </View> */}
             </HStack>
         </TouchableHighlight>
     );
@@ -198,6 +285,12 @@ const enhance = withObservables([], () => ({
     partners: database.collections
         .get("partners")
         .query().observe(),
+    services: database.collections
+        .get("services")
+        .query().observe(),
+    subServices: database.collections
+        .get("sub_services")
+        .query().observe()
 }))
 
 export default enhance(ReferencesMain);
