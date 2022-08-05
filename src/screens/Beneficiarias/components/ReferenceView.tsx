@@ -109,6 +109,7 @@ const ReferenceView: React.FC = ({ route }: any) => {
             }
             <Center flex={1} px="3" >
                 <StepperButton onAdd={() => navigate({ name: "ReferenceForm", params: { beneficiary:  beneficiary, 
+                                                                                            references: references,
                                                                                             userId: isNaN(loggedUser.id) ? loggedUser.online_id : loggedUser.id, 
                                                                                             refs: references.length} })}
                                 onRefresh={syncronize} />
