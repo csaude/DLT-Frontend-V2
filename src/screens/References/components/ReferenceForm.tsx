@@ -20,7 +20,6 @@ const ReferenceForm: React.FC = ({ route }: any) => {
         userId,
         refs
     } = route.params;
-    // console.log(userId);
 
     const [errors, setErrors] = useState(false);
     const [partners, setPartners] = useState<any>([]);
@@ -162,13 +161,13 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                 ref.service_type = formik.values.service_type
                 ref.remarks = formik.values.description
                 ref.status_ref = 0
-                ref.status = '1'
+                ref.status = 0
                 ref.created_by = userId
             });
 
             return newReference;
         });
-        console.log(savedR._raw.id);
+        // console.log(savedR._raw).id;
 
         await database.write(async () => {
            referServices.forEach(async (element) => {
