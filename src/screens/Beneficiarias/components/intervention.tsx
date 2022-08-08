@@ -28,7 +28,7 @@ import { Context } from '../../../routes/DrawerNavigator';
 import styles from './styles';
 
 const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, partners, services, subServices }: any) => {    // console.log(route.params);
-    const { beneficiarie, intervention } = route.params;
+    const { beneficiarie, intervention, interventions } = route.params;
 
     const areaServicos = [{ "id": '1', "name": "Serviços Clinicos" }, { "id": '2', "name": "Serviços Comunitarios" }];
     const entry_points = [{ "id": '1', "name": "US" }, { "id": '2', "name": "CM" }, { "id": '3', "name": "ES" }];
@@ -212,17 +212,27 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
             toast.show({ placement: "bottom", title: "Intervention Saved Successfully: " + newIntervention._raw.id });
             return newIntervention;
         });
+       
+        const subService = subServices.filter((e) => {
+            return e._raw.online_id == values.sub_service_id
+        })[0]?._raw;
+
+        const newInterv = { id: subService.online_id, name: subService.name, intervention: newObject._raw }
+
+        const newInterventionMap = [newInterv, ...interventions];
 
         navigate({
-            name: "BeneficiariesList", params: {
-                intervation: newObject._raw,
-                beneficiarie: beneficiarie
-            }
+            name: 'Serviços',
+            params: {
+                beneficiary: beneficiarie,
+                interventions: newInterventionMap
+            },
+            merge: true,
         });
 
+        setLoading(false);
 
-        //setLoading(false);
-        sync({ username: loggedUser.username })
+        /*sync({ username: loggedUser.username })
             .then(() => toast.show({
                 placement: "top",
                 render: () => {
@@ -260,7 +270,7 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                         </Alert>
                     );
                 }
-            }))
+            }))*/
 
     }
 
@@ -361,7 +371,7 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                                                     }
                                                 }
                                                 }>
-                                                <Picker.Item label="-- Seleccione o Serviço --" value="0" />
+                                                <Picker.Item label="-- Seleccione o Sub-Serviço --" value="0" />
                                                 {
                                                     subServices.filter((e) => {
                                                         return e.service_id == values.service_id
