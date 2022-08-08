@@ -22,7 +22,6 @@ const ReferenceForm: React.FC = ({ route }: any) => {
         userId,
         refs
     } = route.params;
-    // console.log(userId);
 
     const [errors, setErrors] = useState(false);
     const [partners, setPartners] = useState<any>([]);

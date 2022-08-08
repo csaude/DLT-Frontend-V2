@@ -13,6 +13,7 @@ import {
 
 import moment from 'moment';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import DatePicker, { getToday, getFormatedDate } from 'react-native-modern-datepicker';
 import { stringify } from 'qs';
 import { Picker } from '@react-native-picker/picker';
 import { Formik } from 'formik';
@@ -27,8 +28,8 @@ import { Context } from '../../../routes/DrawerNavigator';
 
 import styles from './styles';
 
-const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, partners, services, subServices }: any) => {    // console.log(route.params);
-    const { beneficiarie, intervention, interventions } = route.params;
+const BeneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, partners, services, subServices }: any) => {    // console.log(route.params);
+    const { beneficiarie, intervention } = route.params;
 
     const areaServicos = [{ "id": '1', "name": "Serviços Clinicos" }, { "id": '2', "name": "Serviços Comunitarios" }];
     const entry_points = [{ "id": '1', "name": "US" }, { "id": '2', "name": "CM" }, { "id": '3', "name": "ES" }];
@@ -46,8 +47,9 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
         setShow(false);
         setDate(currentDate);
 
-        let tempDate = new Date(currentDate);
-        setText(moment(tempDate).format('YYYY-MM-DD'));
+        // let tempDate = new Date(currentDate);
+        // setText(moment(tempDate).format('YYYY-MM-DD'));
+        setText(selectedDate);
     }
 
     const showMode = (currentMode) => {
@@ -56,7 +58,7 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
     };
 
     const showDatepicker = () => {
-        showMode('date');
+        showMode('calendar');
     };
     const [initialValues, setInitialValues] = useState<any>({});
     let mounted = true; 
@@ -167,11 +169,12 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
         setLoading(true);
 
         const isEdit = intervention && intervention.id; // new record if it has id
-        //console.log(intervention, isEdit);
+
+        const isService = intervention?.service !== undefined;
 
         const newObject = await database.write(async () => {
         
-            if (isEdit) {
+            if (isEdit && !isService) {
                 const interventionToUpdate = await database.get('beneficiaries_interventions').find(intervention.id);
                 const updatedIntervention = await interventionToUpdate.update(() => {
                     intervention.beneficiary_id = beneficiarie.online_id
@@ -200,7 +203,7 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                 intervention.result = values.result
                 intervention.date = '' + text
                 intervention.us_id = values.us_id
-                intervention.activist_id = values.activist_id
+                intervention.activist_id = loggedUser.id
                 intervention.entry_point = values.entry_point
                 intervention.provider = values.provider
                 intervention.remarks = values.remarks
@@ -212,22 +215,12 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
             toast.show({ placement: "bottom", title: "Intervention Saved Successfully: " + newIntervention._raw.id });
             return newIntervention;
         });
-       
-        const subService = subServices.filter((e) => {
-            return e._raw.online_id == values.sub_service_id
-        })[0]?._raw;
-
-        const newInterv = { id: subService.online_id, name: subService.name, intervention: newObject._raw }
-
-        const newInterventionMap = [newInterv, ...interventions];
 
         navigate({
-            name: 'Serviços',
-            params: {
-                beneficiary: beneficiarie,
-                interventions: newInterventionMap
-            },
-            merge: true,
+            name: "BeneficiariesList", params: {
+                intervation: newObject._raw,
+                beneficiarie: beneficiarie
+            }
         });
 
         setLoading(false);
@@ -437,16 +430,21 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                                             <FormControl.Label>Data Benefício</FormControl.Label>
 
                                             {show && (
-                                                <DateTimePicker
-                                                    testID="dateTimePicker"
-                                                    value={date}
-                                                    // mode={mode}
-                                                    onChange={onChange}
+                                                // <DateTimePicker
+                                                //     testID="dateTimePicker"
+                                                //     value={date}
+                                                //     // mode={mode}
+                                                //     onChange={onChange}
+                                                // />
+                                                <DatePicker
+                                                    mode="calendar"
+                                                    maximumDate={getToday()}
+                                                    onSelectedChange={date => onChange(null, date.replaceAll('/','-'))}
                                                 />
                                             )}
 
 
-                                            <Stack alignItems="center">
+                                            <HStack alignItems="center">
                                                 <InputGroup w={{
                                                     base: "70%",
                                                     md: "285",
@@ -460,9 +458,9 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                                                             base: "70%",
                                                             md: "100%"
                                                         }} value={text}
-                                                        placeholder="dd-M-yyyy" />
+                                                        placeholder="yyyy-M-dd" />
                                                 </InputGroup>
-                                            </Stack>
+                                            </HStack>
 
 
                                         </FormControl>
@@ -538,4 +536,5 @@ const enhance = withObservables([], () => ({
 
 
 }));
-export default enhance(beneficiarieServiceForm);
+
+export default enhance(BeneficiarieServiceForm);

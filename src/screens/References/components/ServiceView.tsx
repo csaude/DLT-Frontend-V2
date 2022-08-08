@@ -4,11 +4,7 @@ import { useToast, HStack, Text, Icon, VStack, Pressable, Spacer, Stagger, IconB
 import { MaterialIcons, Ionicons } from "@native-base/icons";
 import { navigate } from '../../../routes/NavigationRef';
 import styles from './styles';
-import { database } from '../../../database';
-import { Q } from "@nozbe/watermelondb";
-import withObservables from '@nozbe/with-observables';
 import { SwipeListView } from 'react-native-swipe-list-view';
-import StepperButton from '../../Beneficiarias/components/StapperButton';
 import { SuccessHandler, ErrorHandler} from "../../../components/SyncIndicator";
 import { Context } from '../../../routes/DrawerNavigator';
 import { sync } from '../../../database/sync';
@@ -71,6 +67,19 @@ const ServicesView: React.FC = ({ route }: any) => {
         </TouchableHighlight>
     )};
 
+    const renderHiddenItem = (data: any, rowMap: any) => (
+
+        <HStack flex={1} pl={2}>
+            <Pressable px={4} ml="auto" bg="lightBlue.700" justifyContent="center"
+                onPress={() => navigate({ name: "BeneficiarieServiceForm", params: { beneficiarie: beneficiary, intervention: data.item } })}
+                _pressed={{ opacity: 0.5 }}
+            >
+                <Icon as={MaterialIcons} name="mode-edit" size={6} color="gray.200" />
+            </Pressable>
+        </HStack>
+
+    );
+
     return (
         <>
             {services?.length > 0 ?
@@ -78,6 +87,7 @@ const ServicesView: React.FC = ({ route }: any) => {
                     <SwipeListView
                         data={services}
                         renderItem={renderItem}
+                        renderHiddenItem={renderHiddenItem}
                         rightOpenValue={-80}
                         previewRowKey={'0'}
                         previewOpenValue={-40}
