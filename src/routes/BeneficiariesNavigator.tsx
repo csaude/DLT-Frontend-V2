@@ -3,7 +3,7 @@ import {Text} from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import BeneficiariesListScreen from '../screens/Beneficiarias';
 import BeneficiariesViewStack from '../screens/Beneficiarias/components/BeneficiariesViewStack';
-import BeneficiarieServiceForm from '../screens/Beneficiarias/components/intervention';
+import BeneficiarieServiceForm from '../screens/Beneficiarias/components/BeneficiarieServiceForm';
 import ReferenceForm from '../screens/References/components/ReferenceForm';
 import BeneficiaryForm from '../screens/Beneficiarias/components/BeneficiaryForm';
 
