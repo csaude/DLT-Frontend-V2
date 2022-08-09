@@ -12,15 +12,16 @@ import { SwipeListView } from 'react-native-swipe-list-view';
 import ModalSelector from 'react-native-modal-selector-searchable';
 import StepperButton from '../../Beneficiarias/components/StapperButton';
 import styles from './styles';
+import moment from 'moment';
 
 const ReferenceForm: React.FC = ({ route }: any) => {
 
     const {
         beneficiary,
+        references,
         userId,
         refs
     } = route.params;
-    // console.log(userId);
 
     const [errors, setErrors] = useState(false);
     const [partners, setPartners] = useState<any>([]);
@@ -67,14 +68,14 @@ const ReferenceForm: React.FC = ({ route }: any) => {
     });
 
     const onNextStep = () => {
-        /*const errorsList = validate(formik.values);
+        const errorsList = validate(formik.values);
         const hasErrors = JSON.stringify(errorsList) !== '{}';
 
         if (hasErrors) {
             setErrors(true);
         } else {
             setErrors(false);
-        }*/
+        }
     };
 
     const validate = (values: any) => {
@@ -142,9 +143,6 @@ const ReferenceForm: React.FC = ({ route }: any) => {
     }
 
     const handleSubmit = async (values?: any) => {
-        console.log(formik.values);
-        console.log(referServices);
-        //console.log(getNotaRef());
 
         const beneficiaryId = beneficiary.online_id ? beneficiary.online_id : beneficiary.id;
 
@@ -163,27 +161,35 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                 ref.remarks = formik.values.description
                 ref.status_ref = 0
                 ref.status = '1'
-                ref.created_by = userId
+                ref.created_by = userId,
+                ref.date_created = moment(new Date()).format('YYYY-MM-DD')
             });
 
             return newReference;
         });
-        console.log(savedR._raw.id);
 
         await database.write(async () => {
-           referServices.forEach(async (element) => {
+            referServices.forEach(async (element) => {
                 const newRefService = await database.get('references_services').create((refServ: any) => {
                     refServ.reference_id = savedR._raw.id
                     refServ.service_id = element.online_id
                     refServ.status = '1'
                 });
-                console.log(newRefService);
             });
 
         });
 
+        const newReferencesMap = [savedR._raw, ...references];
 
-        navigationRef.goBack();
+        //navigationRef.goBack();
+        navigate({
+            name: 'Referencias',
+            params: {
+                beneficiary: beneficiary,
+                references: newReferencesMap
+            },
+            merge: true,
+        });
     }
 
     const onRemoveService = (value: any) => {
