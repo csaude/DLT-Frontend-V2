@@ -3,11 +3,11 @@ import { Badge, Button, Steps, Row, Col, Input, message, InputNumber, Form, Date
 import './index.css';
 import moment from 'moment';
 import { allPartnersByType} from '@app/utils/partners';
-import { query, userById, allUsesByUs } from '@app/utils/users';
+import { SearchOutlined, EditOutlined, PlusOutlined, EyeOutlined } from '@ant-design/icons';
+import { query as queryUser,userById, allUsesByUs } from '@app/utils/users';
 import { allUs } from '@app/utils/uSanitaria';
-import { query  as queryUser} from '@app/utils/users';
 import { query as queryBeneficiary } from "@app/utils/beneficiary";
-import InterventionForm from './InterventionForm';
+import InterventionRefForm from './InterventionRefForm';
 import { addSubService, SubServiceParams } from '@app/utils/service'
 
 const { Option } = Select;
@@ -25,16 +25,20 @@ const options = [
 
 const StepReference = ({ form, beneficiary }: any) => {
 
-    const selectedIntervention = beneficiary?.record;
+    const selectedIntervention = beneficiary?.beneficiariesInterventionses;
     const serviceType = selectedIntervention?.subServices?.service.serviceType;
+
+    // console.log(beneficiary);
+    // console.log("==============================================================");
+    // console.log(form);
 
     const [partners, setPartners] = React.useState<any>(undefined);
     const [users, setUsers] = React.useState<any>(undefined);
-    const [user, setUser] = React.useState();
+    const [user, setUser] = React.useState<any>();
     const [us, setUs] = React.useState<any>(undefined);
-    const selectedReference = beneficiary?.record;
+    const selectedReference = form;
     const partner_type = selectedReference?.serviceType;
-    let userId = localStorage.getItem('user');
+    const userId = localStorage.getItem('user');
 
     const [visible, setVisible] = useState<boolean>(false);
     const [reference, setReference] = useState<any>();
@@ -42,20 +46,23 @@ const StepReference = ({ form, beneficiary }: any) => {
     const [interventions, setInterventions] = useState<any>();
     const [selectedService, setSelectedService] = useState<any>();
 
+    const showDrawer = (record: any) => {
+
+        setVisible(true);
+        // setSelectedBeneficiary(record);
+    };
 
     const selectedOption = options?.filter(o => o.value === selectedIntervention?.service_type+'').map(filteredOption => (filteredOption.value))[0];
-
-    const RequiredFieldMessage = "Obrigatório!";
 
     useEffect(() => {
 
       const fetchData = async () => {
-        const data = await queryUser(selectedReference.createdBy);
-        const data1 = await queryBeneficiary(selectedReference.beneficiaries.id);
+        const data = await queryUser(beneficiary?.createdBy);
+        const data1 = await queryBeneficiary(beneficiary.id);
 
         setUser(data);
         setInterventions(data1.beneficiariesInterventionses);
-        setServices(selectedReference.referencesServiceses);
+        setServices(selectedReference?.referencesServiceses);
         setReference(selectedReference);
       } 
   
@@ -67,26 +74,6 @@ const StepReference = ({ form, beneficiary }: any) => {
     
       }, []);  
 
-      const onAddIntervention = (record: any) => {
-        // form.resetFields();
-        setVisible(true);
-        setSelectedService(record);
-      };
-  
-      const onChangeTipoServico = async (value:any) => {
-          const data = await allPartnersByType(value);
-          setPartners(data);
-      }
-      
-      const onChangeOrganization = async (value:any) => {
-        const data = await allUs(value);
-        setUs(data);
-      }
-  
-      const onChangeUs = async (value:any) => {
-        const data = await allUsesByUs(value);
-        setUsers(data);
-      }
       const onSubmit = async () => {
        
         form.validateFields().then(async (values) => {
@@ -100,7 +87,7 @@ const StepReference = ({ form, beneficiary }: any) => {
                 beneficiaries: {
                     id: '' + reference.beneficiaries.id
                 },
-                subServices: {
+                subServices: { 
                     id: values.subservice
                 },
                 date: moment(values.dataBeneficio).format('YYYY-MM-DD'),
@@ -177,16 +164,6 @@ const StepReference = ({ form, beneficiary }: any) => {
                   <Text type="success" >Atendido </Text>
           ,
       },
-      { title: 'Atender', 
-          dataIndex: '', 
-          key: 'action',
-          render: (text, record) => (
-            <Space>
-              {/* <Button type="link" icon={<EditOutlined />} onClick={() => onAddIntervention(record) } >
-              </Button> */}
-            </Space>
-          ),
-      }
   ];
 
   const interventionColumns = [
@@ -222,7 +199,7 @@ const StepReference = ({ form, beneficiary }: any) => {
                 <Row gutter={24}>
                     <Col className="gutter-row" span={24}>
                         <Card 
-                            title={reference?.referenceNote + ' | ' + reference?.beneficiaries.neighborhood.locality.district.code + '/' + reference?.beneficiaries.nui}
+                            title={reference?.referenceNote + ' | ' + beneficiary?.neighborhood.locality.district.code + '/' + beneficiary?.nui}
                             bordered={true}
                             headStyle={{ background: "#17a2b8"}}
                             bodyStyle={{ paddingLeft: "10px", paddingRight: "10px", height: "120px" }}
@@ -243,10 +220,10 @@ const StepReference = ({ form, beneficiary }: any) => {
                                 }}/>
                             <Row>
                                 <Col className="gutter-row" span={3}>{moment(reference?.dateCreated).format('YYYY-MM-DD HH:MM')}</Col>
-                                {/* <Col className="gutter-row" span={3}>{user?.name+' '+user?.surname}</Col>
+                                <Col className="gutter-row" span={3}>{user?.name+' '+user?.surname}</Col>
                                 <Col className="gutter-row" span={3}>{user?.phoneNumber}</Col>
                                 <Col className="gutter-row" span={3}>{reference?.bookNumber}</Col>
-                                <Col className="gutter-row" span={3}>{user?.partners.name}</Col> */}
+                                <Col className="gutter-row" span={3}>{user?.partners.name}</Col>
                                 <Col className="gutter-row" span={3}>{reference?.referenceCode}</Col>
                                 <Col className="gutter-row" span={3}>{reference?.serviceType==1? 'Serviços Clínicos': 'Serviços Comunitários'}</Col>
                                 {/* <Col className="gutter-row" span={3}>{reference?.status==0?  
@@ -278,6 +255,9 @@ const StepReference = ({ form, beneficiary }: any) => {
                                 dataSource={services}
                                 pagination={false}
                             />
+                                <Button type="primary" onClick={() => showDrawer(user)} icon={<PlusOutlined />}  >
+                                    Intervenção
+                                </Button>
                         </Card>
                     </Col>
                     <Col className="gutter-row" span={12}>
@@ -320,7 +300,7 @@ const StepReference = ({ form, beneficiary }: any) => {
                 }
             >
                 <Form form={form} layout="vertical" onFinish={() => onSubmit()}> 
-                    <InterventionForm record={selectedService} />
+                    <InterventionRefForm record={selectedService} />
                 </Form> 
             </Drawer>                
         </div>

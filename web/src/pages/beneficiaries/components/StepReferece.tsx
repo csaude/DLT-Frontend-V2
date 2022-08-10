@@ -18,40 +18,46 @@ const options = [
 
 const StepReference = ({ form, beneficiary }: any) => {
 
-    const selectedIntervention = beneficiary?.record;
+    const selectedIntervention = beneficiary;
     const serviceType = selectedIntervention?.subServices?.service.serviceType;
 
     const [partners, setPartners] = React.useState<any>(undefined);
     const [users, setUsers] = React.useState<any>(undefined);
-    const [user, setUser] = React.useState();
+    const [user, setUser] = React.useState<any>();
     const [us, setUs] = React.useState<any>(undefined);
     const selectedReference = beneficiary;
     const partner_type = selectedReference?.serviceType;
     let userId = localStorage.getItem('user');
 
-    console.log(beneficiary);
+    // console.log(beneficiary);
 
-
-    const selectedOption = options?.filter(o => o.value === selectedIntervention?.service_type+'').map(filteredOption => (filteredOption.value))[0];
-
-    const RequiredFieldMessage = "Obrigatório!";
-
+    const selectedOption = options?.filter(o => o.value === serviceType?.service_type+'').map(filteredOption => (filteredOption.value))[0];
+   
     useEffect(() => {
 
         const fetchData = async () => {
-          const data = await userById(userId);
-          setUser(data);
-          console.log(user);
-        } 
+          const loggedUser = await query(localStorage.user);
+          form.setFieldsValue({createdBy: loggedUser?.name+' '+loggedUser?.surname});
+          setUser(loggedUser);
+        }   
   
-  
-        if(selectedIntervention !== undefined){
-  
-          fetchData().catch(error => console.log(error));
-        }    
+        fetchData().catch(error => console.log(error));
     
-      }, []);  
-  
+      }, []); 
+      
+      console.log(user);
+
+      const getNotaRef = () => {
+        return 'REFDR' + String(userId).padStart(3, '0') + '0' + String(500 + 1).padStart(3, '0');
+    }
+
+    const getUser = async () => {
+      const data = await userById(userId);
+      setUser(data);
+      const name = user?.name;
+      return name;
+  }
+      
       const onChangeTipoServico = async (value:any) => {
           const data = await allPartnersByType(value);
           setPartners(data);
@@ -72,12 +78,12 @@ const StepReference = ({ form, beneficiary }: any) => {
             <Row gutter={8}>
               <Col span={8}>
                 <Form.Item
-                  name="reference_note"
+                  name="referenceNote"
                   label="Nota Referência"
                   rules={[{ required: true, message: 'Obrigatório' }]}
-                  initialValue={selectedReference?.reference_note}
+                  initialValue={getNotaRef()}
                 >
-                  <Input placeholder="Nota Referência"/>
+                  <Input placeholder="Nota Referência" disabled/>
                 </Form.Item>
               </Col>
               <Col span={8}>
@@ -92,11 +98,10 @@ const StepReference = ({ form, beneficiary }: any) => {
               </Col>
               <Col span={8}>
                 <Form.Item
-                  name="refer_to"
+                  name="createdBy"
                   label="Referente"
                   rules={[{ required: true, message: 'Obrigatório' }]}
-                  initialValue={userId}
-                >
+                >    
                   <Input placeholder="Referente" disabled/>
                 </Form.Item>
               </Col>
@@ -104,7 +109,7 @@ const StepReference = ({ form, beneficiary }: any) => {
             <Row gutter={8}>
               <Col span={8}>
                 <Form.Item
-                  name="service_type"
+                  name="serviceType"
                   label="Referir Para"
                   rules={[{ required: true, message: 'Obrigatório' }]}
                   initialValue={selectedOption}
@@ -117,7 +122,7 @@ const StepReference = ({ form, beneficiary }: any) => {
               </Col>
               <Col span={8}>
                 <Form.Item
-                  name="book_number"
+                  name="bookNumber"
                   label="Nº do Livro"
                   rules={[{ required: true, message: 'Obrigatório' }]}
                   initialValue={selectedReference?.book_number}
@@ -127,7 +132,7 @@ const StepReference = ({ form, beneficiary }: any) => {
               </Col>
               <Col span={8}>
                 <Form.Item
-                  name="reference_code"
+                  name="referenceCode"
                   label="Código de Referência no livro"
                   rules={[{ required: true, message: 'Obrigatório' }]}
                   initialValue={selectedReference?.reference_code}
@@ -183,7 +188,7 @@ const StepReference = ({ form, beneficiary }: any) => {
             <Row gutter={8}>
               <Col span={8}>
                 <Form.Item
-                  name="notify_to"
+                  name="referTo"
                   label="Notificar ao"
                   rules={[{ required: true, message: 'Obrigatório' }]}
                   initialValue={selectedIntervention===undefined? undefined : selectedIntervention?.subServices?.id+''}
