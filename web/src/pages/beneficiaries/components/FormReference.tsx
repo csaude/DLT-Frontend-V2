@@ -22,12 +22,10 @@ const FormReference = ({ form, beneficiary, modalVisible, handleAdd, handleUpdat
 
             const inc = current + 1;
             setCurrent(inc);
-            current === 0 ? setFirstStepValues(values) : setSecondStepValues(values);
+            setFirstStepValues(values);
         }).catch(error => {
 
         });
-
-
     }
 
     const prev = () => {
@@ -62,11 +60,7 @@ const FormReference = ({ form, beneficiary, modalVisible, handleAdd, handleUpdat
         },
         {
             title: ' Solicitar Intervenções ',
-            content: <StepViewReferece form={form} beneficiary={beneficiary} />,
-        },
-        {
-            title: ' Referências',
-            content: <StepViewReferece form={form} beneficiary={beneficiary} />,
+            content: <StepViewReferece reference={firstStepValues} beneficiary={beneficiary} />,
         }
     ];
 
@@ -77,28 +71,23 @@ const FormReference = ({ form, beneficiary, modalVisible, handleAdd, handleUpdat
                 bodyStyle={{ overflowY: 'auto', maxHeight: 'calc(100vh - 300px)' }}
                 centered
                 destroyOnClose
-                title={` Referências Dreams *`}
+                title={` Referências Dreams`}
                 visible={modalVisible}
                 onCancel={() => handleModalRefVisible(false)}
                 footer={<div className="steps-action">
-                    {(current === 1 || (current === 2 && beneficiary != undefined)) && (
+                    {( (current > 0 && beneficiary != undefined)) && (
                         <Button style={{ marginLeft: 8 }} onClick={() => prev()}>
                             Anterior
                         </Button>
                     )}
-                    {(current < steps.length - 2 || (current === 1 && beneficiary != undefined)) && (
+                    {((current === 0 && beneficiary != undefined)) && (
                         <Button type="primary" onClick={() => next()}>
                             Próximo
                         </Button>
                     )}
-                    {(current === steps.length - 2 && beneficiary === undefined)  && (
+                    {(current === 1 && beneficiary != undefined)  && (
                         <Button type="primary" onClick={() => onSubmit()}>
                             Salvar
-                        </Button>
-                    )}
-                    {(current === steps.length - 1) && (
-                        <Button type="primary" onClick={() => onUpdate()}>
-                            Actualizar
                         </Button>
                     )}
 

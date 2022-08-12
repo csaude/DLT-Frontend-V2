@@ -17,7 +17,6 @@ const ForgotPassword = () => {
   const [isAuthLoading, setAuthLoading] = useState(false);
   const [t] = useTranslation();
   const [passwordType, setPasswordType] = useState("password");
-  // .matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\[email protected]$!%*#?&]{8,}$/, "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character")
 
   const navigate = useNavigate();
 
@@ -31,7 +30,6 @@ const ForgotPassword = () => {
       toast.error( 'Failed');
     }
   };
-
   
   const {handleChange, values, handleSubmit, touched, errors} = useFormik({
     initialValues: {
@@ -96,7 +94,7 @@ const ForgotPassword = () => {
                   id="username"
                   name="username"
                   type=""
-                  placeholder="Username"
+                  placeholder="Insira o Username"
                   onChange={handleChange}
                   value={values.username}
                   isValid={touched.username && !errors.username}
@@ -122,7 +120,7 @@ const ForgotPassword = () => {
                   id="password"
                   name="password"
                   type={passwordType}
-                  placeholder="New Password"
+                  placeholder="Insira a nova Password"
                   onChange={handleChange}
                   value={values.password}
                   isValid={touched.password && !errors.password}
@@ -153,7 +151,7 @@ const ForgotPassword = () => {
                   id="rePassword"
                   name="rePassword"
                   type={passwordType}
-                  placeholder="Confirm Password"
+                  placeholder="Repita a nova password"
                   onChange={handleChange}
                   value={values.rePassword}
                   isValid={touched.rePassword && !errors.rePassword}

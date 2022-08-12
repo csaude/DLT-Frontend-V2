@@ -14,6 +14,7 @@ import { getEntryPoint } from '@app/models/User';
 import { useNavigate } from 'react-router-dom';
 import Item from 'antd/lib/list/Item';
 import ViewReferral from './components/View';
+import FormReference from '../beneficiaries/components/FormReference';
 
 const { Text } = Typography;
 
@@ -57,6 +58,11 @@ const ReferenceList: React.FC = () => {
     const handleViewModalVisible = (flag?: boolean, record?: any) => {
         setReference(record);
         setModalVisible(!!flag);
+    }
+
+    const handleFormModalVisible = (flag?: boolean, record?: any) => {
+        setReference(record);
+        setReferenceModalVisible(!!flag);
     }
 
     const handleAdd = () => {
@@ -369,7 +375,7 @@ const ReferenceList: React.FC = () => {
               <Space>
                 <Button type="primary" icon={<EyeOutlined />} onClick={() =>handleViewModalVisible(true, record)} >
                 </Button>
-                <Button type="primary" icon={<EditOutlined />} onClick={() => { record } } >
+                <Button type="primary" icon={<EditOutlined />} onClick={() =>handleFormModalVisible(true, record) } >
                 </Button>
               </Space>
             ),
@@ -393,6 +399,10 @@ const ReferenceList: React.FC = () => {
                 {...parentMethods}
                 reference={reference}
                 modalVisible={modalVisible} />
+            <FormReference
+                {...parentMethods}
+                reference={reference}
+                modalVisible={false} />
         </>
     );
 }

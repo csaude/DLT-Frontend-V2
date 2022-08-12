@@ -7,8 +7,7 @@ import { SearchOutlined, EditOutlined, PlusOutlined, EyeOutlined } from '@ant-de
 import { query as queryUser,userById, allUsesByUs } from '@app/utils/users';
 import { allUs } from '@app/utils/uSanitaria';
 import { query as queryBeneficiary } from "@app/utils/beneficiary";
-import InterventionRefForm from './InterventionRefForm';
-import { addSubService, SubServiceParams } from '@app/utils/service'
+import { addSubService, queryByType, SubServiceParams } from '@app/utils/service'
 
 const { Option } = Select;
 const { Step } = Steps;
@@ -16,21 +15,16 @@ const { TextArea } = Input;
 
 const { Text } = Typography;
 
-const areaServicos = [{ "id": 'CLINIC', "name": "Clinico" }, { "id": 'COMMUNITY', "name": "Comunitários" }];
 const options = [
   { label: 'US', value: '1' },
   { label: 'CM', value: '2' },
   { label: 'ES', value: '3' },
 ];
 
-const StepReference = ({ form, beneficiary }: any) => {
+const StepReference = ({ form, beneficiary, reference }: any) => {
 
     const selectedIntervention = beneficiary?.beneficiariesInterventionses;
     const serviceType = selectedIntervention?.subServices?.service.serviceType;
-
-    // console.log(beneficiary);
-    // console.log("==============================================================");
-    // console.log(form);
 
     const [partners, setPartners] = React.useState<any>(undefined);
     const [users, setUsers] = React.useState<any>(undefined);
@@ -41,8 +35,8 @@ const StepReference = ({ form, beneficiary }: any) => {
     const userId = localStorage.getItem('user');
 
     const [visible, setVisible] = useState<boolean>(false);
-    const [reference, setReference] = useState<any>();
     const [services, setServices] = useState<any>();
+    const [servicesList, setServicesList] = useState<any>();
     const [interventions, setInterventions] = useState<any>();
     const [selectedService, setSelectedService] = useState<any>();
 
@@ -60,10 +54,15 @@ const StepReference = ({ form, beneficiary }: any) => {
         const data = await queryUser(beneficiary?.createdBy);
         const data1 = await queryBeneficiary(beneficiary.id);
 
+        if(reference !== undefined){
+            const getAllData = await queryByType(reference?.serviceType);
+            setServicesList(getAllData);
+        }
+
         setUser(data);
         setInterventions(data1.beneficiariesInterventionses);
         setServices(selectedReference?.referencesServiceses);
-        setReference(selectedReference);
+        // setReference(selectedReference);
       } 
   
   
@@ -72,7 +71,8 @@ const StepReference = ({ form, beneficiary }: any) => {
           fetchData().catch(error => console.log(error));
         }    
     
-      }, []);  
+      }, [reference]);  
+
 
       const onSubmit = async () => {
        
@@ -107,7 +107,7 @@ const StepReference = ({ form, beneficiary }: any) => {
             const ref = data.references.filter(r => r.id == selectedReference.id);
             
             if (ref.length > 0) {
-                setReference(ref[0]);
+                // setReference(ref[0]);
                 setServices(ref[0].referencesServiceses)
             }
 
@@ -206,13 +206,12 @@ const StepReference = ({ form, beneficiary }: any) => {
                         >
                             <Row>
                                 <Col className="gutter-row" span={3}><b>Data Registo</b></Col>
-                                <Col className="gutter-row" span={3}><b>Referente</b></Col>
+                                <Col className="gutter-row" span={5}><b>Referente</b></Col>
                                 <Col className="gutter-row" span={3}><b>Contacto</b></Col>
                                 <Col className="gutter-row" span={3}><b>No do Livro</b></Col>
-                                <Col className="gutter-row" span={3}><b>Organização</b></Col>
+                                <Col className="gutter-row" span={4}><b>Organização</b></Col>
                                 <Col className="gutter-row" span={3}><b>Cod Referências</b></Col>
                                 <Col className="gutter-row" span={3}><b>Tipo Serviço</b></Col>
-                                <Col className="gutter-row" span={3}><b>Status</b></Col>
                             </Row>
                             <hr style={{
                                 background: 'gray',
@@ -220,18 +219,13 @@ const StepReference = ({ form, beneficiary }: any) => {
                                 }}/>
                             <Row>
                                 <Col className="gutter-row" span={3}>{moment(reference?.dateCreated).format('YYYY-MM-DD HH:MM')}</Col>
-                                <Col className="gutter-row" span={3}>{user?.name+' '+user?.surname}</Col>
+                                <Col className="gutter-row" span={5}>{user?.name+' '+user?.surname}</Col>
                                 <Col className="gutter-row" span={3}>{user?.phoneNumber}</Col>
                                 <Col className="gutter-row" span={3}>{reference?.bookNumber}</Col>
-                                <Col className="gutter-row" span={3}>{user?.partners.name}</Col>
+                                <Col className="gutter-row" span={4}>{user?.partners.name}</Col>
                                 <Col className="gutter-row" span={3}>{reference?.referenceCode}</Col>
-                                <Col className="gutter-row" span={3}>{reference?.serviceType==1? 'Serviços Clínicos': 'Serviços Comunitários'}</Col>
-                                {/* <Col className="gutter-row" span={3}>{reference?.status==0?  
-                                                                        <Text type="danger" >Pendente </Text> 
-                                                                    : reference?.status==1? 
-                                                                        <Text type="warning" >Atendida Parcialmente </Text>
-                                                                    : <Text type="success" >Atendida </Text>}
-                                </Col> */}
+                                <Col className="gutter-row" span={3}>{reference?.serviceType=='CLINIC'? 'Serviços Clínicos': 'Serviços Comunitários'}</Col>
+                            
                             </Row>
                         </Card>
                     </Col>
@@ -248,6 +242,10 @@ const StepReference = ({ form, beneficiary }: any) => {
                             bordered={true}
                             headStyle={{ background: "#17a2b8"}}
                             bodyStyle={{ paddingLeft: "10px", paddingRight: "10px" }}
+                            extra={
+                                <Button type="primary" onClick={() => showDrawer(user)} icon={<PlusOutlined />}  >
+                                    Intervenção
+                                </Button>}
                         >
                             <Table
                                 rowKey="dateCreated" //{( record? ) => record.id.serviceId}
@@ -255,9 +253,6 @@ const StepReference = ({ form, beneficiary }: any) => {
                                 dataSource={services}
                                 pagination={false}
                             />
-                                <Button type="primary" onClick={() => showDrawer(user)} icon={<PlusOutlined />}  >
-                                    Intervenção
-                                </Button>
                         </Card>
                     </Col>
                     <Col className="gutter-row" span={12}>
@@ -268,7 +263,8 @@ const StepReference = ({ form, beneficiary }: any) => {
                             bodyStyle={{ paddingLeft: "10px", paddingRight: "10px" }}
                         >
                             <Table
-                                rowKey="dateCreated" //{( record? ) => record.id.subServiceId}
+                                rowKey={( record? ) => `${record.id.subServiceId}${record.id.date}`}
+                                
                                 columns={interventionColumns}
                                 // expandable={{
                                 //     expandedRowRender: record =>  <div style={{border:"2px solid #d9edf7", backgroundColor:"white"}}><ViewBenefiaryPanel beneficiary={record} columns={interventionColumns} /></div>,
@@ -299,9 +295,34 @@ const StepReference = ({ form, beneficiary }: any) => {
                     </Space>
                 }
             >
-                <Form form={form} layout="vertical" onFinish={() => onSubmit()}> 
-                    <InterventionRefForm record={selectedService} />
-                </Form> 
+                    <>
+                        <Row gutter={8}>              
+                        <Col span={8}>
+                            <Form.Item
+                            name="service"
+                            label="Serviço Referido"
+                            rules={[{ required: true, message: 'Obrigatório' }]}
+                            // initialValue={selectedIntervention===undefined? undefined : selectedIntervention?.subServices?.service.id+''}
+                            >
+                            <Select placeholder="Select Serviço" >
+                                    {servicesList?.map(item => (
+                                        <Option key={item.id}>{item.name}</Option>
+                                    ))}
+                            </Select>
+                            </Form.Item>
+                        </Col>
+                        
+                        <Col span={8}>
+                            <Form.Item
+                            name="outros"
+                            label="Observações"
+                            // initialValue={selectedIntervention?.remarks}
+                            >
+                            <TextArea rows={2} placeholder="Insira as Observações" maxLength={50} />
+                            </Form.Item>
+                        </Col>
+                        </Row>
+                    </>  
             </Drawer>                
         </div>
     </>
