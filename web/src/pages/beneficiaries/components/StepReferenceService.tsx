@@ -21,7 +21,7 @@ const options = [
   { label: 'ES', value: '3' },
 ];
 
-const StepReference = ({ form, beneficiary, reference }: any) => {
+const StepReferenceService = ({ form, reference, beneficiary }: any) => {
 
     const selectedIntervention = beneficiary?.beneficiariesInterventionses;
     const serviceType = selectedIntervention?.subServices?.service.serviceType;
@@ -35,7 +35,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
     const userId = localStorage.getItem('user');
 
     const [visible, setVisible] = useState<boolean>(false);
-    const [services, setServices] = useState<any>();
+    const [services, setServices] = useState<any>([]);
     const [servicesList, setServicesList] = useState<any>();
     const [interventions, setInterventions] = useState<any>();
     const [selectedService, setSelectedService] = useState<any>();
@@ -43,7 +43,6 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
     const showDrawer = (record: any) => {
 
         setVisible(true);
-        // setSelectedBeneficiary(record);
     };
 
     const selectedOption = options?.filter(o => o.value === selectedIntervention?.service_type+'').map(filteredOption => (filteredOption.value))[0];
@@ -61,107 +60,56 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
 
         setUser(data);
         setInterventions(data1.beneficiariesInterventionses);
-        setServices(selectedReference?.referencesServiceses);
-        // setReference(selectedReference);
       } 
   
-  
-        if(selectedIntervention !== undefined){
+          if(selectedIntervention !== undefined){
   
           fetchData().catch(error => console.log(error));
         }    
     
       }, [reference]);  
 
-
-      const onSubmit = async () => {
+      const onAddService = () => {
+        const newServices = [selectedService, ...services];
+        setServices(newServices);
+        setVisible(false);
+        setSelectedService(undefined);
+        form.setFieldValue('service', '');
+        form.setFieldValue('outros', '');
+      }
        
-        form.validateFields().then(async (values) => {
-            
-            let payload: SubServiceParams = {
-                id: {
-                    beneficiaryId: reference.beneficiaries.id,
-                    subServiceId: values.subservice,
-                    date: moment(values.dataBeneficio).format('YYYY-MM-DD'),
-                },
-                beneficiaries: {
-                    id: '' + reference.beneficiaries.id
-                },
-                subServices: { 
-                    id: values.subservice
-                },
-                date: moment(values.dataBeneficio).format('YYYY-MM-DD'),
-                result: "",
-                us: { id: values.location},
-                activistId: localStorage.user,
-                entryPoint: values.entryPoint,
-                provider: values.provider,
-                remarks: values.outros,
-                status: "1",
-                createdBy: localStorage.user
-            };
-
-            const { data } = await addSubService(payload);
-            
-            setInterventions(interventions => [...interventions, data.intervention]);
-            const ref = data.references.filter(r => r.id == selectedReference.id);
-            
-            if (ref.length > 0) {
-                // setReference(ref[0]);
-                setServices(ref[0].referencesServiceses)
-            }
-
-            message.success({
-                content: 'Registado com Sucesso!', className: 'custom-class',
-                style: {
-                    marginTop: '10vh',
-                }
-            });
-
-            setVisible(false);
-            form.resetFields();
-           
-        })
-            .catch(error => {
-                message.error({
-                    content: 'Não foi possivel associar a Intervenção!', className: 'custom-class',
-                    style: {
-                        marginTop: '10vh',
-                    }
-                });
-            });
-
-    };   
+      const onChangeServico = async (value:any) => { 
+        let serv = servicesList.filter(item => {return item.id == value})[0];
+        setSelectedService(serv);
+    }
       
     const onClose = () => {
         setVisible(false);
+        setSelectedService(undefined);
+        form.setFieldValue('service', '');
+        form.setFieldValue('outros', '');        
     };
 
 
     const servicesColumns = [
       { title: '#', 
-          dataIndex: '', 
+          dataIndex: 'order', 
           key: 'order',
           render: (text, record) => services.indexOf(record) + 1,
       },
-      { title: 'Cod Referência', 
-          dataIndex: 'date', 
-          key: 'date',
-          render: (text, record) => reference?.referenceCode
-      },
+     
       { title: 'Serviço', 
           dataIndex: '', 
           key: 'service',
-          render: (text, record)  => record.services.name,
+          render: (text, record)  => record.name,
       },
-      { title: 'Status', 
+      { title: 'Accao', 
           dataIndex: '', 
           key: 'intervention',
           render: (text, record)  => 
-              (record.status !=2 ) ? 
-                  <Text type="danger" >Pendente </Text>
-              : 
-                  <Text type="success" >Atendido </Text>
+             
+                  <Text type="danger" >Remover </Text>
+              
           ,
       },
   ];
@@ -248,7 +196,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
                                 </Button>}
                         >
                             <Table
-                                rowKey="dateCreated" //{( record? ) => record.id.serviceId}
+                                rowKey="id" //{( record? ) => record.id.serviceId}
                                 columns={servicesColumns}
                                 dataSource={services}
                                 pagination={false}
@@ -279,7 +227,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
                 </Row>
             </Card>
             <Drawer
-                title="Intervenções Dreams"
+                title="Adicionar Serviço Dreams"
                 placement="top"
                 closable={false}
                 onClose={onClose}
@@ -289,7 +237,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
                 extra={
                     <Space>
                         <Button onClick={onClose}>Cancel</Button>
-                        <Button htmlType="submit" onClick={() => onSubmit()} type="primary">
+                        <Button htmlType="submit" onClick={() => onAddService()} type="primary">
                             Submit
                         </Button>
                     </Space>
@@ -304,7 +252,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
                             rules={[{ required: true, message: 'Obrigatório' }]}
                             // initialValue={selectedIntervention===undefined? undefined : selectedIntervention?.subServices?.service.id+''}
                             >
-                            <Select placeholder="Select Serviço" >
+                            <Select placeholder="Select Serviço" onChange={onChangeServico}>
                                     {servicesList?.map(item => (
                                         <Option key={item.id}>{item.name}</Option>
                                     ))}
@@ -328,4 +276,4 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
     </>
     );
 }
-export default StepReference;
+export default StepReferenceService;

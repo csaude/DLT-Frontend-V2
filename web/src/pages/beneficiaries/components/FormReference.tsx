@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { Badge, Button, Steps, Row, Col, Input, message, Space, Form, Tabs, Modal, DatePicker, Checkbox, Select, Radio, Divider } from 'antd';
 import './index.css';
 import StepReference from './StepReferece';
-import StepViewReferece from './StepViewReferece';
+import StepReferenceService from './StepReferenceService';
 import { add } from '@app/utils/reference';
 import moment from 'moment';
 import { stringify } from 'qs';
@@ -60,7 +60,7 @@ const FormReference = ({ form, beneficiary, modalVisible, handleAdd, handleUpdat
         },
         {
             title: ' Solicitar Intervenções ',
-            content: <StepViewReferece reference={firstStepValues} beneficiary={beneficiary} />,
+            content: <StepReferenceService form={form}  reference={firstStepValues} beneficiary={beneficiary} />,
         }
     ];
 
