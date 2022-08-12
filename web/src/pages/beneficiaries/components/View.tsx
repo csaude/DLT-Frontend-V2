@@ -289,7 +289,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
                     }
                 >
                     <Table
-                        rowKey="dateCreated"
+                        rowKey={( record? ) => `${record.id.subServiceId}${record.id.date}`}
                         pagination={false}
                         columns={interventionColumns}
                         dataSource={interventions}
