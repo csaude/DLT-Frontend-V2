@@ -1,6 +1,9 @@
 import { Card, Table, message, Button, Space, Badge, Form, Input } from 'antd';
 import React, { Fragment, useEffect, useState } from 'react';
 import { query } from '../../utils/users';
+import {allPartners} from '@app/utils/partners';
+import {allProfiles} from '@app/utils/profiles';
+import {allProvinces} from '@app/utils/locality';
 import { UserModel } from '../../models/User';
 import { SearchOutlined, PlusOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
@@ -16,12 +19,22 @@ const UsersList: React.FC = () => {
     const [ searchedColumn, setSearchedColumn ] = useState('');
     const [form] = Form.useForm();
 
+    const [ partners, setPartners] = useState<any[]>([]);
+    const [ profiles, setProfiles] = useState<any[]>([]);
+    const [ provinces, setProvinces] = useState<any[]>([]);
+
     let searchInput ;
 
     useEffect(() => {
         const fetchData = async () => {
             const data = await query();
+            const partners = await allPartners();
+            const profiles = await allProfiles();
+            const provinces = await allProvinces();
             setUsers(data);
+            setPartners(partners);
+            setProfiles(profiles);
+            setProvinces(provinces);
         }
 
         fetchData().catch(error => console.log(error));
@@ -40,6 +53,11 @@ const UsersList: React.FC = () => {
         setUsersModalVisible(true);
         setSelectedUser(record);
     };
+   
+    const filterObjects = data => formatter => data.map( item => ({
+        text: formatter(item),
+        value: formatter(item)
+    }));
 
     const getColumnSearchProps = (dataIndex:any) => ({
         filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
@@ -178,8 +196,16 @@ const UsersList: React.FC = () => {
 
     }
 
+    console.log(users);
+    console.log(profiles);
+
     const columns = [
-        { title: 'Nome de Utilizador', dataIndex: 'name', key: 'name',
+        { title: '#', 
+            dataIndex: '', 
+            key: 'order',
+            render: (text, record) => users.indexOf(record) + 1,
+        },
+        { title: 'Nome do Utilizador', dataIndex: 'name', key: 'name',
         render: (text, record) => (
             <div>
                 {record.name} {record.surname}
@@ -187,33 +213,88 @@ const UsersList: React.FC = () => {
         ), },
         { title: 'Username', dataIndex: 'username', key: 'username', ...getColumnSearchProps('username') },
         {
-            title: 'Ponto de Entrada', dataIndex: '', key: 'type',
-            render: (text, record) =>
-                (record.entryPoint === "1") ?
-                    "Unidade Sanitaria"
-                    :
-                    (record.entryPoint === "2") ?
-                        "Escola"
-                        :
-                        "Comunidade"
-
-        },
-        { title: 'Email', dataIndex: 'email', key: 'email' },
-        {
-            title: 'Parceiro', dataIndex: '', key: 'type',
-            render: (text, record) => record.partners?.name,
-        },
-        {
             title: 'Tipo de Utilizador', dataIndex: '', key: 'type',
             render: (text, record) => record.profiles.description,
+            filters: filterObjects(profiles)(i => i.description),
+            onFilter: (value, record) => record.profiles.description == value,
+            filterSearch: true,
         },
         {
-            title: 'Estado de Utilizador', dataIndex: '', key: 'status',
+            title: 'Províncias', dataIndex: '', key: 'provinces',
+            render: (text, record) => record.provinces.map(p => p.name+', '),
+            // filters: filterObjects(provinces)(i => i.name),
+            // onFilter: (value, record) => record.provinces.map(p => p.name+' ').includes(value),
+            // filterSearch: true,
+        },
+        {
+            title: 'Distritos', dataIndex: '', key: 'districts',
+            render: (text, record) => record.districts.map(d => d.name+', '),
+        },
+        {
+            title: 'Postos Administrativos', dataIndex: '', key: 'localities',
+            render: (text, record) => record.localities.map(l => l.name+', '),
+        },
+        {
+            title: 'Locais', dataIndex: '', key: 'us',
+            render: (text, record) => record.us.name,
+        },
+        {
+            title: 'Ponto de Entrada', 
+            dataIndex: 'record.entryPoint', 
+            key: 'record.entryPoint',
+            filters: [
+                {
+                    text: 'US',
+                    value: 1,
+                    },
+                    {
+                    text: 'ES',
+                    value: 2,
+                },
+                {
+                    text: 'CM',
+                    value: 3,
+                },
+            ],
+            onFilter: (value, record) => record.entryPoint == value,
+            filterSearch: true,
+            render: (text, record) =>
+                (record.entryPoint === "1") ?
+                    "US"
+                :
+                (record.entryPoint === "2") ?
+                    "ES"
+                    :
+                    "CM"
+
+        },
+        {
+            title: 'Organização', dataIndex: '', key: 'type',
+            render: (text, record) => record.partners?.name,
+            filters: filterObjects(partners)(i => i.name),
+            onFilter: (value, record) => record.partners.name == value,
+            filterSearch: true,
+        },
+        { title: 'Email', dataIndex: 'email', key: 'email' },
+        { title: 'Telefone', dataIndex: 'phoneNumber', key: 'phoneNumber' },
+        {
+            title: 'Estado', dataIndex: '', key: 'status',
+            filters: [
+                {
+                    text: 'Inactivo',
+                    value: 0,
+                },
+                {
+                    text: 'Activo',
+                    value: 1,
+                },
+            ],
+            onFilter: (value, record) => record.status == value,
             render: (text, record) => (
 
                 <Badge
                     className="site-badge-count-109"
-                    count={record.status == 1 ? 'activo' : 'Inactivo'}
+                    count={record.status == 1 ? 'Activo' : 'Inactivo'}
                     style={record.status == 1 ? { backgroundColor: '#52c41a' } :
                         { backgroundColor: '#f5222d' }
                     }
@@ -221,7 +302,7 @@ const UsersList: React.FC = () => {
             ),
         },
         {
-            title: 'Action',
+            title: 'Acção',
             dataIndex: '',
             key: 'x',
             render: (text, record) => (

@@ -60,13 +60,13 @@ const DadosReferenciaView: React.FC = ({ route }: any) => {
 
                                 <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}> Status: </Text>
                                     {
-                                        (reference.status === "0") ?
+                                        (reference.status === 0) ?
                                             "Pendente"
                                             :
-                                            (beneficiary.entry_point === "1") ?
+                                            (reference.status === 1) ?
                                             "Atendida Parcialmente"
                                             :
-                                            (beneficiary.entry_point === "2") ?
+                                            (reference.status === 2) ?
                                             "Atendida"
                                             :
                                             "Cancelada"
