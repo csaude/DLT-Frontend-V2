@@ -14,12 +14,10 @@ export interface UserModel {
     dateUpdated?: string,
     locality?: any,
     partners?: any,
-    profiles?: any,
-    us?: any
+    profiles?: any
 }
 
 export function getEntryPoint(value:any){
-//console.log(value);
   if(value == '1'){
     return "Unidade Sanitaria";
   } else if(value == '2') {

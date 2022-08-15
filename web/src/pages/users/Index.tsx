@@ -48,7 +48,6 @@ const UsersList: React.FC = () => {
     };
 
     const onEditUser = (record: any) => {
-        //console.log(record);
         form.resetFields();
         setUsersModalVisible(true);
         setSelectedUser(record);
@@ -149,7 +148,6 @@ const UsersList: React.FC = () => {
             user.status = values.status;
             user.partners = { "id": values.partners };
             user.profiles = { "id": values.profiles };
-            user.us = { "id": values.us };
             user.provinces = values.provinces?.map(item => (
                 { "id": item }
             ));
@@ -157,6 +155,9 @@ const UsersList: React.FC = () => {
                 { "id": item }
             ));
             user.localities = values.localities?.map(item => (
+                { "id": item }
+            ));
+            user.us = values.us?.map(item => (
                 { "id": item }
             ));
 
@@ -196,9 +197,6 @@ const UsersList: React.FC = () => {
 
     }
 
-    console.log(users);
-    console.log(profiles);
-
     const columns = [
         { title: '#', 
             dataIndex: '', 
@@ -236,7 +234,7 @@ const UsersList: React.FC = () => {
         },
         {
             title: 'Locais', dataIndex: '', key: 'us',
-            render: (text, record) => record.us.name,
+            render: (text, record) => record.us.map(u => u.name+' '),
         },
         {
             title: 'Ponto de Entrada', 

@@ -91,3 +91,20 @@ export async function queryNeighborhoodsByLocalities(payload?: NeighborhoodsFilt
     const res = await select(url);
     return res;
 }
+
+export async function queryUsByLocalities(payload?: NeighborhoodsFilter){
+    let url: string;
+
+    let dists = payload?.localities.map((v)=>{
+        return `localities=${v}`
+    });
+     const param = dists?.join('&');
+
+    if(param) {
+        url = '/api/localus?'.concat(param);
+    } else {
+        url = '/api/localus';
+    }
+    const res = await select(url);
+    return res;
+}

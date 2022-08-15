@@ -1,9 +1,9 @@
-import { Modal, message, Form, Input, Select, Button, Col, Row, DatePicker, Space, Radio, Divider, Checkbox } from 'antd';
+import { Modal, message, Form, Input, InputNumber, Select, Button, Col, Row, DatePicker, Space, Radio, Divider, Checkbox } from 'antd';
 import React, { Fragment, useEffect, useState } from 'react'
 import { allPartners } from '@app/utils/partners';
 import { allProfiles } from '@app/utils/profiles';
 import { allUs } from '@app/utils/uSanitaria';
-import { allProvinces, queryDistrictsByProvinces, queryLocalitiesByDistricts } from '@app/utils/locality';
+import { allProvinces, queryDistrictsByProvinces, queryLocalitiesByDistricts, queryUsByLocalities } from '@app/utils/locality';
 import { ok } from 'assert';
 
 const FormItem = Form.Item;
@@ -13,10 +13,13 @@ const { TextArea } = Input;
 const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) => {
     const [partners, setPartners] = useState<any>([]);
     const [profiles, setProfiles] = useState<any>([]);
-    const [us, setUs] = useState<any>([]);
     const [provinces, setProvinces] = useState<any>([]);
     const [districts, setDistricts] = useState<any>(undefined);
     const [localities, setLocalities] = useState<any>(undefined);
+    const [us, setUs] = useState<any>(undefined);
+    const [selectMode, setSelectMode] = useState<any>();
+    const [localityMode, setLocalityMode] = useState<any>();
+    const [isRequired, setRequired] = useState<any>(false);
 
     const RequiredFieldMessage = "Obrigatório!";
 
@@ -36,14 +39,11 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
 
             const dataPartners = await allPartners();
             const dataProfiles = await allProfiles();
-            const dataUs = await allUs();
             const dataProvinces = await allProvinces();
 
             setPartners(dataPartners);
             setProfiles(dataProfiles);
             setProvinces(dataProvinces);
-            //setlocalityList(dataLocality);
-            setUs(dataUs);
         };
 
         const fetchDistricts = async () => {
@@ -74,17 +74,42 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
     }, [user]);
 
     const onChangeProvinces = async (values: any) => {
-        //console.log(values); // ['1','5']
         if (values.length > 0) {
-            const dataDistricts = await queryDistrictsByProvinces({ provinces: values });
+            const dataDistricts = await queryDistrictsByProvinces({ provinces: Array.isArray(values)? values : [values] });
             setDistricts(dataDistricts);
         }
     }
 
     const onChangeDistricts = async (values: any) => {
         if (values.length > 0) {
-            const dataLocalities = await queryLocalitiesByDistricts({ districts: values });
+            const dataLocalities = await queryLocalitiesByDistricts({ districts: Array.isArray(values)? values : [values] });
             setLocalities(dataLocalities);
+        }
+
+    }
+
+    const onChangeLocalities = async (values: any) => {
+        if (values.length > 0) {
+            const dataUs = await queryUsByLocalities({ localities: Array.isArray(values)? values : [values] });
+            setUs(dataUs);
+        }
+
+    }
+
+    const onChangeProfile = async (values: any) => {
+        if (values == 1 || values == 2 || values == 7) {
+            setSelectMode("multiple");
+            setLocalityMode("multiple");
+            setRequired(false);
+        } else if (values == 3) {
+            setSelectMode("");
+            setLocalityMode("multiple");
+            setRequired(true);
+
+        } else {
+            setSelectMode("");
+            setLocalityMode("");
+            setRequired(true);
         }
 
     }
@@ -129,17 +154,17 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                     </Col>
                 </Row>
                 <Row gutter={8}>
-                    <Col span={12}>
+                    <Col span={8}>
                         <Form.Item
                             name="email"
                             label="Email (Próprio ou do Supervisor)"
-                            rules={[{ required: true, message: RequiredFieldMessage }]}
                             initialValue={user?.email}
+                            rules={[{ type: 'email', message: 'O email inserido não é válido!' }]}
                         >
                             <Input placeholder="Insira o Email" />
                         </Form.Item>
                     </Col>
-                    <Col span={12}>
+                    <Col span={8}>
                         <Form.Item
                             name="username"
                             label="Username"
@@ -149,6 +174,20 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                             <Input placeholder="Insira o Username" />
                         </Form.Item>
                     </Col>
+                    <Col span={8}>
+                        <Form.Item
+                            name="profiles"
+                            label="Perfil"
+                            rules={[{ required: true, message: RequiredFieldMessage }]}
+                            initialValue={user?.profiles.id.toString()}
+                        >
+                            <Select onChange={onChangeProfile} placeholder="Seleccione o Perfil">
+                                {profiles?.map(item => (
+                                    <Option key={item.id}>{item.name}</Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
                 </Row>
                 <Row gutter={8}>
                     <Col span={12}>
@@ -156,9 +195,9 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                             name="phoneNumber"
                             label="Número de Telemóvel"
                             initialValue={user?.phoneNumber}
-                            rules={[{ required: true, message: RequiredFieldMessage }]}
+                            rules={[{ type: 'number', min: 10000001, max:999999999, message: 'O numero inserido não é válido!' }]}
                         >
-                            <Input placeholder="Insira o Telemóvel" />
+                            <InputNumber prefix="+258  " style={{width: '100%',}} placeholder="Insira o Telemóvel" />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
@@ -176,9 +215,10 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                         <Form.Item
                             name="provinces"
                             label="Províncias"
+                            rules={[{ required: isRequired, message: RequiredFieldMessage }]}
                             initialValue={user?.provinces.map(item => { return item.id.toString() })}
                         >
-                            <Select mode="multiple" placeholder="Seleccione a(s) Província(s)"
+                            <Select mode={selectMode} placeholder="Seleccione a(s) Província(s)"
                                 onChange={onChangeProvinces}
                             >
                                 {provinces?.map(item => (
@@ -191,9 +231,10 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                         <Form.Item
                             name="districts"
                             label="Distritos"
+                            rules={[{ required: isRequired, message: RequiredFieldMessage }]}
                             initialValue={user?.districts.map(item => { return item.id.toString() })}
                         >
-                            <Select mode="multiple"
+                            <Select mode={selectMode} 
                                 placeholder="Seleccione  o(s) Distrito(s)"
                                 disabled={districts == undefined}
                                 onChange={onChangeDistricts}
@@ -208,11 +249,13 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                         <Form.Item
                             name="localities"
                             label="Localidades"
+                            rules={[{ required: isRequired, message: RequiredFieldMessage }]}
                             initialValue={user?.localities.map(item => { return item.id.toString() })}
                         >
-                            <Select mode="multiple"
+                            <Select mode={localityMode} 
                                 placeholder="Seleccione a(s) Localidade(s)"
                                 disabled={localities == undefined}
+                                onChange={onChangeLocalities}
                             >
                                 {localities?.map(item => (
                                     <Option key={item.id}>{item.name}</Option>
@@ -222,20 +265,6 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                     </Col>
                 </Row>
                 <Row gutter={8}>
-                    <Col span={8}>
-                        <Form.Item
-                            name="partners"
-                            label="Parceiro"
-                            rules={[{ required: true, message: RequiredFieldMessage }]}
-                            initialValue={user?.partners.id.toString()}
-                        >
-                            <Select placeholder="Seleccione o Parceiro">
-                                {partners?.map(item => (
-                                    <Option key={item.id}>{item.name}</Option>
-                                ))}
-                            </Select>
-                        </Form.Item>
-                    </Col>
                     <Col span={8}>
                         <Form.Item
                             name="entryPoint"
@@ -252,12 +281,28 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                     </Col>
                     <Col span={8}>
                         <Form.Item
-                            name="us"
-                            label="US"
+                            name="partners"
+                            label="Parceiro"
                             rules={[{ required: true, message: RequiredFieldMessage }]}
-                            initialValue={user?.us.id.toString()}
+                            initialValue={user?.partners.id.toString()}
                         >
-                            <Select placeholder="Seleccione a US">
+                            <Select placeholder="Seleccione o Parceiro">
+                                {partners?.map(item => (
+                                    <Option key={item.id}>{item.name}</Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col span={8}>
+                        <Form.Item
+                            name="us"
+                            label="Locais"
+                            initialValue={user?.us.map(item => { return item.id.toString() })}
+                        >
+                            <Select mode="multiple"
+                                placeholder="Seleccione o(s) Local(is)"
+                                disabled={us == undefined}
+                            >
                                 {us?.map(item => (
                                     <Option key={item.id}>{item.name}</Option>
                                 ))}
@@ -266,20 +311,6 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                     </Col>
                 </Row>
                 <Row gutter={8}>
-                    <Col span={8}>
-                        <Form.Item
-                            name="profiles"
-                            label="Perfil"
-                            rules={[{ required: true, message: RequiredFieldMessage }]}
-                            initialValue={user?.profiles.id.toString()}
-                        >
-                            <Select placeholder="Seleccione o Perfil">
-                                {profiles?.map(item => (
-                                    <Option key={item.id}>{item.name}</Option>
-                                ))}
-                            </Select>
-                        </Form.Item>
-                    </Col>
                     <Col span={8}>
                         <Form.Item
                             name="status"
