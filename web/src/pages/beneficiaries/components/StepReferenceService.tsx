@@ -67,24 +67,24 @@ const StepReferenceService = ({ form, reference, beneficiary }: any) => {
           fetchData().catch(error => console.log(error));
         }    
     
-      }, [reference]);  
+    }, [reference]);  
 
-      const onRemoveServico = (value:any) => { 
-
-        alert('Removeste '+value.name+' da lista de serviços a serem providos.');
+    const onRemoveServico = (value:any) => { 
+        // alert('Removeste '+value.name+' da lista de serviços a serem providos.');
         setServices(services.filter((v, i) => i !== services.indexOf(value)));
     }
 
-      const onAddService = () => {
+    const onAddService = () => {
         const newServices = [selectedService, ...services];
-        setServices(newServices);
+        var serv = newServices.filter((v, i) => newServices.indexOf(v) === i);
+        setServices(serv);  
         setVisible(false);
         setSelectedService(undefined);
         form.setFieldValue('service', '');
         form.setFieldValue('outros', '');
-      }
+    }
        
-      const onChangeServico = async (value:any) => { 
+    const onChangeServico = async (value:any) => { 
         let serv = servicesList.filter(item => {return item.id == value})[0];
         setSelectedService(serv);
     }
