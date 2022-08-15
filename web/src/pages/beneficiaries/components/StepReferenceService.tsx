@@ -2,12 +2,10 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { Badge, Button, Steps, Row, Col, Input, message, InputNumber, Form, DatePicker, Checkbox, Select, Radio, Divider, SelectProps, Card, Table, Typography, Space, Drawer } from 'antd';
 import './index.css';
 import moment from 'moment';
-import { allPartnersByType} from '@app/utils/partners';
-import { SearchOutlined, DeleteFilled, PlusOutlined, EyeOutlined } from '@ant-design/icons';
+import { DeleteFilled, PlusOutlined } from '@ant-design/icons';
 import { query as queryUser,userById, allUsesByUs } from '@app/utils/users';
-import { allUs } from '@app/utils/uSanitaria';
 import { query as queryBeneficiary } from "@app/utils/beneficiary";
-import { addSubService, queryByType, SubServiceParams } from '@app/utils/service'
+import { queryByType } from '@app/utils/service'
 
 const { Option } = Select;
 const { Step } = Steps;
@@ -24,15 +22,8 @@ const options = [
 const StepReferenceService = ({ form, reference, beneficiary }: any) => {
 
     const selectedIntervention = beneficiary?.beneficiariesInterventionses;
-    const serviceType = selectedIntervention?.subServices?.service.serviceType;
 
-    const [partners, setPartners] = React.useState<any>(undefined);
-    const [users, setUsers] = React.useState<any>(undefined);
     const [user, setUser] = React.useState<any>();
-    const [us, setUs] = React.useState<any>(undefined);
-    const selectedReference = form;
-    const partner_type = selectedReference?.serviceType;
-    const userId = localStorage.getItem('user');
 
     const [visible, setVisible] = useState<boolean>(false);
     const [services, setServices] = useState<any>([]);
@@ -44,8 +35,6 @@ const StepReferenceService = ({ form, reference, beneficiary }: any) => {
 
         setVisible(true);
     };
-
-    const selectedOption = options?.filter(o => o.value === selectedIntervention?.service_type+'').map(filteredOption => (filteredOption.value))[0];
 
     useEffect(() => {
 
@@ -70,17 +59,46 @@ const StepReferenceService = ({ form, reference, beneficiary }: any) => {
     }, [reference]);  
 
     const onRemoveServico = (value:any) => { 
-        // alert('Removeste '+value.name+' da lista de serviços a serem providos.');
+        
         setServices(services.filter((v, i) => i !== services.indexOf(value)));
+        
+        message.warning({
+            content: value.name+' foi removido da lista de serviços a serem providos.', className: 'custom-class',
+            style: {
+                marginTop: '10vh',
+            }
+        });
     }
 
     const onAddService = () => {
-        const newServices = [selectedService, ...services];
-        var serv = newServices.filter((v, i) => newServices.indexOf(v) === i);
-        setServices(serv);  
-        setVisible(false);
+
+        form.validateFields().then(async (values) => {
+
+            const newServices = [selectedService, ...services];
+            var serv = newServices.filter((v, i) => newServices.indexOf(v) === i);
+            setServices(serv);
+
+            setVisible(false);
+
+            message.success({
+                content: 'Adicionado com Sucesso!', className: 'custom-class',
+                style: {
+                    marginTop: '10vh',
+                }
+            });
+            
+        })
+        .catch(error => {
+            message.error({
+                content: 'Nenhum Serviço selecionado!', className: 'custom-class',
+                style: {
+                    marginTop: '10vh',
+                }
+            });
+        });
+
         setSelectedService(undefined);
-        form.setFieldValue('service', '');
+        form.setFieldValue('service', undefined);
         form.setFieldValue('outros', '');
     }
        
@@ -95,7 +113,6 @@ const StepReferenceService = ({ form, reference, beneficiary }: any) => {
         form.setFieldValue('service', '');
         form.setFieldValue('outros', '');        
     };
-
 
     const servicesColumns = [
       { title: '#', 
@@ -202,7 +219,7 @@ const StepReferenceService = ({ form, reference, beneficiary }: any) => {
                                 </Button>}
                         >
                             <Table
-                                rowKey="id" //{( record? ) => record.id.serviceId}
+                                rowKey="id"
                                 columns={servicesColumns}
                                 dataSource={services}
                                 pagination={false}
@@ -217,13 +234,8 @@ const StepReferenceService = ({ form, reference, beneficiary }: any) => {
                             bodyStyle={{ paddingLeft: "10px", paddingRight: "10px" }}
                         >
                             <Table
-                                rowKey={( record? ) => `${record.id.subServiceId}${record.id.date}`}
-                                
+                                rowKey={( record? ) => `${record.id.subServiceId}${record.id.date}`}                                
                                 columns={interventionColumns}
-                                // expandable={{
-                                //     expandedRowRender: record =>  <div style={{border:"2px solid #d9edf7", backgroundColor:"white"}}><ViewBenefiaryPanel beneficiary={record} columns={interventionColumns} /></div>,
-                                //     rowExpandable: record => record.name !== 'Not Expandable',
-                                // }}
                                 dataSource={interventions}
                                 bordered
                                 pagination={false}
@@ -235,7 +247,6 @@ const StepReferenceService = ({ form, reference, beneficiary }: any) => {
             <Drawer
                 title="Adicionar Serviço Dreams"
                 placement="top"
-                closable={false}
                 onClose={onClose}
                 visible={visible}
                 getContainer={false}
@@ -256,9 +267,8 @@ const StepReferenceService = ({ form, reference, beneficiary }: any) => {
                             name="service"
                             label="Serviço Referido"
                             rules={[{ required: true, message: 'Obrigatório' }]}
-                            // initialValue={selectedIntervention===undefined? undefined : selectedIntervention?.subServices?.service.id+''}
                             >
-                            <Select placeholder="Select Serviço" onChange={onChangeServico}>
+                            <Select placeholder="Selecione um Serviço" onChange={onChangeServico}>
                                     {servicesList?.map(item => (
                                         <Option key={item.id}>{item.name}</Option>
                                     ))}
@@ -270,7 +280,6 @@ const StepReferenceService = ({ form, reference, beneficiary }: any) => {
                             <Form.Item
                             name="outros"
                             label="Observações"
-                            // initialValue={selectedIntervention?.remarks}
                             >
                             <TextArea rows={2} placeholder="Insira as Observações" maxLength={50} />
                             </Form.Item>
