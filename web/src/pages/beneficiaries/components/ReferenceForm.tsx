@@ -1,8 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Drawer, Form, Button, Col, Row, Input, Select, DatePicker, Space, Radio } from 'antd';
 import { allPartnersByType} from '@app/utils/partners';
-import { query, userById, allUsesByUs } from '@app/utils/users';
-import { querySubServiceByService } from '@app/utils/service';
+import { userById, allUsesByUs } from '@app/utils/users';
 import { allUs } from '@app/utils/uSanitaria';
 
 const { Option } = Select;
@@ -32,7 +31,6 @@ const ReferenceForm = (record: any) => {
   
     const selectedOption = options?.filter(o => o.value === selectedIntervention?.service_type+'').map(filteredOption => (filteredOption.value))[0];
 
-    // console.log(user);
     useEffect(() => {
 
       const fetchData = async () => {
@@ -41,34 +39,10 @@ const ReferenceForm = (record: any) => {
         console.log(user);
       } 
 
-      // const fetchUsers = async () => {
-      //   const data = await query();
-      //   setUsers(data);
-      // } 
-
-      // const fetchPartners = async () => {
-      //   const data = await allPartnersByType(partner_type === '1'? 'CLINIC' : 'COMMUNITY');
-      //   setPartners(data);
-      // }
-
-      // const fetchServices = async () => {
-      //   const data = await queryByType(serviceType === '1'? '1' : '2');
-      //   setServices(data);
-      // }
-
-      // const fetchSubServices = async () => {
-      //   const data = await querySubServiceByService(selectedIntervention?.subServices?.service.id);
-      //   setInterventions(data);
-      // }
-
       if(selectedIntervention !== undefined){
-        // fetchServices().catch(error => console.log(error));
-
-        // fetchSubServices().catch(error => console.log(error)); 
 
         fetchData().catch(error => console.log(error));
-      }
-  
+      }  
   
     }, []);
 
@@ -87,17 +61,6 @@ const ReferenceForm = (record: any) => {
       const data = await allUsesByUs(value);
       setUsers(data);
     }
-
-    // const onChangeServices = async (value: any) => {
-
-    //   const data = await querySubServiceByService(value);
-    //   setInterventions(data);
-    // }
-
-    // const fetchData = async () => {
-    //   const data = await allUs();
-    //   setUs(data);
-    // }
 
     return (
       
