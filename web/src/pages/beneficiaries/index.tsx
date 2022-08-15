@@ -51,6 +51,19 @@ const BeneficiariesList: React.FC = () => {
     
     }, []);
 
+    const handleAddRef = (values:any) => {
+        console.log(values);
+
+        message.success({
+            content: 'Registado com Sucesso!', className: 'custom-class',
+            style: {
+                marginTop: '10vh',
+            }
+        });
+
+        setReferenceModalVisible(false);
+    }
+
     const handleAdd = (values:any, gender:string) => {
 
         form.validateFields().then(async (vblts) => {
@@ -470,7 +483,7 @@ const BeneficiariesList: React.FC = () => {
                                 handleModalVisible={handleBeneficiaryPartnerModalVisible} />
             <FormReference  form={form} beneficiary={beneficiary} 
                             modalVisible={referenceModalVisible}
-                            handleAdd={handleAdd}   
+                            handleAdd={handleAddRef}   
                             handleModalRefVisible={handleModalRefVisible} 
                             />
         </>

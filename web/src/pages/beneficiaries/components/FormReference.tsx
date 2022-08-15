@@ -43,9 +43,10 @@ const FormReference = ({ form, beneficiary, modalVisible, handleAdd, handleUpdat
 
     const onSubmit = async () => {
         
-        handleAdd(firstStepValues,"1")
-        const inc = current + 1;
+        handleAdd(firstStepValues)
+        const inc = current - 1;
         setCurrent(inc);
+        handleModalRefVisible(false);
     }
 
     const onUpdate = async () => {

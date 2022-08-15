@@ -61,7 +61,20 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
         setVisible(false);
         setIsAdd(false);
     };
+    const onSubmitService = async (intervention: any) => {
+        form.validateFields().then(async (values) => {
 
+        })
+        .catch(error => {
+            message.error({
+                content: 'Não foi possivel associar o Serviço!', className: 'custom-class',
+                style: {
+                    marginTop: '10vh',
+                }
+            });
+        });
+    };
+    
     const onSubmit = async (intervention: any) => {
        
         form.validateFields().then(async (values) => {
