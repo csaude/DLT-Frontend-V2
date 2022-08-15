@@ -46,7 +46,6 @@ const ReferenceForm = (record: any) => {
   
     }, []);
 
-
     const onChangeTipoServico = async (value:any) => {
         const data = await allPartnersByType(value);
         setPartners(data);

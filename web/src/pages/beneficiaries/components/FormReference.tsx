@@ -46,6 +46,7 @@ const FormReference = ({ form, beneficiary, modalVisible, handleAdd, handleUpdat
         handleAdd(firstStepValues)
         const inc = current - 1;
         setCurrent(inc);
+        form.resetFields();
         handleModalRefVisible(false);
     }
 
