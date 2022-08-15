@@ -3,7 +3,7 @@ import { Badge, Button, Steps, Row, Col, Input, message, InputNumber, Form, Date
 import './index.css';
 import moment from 'moment';
 import { allPartnersByType} from '@app/utils/partners';
-import { SearchOutlined, EditOutlined, PlusOutlined, EyeOutlined } from '@ant-design/icons';
+import { SearchOutlined, DeleteFilled, PlusOutlined, EyeOutlined } from '@ant-design/icons';
 import { query as queryUser,userById, allUsesByUs } from '@app/utils/users';
 import { allUs } from '@app/utils/uSanitaria';
 import { query as queryBeneficiary } from "@app/utils/beneficiary";
@@ -69,6 +69,12 @@ const StepReferenceService = ({ form, reference, beneficiary }: any) => {
     
       }, [reference]);  
 
+      const onRemoveServico = (value:any) => { 
+
+        alert('Removeste '+value.name+' da lista de serviços a serem providos.');
+        setServices(services.filter((v, i) => i !== services.indexOf(value)));
+    }
+
       const onAddService = () => {
         const newServices = [selectedService, ...services];
         setServices(newServices);
@@ -107,9 +113,9 @@ const StepReferenceService = ({ form, reference, beneficiary }: any) => {
           dataIndex: '', 
           key: 'intervention',
           render: (text, record)  => 
-             
-                  <Text type="danger" >Remover </Text>
-              
+            
+            <Button type='primary' icon={<DeleteFilled  />} onClick={() => onRemoveServico(record)} danger>
+            </Button> 
           ,
       },
   ];
