@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {BrowserRouter, Routes, Route} from 'react-router-dom';
+import {BrowserRouter, Routes, Route, HashRouter} from 'react-router-dom';
 import Main from '@modules/main/Main';
 import Login from '@modules/login/Login';
 import NewPassword from "@modules/new-password/NewPassword";
@@ -38,7 +38,7 @@ const App = () => {
   }, [windowSize]);
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route path="/login" element={<PublicRoute />}>
           <Route path="/login" element={<Login />} />
@@ -73,7 +73,7 @@ const App = () => {
           </Route>
         </Route>
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 };
 
