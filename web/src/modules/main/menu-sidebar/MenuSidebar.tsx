@@ -79,7 +79,7 @@ const MenuSidebar = () => {
     <aside className={`main-sidebar elevation-4 ${sidebarSkin}`}>
       <Link to="/" className="brand-link">
         <StyledUserImage
-          src="/img/dreams.png"
+          src="img/dreams.png"
           alt="DREAMS Logo"
           className=" "
           style={{opacity: '.8'}}

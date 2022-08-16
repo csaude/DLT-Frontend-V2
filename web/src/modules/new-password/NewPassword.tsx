@@ -81,7 +81,7 @@ const NewPassword = () => {
           <div className="login-box">
               <div className="card card-outline card-primary" >
                 <div style={{alignItems  : 'center', width:'50%' }}>
-                  <img  style={{  width: "100%", marginLeft: "50%", marginTop:"10%"}}  src={'/img/dreams.png'} />
+                  <img  style={{  width: "100%", marginLeft: "50%", marginTop:"10%"}}  src={'img/dreams.png'} />
                 </div>
                 <div className="card-header text-center">
                   <div className="h3">
