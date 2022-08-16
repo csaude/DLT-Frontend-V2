@@ -42,7 +42,7 @@ const UserDropdown = () => {
       menuContainerTag="ul"
       buttonTemplate={
         <StyledUserImage
-          src={user.picture || '/img/default-profile.png'}
+          src={user.picture || 'img/default-profile.png'}
           className="user-image img-circle elevation-2"
           alt="User"
         />
@@ -51,7 +51,7 @@ const UserDropdown = () => {
         <>
           <li className="user-header bg-info">
             <img
-              src={user.picture || '/img/default-profile.png'}
+              src={user.picture || 'img/default-profile.png'}
               className="img-circle elevation-2"
               alt="User"
             />
