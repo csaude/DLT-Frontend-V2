@@ -3,7 +3,7 @@ import { Badge, Button, Steps, Row, Col, Input, message, InputNumber, Form, Date
 import './index.css';
 import moment from 'moment';
 import { DeleteFilled, PlusOutlined } from '@ant-design/icons';
-import { query as queryUser, userById, allUsesByUs } from '@app/utils/users';
+import { query as queryUser } from '@app/utils/users';
 import { query as queryBeneficiary } from "@app/utils/beneficiary";
 import { queryByType } from '@app/utils/service'
 
@@ -76,25 +76,31 @@ const StepReferenceService = ({ form, reference, beneficiary, handleRefServicesL
 
         form.validateFields().then(async (values) => {
 
-            var other = form.getFieldValue('outros');
+            var servOther = { servico: selectedService, description: form.getFieldValue('outros') };
+            var serv = services.filter((s) => s.servico.id === servOther.servico.id);
 
-            var servOther = { servico: selectedService, description: other };
+            if(serv.length ===0 || services.length === 0){
+                const newServices = [servOther, ...services];
+    
+                handleRefServicesList(newServices);
+                setServices(newServices);
 
-            const newServices = [servOther, ...services];
-            // var serv = newServices.filter((v, i) => newServices.indexOf(v) === i);
-
-            handleRefServicesList(newServices);
-            setServices(newServices);
+                message.success({
+                    content: 'Adicionado com Sucesso!', className: 'custom-class',
+                    style: {
+                        marginTop: '10vh',
+                    }
+                });
+            }else{
+                message.error({
+                    content: 'Já existe este Serviço!', className: 'custom-class',
+                    style: {
+                        marginTop: '10vh',
+                    }
+                });
+            }
 
             setVisible(false);
-
-            message.success({
-                content: 'Adicionado com Sucesso!', className: 'custom-class',
-                style: {
-                    marginTop: '10vh',
-                }
-            });
-
             form.setFieldValue('outros', '');
 
         })
