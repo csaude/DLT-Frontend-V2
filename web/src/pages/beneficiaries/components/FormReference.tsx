@@ -10,11 +10,12 @@ import { stringify } from 'qs';
 const { Option } = Select;
 const { Step } = Steps;
 
-const FormReference = ({ form, beneficiary, modalVisible, handleAdd, handleUpdate, handleModalRefVisible }: any) => {
+const FormReference = ({ form, beneficiary, modalVisible, handleAdd, handleUpdate, handleModalRefVisible, handleRefServicesList }: any) => {
 
     const [current, setCurrent] = useState(0);
     const [firstStepValues, setFirstStepValues] = useState();
     const [secondStepValues, setSecondStepValues] = useState();
+    const [services, setServices] = useState<any>([]);
 
     const next = () => {
         
@@ -32,6 +33,7 @@ const FormReference = ({ form, beneficiary, modalVisible, handleAdd, handleUpdat
         const inc = current - 1;
         setCurrent(inc);
     }
+
     const okHandle = () => {
         handleAdd("test");
         handleModalRefVisible(false);
@@ -43,7 +45,8 @@ const FormReference = ({ form, beneficiary, modalVisible, handleAdd, handleUpdat
 
     const onSubmit = async () => {
         
-        handleAdd(firstStepValues)
+        handleAdd(firstStepValues);
+
         const inc = current - 1;
         setCurrent(inc);
         form.resetFields();
@@ -62,7 +65,7 @@ const FormReference = ({ form, beneficiary, modalVisible, handleAdd, handleUpdat
         },
         {
             title: ' Solicitar Intervenções ',
-            content: <StepReferenceService form={form}  reference={firstStepValues} beneficiary={beneficiary} />,
+            content: <StepReferenceService form={form}  reference={firstStepValues} beneficiary={beneficiary} handleRefServicesList={handleRefServicesList} />,
         }
     ];
 

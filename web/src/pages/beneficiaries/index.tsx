@@ -1,4 +1,5 @@
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react';
+import {useNavigate, Link} from 'react-router-dom';
 import { query } from '../../utils/beneficiary';
 import { query as queryUser } from '../../utils/users';
 import classNames from "classnames";
@@ -15,6 +16,7 @@ import BeneficiaryForm from './components/BeneficiaryForm';
 import FormBeneficiary from './components/FormBeneficiary';
 import FormBeneficiaryPartner from './components/FormBeneficiaryPartner';
 import { add, edit } from '../../utils/beneficiary';
+import { add as addRef, Reference } from '../../utils/reference';
 import { stringify } from 'qs';
 import FormReference from './components/FormReference';
 
@@ -23,11 +25,14 @@ const { Text } = Typography;
 
 const BeneficiariesList: React.FC = () => {
     const [form] = Form.useForm();
+    const navigate = useNavigate();
     const [users, setUsers] = useState<UserModel[]>([]);
     const [ beneficiaries, setBeneficiaries ] = useState<any[]>([]);
     const [ searchText, setSearchText ] = useState('');
+    const [services, setServices] = useState<any>([]);
     const [ searchedColumn, setSearchedColumn ] = useState('');
     const [ beneficiary, setBeneficiary] = useState<any>(undefined);
+    const [ reference, setReference] = useState<any>(undefined);
     const [ modalVisible, setModalVisible] = useState<boolean>(false);
     const [ beneficiaryModalVisible, setBeneficiaryModalVisible] = useState<boolean>(false);
     const [ beneficiaryPartnerModalVisible, setBeneficiaryPartnerModalVisible] = useState<boolean>(false);
@@ -51,17 +56,59 @@ const BeneficiariesList: React.FC = () => {
     
     }, []);
 
-    const handleAddRef = (values:any) => {
-        console.log(values);
+    const handleAddRef = async (values:any) => {
+    
+        if(values !== undefined){
 
-        message.success({
-            content: 'Registado com Sucesso!', className: 'custom-class',
-            style: {
-                marginTop: '10vh',
-            }
-        });
+            const servicesObjects = services.map((e:any) => {
+                let listServices:any = { 
+                                            services: {id: e.servico.id},
+                                            description: e.description, 
+                                            status: 0,
+                                            createdBy: localStorage.user,
+                                        };
+                return listServices
+            });
 
-        setReferenceModalVisible(false);
+            let payload: Reference = {
+                beneficiaries: {
+                    id: beneficiary.id
+                },
+                users: {
+                    id: localStorage.user
+                },
+                referenceNote: values.referenceNote,
+                description: '',
+                referTo: values.referTo,
+                bookNumber: values.bookNumber,
+                referenceCode: values.referenceCode,
+                serviceType: values.serviceType === "CLINIC" ? "1" : "2",
+                remarks: values.remarks,
+                statusRef: '0',
+                status: '0',
+                cancelReason: '0',
+                otherReason: '',
+                createdBy: localStorage.user,
+                dateCreated: '',
+                referencesServiceses: servicesObjects,
+                
+            };            
+
+            console.log(payload);
+
+            const { data } = await addRef(payload);
+
+            message.success({
+                content: 'Registado com Sucesso!'+data?.referenceNote, className: 'custom-class',
+                style: {
+                    marginTop: '10vh',
+                }
+            });
+
+            setReferenceModalVisible(false);
+
+            navigate('/referenceList');            
+        }
     }
 
     const handleAdd = (values:any, gender:string) => {
@@ -216,6 +263,9 @@ const BeneficiariesList: React.FC = () => {
     const handleModalRefVisible = (flag?: boolean, record?: any) => {
         setBeneficiary(record);
         setReferenceModalVisible(!!flag);
+    };
+    const handleRefServicesList = (data?: any) => {
+        setServices(data);
     };
 
     const handleBeneficiaryModalVisible = (flag?: boolean) => {
@@ -485,6 +535,7 @@ const BeneficiariesList: React.FC = () => {
                             modalVisible={referenceModalVisible}
                             handleAdd={handleAddRef}   
                             handleModalRefVisible={handleModalRefVisible} 
+                            handleRefServicesList={handleRefServicesList}
                             />
         </>
     );
