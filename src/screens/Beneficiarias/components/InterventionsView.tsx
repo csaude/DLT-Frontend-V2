@@ -6,7 +6,7 @@ import { navigate } from '../../../routes/NavigationRef';
 import styles from './styles';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import StepperButton from './StapperButton';
-import { SuccessHandler, ErrorHandler} from "../../../components/SyncIndicator";
+import { SuccessHandler, ErrorHandler } from "../../../components/SyncIndicator";
 import { Context } from '../../../routes/DrawerNavigator';
 import { sync } from '../../../database/sync';
 
@@ -18,23 +18,23 @@ const InterventionsView: React.FC = ({ route }: any) => {
         beneficiary,
         interventions
     } = route.params;
-    const loggedUser:any = useContext(Context);
+    const loggedUser: any = useContext(Context);
     const toast = useToast();
 
     const syncronize = () => {
-        sync({username: loggedUser.username})
-                .then(() => toast.show({
-                                placement: "top",
-                                render:() => {
-                                    return (<SuccessHandler />);
-                                }
-                            }))
-                .catch(() => toast.show({
-                                placement: "top",
-                                render:() => {
-                                    return (<ErrorHandler />);
-                                }
-                            }))
+        sync({ username: loggedUser.username })
+            .then(() => toast.show({
+                placement: "top",
+                render: () => {
+                    return (<SuccessHandler />);
+                }
+            }))
+            .catch(() => toast.show({
+                placement: "top",
+                render: () => {
+                    return (<ErrorHandler />);
+                }
+            }))
     }
 
     const renderItem = (data: any) => (
@@ -55,18 +55,17 @@ const InterventionsView: React.FC = ({ route }: any) => {
                             Ponto de Entrada:
                         </Text>
                         <Text color="darkBlue.300" _dark={{ color: "warmGray.200" }}>
-                            {` ${
-                                        (data.item.intervention.entry_point === "1") ?
-                                            "US"
-                                            :
-                                            (data.item.intervention.entry_point === "2") ?
-                                                "ES"
-                                                :
-                                                "CM"
-                                    }`}
+                            {` ${(data.item.intervention.entry_point === "1") ?
+                                    "US"
+                                    :
+                                    (data.item.intervention.entry_point === "2") ?
+                                        "ES"
+                                        :
+                                        "CM"
+                                }`}
                         </Text>
                     </HStack>
-                    
+
                 </VStack>
                 <Text color="coolGray.500" alignSelf="flex-start" marginTop={2}>{data.item.intervention.date}</Text>
             </HStack>
@@ -108,7 +107,7 @@ const InterventionsView: React.FC = ({ route }: any) => {
             }
             <Center flex={1} px="3" >
                 <StepperButton onAdd={() => navigate({ name: "BeneficiarieServiceForm", params: { beneficiarie: beneficiary } })}
-                                onRefresh={syncronize} />
+                    onRefresh={syncronize} />
             </Center>
 
         </>

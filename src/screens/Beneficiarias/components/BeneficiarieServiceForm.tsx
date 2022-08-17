@@ -61,7 +61,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
         showMode('calendar');
     };
     const [initialValues, setInitialValues] = useState<any>({});
-    let mounted = true; 
+    let mounted = true;
     const [loading, setLoading] = useState(false);
     const [savedIntervention, setSavedIntervention] = useState<any>(null);
     const loggedUser: any = useContext(Context);
@@ -69,59 +69,34 @@ const BeneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
 
     useEffect(() => {
 
-        if (intervention && mounted) {
+        if (mounted) {
             const isEdit = intervention && intervention.id;
             let initValues = {};
 
             if (isEdit) {
 
-                const isService = intervention.service !== undefined;
+                const selSubService = subServices.filter((e) => {
+                    return e._raw.online_id == intervention.sub_service_id
+                })[0];
 
-                if (isService){
-                    const selService = services.filter((e) => {
-                        return e._raw.online_id == intervention.id
-                    })[0];
+                const selService = services.filter((e) => {
+                    return e._raw.online_id == selSubService._raw.service_id
+                })[0];
 
-                    initValues = {
-                        areaServicos_id: selService.service_type,
-                        service_id: intervention.id,
-                        beneficiary_id: beneficiarie.online_id,
-                        sub_service_id: '',
-                        result: '',
-                        date: '',
-                        us_id: '',
-                        activist_id: '',
-                        entry_point: '',
-                        provider: '',
-                        remarks: '',
-                        status: '1'
-                    }
-                } else {
-                    const selSubService = subServices.filter((e) => {
-                        return e._raw.online_id == intervention.sub_service_id
-                    })[0];
-    
-                    const selService = services.filter((e) => {
-                        return e._raw.online_id == selSubService._raw.service_id
-                    })[0];
-    
-                    initValues = {
-                        areaServicos_id: selService._raw.service_type,
-                        service_id: selService._raw.online_id,
-                        beneficiary_id: beneficiarie.online_id,
-                        sub_service_id: intervention.sub_service_id,
-                        result: intervention.result,
-                        date: intervention.date,
-                        us_id: intervention.us_id,
-                        activist_id: intervention.activist_id,
-                        entry_point: intervention.entry_point,
-                        provider: intervention.provider,
-                        remarks: intervention.remarks,
-                        status: '1'
-                    }
+                initValues = {
+                    areaServicos_id: selService._raw.service_type,
+                    service_id: selService._raw.online_id,
+                    beneficiary_id: beneficiarie.online_id,
+                    sub_service_id: intervention.sub_service_id,
+                    result: intervention.result,
+                    date: intervention.date,
+                    us_id: intervention.us_id,
+                    activist_id: intervention.activist_id,
+                    entry_point: intervention.entry_point,
+                    provider: intervention.provider,
+                    remarks: intervention.remarks,
+                    status: '1'
                 }
-                
-                
 
                 setText(intervention.date);
                 setDate(new Date(intervention.date));
@@ -148,8 +123,8 @@ const BeneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                 mounted = false; // set it to false if we leave the page
             }
         }
-        
-        
+
+
     }, [intervention]);
 
     const message = "Este campo é Obrigatório"
@@ -195,12 +170,11 @@ const BeneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
 
         const isEdit = intervention && intervention.id; // new record if it has id
 
-        const isService = intervention?.service !== undefined;
-
         const newObject = await database.write(async () => {
-        
-            if (isEdit && !isService) {
+
+            if (isEdit) {
                 const interventionToUpdate = await database.get('beneficiaries_interventions').find(intervention.id);
+                console.log(interventionToUpdate);
                 const updatedIntervention = await interventionToUpdate.update(() => {
                     intervention.beneficiary_id = beneficiarie.online_id
                     intervention.sub_service_id = values.sub_service_id
@@ -213,50 +187,40 @@ const BeneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                     intervention.provider = values.provider
                     intervention.remarks = values.remarks
                     intervention.status = values.status
-                    intervention.online_id = intervention.online_id
                     intervention._status = "updated"
                 })
-
+                console.log(updatedIntervention);
                 toast.show({ placement: "bottom", title: "Intervention Updated Successfully: " + updatedIntervention._raw.id });
 
                 return updatedIntervention;
-            } 
+            } else {
 
-            const newIntervention = await database.collections.get('beneficiaries_interventions').create((intervention: any) => {
+                const newIntervention = await database.collections.get('beneficiaries_interventions').create((intervention: any) => {
 
-                intervention.beneficiary_id = beneficiarie.online_id
-                intervention.sub_service_id = values.sub_service_id
-                intervention.result = values.result
-                intervention.date = '' + text
-                intervention.us_id = values.us_id
-                intervention.activist_id = loggedUser.id
-                intervention.entry_point = values.entry_point
-                intervention.provider = values.provider
-                intervention.remarks = values.remarks
-                intervention.status = values.status
-                intervention.online_id = values.online_id
+                    intervention.beneficiary_id = beneficiarie.online_id
+                    intervention.sub_service_id = values.sub_service_id
+                    intervention.result = values.result
+                    intervention.date = '' + text
+                    intervention.us_id = values.us_id
+                    intervention.activist_id = loggedUser.id
+                    intervention.entry_point = values.entry_point
+                    intervention.provider = values.provider
+                    intervention.remarks = values.remarks
+                    intervention.status = values.status
 
-            });
+                });
+                toast.show({ placement: "bottom", title: "Intervention Saved Successfully: " + newIntervention._raw.id });
+                return newIntervention;
+            }
 
-            toast.show({ placement: "bottom", title: "Intervention Saved Successfully: " + newIntervention._raw.id });
-            return newIntervention;
         });
 
-        if (isService){
-            navigate({
-                name: "Serviços Solicitados", params: {
-                    intervation: newObject._raw,
-                    beneficiarie: beneficiarie,
-                }
-            });
-        } else {
-            navigate({
-                name: "BeneficiariesList", params: {
-                    intervation: newObject._raw,
-                    beneficiarie: beneficiarie
-                }
-            });
-        }
+        navigate({
+            name: "BeneficiariesList", params: {
+                intervation: newObject._raw,
+                beneficiarie: beneficiarie
+            }
+        });
 
 
         //setLoading(false);
@@ -474,7 +438,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                                                 <DatePicker
                                                     mode="calendar"
                                                     maximumDate={getToday()}
-                                                    onSelectedChange={date => onChange(null, date.replaceAll('/','-'))}
+                                                    onSelectedChange={date => onChange(null, date.replaceAll('/', '-'))}
                                                 />
                                             )}
 

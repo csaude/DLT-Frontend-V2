@@ -185,7 +185,7 @@ export default appSchema({
           {name: 'provider', type: 'string'},
           {name: 'remarks', type: 'string', isOptional: true},
           {name: 'status', type: 'number'},
-          {name: 'online_id', type: 'number',isOptional: true}
+          {name: 'online_id', type: 'string',isOptional: true}
         ],
       }),
       tableSchema({
