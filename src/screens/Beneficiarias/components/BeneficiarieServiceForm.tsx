@@ -29,17 +29,13 @@ import { Context } from '../../../routes/DrawerNavigator';
 
 import styles from './styles';
 
-const BeneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, partners, services, subServices }: any) => {    // console.log(route.params);
+const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }: any) => {    // console.log(route.params);
     const { beneficiarie, intervs, intervention } = route.params;
 
     const areaServicos = [{ "id": '1', "name": "Serviços Clinicos" }, { "id": '2', "name": "Serviços Comunitarios" }];
     const entry_points = [{ "id": '1', "name": "US" }, { "id": '3', "name": "CM" }, { "id": '2', "name": "ES" }];
-    const [areaServicos_id, setAreaServicos_id] = useState('');
-    const [service_id, setService_id] = useState('');
-    const [entry_point, setEntry_point] = useState('');
 
     const [date, setDate] = useState(new Date());
-    const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
     const [text, setText] = useState('');
 
@@ -64,7 +60,6 @@ const BeneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
     const [initialValues, setInitialValues] = useState<any>({});
     let mounted = true;
     const [loading, setLoading] = useState(false);
-    const [savedIntervention, setSavedIntervention] = useState<any>(null);
     const loggedUser: any = useContext(Context);
     const toast = useToast();
 
@@ -499,20 +494,11 @@ const BeneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
     );
 }
 const enhance = withObservables([], () => ({
-    localities: database.collections
-        .get("localities")
-        .query().observe(),
-    profiles: database.collections
-        .get("profiles")
-        .query().observe(),
     services: database.collections
         .get("services")
         .query(),
     subServices: database.collections
         .get("sub_services")
-        .query().observe(),
-    partners: database.collections
-        .get("partners")
         .query().observe(),
     us: database.collections
         .get("us")
