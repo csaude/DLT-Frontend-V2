@@ -10,6 +10,7 @@ import {
     Alert, Flex, useToast, Stack, InputGroup, InputLeftAddon, InputRightAddon, Radio
 }
     from 'native-base';
+import { SuccessHandler, ErrorHandler } from "../../../components/SyncIndicator";
 
 import moment from 'moment';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -29,10 +30,10 @@ import { Context } from '../../../routes/DrawerNavigator';
 import styles from './styles';
 
 const BeneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, partners, services, subServices }: any) => {    // console.log(route.params);
-    const { beneficiarie, intervention } = route.params;
+    const { beneficiarie, intervs, intervention } = route.params;
 
     const areaServicos = [{ "id": '1', "name": "Serviços Clinicos" }, { "id": '2', "name": "Serviços Comunitarios" }];
-    const entry_points = [{ "id": '1', "name": "US" }, { "id": '2', "name": "CM" }, { "id": '3', "name": "ES" }];
+    const entry_points = [{ "id": '1', "name": "US" }, { "id": '3', "name": "CM" }, { "id": '2', "name": "ES" }];
     const [areaServicos_id, setAreaServicos_id] = useState('');
     const [service_id, setService_id] = useState('');
     const [entry_point, setEntry_point] = useState('');
@@ -174,7 +175,6 @@ const BeneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
 
             if (isEdit) {
                 const interventionToUpdate = await database.get('beneficiaries_interventions').find(intervention.id);
-                console.log(interventionToUpdate);
                 const updatedIntervention = await interventionToUpdate.update(() => {
                     intervention.beneficiary_id = beneficiarie.online_id
                     intervention.sub_service_id = values.sub_service_id
@@ -189,12 +189,10 @@ const BeneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                     intervention.status = values.status
                     intervention._status = "updated"
                 })
-                console.log(updatedIntervention);
                 toast.show({ placement: "bottom", title: "Intervention Updated Successfully: " + updatedIntervention._raw.id });
 
                 return updatedIntervention;
             } else {
-
                 const newIntervention = await database.collections.get('beneficiaries_interventions').create((intervention: any) => {
 
                     intervention.beneficiary_id = beneficiarie.online_id
@@ -215,54 +213,41 @@ const BeneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
 
         });
 
+        var newIntr: any = newObject._raw;
+        let subserviceObj = subServices.filter((item) => {
+            return item._raw.online_id == newIntr.sub_service_id
+        })[0];
+        const nIobj =  { id: subserviceObj._raw.online_id, name: subserviceObj._raw.name, intervention: newIntr }
+
+        let newIntervMap;
+        if(isEdit){
+            newIntervMap = intervs.map(item => item.intervention.id === nIobj.intervention.id ? nIobj: item);
+        } else {
+            newIntervMap = [nIobj, ...intervs];
+        }
+
         navigate({
-            name: "BeneficiariesList", params: {
-                intervation: newObject._raw,
-                beneficiarie: beneficiarie
-            }
+            name: 'Serviços',
+            params: {
+                beneficiary: beneficiarie,
+                interventions: newIntervMap
+            },
+            merge: true,
         });
 
-
-        //setLoading(false);
         sync({ username: loggedUser.username })
             .then(() => toast.show({
                 placement: "top",
                 render: () => {
-                    return (
-                        <Alert w="100%" variant="left-accent" colorScheme="success" status="success">
-                            <VStack space={2} flexShrink={1} w="100%">
-                                <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
-                                    <HStack space={2} flexShrink={1} alignItems="center">
-                                        <Alert.Icon />
-                                        <Text color="coolGray.800">
-                                            Synced Successfully!
-                                        </Text>
-                                    </HStack>
-                                </HStack>
-                            </VStack>
-                        </Alert>
-                    );
+                    return (<SuccessHandler />);
                 }
             }))
             .catch(() => toast.show({
                 placement: "top",
                 render: () => {
-                    return (
-                        <Alert w="100%" variant="left-accent" colorScheme="error" status="error">
-                            <VStack space={2} flexShrink={1} w="100%">
-                                <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
-                                    <HStack space={2} flexShrink={1} alignItems="center">
-                                        <Alert.Icon />
-                                        <Text color="coolGray.800">
-                                            Sync Failed!
-                                        </Text>
-                                    </HStack>
-                                </HStack>
-                            </VStack>
-                        </Alert>
-                    );
+                    return (<ErrorHandler />);
                 }
-            }))
+            }));
 
     }
 

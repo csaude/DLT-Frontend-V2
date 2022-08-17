@@ -77,7 +77,7 @@ const InterventionsView: React.FC = ({ route }: any) => {
 
         <HStack flex={1} pl={2}>
             <Pressable px={4} ml="auto" bg="lightBlue.700" justifyContent="center"
-                onPress={() => navigate({ name: "BeneficiarieServiceForm", params: { beneficiarie: beneficiary, intervention: data.item.intervention } })}
+                onPress={() => navigate({ name: "BeneficiarieServiceForm", params: { beneficiarie: beneficiary, intervs: interventions, intervention: data.item.intervention } })}
                 _pressed={{ opacity: 0.5 }}
             >
                 <Icon as={MaterialIcons} name="mode-edit" size={6} color="gray.200" />
@@ -106,7 +106,7 @@ const InterventionsView: React.FC = ({ route }: any) => {
                 </View>
             }
             <Center flex={1} px="3" >
-                <StepperButton onAdd={() => navigate({ name: "BeneficiarieServiceForm", params: { beneficiarie: beneficiary } })}
+                <StepperButton onAdd={() => navigate({ name: "BeneficiarieServiceForm", params: { beneficiarie: beneficiary, intervs: interventions } })}
                     onRefresh={syncronize} />
             </Center>
 
