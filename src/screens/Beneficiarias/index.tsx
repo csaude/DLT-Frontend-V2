@@ -138,14 +138,14 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
                         </Text>
                     </HStack>
                     <HStack style={{alignContent:'center'}}>
-                        <View style={{paddingTop:5}}><Ionicons name="person" size={11} color="#a8a29e"/></View>
+                        <View style={{paddingTop:5}}><Ionicons name="person" size={11} color="#17a2b8"/></View>
                         
                         <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
                            {` ${data.item.name} ${data.item.surname}`}
                         </Text>
                     </HStack>
                     <HStack>
-                        <View style={{paddingTop:5}}><Ionicons name="navigate" size={11} color="#a8a29e"/></View>
+                        <View style={{paddingTop:5}}><Ionicons name="navigate" size={11} color="#17a2b8"/></View>
                         <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
                         {` ${data.item.locality_name}`}
                         </Text>
@@ -154,7 +154,7 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
                 <View >
                     <Text color="darkBlue.800"></Text>
                     <HStack>
-                        <View style={{paddingTop:5}}><Ionicons name="calendar" size={11} color="#a8a29e"/></View>
+                        <View style={{paddingTop:5}}><Ionicons name="calendar" size={11} color="#17a2b8"/></View>
                         <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
                         {` ${age(data.item.date_of_birth)} Anos`}
                         </Text>
