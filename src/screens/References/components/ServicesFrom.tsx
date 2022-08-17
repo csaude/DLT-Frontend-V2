@@ -1,46 +1,37 @@
 import React, { useEffect, useState, useContext } from 'react';
 import {
-    View, KeyboardAvoidingView, ScrollView,
-    TextInput, TouchableOpacity, Platform,
-}
-    from 'react-native';
+    View, KeyboardAvoidingView, ScrollView
+} from 'react-native';
 import {
     Center, Box, Select, Text, Heading, VStack, FormControl,
     Input, Link, Button, CheckIcon, WarningOutlineIcon, HStack,
     Alert, Flex, useToast, Stack, InputGroup, InputLeftAddon, InputRightAddon, Radio
-}
-    from 'native-base';
-
-import moment from 'moment';
-import DateTimePicker from '@react-native-community/datetimepicker';
+} from 'native-base';
 import DatePicker, { getToday, getFormatedDate } from 'react-native-modern-datepicker';
-import { stringify } from 'qs';
 import { Picker } from '@react-native-picker/picker';
-import { Formik } from 'formik';
-import { Q } from "@nozbe/watermelondb";
-import { navigate } from '../../../routes/NavigationRef';
 import withObservables from '@nozbe/with-observables';
 import { database } from '../../../database';
-import { MaterialIcons } from "@native-base/icons";
-import Beneficiaries_interventions, { BeneficiariesInterventionsModel } from '../../../models/Beneficiaries_interventions';
-import { sync } from "../../../database/sync";
+import { Q } from "@nozbe/watermelondb";
+import { Formik } from 'formik';
 import { Context } from '../../../routes/DrawerNavigator';
+import Beneficiaries_interventions, { BeneficiariesInterventionsModel } from '../../../models/Beneficiaries_interventions';
 
 import styles from './styles';
 
-const BeneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, partners, services, subServices }: any) => {    // console.log(route.params);
+const ServicesForm: React.FC = ({ route, us, services, subServices }: any) => {
     const { beneficiarie, intervention } = route.params;
+    const loggedUser: any = useContext(Context);
+    const toast = useToast();
+      
+    const [initialValues, setInitialValues] = useState<any>({});
+    const [loading, setLoading] = useState(false);
+    const [show, setShow] = useState(false);
+    const [text, setText] = useState('');
+    const [date, setDate] = useState(new Date());
 
     const areaServicos = [{ "id": '1', "name": "Serviços Clinicos" }, { "id": '2', "name": "Serviços Comunitarios" }];
     const entry_points = [{ "id": '1', "name": "US" }, { "id": '2', "name": "CM" }, { "id": '3', "name": "ES" }];
-    const [areaServicos_id, setAreaServicos_id] = useState('');
-    const [service_id, setService_id] = useState('');
-    const [entry_point, setEntry_point] = useState('');
-
-    const [date, setDate] = useState(new Date());
-    const [mode, setMode] = useState('date');
-    const [show, setShow] = useState(false);
-    const [text, setText] = useState('');
+    const message = "Este campo é Obrigatório"
 
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
@@ -52,107 +43,9 @@ const BeneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
         setText(selectedDate);
     }
 
-    const showMode = (currentMode) => {
-        setShow(true);
-        setMode(currentMode);
-    };
-
     const showDatepicker = () => {
-        showMode('calendar');
+        setShow(true);
     };
-    const [initialValues, setInitialValues] = useState<any>({});
-    let mounted = true; 
-    const [loading, setLoading] = useState(false);
-    const [savedIntervention, setSavedIntervention] = useState<any>(null);
-    const loggedUser: any = useContext(Context);
-    const toast = useToast();
-
-    useEffect(() => {
-
-        if (intervention && mounted) {
-            const isEdit = intervention && intervention.id;
-            let initValues = {};
-
-            if (isEdit) {
-
-                const isService = intervention.service !== undefined;
-
-                if (isService){
-                    const selService = services.filter((e) => {
-                        return e._raw.online_id == intervention.id
-                    })[0];
-
-                    initValues = {
-                        areaServicos_id: selService.service_type,
-                        service_id: intervention.id,
-                        beneficiary_id: beneficiarie.online_id,
-                        sub_service_id: '',
-                        result: '',
-                        date: '',
-                        us_id: '',
-                        activist_id: '',
-                        entry_point: '',
-                        provider: '',
-                        remarks: '',
-                        status: '1'
-                    }
-                } else {
-                    const selSubService = subServices.filter((e) => {
-                        return e._raw.online_id == intervention.sub_service_id
-                    })[0];
-    
-                    const selService = services.filter((e) => {
-                        return e._raw.online_id == selSubService._raw.service_id
-                    })[0];
-    
-                    initValues = {
-                        areaServicos_id: selService._raw.service_type,
-                        service_id: selService._raw.online_id,
-                        beneficiary_id: beneficiarie.online_id,
-                        sub_service_id: intervention.sub_service_id,
-                        result: intervention.result,
-                        date: intervention.date,
-                        us_id: intervention.us_id,
-                        activist_id: intervention.activist_id,
-                        entry_point: intervention.entry_point,
-                        provider: intervention.provider,
-                        remarks: intervention.remarks,
-                        status: '1'
-                    }
-                }
-                
-                
-
-                setText(intervention.date);
-                setDate(new Date(intervention.date));
-
-            } else {
-                initValues = {
-                    areaServicos_id: '',
-                    service_id: '',
-                    beneficiary_id: '',
-                    sub_service_id: '',
-                    result: '',
-                    date: '',
-                    us_id: '',
-                    activist_id: '',
-                    entry_point: '',
-                    provider: '',
-                    remarks: '',
-                    status: '1'
-                }
-            }
-
-            setInitialValues(initValues);
-            return () => { // This code runs when component is unmounted 
-                mounted = false; // set it to false if we leave the page
-            }
-        }
-        
-        
-    }, [intervention]);
-
-    const message = "Este campo é Obrigatório"
 
     const validate = (values: any) => {
         const errors: BeneficiariesInterventionsModel = {};
@@ -191,118 +84,8 @@ const BeneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
     }
 
     const onSubmit = async (values: any) => {
-        setLoading(true);
-
-        const isEdit = intervention && intervention.id; // new record if it has id
-
-        const isService = intervention?.service !== undefined;
-
-        const newObject = await database.write(async () => {
-        
-            if (isEdit && !isService) {
-                const interventionToUpdate = await database.get('beneficiaries_interventions').find(intervention.id);
-                const updatedIntervention = await interventionToUpdate.update(() => {
-                    intervention.beneficiary_id = beneficiarie.online_id
-                    intervention.sub_service_id = values.sub_service_id
-                    intervention.remarks = values.remarks
-                    intervention.result = values.result
-                    intervention.date = '' + text
-                    intervention.us_id = values.us_id
-                    intervention.activist_id = 1 //values.activist_id
-                    intervention.entry_point = values.entry_point
-                    intervention.provider = values.provider
-                    intervention.remarks = values.remarks
-                    intervention.status = values.status
-                    intervention.online_id = intervention.online_id
-                    intervention._status = "updated"
-                })
-
-                toast.show({ placement: "bottom", title: "Intervention Updated Successfully: " + updatedIntervention._raw.id });
-
-                return updatedIntervention;
-            } 
-
-            const newIntervention = await database.collections.get('beneficiaries_interventions').create((intervention: any) => {
-
-                intervention.beneficiary_id = beneficiarie.online_id
-                intervention.sub_service_id = values.sub_service_id
-                intervention.result = values.result
-                intervention.date = '' + text
-                intervention.us_id = values.us_id
-                intervention.activist_id = loggedUser.id
-                intervention.entry_point = values.entry_point
-                intervention.provider = values.provider
-                intervention.remarks = values.remarks
-                intervention.status = values.status
-                intervention.online_id = values.online_id
-
-            });
-
-            toast.show({ placement: "bottom", title: "Intervention Saved Successfully: " + newIntervention._raw.id });
-            return newIntervention;
-        });
-
-        if (isService){
-            navigate({
-                name: "Serviços Solicitados", params: {
-                    intervation: newObject._raw,
-                    beneficiarie: beneficiarie,
-                }
-            });
-        } else {
-            navigate({
-                name: "BeneficiariesList", params: {
-                    intervation: newObject._raw,
-                    beneficiarie: beneficiarie
-                }
-            });
-        }
-
-
-        //setLoading(false);
-        sync({ username: loggedUser.username })
-            .then(() => toast.show({
-                placement: "top",
-                render: () => {
-                    return (
-                        <Alert w="100%" variant="left-accent" colorScheme="success" status="success">
-                            <VStack space={2} flexShrink={1} w="100%">
-                                <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
-                                    <HStack space={2} flexShrink={1} alignItems="center">
-                                        <Alert.Icon />
-                                        <Text color="coolGray.800">
-                                            Synced Successfully!
-                                        </Text>
-                                    </HStack>
-                                </HStack>
-                            </VStack>
-                        </Alert>
-                    );
-                }
-            }))
-            .catch(() => toast.show({
-                placement: "top",
-                render: () => {
-                    return (
-                        <Alert w="100%" variant="left-accent" colorScheme="error" status="error">
-                            <VStack space={2} flexShrink={1} w="100%">
-                                <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
-                                    <HStack space={2} flexShrink={1} alignItems="center">
-                                        <Alert.Icon />
-                                        <Text color="coolGray.800">
-                                            Sync Failed!
-                                        </Text>
-                                    </HStack>
-                                </HStack>
-                            </VStack>
-                        </Alert>
-                    );
-                }
-            }))
 
     }
-
-
 
     return (
         <KeyboardAvoidingView>
@@ -325,7 +108,6 @@ const BeneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                                     </Text>
                                 </HStack>
                             </Alert>
-
                             <Formik initialValues={initialValues}
                                 onSubmit={onSubmit} validate={validate} enableReinitialize={true}>
                                 {({
@@ -465,16 +247,11 @@ const BeneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                                             <FormControl.Label>Data Benefício</FormControl.Label>
 
                                             {show && (
-                                                // <DateTimePicker
-                                                //     testID="dateTimePicker"
-                                                //     value={date}
-                                                //     // mode={mode}
-                                                //     onChange={onChange}
-                                                // />
+                                                
                                                 <DatePicker
                                                     mode="calendar"
                                                     maximumDate={getToday()}
-                                                    onSelectedChange={date => onChange(null, date.replaceAll('/','-'))}
+                                                    onSelectedChange={date => onChange(null, date.replaceAll('/', '-'))}
                                                 />
                                             )}
 
@@ -550,26 +327,15 @@ const BeneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
     );
 }
 const enhance = withObservables([], () => ({
-    localities: database.collections
-        .get("localities")
-        .query().observe(),
-    profiles: database.collections
-        .get("profiles")
-        .query().observe(),
     services: database.collections
         .get("services")
         .query(),
     subServices: database.collections
         .get("sub_services")
         .query().observe(),
-    partners: database.collections
-        .get("partners")
-        .query().observe(),
     us: database.collections
         .get("us")
         .query().observe(),
-
-
 }));
 
-export default enhance(BeneficiarieServiceForm);
+export default enhance(ServicesForm);
