@@ -80,22 +80,24 @@ const FormReference = ({ form, beneficiary, reference, modalVisible, handleAdd, 
                 visible={modalVisible}
                 onCancel={() => handleModalRefVisible(false)}
                 footer={<div className="steps-action">
-                    {( (current > 0 && beneficiary != undefined)) && (
+                    {( (current > 0 && (beneficiary != undefined || reference != undefined))) && (
                         <Button style={{ marginLeft: 8 }} onClick={() => prev()}>
                             Anterior
                         </Button>
                     )}
-                    {((current === 0 && beneficiary != undefined)) && (
+                    {((current === 0 && (beneficiary != undefined || reference != undefined))) && (
                         <Button type="primary" onClick={() => next()}>
                             Próximo
                         </Button>
                     )}
-                    {(current === 1 && beneficiary != undefined)  && (
+                    {(current === 1 && (beneficiary != undefined || reference != undefined))  && (
                         <Button type="primary" onClick={() => onSubmit()}>
-                            Salvar
+                            {
+                                reference != undefined ? 'Actualizar': 'Salvar'
+                            }
+                            
                         </Button>
-                    )}
-
+                    )}                        
                 </div>}
             >
                 <div>
