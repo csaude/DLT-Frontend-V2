@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { Badge, Button, Steps, Row, Col, Input, message, Space, Form, Tabs, Modal, DatePicker, Checkbox, Select, Radio, Divider } from 'antd';
 import './index.css';
 import StepReference from './StepReferece';
-import StepViewReferece from './StepViewReferece';
+import StepReferenceService from './StepReferenceService';
 import { add } from '@app/utils/reference';
 import moment from 'moment';
 import { stringify } from 'qs';
@@ -10,11 +10,12 @@ import { stringify } from 'qs';
 const { Option } = Select;
 const { Step } = Steps;
 
-const FormReference = ({ form, beneficiary, modalVisible, handleAdd, handleUpdate, handleModalRefVisible }: any) => {
+const FormReference = ({ form, beneficiary, modalVisible, handleAdd, handleUpdate, handleModalRefVisible, handleRefServicesList }: any) => {
 
     const [current, setCurrent] = useState(0);
     const [firstStepValues, setFirstStepValues] = useState();
     const [secondStepValues, setSecondStepValues] = useState();
+    const [services, setServices] = useState<any>([]);
 
     const next = () => {
         
@@ -22,18 +23,17 @@ const FormReference = ({ form, beneficiary, modalVisible, handleAdd, handleUpdat
 
             const inc = current + 1;
             setCurrent(inc);
-            current === 0 ? setFirstStepValues(values) : setSecondStepValues(values);
+            setFirstStepValues(values);
         }).catch(error => {
 
         });
-
-
     }
 
     const prev = () => {
         const inc = current - 1;
         setCurrent(inc);
     }
+
     const okHandle = () => {
         handleAdd("test");
         handleModalRefVisible(false);
@@ -45,9 +45,12 @@ const FormReference = ({ form, beneficiary, modalVisible, handleAdd, handleUpdat
 
     const onSubmit = async () => {
         
-        handleAdd(firstStepValues,"1")
-        const inc = current + 1;
+        handleAdd(firstStepValues);
+
+        const inc = current - 1;
         setCurrent(inc);
+        form.resetFields();
+        handleModalRefVisible(false);
     }
 
     const onUpdate = async () => {
@@ -62,11 +65,7 @@ const FormReference = ({ form, beneficiary, modalVisible, handleAdd, handleUpdat
         },
         {
             title: ' Solicitar Intervenções ',
-            content: <StepViewReferece form={form} beneficiary={beneficiary} />,
-        },
-        {
-            title: ' Referências',
-            content: <StepViewReferece form={form} beneficiary={beneficiary} />,
+            content: <StepReferenceService form={form}  reference={firstStepValues} beneficiary={beneficiary} handleRefServicesList={handleRefServicesList} />,
         }
     ];
 
@@ -77,28 +76,23 @@ const FormReference = ({ form, beneficiary, modalVisible, handleAdd, handleUpdat
                 bodyStyle={{ overflowY: 'auto', maxHeight: 'calc(100vh - 300px)' }}
                 centered
                 destroyOnClose
-                title={` Referências Dreams *`}
+                title={` Referências Dreams`}
                 visible={modalVisible}
                 onCancel={() => handleModalRefVisible(false)}
                 footer={<div className="steps-action">
-                    {(current === 1 || (current === 2 && beneficiary != undefined)) && (
+                    {( (current > 0 && beneficiary != undefined)) && (
                         <Button style={{ marginLeft: 8 }} onClick={() => prev()}>
                             Anterior
                         </Button>
                     )}
-                    {(current < steps.length - 2 || (current === 1 && beneficiary != undefined)) && (
+                    {((current === 0 && beneficiary != undefined)) && (
                         <Button type="primary" onClick={() => next()}>
                             Próximo
                         </Button>
                     )}
-                    {(current === steps.length - 2 && beneficiary === undefined)  && (
+                    {(current === 1 && beneficiary != undefined)  && (
                         <Button type="primary" onClick={() => onSubmit()}>
                             Salvar
-                        </Button>
-                    )}
-                    {(current === steps.length - 1) && (
-                        <Button type="primary" onClick={() => onUpdate()}>
-                            Actualizar
                         </Button>
                     )}
 

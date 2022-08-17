@@ -17,7 +17,7 @@ export async function allDistrictById(payload?: DistrictFilter){
 }
 export async function allDistrict(){
     let url: string;
-    url = '/api/getdistricts/';
+    url = '/api/districts/';
     const res = await select(url);
     return res;
 }
