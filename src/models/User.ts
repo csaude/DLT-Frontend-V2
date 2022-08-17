@@ -14,7 +14,7 @@ export interface UsersModel {
     locality_id?: any,
     partner_id?: any,
     profile_id?: any,
-    us_id?: any
+    us_ids?: any
 }
 
 export default class User extends Model {
@@ -31,7 +31,7 @@ export default class User extends Model {
     @field("locality_id") locality_id;   
     @field("partner_id") partner_id;   
     @field("profile_id") profile_id;   
-    @field("us_id") us_id;   
+    @field("us_ids") us_ids;   
     @field("online_id") online_id;   
     
 }

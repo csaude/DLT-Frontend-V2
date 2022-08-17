@@ -36,6 +36,7 @@ export default function ReferenceViewStack({ route }) {
           reference: route.params?.reference,
           beneficiary:  route.params?.beneficiary,
           referer:  route.params?.referer,
+          notify:  route.params?.notify,
           organization:  route.params?.organization
         }} />
       <Tab.Screen name="Serviços Solicitados" component={ServiceView} options={{ headerShown: false }}
