@@ -133,12 +133,10 @@ const ReferenceForm: React.FC = ({ route }: any) => {
 
     const onChangeUs = async (value: any) => {
 
-
         const getUsersList = await database.get('users').query(
-            Q.where('us_id', value)
+           Q.where('us_ids', Q.like(`%${value}%`))
         ).fetch();
         const usersSerialized = getUsersList.map(item => item._raw);
-
         setUsers(usersSerialized);
     }
 
