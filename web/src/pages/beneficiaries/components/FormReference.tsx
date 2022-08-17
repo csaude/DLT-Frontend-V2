@@ -10,7 +10,7 @@ import { stringify } from 'qs';
 const { Option } = Select;
 const { Step } = Steps;
 
-const FormReference = ({ form, beneficiary, modalVisible, handleAdd, handleUpdate, handleModalRefVisible, handleRefServicesList }: any) => {
+const FormReference = ({ form, beneficiary, reference, modalVisible, handleAdd, handleUpdate, handleModalRefVisible, handleRefServicesList }: any) => {
 
     const [current, setCurrent] = useState(0);
     const [firstStepValues, setFirstStepValues] = useState();
@@ -61,7 +61,7 @@ const FormReference = ({ form, beneficiary, modalVisible, handleAdd, handleUpdat
     const steps = [
         {
             title: 'Referir Beneficiario',
-            content: <StepReference form={form} beneficiary={beneficiary} />,
+            content: <StepReference form={form} beneficiary={beneficiary} reference={reference} />,
         },
         {
             title: ' Solicitar Intervenções ',
