@@ -272,7 +272,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                         style={{ textAlign: 'left' }}
                         initialValue={beneficiary?.entryPoint}
                     >
-                        <Radio.Group defaultValue={userEntryPoint} buttonStyle="solid">
+                        <Radio.Group buttonStyle="solid">
                             <Radio.Button value="1">US</Radio.Button>
                             <Radio.Button value="2">CM</Radio.Button>
                             <Radio.Button value="3">ES</Radio.Button>
