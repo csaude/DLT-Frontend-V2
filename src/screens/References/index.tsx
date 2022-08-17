@@ -51,7 +51,9 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
         const reference = data.item?._raw;
         const beneficiary = getBeneficiary(reference.beneficiary_id)._raw;
         const referer = getUser(reference.created_by)._raw;
+        const notifyTo = `${getUser(data.item._raw.notify_to).name + " " + getUser(data.item._raw.notify_to).surname}`
         const organization = getOrganization(referer.partner_id)._raw.name
+        
 
         const beneficiaryId = beneficiary.online_id ? beneficiary.online_id : beneficiary.id;
 
@@ -84,6 +86,7 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
                 reference: reference,
                 beneficiary: beneficiary,
                 referer: referer,
+                notify: notifyTo,
                 organization: organization,
                 services: servicesObjects,
                 interventions: interventionObjects
