@@ -16,26 +16,28 @@ const options = [
   { label: 'ES', value: '3' },
 ];
 
-const StepReference = ({ form, beneficiary }: any) => {
+const StepReference = ({ form, beneficiary, reference }: any) => {
 
-    // const selectedIntervention = beneficiary;
-    // const serviceType = selectedIntervention?.subServices?.service.serviceType;
+  console.log(reference);
 
     const [partners, setPartners] = React.useState<any>();
     const [users, setUsers] = React.useState<any>();
     const [user, setUser] = React.useState<any>();
-    const [us, setUs] = React.useState<any>();
+    const [us, setUs] = React.useState<any>([]);
     const selectedReference = beneficiary;
-    const partner_type = selectedReference?.serviceType;
     let userId = localStorage.getItem('user');
 
-    // const selectedOption = options?.filter(o => o.value === serviceType?.service_type+'').map(filteredOption => (filteredOption.value))[0];
-   
     useEffect(() => {
 
         const fetchData = async () => {
           const loggedUser = await query(localStorage.user);
-          form.setFieldsValue({createdBy: loggedUser?.name+' '+loggedUser?.surname});
+          
+          if(reference === undefined){
+            form.setFieldsValue({createdBy: loggedUser?.name+' '+loggedUser?.surname});
+          }else{
+            const regUser = await query(reference?.createdBy);
+            form.setFieldsValue({createdBy: regUser?.name+' '+regUser?.surname});
+          }
           
           setUser(loggedUser);
         }   
@@ -44,19 +46,26 @@ const StepReference = ({ form, beneficiary }: any) => {
 
         let orgType = form.getFieldValue('serviceType');
         let org = form.getFieldValue('partner_id');
-        let loc = form.getFieldValue('local');
 
         if(orgType !== '' && orgType !== undefined){
-          onChangeTipoServico(form.getFieldValue('serviceType'));
+          onChangeTipoServico(orgType);
         }
         if(org !== '' && org !== undefined){
-          onChangeOrganization(form.getFieldValue('partner_id'));
-        }
-        if(loc !== '' && loc !== undefined){
-          onChangeUs(form.getFieldValue('local'));
+          onChangeOrganization(org);
         }
     
       }, []); 
+
+    useEffect(() => {
+
+      let loc = form.getFieldValue('local');
+
+      if(loc !== '' && loc !== undefined && us.length > 0){
+        const usObj = us.filter(e => {return e.name === loc})[0];
+        onChangeUs(usObj?.id);
+      }
+
+    },[us]);
       
       const getNotaRef = () => {
         return 'REFDR' + String(userId).padStart(3, '0') + '0' + String(500 + 1).padStart(3, '0');
@@ -92,7 +101,7 @@ const StepReference = ({ form, beneficiary }: any) => {
                   name="referenceNote"
                   label="Nota Referência"
                   rules={[{ required: true, message: 'Obrigatório' }]}
-                  initialValue={getNotaRef()}
+                  initialValue={reference === undefined ? getNotaRef() : reference.referenceNote}
                 >
                   <Input placeholder="Nota Referência" disabled/>
                 </Form.Item>
@@ -102,7 +111,7 @@ const StepReference = ({ form, beneficiary }: any) => {
                   name="beneficiary_id"
                   label="Nº de Beneficiário"
                   rules={[{ required: true, message: 'Obrigatório' }]}
-                  initialValue={selectedReference?.nui}
+                  initialValue={reference === undefined ? selectedReference?.nui  : reference?.beneficiaries?.nui} 
                 >
                   <Input placeholder="Nº de Beneficiário" disabled/>
                 </Form.Item>
@@ -123,7 +132,7 @@ const StepReference = ({ form, beneficiary }: any) => {
                   name="referTo"
                   label="Referir Para"
                   rules={[{ required: true, message: 'Obrigatório' }]}
-                  // initialValue={selectedOption}
+                  initialValue={reference === undefined ? " " : reference?.serviceType}
                 >
                   <Radio.Group
                     options={options}
@@ -136,7 +145,7 @@ const StepReference = ({ form, beneficiary }: any) => {
                   name="bookNumber"
                   label="Nº do Livro"
                   rules={[{ required: true, message: 'Obrigatório' }]}
-                  // initialValue={selectedReference?.book_number}
+                  initialValue={reference === undefined ? " " : reference?.bookNumber}
                 >
                   <Input placeholder="Nº do Livro" />
                 </Form.Item>
@@ -146,7 +155,7 @@ const StepReference = ({ form, beneficiary }: any) => {
                   name="referenceCode"
                   label="Código de Referência no livro"
                   rules={[{ required: true, message: 'Obrigatório' }]}
-                  // initialValue={selectedReference?.reference_code}
+                  initialValue={reference === undefined ? " " : reference?.referenceCode}
                 >
                   <Input placeholder="Código de Referência no livro" />
                 </Form.Item>
@@ -158,7 +167,7 @@ const StepReference = ({ form, beneficiary }: any) => {
                   name="serviceType"
                   label="Tipo de Serviço"
                   rules={[{ required: true, message: 'Obrigatório' }]}
-                  // initialValue={serviceType===undefined? undefined : serviceType === '1'? 'CLINIC' : 'COMMUNITY'}
+                  initialValue={reference === undefined ? " " : reference?.serviceType === '1'? 'CLINIC' : 'COMMUNITY'}
                 >
                     <Select placeholder="Seleccione o Tipo de Serviço" onChange={onChangeTipoServico}>
                         {areaServicos.map(item => (
@@ -172,7 +181,7 @@ const StepReference = ({ form, beneficiary }: any) => {
                   name="partner_id"
                   label="Organização"
                   rules={[{ required: true, message: 'Obrigatório' }]}
-                  // initialValue={partner_type===undefined? undefined : partner_type === '1'? 'CLINIC' : 'COMMUNITY'}
+                  initialValue={reference === undefined ? " " : reference?.users?.partners?.name}
                 >
                   <Select placeholder="Organização" onChange={onChangeOrganization} disabled={partners === undefined}>
                         {partners?.map(item => (
@@ -186,7 +195,7 @@ const StepReference = ({ form, beneficiary }: any) => {
                   name="local"
                   label="Local"
                   rules={[{ required: true, message: 'Obrigatório' }]}
-                  // initialValue={selectedIntervention===undefined? undefined : selectedIntervention?.subServices?.id+''}
+                  initialValue={reference === undefined ? " " : reference?.users?.us[0]?.name}
                 >
                   <Select placeholder="Local" onChange={onChangeUs}  disabled={us === undefined}>
                         {us?.map(item => (
@@ -202,11 +211,11 @@ const StepReference = ({ form, beneficiary }: any) => {
                   name="notifyTo"
                   label="Notificar ao"
                   rules={[{ required: true, message: 'Obrigatório' }]}
-                  // initialValue={selectedIntervention===undefined? undefined : selectedIntervention?.subServices?.id+''}
+                  initialValue={reference === undefined ? " " : reference?.users?.name+" "+reference?.users?.surname}
                 >
                   <Select placeholder="Notificar ao" disabled={users === undefined}>
                         {users?.map(item => (
-                            <Option key={item.id}>{item.name}</Option>
+                            <Option key={item.id}>{item.name+' '+item.surname}</Option>
                         ))}
                   </Select>
                 </Form.Item>
@@ -215,7 +224,7 @@ const StepReference = ({ form, beneficiary }: any) => {
                 <Form.Item
                   name="remarks"
                   label="Observações"
-                  // initialValue={selectedIntervention?.remarks}
+                  initialValue={reference === undefined ? " " : reference?.remarks}
                 >
                   <TextArea rows={2} placeholder="Observações" maxLength={6} />
                 </Form.Item>
