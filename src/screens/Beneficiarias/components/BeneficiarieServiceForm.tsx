@@ -36,6 +36,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     const entry_points = [{ "id": '1', "name": "US" }, { "id": '3', "name": "CM" }, { "id": '2', "name": "ES" }];
 
     const [date, setDate] = useState(new Date());
+    const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
     const [text, setText] = useState('');
 
