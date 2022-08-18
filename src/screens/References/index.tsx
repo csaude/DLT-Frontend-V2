@@ -9,13 +9,14 @@ import { Q } from "@nozbe/watermelondb";
 import { database } from '../../database';
 import { Context } from '../../routes/DrawerNavigator';
 import { sync } from '../../database/sync';
+import { SuccessHandler, ErrorHandler } from "../../components/SyncIndicator";
 
 import styles from './styles';
 
 
-const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, services, subServices }:any) => {
+const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, services, subServices }: any) => {
     const [searchField, setSearchField] = useState('');
-    const loggedUser:any = useContext(Context);
+    const loggedUser: any = useContext(Context);
     const toast = useToast();
 
     const getBeneficiary = (beneficiary_id: any) => {
@@ -36,31 +37,31 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
         })[0];
     }
 
-    const getStatus = (status:any) => {
+    const getStatus = (status: any) => {
         if (status === 0) {
             return "Pendente";
         } else if (status === 1) {
             return "Atendida Parcialmente"
         } else if (status === 2) {
             return "Atendida"
-        } else if (status === 3) {
-            return "Cancelada"
         }
     }
 
-    const viewReference = async (data:any) => {
+    const viewReference = async (data: any) => {
         const reference = data.item?._raw;
         const beneficiary = getBeneficiary(reference.beneficiary_id)._raw;
         const referer = getUser(reference.created_by)._raw;
+        const notifyTo = `${getUser(data.item._raw.notify_to).name + " " + getUser(data.item._raw.notify_to).surname}`
         const organization = getOrganization(referer.partner_id)._raw.name
+        
 
         const beneficiaryId = beneficiary.online_id ? beneficiary.online_id : beneficiary.id;
 
         const interventions = await database.get('beneficiaries_interventions').query(
-            Q.where('beneficiary_id', beneficiaryId),   
+            Q.where('beneficiary_id', beneficiaryId),
         ).fetch();
 
-        const interventionObjects = interventions.map((e:any) => {
+        const interventionObjects = interventions.map((e: any) => {
             let subservice = subServices.filter((item) => {
                 return item._raw.online_id == e._raw.sub_service_id
             })[0];
@@ -70,21 +71,22 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
         const referenceId = reference.online_id ? reference.online_id : reference.id;
 
         const referenceServices = await database.get('references_services').query(
-            Q.where('reference_id', referenceId+""),   
+            Q.where('reference_id', referenceId + ""),
         ).fetch();
 
-        const servicesObjects = referenceServices.map((e:any) => {
-            let service:any = services.filter((item:any) => {
+        const servicesObjects = referenceServices.map((e: any) => {
+            let service: any = services.filter((item: any) => {
                 return item._raw.online_id == e._raw.service_id
             })[0];
             return { id: service._raw.online_id, name: service._raw.name, service: e._raw }
         });
 
         navigate({
-            name:"ReferenceView", params: {
-                reference: reference, 
+            name: "ReferenceView", params: {
+                reference: reference,
                 beneficiary: beneficiary,
                 referer: referer,
+                notify: notifyTo,
                 organization: organization,
                 services: servicesObjects,
                 interventions: interventionObjects
@@ -93,45 +95,19 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
     }
 
     const syncronize = () => {
-        sync({username: loggedUser.username})
-                .then(() => toast.show({
-                                placement: "top",
-                                render:() => {
-                                    return (
-                                        <Alert w="100%" variant="left-accent" colorScheme="success" status="success">
-                                            <VStack space={2} flexShrink={1} w="100%">
-                                                <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
-                                                    <HStack space={2} flexShrink={1} alignItems="center">
-                                                        <Alert.Icon />
-                                                        <Text color="coolGray.800">
-                                                            Synced Successfully!
-                                                        </Text>
-                                                    </HStack>
-                                                </HStack>
-                                            </VStack>
-                                        </Alert>
-                                    );
-                                }
-                }))
-                .catch(() => toast.show({
-                                placement: "top",
-                                render:() => {
-                                    return (
-                                        <Alert w="100%" variant="left-accent" colorScheme="error" status="error">
-                                            <VStack space={2} flexShrink={1} w="100%">
-                                                <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
-                                                    <HStack space={2} flexShrink={1} alignItems="center">
-                                                        <Alert.Icon />
-                                                        <Text color="coolGray.800">
-                                                            Sync Failed!
-                                                        </Text>
-                                                    </HStack>
-                                                </HStack>
-                                            </VStack>
-                                        </Alert> 
-                                    );
-                                }
-                }))
+        sync({ username: loggedUser.username })
+            .then(() => toast.show({
+                placement: "top",
+                render: () => {
+                    return (<SuccessHandler />);
+                }
+            }))
+            .catch(() => toast.show({
+                placement: "top",
+                render: () => {
+                    return (<ErrorHandler />);
+                }
+            }))
     }
 
     const randomHexColor = () => {
@@ -141,82 +117,62 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
     };
 
     const viewRow = (rowMap: any, rowKey: any) => {
-        console.log(typeof(rowMap[0]), "on View Row");
+        console.log(typeof (rowMap[0]), "on View Row");
         if (rowMap[rowKey]) {
             rowMap[rowKey].closeRow();
         }
     };
 
-    const onRowDidOpen = (rowKey:any) => {
-        console.log('This row opened', rowKey);
+    const onRowDidOpen = (rowKey: any) => {
     };
 
-    const renderItem = (data:any) => (
+    const renderItem = (data: any) => (
         <TouchableHighlight
             onPress={() => viewReference(data)}
             style={styles.rowFront}
             underlayColor={'#AAA'}
         >
             <HStack width="100%" px={4}
-                   flex={1} space={5} alignItems="center">
-                <Ionicons name="exit" size={50} color="#0d9488" />
-                <VStack >
+                flex={1} space={5} alignItems="center">
+                <Ionicons name="exit-outline" size={35} color="#0d9488" />
+                <VStack width='200px' >
                     <HStack>
                         <Text color="warmGray.400" _dark={{ color: "warmGray.200" }}>
-                            NUI:
+                            NID:
                         </Text>
-                        <Text color="darkBlue.300" _dark={{ color: "warmGray.200" }}>
+                        <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
                             {` ${getBeneficiary(data.item.beneficiary_id).nui}`}
                         </Text>
                     </HStack>
                     <HStack>
-                        <Text color="warmGray.400" _dark={{ color: "warmGray.200" }}>
-                            Referente:
-                        </Text>
-                        <Text color="darkBlue.300" _dark={{ color: "warmGray.200" }}>
-                            {` ${getUser(data.item._raw.created_by)?.name + " " + getUser(data.item._raw.created_by)?.surname}`}
-                        </Text>
-                    </HStack>
-                    <HStack>
-                        <Text color="warmGray.400" _dark={{ color: "warmGray.200" }}>
-                            Organização:
-                        </Text>
-                        <Text color="darkBlue.300" _dark={{ color: "warmGray.200" }}>
-                            {` ${getOrganization(getUser(data.item._raw.created_by).partner_id).name}`}
-                        </Text>
-                    </HStack>
-                </VStack>
-                <VStack >
-                    <HStack>
-                        <Text color="warmGray.400" _dark={{ color: "warmGray.200" }}>
-                            Data:
-                        </Text>
-                        <Text color="darkBlue.300" _dark={{ color: "warmGray.200" }}>
-                            {` ${data.item.date_created}`}
-                        </Text>
-                    </HStack>
-                    <HStack>
-                        <Text color="warmGray.400" _dark={{ color: "warmGray.200" }}>
-                            Notificar ao:
-                        </Text>
-                        <Text color="darkBlue.300" _dark={{ color: "warmGray.200" }}>
+                        <View style={{ paddingTop: 5 }}><Ionicons name="notifications" size={11} color="#17a2b8" /></View>
+                        <View style={{ paddingTop: 5 }}><Ionicons name="person" size={11} color="#17a2b8" /></View>
+                        <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
                             {` ${getUser(data.item._raw.notify_to).name + " " + getUser(data.item._raw.notify_to).surname}`}
                         </Text>
                     </HStack>
                     <HStack>
-                        <Text color="warmGray.400" _dark={{ color: "warmGray.200" }}>
-                            Status:
+                        <View style={{ paddingTop: 5 }}><Ionicons name="notifications" size={11} color="#17a2b8" /></View>
+                        <View style={{ paddingTop: 5 }}><Ionicons name="md-home" size={11} color="#17a2b8" /></View>
+                        <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
+                            {` ${getOrganization(getUser(data.item._raw.created_by).partner_id).name}`}
                         </Text>
-                        <Text color="darkBlue.300" _dark={{ color: "warmGray.200" }}>
+                    </HStack>
+                </VStack>
+                <VStack alignSelf="flex-start" marginTop={2} width='100px'>
+
+
+                    <Text color="coolGray.500" >{` ${data.item.date_created}`}</Text>
+                    <HStack>
+                        <View style={{ paddingTop: 5 }}><Ionicons name="checkmark-circle" size={11} color="#17a2b8" /></View>
+
+                        <Text color={data.item._raw.status == 0 ? "danger.700" :
+                            data.item._raw.status == 1 ? "warning.700" : "success.700"} _dark={{ color: "warmGray.200" }}>
                             {` ${getStatus(data.item._raw.status)}`}
                         </Text>
                     </HStack>
                 </VStack>
-                {/* <View>
-                    <Text color="darkBlue.800">{getUser(data.item._raw.notify_to).name + " " + getUser(data.item._raw.notify_to).surname}</Text>
-                    <Text color="darkBlue.800">{getOrganization(getUser(data.item._raw.notify_to).partner_id).name}</Text>
-                    <Text color="darkBlue.800">{getStatus(data.item._raw.status)}</Text>
-                </View> */}
+
             </HStack>
         </TouchableHighlight>
     );
@@ -224,35 +180,35 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
     const renderHiddenItem = (data: any, rowMap: any) => (
         <HStack flex={1} pl={2}>
             <Pressable px={4} ml="auto" bg="lightBlue.700" justifyContent="center"
-                            onPress={() => viewReference(data)}
-                            _pressed={{opacity:0.5}}
+                onPress={() => viewReference(data)}
+                _pressed={{ opacity: 0.5 }}
             >
                 <Icon as={MaterialIcons} name="remove-red-eye" size={6} color="gray.200" />
             </Pressable>
-            <Pressable px={4} bg="lightBlue.700" justifyContent="center"
-                            onPress={() => navigate({name:"ReferenceForm", params:{reference:data.item}})}
-                            _pressed={{opacity:0.5}}
+            <Pressable px={4} bg="lightBlue.800" justifyContent="center"
+                onPress={() => navigate({ name: "ReferenceForm", params: { reference: data.item } })}
+                _pressed={{ opacity: 0.5 }}
             >
                 <Icon as={MaterialIcons} name="mode-edit" size={6} color="gray.200" />
             </Pressable>
         </HStack>
     );
 
-    const handleChange = (e:any) => {
+    const handleChange = (e: any) => {
         setSearchField(e);
     };
 
     const filteredReferences = references?.filter(reference =>
-        (getUser(reference.notify_to).name + " " + getUser(reference.notify_to).surname).toLowerCase().includes(searchField.toLowerCase())    
+        (getUser(reference.notify_to).name + " " + getUser(reference.notify_to).surname).toLowerCase().includes(searchField.toLowerCase())
     )
 
     return (
         <View style={styles.container}>
             <View style={styles.heading}>
-                <Box alignItems="center" w="80%" bgColor="white" style={{borderRadius: 5}}>
-                    <Input w={{base:"100%", md:"25%"}} onChangeText={handleChange} 
+                <Box alignItems="center" w="80%" bgColor="white" style={{ borderRadius: 5 }}>
+                    <Input w={{ base: "100%", md: "25%" }} onChangeText={handleChange}
                         InputLeftElement={<Icon as={MaterialIcons} name="search" size={5} ml="2" color="muted.700" />} placeholder="Search"
-                        style={{borderRadius:45}} />
+                        style={{ borderRadius: 45 }} />
                 </Box>
             </View>
             <SwipeListView

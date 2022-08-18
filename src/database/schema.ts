@@ -81,7 +81,7 @@ export default appSchema({
           {name: "locality_id", type: "number", isIndexed: true },
           {name: "partner_id", type: "number" },
           {name: "profile_id", type: "number", isIndexed: true },
-          {name: "us_id", type: "number", isIndexed: true },
+          {name: "us_ids", type: "string", isOptional:true},
           {name: 'online_id', type: 'number',isOptional: true }, // flag to control if entity is synchronized with the backend
         ],
       }),
