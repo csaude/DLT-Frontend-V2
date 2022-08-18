@@ -21,8 +21,6 @@ const options = [
 
 const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, handleRefServicesList }: any) => {
 
-    const selectedIntervention = beneficiary?.beneficiariesInterventionses;
-
     const [user, setUser] = React.useState<any>();
 
     const [visible, setVisible] = useState<boolean>(false);
@@ -30,6 +28,9 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
     const [servicesList, setServicesList] = useState<any>();
     const [interventions, setInterventions] = useState<any>();
     const [selectedService, setSelectedService] = useState<any>();
+
+    const selectedIntervention = (reference !== undefined ? reference?.beneficiaries?.beneficiariesInterventionses : beneficiary?.beneficiariesInterventionses);
+    beneficiary = (reference !== undefined ? reference?.beneficiaries : beneficiary);
 
     const showDrawer = (record: any) => {
 
@@ -42,8 +43,8 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
             const data = await queryUser(beneficiary?.createdBy);
             const data1 = await queryBeneficiary(beneficiary.id);
 
-            if (reference !== undefined) {
-                const getAllData = await queryByType(reference?.serviceType);
+            if (firstStepValues !== undefined ) {
+                const getAllData = await queryByType(firstStepValues?.serviceType);
                 setServicesList(getAllData);
             }
 
@@ -56,7 +57,7 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
             fetchData().catch(error => console.log(error));
         }
 
-    }, [reference]);
+    }, [firstStepValues]);
 
     const onRemoveServico = (value: any) => {
 
@@ -211,7 +212,6 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
                                     height: '1px',
                                 }} />
                                 <Row>
-                                    {console.log(firstStepValues)}
                                     <Col className="gutter-row" span={3}>{moment(firstStepValues?.dateCreated).format('YYYY-MM-DD HH:MM')}</Col>
                                     <Col className="gutter-row" span={5}>{user === undefined ? (reference?.users?.name+' '+reference?.users?.surname) : (user?.name + ' ' + user?.surname)}</Col>
                                     <Col className="gutter-row" span={3}>{user === undefined ? (reference?.users?.phoneNumber) :(user?.phoneNumber)}</Col>

@@ -18,8 +18,6 @@ const options = [
 
 const StepReference = ({ form, beneficiary, reference }: any) => {
 
-  console.log(reference);
-
     const [partners, setPartners] = React.useState<any>();
     const [users, setUsers] = React.useState<any>();
     const [user, setUser] = React.useState<any>();
@@ -46,6 +44,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
 
         let orgType = form.getFieldValue('serviceType');
         let org = form.getFieldValue('partner_id');
+        // let loc = form.getFieldValue('local');
 
         if(orgType !== '' && orgType !== undefined){
           onChangeTipoServico(orgType);
@@ -53,6 +52,12 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
         if(org !== '' && org !== undefined){
           onChangeOrganization(org);
         }
+
+        /// Mostra o nome do utilizador a ser notificado
+        // Por rever
+        // if(loc !== '' && loc !== undefined && reference === undefined){
+        //   onChangeUs(loc);
+        // }
     
       }, []); 
 
@@ -60,7 +65,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
 
       let loc = form.getFieldValue('local');
 
-      if(loc !== '' && loc !== undefined && us.length > 0){
+      if(loc !== '' && loc !== undefined && us.length > 0 && reference != undefined){
         const usObj = us.filter(e => {return e.name === loc})[0];
         onChangeUs(usObj?.id);
       }
