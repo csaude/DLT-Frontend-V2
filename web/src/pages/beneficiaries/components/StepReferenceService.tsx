@@ -47,11 +47,13 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
                 const getAllData = await queryByType(firstStepValues?.serviceType);
                 setServicesList(getAllData);
             }
-
             setUser(data);
             setInterventions(data1.beneficiariesInterventionses);
         }
 
+        if( reference !== undefined){
+            
+        }
         if (selectedIntervention !== undefined) {
 
             fetchData().catch(error => console.log(error));
@@ -62,6 +64,7 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
     const onRemoveServico = (value: any) => {
 
         var serv = (services.filter((v, i) => i !== services.indexOf(value)));
+        console.log(serv);
         handleRefServicesList(serv);
         setServices(serv);
 
