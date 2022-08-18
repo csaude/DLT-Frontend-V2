@@ -19,9 +19,7 @@ const options = [
     { label: 'ES', value: '3' },
 ];
 
-const StepReferenceService = ({ form, reference, beneficiary, handleRefServicesList }: any) => {
-
-    const selectedIntervention = beneficiary?.beneficiariesInterventionses;
+const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, handleRefServicesList }: any) => {
 
     const [user, setUser] = React.useState<any>();
 
@@ -30,6 +28,9 @@ const StepReferenceService = ({ form, reference, beneficiary, handleRefServicesL
     const [servicesList, setServicesList] = useState<any>();
     const [interventions, setInterventions] = useState<any>();
     const [selectedService, setSelectedService] = useState<any>();
+
+    const selectedIntervention = (reference !== undefined ? reference?.beneficiaries?.beneficiariesInterventionses : beneficiary?.beneficiariesInterventionses);
+    beneficiary = (reference !== undefined ? reference?.beneficiaries : beneficiary);
 
     const showDrawer = (record: any) => {
 
@@ -42,25 +43,28 @@ const StepReferenceService = ({ form, reference, beneficiary, handleRefServicesL
             const data = await queryUser(beneficiary?.createdBy);
             const data1 = await queryBeneficiary(beneficiary.id);
 
-            if (reference !== undefined) {
-                const getAllData = await queryByType(reference?.serviceType);
+            if (firstStepValues !== undefined ) {
+                const getAllData = await queryByType(firstStepValues?.serviceType);
                 setServicesList(getAllData);
             }
-
             setUser(data);
             setInterventions(data1.beneficiariesInterventionses);
         }
 
+        if( reference !== undefined){
+            
+        }
         if (selectedIntervention !== undefined) {
 
             fetchData().catch(error => console.log(error));
         }
 
-    }, [reference]);
+    }, [firstStepValues]);
 
     const onRemoveServico = (value: any) => {
 
         var serv = (services.filter((v, i) => i !== services.indexOf(value)));
+        console.log(serv);
         handleRefServicesList(serv);
         setServices(serv);
 
@@ -211,13 +215,13 @@ const StepReferenceService = ({ form, reference, beneficiary, handleRefServicesL
                                     height: '1px',
                                 }} />
                                 <Row>
-                                    <Col className="gutter-row" span={3}>{moment(reference?.dateCreated).format('YYYY-MM-DD HH:MM')}</Col>
-                                    <Col className="gutter-row" span={5}>{user?.name + ' ' + user?.surname}</Col>
-                                    <Col className="gutter-row" span={3}>{user?.phoneNumber}</Col>
-                                    <Col className="gutter-row" span={3}>{reference?.bookNumber}</Col>
-                                    <Col className="gutter-row" span={4}>{user?.partners.name}</Col>
-                                    <Col className="gutter-row" span={3}>{reference?.referenceCode}</Col>
-                                    <Col className="gutter-row" span={3}>{reference?.serviceType == 'CLINIC' ? 'Serviços Clínicos' : 'Serviços Comunitários'}</Col>
+                                    <Col className="gutter-row" span={3}>{moment(firstStepValues?.dateCreated).format('YYYY-MM-DD HH:MM')}</Col>
+                                    <Col className="gutter-row" span={5}>{user === undefined ? (reference?.users?.name+' '+reference?.users?.surname) : (user?.name + ' ' + user?.surname)}</Col>
+                                    <Col className="gutter-row" span={3}>{user === undefined ? (reference?.users?.phoneNumber) :(user?.phoneNumber)}</Col>
+                                    <Col className="gutter-row" span={3}>{firstStepValues?.bookNumber}</Col>
+                                    <Col className="gutter-row" span={4}>{user === undefined ? (reference?.users?.partners?.description) : (user?.partners.name)}</Col>
+                                    <Col className="gutter-row" span={3}>{firstStepValues?.referenceCode}</Col>
+                                    <Col className="gutter-row" span={3}>{firstStepValues?.serviceType == 'CLINIC' ? 'Serviços Clínicos' : 'Serviços Comunitários'}</Col>
 
                                 </Row>
                             </Card>

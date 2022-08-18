@@ -10,7 +10,7 @@ import { stringify } from 'qs';
 const { Option } = Select;
 const { Step } = Steps;
 
-const FormReference = ({ form, beneficiary, modalVisible, handleAdd, handleUpdate, handleModalRefVisible, handleRefServicesList }: any) => {
+const FormReference = ({ form, beneficiary, reference, modalVisible, handleAdd, handleUpdate, handleModalRefVisible, handleRefServicesList }: any) => {
 
     const [current, setCurrent] = useState(0);
     const [firstStepValues, setFirstStepValues] = useState();
@@ -58,14 +58,18 @@ const FormReference = ({ form, beneficiary, modalVisible, handleAdd, handleUpdat
         handleUpdate(firstStepValues, secondStepValues);
     }
 
+    // reference = reference !== undefined ? reference : firstStepValues;
+
     const steps = [
         {
             title: 'Referir Beneficiario',
-            content: <StepReference form={form} beneficiary={beneficiary} />,
+            content: <StepReference form={form} beneficiary={beneficiary} reference={reference} />,
         },
         {
             title: ' Solicitar Intervenções ',
-            content: <StepReferenceService form={form}  reference={firstStepValues} beneficiary={beneficiary} handleRefServicesList={handleRefServicesList} />,
+            content: <StepReferenceService form={form} reference={reference} firstStepValues={firstStepValues}
+                                            beneficiary={beneficiary} handleRefServicesList={handleRefServicesList} 
+                                            />,
         }
     ];
 
@@ -80,22 +84,24 @@ const FormReference = ({ form, beneficiary, modalVisible, handleAdd, handleUpdat
                 visible={modalVisible}
                 onCancel={() => handleModalRefVisible(false)}
                 footer={<div className="steps-action">
-                    {( (current > 0 && beneficiary != undefined)) && (
+                    {( (current > 0 && (beneficiary != undefined || reference != undefined))) && (
                         <Button style={{ marginLeft: 8 }} onClick={() => prev()}>
                             Anterior
                         </Button>
                     )}
-                    {((current === 0 && beneficiary != undefined)) && (
+                    {((current === 0 && (beneficiary != undefined || reference != undefined))) && (
                         <Button type="primary" onClick={() => next()}>
                             Próximo
                         </Button>
                     )}
-                    {(current === 1 && beneficiary != undefined)  && (
+                    {(current === 1 && (beneficiary != undefined || reference != undefined))  && (
                         <Button type="primary" onClick={() => onSubmit()}>
-                            Salvar
+                            {
+                                reference != undefined ? 'Actualizar': 'Salvar'
+                            }
+                            
                         </Button>
-                    )}
-
+                    )}                        
                 </div>}
             >
                 <div>

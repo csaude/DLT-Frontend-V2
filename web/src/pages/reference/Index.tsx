@@ -24,9 +24,10 @@ const ReferenceList: React.FC = () => {
     const [ references, setReferences ] = useState<any[]>([]);
     const [ searchText, setSearchText ] = useState('');
     const [ searchedColumn, setSearchedColumn ] = useState('');
-    const [ reference, setReference] = useState();
-    const [ modalVisible, setModalVisible] = useState<boolean>(false);
-    const [ referenceModalVisible, setReferenceModalVisible] = useState<boolean>(false);
+    const [ reference, setReference ] = useState();
+    const [services, setServices] = useState<any>([]);
+    const [ modalVisible, setModalVisible ] = useState<boolean>(false);
+    const [ referenceModalVisible, setReferenceModalVisible ] = useState<boolean>(false);
 
     const [ partners, setPartners] = useState<any[]>([]);
     const [ user, setUser] = useState<any[]>([]);
@@ -53,16 +54,21 @@ const ReferenceList: React.FC = () => {
     
         fetchData().catch(error => console.log(error));
     
-    }, []);    
+    }, []);
+
+    const handleModalRefVisible = (flag?: boolean, record?: any) => {
+        setReferences(record);
+        setReferenceModalVisible(!!flag);
+    };
 
     const handleViewModalVisible = (flag?: boolean, record?: any) => {
         setReference(record);
         setModalVisible(!!flag);
     }
 
-    const handleFormModalVisible = (flag?: boolean, record?: any) => {
+    const onEditRefence = (record?: any) => {
         setReference(record);
-        setReferenceModalVisible(!!flag);
+        setReferenceModalVisible(true);
     }
 
     const handleAdd = () => {
@@ -220,6 +226,10 @@ const ReferenceList: React.FC = () => {
         clearFilters();
         setSearchText(searchText);
     };
+
+    const handleRefServicesList = (data?: any) => {
+        setServices(data);
+    };
     
     const columnsRef = [
         { 
@@ -375,7 +385,7 @@ const ReferenceList: React.FC = () => {
               <Space>
                 <Button type="primary" icon={<EyeOutlined />} onClick={() =>handleViewModalVisible(true, record)} >
                 </Button>
-                <Button type="primary" icon={<EditOutlined />} onClick={() =>handleFormModalVisible(true, record) } >
+                <Button type="primary" icon={<EditOutlined />} onClick={() =>onEditRefence(record) } >
                 </Button>
               </Space>
             ),
@@ -399,10 +409,14 @@ const ReferenceList: React.FC = () => {
                 {...parentMethods}
                 reference={reference}
                 modalVisible={modalVisible} />
+
             <FormReference
-                {...parentMethods}
+                form={form}
                 reference={reference}
-                modalVisible={false} />
+                modalVisible={referenceModalVisible}
+                handleModalRefVisible={handleModalRefVisible} 
+                handleRefServicesList={handleRefServicesList}/>
+
         </>
     );
 }
