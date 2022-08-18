@@ -25,6 +25,7 @@ const ReferenceList: React.FC = () => {
     const [ searchText, setSearchText ] = useState('');
     const [ searchedColumn, setSearchedColumn ] = useState('');
     const [ reference, setReference ] = useState();
+    const [services, setServices] = useState<any>([]);
     const [ modalVisible, setModalVisible ] = useState<boolean>(false);
     const [ referenceModalVisible, setReferenceModalVisible ] = useState<boolean>(false);
 
@@ -225,6 +226,10 @@ const ReferenceList: React.FC = () => {
         clearFilters();
         setSearchText(searchText);
     };
+
+    const handleRefServicesList = (data?: any) => {
+        setServices(data);
+    };
     
     const columnsRef = [
         { 
@@ -409,7 +414,8 @@ const ReferenceList: React.FC = () => {
                 form={form}
                 reference={reference}
                 modalVisible={referenceModalVisible}
-                handleModalRefVisible={handleModalRefVisible} />
+                handleModalRefVisible={handleModalRefVisible} 
+                handleRefServicesList={handleRefServicesList}/>
         </>
     );
 }
