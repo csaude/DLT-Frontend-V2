@@ -19,7 +19,7 @@ const options = [
     { label: 'ES', value: '3' },
 ];
 
-const StepReferenceService = ({ form, reference, beneficiary, handleRefServicesList }: any) => {
+const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, handleRefServicesList }: any) => {
 
     const selectedIntervention = beneficiary?.beneficiariesInterventionses;
 
@@ -211,13 +211,14 @@ const StepReferenceService = ({ form, reference, beneficiary, handleRefServicesL
                                     height: '1px',
                                 }} />
                                 <Row>
-                                    <Col className="gutter-row" span={3}>{moment(reference?.dateCreated).format('YYYY-MM-DD HH:MM')}</Col>
-                                    <Col className="gutter-row" span={5}>{user?.name + ' ' + user?.surname}</Col>
-                                    <Col className="gutter-row" span={3}>{user?.phoneNumber}</Col>
-                                    <Col className="gutter-row" span={3}>{reference?.bookNumber}</Col>
-                                    <Col className="gutter-row" span={4}>{user?.partners.name}</Col>
-                                    <Col className="gutter-row" span={3}>{reference?.referenceCode}</Col>
-                                    <Col className="gutter-row" span={3}>{reference?.serviceType == 'CLINIC' ? 'Serviços Clínicos' : 'Serviços Comunitários'}</Col>
+                                    {console.log(firstStepValues)}
+                                    <Col className="gutter-row" span={3}>{moment(firstStepValues?.dateCreated).format('YYYY-MM-DD HH:MM')}</Col>
+                                    <Col className="gutter-row" span={5}>{user === undefined ? (reference?.users?.name+' '+reference?.users?.surname) : (user?.name + ' ' + user?.surname)}</Col>
+                                    <Col className="gutter-row" span={3}>{user === undefined ? (reference?.users?.phoneNumber) :(user?.phoneNumber)}</Col>
+                                    <Col className="gutter-row" span={3}>{firstStepValues?.bookNumber}</Col>
+                                    <Col className="gutter-row" span={4}>{user === undefined ? (reference?.users?.partners?.description) : (user?.partners.name)}</Col>
+                                    <Col className="gutter-row" span={3}>{firstStepValues?.referenceCode}</Col>
+                                    <Col className="gutter-row" span={3}>{firstStepValues?.serviceType == 'CLINIC' ? 'Serviços Clínicos' : 'Serviços Comunitários'}</Col>
 
                                 </Row>
                             </Card>
