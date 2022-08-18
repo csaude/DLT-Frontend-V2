@@ -51,6 +51,9 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
             setInterventions(data1.beneficiariesInterventionses);
         }
 
+        if( reference !== undefined){
+            
+        }
         if (selectedIntervention !== undefined) {
 
             fetchData().catch(error => console.log(error));
