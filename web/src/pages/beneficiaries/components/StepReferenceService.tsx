@@ -28,9 +28,11 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
     const [servicesList, setServicesList] = useState<any>();
     const [interventions, setInterventions] = useState<any>();
     const [selectedService, setSelectedService] = useState<any>();
-
+    
     const selectedIntervention = (reference !== undefined ? reference?.beneficiaries?.beneficiariesInterventionses : beneficiary?.beneficiariesInterventionses);
     beneficiary = (reference !== undefined ? reference?.beneficiaries : beneficiary);
+
+    console.log(reference);
 
     const showDrawer = (record: any) => {
 
@@ -52,8 +54,9 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
         }
 
         if( reference !== undefined){
-            
+            setServices(reference?.referencesServiceses);
         }
+
         if (selectedIntervention !== undefined) {
 
             fetchData().catch(error => console.log(error));
@@ -145,7 +148,11 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
             title: 'Serviço',
             dataIndex: '',
             key: 'servico.id',
-            render: (text, record) => record?.servico?.name,
+            // render: (text, record) => record?.servico?.name,
+            render: (text, record) => 
+            reference === undefined ? record?.servico?.name :
+            record?.services?.name
+            ,
         },
         {
             title: 'Accao',
