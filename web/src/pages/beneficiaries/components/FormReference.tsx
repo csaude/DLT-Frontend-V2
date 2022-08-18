@@ -58,6 +58,8 @@ const FormReference = ({ form, beneficiary, reference, modalVisible, handleAdd, 
         handleUpdate(firstStepValues, secondStepValues);
     }
 
+    // reference = reference !== undefined ? reference : firstStepValues;
+
     const steps = [
         {
             title: 'Referir Beneficiario',
@@ -65,7 +67,9 @@ const FormReference = ({ form, beneficiary, reference, modalVisible, handleAdd, 
         },
         {
             title: ' Solicitar Intervenções ',
-            content: <StepReferenceService form={form}  reference={firstStepValues} beneficiary={beneficiary} handleRefServicesList={handleRefServicesList} />,
+            content: <StepReferenceService form={form} reference={reference} firstStepValues={firstStepValues}
+                                            beneficiary={beneficiary} handleRefServicesList={handleRefServicesList} 
+                                            />,
         }
     ];
 
