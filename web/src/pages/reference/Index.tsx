@@ -56,8 +56,8 @@ const ReferenceList: React.FC = () => {
     
     }, []);
 
-    const handleModalRefVisible = (flag?: boolean, record?: any) => {
-        setReferences(record);
+    const handleModalRefVisible = (flag?: boolean) => {
+        // setReferences(record);
         setReferenceModalVisible(!!flag);
     };
 

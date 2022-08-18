@@ -64,12 +64,12 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
     const onRemoveServico = (value: any) => {
 
         var serv = (services.filter((v, i) => i !== services.indexOf(value)));
-        console.log(serv);
+        console.log(value);
         handleRefServicesList(serv);
         setServices(serv);
 
         message.warning({
-            content: value.name + ' foi removido da lista de serviços a serem providos.', className: 'custom-class',
+            content: value.servico.name + ' foi removido da lista de serviços a serem providos.', className: 'custom-class',
             style: {
                 marginTop: '10vh',
             }
