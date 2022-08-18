@@ -65,7 +65,7 @@ const ReferenceView: React.FC = ({ route }: any) => {
                 <Ionicons name="exit" size={50} color="#0d9488" />
                 <VStack width='200px' >
                     <Text _dark={{color: "warmGray.50"}} color="darkBlue.800" >
-                        {data.item.reference_code}
+                        {data.item.reference_note}
                     </Text>
                     <HStack>
                         <Text color="warmGray.400" _dark={{ color: "warmGray.200" }}>

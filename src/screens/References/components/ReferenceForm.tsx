@@ -11,7 +11,7 @@ import { Picker } from '@react-native-picker/picker';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import ModalSelector from 'react-native-modal-selector-searchable';
 import StepperButton from '../../Beneficiarias/components/StapperButton';
-import styles from './styles';
+import styles from './styles1';
 import moment from 'moment';
 
 const ReferenceForm: React.FC = ({ route }: any) => {
@@ -162,7 +162,6 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                 ref.created_by = userId,
                 ref.date_created = moment(new Date()).format('YYYY-MM-DD')
             });
-
             return newReference;
         });
 
