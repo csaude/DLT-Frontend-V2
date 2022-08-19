@@ -54,11 +54,18 @@ const FormReference = ({ form, beneficiary, reference, modalVisible, handleAdd, 
     }
 
     const onUpdate = async () => {
-        
-        handleUpdate(firstStepValues, secondStepValues);
-    }
 
-    // reference = reference !== undefined ? reference : firstStepValues;
+        // handleUpdate(firstStepValues);
+
+        console.log(firstStepValues);
+
+        const inc = current - 1;
+        setCurrent(inc);
+        form.resetFields();
+        handleModalRefVisible(false);
+        
+        // handleUpdate(firstStepValues, secondStepValues);
+    }
 
     const steps = [
         {
@@ -95,12 +102,15 @@ const FormReference = ({ form, beneficiary, reference, modalVisible, handleAdd, 
                         </Button>
                     )}
                     {(current === 1 && (beneficiary != undefined || reference != undefined))  && (
-                        <Button type="primary" onClick={() => onSubmit()}>
-                            {
-                                reference != undefined ? 'Actualizar': 'Salvar'
-                            }
-                            
-                        </Button>
+                        reference != undefined ?
+                                <Button type="primary" onClick={() => onUpdate()}>
+                                    Actualizar
+                                </Button>
+                            :
+
+                                <Button type="primary" onClick={() => onSubmit()}>
+                                    Salvar
+                                </Button>
                     )}                        
                 </div>}
             >

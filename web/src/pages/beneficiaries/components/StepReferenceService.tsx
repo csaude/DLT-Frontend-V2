@@ -54,8 +54,6 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
         if( reference !== undefined){
             let referencesServiceses = reference?.referencesServiceses;
 
-            console.log( referencesServiceses );
-
             if(referencesServiceses.length !==0){
                 referencesServiceses.forEach(item => {
                     
@@ -65,9 +63,6 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
                         const service = ({ servico: item?.services, description: item?.description});
                         setServices(services => [...services, service]);
                     }
-        
-                    console.log("==========================");
-                    console.log(services); 
                     handleRefServicesList(services);
                 });
             }
@@ -141,19 +136,6 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
         form.setFieldValue('service', undefined);
     }
 
-    const listServices = async (service:any) => {
-
-        // if(service.length ===0 || services.length === 0){
-            const newServices = [service, ...services];
-
-            setServices(newServices);
-            handleRefServicesList(newServices);
-            console.log("==========================");
-            console.log(services);
-
-        // }        
-    }
-
     const onChangeServico = async (value: any) => {
         let serv = servicesList.filter(item => { return item.id == value })[0];
         setSelectedService(serv);
@@ -178,11 +160,7 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
             title: 'Serviço',
             dataIndex: '',
             key: 'servico.id',
-            // render: (text, record) => record?.servico?.name,
-            render: (text, record) => 
-            // reference === undefined ? 
-            record?.servico.name
-            //  :  record?.services?.name
+            render: (text, record) => record?.servico.name
             ,
         },
         {
@@ -190,7 +168,6 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
             dataIndex: '',
             key: 'intervention',
             render: (text, record) =>
-
                 <Button type='primary' icon={<DeleteFilled />} onClick={() => onRemoveServico(record)} danger>
                 </Button>
             ,
