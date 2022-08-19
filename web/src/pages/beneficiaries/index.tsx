@@ -26,20 +26,27 @@ const { Text } = Typography;
 const BeneficiariesList: React.FC = () => {
     const [form] = Form.useForm();
     const navigate = useNavigate();
-    const [users, setUsers] = useState<UserModel[]>([]);
+    const [ users, setUsers ] = useState<UserModel[]>([]);
+    const [ user, setUser ] = React.useState<any>();
     const [ beneficiaries, setBeneficiaries ] = useState<any[]>([]);
     const [ searchText, setSearchText ] = useState('');
-    const [services, setServices] = useState<any>([]);
+    const [services, setServices ] = useState<any>([]);
     const [ searchedColumn, setSearchedColumn ] = useState('');
-    const [ beneficiary, setBeneficiary] = useState<any>(undefined);
-    const [ reference, setReference] = useState<any>(undefined);
-    const [ modalVisible, setModalVisible] = useState<boolean>(false);
-    const [ beneficiaryModalVisible, setBeneficiaryModalVisible] = useState<boolean>(false);
-    const [ beneficiaryPartnerModalVisible, setBeneficiaryPartnerModalVisible] = useState<boolean>(false);
-    const [ referenceModalVisible, setReferenceModalVisible] = useState<boolean>(false);
+    const [ beneficiary, setBeneficiary ] = useState<any>(undefined);
+    const [ reference, setReference ] = useState<any>(undefined);
+    const [ modalVisible, setModalVisible ] = useState<boolean>(false);
+    const [ beneficiaryModalVisible, setBeneficiaryModalVisible ] = useState<boolean>(false);
+    const [ beneficiaryPartnerModalVisible, setBeneficiaryPartnerModalVisible ] = useState<boolean>(false);
+    const [ referenceModalVisible, setReferenceModalVisible ] = useState<boolean>(false);
 
     let searchInput ;
-    useEffect(() => {
+    useEffect(() => { 
+
+        const fetchUser = async () => {
+            const user = await queryUser(localStorage.user);
+            setUser(user);
+        }
+
         const fetchData = async () => {
           const data = await query();
 
@@ -51,6 +58,7 @@ const BeneficiariesList: React.FC = () => {
             setUsers(users);
         }
     
+        fetchUser().catch(error => console.log(error))
         fetchData().catch(error => console.log(error));
         fetchUsers().catch(error => console.log(error));
     
@@ -92,9 +100,7 @@ const BeneficiariesList: React.FC = () => {
                 dateCreated: '',
                 referencesServiceses: servicesObjects,
                 
-            };            
-
-            console.log(payload);
+            };
 
             const { data } = await addRef(payload);
 
@@ -269,13 +275,13 @@ const BeneficiariesList: React.FC = () => {
     };
 
     const handleBeneficiaryModalVisible = (flag?: boolean) => {
-        // form.resetFields();
+        form.resetFields();
         setBeneficiary(undefined);
         setBeneficiaryModalVisible(!!flag);
     };
 
     const handleBeneficiaryPartnerModalVisible = (flag?: boolean) => {
-        // form.resetFields();
+        form.resetFields();
         setBeneficiary(undefined);
         setBeneficiaryPartnerModalVisible(!!flag);
     };
@@ -303,6 +309,10 @@ const BeneficiariesList: React.FC = () => {
         }
         setBeneficiary(record);
     };
+
+    const getName = (record: any) => {
+        return user?.profiles.id === 1 ? record.name + ' ' + record.surname : 'DREAMS'+record.nui;
+    }
 
     const getColumnSearchProps = (dataIndex:any) => ({
         filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
@@ -394,27 +404,28 @@ const BeneficiariesList: React.FC = () => {
     ];
 
     const columns = [
-        { title: 'Código do Beneficiário', dataIndex: '', key: 'nui', ...getColumnSearchProps('nui'),
+        { title: 'Código do Beneficiário (NUI)', dataIndex: '', key: 'nui', ...getColumnSearchProps('nui'),
             render: (text, record)  => (
-                <Text type="danger" >
+                <Text type="danger" >   
                     {record.neighborhood.locality.district.code}/{record.nui}
                 </Text>),
         },
-        { title: 'Nome do Beneficiário', dataIndex: 'name', key: 'name',
-            render: (text, record) => (
-                <div>
-                    {record.name} {record.surname}
-                </div>
-            ), 
+        { title: 'Nome do Beneficiário', dataIndex: 'name', key: 'name', ...getColumnSearchProps('name'),
+            // render: (text, record) => (
+            //     <div>
+            //         {record.name} {record.surname}
+            //     </div>
+            // ), 
+            render: (text, record) => getName(record),
         },
         { title: 'Sexo', dataIndex: 'gender', key: 'gender',
             filters: [
             {
-                text: 'Masculino',
+                text: 'M',
                 value: '0',
                 },
                 {
-                text: 'Feminino',
+                text: 'F',
                 value: '1',
             },
             ],
@@ -426,24 +437,42 @@ const BeneficiariesList: React.FC = () => {
                     status={val == true ? 'success' : 'warning'}
                     text={
                       val == '1'
-                        ? 'F'
+                        ? 'F' 
                         : 'M'
                     }
                   />
                 );
               },
         },
-        { title: 'PE', dataIndex: '', key: 'entryPoint', render: (text, record)  => getEntryPoint(record.entryPoint) },
+        { title: 'PE', dataIndex: '', key: 'entryPoint', 
+            filters: [
+            {
+                text: 'US',
+                value: '1',
+            },
+            {
+                text: 'ES',
+                value: '2',
+            },
+            {
+                text: 'CM',
+                value: '3',
+            },
+            ],
+            onFilter: (value, record) => record.entryPoint == value,
+            filterSearch: true,
+            render: (text, record)  => getEntryPoint(record.entryPoint) 
+        },
         { title: 'Distrito', dataIndex: '', key: 'district',
             render: (text, record)  => record.neighborhood.locality.district.name,
         },
         { title: 'Idade', dataIndex: 'age', key: 'age',
-            render: (text, record) => calculateAge(record.dateOfBirth)
+            render: (text, record) => calculateAge(record.dateOfBirth) + ' anos'
         },
-        { title: '#Interv', dataIndex: 'status', key: 'status', 
+        { title: '#Interv', dataIndex: 'beneficiariesInterventionses', key: 'beneficiariesInterventionses', 
             render(val: any) {
                 return (
-                    <Badge count={val} />
+                    <Badge count={val.length} />
                 );
             },
         },
@@ -451,16 +480,16 @@ const BeneficiariesList: React.FC = () => {
             render: (text, record)  => record.partner.abbreviation,
         },
         { title: 'Criado Por', dataIndex: '', key: 'createdBy',
-            render: (text, record)  => users.filter(user => record.createdBy == user.id).map(filteredUser => filteredUser.username)[0],
+            render: (text, record)  => users.filter(user => record.createdBy == user.id).map(filteredUser => `${filteredUser.name} ` + `${filteredUser.surname}`)[0],
         },
         { title: 'Atualizado Por', dataIndex: '', key: 'updatedBy',
-            render: (text, record)  => users.filter(user => record.updatedBy == user.id).map(filteredUser => filteredUser.username)[0],
+            render: (text, record)  => users.filter(user => record.updatedBy == user.id).map(filteredUser => `${filteredUser.name} ` + `${filteredUser.surname}`)[0],
         },
         { title: 'Criado Em', dataIndex: 'dateCreated', key: 'dateCreated',
             render: (val: string) => <span>{moment(val).format('YYYY-MM-DD')}</span>,
         },
         {
-          title: 'Action',
+          title: 'Acção',
           dataIndex: '',
           key: 'x',
           render: (text, record) => (
