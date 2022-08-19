@@ -18,9 +18,7 @@ const BeneficiaryForm = ({ form, beneficiary, modalVisible, handleAdd, handleUpd
     const [secondStepValues, setSecondStepValues] = useState();
 
     const next = () => {
-        
         form.validateFields().then(async (values) => {
-
             const inc = current + 1;
             setCurrent(inc);
             current === 0 ? setFirstStepValues(values) : setSecondStepValues(values);
@@ -35,25 +33,28 @@ const BeneficiaryForm = ({ form, beneficiary, modalVisible, handleAdd, handleUpd
         const inc = current - 1;
         setCurrent(inc);
     }
-    const okHandle = () => {
-        handleAdd("test");
-        handleModalVisible(false);
-    }
 
     const onSubmit = async () => {
-        
-        handleAdd(firstStepValues,"1")
-        //TODO: Go to next page only if above instruction succeeds
-        const inc = current + 1;
-        setCurrent(inc);
+        form.validateFields().then(async (values) => {
+            setSecondStepValues(values);
+            handleAdd(firstStepValues,"1")
+            const inc = current + 1;
+            setCurrent(inc);
+            
+        }).catch(error => {
+            console.log(error)
+        });
     }
 
     const onUpdate = async () => {
-        
-        handleUpdate(firstStepValues, secondStepValues);
-        // TODO: Perform actions only if above instruction succeeds
-        // setCurrent(0);
-        // form.resetFields();
+        form.validateFields().then(async (values) => {
+            handleUpdate(firstStepValues, secondStepValues);
+            // TODO: Review these actions... date is not being persisted when included
+            // setCurrent(0);
+            // form.resetFields();
+        }).catch(error => {
+            console.log(error)
+        });
     }
 
     const steps = [
