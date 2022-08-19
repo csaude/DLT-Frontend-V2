@@ -51,6 +51,28 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
             setInterventions(data1.beneficiariesInterventionses);
         }
 
+        if( reference !== undefined){
+            let referencesServiceses = reference?.referencesServiceses;
+
+            console.log( referencesServiceses );
+
+            if(referencesServiceses.length !==0){
+                referencesServiceses.forEach(item => {
+                    
+                    var serv = services.filter((s) => s.servico.id === item.services.id);
+
+                    if(serv.length ===0 || services.length === 0){
+                        const service = ({ servico: item?.services, description: item?.description});
+                        setServices(services => [...services, service]);
+                    }
+        
+                    console.log("==========================");
+                    console.log(services); 
+                    handleRefServicesList(services);
+                });
+            }
+
+        }
         if (selectedIntervention !== undefined) {
 
             fetchData().catch(error => console.log(error));
