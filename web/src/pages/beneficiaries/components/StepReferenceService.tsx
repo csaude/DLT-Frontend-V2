@@ -32,8 +32,6 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
     const selectedIntervention = (reference !== undefined ? reference?.beneficiaries?.beneficiariesInterventionses : beneficiary?.beneficiariesInterventionses);
     beneficiary = (reference !== undefined ? reference?.beneficiaries : beneficiary);
 
-    console.log(reference);
-
     const showDrawer = (record: any) => {
 
         setVisible(true);
@@ -54,7 +52,27 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
         }
 
         if( reference !== undefined){
-            setServices(reference?.referencesServiceses);
+
+            let referencesServiceses = reference?.referencesServiceses;
+
+            console.log( referencesServiceses );
+
+            if(referencesServiceses.length !==0){
+                referencesServiceses.forEach(item => {
+                    
+                    var serv = services.filter((s) => s.servico.id === item.services.id);
+
+                    if(serv.length ===0 || services.length === 0){
+                        const service = ({ servico: item?.services, description: item?.description});
+                        setServices(services => [...services, service]);
+                    }
+        
+                    console.log("==========================");
+                    console.log(services); 
+                    handleRefServicesList(services);
+                });
+            }
+
         }
 
         if (selectedIntervention !== undefined) {
@@ -67,7 +85,6 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
     const onRemoveServico = (value: any) => {
 
         var serv = (services.filter((v, i) => i !== services.indexOf(value)));
-        console.log(value);
         handleRefServicesList(serv);
         setServices(serv);
 
@@ -91,6 +108,7 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
     
                 handleRefServicesList(newServices);
                 setServices(newServices);
+                console.log(services);
 
                 message.success({
                     content: 'Adicionado com Sucesso!', className: 'custom-class',
@@ -124,6 +142,19 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
         form.setFieldValue('service', undefined);
     }
 
+    const listServices = async (service:any) => {
+
+        // if(service.length ===0 || services.length === 0){
+            const newServices = [service, ...services];
+
+            setServices(newServices);
+            handleRefServicesList(newServices);
+            console.log("==========================");
+            console.log(services);
+
+        // }        
+    }
+
     const onChangeServico = async (value: any) => {
         let serv = servicesList.filter(item => { return item.id == value })[0];
         setSelectedService(serv);
@@ -150,8 +181,9 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
             key: 'servico.id',
             // render: (text, record) => record?.servico?.name,
             render: (text, record) => 
-            reference === undefined ? record?.servico?.name :
-            record?.services?.name
+            // reference === undefined ? 
+            record?.servico.name
+            //  :  record?.services?.name
             ,
         },
         {
