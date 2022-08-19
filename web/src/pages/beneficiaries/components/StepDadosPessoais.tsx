@@ -219,7 +219,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                         name="province"
                         label="Provincia"
                         rules={[{ required: true, message: RequiredFieldMessage }]}
-                        initialValue={beneficiary?.neighborhood.locality.district.province.id.toString()}
+                        initialValue={beneficiary?.neighborhood.locality?.district.province.id.toString()}
                     >
                         <Select placeholder="Seleccione a Provincia" onChange={onChangeProvinces}>
                             {provinces?.map(item => (
@@ -233,7 +233,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                         name="district"
                         label="Distrito"
                         rules={[{ required: true, message: RequiredFieldMessage }]}
-                        initialValue={beneficiary?.neighborhood.locality.district.id.toString()}
+                        initialValue={beneficiary?.neighborhood.locality?.district.id.toString()}
                     >
                         <Select placeholder="Seleccione o Distrito" 
                                 disabled={districts == undefined && beneficiary == undefined}
@@ -250,7 +250,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                         name="locality"
                         label="Posto Administrativo"
                         rules={[{ required: true, message: RequiredFieldMessage }]}
-                        initialValue={beneficiary?.neighborhood.locality.id.toString()}
+                        initialValue={beneficiary?.neighborhood.locality?.id.toString()}
                     >
                         <Select placeholder="Seleccione o Posto Administrativo" 
                             disabled={localities == undefined && beneficiary == undefined}
