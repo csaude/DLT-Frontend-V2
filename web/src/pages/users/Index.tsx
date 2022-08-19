@@ -138,6 +138,10 @@ const UsersList: React.FC = () => {
 
             const user: any = selectedUser ? selectedUser : {};
 
+            let provinces = Array.isArray(values.provinces)? values.provinces : [values.provinces];
+            let districts = Array.isArray(values.districts)? values.districts : [values.districts];
+            let localities = Array.isArray(values.localities)? values.localities : [values.localities];
+
             user.surname = values.surname;
             user.name = values.name;
             user.phoneNumber = values.phoneNumber;
@@ -148,13 +152,13 @@ const UsersList: React.FC = () => {
             user.status = values.status;
             user.partners = { "id": values.partners };
             user.profiles = { "id": values.profiles };
-            user.provinces = values.provinces?.map(item => (
+            user.provinces = provinces?.map(item => (
                 { "id": item }
             ));
-            user.districts = values.districts?.map(item => (
+            user.districts = districts?.map(item => (
                 { "id": item }
             ));
-            user.localities = values.localities?.map(item => (
+            user.localities = localities?.map(item => (
                 { "id": item }
             ));
             user.us = values.us?.map(item => (
