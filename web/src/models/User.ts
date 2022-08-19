@@ -18,11 +18,11 @@ export interface UserModel {
 }
 
 export function getEntryPoint(value:any){
-  if(value == '1'){
-    return "Unidade Sanitaria";
-  } else if(value == '2') {
-    return "Escola";
-  } 
+    if(value == '1'){
+      return "US";
+    } else if(value == '2') {
+      return "ES";
+    } 
 
-  return "Comunidade";
+    return "CM";
 }
