@@ -28,7 +28,7 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
     const [servicesList, setServicesList] = useState<any>();
     const [interventions, setInterventions] = useState<any>();
     const [selectedService, setSelectedService] = useState<any>();
-
+    
     const selectedIntervention = (reference !== undefined ? reference?.beneficiaries?.beneficiariesInterventionses : beneficiary?.beneficiariesInterventionses);
     beneficiary = (reference !== undefined ? reference?.beneficiaries : beneficiary);
 
@@ -52,7 +52,21 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
         }
 
         if( reference !== undefined){
-            
+            let referencesServiceses = reference?.referencesServiceses;
+
+            if(referencesServiceses.length !==0){
+                referencesServiceses.forEach(item => {
+                    
+                    var serv = services.filter((s) => s.servico.id === item.services.id);
+
+                    if(serv.length ===0 || services.length === 0){
+                        const service = ({ servico: item?.services, description: item?.description});
+                        setServices(services => [...services, service]);
+                    }
+                    handleRefServicesList(services);
+                });
+            }
+
         }
         if (selectedIntervention !== undefined) {
 
@@ -69,7 +83,7 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
         setServices(serv);
 
         message.warning({
-            content: value.name + ' foi removido da lista de serviços a serem providos.', className: 'custom-class',
+            content: value.servico.name + ' foi removido da lista de serviços a serem providos.', className: 'custom-class',
             style: {
                 marginTop: '10vh',
             }
@@ -88,7 +102,7 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
     
                 handleRefServicesList(newServices);
                 setServices(newServices);
-
+                
                 message.success({
                     content: 'Adicionado com Sucesso!', className: 'custom-class',
                     style: {
@@ -145,14 +159,14 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
             title: 'Serviço',
             dataIndex: '',
             key: 'servico.id',
-            render: (text, record) => record?.servico?.name,
+            render: (text, record) => record?.servico.name
+            ,
         },
         {
             title: 'Accao',
             dataIndex: '',
             key: 'intervention',
             render: (text, record) =>
-
                 <Button type='primary' icon={<DeleteFilled />} onClick={() => onRemoveServico(record)} danger>
                 </Button>
             ,
