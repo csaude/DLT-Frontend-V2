@@ -44,3 +44,8 @@ export async function add(payload: Reference) {
   const res = await create('/api/references', payload);
   return res;
 }
+ 
+export async function edit(payload: any) {
+  const res = await update('/api/references/', payload);
+  return res;
+}

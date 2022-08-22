@@ -4,7 +4,7 @@ import {allPartners} from '@app/utils/partners';
 import {allDistrict} from '@app/utils/district';
 import { query  as query1} from '@app/utils/users';
 import {allUs} from '@app/utils/uSanitaria';
-import { Card, Table, Button, Space, Badge, Input, Typography, Form } from 'antd';
+import { Card, Table, Button, Space, Badge, Input, Typography, Form, message } from 'antd';
 import 'antd/dist/antd.css';
 import moment from 'moment';
 import Highlighter from 'react-highlight-words';
@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import Item from 'antd/lib/list/Item';
 import ViewReferral from './components/View';
 import FormReference from '../beneficiaries/components/FormReference';
+import { edit as editRef, Reference } from '../../utils/reference';
 
 const { Text } = Typography;
 
@@ -25,7 +26,8 @@ const ReferenceList: React.FC = () => {
     const [ searchText, setSearchText ] = useState('');
     const [ searchedColumn, setSearchedColumn ] = useState('');
     const [ reference, setReference ] = useState();
-    const [services, setServices] = useState<any>([]);
+    const [services, setServices] = useState<any>([])
+    const [ beneficiary, setBeneficiary ] = useState<any>(undefined);
     const [ modalVisible, setModalVisible ] = useState<boolean>(false);
     const [ referenceModalVisible, setReferenceModalVisible ] = useState<boolean>(false);
 
@@ -68,6 +70,7 @@ const ReferenceList: React.FC = () => {
 
     const onEditRefence = (record?: any) => {
         setReference(record);
+        setBeneficiary(record?.beneficiaries);
         setReferenceModalVisible(true);
     }
 
@@ -78,6 +81,62 @@ const ReferenceList: React.FC = () => {
     const handleModalVisible = (flag?: boolean) => {
         setModalVisible(!!flag);
     };
+
+    const handleRefUpdate = async (values:any) => {
+
+        let ref:any = reference;    
+        if(values !== undefined){
+
+            const servicesObjects = services.map((e:any) => {
+                let listServices:any = { 
+                                            services: {id: e.servico.id},
+                                            description: e.description, 
+                                            status: 0,
+                                            createdBy: localStorage.user,
+                                        };
+                return listServices
+            });
+
+            let payload: Reference = {
+                id: ref?.id,
+                beneficiaries: {
+                    id: beneficiary?.id
+                },
+                users: {
+                    id: localStorage.user
+                },
+                referenceNote: values.referenceNote,
+                description: '',
+                referTo: values.referTo,
+                bookNumber: values.bookNumber,
+                referenceCode: values.referenceCode,
+                serviceType: values.serviceType === "CLINIC" ? "1" : "2",
+                remarks: values.remarks,
+                statusRef: '0',
+                status: '0',
+                cancelReason: '0',
+                otherReason: '',
+                createdBy: ref?.createdBy, 
+                dateCreated: ref?.dateCreated,
+                referencesServiceses: servicesObjects,
+                
+            };
+
+            const { data } = await editRef(payload);
+            console.log(data);
+
+            message.success({
+                content: 'Actualizado com Sucesso!'+data?.referenceNote, className: 'custom-class',
+                style: {
+                    marginTop: '10vh',
+                }
+            });
+
+            // setReferenceModalVisible(false);
+
+            navigate('/referenceList');            
+        }
+    }
    
     const filterPartner = data => formatter => data.map( item => ({
         text: formatter(item),
@@ -413,6 +472,7 @@ const ReferenceList: React.FC = () => {
             <FormReference
                 form={form}
                 reference={reference}
+                handleUpdate={handleRefUpdate}
                 modalVisible={referenceModalVisible}
                 handleModalRefVisible={handleModalRefVisible} 
                 handleRefServicesList={handleRefServicesList}/>

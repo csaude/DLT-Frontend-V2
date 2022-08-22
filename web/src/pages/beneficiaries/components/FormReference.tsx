@@ -40,6 +40,11 @@ const FormReference = ({ form, beneficiary, reference, modalVisible, handleAdd, 
     }
     
     const onClose = () => {
+        form.resetFields();
+        if(current>0){
+            const inc = current - 1;
+            setCurrent(inc);
+        }
         handleModalRefVisible(false);
     }
 
@@ -55,9 +60,11 @@ const FormReference = ({ form, beneficiary, reference, modalVisible, handleAdd, 
 
     const onUpdate = async () => {
 
-        // handleUpdate(firstStepValues);
+        handleUpdate(firstStepValues, beneficiary);
 
-        console.log(firstStepValues);
+
+        // console.log(beneficiary);
+        // console.log(firstStepValues);
 
         const inc = current - 1;
         setCurrent(inc);
@@ -89,7 +96,7 @@ const FormReference = ({ form, beneficiary, reference, modalVisible, handleAdd, 
                 destroyOnClose
                 title={` Referências Dreams`}
                 visible={modalVisible}
-                onCancel={() => handleModalRefVisible(false)}
+                onCancel={() => onClose()}
                 footer={<div className="steps-action">
                     {( (current > 0 && (beneficiary != undefined || reference != undefined))) && (
                         <Button style={{ marginLeft: 8 }} onClick={() => prev()}>
