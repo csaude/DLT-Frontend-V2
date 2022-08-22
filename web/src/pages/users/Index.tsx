@@ -138,9 +138,9 @@ const UsersList: React.FC = () => {
 
             const user: any = selectedUser ? selectedUser : {};
 
-            let provinces = Array.isArray(values.provinces)? values.provinces : [values.provinces];
-            let districts = Array.isArray(values.districts)? values.districts : [values.districts];
-            let localities = Array.isArray(values.localities)? values.localities : [values.localities];
+            let provinces = values.provinces === undefined? [] : Array.isArray(values.provinces)? values.provinces : [values.provinces];
+            let districts = values.districts === undefined? [] : Array.isArray(values.districts)? values.districts : [values.districts];
+            let localities = values.localities === undefined? [] : Array.isArray(values.localities)? values.localities : [values.localities];
 
             user.surname = values.surname;
             user.name = values.name;
