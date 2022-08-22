@@ -7,6 +7,7 @@ interface ReferenceFilter{
 }
 
 export interface Reference {
+  id?: string;
   beneficiaries: {
       id: string
   },
@@ -26,6 +27,8 @@ export interface Reference {
 	otherReason: string;
 	createdBy: string;
 	dateCreated: string;
+  updatedBy?: string;
+  dateUpdated?: string;
 	referencesServiceses:[];
 }
 
@@ -42,5 +45,10 @@ export async function query(payload?: ReferenceFilter) {
 
 export async function add(payload: Reference) {
   const res = await create('/api/references', payload);
+  return res;
+}
+ 
+export async function edit(payload: any) {
+  const res = await update('/api/references/', payload);
   return res;
 }
