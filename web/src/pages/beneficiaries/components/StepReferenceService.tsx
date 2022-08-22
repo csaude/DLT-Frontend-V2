@@ -102,8 +102,7 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
     
                 handleRefServicesList(newServices);
                 setServices(newServices);
-                console.log(services);
-
+                
                 message.success({
                     content: 'Adicionado com Sucesso!', className: 'custom-class',
                     style: {
