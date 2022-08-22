@@ -66,10 +66,21 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
             }
         };
 
+        const fetchUs = async () => {
+            if (user && user.localities.length > 0) {
+                const lIds = user.localities.map(item => {
+                    return item.id + ''
+                });
+                const dataUs = await queryUsByLocalities({ localities: lIds });
+                setUs(dataUs);
+            }
+        };
+
 
         fetchData().catch(error => console.log(error));
         fetchDistricts().catch(error => console.log(error));
         fetchLocalities().catch(error => console.log(error));
+        fetchUs().catch(error => console.log(error));
 
     }, [user]);
 
@@ -195,7 +206,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                             name="phoneNumber"
                             label="Número de Telemóvel"
                             initialValue={user?.phoneNumber}
-                            rules={[{ type: 'number', min: 10000001, max:999999999, message: 'O numero inserido não é válido!' }]}
+                            rules={[{ required: true, type: 'number', min: 10000001, max:999999999, message: 'O numero inserido não é válido!' }]}
                         >
                             <InputNumber prefix="+258  " style={{width: '100%',}} placeholder="Insira o Telemóvel" />
                         </Form.Item>
@@ -204,9 +215,10 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                         <Form.Item
                             name="phoneNumber2"
                             label="Número de Telemóvel (Alternativo)"
+                            rules={[{ type: 'number', min: 10000001, max:999999999, message: 'O numero inserido não é válido!' }]}
                             initialValue={user?.phoneNumber2}
                         >
-                            <Input placeholder="Insira o Telemóvel" />
+                            <InputNumber prefix="+258  " style={{width: '100%',}} placeholder="Insira o Telemóvel" />
                         </Form.Item>
                     </Col>
                 </Row>
