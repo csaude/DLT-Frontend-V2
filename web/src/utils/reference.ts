@@ -7,6 +7,7 @@ interface ReferenceFilter{
 }
 
 export interface Reference {
+  id?: string;
   beneficiaries: {
       id: string
   },
@@ -26,6 +27,8 @@ export interface Reference {
 	otherReason: string;
 	createdBy: string;
 	dateCreated: string;
+  updatedBy?: string;
+  dateUpdated?: string;
 	referencesServiceses:[];
 }
 
