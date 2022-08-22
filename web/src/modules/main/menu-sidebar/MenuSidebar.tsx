@@ -14,7 +14,7 @@ const StyledUserImage = styled.img`
 export interface IMenuItem {
   name: string;
   path?: string;
-  role?: string;
+  roles?: string[];
   icon?: string;
   children?: Array<IMenuItem>;
 }
@@ -24,30 +24,30 @@ export const MENU: IMenuItem[] = [
     name: 'menusidebar.label.beneficiariesList',
     path: '/beneficiariesList',
     icon: 'fas fa-users', // icon set: https://fontawesome.com/v5/search
-    role: 'ADMIN'
+    roles: ['ADMIN','M&E','SUPERVISOR','MENTORA','ENFERMEIRA','CONSELHEIRA']
   },
   {
     name: 'menusidebar.label.referenceList',
     path: '/referenceList',
     icon: 'fas fa-sync',
-    role: 'ADMIN'
+    roles: ['ADMIN','M&E','SUPERVISOR','MENTORA','ENFERMEIRA','CONSELHEIRA']
   },
   {
     name: 'menusidebar.label.reports',
     path: '#',
     icon: 'fas fa-file-alt',
-    role: 'ADMIN'
+    roles: ['ADMIN','M&E','SUPERVISOR','DOADOR']
   },
   {
     name: 'menusidebar.label.configurations',
     path: '#',
     icon: 'fas fa-cog',
-    role: 'ADMIN'
+    roles: ['ADMIN','M&E','SUPERVISOR']
   },
   {
     name: 'menusidebar.label.users',
     path: '/usersList',
-    role: 'ADMIN',
+    roles: ['ADMIN'],
     icon: 'fas fa-user',
     /*children: [
       {
@@ -74,7 +74,6 @@ const MenuSidebar = () => {
   const menuItemFlat = useSelector((state: any) => state.ui.menuItemFlat);
   const menuChildIndent = useSelector((state: any) => state.ui.menuChildIndent);
 
-
   return (
     <aside className={`main-sidebar elevation-4 ${sidebarSkin}`}>
       <Link to="/" className="brand-link">
@@ -96,7 +95,7 @@ const MenuSidebar = () => {
           >
             {
               MENU.map((menuItem: IMenuItem) => (
-                menuItem.role == user.role ? <MenuItem key={menuItem.name} menuItem={menuItem} /> : undefined
+                menuItem.roles?.includes(user.role) ? <MenuItem key={menuItem.name} menuItem={menuItem} /> : undefined
               ))
             }
           </ul>
