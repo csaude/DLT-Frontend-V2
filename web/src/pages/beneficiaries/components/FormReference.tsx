@@ -62,16 +62,10 @@ const FormReference = ({ form, beneficiary, reference, modalVisible, handleAdd, 
 
         handleUpdate(firstStepValues, beneficiary);
 
-
-        // console.log(beneficiary);
-        // console.log(firstStepValues);
-
         const inc = current - 1;
         setCurrent(inc);
         form.resetFields();
         handleModalRefVisible(false);
-        
-        // handleUpdate(firstStepValues, secondStepValues);
     }
 
     const steps = [
