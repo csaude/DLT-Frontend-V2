@@ -108,6 +108,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
                   rules={[{ required: true, message: 'Obrigatório' }]}
                   initialValue={reference === undefined ? getNotaRef() : reference.referenceNote}
                 >
+
                   <Input placeholder="Nota Referência" disabled/>
                 </Form.Item>
               </Col>

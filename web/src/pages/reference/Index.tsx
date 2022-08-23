@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { query } from '@app/utils/reference';
+import { query, edit as editRef, Reference} from '@app/utils/reference';
 import {allPartners} from '@app/utils/partners';
 import {allDistrict} from '@app/utils/district';
 import { query  as query1} from '@app/utils/users';
 import {allUs} from '@app/utils/uSanitaria';
-import { Card, Table, Button, Space, Badge, Input, Typography, Form } from 'antd';
+import { Card, Table, Button, Space, Badge, Input, Typography, Form, message } from 'antd';
 import 'antd/dist/antd.css';
 import moment from 'moment';
 import Highlighter from 'react-highlight-words';
-import { SearchOutlined, PlusOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
-import { getEntryPoint } from '@app/models/User';
+import { SearchOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
 
 import { useNavigate } from 'react-router-dom';
-import Item from 'antd/lib/list/Item';
 import ViewReferral from './components/View';
 import FormReference from '../beneficiaries/components/FormReference';
 
@@ -25,7 +23,8 @@ const ReferenceList: React.FC = () => {
     const [ searchText, setSearchText ] = useState('');
     const [ searchedColumn, setSearchedColumn ] = useState('');
     const [ reference, setReference ] = useState();
-    const [services, setServices] = useState<any>([]);
+    const [services, setServices] = useState<any>([])
+    const [ beneficiary, setBeneficiary ] = useState<any>(undefined);
     const [ modalVisible, setModalVisible ] = useState<boolean>(false);
     const [ referenceModalVisible, setReferenceModalVisible ] = useState<boolean>(false);
 
@@ -56,8 +55,7 @@ const ReferenceList: React.FC = () => {
     
     }, []);
 
-    const handleModalRefVisible = (flag?: boolean, record?: any) => {
-        setReferences(record);
+    const handleModalRefVisible = (flag?: boolean) => {
         setReferenceModalVisible(!!flag);
     };
 
@@ -68,6 +66,7 @@ const ReferenceList: React.FC = () => {
 
     const onEditRefence = (record?: any) => {
         setReference(record);
+        setBeneficiary(record?.beneficiaries);
         setReferenceModalVisible(true);
     }
 
@@ -78,6 +77,61 @@ const ReferenceList: React.FC = () => {
     const handleModalVisible = (flag?: boolean) => {
         setModalVisible(!!flag);
     };
+
+    const handleRefUpdate = async (values:any) => {
+
+        let ref:any = reference;    
+        if(values !== undefined){
+
+            const servicesObjects = services.map((e:any) => {
+                let listServices:any = { 
+                                            services: {id: e.servico.id},
+                                            description: e.description, 
+                                            status: 0,
+                                            createdBy: localStorage.user,
+                                        };
+                return listServices
+            });
+
+            let payload: Reference = {
+                id: ref?.id,
+                beneficiaries: {
+                    id: beneficiary?.id
+                },
+                users: {
+                    id: localStorage.user
+                },
+                referenceNote: values.referenceNote,
+                description: '',
+                referTo: values.referTo,
+                bookNumber: values.bookNumber,
+                referenceCode: values.referenceCode,
+                serviceType: values.serviceType === "CLINIC" ? "1" : "2",
+                remarks: values.remarks,
+                statusRef: '0',
+                status: '0',
+                cancelReason: '0',
+                otherReason: '',
+                createdBy: ref?.createdBy, 
+                dateCreated: ref?.dateCreated,
+                referencesServiceses: servicesObjects,
+                
+            };
+
+            const { data } = await editRef(payload);
+            const allReferences: any = await query();
+            setReferences(allReferences);
+
+            message.success({
+                content: 'Actualizado com Sucesso!'+data?.referenceNote, className: 'custom-class',
+                style: {
+                    marginTop: '10vh',
+                }
+            });
+
+            navigate('/referenceList');            
+        }
+    }
    
     const filterPartner = data => formatter => data.map( item => ({
         text: formatter(item),
@@ -142,9 +196,7 @@ const ReferenceList: React.FC = () => {
                 autoEscape
                 textToHighlight={value ? value.toString() : ''}
                 />
-            ) : ( value),
-
-            
+            ) : ( value),            
     });
 
     const parentMethods = {
@@ -195,7 +247,7 @@ const ReferenceList: React.FC = () => {
         filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
         onFilter: (value, record) =>
                     record.beneficiaries?.nui
-                        ? record.beneficiaries?.nui.toString().toLowerCase().includes(value.toLowerCase())
+                        ? record?.beneficiaries?.nui.toString().toLowerCase().includes(value.toLowerCase())
                         : '',                        
         onFilterDropdownVisibleChange: visible => {
                 if (visible) {
@@ -208,10 +260,9 @@ const ReferenceList: React.FC = () => {
                 highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
                 searchWords={[searchText]}
                 autoEscape
-                textToHighlight={value  ? '' : record.beneficiaries?.nui}
+                textToHighlight={value  ? '' : record?.beneficiaries?.nui}
                 />
-            ) : ( record.beneficiaries.nui),
-
+            ) : ( record?.beneficiaries?.nui),
             
     });
 
@@ -236,9 +287,9 @@ const ReferenceList: React.FC = () => {
             title: 'Distrito', 
             dataIndex: '', 
             key: 'type',
-            render: (text, record)  => record.beneficiaries.neighborhood.locality.district.name,
+            render: (text, record)  => record?.beneficiaries?.neighborhood?.locality?.district?.name,
             filters: filterPartner(district)(i => i.name),
-            onFilter: (value, record) => record.beneficiaries.neighborhood.locality.district.name == value,
+            onFilter: (value, record) => record?.beneficiaries?.neighborhood?.locality?.district?.name == value,
             filterSearch: true,
         },
         { 
@@ -247,8 +298,8 @@ const ReferenceList: React.FC = () => {
             key: 'type',
             render: (text, record)  => (
                 user.map(data =>(
-                    data.id == record.createdBy ?                        
-                        data.partners.name                        
+                    data?.id == record?.createdBy ?                        
+                        data?.partners?.name                        
                         :
                         ''
                 ))
@@ -278,8 +329,8 @@ const ReferenceList: React.FC = () => {
             key: 'createdBy',
             render: (text, record)  => (
                 user.map(data =>(
-                    data.id == record.createdBy ?                        
-                        data.name+' '+data.surname                       
+                    data?.id == record?.createdBy ?                        
+                        data?.name+' '+data?.surname                       
                         :
                         ''
                 ))
@@ -289,13 +340,13 @@ const ReferenceList: React.FC = () => {
             title: 'Contacto', 
             dataIndex: '', 
             key: '',
-            render: (text, record)  => record.users.phoneNumber,
+            render: (text, record)  => record?.users?.phoneNumber,
         },		
         { 
             title: 'Notificar ao', 
             dataIndex: 'record.users.name', 
             key: '',
-            render: (text, record)  => record.users.name+' '+record.users.surname,
+            render: (text, record)  => record?.users?.name+' '+record?.users?.surname,
         },		
         { 
             title: 'Ref. Para', 
@@ -315,7 +366,7 @@ const ReferenceList: React.FC = () => {
                     value: 3,
                 },
             ],
-            onFilter: (value, record) => record.users.entryPoint == value,
+            onFilter: (value, record) => record?.users?.entryPoint == value,
             filterSearch: true,
             render: (text, record)  => 
                 (record.users.entryPoint==1) ?
@@ -330,9 +381,9 @@ const ReferenceList: React.FC = () => {
             title: 'Organização Referida', 
             dataIndex: '', 
             key: '',
-            render: (text, record)  => record.users.partners.name,
+            render: (text, record)  => record?.users?.partners?.name,
             filters: filterPartner(partners)(i => i.name),
-            onFilter: (value, record) => record.users.partners.name == value,
+            onFilter: (value, record) => record?.users?.partners?.name == value,
             filterSearch: true,
            
         },	
@@ -340,9 +391,9 @@ const ReferenceList: React.FC = () => {
             title: 'Ponto de Entrada para Referência', 
             dataIndex: '', 
             key: '',
-            render: (text, record)  => record.users.us.name,
+            render: (text, record)  => record?.users?.us?.name,
             filters: filterPartner(us)(i => i.name),
-            onFilter: (value, record) => record.users.us.name == value,
+            onFilter: (value, record) => record?.users?.us?.name == value,
             filterSearch: true,
         },	
         { 
@@ -363,7 +414,7 @@ const ReferenceList: React.FC = () => {
                     value: 2,
                 },
             ],
-            onFilter: (value, record) => record.status == value,
+            onFilter: (value, record) => record?.status == value,
             filterSearch: true,
             render: (text, record)  => 
                 (record.status==0) ?
@@ -413,6 +464,7 @@ const ReferenceList: React.FC = () => {
             <FormReference
                 form={form}
                 reference={reference}
+                handleUpdate={handleRefUpdate}
                 modalVisible={referenceModalVisible}
                 handleModalRefVisible={handleModalRefVisible} 
                 handleRefServicesList={handleRefServicesList}/>
