@@ -21,8 +21,8 @@ export function getEntryPoint(value:any){
     if(value == '1'){
       return "US";
     } else if(value == '2') {
-      return "ES";
+      return "CM";
     } 
 
-    return "CM";
+    return "ES";
 }

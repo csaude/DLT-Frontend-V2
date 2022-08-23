@@ -203,7 +203,7 @@ const BeneficiariesList: React.FC = () => {
             beneficiary.nationality = firstStepValues.nationality;
             beneficiary.entryPoint = firstStepValues.entry_point;
             beneficiary.neighborhood = { "id": firstStepValues.neighbourhood_id };
-            beneficiary.partnerNUI = values.partner_nui;
+            beneficiary.partnerNUI = firstStepValues.partner_nui;
             beneficiary.vbltChildren = secondStepValues.vblt_children;
             beneficiary.vbltDeficiencyType = secondStepValues.vblt_deficiency_type;
             beneficiary.vbltHouseSustainer = secondStepValues.vblt_house_sustainer;
@@ -403,7 +403,7 @@ const BeneficiariesList: React.FC = () => {
         { title: 'Ponto de Entrada', 
             dataIndex: '', 
             key: 'entryPoint',
-            render: (text, record)  => getEntryPoint(record.entryPoint),
+            render: (text, record)  => record.us.name,
         }
     ];
 
@@ -450,11 +450,11 @@ const BeneficiariesList: React.FC = () => {
                 value: '1',
             },
             {
-                text: 'ES',
+                text: 'CM',
                 value: '2',
             },
             {
-                text: 'CM',
+                text: 'ES',
                 value: '3',
             },
             ],
@@ -518,7 +518,7 @@ const BeneficiariesList: React.FC = () => {
         
         <>
             <Card  bordered={false} style={{marginBottom:'10px', textAlign:"center", fontWeight:"bold", color:"#17a2b8"}} >
-            SISTEMA INTEGRADO DE CADASTRO DE ADOLESCENTES E JOVENS
+                SISTEMA INTEGRADO DE CADASTRO DE ADOLESCENTES E JOVENS
             </Card>
             <Card title="Lista de Adolescentes e Jovens" 
                     bordered={false} 
@@ -549,22 +549,23 @@ const BeneficiariesList: React.FC = () => {
                 {...parentMethods}
                 beneficiary={beneficiary} 
                 modalVisible={modalVisible} 
-                handleModalRefVisible={handleModalRefVisible}/>
-                
+                handleModalRefVisible={handleModalRefVisible}
+            />
             <FormBeneficiary form={form} beneficiary={beneficiary} modalVisible={beneficiaryModalVisible}
-                                handleAdd={handleAdd}
-                                handleUpdate={handleUpdate}
-                                handleModalVisible={handleBeneficiaryModalVisible} />
-
+                handleAdd={handleAdd}
+                handleUpdate={handleUpdate}
+                handleModalVisible={handleBeneficiaryModalVisible} 
+            />
             <FormBeneficiaryPartner form={form} beneficiary={beneficiary} modalVisible={beneficiaryPartnerModalVisible}
-                                handleAdd={handleAdd}
-                                handleModalVisible={handleBeneficiaryPartnerModalVisible} />
+                handleAdd={handleAdd}
+                handleModalVisible={handleBeneficiaryPartnerModalVisible} 
+            />
             <FormReference  form={form} beneficiary={beneficiary} 
-                            modalVisible={referenceModalVisible}
-                            handleAdd={handleAddRef}   
-                            handleModalRefVisible={handleModalRefVisible} 
-                            handleRefServicesList={handleRefServicesList}
-                            />
+                modalVisible={referenceModalVisible}
+                handleAdd={handleAddRef}   
+                handleModalRefVisible={handleModalRefVisible} 
+                handleRefServicesList={handleRefServicesList}
+            />
         </>
     );
 }
