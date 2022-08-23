@@ -8,11 +8,9 @@ import { Card, Table, Button, Space, Badge, Input, Typography, Form, message } f
 import 'antd/dist/antd.css';
 import moment from 'moment';
 import Highlighter from 'react-highlight-words';
-import { SearchOutlined, PlusOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
-import { getEntryPoint } from '@app/models/User';
+import { SearchOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
 
 import { useNavigate } from 'react-router-dom';
-import Item from 'antd/lib/list/Item';
 import ViewReferral from './components/View';
 import FormReference from '../beneficiaries/components/FormReference';
 import { edit as editRef, Reference } from '../../utils/reference';
@@ -59,7 +57,6 @@ const ReferenceList: React.FC = () => {
     }, []);
 
     const handleModalRefVisible = (flag?: boolean) => {
-        // setReferences(record);
         setReferenceModalVisible(!!flag);
     };
 
@@ -123,7 +120,17 @@ const ReferenceList: React.FC = () => {
             };
 
             const { data } = await editRef(payload);
+            data.beneficiaries = beneficiary;
+            data.users = ref.users;
             console.log(data);
+
+            setReferences(existingItems => {
+                return existingItems.map((item, j) => {
+                    return item.id === ref?.id ?
+                        data : item
+                })
+            });
+            // record.beneficiaries.neighborhood 
 
             message.success({
                 content: 'Actualizado com Sucesso!'+data?.referenceNote, className: 'custom-class',
@@ -131,8 +138,6 @@ const ReferenceList: React.FC = () => {
                     marginTop: '10vh',
                 }
             });
-
-            // setReferenceModalVisible(false);
 
             navigate('/referenceList');            
         }
@@ -201,9 +206,7 @@ const ReferenceList: React.FC = () => {
                 autoEscape
                 textToHighlight={value ? value.toString() : ''}
                 />
-            ) : ( value),
-
-            
+            ) : ( value),            
     });
 
     const parentMethods = {
@@ -270,7 +273,6 @@ const ReferenceList: React.FC = () => {
                 textToHighlight={value  ? '' : record.beneficiaries?.nui}
                 />
             ) : ( record.beneficiaries.nui),
-
             
     });
 
@@ -295,9 +297,9 @@ const ReferenceList: React.FC = () => {
             title: 'Distrito', 
             dataIndex: '', 
             key: 'type',
-            render: (text, record)  => record.beneficiaries.neighborhood.locality.district.name,
+            render: (text, record)  => record?.beneficiaries?.neighborhood?.locality?.district?.name,
             filters: filterPartner(district)(i => i.name),
-            onFilter: (value, record) => record.beneficiaries.neighborhood.locality.district.name == value,
+            onFilter: (value, record) => record?.beneficiaries?.neighborhood?.locality?.district?.name == value,
             filterSearch: true,
         },
         { 
@@ -306,8 +308,8 @@ const ReferenceList: React.FC = () => {
             key: 'type',
             render: (text, record)  => (
                 user.map(data =>(
-                    data.id == record.createdBy ?                        
-                        data.partners.name                        
+                    data?.id == record?.createdBy ?                        
+                        data?.partners?.name                        
                         :
                         ''
                 ))
@@ -337,8 +339,8 @@ const ReferenceList: React.FC = () => {
             key: 'createdBy',
             render: (text, record)  => (
                 user.map(data =>(
-                    data.id == record.createdBy ?                        
-                        data.name+' '+data.surname                       
+                    data?.id == record?.createdBy ?                        
+                        data?.name+' '+data?.surname                       
                         :
                         ''
                 ))
@@ -348,13 +350,13 @@ const ReferenceList: React.FC = () => {
             title: 'Contacto', 
             dataIndex: '', 
             key: '',
-            render: (text, record)  => record.users.phoneNumber,
+            render: (text, record)  => record?.users?.phoneNumber,
         },		
         { 
             title: 'Notificar ao', 
             dataIndex: 'record.users.name', 
             key: '',
-            render: (text, record)  => record.users.name+' '+record.users.surname,
+            render: (text, record)  => record?.users?.name+' '+record?.users?.surname,
         },		
         { 
             title: 'Ref. Para', 
@@ -374,7 +376,7 @@ const ReferenceList: React.FC = () => {
                     value: 3,
                 },
             ],
-            onFilter: (value, record) => record.users.entryPoint == value,
+            onFilter: (value, record) => record?.users?.entryPoint == value,
             filterSearch: true,
             render: (text, record)  => 
                 (record.users.entryPoint==1) ?
@@ -389,9 +391,9 @@ const ReferenceList: React.FC = () => {
             title: 'Organização Referida', 
             dataIndex: '', 
             key: '',
-            render: (text, record)  => record.users.partners.name,
+            render: (text, record)  => record?.users?.partners?.name,
             filters: filterPartner(partners)(i => i.name),
-            onFilter: (value, record) => record.users.partners.name == value,
+            onFilter: (value, record) => record?.users?.partners?.name == value,
             filterSearch: true,
            
         },	
@@ -399,9 +401,9 @@ const ReferenceList: React.FC = () => {
             title: 'Ponto de Entrada para Referência', 
             dataIndex: '', 
             key: '',
-            render: (text, record)  => record.users.us.name,
+            render: (text, record)  => record?.users?.us?.name,
             filters: filterPartner(us)(i => i.name),
-            onFilter: (value, record) => record.users.us.name == value,
+            onFilter: (value, record) => record?.users?.us?.name == value,
             filterSearch: true,
         },	
         { 
@@ -422,7 +424,7 @@ const ReferenceList: React.FC = () => {
                     value: 2,
                 },
             ],
-            onFilter: (value, record) => record.status == value,
+            onFilter: (value, record) => record?.status == value,
             filterSearch: true,
             render: (text, record)  => 
                 (record.status==0) ?
