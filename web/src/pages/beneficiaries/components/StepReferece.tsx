@@ -1,9 +1,9 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Badge, Button, Steps, Row, Col, Input, message, InputNumber, Form, DatePicker, Checkbox, Select, Radio, Divider, SelectProps } from 'antd';
 import './index.css';
-import { allPartnersByType} from '@app/utils/partners';
+import { allPartnersByType, allPartnersByTypeDistrict} from '@app/utils/partners';
 import { query, userById, allUsesByUs } from '@app/utils/users';
-import { allUs } from '@app/utils/uSanitaria';
+import { allUs, allUsByType } from '@app/utils/uSanitaria';
 
 const { Option } = Select;
 const { Step } = Steps;
@@ -21,7 +21,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
     const [partners, setPartners] = React.useState<any>();
     const [users, setUsers] = React.useState<any>();
     const [user, setUser] = React.useState<any>();
-    const [us, setUs] = React.useState<any>([]);
+    const [us, setUs] = React.useState<any>();
     const selectedReference = beneficiary;
     let userId = localStorage.getItem('user');
 
@@ -43,21 +43,16 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
         fetchData().catch(error => console.log(error));
 
         let orgType = form.getFieldValue('serviceType');
-        let org = form.getFieldValue('partner_id');
-        // let loc = form.getFieldValue('local');
+        //let org = form.getFieldValue('partner_id');
 
         if(orgType !== '' && orgType !== undefined){
           onChangeTipoServico(orgType);
         }
-        if(org !== '' && org !== undefined){
+        /*if(org !== '' && org !== undefined){
           onChangeOrganization(org);
-        }
+        }*/
 
-        /// Mostra o nome do utilizador a ser notificado
-        // Por rever
-        // if(loc !== '' && loc !== undefined && reference === undefined){
-        //   onChangeUs(loc);
-        // }
+
     
       }, []); 
 
@@ -84,12 +79,20 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
   }
       
       const onChangeTipoServico = async (value:any) => {
-          const data = await allPartnersByType(value);
+          var payload = {
+            type: value,
+            districtId: beneficiary?.neighborhood?.locality?.district?.id
+          }
+          const data = await allPartnersByTypeDistrict(payload);
           setPartners(data);
       }
-      
-      const onChangeOrganization = async (value:any) => {
-        const data = await allUs(value);
+
+      const onChangeEntryPoint = async (e:any) => {
+        var payload = {
+          typeId: e.target.value,
+          localityId: beneficiary?.neighborhood?.locality?.id
+        }
+        const data = await allUsByType(payload);
         setUs(data);
       }
   
@@ -140,7 +143,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
                   rules={[{ required: true, message: 'Obrigatório' }]}
                   initialValue={reference === undefined ? "" : reference?.serviceType}
                 >
-                  <Radio.Group
+                  <Radio.Group onChange={onChangeEntryPoint} 
                     options={options}
                     optionType="button"
                   />
@@ -173,7 +176,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
                   name="serviceType"
                   label="Tipo de Serviço"
                   rules={[{ required: true, message: 'Obrigatório' }]}
-                  initialValue={reference === undefined ? "" : reference?.serviceType === '1'? 'CLINIC' : 'COMMUNITY'}
+                  initialValue={reference === undefined ? undefined : reference?.serviceType === '1'? 'CLINIC' : 'COMMUNITY'}
                 >
                     <Select placeholder="Seleccione o Tipo de Serviço" onChange={onChangeTipoServico}>
                         {areaServicos.map(item => (
@@ -187,9 +190,9 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
                   name="partner_id"
                   label="Organização"
                   rules={[{ required: true, message: 'Obrigatório' }]}
-                  initialValue={reference === undefined ? "" : reference?.users?.partners?.name}
+                  initialValue={reference === undefined ? undefined : reference?.users?.partners?.name}
                 >
-                  <Select placeholder="Organização" onChange={onChangeOrganization} disabled={partners === undefined}>
+                  <Select placeholder="Organização" disabled={partners === undefined}>
                         {partners?.map(item => (
                             <Option key={item.id}>{item.name}</Option>
                         ))}
@@ -201,9 +204,9 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
                   name="local"
                   label="Local"
                   rules={[{ required: true, message: 'Obrigatório' }]}
-                  initialValue={reference === undefined ? "" : reference?.users?.us[0]?.name}
+                  initialValue={reference === undefined ? undefined : reference?.users?.us[0]?.name}
                 >
-                  <Select placeholder="Local" onChange={onChangeUs}  disabled={us === undefined}>
+                  <Select placeholder="Seleccione o Local" onChange={onChangeUs}  disabled={us === undefined}>
                         {us?.map(item => (
                             <Option key={item.id}>{item.name}</Option>
                         ))}
