@@ -26,6 +26,18 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
 
     return (
         <>
+            <Row gutter={8} hidden={beneficiary === undefined}>
+                <Col className="gutter-row" span={8}>
+                    <Form.Item
+                        name="nui"
+                        label="Código da Beneficiária (NUI)"
+                        style={{ textAlign: 'left' }}
+                        initialValue={beneficiary?.nui}
+                    >
+                    <Input disabled={true} />
+                    </Form.Item>
+                </Col>
+            </Row>
             <Row gutter={24}>
                 <Col className="gutter-row" span={8}>
                     <Form.Item

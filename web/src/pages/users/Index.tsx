@@ -4,7 +4,7 @@ import { query } from '../../utils/users';
 import {allPartners} from '@app/utils/partners';
 import {allProfiles} from '@app/utils/profiles';
 import {allProvinces} from '@app/utils/locality';
-import { UserModel } from '../../models/User';
+import { UserModel, getEntryPoint } from '../../models/User';
 import { SearchOutlined, PlusOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
 import UsersForm from './components/UsersForm';
@@ -138,9 +138,9 @@ const UsersList: React.FC = () => {
 
             const user: any = selectedUser ? selectedUser : {};
 
-            let provinces = Array.isArray(values.provinces)? values.provinces : [values.provinces];
-            let districts = Array.isArray(values.districts)? values.districts : [values.districts];
-            let localities = Array.isArray(values.localities)? values.localities : [values.localities];
+            let provinces = values.provinces === undefined? [] : Array.isArray(values.provinces)? values.provinces : [values.provinces];
+            let districts = values.districts === undefined? [] : Array.isArray(values.districts)? values.districts : [values.districts];
+            let localities = values.localities === undefined? [] : Array.isArray(values.localities)? values.localities : [values.localities];
 
             user.surname = values.surname;
             user.name = values.name;
@@ -248,27 +248,19 @@ const UsersList: React.FC = () => {
                 {
                     text: 'US',
                     value: 1,
-                    },
-                    {
-                    text: 'ES',
-                    value: 2,
                 },
                 {
                     text: 'CM',
+                    value: 2,
+                },
+                {
+                    text: 'ES',
                     value: 3,
                 },
             ],
             onFilter: (value, record) => record.entryPoint == value,
             filterSearch: true,
-            render: (text, record) =>
-                (record.entryPoint === "1") ?
-                    "US"
-                :
-                (record.entryPoint === "2") ?
-                    "ES"
-                    :
-                    "CM"
-
+            render: (text, record) => getEntryPoint(record.entryPoint) 
         },
         {
             title: 'Organização', dataIndex: '', key: 'type',
