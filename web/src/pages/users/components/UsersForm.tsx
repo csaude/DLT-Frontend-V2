@@ -285,9 +285,9 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                             initialValue={user?.entryPoint}
                         >
                             <Select placeholder="Seleccione o Ponto de Entrada" >
-                                <Option key="1">{"Unidade Sanitaria"}</Option>
-                                <Option key="2">{"Escola"}</Option>
-                                <Option key="3">{"Comunidade"}</Option>
+                                <Option key="1">{"Unidade Sanitária"}</Option>
+                                <Option key="2">{"Comunidade"}</Option>
+                                <Option key="3">{"Escola"}</Option>
                             </Select>
                         </Form.Item>
                     </Col>
