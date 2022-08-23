@@ -210,7 +210,7 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
                     <Row gutter={24}>
                         <Col className="gutter-row" span={24}>
                             <Card
-                                title={reference?.referenceNote + ' | ' + beneficiary?.neighborhood.locality.district.code + '/' + beneficiary?.nui}
+                                title={firstStepValues?.referenceNote + ' | ' + beneficiary?.neighborhood.locality.district.code + '/' + beneficiary?.nui}
                                 bordered={true}
                                 headStyle={{ background: "#17a2b8" }}
                                 bodyStyle={{ paddingLeft: "10px", paddingRight: "10px", height: "120px" }}
