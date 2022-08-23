@@ -12,12 +12,10 @@ import moment from 'moment';
 import ViewBeneficiary, { ViewBenefiaryPanel } from './components/View';
 import { getEntryPoint, UserModel } from '@app/models/User';
 import { calculateAge } from '@app/models/Utils';
-import BeneficiaryForm from './components/BeneficiaryForm';
 import FormBeneficiary from './components/FormBeneficiary';
 import FormBeneficiaryPartner from './components/FormBeneficiaryPartner';
 import { add, edit } from '../../utils/beneficiary';
 import { add as addRef, Reference } from '../../utils/reference';
-import { stringify } from 'qs';
 import FormReference from './components/FormReference';
 
 
@@ -30,7 +28,7 @@ const BeneficiariesList: React.FC = () => {
     const [ user, setUser ] = React.useState<any>();
     const [ beneficiaries, setBeneficiaries ] = useState<any[]>([]);
     const [ searchText, setSearchText ] = useState('');
-    const [services, setServices ] = useState<any>([]);
+    const [ services, setServices ] = useState<any>([]);
     const [ searchedColumn, setSearchedColumn ] = useState('');
     const [ beneficiary, setBeneficiary ] = useState<any>(undefined);
     const [ reference, setReference ] = useState<any>(undefined);
@@ -152,12 +150,13 @@ const BeneficiariesList: React.FC = () => {
             ben.vbltTestedHiv = vblts.vblt_tested_hiv;
             ben.status="1";
             
+            const us = values.us;
 
             if (beneficiary === undefined) {
                 ben.createdBy = localStorage.user;
                 ben.partner = { "id": localStorage.organization };
                 ben.organizationId = localStorage.organization;
-                ben.us = { "id": localStorage.us };
+                ben.us = { "id": us === undefined? localStorage.us : us };
 
                 const { data } = await add(ben);
                 setBeneficiaries(beneficiaries => [...beneficiaries, data]);
@@ -232,6 +231,11 @@ const BeneficiariesList: React.FC = () => {
             beneficiary.vbltStiHistory = values.vblt_sti_history;
             beneficiary.vbltSexWorker = values.vblt_sex_worker;
             beneficiary.updatedBy = localStorage.user;
+
+            const us = firstStepValues.us;
+            if (us !== undefined) {
+                beneficiary.us = us;
+            }
 
             const { data } = await edit(beneficiary);
             setBeneficiaries(existingItems => {
@@ -367,10 +371,10 @@ const BeneficiariesList: React.FC = () => {
         render: text =>
             searchedColumn === dataIndex ? (
                 <Highlighter
-                highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
-                searchWords={[searchText]}
-                autoEscape
-                textToHighlight={text ? text.toString() : ''}
+                    highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+                    searchWords={[searchText]}
+                    autoEscape
+                    textToHighlight={text ? text.toString() : ''}
                 />
             ) : ( text ),
     });
@@ -411,11 +415,6 @@ const BeneficiariesList: React.FC = () => {
                 </Text>),
         },
         { title: 'Nome do Beneficiário', dataIndex: 'name', key: 'name', ...getColumnSearchProps('name'),
-            // render: (text, record) => (
-            //     <div>
-            //         {record.name} {record.surname}
-            //     </div>
-            // ), 
             render: (text, record) => getName(record),
         },
         { title: 'Sexo', dataIndex: 'gender', key: 'gender',
