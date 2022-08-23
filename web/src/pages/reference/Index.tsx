@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { query } from '@app/utils/reference';
+import { query, edit as editRef, Reference} from '@app/utils/reference';
 import {allPartners} from '@app/utils/partners';
 import {allDistrict} from '@app/utils/district';
 import { query  as query1} from '@app/utils/users';
@@ -13,7 +13,6 @@ import { SearchOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import ViewReferral from './components/View';
 import FormReference from '../beneficiaries/components/FormReference';
-import { edit as editRef, Reference } from '../../utils/reference';
 
 const { Text } = Typography;
 
@@ -120,17 +119,8 @@ const ReferenceList: React.FC = () => {
             };
 
             const { data } = await editRef(payload);
-            data.beneficiaries = beneficiary;
-            data.users = ref.users;
-            console.log(data);
-
-            setReferences(existingItems => {
-                return existingItems.map((item, j) => {
-                    return item.id === ref?.id ?
-                        data : item
-                })
-            });
-            // record.beneficiaries.neighborhood 
+            const allReferences: any = await query();
+            setReferences(allReferences);
 
             message.success({
                 content: 'Actualizado com Sucesso!'+data?.referenceNote, className: 'custom-class',
@@ -257,7 +247,7 @@ const ReferenceList: React.FC = () => {
         filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
         onFilter: (value, record) =>
                     record.beneficiaries?.nui
-                        ? record.beneficiaries?.nui.toString().toLowerCase().includes(value.toLowerCase())
+                        ? record?.beneficiaries?.nui.toString().toLowerCase().includes(value.toLowerCase())
                         : '',                        
         onFilterDropdownVisibleChange: visible => {
                 if (visible) {
@@ -270,9 +260,9 @@ const ReferenceList: React.FC = () => {
                 highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
                 searchWords={[searchText]}
                 autoEscape
-                textToHighlight={value  ? '' : record.beneficiaries?.nui}
+                textToHighlight={value  ? '' : record?.beneficiaries?.nui}
                 />
-            ) : ( record.beneficiaries.nui),
+            ) : ( record?.beneficiaries?.nui),
             
     });
 
