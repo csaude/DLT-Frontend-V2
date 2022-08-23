@@ -138,7 +138,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
                   name="referTo"
                   label="Referir Para"
                   rules={[{ required: true, message: 'Obrigatório' }]}
-                  initialValue={reference === undefined ? " " : reference?.serviceType}
+                  initialValue={reference === undefined ? "" : reference?.serviceType}
                 >
                   <Radio.Group
                     options={options}
@@ -151,7 +151,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
                   name="bookNumber"
                   label="Nº do Livro"
                   rules={[{ required: true, message: 'Obrigatório' }]}
-                  initialValue={reference === undefined ? " " : reference?.bookNumber}
+                  initialValue={reference === undefined ? "" : reference?.bookNumber}
                 >
                   <Input placeholder="Nº do Livro" />
                 </Form.Item>
@@ -161,9 +161,9 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
                   name="referenceCode"
                   label="Código de Referência no livro"
                   rules={[{ required: true, message: 'Obrigatório' }]}
-                  initialValue={reference === undefined ? " " : reference?.referenceCode}
+                  initialValue={reference === undefined ? "" : reference?.referenceCode}
                 >
-                  <Input placeholder="Código de Referência no livro" />
+                  <Input placeholder='Ex: CM-08-001' />
                 </Form.Item>
               </Col>
             </Row>
@@ -173,7 +173,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
                   name="serviceType"
                   label="Tipo de Serviço"
                   rules={[{ required: true, message: 'Obrigatório' }]}
-                  initialValue={reference === undefined ? " " : reference?.serviceType === '1'? 'CLINIC' : 'COMMUNITY'}
+                  initialValue={reference === undefined ? "" : reference?.serviceType === '1'? 'CLINIC' : 'COMMUNITY'}
                 >
                     <Select placeholder="Seleccione o Tipo de Serviço" onChange={onChangeTipoServico}>
                         {areaServicos.map(item => (
@@ -187,7 +187,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
                   name="partner_id"
                   label="Organização"
                   rules={[{ required: true, message: 'Obrigatório' }]}
-                  initialValue={reference === undefined ? " " : reference?.users?.partners?.name}
+                  initialValue={reference === undefined ? "" : reference?.users?.partners?.name}
                 >
                   <Select placeholder="Organização" onChange={onChangeOrganization} disabled={partners === undefined}>
                         {partners?.map(item => (
@@ -201,7 +201,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
                   name="local"
                   label="Local"
                   rules={[{ required: true, message: 'Obrigatório' }]}
-                  initialValue={reference === undefined ? " " : reference?.users?.us[0]?.name}
+                  initialValue={reference === undefined ? "" : reference?.users?.us[0]?.name}
                 >
                   <Select placeholder="Local" onChange={onChangeUs}  disabled={us === undefined}>
                         {us?.map(item => (
@@ -217,7 +217,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
                   name="notifyTo"
                   label="Notificar ao"
                   rules={[{ required: true, message: 'Obrigatório' }]}
-                  initialValue={reference === undefined ? " " : reference?.users?.name+" "+reference?.users?.surname}
+                  initialValue={reference === undefined ? "" : reference?.users?.name+" "+reference?.users?.surname}
                 >
                   <Select placeholder="Notificar ao" disabled={users === undefined}>
                         {users?.map(item => (
@@ -230,7 +230,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
                 <Form.Item
                   name="remarks"
                   label="Observações"
-                  initialValue={reference === undefined ? " " : reference?.remarks}
+                  initialValue={reference === undefined ? "" : reference?.remarks}
                 >
                   <TextArea rows={2} placeholder="Observações" maxLength={6} />
                 </Form.Item>
