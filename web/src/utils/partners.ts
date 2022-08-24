@@ -22,3 +22,15 @@ export async function allPartnersByType(payload?: any){
     const res = await select(url);
     return res;
 }
+interface PartnerTypeFilter{
+    type: string,
+    districtId: number
+}
+export async function allPartnersByTypeDistrict(payload?: PartnerTypeFilter){
+    let url: string;
+    if(payload) {
+        url = '/api/partners/'+payload.type+'/'+payload.districtId;
+        const res = await select(url);
+        return res;
+    }
+}

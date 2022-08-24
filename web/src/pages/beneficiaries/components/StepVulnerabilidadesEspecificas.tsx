@@ -26,6 +26,17 @@ const StepVulnerabilidadesEspecificas = ({ form, beneficiary }: any) => {
             <Row gutter={24}>
                 <Col className="gutter-row" span={8}>
                     <Form.Item
+                        name="nui"
+                        label="Código da Beneficiária (NUI)"
+                        style={{ textAlign: 'left' }}
+                    >
+                       <Input disabled={true} value={beneficiary?.nui} />
+                    </Form.Item>
+                </Col>
+            </Row>
+            <Row gutter={24}>
+                <Col className="gutter-row" span={8}>
+                    <Form.Item
                         name="vblt_sexually_active"
                         label="Sexualmente Activa?"
                         rules={[{ required: true, message: RequiredFieldMessage }]}

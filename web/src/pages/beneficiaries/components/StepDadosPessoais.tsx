@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Badge, Button, Steps, Row, Col, Input, message, InputNumber, Form, DatePicker, Checkbox, Select, Radio, Divider, SelectProps } from 'antd';
-import { allProvinces, queryDistrictsByProvinces, queryLocalitiesByDistricts, queryNeighborhoodsByLocalities } from '@app/utils/locality';
+import { allProvinces, queryDistrictsByProvinces, queryLocalitiesByDistricts, queryNeighborhoodsByLocalities, queryUsByLocalities } from '@app/utils/locality';
 import './index.css';
 import moment from 'moment';
 import { query } from '@app/utils/users';
@@ -13,9 +13,10 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
     const [isDateRequired, setIsDateRequired] = useState<any>(true);
     const [user, setUser] = useState<any>(undefined);
     const [provinces, setProvinces] = useState<any>([]);
-    const [districts, setDistricts] = useState<any>(undefined);
-    const [localities, setLocalities] = useState<any>(undefined);
-    const [neighborhoods, setNeighborhoods] = useState<any>(undefined);
+    const [districts, setDistricts] = useState<any>([]);
+    const [localities, setLocalities] = useState<any>([]);
+    const [neighborhoods, setNeighborhoods] = useState<any>([]);
+    const [us, setUs] = useState<any>([]);
     const [age, setAge] = useState<any>(undefined);
     const [birthDate, setBirthDate] = useState<any>(undefined);
 
@@ -27,43 +28,57 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
     useEffect(() => {
         const fetchData = async () => {
             const loggedUser = await query(localStorage.user);
-            const dataProvinces = loggedUser.provinces.length > 0 ? loggedUser.provinces : await allProvinces();
+            let dataProvinces;
+
+            if(loggedUser.provinces.length > 0) {
+                dataProvinces = loggedUser.provinces;
+            } else {
+                dataProvinces = await allProvinces();
+            }
+
             let dataDistricts;
             let dataLocalities;
 
             if (loggedUser.districts.length > 0) {
                 dataDistricts = loggedUser.districts;
                 setDistricts(dataDistricts)
-            }
-            else {
-                const pIds = dataProvinces.map(item => {
-                    return item.id + ''
-                });
-                dataDistricts = await queryDistrictsByProvinces({ provinces: pIds });
-                setDistricts(dataDistricts);
+            } else if (beneficiary !== undefined) {
+                let province = form.getFieldValue('province');
+                if(province !== '' && province !== undefined){
+                    onChangeProvinces(province);
+                }
             }
 
-            if (loggedUser.localities > 0) {
+            if (loggedUser.localities.length > 0) {
                 dataLocalities = loggedUser.localities;
                 setLocalities(dataLocalities);
-            }
-            else {
-                const dIds = dataDistricts.map(item => {
-                    return item.id + ''
-                });
-                dataLocalities = await queryLocalitiesByDistricts({ districts: dIds });
-                setLocalities(dataLocalities);
-            }
 
-            if (loggedUser.neighborhoods > 0) {
-                setNeighborhoods(loggedUser.neighborhoods);
-            }
-            else {
-                const lIds = dataLocalities.map(item => {
-                    return item.id + ''
-                });
-                const dataNeighborhood = await queryNeighborhoodsByLocalities({ localities: lIds });
-                setNeighborhoods(dataNeighborhood);
+                if (dataLocalities.length === 1) {
+                    const dataNeighborhood = await queryNeighborhoodsByLocalities({ localities: [dataLocalities[0].id] });
+                    setNeighborhoods(dataNeighborhood);
+
+                    if (loggedUser.us.length > 0) {
+                        setUs(loggedUser.us);
+                    }
+                    else {
+                        const lIds = dataLocalities.map(item => {
+                            return item.id + ''
+                        });
+                        const dataUs = await queryUsByLocalities({ localities: lIds });
+                        setUs(dataUs);
+                    }
+                }
+            } else if (beneficiary !== undefined) {
+                let district = form.getFieldValue('district');
+                let locality = form.getFieldValue('locality');
+
+                if(district !== '' && district !== undefined){
+                    onChangeDistricts(district);
+                }
+
+                if(locality !== '' && locality !== undefined){
+                    onChangeLocality(locality);
+                }
             }
 
             setUser(loggedUser);
@@ -74,14 +89,14 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
     }, [beneficiary]);
 
     const onChangeProvinces = async (values: any) => {
-        if (values.length > 0) {
+        if (districts.length === 0 && values.length > 0) {
             const dataDistricts = await queryDistrictsByProvinces({ provinces: [values + ""] });
             setDistricts(dataDistricts);
         }
     }
 
     const onChangeDistricts = async (values: any) => {
-        if (values.length > 0) {
+        if (localities.length === 0 && values.length > 0) {
             const dataLocalities = await queryLocalitiesByDistricts({ districts: [values + ""] });
             setLocalities(dataLocalities);
         }
@@ -89,8 +104,14 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
 
     const onChangeLocality = async (values: any) => {
         if (values.length > 0) {
-            const dataNeighborhood = await queryNeighborhoodsByLocalities({ localities: [values + ""] });
-            setNeighborhoods(dataNeighborhood);
+            if(neighborhoods.length === 0) {
+                const dataNeighborhood = await queryNeighborhoodsByLocalities({ localities: [values + ""] });
+                setNeighborhoods(dataNeighborhood);
+            }
+            if (us.length === 0) {
+                const dataUs = await queryUsByLocalities({ localities: [values + ""] });
+                setUs(dataUs);
+            }
         }
     }
 
@@ -140,6 +161,18 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
 
     return (
         <>
+            <Row gutter={24} hidden={beneficiary === undefined}>
+                <Col className="gutter-row" span={8}>
+                    <Form.Item
+                        name="nui"
+                        label="Código da Beneficiária (NUI)"
+                        style={{ textAlign: 'left' }}
+                        initialValue={beneficiary?.nui}
+                    >
+                       <Input disabled={true} />
+                    </Form.Item>
+                </Col>
+            </Row>
             <Row gutter={16}>
                 <Col className="gutter-row" span={12}>
                     <Form.Item
@@ -213,12 +246,12 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                     </Form.Item>
                 </Col>
             </Row>
-            <Row gutter={16}>
+            <Row gutter={16} hidden={localities.length === 1} >
                 <Col className="gutter-row" span={8}>
                     <Form.Item
                         name="province"
                         label="Provincia"
-                        rules={[{ required: true, message: RequiredFieldMessage }]}
+                        rules={[{ required: localities.length !== 1, message: RequiredFieldMessage }]}
                         initialValue={beneficiary?.neighborhood.locality?.district.province.id.toString()}
                     >
                         <Select placeholder="Seleccione a Provincia" onChange={onChangeProvinces}>
@@ -232,7 +265,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                     <Form.Item
                         name="district"
                         label="Distrito"
-                        rules={[{ required: true, message: RequiredFieldMessage }]}
+                        rules={[{ required: localities.length !== 1, message: RequiredFieldMessage }]}
                         initialValue={beneficiary?.neighborhood.locality?.district.id.toString()}
                     >
                         <Select placeholder="Seleccione o Distrito" 
@@ -249,7 +282,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                     <Form.Item
                         name="locality"
                         label="Posto Administrativo"
-                        rules={[{ required: true, message: RequiredFieldMessage }]}
+                        rules={[{ required: localities.length !== 1, message: RequiredFieldMessage }]}
                         initialValue={beneficiary?.neighborhood.locality?.id.toString()}
                     >
                         <Select placeholder="Seleccione o Posto Administrativo" 
@@ -277,6 +310,23 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                             <Radio.Button value="2">CM</Radio.Button>
                             <Radio.Button value="3">ES</Radio.Button>
                         </Radio.Group>
+                    </Form.Item>
+                </Col>
+                <Col span={8} hidden={us.length === 1 }>
+                    <Form.Item
+                        name="us"
+                        label="Local"
+                        rules={[{ required: us.length > 1, message: RequiredFieldMessage }]}
+                        initialValue={beneficiary?.us.id.toString()}
+                    >
+                        <Select
+                            placeholder="Seleccione o Local"
+                            disabled={us == undefined && beneficiary == undefined}
+                        >
+                            {us?.map(item => (
+                                <Option key={item.id}>{item.name}</Option>
+                            ))}
+                        </Select>
                     </Form.Item>
                 </Col>
             </Row>
