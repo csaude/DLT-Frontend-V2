@@ -163,7 +163,7 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
             ,
         },
         {
-            title: 'Accao',
+            title: 'Acção',
             dataIndex: '',
             key: 'intervention',
             render: (text, record) =>
@@ -216,12 +216,12 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
                                 bodyStyle={{ paddingLeft: "10px", paddingRight: "10px", height: "120px" }}
                             >
                                 <Row>
-                                    <Col className="gutter-row" span={3}><b>Data Registo</b></Col>
+                                    <Col className="gutter-row" span={3}><b>Data de Registo</b></Col>
                                     <Col className="gutter-row" span={5}><b>Referente</b></Col>
                                     <Col className="gutter-row" span={3}><b>Contacto</b></Col>
-                                    <Col className="gutter-row" span={3}><b>No do Livro</b></Col>
+                                    <Col className="gutter-row" span={3}><b>Nº do Livro</b></Col>
                                     <Col className="gutter-row" span={4}><b>Organização</b></Col>
-                                    <Col className="gutter-row" span={3}><b>Cod Referências</b></Col>
+                                    <Col className="gutter-row" span={3}><b>Cod. Referências</b></Col>
                                     <Col className="gutter-row" span={3}><b>Tipo Serviço</b></Col>
                                 </Row>
                                 <hr style={{
@@ -254,7 +254,7 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
                                 headStyle={{ background: "#17a2b8" }}
                                 bodyStyle={{ paddingLeft: "10px", paddingRight: "10px" }}
                                 extra={
-                                    <Button type="primary" onClick={() => showDrawer(user)} icon={<PlusOutlined />}  >
+                                    <Button type="primary" onClick={() => showDrawer(user)} icon={<PlusOutlined />} style={{ background: "#00a65a", borderColor: "#00a65a", borderRadius:'4px' }} >
                                         Intervenção
                                     </Button>}
                             >
