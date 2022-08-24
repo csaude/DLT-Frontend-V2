@@ -24,6 +24,8 @@ const InterventionForm = (record: any) => {
   
     const selectedOption = options?.filter(o => o.value === selectedIntervention?.entryPoint+'').map(filteredOption => (filteredOption.value))[0];
 
+    const RequiredFieldMessage = "Obrigatório!";
+
     useEffect(() => {
 
       const fetchData = async () => {
@@ -76,7 +78,7 @@ const InterventionForm = (record: any) => {
                 <Form.Item
                   name="areaServicos"
                   label="Área de Serviços"
-                  rules={[{ required: true, message: 'This field is required' }]}
+                  rules={[{ required: true, message: RequiredFieldMessage}]}
                   initialValue={service?.serviceType===undefined? undefined : service?.serviceType === '1'? 'CLINIC' : 'COMMUNITY'}
                 >
                     <Select placeholder="Select Area Serviço" onChange={onChangeAreaServiço}>
@@ -90,7 +92,7 @@ const InterventionForm = (record: any) => {
                 <Form.Item
                   name="service"
                   label="Serviço"
-                  rules={[{ required: true, message: 'Please enter url' }]}
+                  rules={[{ required: true, message: RequiredFieldMessage }]}
                   initialValue={selectedIntervention===undefined? undefined : selectedIntervention?.subServices?.service.id+''}
                 >
                   <Select placeholder="Select Serviço" onChange={onChangeServices} disabled={services === undefined}>
@@ -104,7 +106,7 @@ const InterventionForm = (record: any) => {
                 <Form.Item
                   name="subservice"
                   label="Sub-Serviço/Intervenção"
-                  rules={[{ required: true, message: 'Please enter url' }]}
+                  rules={[{ required: true, message: RequiredFieldMessage }]}
                   initialValue={selectedIntervention===undefined? undefined : selectedIntervention?.subServices?.id+''}
                 >
                   <Select placeholder="Select Sub Serviço" disabled={interventions === undefined} value={undefined}>
@@ -120,7 +122,7 @@ const InterventionForm = (record: any) => {
                 <Form.Item
                   name="entryPoint"
                   label="Ponto de Entrada"
-                  rules={[{ required: true, message: 'Please select an owner' }]}
+                  rules={[{ required: true, message: RequiredFieldMessage }]}
                   initialValue={selectedOption}
                 >
                   <Radio.Group
@@ -133,10 +135,10 @@ const InterventionForm = (record: any) => {
                 <Form.Item
                   name="location"
                   label="Localização"
-                  rules={[{ required: true, message: 'Please choose the type' }]}
+                  rules={[{ required: true, message: RequiredFieldMessage }]}
                   initialValue={selectedIntervention === undefined? undefined : selectedIntervention?.us?.id+''}
                 >
-                  <Select placeholder="Select Localização">
+                  <Select placeholder="Selecione Localização">
                         {us?.map(item => (
                             <Option key={item.id}>{item.name}</Option>
                         ))}
@@ -146,8 +148,8 @@ const InterventionForm = (record: any) => {
               <Col span={8}>
                 <Form.Item
                   name="dataBeneficio"
-                  label="Data Benefício"
-                  rules={[{ required: true, message: 'Please select an owner' }]}
+                  label="Data de Provisão do Serviço"
+                  rules={[{ required: true, message: RequiredFieldMessage }]}
                   initialValue={selectedIntervention === undefined? undefined : moment(selectedIntervention?.id.date,'YYYY-MM-DD')}
                 >
                   <DatePicker style={{width: '100%'}} />
@@ -160,7 +162,7 @@ const InterventionForm = (record: any) => {
                 <Form.Item
                   name="provider"
                   label="Provedor do Serviço"
-                  rules={[{ required: true, message: 'Nome do Provedor do Serviço' }]}
+                  rules={[{ required: true, message: RequiredFieldMessage }]}
                   initialValue={selectedIntervention?.provider}
                 >
                   <Input placeholder="Nome do Provedor do Serviço" />
