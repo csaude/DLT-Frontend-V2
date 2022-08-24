@@ -83,6 +83,9 @@ const BeneficiaryForm = ({ form, beneficiary, modalVisible, handleAdd, handleUpd
                 visible={modalVisible}
                 onCancel={() => handleModalVisible(false)}
                 footer={<div className="steps-action">
+                    <Button key="Cancel" onClick={() => handleModalVisible()} >
+                        Cancelar
+                    </Button>
                     {(current === 1 || (current === 2 && beneficiary != undefined)) && (
                         <Button style={{ marginLeft: 8 }} onClick={() => prev()}>
                             Anterior
