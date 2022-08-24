@@ -92,6 +92,9 @@ const FormReference = ({ form, beneficiary, reference, modalVisible, handleAdd, 
                 visible={modalVisible}
                 onCancel={() => onClose()}
                 footer={<div className="steps-action">
+                    <Button key="Cancel" onClick={() => onClose()} >
+                        Cancelar
+                    </Button>
                     {( (current > 0 && (beneficiary != undefined || reference != undefined))) && (
                         <Button style={{ marginLeft: 8 }} onClick={() => prev()}>
                             Anterior
