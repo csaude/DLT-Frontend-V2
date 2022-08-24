@@ -31,7 +31,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
           setServices(selectedReference.referencesServiceses);
           setReference(selectedReference);
         } 
-    
+        
         fetchData().catch(error => console.log(error));
     
     }, []);
@@ -232,7 +232,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
                                 bodyStyle={{ paddingLeft: "10px", paddingRight: "10px" }}
                             >
                                 <Table
-                                    rowKey="dateCreated" //{( record? ) => record.id.serviceId}
+                                    rowKey={(record?) => `${record?.services?.id}`}
                                     columns={servicesColumns}
                                     dataSource={services}
                                     pagination={false}
@@ -247,12 +247,8 @@ export function ViewReferencePanel({selectedReference, columns}) {
                                 bodyStyle={{ paddingLeft: "10px", paddingRight: "10px" }}
                             >
                                 <Table
-                                    rowKey="dateCreated" //{( record? ) => record.id.subServiceId}
+                                    rowKey={(record?) => `${record.id.subServiceId}${record.id.date}`}
                                     columns={interventionColumns}
-                                    // expandable={{
-                                    //     expandedRowRender: record =>  <div style={{border:"2px solid #d9edf7", backgroundColor:"white"}}><ViewBenefiaryPanel beneficiary={record} columns={interventionColumns} /></div>,
-                                    //     rowExpandable: record => record.name !== 'Not Expandable',
-                                    // }}
                                     dataSource={interventions}
                                     bordered
                                     pagination={false}
@@ -299,7 +295,7 @@ const ViewReferral = ({reference, modalVisible, handleModalVisible}) => {
             width={1300}
             centered
             destroyOnClose
-            title={`Dados Referência: `}
+            title={`Dados Referência `}
             visible={modalVisible}
             onOk={okHandle}
             onCancel={() => handleModalVisible()}
