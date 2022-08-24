@@ -1,10 +1,11 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Badge, Button, Steps, Row, Col, Input, message, InputNumber, Form, DatePicker, Checkbox, Select, Radio, Divider, SelectProps } from 'antd';
-import { allProvinces, queryDistrictsByProvinces, queryLocalitiesByDistricts, queryNeighborhoodsByLocalities } from '@app/utils/locality';
+import { allProvinces, queryDistrictsByProvinces, queryLocalitiesByDistricts, queryNeighborhoodsByLocalities, queryUsByLocalities } from '@app/utils/locality';
 import './index.css';
 import moment from 'moment';
 import { query } from '@app/utils/users';
-import { calculateAge } from '@app/models/Utils';
+import { calculateAge, getMaxDate, getMinDate } from '@app/models/Utils';
+import { allUsByType } from '@app/utils/uSanitaria';
 
 const { Option } = Select;
 const { Step } = Steps;
@@ -13,9 +14,10 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
     const [isDateRequired, setIsDateRequired] = useState<any>(true);
     const [user, setUser] = useState<any>(undefined);
     const [provinces, setProvinces] = useState<any>([]);
-    const [districts, setDistricts] = useState<any>(undefined);
-    const [localities, setLocalities] = useState<any>(undefined);
-    const [neighborhoods, setNeighborhoods] = useState<any>(undefined);
+    const [districts, setDistricts] = useState<any>([]);
+    const [localities, setLocalities] = useState<any>([]);
+    const [neighborhoods, setNeighborhoods] = useState<any>([]);
+    const [us, setUs] = useState<any>([]);
     const [age, setAge] = useState<any>(undefined);
     const [birthDate, setBirthDate] = useState<any>(undefined);
 
@@ -26,48 +28,71 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
 
     useEffect(() => {
         const fetchData = async () => {
+            if(beneficiary === undefined) {
+                form.setFieldsValue({entry_point: userEntryPoint});
+            }
+
             const loggedUser = await query(localStorage.user);
-            const dataProvinces = loggedUser.provinces.length > 0 ? loggedUser.provinces : await allProvinces();
+            let dataProvinces;
+
+            if(loggedUser.provinces.length > 0) {
+                dataProvinces = loggedUser.provinces;
+            } else {
+                dataProvinces = await allProvinces();
+            }
+
+            setUser(loggedUser);
+            setProvinces(dataProvinces);
+
             let dataDistricts;
             let dataLocalities;
 
             if (loggedUser.districts.length > 0) {
                 dataDistricts = loggedUser.districts;
                 setDistricts(dataDistricts)
-            }
-            else {
-                const pIds = dataProvinces.map(item => {
-                    return item.id + ''
-                });
-                dataDistricts = await queryDistrictsByProvinces({ provinces: pIds });
-                setDistricts(dataDistricts);
+            } else {
+                let province = form.getFieldValue('province');
+                if(province !== '' && province !== undefined){
+                    onChangeProvinces(province);
+                }
             }
 
-            if (loggedUser.localities > 0) {
+            if (loggedUser.localities.length > 0) {
                 dataLocalities = loggedUser.localities;
                 setLocalities(dataLocalities);
-            }
-            else {
-                const dIds = dataDistricts.map(item => {
-                    return item.id + ''
-                });
-                dataLocalities = await queryLocalitiesByDistricts({ districts: dIds });
-                setLocalities(dataLocalities);
-            }
 
-            if (loggedUser.neighborhoods > 0) {
-                setNeighborhoods(loggedUser.neighborhoods);
-            }
-            else {
-                const lIds = dataLocalities.map(item => {
-                    return item.id + ''
-                });
-                const dataNeighborhood = await queryNeighborhoodsByLocalities({ localities: lIds });
-                setNeighborhoods(dataNeighborhood);
-            }
+                if (dataLocalities.length === 1) {
+                    const dataNeighborhood = await queryNeighborhoodsByLocalities({ localities: [dataLocalities[0].id] });
+                    setNeighborhoods(dataNeighborhood);
 
-            setUser(loggedUser);
-            setProvinces(dataProvinces);
+                    if (loggedUser.us.length > 0) {
+                        setUs(loggedUser.us);
+                    }
+                    else {
+                        const lIds = dataLocalities.map(item => {
+                            return item.id + ''
+                        });
+                        const dataUs = await queryUsByLocalities({ localities: lIds });
+                        setUs(dataUs);
+                    }
+                }
+            } else {
+                let district = form.getFieldValue('district');
+                let locality = form.getFieldValue('locality');
+                let entryPoint = form.getFieldValue('entry_point');
+
+                if(district !== '' && district !== undefined){
+                    onChangeDistricts(district);
+                }
+
+                if(locality !== '' && locality !== undefined){
+                    onChangeLocality(locality);
+                }
+                
+                if (entryPoint !== '' && entryPoint !== undefined) {            
+                  onChangeEntryPoint(locality);
+                }
+            }
         };
         
         fetchData().catch(error => console.log(error));
@@ -91,6 +116,28 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
         if (values.length > 0) {
             const dataNeighborhood = await queryNeighborhoodsByLocalities({ localities: [values + ""] });
             setNeighborhoods(dataNeighborhood);
+
+            let entryPoint = form.getFieldValue('entry_point');
+            if (entryPoint !== '' && entryPoint !== undefined) {
+                var payload = {
+                  typeId: entryPoint,
+                  localityId: values
+                }
+                const data = await allUsByType(payload);
+                setUs(data);
+            }
+        }
+    }
+
+    const onChangeEntryPoint = async (e: any) => {
+        if (user?.us.length !== 1){
+            let locality = user?.localities.length === 1? user.localities[0] : form.getFieldValue('locality');
+            var payload = {
+                typeId: e?.target?.value === undefined ? e : e?.target?.value,
+                localityId: locality
+            }
+            const data = await allUsByType(payload);
+            setUs(data);
         }
     }
 
@@ -101,7 +148,6 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
     const onChangeBirthDate = (value:any) => {
         setAge(calculateAge(value)+'');
     }
-
 
     const IdadeSelect: React.FC<SelectProps> = ({ value, onChange, defaultValue }: SelectProps) => {
         
@@ -140,6 +186,18 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
 
     return (
         <>
+            <Row gutter={24} hidden={beneficiary === undefined}>
+                <Col className="gutter-row" span={8}>
+                    <Form.Item
+                        name="nui"
+                        label="Código do Pareceiro (NUI)"
+                        style={{ textAlign: 'left' }}
+                        initialValue={beneficiary?.nui}
+                    >
+                    <Input disabled={true} />
+                    </Form.Item>
+                </Col>
+            </Row>
             <Row gutter={16}>
                 <Col className="gutter-row" span={12}>
                     <Form.Item
@@ -172,7 +230,15 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                                 rules={[{ required: isDateRequired, message: RequiredFieldMessage }]}
                                 initialValue={birthDate ? moment(birthDate,'YYYY-MM-DD') : beneficiary ? moment(beneficiary?.dateOfBirth,'YYYY-MM-DD') : ''}
                             >
-                                <DatePicker disabled={!isDateRequired} onChange={onChangeBirthDate} style={{ width: '100%' }} placeholder="Selecione a data" />
+                            <DatePicker 
+                                defaultPickerValue={moment(getMaxDate(),'YYYY-MM-DD')} 
+                                inputReadOnly={true} 
+                                disabled={!isDateRequired} 
+                                onChange={onChangeBirthDate} 
+                                style={{ width: '100%' }} 
+                                placeholder="Selecione a data"
+                                disabledDate={d => !d || d.isAfter(getMaxDate()) || d.isSameOrBefore(getMinDate()) } 
+                            />
                             </Form.Item>
                         </Col>
                         <Col span={14}>
@@ -209,7 +275,13 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                         rules={[{ required: isDateRequired, message: RequiredFieldMessage }]}
                         initialValue={beneficiary && beneficiary.enrollmentDate ? moment(beneficiary?.enrollmentDate,'YYYY-MM-DD') : ''}
                     >
-                        <DatePicker disabled={!isDateRequired} style={{ width: '100%' }} placeholder="Selecione a data" />
+                    <DatePicker  
+                        inputReadOnly={true} 
+                        disabled={!isDateRequired} 
+                        style={{ width: '100%' }} 
+                        placeholder="Selecione a data"
+                        disabledDate={d => !d || d.isAfter(new Date()) || d.isSameOrBefore("2017/01/01") }
+                    />
                     </Form.Item>
                 </Col>
             </Row>
@@ -218,8 +290,8 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                     <Form.Item
                         name="province"
                         label="Provincia"
-                        rules={[{ required: true, message: RequiredFieldMessage }]}
-                        initialValue={beneficiary?.neighborhood.locality.district.province.id.toString()}
+                        rules={[{ required: localities.length !== 1, message: RequiredFieldMessage }]}
+                        initialValue={beneficiary?.neighborhood.locality?.district.province.id.toString()}
                     >
                         <Select placeholder="Seleccione a Provincia" onChange={onChangeProvinces}>
                             {provinces?.map(item => (
@@ -232,11 +304,11 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                     <Form.Item
                         name="district"
                         label="Distrito"
-                        rules={[{ required: true, message: RequiredFieldMessage }]}
-                        initialValue={beneficiary?.neighborhood.locality.district.id.toString()}
+                        rules={[{ required: localities.length !== 1, message: RequiredFieldMessage }]}
+                        initialValue={beneficiary?.neighborhood.locality?.district.id.toString()}
                     >
                         <Select placeholder="Seleccione o Distrito" 
-                                disabled={districts == undefined && beneficiary == undefined}
+                                disabled={districts.length == 0 && beneficiary == undefined}
                                 onChange={onChangeDistricts}
                         >
                             {districts?.map(item => (
@@ -249,11 +321,11 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                     <Form.Item
                         name="locality"
                         label="Posto Administrativo"
-                        rules={[{ required: true, message: RequiredFieldMessage }]}
-                        initialValue={beneficiary?.neighborhood.locality.id.toString()}
+                        rules={[{ required: localities.length !== 1, message: RequiredFieldMessage }]}
+                        initialValue={beneficiary?.neighborhood.locality?.id.toString()}
                     >
                         <Select placeholder="Seleccione o Posto Administrativo" 
-                            disabled={localities == undefined && beneficiary == undefined}
+                            disabled={localities.length == 0 && beneficiary == undefined}
                             onChange={onChangeLocality}
                         >
                             {localities?.map(item => (
@@ -272,11 +344,28 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                         style={{ textAlign: 'left' }}
                         initialValue={beneficiary?.entryPoint}
                     >
-                        <Radio.Group defaultValue={userEntryPoint} buttonStyle="solid">
+                        <Radio.Group buttonStyle="solid" onChange={onChangeEntryPoint} >
                             <Radio.Button value="1">US</Radio.Button>
                             <Radio.Button value="2">CM</Radio.Button>
                             <Radio.Button value="3">ES</Radio.Button>
                         </Radio.Group>
+                    </Form.Item>
+                </Col>
+                <Col span={8} hidden={user?.us.length === 1 }>
+                    <Form.Item
+                        name="us"
+                        label="Local"
+                        rules={[{ required: user?.us.length !== 1, message: RequiredFieldMessage }]}
+                        initialValue={beneficiary?.us.id.toString()}
+                    >
+                        <Select
+                            placeholder="Seleccione o Local"
+                            disabled={us.length == 0 && beneficiary == undefined}
+                        >
+                            {us?.map(item => (
+                                <Option key={item.id}>{item.name}</Option>
+                            ))}
+                        </Select>
                     </Form.Item>
                 </Col>
             </Row>
@@ -338,6 +427,15 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                                 <Option key={item.id}>{item.name}</Option>
                             ))}
                         </Select>
+                    </Form.Item>
+                </Col>
+                <Col className="gutter-row" span={12}>
+                    <Form.Item
+                        name="partner_nui"
+                        label="NUI da Parceira"
+                        initialValue={beneficiary?.partnerNUI}
+                    >
+                        <Input placeholder="Insira o NUI da parceira" />
                     </Form.Item>
                 </Col>
             </Row>

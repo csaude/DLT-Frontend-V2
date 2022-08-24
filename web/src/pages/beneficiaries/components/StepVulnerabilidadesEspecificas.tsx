@@ -1,12 +1,27 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Badge, Button, Steps, Row, Col, Input, message, Space, Form, Tabs, Modal, DatePicker, Checkbox, Select, Radio, Divider } from 'antd';
 import './index.css';
+import { query } from '@app/utils/beneficiary';
 const { Option } = Select;
 const { Step } = Steps;
 
 const StepVulnerabilidadesEspecificas = ({ form, beneficiary }: any) => {
     const [gbvTypeEnabled, setGbvTypeEnabled] = useState<any>(true);
     const [gbvTimeEnabled, setGbvTimeEnabled] = useState<any>(true);
+    const [sexExploitationTimeEnabled, setSexExploitationTimeEnabled] = useState<any>(true);
+
+    console.log(beneficiary);
+
+    useEffect(() => { 
+        if (beneficiary){
+            form.setFieldsValue({nui: beneficiary?.nui});
+        }
+    
+    }, [beneficiary]);
+
+    const sexExploitationChange = async (values: any) => {
+        setSexExploitationTimeEnabled(values.target.value != 1);
+    }
 
     const gbvVictimChange = async (values: any) => {
         setGbvTypeEnabled(values.target.value != 1);
@@ -30,7 +45,7 @@ const StepVulnerabilidadesEspecificas = ({ form, beneficiary }: any) => {
                         label="Código da Beneficiária (NUI)"
                         style={{ textAlign: 'left' }}
                     >
-                       <Input disabled={true} value={beneficiary?.nui} />
+                       <Input disabled={true} />
                     </Form.Item>
                 </Col>
             </Row>
@@ -101,7 +116,7 @@ const StepVulnerabilidadesEspecificas = ({ form, beneficiary }: any) => {
                         style={{ textAlign: 'left' }}
                         initialValue={beneficiary?.vbltSexualExploitation}
                     >
-                        <Radio.Group>
+                        <Radio.Group onChange={sexExploitationChange}>
                             <Radio.Button value={1}>SIM</Radio.Button>
                             <Radio.Button value={0}>NÃO</Radio.Button>
                         </Radio.Group>
@@ -111,12 +126,14 @@ const StepVulnerabilidadesEspecificas = ({ form, beneficiary }: any) => {
                     <Form.Item
                         name="vblt_sexploitation_time"
                         label="Tempo"
+                        rules={[{ required: !sexExploitationTimeEnabled, message: RequiredFieldMessage }]}
                         style={{ textAlign: 'left' }}
                         initialValue={beneficiary?.vbltSexploitationTime}
                     >
                        <Select
                             size='middle'
                             placeholder="Please select"
+                            disabled={sexExploitationTimeEnabled}
                             //defaultValue={['a10', 'c12']}
                             //onChange={handleChange}
                             style={{width: '100%',}}
