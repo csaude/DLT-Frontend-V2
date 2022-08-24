@@ -1,0 +1,168 @@
+import React, { Fragment, useEffect, useState } from 'react'
+import { Drawer, Form, Button, Col, Row, Input, Select, DatePicker, Space, Radio } from 'antd';
+import { queryByType, querySubServiceByService } from '@app/utils/service'
+import { allUs } from '@app/utils/uSanitaria'
+import moment from 'moment';
+
+const { Option } = Select;
+const { TextArea } = Input;
+
+const areaServicos = [{ "id": 'CLINIC', "name": "Serviços Clinicos" }, { "id": 'COMMUNITY', "name": "Serviços Comunitarios" }];
+const options = [
+    { label: 'US', value: '1' },
+    { label: 'CM', value: '2' },
+    { label: 'ES', value: '3' },
+];
+
+const ReferenceInterventionForm = ({ form, record }: any) => {
+    const [services, setServices] = React.useState<any>(undefined);
+    const [interventions, setInterventions] = React.useState<any>(undefined);
+    const [us, setUs] = React.useState<any>(undefined);
+    const selectedIntervention = record;
+    const service = selectedIntervention?.services;
+
+    //console.log(record);
+    useEffect(() => {
+
+        const fetchData = async () => {
+            const data = await allUs();
+            setUs(data);
+        }
+
+        const fetchServices = async () => {
+            const data = await queryByType(service.serviceType === '1' ? 'CLINIC' : 'COMMUNITY');
+            setServices(data);
+        }
+
+        const fetchSubServices = async () => {
+            const data = await querySubServiceByService(service.id);
+            setInterventions(data);
+        }
+
+        if (selectedIntervention !== undefined) {
+            form.setFieldsValue({ areaServicos: service.serviceType === '1' ? 'CLINIC' : 'COMMUNITY' });
+            form.setFieldsValue({ service: service?.id + '' });
+
+            fetchServices().catch(error => console.log(error));
+
+            fetchSubServices().catch(error => console.log(error));
+        }
+
+        fetchData().catch(error => console.log(error));
+
+    }, [selectedIntervention]);
+
+    const onChangeAreaServiço = async (value: any) => {
+        const data = await queryByType(value);
+        setServices(data);
+    }
+
+    const onChangeServices = async (value: any) => {
+        const data = await querySubServiceByService(value);
+        setInterventions(data);
+    }
+
+    return (
+        <><Row gutter={8}>
+            <Col span={8}>
+                <Form.Item
+                    name="areaServicos"
+                    label="Área de Serviços"
+                    rules={[{ required: true, message: 'This field is required' }]}
+                >
+                    <Select placeholder="Select Area Serviço" onChange={onChangeAreaServiço} disabled>
+                        {areaServicos.map(item => (
+                            <Option key={item.id}>{item.name}</Option>
+                        ))}
+                    </Select>
+                </Form.Item>
+            </Col>
+            <Col span={8}>
+                <Form.Item
+                    name="service"
+                    label="Serviço"
+                    rules={[{ required: true, message: 'Please enter url' }]}
+                >
+                    <Select placeholder="Select Serviço" onChange={onChangeServices} disabled>
+                        {services?.map(item => (
+                            <Option key={item.id}>{item.name}</Option>
+                        ))}
+                    </Select>
+                </Form.Item>
+            </Col>
+            <Col span={8}>
+                <Form.Item
+                    name="subservice"
+                    label="Sub-Serviço/Intervenção"
+                    rules={[{ required: true, message: 'Please enter url' }]}
+                >
+                    <Select placeholder="Select Sub Serviço" disabled={interventions === undefined} value={undefined}>
+                        {interventions?.map(item => (
+                            <Option key={item.id}>{item.name}</Option>
+                        ))}
+                    </Select>
+                </Form.Item>
+            </Col>
+        </Row>
+        <Row gutter={8}>
+              <Col span={8}>
+                <Form.Item
+                  name="entryPoint"
+                  label="Ponto de Entrada"
+                  rules={[{ required: true, message: 'Please select an owner' }]}
+                >
+                  <Radio.Group
+                    options={options}
+                    optionType="button"
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item
+                  name="location"
+                  label="Localização"
+                  rules={[{ required: true, message: 'Please choose the type' }]}
+                >
+                  <Select placeholder="Select Localização">
+                        {us?.map(item => (
+                            <Option key={item.id}>{item.name}</Option>
+                        ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item
+                  name="dataBeneficio"
+                  label="Data Benefício"
+                  rules={[{ required: true, message: 'Please select an owner' }]}
+                >
+                  <DatePicker style={{width: '100%'}} />
+                  
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={8}>
+              <Col span={8}>
+                <Form.Item
+                  name="provider"
+                  label="Provedor do Serviço"
+                  rules={[{ required: true, message: 'Nome do Provedor do Serviço' }]}
+                  initialValue={selectedIntervention?.provider}
+                >
+                  <Input placeholder="Nome do Provedor do Serviço" />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item
+                  name="outros"
+                  label="Outras Observações"
+                  initialValue={selectedIntervention?.remarks}
+                >
+                  <TextArea rows={2} placeholder="Insira as Observações" maxLength={50} />
+                </Form.Item>
+              </Col>
+            </Row>
+        </>
+    );
+}
+export default ReferenceInterventionForm;
