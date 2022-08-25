@@ -276,7 +276,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
                     }
                 >
                     <Form form={form} layout="vertical" onFinish={() => onSubmit()}> 
-                        <ReferenceInterventionForm form={form} record={selectedService} />
+                        <ReferenceInterventionForm form={form} record={selectedService} beneficiary={reference?.beneficiaries} />
                     </Form> 
                 </Drawer>                
             </div>
