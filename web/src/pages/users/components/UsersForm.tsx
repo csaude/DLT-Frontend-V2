@@ -138,6 +138,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
             destroyOnClose
             title='Dados de Registo do Utilizador'
             visible={modalVisible}
+            onCancel={() => handleModalVisible(false)}
             footer={[
                 <Button key="Cancel" onClick={() => handleModalVisible()} >
                     Cancelar
