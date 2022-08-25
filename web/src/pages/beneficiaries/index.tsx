@@ -420,7 +420,7 @@ const BeneficiariesList: React.FC = () => {
                 handleModalVisible={handleBeneficiaryModalVisible} 
             />
             <FormBeneficiaryPartner form={form} beneficiary={beneficiary} modalVisible={beneficiaryPartnerModalVisible}
-             //   handleAdd={handleAdd}
+                handleAddBeneficiary={handleAddBeneficiary}
                 handleModalVisible={handleBeneficiaryPartnerModalVisible} 
             />
             <FormReference  form={form} beneficiary={beneficiary} 

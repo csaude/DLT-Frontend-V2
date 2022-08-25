@@ -27,11 +27,15 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
     useEffect(() => { 
 
         const fetchUser = async () => {
-            const user = await query(beneficiary.partnerId);
-            setPartner(user);
+
+            if(beneficiary.partnerId){
+                const user = await query(beneficiary.partnerId);
+                setPartner(user);
+            }
+            
         }
     
-        fetchUser().catch(error => console.log(error))
+        fetchUser().catch(error => console.log("---: ",error))
     
     }, []);
 
