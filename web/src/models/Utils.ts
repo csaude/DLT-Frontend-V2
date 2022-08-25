@@ -31,3 +31,28 @@ export function getMaxDate() {
 
     return new Date(year-9 + "/" + month + "/" + day);
 }
+
+export function getUserParams(user: any) {
+
+    var params;
+    var level;
+    if (user.provinces.length === 0) {
+        level = "CENTRAL";
+        params = [];
+    } else if (user.districts.length === 0) {
+        level = "PROVINCIAL";
+        params = user.provinces.map(p => p.id);
+    } else if (user.localities.length === 0) {
+        level = "DISTRITAL";
+        params = user.districts.map(d => d.id);
+    } else {
+        level = "LOCAL";
+        params = user.localities.map(l => l.id);
+    }
+
+    return {
+        profile: user.profiles.id,
+        level: level,
+        params: params.join(',')
+    }
+}

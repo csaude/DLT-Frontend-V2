@@ -37,6 +37,9 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
 
             if(loggedUser.provinces.length > 0) {
                 dataProvinces = loggedUser.provinces;
+                if (loggedUser.provinces.length === 1) {
+                    form.setFieldsValue({province: loggedUser.provinces[0].id.toString()});
+                }
             } else {
                 dataProvinces = await allProvinces();
             }
@@ -50,6 +53,9 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
             if (loggedUser.districts.length > 0) {
                 dataDistricts = loggedUser.districts;
                 setDistricts(dataDistricts)
+                if (loggedUser.districts.length === 1) {
+                    form.setFieldsValue({district: loggedUser.districts[0].id.toString()});
+                }
             } else {
                 let province = form.getFieldValue('province');
                 if(province !== '' && province !== undefined){
@@ -75,6 +81,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                         const dataUs = await queryUsByLocalities({ localities: lIds });
                         setUs(dataUs);
                     }
+                    form.setFieldsValue({locality: loggedUser.localities[0].id.toString()});
                 }
             } else {
                 let district = form.getFieldValue('district');
@@ -99,14 +106,19 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
     }, [beneficiary]);
 
     const onChangeProvinces = async (values: any) => {
-        if (values.length > 0) {
+        if (user?.districts.length > 0) {
+            setDistricts(user.districts);
+        } else  {
             const dataDistricts = await queryDistrictsByProvinces({ provinces: [values + ""] });
-            setDistricts(dataDistricts);
+            setDistricts(dataDistricts);    
         }
+        
     }
 
     const onChangeDistricts = async (values: any) => {
-        if (values.length > 0) {
+        if (user?.localities.length >0) {
+            setLocalities(user.localities);
+        } else {
             const dataLocalities = await queryLocalitiesByDistricts({ districts: [values + ""] });
             setLocalities(dataLocalities);
         }
@@ -132,12 +144,14 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
     const onChangeEntryPoint = async (e: any) => {
         if (user?.us.length !== 1){
             let locality = user?.localities.length === 1? user.localities[0] : form.getFieldValue('locality');
-            var payload = {
-                typeId: e?.target?.value === undefined ? e : e?.target?.value,
-                localityId: locality
+            if (locality !== '' && locality !== undefined) {
+                var payload = {
+                    typeId: e?.target?.value === undefined ? e : e?.target?.value,
+                    localityId: locality
+                }
+                const data = await allUsByType(payload);
+                setUs(data);
             }
-            const data = await allUsByType(payload);
-            setUs(data);
         }
     }
 
