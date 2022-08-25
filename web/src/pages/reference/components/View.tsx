@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { query  as queryUser} from '@app/utils/users';
 import { query as queryBeneficiary } from "@app/utils/beneficiary";
 import { Button, Card, Col, Drawer, Form, message, Modal, Row, Space, Table, Typography } from "antd";
-import { SearchOutlined, EditOutlined, PlusOutlined, EyeOutlined, CloseOutlined, CheckOutlined } from '@ant-design/icons';
+import { SearchOutlined, EditOutlined, PlusOutlined, EyeOutlined, CloseOutlined, CheckOutlined,FileDoneOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import InterventionForm from "@app/pages/beneficiaries/components/InterventionForm";
+import ReferenceInterventionForm from "@app/pages/reference/components/ReferenceInterventionForm";
 import { addSubService, SubServiceParams } from '@app/utils/service'
 
 const { Text } = Typography;
@@ -37,9 +38,8 @@ export function ViewReferencePanel({selectedReference, columns}) {
     }, []);
 
     const onAddIntervention = (record: any) => {
-        // form.resetFields();
-        setVisible(true);
         setSelectedService(record);
+        setVisible(true);
     };
 
     const onSubmit = async () => {
@@ -102,6 +102,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
     };
 
     const onClose = () => {
+        form.resetFields();
         setVisible(false);
     };
 
@@ -141,7 +142,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
             key: 'action',
             render: (text, record) => (
               <Space>
-                <Button type="link" icon={<EditOutlined />} onClick={() => onAddIntervention(record) } >
+                <Button type="primary" icon={<FileDoneOutlined />} onClick={() => onAddIntervention(record) } >
                 </Button>
               </Space>
             ),
@@ -275,7 +276,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
                     }
                 >
                     <Form form={form} layout="vertical" onFinish={() => onSubmit()}> 
-                        <InterventionForm record={selectedService} />
+                        <ReferenceInterventionForm form={form} record={selectedService} beneficiary={reference?.beneficiaries} />
                     </Form> 
                 </Drawer>                
             </div>
