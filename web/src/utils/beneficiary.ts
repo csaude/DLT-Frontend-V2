@@ -6,13 +6,15 @@ interface BeneficiaryFilter{
     nui: string
 }
 
-export async function query(payload?: BeneficiaryFilter) {
+export async function query(payload?: any) {
     let url: string;
-    if (payload) {
-      url = '/api/beneficiaries/' + payload;
-    } else {
-      url = '/api/beneficiaries';
+    if (payload.profile){
+      url = '/api/beneficiaries?'.concat(stringify(payload));
     }
+    else {
+      url = '/api/beneficiaries/' + payload;
+    }
+
     const res = await select(url);
     return res;
 }
