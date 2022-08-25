@@ -44,6 +44,10 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
             setPartners(dataPartners);
             setProfiles(dataProfiles);
             setProvinces(dataProvinces);
+
+            if (user) {
+                onChangeProfile(user.profiles.id);
+            }
         };
 
         const fetchDistricts = async () => {
@@ -76,11 +80,13 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
             }
         };
 
-
         fetchData().catch(error => console.log(error));
         fetchDistricts().catch(error => console.log(error));
         fetchLocalities().catch(error => console.log(error));
         fetchUs().catch(error => console.log(error));
+
+        console.log(user);
+        
 
     }, [user]);
 
