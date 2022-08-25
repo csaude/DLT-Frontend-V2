@@ -11,7 +11,7 @@ import { SearchOutlined, EditOutlined, PlusOutlined, EyeOutlined } from '@ant-de
 import moment from 'moment';
 import ViewBeneficiary, { ViewBenefiaryPanel } from './components/View';
 import { getEntryPoint, UserModel } from '@app/models/User';
-import { calculateAge } from '@app/models/Utils';
+import { calculateAge, getUserParams } from '@app/models/Utils';
 import FormBeneficiary from './components/FormBeneficiary';
 import FormBeneficiaryPartner from './components/FormBeneficiaryPartner';
 import { add, edit } from '../../utils/beneficiary';
@@ -36,19 +36,17 @@ const BeneficiariesList: React.FC = () => {
     const [ beneficiaryModalVisible, setBeneficiaryModalVisible ] = useState<boolean>(false);
     const [ beneficiaryPartnerModalVisible, setBeneficiaryPartnerModalVisible ] = useState<boolean>(false);
     const [ referenceModalVisible, setReferenceModalVisible ] = useState<boolean>(false);
+    const [ params, setParams] = useState<any>(undefined);
 
     let searchInput ;
     useEffect(() => { 
 
-        const fetchUser = async () => {
-            const user = await queryUser(localStorage.user);
-            setUser(user);
-        }
-
         const fetchData = async () => {
-          const data = await query();
+            const user = await queryUser(localStorage.user);
+            const data = await query(getUserParams(user));
 
-          setBeneficiaries(data);
+            setUser(user);
+            setBeneficiaries(data);
         } 
 
         const fetchUsers = async () => {
@@ -56,7 +54,6 @@ const BeneficiariesList: React.FC = () => {
             setUsers(users);
         }
     
-        fetchUser().catch(error => console.log(error))
         fetchData().catch(error => console.log(error));
         fetchUsers().catch(error => console.log(error));
     
