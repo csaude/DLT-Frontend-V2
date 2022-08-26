@@ -124,6 +124,7 @@ const BeneficiariesList: React.FC = () => {
                     data : item
             })
         });
+        setBeneficiary(data);
         setBeneficiaryModalVisible(false);
     }
 
@@ -166,11 +167,12 @@ const BeneficiariesList: React.FC = () => {
     const onEditBeneficiary = async (record: any) => {
         
         form.resetFields();
+        
         if (record.gender === "1") {
             if (record.partnerId != null) {
-                await fetchPartner(record).catch(error => console.log(error));;
+                await fetchPartner(record).catch(error => console.log(error));
             }
-            setBeneficiaryModalVisible(true)
+            setBeneficiaryModalVisible(true);
         }
         else {
             setBeneficiaryPartnerModalVisible(true);

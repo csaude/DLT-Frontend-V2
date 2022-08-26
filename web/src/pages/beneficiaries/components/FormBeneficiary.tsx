@@ -17,6 +17,8 @@ const BeneficiaryForm = ({ form, beneficiary, modalVisible, handleAddBeneficiary
     const [firstStepValues, setFirstStepValues] = useState();
     const [secondStepValues, setSecondStepValues] = useState();
 
+    
+
     const next = () => {
         form.validateFields().then(async (values) => {
             const inc = current + 1;
@@ -35,10 +37,10 @@ const BeneficiaryForm = ({ form, beneficiary, modalVisible, handleAddBeneficiary
     }
 
     const onSubmit = async () => {
-        handleAdd(firstStepValues,"1");
+        handleAdd(firstStepValues, "1");
     }
 
-    const handleAdd = (values:any, gender:string) => {
+    const handleAdd = (values: any, gender: string) => {
 
         form.validateFields().then(async (vblts) => {
             setSecondStepValues(vblts);
@@ -49,7 +51,7 @@ const BeneficiaryForm = ({ form, beneficiary, modalVisible, handleAddBeneficiary
             ben.nickName = values.nick_name;
             ben.dateOfBirth = moment(values.date_of_birth).format('YYYY-MM-DD');
             ben.age = values.age;
-            ben.gender=gender;
+            ben.gender = gender;
             ben.address = values.address;
             ben.email = values.e_mail;
             ben.phoneNumber = values.phone_number;
@@ -72,18 +74,18 @@ const BeneficiaryForm = ({ form, beneficiary, modalVisible, handleAddBeneficiary
             ben.vbltSchoolGrade = vblts.vblt_school_grade;
             ben.vbltSchoolName = vblts.vblt_school_name;
             ben.vbltTestedHiv = vblts.vblt_tested_hiv;
-            ben.status="1";
-            
+            ben.status = "1";
+
             const us = values.us;
 
             ben.createdBy = localStorage.user;
             ben.partner = { "id": localStorage.organization };
             ben.organizationId = localStorage.organization;
-            ben.us = { "id": us === undefined? localStorage.us : us };
+            ben.us = { "id": us === undefined ? localStorage.us : us };
 
             const { data } = await add(ben);
             handleAddBeneficiary(data);
-            
+
             const inc = current + 1;
             setCurrent(inc);
 
@@ -94,15 +96,15 @@ const BeneficiaryForm = ({ form, beneficiary, modalVisible, handleAddBeneficiary
                 }
             });
         })
-        .catch(error => {
+            .catch(error => {
 
-            message.error({
-                content: 'Não foi possivel Registrar a Beneficiária!', className: 'custom-class',
-                style: {
-                    marginTop: '10vh',
-                }
+                message.error({
+                    content: 'Não foi possivel Registrar a Beneficiária!', className: 'custom-class',
+                    style: {
+                        marginTop: '10vh',
+                    }
+                });
             });
-        });
     }
 
     const handleUpdate = (firstStepValues, secondStepValues) => {
@@ -163,27 +165,25 @@ const BeneficiaryForm = ({ form, beneficiary, modalVisible, handleAddBeneficiary
                 }
             });
         })
-        .catch(error => {
+            .catch(error => {
 
-            message.error({
-                content: 'Não foi possivel Actualizar a Beneficiária!', className: 'custom-class',
-                style: {
-                    marginTop: '10vh',
-                }
+                message.error({
+                    content: 'Não foi possivel Actualizar a Beneficiária!', className: 'custom-class',
+                    style: {
+                        marginTop: '10vh',
+                    }
+                });
             });
-        });
     };
 
 
     const onUpdate = async () => {
-        form.validateFields().then(async (values) => {
-            handleUpdate(firstStepValues, secondStepValues);
-            // TODO: Review these actions... date is not being persisted when included
-            // setCurrent(0);
-            // form.resetFields();
-        }).catch(error => {
-            console.log(error)
-        });
+
+        handleUpdate(firstStepValues, secondStepValues);
+        // TODO: Review these actions... date is not being persisted when included
+        //setCurrent(0);
+       // form.resetFields();
+
     }
 
     const steps = [
@@ -225,7 +225,7 @@ const BeneficiaryForm = ({ form, beneficiary, modalVisible, handleAddBeneficiary
                             Próximo
                         </Button>
                     )}
-                    {(current === steps.length - 2 && beneficiary === undefined)  && (
+                    {(current === steps.length - 2 && beneficiary === undefined) && (
                         <Button type="primary" onClick={() => onSubmit()}>
                             Salvar
                         </Button>

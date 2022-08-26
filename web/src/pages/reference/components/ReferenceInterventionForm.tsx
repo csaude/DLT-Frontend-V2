@@ -25,7 +25,6 @@ const ReferenceInterventionForm = ({ form, record, beneficiary }: any) => {
   const selectedIntervention = record;
   const service = selectedIntervention?.services;
   const inputRef = useRef<any>(null);
-  const [items, setItems] = useState(['jack', 'lucy']);
   const [users, setUsers] = React.useState<any>([]);
   const [name, setName] = useState('');
   //console.log(beneficiary);
