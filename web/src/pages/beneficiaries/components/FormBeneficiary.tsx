@@ -17,7 +17,6 @@ const BeneficiaryForm = ({ form, beneficiary, modalVisible, handleAddBeneficiary
     const [firstStepValues, setFirstStepValues] = useState();
     const [secondStepValues, setSecondStepValues] = useState();
 
-
     useEffect(() => { 
         if(!modalVisible){
             setCurrent(0);
