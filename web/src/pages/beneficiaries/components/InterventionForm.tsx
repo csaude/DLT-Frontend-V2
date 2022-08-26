@@ -1,8 +1,10 @@
-import React, { Fragment, useEffect, useState } from 'react'
-import { Drawer, Form, Button, Col, Row, Input, Select, DatePicker, Space, Radio } from 'antd';
+import React, { Fragment, useEffect, useState, useRef } from 'react'
+import { Drawer, Form, Button, Col, Row, Input, Select, DatePicker, Space, Radio, Divider } from 'antd';
 import { queryByType, querySubServiceByService } from '@app/utils/service'
 import { allUs } from '@app/utils/uSanitaria'
 import moment from 'moment';
+import { query } from '@app/utils/users';
+import { PlusOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -22,6 +24,11 @@ const InterventionForm = (record: any) => {
     const selectedIntervention = record.record;
     const service = selectedIntervention?.subServices === undefined? selectedIntervention?.services : selectedIntervention?.subServices.service;
   
+
+    const inputRef = useRef<any>(null);
+    const [users, setUsers] = React.useState<any>([]);
+    const [name, setName] = useState('');
+
     const selectedOption = options?.filter(o => o.value === selectedIntervention?.entryPoint+'').map(filteredOption => (filteredOption.value))[0];
 
     const RequiredFieldMessage = "Obrigatório!";
@@ -30,7 +37,14 @@ const InterventionForm = (record: any) => {
 
       const fetchData = async () => {
         const data = await allUs();
+        const data1 = await query();
+
+        const listUser = data1?.map(item => (
+            { username: item.name+' '+item.surname }
+        ))
+
         setUs(data);
+        setUsers(listUser);
       } 
 
       const fetchServices = async () => {
@@ -53,7 +67,6 @@ const InterventionForm = (record: any) => {
   
     }, []);
 
-
     const onChangeAreaServiço = async (value:any) => {
         const data = await queryByType(value);
         setServices(data);
@@ -69,6 +82,22 @@ const InterventionForm = (record: any) => {
       const data = await allUs();
       setUs(data);
     }
+
+  const onNameChange = (event) => {
+    setName(event.target.value);
+  }
+  const addItem = (e) => {
+    e.preventDefault();
+    if (name !== undefined || name !== '') {
+      const newItem = { username: name };
+      setUsers([...users, newItem]);
+
+    }
+    setName('');
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
+  };
 
     return (
       
@@ -165,7 +194,50 @@ const InterventionForm = (record: any) => {
                   rules={[{ required: true, message: RequiredFieldMessage }]}
                   initialValue={selectedIntervention?.provider}
                 >
-                  <Input placeholder="Nome do Provedor do Serviço" />
+                  
+                <Select
+                  showSearch
+                  style={{
+                    width: 300,
+                  }}
+                  placeholder="Nome do Provedor do Serviço"
+                  optionFilterProp="children"
+                  filterOption={(input, option: any) => option.children.includes(input)}
+                  filterSort={(optionA, optionB) =>
+                    optionA.children.toLowerCase().localeCompare(optionB.children.toLowerCase())
+                  }
+                  dropdownRender={(menu) => (
+                    <>
+                      {menu}
+                      <Divider
+                        style={{
+                          margin: '8px 0',
+                        }}
+                      />
+                      <Space
+                        style={{
+                          padding: '0 8px 4px',
+                        }}
+                      >
+                        <Input
+                          placeholder="Provedor"
+                          ref={inputRef}
+                          value={name}
+                          onChange={onNameChange}
+                        />
+                        <Button type="text" icon={<PlusOutlined />} onClick={addItem}>
+                          Outro
+                        </Button>
+                      </Space>
+                    </>
+                  )}
+                >
+
+                  {console.log(users)}
+                  {users.map((item) => (
+                    <Option key={item.username}>{item.username}</Option>
+                  ))}
+                </Select>
                 </Form.Item>
               </Col>
               <Col span={8}>
