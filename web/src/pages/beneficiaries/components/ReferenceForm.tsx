@@ -36,7 +36,7 @@ const ReferenceForm = (record: any) => {
       const fetchData = async () => {
         const data = await userById(userId);
         setUser(data);
-        console.log(user);
+        //console.log(user);
       } 
 
       if(selectedIntervention !== undefined){

@@ -10,7 +10,7 @@ const StepVulnerabilidadesEspecificas = ({ form, beneficiary }: any) => {
     const [gbvTimeEnabled, setGbvTimeEnabled] = useState<any>(true);
     const [sexExploitationTimeEnabled, setSexExploitationTimeEnabled] = useState<any>(true);
 
-    console.log(beneficiary);
+    //console.log(beneficiary);
 
     useEffect(() => { 
         if (beneficiary){
