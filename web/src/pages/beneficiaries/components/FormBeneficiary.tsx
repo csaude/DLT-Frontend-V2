@@ -17,7 +17,13 @@ const BeneficiaryForm = ({ form, beneficiary, modalVisible, handleAddBeneficiary
     const [firstStepValues, setFirstStepValues] = useState();
     const [secondStepValues, setSecondStepValues] = useState();
 
-    
+
+    useEffect(() => { 
+        if(!modalVisible){
+            setCurrent(0);
+        }
+        
+    }, [modalVisible]);
 
     const next = () => {
         form.validateFields().then(async (values) => {
