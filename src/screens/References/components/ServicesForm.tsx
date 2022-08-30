@@ -11,6 +11,7 @@ import DatePicker, { getToday, getFormatedDate } from 'react-native-modern-datep
 import { Picker } from '@react-native-picker/picker';
 import withObservables from '@nozbe/with-observables';
 import { database } from '../../../database';
+import { navigate } from '../../../routes/NavigationRef';
 import { Q } from "@nozbe/watermelondb";
 import { Formik } from 'formik';
 import { Context } from '../../../routes/DrawerNavigator';
@@ -20,6 +21,8 @@ import styles from './styles';
 
 const ServicesForm: React.FC = ({ route, us, services, subServices }: any) => {
     const { beneficiarie, intervention } = route.params;
+    //console.log(beneficiarie);
+    //console.log(intervention);
     const loggedUser: any = useContext(Context);
     const toast = useToast();
       
@@ -30,7 +33,7 @@ const ServicesForm: React.FC = ({ route, us, services, subServices }: any) => {
     const [date, setDate] = useState(new Date());
 
     const areaServicos = [{ "id": '1', "name": "Serviços Clinicos" }, { "id": '2', "name": "Serviços Comunitarios" }];
-    const entry_points = [{ "id": '1', "name": "US" }, { "id": '2', "name": "CM" }, { "id": '3', "name": "ES" }];
+    const entry_points = [{ "id": '1', "name": "US" }, { "id": '3', "name": "CM" }, { "id": '2', "name": "ES" }];
     const message = "Este campo é Obrigatório"
 
     const onChange = (event, selectedDate) => {
@@ -84,6 +87,14 @@ const ServicesForm: React.FC = ({ route, us, services, subServices }: any) => {
     }
 
     const onSubmit = async (values: any) => {
+        /*navigate({
+            name: 'Serviços',
+            params: {
+                beneficiary: beneficiarie,
+                interventions: newIntervMap
+            },
+            merge: true,
+        });*/
 
     }
 

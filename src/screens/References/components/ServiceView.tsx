@@ -71,10 +71,10 @@ const ServicesView: React.FC = ({ route }: any) => {
 
         <HStack flex={1} pl={2}>
             <Pressable px={4} ml="auto" bg="lightBlue.700" justifyContent="center"
-                onPress={() => navigate({ name: "BeneficiarieServiceForm", params: { beneficiarie: beneficiary, intervention: data.item } })}
+                onPress={() => navigate({ name: "ServicesForm", params: { beneficiarie: beneficiary, intervention: data.item } })}
                 _pressed={{ opacity: 0.5 }}
             >
-                <Icon as={MaterialIcons} name="mode-edit" size={6} color="gray.200" />
+                <Icon as={Ionicons} name="create" size={6} color="gray.200" />
             </Pressable>
         </HStack>
 
