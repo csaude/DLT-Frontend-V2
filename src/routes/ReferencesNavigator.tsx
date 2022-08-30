@@ -3,7 +3,7 @@ import { Text } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ReferencesListScreen from '../screens/References';
 import ReferenceViewStack from "../screens/References/components/ReferenceViewStack";
-import BeneficiariesNavigator from "./BeneficiariesNavigator";
+import ServicesForm from "../screens/References/components/ServicesForm";
 
 const ReferenceStack = createNativeStackNavigator();
 
@@ -19,6 +19,14 @@ const ReferencesNavigator: React.FC = () => {
                     ),
                     headerShown:true
                 }} />
+             <ReferenceStack.Screen name="ServicesForm" component={ServicesForm} options={{
+                    headerTitle: (props) => (
+                      <Text {...props} style={{ color: 'black', fontWeight: 'bold' }}>
+                        back
+                      </Text>
+                    ),
+                    headerShown:true
+                }}/>
         </ReferenceStack.Navigator>
     );
 }

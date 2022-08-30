@@ -40,10 +40,10 @@ const DadosReferenciaView: React.FC = ({ route }: any) => {
                                 <Divider />
                                 <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}> Data: </Text> {reference.date_created} </Text>
 
-                                <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}> Referente: </Text> {referer.name + ' ' + referer.surname} </Text>
+                                {/*<Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}> Referente: </Text> {referer.name + ' ' + referer.surname} </Text>*/}
                                 <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}> Notificar a(o) : </Text> {notify} </Text>
 
-                                <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}> Contacto: </Text> {referer.phone_number} </Text>
+                                {/*<Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}> Contacto: </Text> {referer.phone_number} </Text>*/}
 
                                 <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}> No do Livro: </Text> {reference.book_number} </Text>
 
