@@ -48,13 +48,14 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
     }
 
     const viewReference = async (data: any) => {
+        //console.log(data.item?._raw);
         const reference = data.item?._raw;
         const beneficiary = getBeneficiary(reference.beneficiary_id)._raw;
-        const referer = getUser(reference.created_by)._raw;
+        //const referer = getUser(reference.createdby)._raw;
         const notifyTo = `${getUser(data.item._raw.notify_to).name + " " + getUser(data.item._raw.notify_to).surname}`
-        const organization = getOrganization(referer.partner_id)._raw.name
+        const organization = 'FGH'//getOrganization(referer.partner_id)._raw.name
         
-
+        
         const beneficiaryId = beneficiary.online_id ? beneficiary.online_id : beneficiary.id;
 
         const interventions = await database.get('beneficiaries_interventions').query(
@@ -85,7 +86,7 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
             name: "ReferenceView", params: {
                 reference: reference,
                 beneficiary: beneficiary,
-                referer: referer,
+                //referer: referer,
                 notify: notifyTo,
                 organization: organization,
                 services: servicesObjects,
@@ -134,7 +135,7 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
         >
             <HStack width="100%" px={4}
                 flex={1} space={5} alignItems="center">
-                <Ionicons name="exit-outline" size={35} color="#0d9488" />
+                <Ionicons name="exit" size={40} color="#0d9488" />
                 <VStack width='200px' >
                     <HStack>
                         <Text color="warmGray.400" _dark={{ color: "warmGray.200" }}>
@@ -155,7 +156,7 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
                         <View style={{ paddingTop: 5 }}><Ionicons name="notifications" size={11} color="#17a2b8" /></View>
                         <View style={{ paddingTop: 5 }}><Ionicons name="md-home" size={11} color="#17a2b8" /></View>
                         <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
-                            {` ${getOrganization(getUser(data.item._raw.created_by).partner_id).name}`}
+                            {' FGH'/*` ${getOrganization(getUser(data.item._raw.createdby).partner_id).name}`*/}
                         </Text>
                     </HStack>
                 </VStack>
@@ -185,12 +186,12 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
             >
                 <Icon as={MaterialIcons} name="remove-red-eye" size={6} color="gray.200" />
             </Pressable>
-            <Pressable px={4} bg="lightBlue.800" justifyContent="center"
+           {/* <Pressable px={4} bg="lightBlue.800" justifyContent="center"
                 onPress={() => navigate({ name: "ReferenceForm", params: { reference: data.item } })}
                 _pressed={{ opacity: 0.5 }}
             >
                 <Icon as={MaterialIcons} name="mode-edit" size={6} color="gray.200" />
-            </Pressable>
+    </Pressable>*/}
         </HStack>
     );
 
