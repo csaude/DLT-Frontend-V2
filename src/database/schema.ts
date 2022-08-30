@@ -64,6 +64,7 @@ export default appSchema({
           {name: 'name', type: 'string'},
           {name: 'description', type: 'string', isOptional: true},
           {name: 'status', type: 'string'},
+          {name: 'locality_id', type: 'number'},
           {name: 'online_id', type: 'number',isOptional: true}
         ],
       }),

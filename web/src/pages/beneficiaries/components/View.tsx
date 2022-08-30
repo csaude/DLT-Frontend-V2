@@ -104,7 +104,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
                 let payload: SubServiceParams = {
                     id: {
                         beneficiaryId: beneficiary.id,
-                        subServiceId: values.subservice,
+                        subServiceId: selectedIntervention.id.subServiceId,
                         date: moment(selectedIntervention.id.date).format('YYYY-MM-DD'),
                     },
                     beneficiaries: {
@@ -339,7 +339,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
                         </Space>
                     }
                 >
-                    {isAdd ? <Form form={form} layout="vertical" onFinish={() => onSubmit(selectedIntervention)}> <InterventionForm record={selectedIntervention} /></Form> :
+                    {isAdd ? <Form form={form} layout="vertical" onFinish={() => onSubmit(selectedIntervention)}> <InterventionForm record={selectedIntervention} beneficiary={beneficiary} /></Form> :
                         <ViewIntervention record={selectedBeneficiary} beneficiary={beneficiary} />
                     }
                 </Drawer>
