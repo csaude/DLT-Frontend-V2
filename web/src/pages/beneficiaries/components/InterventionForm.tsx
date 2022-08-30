@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState, useRef } from 'react'
 import { Drawer, Form, Button, Col, Row, Input, Select, DatePicker, Space, Radio, Divider } from 'antd';
 import { queryByType, querySubServiceByService } from '@app/utils/service'
-import { allUs } from '@app/utils/uSanitaria'
+import { allUs, allUsByType, allUsByUser } from '@app/utils/uSanitaria'
 import moment from 'moment';
 import { query } from '@app/utils/users';
 import { PlusOutlined } from '@ant-design/icons';
@@ -16,18 +16,19 @@ const options = [
   { label: 'ES', value: '3' },
 ];
 
-const InterventionForm = (record: any) => {
+const InterventionForm = ({ record, beneficiary}: any) => {
     const [services, setServices] = React.useState<any>(undefined);
     const [interventions, setInterventions] = React.useState<any>(undefined);
     const [us, setUs] = React.useState<any>(undefined);
     const form = Form.useFormInstance();
-    const selectedIntervention = record.record;
+    const selectedIntervention = record;
     const service = selectedIntervention?.subServices === undefined? selectedIntervention?.services : selectedIntervention?.subServices.service;
   
 
     const inputRef = useRef<any>(null);
     const [users, setUsers] = React.useState<any>([]);
     const [name, setName] = useState('');
+    const [ user, setUser ] = React.useState<any>();
 
     const selectedOption = options?.filter(o => o.value === selectedIntervention?.entryPoint+'').map(filteredOption => (filteredOption.value))[0];
 
@@ -36,6 +37,7 @@ const InterventionForm = (record: any) => {
     useEffect(() => {
 
       const fetchData = async () => {
+        const user = await query(localStorage.user);
         const data = await allUs();
         const data1 = await query();
 
@@ -43,6 +45,7 @@ const InterventionForm = (record: any) => {
             { username: item.name+' '+item.surname }
         ))
 
+        setUser(user);
         setUs(data);
         setUsers(listUser);
       } 
@@ -98,6 +101,17 @@ const InterventionForm = (record: any) => {
       inputRef.current?.focus();
     }, 0);
   };
+
+
+  const onChangeEntryPoint = async (e: any) => {
+
+    var payload = {
+      typeId: e?.target?.value === undefined ? e : e?.target?.value,
+      userId: localStorage.user
+    }
+    const data = await allUsByUser(payload);
+    setUs(data);
+  }
 
     return (
       
@@ -155,6 +169,7 @@ const InterventionForm = (record: any) => {
                   initialValue={selectedOption}
                 >
                   <Radio.Group
+                    onChange={onChangeEntryPoint}
                     options={options}
                     optionType="button"
                   />
@@ -232,8 +247,6 @@ const InterventionForm = (record: any) => {
                     </>
                   )}
                 >
-
-                  {console.log(users)}
                   {users.map((item) => (
                     <Option key={item.username}>{item.username}</Option>
                   ))}
