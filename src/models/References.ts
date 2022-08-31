@@ -17,7 +17,7 @@ export interface ReferencesModel {
     cancel_reason?: any,
     other_reason?: string,
     online_id?: string,
-    created_by: any,
+    user_created?: string,
     date_created: string
 
 }
@@ -39,5 +39,6 @@ export default class References extends Model {
     @field("cancel_reason") cancel_reason;
     @text("other_reason") other_reason;
     @text("online_id") online_id;
+    @text("user_created") user_created;
     @text("date_created") date_created;
 }

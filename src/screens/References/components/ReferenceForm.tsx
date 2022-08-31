@@ -147,7 +147,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
 
 
         const savedR = await database.write(async () => {
-            console.log(userId);
+
             const newReference = await database.get('references').create((ref: any) => {
                 ref.beneficiary_id = beneficiaryId
                 ref.refer_to = formik.values.refer_to
@@ -159,14 +159,14 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                 ref.service_type = formik.values.service_type
                 ref.remarks = formik.values.description
                 ref.status_ref = 0
-                ref.status = 1
-                ref.created_by = "1",
+                ref.status = 0
+                ref.user_created = ""+userId,
                 ref.date_created = moment(new Date()).format('YYYY-MM-DD')
             });
-            
+
             return newReference;
         });
-        console.log(savedR._raw);
+
         await database.write(async () => {
             referServices.forEach(async (element) => {
                 const newRefService = await database.get('references_services').create((refServ: any) => {
