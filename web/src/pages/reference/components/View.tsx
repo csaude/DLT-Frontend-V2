@@ -24,7 +24,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
 
     useEffect(() => {
         const fetchData = async () => {
-          const data = await queryUser(selectedReference.createdBy);
+          const data = await queryUser(selectedReference.userCreated);
           const data1 = await queryBeneficiary(selectedReference.beneficiaries.id);
 
           setUser(data);
@@ -206,7 +206,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
                                     <Col className="gutter-row" span={3}>{user?.name+' '+user?.surname}</Col>
                                     <Col className="gutter-row" span={3}>{user?.phoneNumber}</Col>
                                     <Col className="gutter-row" span={3}>{reference?.bookNumber}</Col>
-                                    <Col className="gutter-row" span={3}>{user?.partners.name}</Col>
+                                    <Col className="gutter-row" span={3}>{user?.partners?.name}</Col>
                                     <Col className="gutter-row" span={3}>{reference?.referenceCode}</Col>
                                     <Col className="gutter-row" span={3}>{reference?.serviceType==1? 'Serviços Clínicos': 'Serviços Comunitários'}</Col>
                                     <Col className="gutter-row" span={3}>{reference?.status==0?  
