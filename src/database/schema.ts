@@ -206,7 +206,7 @@ export default appSchema({
           {name: 'status', type: 'number'},
           {name: 'cancel_reason', type: 'number', isOptional: true},
           {name: 'other_reason', type: 'string', isOptional: true},
-          {name: 'created_by', type: 'number', isIndexed: true},
+          {name: 'user_created', type: 'string', isOptional: true},
           {name: 'date_created', type: 'string', isOptional: true},
           {name: 'online_id', type: 'number',isOptional: true}
         ],
