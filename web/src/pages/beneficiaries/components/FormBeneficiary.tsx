@@ -37,10 +37,10 @@ const BeneficiaryForm = ({ form, beneficiary, modalVisible, handleAddBeneficiary
     }
 
     const onSubmit = async () => {
-        handleAdd(firstStepValues, "1");
+        handleAdd(firstStepValues);
     }
 
-    const handleAdd = (values: any, gender: string) => {
+    const handleAdd = (values: any) => {
 
         form.validateFields().then(async (vblts) => {
             setSecondStepValues(vblts);
@@ -51,7 +51,7 @@ const BeneficiaryForm = ({ form, beneficiary, modalVisible, handleAddBeneficiary
             ben.nickName = values.nick_name;
             ben.dateOfBirth = moment(values.date_of_birth).format('YYYY-MM-DD');
             ben.age = values.age;
-            ben.gender = gender;
+            ben.gender = "2";
             ben.address = values.address;
             ben.email = values.e_mail;
             ben.phoneNumber = values.phone_number;
