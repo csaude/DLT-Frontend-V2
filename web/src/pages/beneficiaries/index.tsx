@@ -92,7 +92,7 @@ const BeneficiariesList: React.FC = () => {
                 status: '0',
                 cancelReason: '0',
                 otherReason: '',
-                createdBy: localStorage.user,
+                userCreated: localStorage.user,
                 dateCreated: '',
                 referencesServiceses: servicesObjects,
                 

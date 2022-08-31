@@ -25,7 +25,7 @@ export interface Reference {
 	status: string;
 	cancelReason: string; 
 	otherReason: string;
-	createdBy: string;
+	userCreated: string;
 	dateCreated: string;
   updatedBy?: string;
   dateUpdated?: string;

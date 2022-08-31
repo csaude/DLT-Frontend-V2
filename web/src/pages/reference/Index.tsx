@@ -112,7 +112,7 @@ const ReferenceList: React.FC = () => {
                 status: '0',
                 cancelReason: '0',
                 otherReason: '',
-                createdBy: ref?.createdBy, 
+                userCreated: ref?.userCreated, 
                 dateCreated: ref?.dateCreated,
                 updatedBy: localStorage.user,
                 referencesServiceses: servicesObjects,
