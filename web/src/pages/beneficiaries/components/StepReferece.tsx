@@ -73,8 +73,6 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
     return 'REFDR' + String(userId).padStart(3, '0') + '0' + String(500 + 1).padStart(3, '0');
   }
 
-console.log(reference?.beneficiaries?.neighborhood?.locality?.district?.id);
-
   const onChangeTipoServico = async (value: any) => {
     var payload = {
       type: value,
