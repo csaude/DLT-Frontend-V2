@@ -36,14 +36,12 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
         const regUser = await query(reference?.createdBy);
         form.setFieldsValue({ createdBy: regUser?.name + ' ' + regUser?.surname });
       }
-
       setUser(loggedUser);
     }
 
     fetchData().catch(error => console.log(error));
 
     let orgType = form.getFieldValue('serviceType');
-    let local = form.getFieldValue('local');
     let refer = form.getFieldValue('referTo');
     if (refer !== '' && refer !== undefined) {
 
@@ -51,9 +49,6 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
     }
     if (orgType !== '' && orgType !== undefined) {
       onChangeTipoServico(orgType);
-    }
-    if (local !== '' && local !== undefined) {
-      onChangeUs(local);
     }
 
   }, []);
@@ -73,11 +68,6 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
     return 'REFDR' + String(userId).padStart(3, '0') + '0' + String(500 + 1).padStart(3, '0');
   }
 
-<<<<<<< HEAD
-console.log(reference?.beneficiaries?.neighborhood?.locality?.district?.id);
-
-=======
->>>>>>> upstream/test
   const onChangeTipoServico = async (value: any) => {
     var payload = {
       type: value,

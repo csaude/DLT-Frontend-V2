@@ -114,6 +114,7 @@ const ReferenceList: React.FC = () => {
                 otherReason: '',
                 createdBy: ref?.createdBy, 
                 dateCreated: ref?.dateCreated,
+                updatedBy: localStorage.user,
                 referencesServiceses: servicesObjects,
                 
             };
