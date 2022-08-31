@@ -99,7 +99,7 @@ const ReferenceList: React.FC = () => {
                     id: beneficiary?.id
                 },
                 users: {
-                    id: localStorage.user
+                    id: values.notifyTo
                 },
                 referenceNote: values.referenceNote,
                 description: '',
