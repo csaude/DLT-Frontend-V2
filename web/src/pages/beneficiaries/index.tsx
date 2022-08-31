@@ -286,11 +286,11 @@ const BeneficiariesList: React.FC = () => {
             filters: [
             {
                 text: 'M',
-                value: '0',
-                },
-                {
-                text: 'F',
                 value: '1',
+            },
+            {
+                text: 'F',
+                value: '2',
             },
             ],
             onFilter: (value, record) => record.gender == value,
@@ -300,7 +300,7 @@ const BeneficiariesList: React.FC = () => {
                   <Badge
                     status={val == true ? 'success' : 'warning'}
                     text={
-                      val == '1'
+                      val == '2'
                         ? 'F' 
                         : 'M'
                     }
