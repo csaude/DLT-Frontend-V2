@@ -56,8 +56,6 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
       onChangeUs(local);
     }
 
-
-
   }, []);
 
   useEffect(() => {
@@ -75,19 +73,12 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
     return 'REFDR' + String(userId).padStart(3, '0') + '0' + String(500 + 1).padStart(3, '0');
   }
 
-  const getUser = async () => {
-    const data = await userById(userId);
-    setUser(data);
-    const name = user?.name;
-    return name;
-  }
-
-
-
   const onChangeTipoServico = async (value: any) => {
     var payload = {
       type: value,
-      districtId: beneficiary?.neighborhood?.locality?.district?.id
+      districtId: reference !== undefined ? 
+                                reference?.beneficiaries?.neighborhood?.locality?.district?.id :
+                                beneficiary?.neighborhood?.locality?.district?.id
     }
     const data = await allPartnersByTypeDistrict(payload);
     setPartners(data);
@@ -96,7 +87,9 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
   const onChangeEntryPoint = async (e: any) => {
     var payload = {
       typeId: e?.target?.value === undefined ? e : e?.target?.value,
-      localityId: beneficiary?.neighborhood?.locality?.id
+      localityId: reference !== undefined ? 
+                                reference?.beneficiaries?.neighborhood?.locality?.id :
+                                beneficiary?.neighborhood?.locality?.id
     }
     const data = await allUsByType(payload);
     setUs(data);
