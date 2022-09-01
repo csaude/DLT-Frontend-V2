@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { TouchableHighlight, TouchableOpacity } from 'react-native';
-import { View, HStack, Text, VStack, FormControl, Input, Stack, InputGroup, InputLeftAddon, TextArea, Center, Icon, Box, IconButton, Flex, Heading, Divider, Button, Radio, WarningOutlineIcon, Modal, ScrollView, Alert } from 'native-base';
+import { View, HStack, Text, VStack, FormControl, Input, Stack, InputGroup, InputLeftAddon, TextArea, Center, Icon, Box, IconButton, Flex, Heading, Divider, Button, Radio, WarningOutlineIcon, Modal, ScrollView, Alert, Checkbox } from 'native-base';
 import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
 import { MaterialIcons, Ionicons, MaterialCommunityIcons } from "@native-base/icons";
 import { useFormik } from 'formik';
-import { Picker } from '@react-native-picker/picker';
+import { Picker, PickerProps } from '@react-native-picker/picker';
 import { Q } from "@nozbe/watermelondb";
 import ModalSelector from 'react-native-modal-selector-searchable';
 import StepperButton from '../../Beneficiarias/components/StapperButton';
@@ -13,14 +13,22 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { navigate, navigationRef } from '../../../routes/NavigationRef';
 import moment from 'moment';
+import DatePicker, { getToday, getFormatedDate } from 'react-native-modern-datepicker';
+import { calculateAge, getMaxDate, getMinDate } from '../../../models/Utils';
 import styles from './styles';
 
 const BeneficiaryForm: React.FC = ({ route }: any) => {
+
+    const idades = ['9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24'];
+
+    const { beneficiary } = route.params;
+
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState(false);
     const [provinces, setProvinces] = useState<any>([]);
     const [districts, setDistricts] = useState<any>([]);
     const [localities, setLocalities] = useState<any>([]);
+    const [uss, setUss] = useState<any>([]);
     const [neighborhoods, setNeighborhoods] = useState<any>([]);
     const [isDatePickerVisible2, setIsDatePickerVisible2] = useState(false);
     const [datePickerValue2, setDatePickerValue2] = useState<any>(new Date());
@@ -29,6 +37,12 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
     const [step, setStep] = useState(1);
     const [showModal, setShowModal] = useState(false);
     const [newNui, setNewNui] = useState();
+    const [district, setDistrict] = useState<any>()
+    const [isDateRequired, setIsDateRequired] = useState<any>(true);
+    const [age, setAge] = useState<any>(undefined);
+    const [birthDate, setBirthDate] = useState<any>(undefined);
+
+    
 
     useEffect(() => {
         const fetchProvincesData = async () => {
@@ -63,6 +77,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             locality: '',
             locality_name: '',
             entry_point: '',
+            us_id: '',
             nick_name: '',
             address: '',
             phone_number: '',
@@ -145,6 +160,10 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
         setStep(2);
     };
 
+    const onChangeCheckbox = (e) => {
+        setIsDateRequired(!e);
+    }
+
     const validate = (values: any) => {
         const errors: any = {};
         let errorMessage = 'Obrigatório';
@@ -176,6 +195,9 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             }
             if (!values.entry_point) {
                 errors.entry_point = errorMessage;
+            }
+            if (!values.us_id) {
+                errors.us_id = errorMessage;
             }
             if (!values.neighbourhood_id) {
                 errors.neighbourhood_id = errorMessage;
@@ -248,14 +270,15 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
         return errors;
     }
 
-
     const handleSaveBeneficiary = async () => {
 
         // get prefix and nui
         const getPrefix:any = (await database.get('sequences').query().fetch())[0]?._raw;
         const newNui = Number(getPrefix.last_nui)+1;
         const fullNUI = `${getPrefix.prefix}${String(newNui).padStart(7, '0')}`
-        //console.log(Number(formik.values.nationality));
+        const district = districts.filter(d => d.online_id === formik.values.district)[0];
+        setDistrict(district);
+        
         const newObject = await database.write(async () => {
             const newBeneficiary = await database.collections.get('beneficiaries').create((beneficiary: any) => {
                 beneficiary.nui = fullNUI,
@@ -270,10 +293,11 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                 beneficiary.via = 1, 
                 beneficiary.partner_id = 1,  //FIXME: define correctly
                 beneficiary.entry_point = formik.values.entry_point, 
+                beneficiary.us_id = formik.values.us_id,
                 beneficiary.neighbourhood_id = formik.values.neighbourhood_id, 
-                beneficiary.us_id = 1, 
                 beneficiary.status = 1, 
                 beneficiary.locality_name = formik.values.locality_name, 
+                beneficiary.district_code = district.code, 
                 beneficiary.nationality = 1,
                 beneficiary.vblt_lives_with = formik.values.vblt_lives_with, 
                 beneficiary.vblt_house_sustainer = Number(formik.values.vblt_house_sustainer),
@@ -314,7 +338,9 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
         setDatePickerValue(selectedDate);
 
         let tempDate = new Date(selectedDate);
-        formik.setFieldValue('date_of_birth', moment(tempDate).format('YYYY-MM-DD'));
+        formik.setFieldValue('date_of_birth', getFormatedDate(tempDate,'YYYY-MM-DD'));
+        setAge(calculateAge(selectedDate)+'');
+        formik.setFieldValue('age', calculateAge(selectedDate)+'');
     }
 
     const showDatepicker2 = () => {
@@ -354,6 +380,60 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
         ).fetch();
         const neiSerialized = getNeiList.map(item => item._raw);
         setNeighborhoods(neiSerialized);
+
+        const entryPoint = formik.values.entry_point;
+        if (entryPoint) {
+            const getUsList = await database.get('us').query(
+                Q.where('locality_id', Number(locId)),
+                Q.where('entry_point', Number(entryPoint))
+            ).fetch();
+            const usSerialized = getUsList.map(item => item._raw);
+            setUss(usSerialized);
+        }
+    }
+
+    const onChangeEntryPoint = async (entryPoint: any) => {
+
+        const locality = formik.values.locality;
+        if (locality) {
+            const getUsList = await database.get('us').query(
+                Q.where('locality_id', Number(locality)),
+                Q.where('entry_point', Number(entryPoint))
+            ).fetch();
+            const usSerialized = getUsList.map(item => item._raw);
+            setUss(usSerialized);
+        }
+    }
+
+    const IdadePicker: React.FC<PickerProps> = ({ selectedValue, onValueChange }: PickerProps) => {
+
+        const onchangeAge = (value: any) =>{
+            var today = new Date();
+            var birthYear = today.getFullYear() - value;
+            var birthDate = new Date(birthYear + "/01/01");
+            setBirthDate(birthDate);
+
+            setAge(value);
+        }
+
+        useEffect(() => {
+            if(age != undefined){
+                formik.setFieldValue('age', age);
+            }
+
+            if(birthDate != undefined){
+                formik.setFieldValue('date_of_birth', moment(birthDate,'YYYY-MM-DD'));
+            }
+
+        }, []);
+
+        return (
+            <Picker enabled={!isDateRequired} onValueChange={onchangeAge} selectedValue={age} placeholder="Seleccione a Idade" >
+                {idades.map(item => (
+                    <Picker.Item key={item} value={item} label={item}>{item}</Picker.Item>
+                ))}
+            </Picker>
+        );
     }
 
     return (
@@ -381,20 +461,29 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         {formik.errors.name}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl isRequired isInvalid={'date_of_birth' in formik.errors}>
+                                <FormControl isRequired={isDateRequired} isInvalid={'date_of_birth' in formik.errors}>
                                     <FormControl.Label>Data Nascimento</FormControl.Label>
                                     {isDatePickerVisible && (
-                                        <DateTimePicker
-                                            testID="dateTimePicker"
-                                            value={datePickerValue}
-                                            // mode={mode}
-                                            onChange={onChangeDatePicker}
+                                        // <DateTimePicker
+                                        //     testID="dateTimePicker"
+                                        //     value={datePickerValue}
+                                        //     // mode={mode}
+                                        //     onChange={onChangeDatePicker}
+                                        // />
+                                        <DatePicker
+                                            mode="calendar"
+                                            disabled={!isDateRequired}
+                                            // onChange={onChangeBirthDate}
+                                            current={getFormatedDate(getMaxDate(),'YYYY-MM-DD')}
+                                            minimumDate={getFormatedDate(getMinDate(),'YYYY-MM-DD')}
+                                            maximumDate={getFormatedDate(getMaxDate(),'YYYY-MM-DD')}
+                                            onSelectedChange={date => onChangeDatePicker(null, date.replaceAll('/', '-'))}
                                         />
                                     )}
                                     <HStack w="100%" flex={1} space={5} alignItems="center"  >
                                         <InputGroup w={{ base: "70%", md: "285" }}>
                                             <InputLeftAddon>
-                                                <Button style={{ width: 10 }} onPress={() => showDatepicker()}> </Button>
+                                                <Button disabled={!isDateRequired} style={{ width: 10 }} onPress={() => showDatepicker()}> </Button>
                                             </InputLeftAddon>
                                             <Input isDisabled w={{ base: "70%", md: "100%" }}
                                                 onPressIn={() => showDatepicker()}
@@ -402,12 +491,32 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                                 value={formik.values.date_of_birth}
                                                 onChangeText={formik.handleChange('date_of_birth')}
                                                 //value={moment(new Date(datePickerValue)).format('YYYY-MM-DD')}
-                                                placeholder="dd-M-yyyy" />
+                                                placeholder="yyyy-MM-dd" />
                                         </InputGroup>
                                     </HStack>
 
                                     <FormControl.ErrorMessage>
                                         {formik.errors.date_of_birth}
+                                    </FormControl.ErrorMessage>
+                                </FormControl>
+                                <FormControl>
+                                    <Checkbox isInvalid value="invalid" onChange={onChangeCheckbox} >
+                                        <Text>Não Conhece a Data de Nascimento</Text> 
+                                    </Checkbox>
+                                </FormControl>
+                                <FormControl isRequired={!isDateRequired} isInvalid={'age' in formik.errors}>
+                                    <FormControl.Label>Idade (em anos)</FormControl.Label>
+                                    {/* <Picker
+                                        selectedValue={formik.values.age}
+                                        onValueChange={(itemValue, itemIndex) => {
+                                            // if (itemIndex !== 0) {
+                                            formik.setFieldValue('age', itemValue);
+                                            // }
+                                    }}> */}
+                                        {/* <IdadePicker /> */}
+                                    {/* </Picker> */}
+                                    <FormControl.ErrorMessage>
+                                        {formik.errors.nationality}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'nationality' in formik.errors}>
@@ -466,7 +575,6 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                             }
                                         }
                                         }>
-
                                         <Picker.Item label="-- Seleccione a Provincia --" value="0" />
                                         {
                                             provinces.map(item => (
@@ -532,15 +640,38 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
                                                 formik.setFieldValue('entry_point', itemValue);
+                                                onChangeEntryPoint(itemValue);
                                             }
                                         }}>
                                         <Picker.Item label="-- Seleccione o PE --" value="0" />
                                         <Picker.Item key="1" label="US" value="1" />
-                                        <Picker.Item key="2" label="ES" value="2" />
-                                        <Picker.Item key="3" label="CM" value="3" />
+                                        <Picker.Item key="2" label="CM" value="2" />
+                                        <Picker.Item key="3" label="ES" value="3" />
                                     </Picker>
                                     <FormControl.ErrorMessage>
                                         {formik.errors.entry_point}
+                                    </FormControl.ErrorMessage>
+                                </FormControl>
+                                <FormControl isRequired isInvalid={'us_id' in formik.errors}>
+                                    <FormControl.Label>Local</FormControl.Label>
+                                    <Picker
+                                        selectedValue={formik.values.us_id}
+                                        onValueChange={(itemValue, itemIndex) => {
+                                            if (itemIndex !== 0) {
+                                                formik.setFieldValue('us_id', itemValue);
+                                            }
+                                        }
+                                        }>
+
+                                        <Picker.Item label="-- Seleccione o Local --" value="0" />
+                                        {
+                                            uss.map(item => (
+                                                <Picker.Item key={item.online_id} label={item.name} value={item.online_id} />
+                                            ))
+                                        }
+                                    </Picker>
+                                    <FormControl.ErrorMessage>
+                                        {formik.errors.us_id}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
                                 <FormControl >
@@ -1142,17 +1273,17 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                 <HStack space={2} flexShrink={1}>
                                     <Alert.Icon mt="1"  />
                                     <Text fontSize="sm" color="coolGray.800">
-                                        Beneficiaria Registada com Sucesso!
+                                        Beneficiária Registada com Sucesso!
                                     </Text>
                                 </HStack>
                                 </Alert>
                                
                                     
                                     <Text marginTop={3} marginBottom={3}>
-                                        NID da Beneficiaria:
+                                        NUI da Beneficiária:
                                         <Text fontWeight='bold' color='#008D4C' >  
                                         {
-                                            ` ${newNui}`
+                                            ` ${district?.code}/${newNui}`
                                         }
                                         </Text>
                                     </Text>

@@ -6,6 +6,7 @@ import CustomDrawer from './components/CustomDrawer';
 import UsersNavigator from './UsersNavigator';
 import BeneficiariesNavigator from './BeneficiariesNavigator';
 import RefencesNavigator from './ReferencesNavigator'
+import { navigate } from './NavigationRef';
 
 
 function HomeScreen({ navigation }: any) {
@@ -25,6 +26,9 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
 
   const onLogout = (e?: any) => {
     console.log("logged out", loggedUser);
+    navigate({
+      name: "Login"
+    });
   };
 
 
@@ -65,7 +69,7 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
             }}
             
         />
-        <Drawer.Screen name="Users" 
+        {/* <Drawer.Screen name="Users" 
             component={UsersNavigator}  
             options={{                     
                 title: 'Utilizadores', 
@@ -73,7 +77,7 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
             }}
             
         />
-      
+       */}
       </Drawer.Navigator>
     </Context.Provider>
   );

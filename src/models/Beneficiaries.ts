@@ -20,6 +20,7 @@ export interface BeneficiariesModel {
     entry_point?: any,
     neighbourhood_id?: any,
     locality_name?: any,
+    district_code?: any,
     us_id?: any,
     status?: any,
     online_id?:any,
@@ -70,6 +71,7 @@ export default class Beneficiarie extends Model {
     @field("entry_point") entry_point;
     @field("neighbourhood_id") neighbourhood_id;
     @field("locality_name") locality_name;
+    @field("district_code") district_code;
     @field("us_id") us_id;
     @field("status") status;
     @field("online_id") online_id;

@@ -65,6 +65,7 @@ export default appSchema({
           {name: 'description', type: 'string', isOptional: true},
           {name: 'status', type: 'string'},
           {name: 'locality_id', type: 'number'},
+          {name: 'entry_point', type: 'number'},
           {name: 'online_id', type: 'number',isOptional: true}
         ],
       }),
@@ -104,6 +105,7 @@ export default appSchema({
           {name: 'entry_point',  type: "string", isIndexed: true },
           {name: 'neighbourhood_id',  type: "number", isIndexed: true },
           {name: 'locality_name',  type: "string", isOptional: true },
+          {name: 'district_code',  type: "string"},
           {name: 'nationality',  type: "number", isOptional: true },
           {name: 'us_id',  type: "number", isIndexed: true },
           {name: 'status', type: 'number'},
