@@ -73,12 +73,13 @@ const BeneficiariesList: React.FC = () => {
                 return listServices
             });
 
+
             let payload: Reference = {
                 beneficiaries: {
                     id: beneficiary.id
                 },
                 users: {
-                    id: localStorage.user
+                    id: values.notifyTo
                 },
                 referenceNote: values.referenceNote,
                 description: '',
