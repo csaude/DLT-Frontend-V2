@@ -38,12 +38,15 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
     }
 
     const getStatus = (status: any) => {
+
         if (status === 0) {
             return "Pendente";
         } else if (status === 1) {
             return "Atendida Parcialmente"
         } else if (status === 2) {
             return "Atendida"
+        } else if (status === 4){
+            return "Sync"
         }
     }
 
@@ -169,11 +172,11 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
 
                         <Text color={data.item._raw.status == 0 ? "danger.700" :
                             data.item._raw.status == 1 ? "warning.700" : "success.700"} _dark={{ color: "warmGray.200" }}>
-                            {` ${getStatus(data.item._raw.status)}`}
+                            { data.item._raw.is_awaiting_sync === 1 && data.item._raw._status === "updated"  ? ` ${getStatus(4)}` : ` ${getStatus(data.item._raw.status)}` }
                         </Text>
                     </HStack>
                 </VStack>
-
+                
             </HStack>
         </TouchableHighlight>
     );
@@ -190,6 +193,7 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
                 onPress={() => navigate({ name: "ReferenceForm", params: { reference: data.item } })}
                 _pressed={{ opacity: 0.5 }}
             >
+            "_status": "synced"
                 <Icon as={MaterialIcons} name="mode-edit" size={6} color="gray.200" />
     </Pressable>*/}
         </HStack>
@@ -202,7 +206,7 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
     const filteredReferences = references?.filter(reference =>
         (getUser(reference.notify_to).name + " " + getUser(reference.notify_to).surname).toLowerCase().includes(searchField.toLowerCase())
     )
-
+    //console.log(filteredReferences);
     return (
         <View style={styles.container}>
             <View style={styles.heading}>

@@ -22,7 +22,7 @@ import styles from './styles';
 
 const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     const { beneficiarie, intervention } = route.params;
-    //console.log(beneficiarie);
+    //console.log(intervention);
 
     const loggedUser: any = useContext(Context);
     const toast = useToast();
@@ -89,7 +89,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     const onChangeUs = async (value: any) => {
 
         const getUsersList = await database.get('users').query(
-           Q.where('us_ids', Q.like(`%${value}%`))
+            Q.where('us_ids', Q.like(`%${value}%`))
         ).fetch();
         const usersSerialized = getUsersList.map(item => item._raw);
         setUsers(usersSerialized);
@@ -139,8 +139,59 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     }
 
     const onSubmit = async (values: any) => {
-        console.log(values);
-        /*navigate({
+        //console.log(values);
+
+
+        const newObject = await database.write(async () => {
+            
+            const newIntervention = await database.collections.get('beneficiaries_interventions').create((intervention: any) => {
+
+                intervention.beneficiary_id = beneficiarie.online_id
+                intervention.sub_service_id = values.sub_service_id
+                intervention.result = values.result
+                intervention.date = '' + text
+                intervention.us_id = values.us_id
+                intervention.activist_id = loggedUser.id
+                intervention.entry_point = values.entry_point
+                intervention.provider = values.provider
+                intervention.remarks = values.remarks
+                intervention.status = values.status
+
+            });
+            return newIntervention;
+        });
+
+        await database.write(async () => {
+                const referenceSToUpdate = await database.get('references_services').query(
+                    Q.where('reference_id', intervention?.service?.reference_id + ""),
+                    Q.where('service_id', parseInt(intervention?.service?.service_id))
+                ).fetch();
+
+                const referenceToUpdate = await database.get('references').query(
+                    Q.where('online_id', parseInt(intervention?.service?.reference_id))
+                ).fetch();
+
+                const refService = referenceSToUpdate[0];
+                const ref = referenceToUpdate[0];
+
+                //console.log(referenceToUpdate);
+                //console.log(referenceToUpdate[0]);
+                const updatedreferenceS = await refService.update((interventionS: any) => {
+                    interventionS._raw.is_awaiting_sync = parseInt("1")
+                    interventionS._raw._status = "updated"
+                });
+
+                const updatedreference = await ref.update((reference: any) => {
+                    reference._raw.is_awaiting_sync = parseInt("1")
+                    reference._raw._status = "updated"
+                });
+                //console.log("T: ",updatedreference);
+              
+        });
+        toast.show({ placement: "bottom", title: "Service Provided Successfully! " });
+
+        navigate({ name: "ReferencesList", params: { } });
+        /*navigate({    
             name: 'Serviços',
             params: {
                 beneficiary: beneficiarie,
