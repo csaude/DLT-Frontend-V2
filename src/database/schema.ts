@@ -210,6 +210,7 @@ export default appSchema({
           {name: 'other_reason', type: 'string', isOptional: true},
           {name: 'user_created', type: 'string', isOptional: true},
           {name: 'date_created', type: 'string', isOptional: true},
+          {name: 'is_awaiting_sync', type: 'number', isOptional: true}, // flag to control if reference status is synced
           {name: 'online_id', type: 'number',isOptional: true}
         ],
       }),
@@ -221,6 +222,7 @@ export default appSchema({
           {name: 'description', type: 'string', isOptional: true},
           {name: 'status', type: "number"},
           {name: 'date_created', type: "string", isOptional: true },
+          {name: 'is_awaiting_sync', type: 'number', isOptional: true}, // flag to control if reference status is synced
           {name: 'online_id', type: 'string', isOptional: true}
         ],
       }),

@@ -18,6 +18,7 @@ export interface ReferencesModel {
     other_reason?: string,
     online_id?: string,
     user_created?: string,
+    is_awaiting_sync?: any;
     date_created: string
 
 }
@@ -38,7 +39,8 @@ export default class References extends Model {
     @field("status") status;
     @field("cancel_reason") cancel_reason;
     @text("other_reason") other_reason;
-    @text("online_id") online_id;
     @text("user_created") user_created;
     @text("date_created") date_created;
+    @text("is_awaiting_sync") is_awaiting_sync;
+    @text("online_id") online_id;
 }
