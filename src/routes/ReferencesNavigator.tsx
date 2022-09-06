@@ -22,7 +22,7 @@ const ReferencesNavigator: React.FC = () => {
              <ReferenceStack.Screen name="ServicesForm" component={ServicesForm} options={{
                     headerTitle: (props) => (
                       <Text {...props} style={{ color: 'black', fontWeight: 'bold' }}>
-                        back
+                        Atender Serviço de Referência
                       </Text>
                     ),
                     headerShown:true

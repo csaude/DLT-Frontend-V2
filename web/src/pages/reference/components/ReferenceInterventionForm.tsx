@@ -193,7 +193,7 @@ const ReferenceInterventionForm = ({ form, record, beneficiary }: any) => {
               style={{
                 width: 300,
               }}
-              placeholder="custom dropdown render"
+              placeholder="Nome do Provedor do Serviço"
               optionFilterProp="children"
               filterOption={(input, option: any) => option.children.includes(input)}
               filterSort={(optionA, optionB) =>
@@ -213,13 +213,13 @@ const ReferenceInterventionForm = ({ form, record, beneficiary }: any) => {
                     }}
                   >
                     <Input
-                      placeholder="Please enter item"
+                      placeholder="Provedor"
                       ref={inputRef}
                       value={name}
                       onChange={onNameChange}
                     />
                     <Button type="text" icon={<PlusOutlined />} onClick={addItem}>
-                      Add item
+                      Outro
                     </Button>
                   </Space>
                 </>
@@ -229,7 +229,6 @@ const ReferenceInterventionForm = ({ form, record, beneficiary }: any) => {
                 <Option key={item.username}>{item.username}</Option>
               ))}
             </Select>
-            { /*<Input placeholder="Nome do Provedor do Serviço" />*/}
           </Form.Item>
         </Col>
         <Col span={8}>

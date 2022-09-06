@@ -64,8 +64,8 @@ export default appSchema({
           {name: 'name', type: 'string'},
           {name: 'description', type: 'string', isOptional: true},
           {name: 'status', type: 'string'},
-          {name: 'locality_id', type: 'number'},
-          {name: 'entry_point', type: 'number'},
+          {name: 'locality_id', type: 'number', isOptional: true},
+          {name: 'entry_point', type: 'number', isOptional: true},
           {name: 'online_id', type: 'number',isOptional: true}
         ],
       }),
@@ -104,6 +104,7 @@ export default appSchema({
           {name: 'partner_id',  type: "number", isIndexed: true },
           {name: 'entry_point',  type: "string", isIndexed: true },
           {name: 'neighbourhood_id',  type: "number", isIndexed: true },
+          {name: 'locality_id',  type: "number", isOptional: true },
           {name: 'locality_name',  type: "string", isOptional: true },
           {name: 'district_code',  type: "string"},
           {name: 'nationality',  type: "number", isOptional: true },
@@ -208,8 +209,9 @@ export default appSchema({
           {name: 'status', type: 'number'},
           {name: 'cancel_reason', type: 'number', isOptional: true},
           {name: 'other_reason', type: 'string', isOptional: true},
-          {name: 'created_by', type: 'number', isIndexed: true},
+          {name: 'user_created', type: 'string', isOptional: true},
           {name: 'date_created', type: 'string', isOptional: true},
+          {name: 'is_awaiting_sync', type: 'number', isOptional: true}, // flag to control if reference status is synced
           {name: 'online_id', type: 'number',isOptional: true}
         ],
       }),
@@ -221,6 +223,7 @@ export default appSchema({
           {name: 'description', type: 'string', isOptional: true},
           {name: 'status', type: "number"},
           {name: 'date_created', type: "string", isOptional: true },
+          {name: 'is_awaiting_sync', type: 'number', isOptional: true}, // flag to control if reference status is synced
           {name: 'online_id', type: 'string', isOptional: true}
         ],
       }),

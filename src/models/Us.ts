@@ -7,8 +7,9 @@ export default class Us extends Model {
 
     @field("name") name;
     @field("description") description;
-    @field("status") status;     
-    @field("online_id") online_id;     
-    @field("entry_point") entry_point;   
+    @field("status") status;  
+    @field("locality_id") locality_id;   
+    @field("entry_point") entry_point;      
+    @field("online_id") online_id;   
 
 }

@@ -99,7 +99,7 @@ const ReferenceList: React.FC = () => {
                     id: beneficiary?.id
                 },
                 users: {
-                    id: localStorage.user
+                    id: values.notifyTo
                 },
                 referenceNote: values.referenceNote,
                 description: '',
@@ -112,8 +112,9 @@ const ReferenceList: React.FC = () => {
                 status: '0',
                 cancelReason: '0',
                 otherReason: '',
-                createdBy: ref?.createdBy, 
+                userCreated: ref?.userCreated, 
                 dateCreated: ref?.dateCreated,
+                updatedBy: localStorage.user,
                 referencesServiceses: servicesObjects,
                 
             };
@@ -298,7 +299,7 @@ const ReferenceList: React.FC = () => {
             key: 'type',
             render: (text, record)  => (
                 user.map(data =>(
-                    data?.id == record?.createdBy ?                        
+                    data?.id == record?.userCreated ?                        
                         data?.partners?.name                        
                         :
                         ''
@@ -329,7 +330,7 @@ const ReferenceList: React.FC = () => {
             key: 'createdBy',
             render: (text, record)  => (
                 user.map(data =>(
-                    data?.id == record?.createdBy ?                        
+                    data?.id == record?.userCreated ?                        
                         data?.name+' '+data?.surname                       
                         :
                         ''
@@ -391,10 +392,19 @@ const ReferenceList: React.FC = () => {
             title: 'Ponto de Entrada para Referência', 
             dataIndex: '', 
             key: '',
-            render: (text, record)  => record?.users?.us?.name,
-            filters: filterPartner(us)(i => i.name),
-            onFilter: (value, record) => record?.users?.us?.name == value,
-            filterSearch: true,
+            render: (text, record)  => (
+                user.map(data =>(
+                    data?.id != record?.userCreated ?                        
+                        ''                       
+                        :
+                        (data?.entryPoint==1) ? 
+                            <Text>US </Text> 
+                        : 
+                            (data?.entryPoint==2) ? <Text>ES </Text>
+                            :
+                            <Text>CM </Text>
+                ))
+            ),           
         },	
         { 
             title: 'Estado', 
@@ -450,7 +460,7 @@ const ReferenceList: React.FC = () => {
             </Card>
             <Card title="Lista de Referências e Contra-Referências" bordered={false} headStyle={{color:"#17a2b8"}}>
                 <Table
-                    rowKey="id"
+                    rowKey={(record?) => `${record.id}${record.id.date}`}
                     columns={columnsRef}
                     dataSource={references}
                     bordered
