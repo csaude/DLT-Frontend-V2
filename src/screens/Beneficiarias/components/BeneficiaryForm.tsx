@@ -324,7 +324,6 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
     }
 
     const handleSubmit = async (values?: any) => {
-        //console.log(formik.values);
         navigationRef.goBack();
     }
 
@@ -336,9 +335,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
 
         setIsDatePickerVisible(false);
         setDatePickerValue(selectedDate);
-
-        let tempDate = new Date(selectedDate);
-        formik.setFieldValue('date_of_birth', getFormatedDate(tempDate,'YYYY-MM-DD'));
+        formik.setFieldValue('date_of_birth', selectedDate);
         setAge(calculateAge(selectedDate)+'');
         formik.setFieldValue('age', calculateAge(selectedDate)+'');
     }
@@ -408,29 +405,22 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
     const IdadePicker: React.FC<PickerProps> = ({ selectedValue, onValueChange }: PickerProps) => {
 
         const onchangeAge = (value: any) =>{
+
+            console.log(value)
+
             var today = new Date();
             var birthYear = today.getFullYear() - value;
-            var birthDate = new Date(birthYear + "/01/01");
-            setBirthDate(birthDate);
-
+            var bDate = new Date(birthYear + "-01-01");
+            setBirthDate(bDate);
             setAge(value);
+
+            formik.setFieldValue('date_of_birth', getFormatedDate(birthDate, 'yyyy-MM-DD'));
         }
-
-        useEffect(() => {
-            if(age != undefined){
-                formik.setFieldValue('age', age);
-            }
-
-            if(birthDate != undefined){
-                formik.setFieldValue('date_of_birth', moment(birthDate,'YYYY-MM-DD'));
-            }
-
-        }, []);
 
         return (
             <Picker enabled={!isDateRequired} onValueChange={onchangeAge} selectedValue={age} placeholder="Seleccione a Idade" >
                 {idades.map(item => (
-                    <Picker.Item key={item} value={item} label={item}>{item}</Picker.Item>
+                    <Picker.Item key={item} value={item} label={item}></Picker.Item>
                 ))}
             </Picker>
         );
@@ -464,20 +454,13 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                 <FormControl isRequired={isDateRequired} isInvalid={'date_of_birth' in formik.errors}>
                                     <FormControl.Label>Data Nascimento</FormControl.Label>
                                     {isDatePickerVisible && (
-                                        // <DateTimePicker
-                                        //     testID="dateTimePicker"
-                                        //     value={datePickerValue}
-                                        //     // mode={mode}
-                                        //     onChange={onChangeDatePicker}
-                                        // />
                                         <DatePicker
                                             mode="calendar"
                                             disabled={!isDateRequired}
-                                            // onChange={onChangeBirthDate}
-                                            current={getFormatedDate(getMaxDate(),'YYYY-MM-DD')}
+                                            current={birthDate === undefined? getFormatedDate(getMaxDate(),'YYYY-MM-DD') : getFormatedDate(birthDate,'YYYY-MM-DD')}
                                             minimumDate={getFormatedDate(getMinDate(),'YYYY-MM-DD')}
                                             maximumDate={getFormatedDate(getMaxDate(),'YYYY-MM-DD')}
-                                            onSelectedChange={date => onChangeDatePicker(null, date.replaceAll('/', '-'))}
+                                            onDateChange={date => onChangeDatePicker(null, date.replaceAll('/', '-'))}
                                         />
                                     )}
                                     <HStack w="100%" flex={1} space={5} alignItems="center"  >
@@ -489,7 +472,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                                 onPressIn={() => showDatepicker()}
                                                 onBlur={formik.handleBlur('name')}
                                                 value={formik.values.date_of_birth}
-                                                onChangeText={formik.handleChange('date_of_birth')}
+                                                // onChangeText={formik.handleChange('date_of_birth')}
                                                 //value={moment(new Date(datePickerValue)).format('YYYY-MM-DD')}
                                                 placeholder="yyyy-MM-dd" />
                                         </InputGroup>
@@ -506,15 +489,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                 </FormControl>
                                 <FormControl isRequired={!isDateRequired} isInvalid={'age' in formik.errors}>
                                     <FormControl.Label>Idade (em anos)</FormControl.Label>
-                                    {/* <Picker
-                                        selectedValue={formik.values.age}
-                                        onValueChange={(itemValue, itemIndex) => {
-                                            // if (itemIndex !== 0) {
-                                            formik.setFieldValue('age', itemValue);
-                                            // }
-                                    }}> */}
-                                        {/* <IdadePicker /> */}
-                                    {/* </Picker> */}
+                                        <IdadePicker />
                                     <FormControl.ErrorMessage>
                                         {formik.errors.nationality}
                                     </FormControl.ErrorMessage>
