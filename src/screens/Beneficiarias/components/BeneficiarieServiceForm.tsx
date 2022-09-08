@@ -10,9 +10,11 @@ import {
     Alert, Flex, useToast, Stack, InputGroup, InputLeftAddon, InputRightAddon, Radio
 }
     from 'native-base';
+import { SuccessHandler, ErrorHandler } from "../../../components/SyncIndicator";
 
 import moment from 'moment';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import DatePicker, { getToday, getFormatedDate } from 'react-native-modern-datepicker';
 import { stringify } from 'qs';
 import { Picker } from '@react-native-picker/picker';
 import { Formik } from 'formik';
@@ -27,14 +29,11 @@ import { Context } from '../../../routes/DrawerNavigator';
 
 import styles from './styles';
 
-const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, partners, services, subServices }: any) => {    // console.log(route.params);
-    const { beneficiarie, intervention } = route.params;
+const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }: any) => {    // console.log(route.params);
+    const { beneficiarie, intervs, intervention } = route.params;
 
     const areaServicos = [{ "id": '1', "name": "Serviços Clinicos" }, { "id": '2', "name": "Serviços Comunitarios" }];
-    const entry_points = [{ "id": '1', "name": "US" }, { "id": '2', "name": "CM" }, { "id": '3', "name": "ES" }];
-    const [areaServicos_id, setAreaServicos_id] = useState('');
-    const [service_id, setService_id] = useState('');
-    const [entry_point, setEntry_point] = useState('');
+    const entry_points = [{ "id": '1', "name": "US" }, { "id": '3', "name": "CM" }, { "id": '2', "name": "ES" }];
 
     const [date, setDate] = useState(new Date());
     const [mode, setMode] = useState('date');
@@ -46,9 +45,9 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
         setShow(false);
         setDate(currentDate);
 
-        let tempDate = new Date(currentDate);
-        setText(moment(tempDate).format('YYYY-MM-DD'));
-        console.log(text);
+        // let tempDate = new Date(currentDate);
+        // setText(moment(tempDate).format('YYYY-MM-DD'));
+        setText(selectedDate);
     }
 
     const showMode = (currentMode) => {
@@ -57,30 +56,29 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
     };
 
     const showDatepicker = () => {
-        showMode('date');
+        showMode('calendar');
     };
     const [initialValues, setInitialValues] = useState<any>({});
-    let mounted = true; 
+    let mounted = true;
     const [loading, setLoading] = useState(false);
-    const [savedIntervention, setSavedIntervention] = useState<any>(null);
     const loggedUser: any = useContext(Context);
-    //const intervention = new Beneficiaries_interventions;
     const toast = useToast();
-    //console.log(intervention);
-    //console.log(beneficiarie);
 
     useEffect(() => {
 
-        if (intervention && mounted) {
+        if (mounted) {
             const isEdit = intervention && intervention.id;
-            let initValues;
-            console.log(isEdit, intervention);
+            let initValues = {};
+
             if (isEdit) {
 
-                const selService = services.filter((e) => {
+                const selSubService = subServices.filter((e) => {
                     return e._raw.online_id == intervention.sub_service_id
-                }
-                )[0];
+                })[0];
+
+                const selService = services.filter((e) => {
+                    return e._raw.online_id == selSubService._raw.service_id
+                })[0];
 
                 initValues = {
                     areaServicos_id: selService._raw.service_type,
@@ -96,6 +94,9 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                     remarks: intervention.remarks,
                     status: '1'
                 }
+
+                setText(intervention.date);
+                setDate(new Date(intervention.date));
 
             } else {
                 initValues = {
@@ -119,14 +120,11 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                 mounted = false; // set it to false if we leave the page
             }
         }
-        
-        
+
+
     }, [intervention]);
 
-
-
     const message = "Este campo é Obrigatório"
-
 
     const validate = (values: any) => {
         const errors: BeneficiariesInterventionsModel = {};
@@ -167,103 +165,85 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
     const onSubmit = async (values: any) => {
         setLoading(true);
 
-
         const isEdit = intervention && intervention.id; // new record if it has id
-        //console.log(intervention, isEdit);
-
-
-        if (isEdit) {
-            const interventionToUpdate = await database.get('beneficiaries_interventions').find(intervention.id);
-            const updatedIntervention = await interventionToUpdate.update(() => {
-                intervention.beneficiary_id = beneficiarie.online_id
-                intervention.sub_service_id = values.sub_service_id
-                intervention.result = values.result
-                intervention.date = '' + text
-                intervention.us_id = values.us_id
-                intervention.activist_id = 1 //values.activist_id
-                intervention.entry_point = values.entry_point
-                intervention.provider = values.provider
-                intervention.remarks = values.remarks
-                intervention.status = values.status
-                intervention.online_id = intervention.online_id
-                // intervention._status = "updated"
-            })
-
-            toast.show({ placement: "bottom", title: "Intervention Updated Successfully: " + updatedIntervention._raw.id });
-
-            return updatedIntervention;
-        }
 
         const newObject = await database.write(async () => {
 
-            const newIntervention = await database.collections.get('beneficiaries_interventions').create((intervention: any) => {
+            if (isEdit) {
+                const interventionToUpdate = await database.get('beneficiaries_interventions').find(intervention.id);
+                const updatedIntervention = await interventionToUpdate.update(() => {
+                    intervention.beneficiary_id = beneficiarie.online_id
+                    intervention.sub_service_id = values.sub_service_id
+                    intervention.remarks = values.remarks
+                    intervention.result = values.result
+                    intervention.date = '' + text
+                    intervention.us_id = values.us_id
+                    intervention.activist_id = 1 //values.activist_id
+                    intervention.entry_point = values.entry_point
+                    intervention.provider = values.provider
+                    intervention.remarks = values.remarks
+                    intervention.status = values.status
+                    intervention._status = "updated"
+                })
+                toast.show({ placement: "bottom", title: "Intervention Updated Successfully: " + updatedIntervention._raw.id });
 
-                intervention.beneficiary_id = beneficiarie.online_id
-                intervention.sub_service_id = values.sub_service_id
-                intervention.result = values.result
-                intervention.date = '' + text
-                intervention.us_id = values.us_id
-                intervention.activist_id = values.activist_id
-                intervention.entry_point = values.entry_point
-                intervention.provider = values.provider
-                intervention.remarks = values.remarks
-                intervention.status = values.status
-                intervention.online_id = values.online_id
+                return updatedIntervention;
+            } else {
+                const newIntervention = await database.collections.get('beneficiaries_interventions').create((intervention: any) => {
 
-            });
+                    intervention.beneficiary_id = beneficiarie.online_id
+                    intervention.sub_service_id = values.sub_service_id
+                    intervention.result = values.result
+                    intervention.date = '' + text
+                    intervention.us_id = values.us_id
+                    intervention.activist_id = loggedUser.id
+                    intervention.entry_point = values.entry_point
+                    intervention.provider = values.provider
+                    intervention.remarks = values.remarks
+                    intervention.status = values.status
 
-            toast.show({ placement: "bottom", title: "Intervention Saved Successfully: " + newIntervention._raw.id });
-            return newIntervention;
+                });
+                toast.show({ placement: "bottom", title: "Intervention Saved Successfully: " + newIntervention._raw.id });
+                return newIntervention;
+            }
+
         });
+
+        var newIntr: any = newObject._raw;
+        let subserviceObj = subServices.filter((item) => {
+            return item._raw.online_id == newIntr.sub_service_id
+        })[0];
+        const nIobj =  { id: subserviceObj._raw.online_id, name: subserviceObj._raw.name, intervention: newIntr }
+
+        let newIntervMap;
+        if(isEdit){
+            newIntervMap = intervs.map(item => item.intervention.id === nIobj.intervention.id ? nIobj: item);
+        } else {
+            newIntervMap = [nIobj, ...intervs];
+        }
 
         navigate({
-            name: "BeneficiariesList", params: {
-                intervation: newObject._raw,
-                beneficiarie: beneficiarie
-            }
+            name: 'Serviços',
+            params: {
+                beneficiary: beneficiarie,
+                interventions: newIntervMap
+            },
+            merge: true,
         });
 
-
-        //setLoading(false);
         sync({ username: loggedUser.username })
             .then(() => toast.show({
                 placement: "top",
                 render: () => {
-                    return (
-                        <Alert w="100%" variant="left-accent" colorScheme="success" status="success">
-                            <VStack space={2} flexShrink={1} w="100%">
-                                <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
-                                    <HStack space={2} flexShrink={1} alignItems="center">
-                                        <Alert.Icon />
-                                        <Text color="coolGray.800">
-                                            Synced Successfully!
-                                        </Text>
-                                    </HStack>
-                                </HStack>
-                            </VStack>
-                        </Alert>
-                    );
+                    return (<SuccessHandler />);
                 }
             }))
             .catch(() => toast.show({
                 placement: "top",
                 render: () => {
-                    return (
-                        <Alert w="100%" variant="left-accent" colorScheme="error" status="error">
-                            <VStack space={2} flexShrink={1} w="100%">
-                                <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
-                                    <HStack space={2} flexShrink={1} alignItems="center">
-                                        <Alert.Icon />
-                                        <Text color="coolGray.800">
-                                            Sync Failed!
-                                        </Text>
-                                    </HStack>
-                                </HStack>
-                            </VStack>
-                        </Alert>
-                    );
+                    return (<ErrorHandler />);
                 }
-            }))
+            }));
 
     }
 
@@ -280,13 +260,13 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                                 fontWeight="semibold"
                                 marginBottom={5}
                                 marginTop={0} >
-                                Prover Servico
+                                Prover Serviço
                             </Heading>
                             <Alert status="info" colorScheme="info">
                                 <HStack flexShrink={1} space={2} alignItems="center">
                                     <Alert.Icon />
                                     <Text fontSize="xs" fontWeight="medium" color="coolGray.800">
-                                        Preencha os campos abaixo para prover um servico a Beneficiaria!
+                                        Preencha os campos abaixo para prover um serviço a Beneficiaria!
                                     </Text>
                                 </HStack>
                             </Alert>
@@ -317,7 +297,7 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                                                 <Picker.Item label="-- Seleccione a Área do Serviço --" value="0" />
                                                 {
                                                     areaServicos.map(item => (
-                                                        <Picker.Item key={item.id} label={item.name} value={parseInt(item.id)} />
+                                                        <Picker.Item key={item.id} label={item.name} value={item.id} />
                                                     ))
                                                 }
                                             </Picker>
@@ -394,7 +374,7 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                                                 <Picker.Item label="-- Seleccione o ponto de Entrada --" value="" />
                                                 {
                                                     entry_points.map(item => (
-                                                        <Picker.Item key={item.id} label={item.name} value={parseInt(item.id)} />
+                                                        <Picker.Item key={item.id} label={item.name} value={item.id} />
                                                     ))
                                                 }
                                             </Picker>
@@ -402,30 +382,6 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                                                 {errors.entry_point}
                                             </FormControl.ErrorMessage>
                                         </FormControl>
-
-                                        {/* <FormControl isInvalid={'entry_point' in errors}>
-                                            <FormControl.Label>
-                                            Ponto de Entrada
-                                            </FormControl.Label>
-                                                <Radio.Group name="entry_point"  defaultValue={entry_point} onChange={value => {
-                                                setEntry_point(value || "");
-                                                // setFieldValue('entry_point', value);
-                                                console.log("Ponto de entrada : " + entry_point)
-                                            }}>
-                                                <Radio value="1" my="1">
-                                                    US
-                                                </Radio>
-                                                <Radio value="2" my="1">
-                                                    CM
-                                                </Radio>
-                                                <Radio value="3" my="1">
-                                                    ES
-                                                </Radio>
-                                            </Radio.Group>
-                                            <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                                                {errors.entry_point}
-                                            </FormControl.ErrorMessage>
-                                        </FormControl> */}
 
                                         <FormControl isRequired isInvalid={'us_id' in errors}>
                                             <FormControl.Label>Localização</FormControl.Label>
@@ -454,16 +410,21 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                                             <FormControl.Label>Data Benefício</FormControl.Label>
 
                                             {show && (
-                                                <DateTimePicker
-                                                    testID="dateTimePicker"
-                                                    value={date}
-                                                    // mode={mode}
-                                                    onChange={onChange}
+                                                // <DateTimePicker
+                                                //     testID="dateTimePicker"
+                                                //     value={date}
+                                                //     // mode={mode}
+                                                //     onChange={onChange}
+                                                // />
+                                                <DatePicker
+                                                    mode="calendar"
+                                                    maximumDate={getToday()}
+                                                    onSelectedChange={date => onChange(null, date.replaceAll('/', '-'))}
                                                 />
                                             )}
 
 
-                                            <Stack alignItems="center">
+                                            <HStack alignItems="center">
                                                 <InputGroup w={{
                                                     base: "70%",
                                                     md: "285",
@@ -477,9 +438,9 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
                                                             base: "70%",
                                                             md: "100%"
                                                         }} value={text}
-                                                        placeholder="dd-M-yyyy" />
+                                                        placeholder="yyyy-M-dd" />
                                                 </InputGroup>
-                                            </Stack>
+                                            </HStack>
 
 
                                         </FormControl>
@@ -534,20 +495,11 @@ const beneficiarieServiceForm: React.FC = ({ route, localities, profiles, us, pa
     );
 }
 const enhance = withObservables([], () => ({
-    localities: database.collections
-        .get("localities")
-        .query().observe(),
-    profiles: database.collections
-        .get("profiles")
-        .query().observe(),
     services: database.collections
         .get("services")
         .query(),
     subServices: database.collections
         .get("sub_services")
-        .query().observe(),
-    partners: database.collections
-        .get("partners")
         .query().observe(),
     us: database.collections
         .get("us")
@@ -555,4 +507,5 @@ const enhance = withObservables([], () => ({
 
 
 }));
-export default enhance(beneficiarieServiceForm);
+
+export default enhance(BeneficiarieServiceForm);

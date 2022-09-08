@@ -1,60 +1,189 @@
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react';
+import {useNavigate, Link} from 'react-router-dom';
 import { query } from '../../utils/beneficiary';
+import { query as queryUser } from '../../utils/users';
 import classNames from "classnames";
 import {matchSorter} from "match-sorter";
-import { Badge, Button, Card, Input, Space, Table, Typography, Form } from 'antd';
+import { Badge, Button, message, Card, Input, Space, Table, Typography, Form } from 'antd';
 import Highlighter from 'react-highlight-words';
 import 'antd/dist/antd.css';
 import { SearchOutlined, EditOutlined, PlusOutlined, EyeOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import ViewBeneficiary, { ViewBenefiaryPanel } from './components/View';
-import { getEntryPoint } from '@app/models/User';
-import BeneficiaryForm from './components/BeneficiaryForm';
+import { getEntryPoint, UserModel } from '@app/models/User';
+import { calculateAge, getUserParams } from '@app/models/Utils';
 import FormBeneficiary from './components/FormBeneficiary';
+import FormBeneficiaryPartner from './components/FormBeneficiaryPartner';
+import { add, edit } from '../../utils/beneficiary';
+import { add as addRef, Reference } from '../../utils/reference';
+import FormReference from './components/FormReference';
 
 
 const { Text } = Typography;
 
 const BeneficiariesList: React.FC = () => {
     const [form] = Form.useForm();
+    const navigate = useNavigate();
+    const [ users, setUsers ] = useState<UserModel[]>([]);
+    const [ user, setUser ] = React.useState<any>();
     const [ beneficiaries, setBeneficiaries ] = useState<any[]>([]);
     const [ searchText, setSearchText ] = useState('');
+    const [ services, setServices ] = useState<any>([]);
     const [ searchedColumn, setSearchedColumn ] = useState('');
-    const [ beneficiary, setBeneficiary] = useState();
-    const [ modalVisible, setModalVisible] = useState<boolean>(false);
-    const [ beneficiaryModalVisible, setBeneficiaryModalVisible] = useState<boolean>(false);
-
+    const [ beneficiary, setBeneficiary ] = useState<any>(undefined);
+    const [ reference, setReference ] = useState<any>(undefined);
+    const [ modalVisible, setModalVisible ] = useState<boolean>(false);
+    const [ beneficiaryModalVisible, setBeneficiaryModalVisible ] = useState<boolean>(false);
+    const [ beneficiaryPartnerModalVisible, setBeneficiaryPartnerModalVisible ] = useState<boolean>(false);
+    const [ referenceModalVisible, setReferenceModalVisible ] = useState<boolean>(false);
+    const [ params, setParams] = useState<any>(undefined);
 
     let searchInput ;
-    useEffect(() => {
-        const fetchData = async () => {
-          const data = await query();
+    useEffect(() => { 
 
-          setBeneficiaries(data);
+        const fetchData = async () => {
+            const user = await queryUser(localStorage.user);
+            const data = await query(getUserParams(user));
+
+            setUser(user);
+            setBeneficiaries(data);
         } 
+
+        const fetchUsers = async () => {
+            const users = await queryUser();
+            setUsers(users);
+        }
     
         fetchData().catch(error => console.log(error));
+        fetchUsers().catch(error => console.log(error));
     
     }, []);
 
-    const handleAdd = (record:any) => {
-        console.log(record);
+    const handleAddRef = async (values:any) => {
+    
+        if(values !== undefined){
+
+            const servicesObjects = services.map((e:any) => {
+                let listServices:any = { 
+                                            services: {id: e.servico.id},
+                                            description: e.description, 
+                                            status: 0,
+                                            createdBy: localStorage.user,
+                                        };
+                return listServices
+            });
+
+
+            let payload: Reference = {
+                beneficiaries: {
+                    id: beneficiary.id
+                },
+                users: {
+                    id: values.notifyTo
+                },
+                referenceNote: values.referenceNote,
+                description: '',
+                referTo: values.referTo,
+                bookNumber: values.bookNumber,
+                referenceCode: values.referenceCode,
+                serviceType: values.serviceType === "CLINIC" ? "1" : "2",
+                remarks: values.remarks,
+                statusRef: '0',
+                status: '0',
+                cancelReason: '0',
+                otherReason: '',
+                userCreated: localStorage.user,
+                dateCreated: '',
+                referencesServiceses: servicesObjects,
+                
+            };
+
+            const { data } = await addRef(payload);
+
+            message.success({
+                content: 'Registado com Sucesso!'+data?.referenceNote, className: 'custom-class',
+                style: {
+                    marginTop: '10vh',
+                }
+            });
+
+            setReferenceModalVisible(false);
+
+            navigate('/referenceList');            
+        }
     }
+
+    const handleAddBeneficiary = (data: any) => {
+        setBeneficiaries(beneficiaries => [...beneficiaries, data]);
+        setBeneficiary(data);
+    }
+
+    const handleUpdateBeneficiary = (data: any) => {
+        setBeneficiaries(existingItems => {
+            return existingItems.map((item, j) => {
+                return item.id === beneficiary.id ?
+                    data : item
+            })
+        });
+        setBeneficiary(data);
+        setBeneficiaryModalVisible(false);
+    }
+
+    
 
     const handleViewModalVisible = (flag?: boolean, record?: any) => {
         setBeneficiary(record);
         setModalVisible(!!flag);
     };
 
+    const handleModalRefVisible = (flag?: boolean, record?: any) => {
+        setBeneficiary(record);
+        setReferenceModalVisible(!!flag);
+    };
+    const handleRefServicesList = (data?: any) => {
+        setServices(data);
+    };
+
     const handleBeneficiaryModalVisible = (flag?: boolean) => {
-        
+        form.resetFields();
+        setBeneficiary(undefined);
         setBeneficiaryModalVisible(!!flag);
-        
+    };
+
+    const handleBeneficiaryPartnerModalVisible = (flag?: boolean) => {
+        form.resetFields();
+        setBeneficiary(undefined);
+        setBeneficiaryPartnerModalVisible(!!flag);
     };
 
     const handleModalVisible = (flag?: boolean) => {
         setModalVisible(!!flag);
     };
+
+    const fetchPartner = async (record: any) => {
+        const data = await query(record.partnerId);
+        record.partnerNUI = data.nui;
+    }
+
+    const onEditBeneficiary = async (record: any) => {
+        
+        form.resetFields();
+        
+        if (record.gender === "1") {
+            if (record.partnerId != null) {
+                await fetchPartner(record).catch(error => console.log(error));
+            }
+            setBeneficiaryModalVisible(true);
+        }
+        else {
+            setBeneficiaryPartnerModalVisible(true);
+        }
+        setBeneficiary(record);
+    };
+
+    const getName = (record: any) => {
+        return user?.profiles.id === 1 ? record.name + ' ' + record.surname : 'DREAMS'+record.nui;
+    }
 
     const getColumnSearchProps = (dataIndex:any) => ({
         filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
@@ -109,16 +238,15 @@ const BeneficiariesList: React.FC = () => {
         render: text =>
             searchedColumn === dataIndex ? (
                 <Highlighter
-                highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
-                searchWords={[searchText]}
-                autoEscape
-                textToHighlight={text ? text.toString() : ''}
+                    highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+                    searchWords={[searchText]}
+                    autoEscape
+                    textToHighlight={text ? text.toString() : ''}
                 />
             ) : ( text ),
     });
 
     const parentMethods = {
-        handleAdd: handleAdd,
         handleModalVisible: handleModalVisible
     };
 
@@ -126,7 +254,7 @@ const BeneficiariesList: React.FC = () => {
         { title: 'Data', 
             dataIndex: 'date', 
             key: 'date',
-            render: (val: string) => <span>{moment(val).format('YYYY-MM-DD')}</span>,
+            render: (text, record) => <span>{moment(record.dateCreated).format('YYYY-MM-DD')}</span>,
         },
         { title: 'Serviço', 
             dataIndex: '', 
@@ -141,23 +269,28 @@ const BeneficiariesList: React.FC = () => {
         { title: 'Ponto de Entrada', 
             dataIndex: '', 
             key: 'entryPoint',
-            render: (text, record)  => getEntryPoint(record.entryPoint),
+            render: (text, record)  => record.us.name,
         }
     ];
 
     const columns = [
-        { title: 'Código do Beneficiário', dataIndex: '', key: 'nui', ...getColumnSearchProps('nui'),
-            render: (text, record)  => (<Text type="danger" >{record.nui}</Text>),
+        { title: 'Código do Beneficiário (NUI)', dataIndex: '', key: 'nui', ...getColumnSearchProps('nui'),
+            render: (text, record)  => (
+                <Text type="danger" >   
+                    {record.neighborhood.locality.district.code}/{record.nui}
+                </Text>),
         },
-        { title: 'Nome do Beneficiário', dataIndex: 'name', key: 'name' },
+        { title: 'Nome do Beneficiário', dataIndex: 'name', key: 'name', ...getColumnSearchProps('name'),
+            render: (text, record) => getName(record),
+        },
         { title: 'Sexo', dataIndex: 'gender', key: 'gender',
             filters: [
             {
-                text: 'Masculino',
+                text: 'M',
                 value: '1',
-                },
-                {
-                text: 'Feminino',
+            },
+            {
+                text: 'F',
                 value: '2',
             },
             ],
@@ -168,23 +301,43 @@ const BeneficiariesList: React.FC = () => {
                   <Badge
                     status={val == true ? 'success' : 'warning'}
                     text={
-                      val == '1'
-                        ? 'F'
+                      val == '2'
+                        ? 'F' 
                         : 'M'
                     }
                   />
                 );
               },
         },
-        { title: 'PE', dataIndex: '', key: 'entryPoint', render: (text, record)  => getEntryPoint(record.entryPoint) },
+        { title: 'PE', dataIndex: '', key: 'entryPoint', 
+            filters: [
+            {
+                text: 'US',
+                value: '1',
+            },
+            {
+                text: 'CM',
+                value: '2',
+            },
+            {
+                text: 'ES',
+                value: '3',
+            },
+            ],
+            onFilter: (value, record) => record.entryPoint == value,
+            filterSearch: true,
+            render: (text, record)  => getEntryPoint(record.entryPoint) 
+        },
         { title: 'Distrito', dataIndex: '', key: 'district',
             render: (text, record)  => record.neighborhood.locality.district.name,
         },
-        { title: 'Idade', dataIndex: 'grade', key: 'grade'},
-        { title: '#Interv', dataIndex: 'status', key: 'status', 
+        { title: 'Idade', dataIndex: 'age', key: 'age',
+            render: (text, record) => calculateAge(record.dateOfBirth) + ' anos'
+        },
+        { title: '#Interv', dataIndex: 'beneficiariesInterventionses', key: 'beneficiariesInterventionses', 
             render(val: any) {
                 return (
-                    <Badge count={val} />
+                    <Badge count={val.length} />
                 );
             },
         },
@@ -192,23 +345,25 @@ const BeneficiariesList: React.FC = () => {
             render: (text, record)  => record.partner.abbreviation,
         },
         { title: 'Criado Por', dataIndex: '', key: 'createdBy',
-            render: (text, record)  => record.createdBy.username,
+            render: (text, record)  => users.filter(user => record.createdBy == user.id).map(filteredUser => `${filteredUser.name} ` + `${filteredUser.surname}`)[0],
         },
         { title: 'Atualizado Por', dataIndex: '', key: 'updatedBy',
-            render: (text, record)  => record.updatedBy?.username,
+            render: (text, record)  => users.filter(user => record.updatedBy == user.id).map(filteredUser => `${filteredUser.name} ` + `${filteredUser.surname}`)[0],
         },
         { title: 'Criado Em', dataIndex: 'dateCreated', key: 'dateCreated',
             render: (val: string) => <span>{moment(val).format('YYYY-MM-DD')}</span>,
         },
         {
-          title: 'Action',
+          title: 'Acção',
           dataIndex: '',
           key: 'x',
           render: (text, record) => (
-            <Fragment>
-              <Button type="primary" icon={<EyeOutlined />} onClick={()=>handleViewModalVisible(true, record)}>
-              </Button>
-            </Fragment>
+                <Space>
+                    <Button type="primary" icon={<EyeOutlined />} onClick={()=>handleViewModalVisible(true, record)}>
+                    </Button>
+                    <Button type="primary" icon={<EditOutlined />} onClick={() => onEditBeneficiary(record)} >
+                    </Button>
+                </Space>
           ),
         },
     ];
@@ -229,7 +384,7 @@ const BeneficiariesList: React.FC = () => {
         
         <>
             <Card  bordered={false} style={{marginBottom:'10px', textAlign:"center", fontWeight:"bold", color:"#17a2b8"}} >
-            SISTEMA INTEGRADO DE CADASTRO DE ADOLESCENTES E JOVENS
+                SISTEMA INTEGRADO DE CADASTRO DE ADOLESCENTES E JOVENS
             </Card>
             <Card title="Lista de Adolescentes e Jovens" 
                     bordered={false} 
@@ -237,7 +392,10 @@ const BeneficiariesList: React.FC = () => {
                     extra={
                         <Space>
                           <Button type="primary" onClick={()=>handleBeneficiaryModalVisible(true)} icon={<PlusOutlined />} style={{ background: "#00a65a", borderColor: "#00a65a", borderRadius:'4px' }}>
-                            Adicionar Novo Beneficiário
+                            Adicionar Nova Beneficiária
+                          </Button>
+                          <Button type="primary" onClick={()=>handleBeneficiaryPartnerModalVisible(true)} icon={<PlusOutlined />} style={{ background: "#a69e00", borderColor: "#a69e00", borderRadius:'4px' }}>
+                            Adicionar Novo Parceiro
                           </Button>
                         </Space>
                     }
@@ -246,7 +404,7 @@ const BeneficiariesList: React.FC = () => {
                     rowKey="id"
                     columns={columns}
                     expandable={{
-                        expandedRowRender: record =>  <div style={{border:"2px solid #d9edf7", backgroundColor:"white"}}><ViewBenefiaryPanel beneficiary={record} columns={interventionColumns} /></div>,
+                        expandedRowRender: record =>  <div style={{border:"2px solid #d9edf7", backgroundColor:"white"}}><ViewBenefiaryPanel beneficiary={record} columns={interventionColumns} handleModalVisible={handleModalVisible} handleModalRefVisible={handleModalRefVisible} /></div>,
                         rowExpandable: record => record.name !== 'Not Expandable',
                     }}
                     dataSource={beneficiaries}
@@ -256,11 +414,24 @@ const BeneficiariesList: React.FC = () => {
             <ViewBeneficiary 
                 {...parentMethods}
                 beneficiary={beneficiary} 
-                modalVisible={modalVisible} />
-                
-            <FormBeneficiary form={form} modalVisible={beneficiaryModalVisible}
-                                handleAdd
-                                handleModalVisible={handleBeneficiaryModalVisible} />
+                modalVisible={modalVisible} 
+                handleModalRefVisible={handleModalRefVisible}
+            />
+            <FormBeneficiary form={form} beneficiary={beneficiary} modalVisible={beneficiaryModalVisible}
+                handleAddBeneficiary={handleAddBeneficiary}
+                handleUpdateBeneficiary={handleUpdateBeneficiary}
+                handleModalVisible={handleBeneficiaryModalVisible} 
+            />
+            <FormBeneficiaryPartner form={form} beneficiary={beneficiary} modalVisible={beneficiaryPartnerModalVisible}
+                handleAddBeneficiary={handleAddBeneficiary}
+                handleModalVisible={handleBeneficiaryPartnerModalVisible} 
+            />
+            <FormReference  form={form} beneficiary={beneficiary} 
+                modalVisible={referenceModalVisible}
+                handleAdd={handleAddRef}   
+                handleModalRefVisible={handleModalRefVisible} 
+                handleRefServicesList={handleRefServicesList}
+            />
         </>
     );
 }

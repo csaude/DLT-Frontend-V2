@@ -5,6 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import CustomDrawer from './components/CustomDrawer';
 import UsersNavigator from './UsersNavigator';
 import BeneficiariesNavigator from './BeneficiariesNavigator';
+import RefencesNavigator from './ReferencesNavigator'
 
 
 function HomeScreen({ navigation }: any) {
@@ -32,7 +33,7 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
       <Drawer.Navigator 
         screenOptions={{
             headerStyle: {
-                backgroundColor: '#0c4a6e',
+                backgroundColor:'#17a2b8', //'#0c4a6e',
             },
             headerTintColor: '#fff',
             headerTitleStyle: {   
@@ -52,6 +53,14 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
             component={BeneficiariesNavigator}
             options={{                     
                 title: 'Beneficiárias',
+                headerTitle: '',
+            }}
+            
+        />        
+        <Drawer.Screen name="References" 
+            component={RefencesNavigator}
+            options={{                     
+                title: 'Referências',
                 headerTitle: '',
             }}
             

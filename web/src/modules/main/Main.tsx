@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useCallback} from 'react';
-import {Outlet} from 'react-router-dom';
+import {Navigate, Outlet} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 import {Gatekeeper} from 'gatekeeper-client-sdk';
 import {loadUser, logoutUser} from '@store/reducers/auth';
@@ -14,6 +14,9 @@ import {useNavigate, useLocation} from 'react-router-dom';
 const Main = () => {
   
   const dispatch = useDispatch();
+  
+  let isNewPassword = localStorage.getItem('isNewPassword');
+
   const menuSidebarCollapsed = useSelector(
     (state: any) => state.ui.menuSidebarCollapsed
   );
@@ -30,9 +33,11 @@ const Main = () => {
   const fetchProfile = async () => {
     try {
       const email = await localStorage.getItem('userEmail');
+      const role = await localStorage.getItem('userRole');
       //const response = await Gatekeeper.getProfile();
       const response = {
         email: email,
+        role: role,
         picture: null
       }
       dispatch(loadUser(response));
@@ -86,7 +91,7 @@ const Main = () => {
         <div className="preloader flex-column justify-content-center align-items-center">
           <img
             className="animation__shake"
-            src="/img/logo.png"
+            src="img/logo.png"
             alt="AdminLTELogo"
             height="60"
             width="60"
@@ -118,7 +123,9 @@ const Main = () => {
     );
   }, [isAppLoaded]);
 
-  return <div className="wrapper">{getAppTemplate()}</div>;
+  
+  return isNewPassword === "1" ? <Navigate to="/newPassword" />  : <div className="wrapper">{getAppTemplate()}</div>;
+   
 };
 
 export default Main;

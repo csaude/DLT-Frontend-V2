@@ -4,10 +4,37 @@ export default appSchema({
     version: 1,
     tables: [
       tableSchema({
+        name: 'sequences',
+        columns: [
+          {name: 'prefix', type: 'string'},
+          {name: 'last_nui', type: 'string', isOptional: true}
+        ],
+      }),
+      tableSchema({
+        name: 'provinces',
+        columns: [
+          {name: 'name', type: 'string'},
+          {name: 'code', type: 'string'},
+          {name: 'status', type: 'number'},
+          {name: 'online_id', type: 'number',isOptional: true}
+        ],
+      }),
+      tableSchema({
+        name: 'districts',
+        columns: [
+          {name: 'name', type: 'string'},
+          {name: 'code', type: 'string'},
+          {name: 'province_id', type: 'number'},
+          {name: 'status', type: 'number'},
+          {name: 'online_id', type: 'number',isOptional: true}
+        ],
+      }),
+      tableSchema({
         name: 'localities',
         columns: [
           {name: 'name', type: 'string'},
           {name: 'description', type: 'string', isOptional: true},
+          {name: 'district_id', type: 'number'},
           {name: 'status', type: 'string'},
           {name: 'online_id', type: 'number',isOptional: true}
         ],
@@ -18,6 +45,7 @@ export default appSchema({
           {name: 'name', type: 'string'},
           {name: 'abbreviation', type: 'string'},
           {name: 'description', type: 'string', isOptional: true},
+          {name: 'partner_type', type: 'string', isOptional: true},
           {name: 'status', type: 'string'},
           {name: 'online_id', type: 'number',isOptional: true}
         ],
@@ -36,6 +64,8 @@ export default appSchema({
           {name: 'name', type: 'string'},
           {name: 'description', type: 'string', isOptional: true},
           {name: 'status', type: 'string'},
+          {name: 'locality_id', type: 'number', isOptional: true},
+          {name: 'entry_point', type: 'number', isOptional: true},
           {name: 'online_id', type: 'number',isOptional: true}
         ],
       }),
@@ -53,7 +83,7 @@ export default appSchema({
           {name: "locality_id", type: "number", isIndexed: true },
           {name: "partner_id", type: "number" },
           {name: "profile_id", type: "number", isIndexed: true },
-          {name: "us_id", type: "number", isIndexed: true },
+          {name: "us_ids", type: "string", isOptional:true},
           {name: 'online_id', type: 'number',isOptional: true }, // flag to control if entity is synchronized with the backend
         ],
       }),
@@ -74,6 +104,9 @@ export default appSchema({
           {name: 'partner_id',  type: "number", isIndexed: true },
           {name: 'entry_point',  type: "string", isIndexed: true },
           {name: 'neighbourhood_id',  type: "number", isIndexed: true },
+          {name: 'locality_id',  type: "number", isOptional: true },
+          {name: 'locality_name',  type: "string", isOptional: true },
+          {name: 'nationality',  type: "number", isOptional: true },
           {name: 'us_id',  type: "number", isIndexed: true },
           {name: 'status', type: 'number'},
           {name: 'online_id', type: 'number',isOptional: true},
@@ -103,7 +136,7 @@ export default appSchema({
           {name: 'vblt_sti_history', type: 'number',isOptional: true},
           {name: 'vblt_sex_worker', type: 'number',isOptional: true},
           {name: 'vblt_house_sustainer', type: 'number',isOptional: true},
-
+          {name: 'references_a', type: 'string',isOptional: true},
         ],
       }),
       tableSchema({
@@ -113,7 +146,7 @@ export default appSchema({
           {name: 'description', type: 'string'},
           {name: 'core_service', type: 'number'},
           {name: 'hidden', type: 'number'},
-          {name: 'service_type', type: 'number',isOptional: true},
+          {name: 'service_type', type: 'string',isOptional: true},
           {name: 'status', type: 'number'},
           {name: 'online_id', type: 'number',isOptional: true}
         ],
@@ -138,6 +171,7 @@ export default appSchema({
           {name: 'name', type: "string"},
           {name: 'description',type: "string"},
           {name: 'locality_id', type: "number", isIndexed: true },
+          {name: 'us_id', type: "number", isIndexed: true },
           {name: 'status', type: 'number'},
           {name: 'online_id', type: 'number',isOptional: true}
         ],
@@ -151,12 +185,46 @@ export default appSchema({
           {name: 'date', type: 'string'},
           {name: 'us_id', type: "number", isIndexed: true },
           {name: 'activist_id', type: "number", isIndexed: true },
-          {name: 'entry_point', type: 'number'},
+          {name: 'entry_point', type: 'string'},
           {name: 'provider', type: 'string'},
           {name: 'remarks', type: 'string', isOptional: true},
           {name: 'status', type: 'number'},
           {name: 'online_id', type: 'string',isOptional: true}
         ],
       }),
-    ],
+      tableSchema({
+        name: 'references',
+        columns: [
+          {name: 'beneficiary_id', type: 'number', isIndexed: true},
+          {name: 'refer_to', type: 'string', isIndexed: true},
+          {name: 'notify_to', type: 'number', isIndexed: true},
+          {name: 'reference_note', type: 'string'},
+          {name: 'description', type: 'string'},
+          {name: 'book_number', type: 'string'},
+          {name: 'reference_code', type: 'string'},
+          {name: 'service_type', type: 'string'},
+          {name: 'remarks', type: 'string', isOptional: true},
+          {name: 'status_ref', type: 'number'},
+          {name: 'status', type: 'number'},
+          {name: 'cancel_reason', type: 'number', isOptional: true},
+          {name: 'other_reason', type: 'string', isOptional: true},
+          {name: 'user_created', type: 'string', isOptional: true},
+          {name: 'date_created', type: 'string', isOptional: true},
+          {name: 'is_awaiting_sync', type: 'number', isOptional: true}, // flag to control if reference status is synced
+          {name: 'online_id', type: 'number',isOptional: true}
+        ],
+      }),
+      tableSchema({
+        name: 'references_services',
+        columns: [
+          {name: 'reference_id', type: "string" },
+          {name: 'service_id',type: "number", isIndexed: true },
+          {name: 'description', type: 'string', isOptional: true},
+          {name: 'status', type: "number"},
+          {name: 'date_created', type: "string", isOptional: true },
+          {name: 'is_awaiting_sync', type: 'number', isOptional: true}, // flag to control if reference status is synced
+          {name: 'online_id', type: 'string', isOptional: true}
+        ],
+      }),
+    ], 
 });

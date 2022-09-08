@@ -43,11 +43,9 @@ const Login = () => {
       password: ''
     },
     validationSchema: Yup.object({
-      email: Yup.string().required('Required'),
+      email: Yup.string().required('Obrigatório'),
       password: Yup.string()
-        .min(1, 'Must be 1 characters or more')
-        .max(30, 'Must be 30 characters or less')
-        .required('Required')
+        .required('Obrigatório')
     }),
     onSubmit: (values) => {
       login(values.email, values.password);
@@ -60,7 +58,7 @@ const Login = () => {
     <div className="login-box">
       <div className="card card-outline card-primary"  style={{ }}>
         <div style={{alignItems  : 'center', width:'50%' }}>
-          <img  style={{  width: "100%", marginLeft: "50%", marginTop:"10%"}}  src={'/img/dreams.png'} />
+          <img  style={{  width: "100%", marginLeft: "50%", marginTop:"10%"}}  src={'img/dreams.png'} />
         </div>
         <div className="card-header text-center">
           <p className="login-box-msg">
@@ -80,7 +78,7 @@ const Login = () => {
                 <Form.Control
                   id="email"
                   name="email"
-                  placeholder="username"
+                  placeholder="Insira o Username"
                   onChange={handleChange}
                   value={values.email}
                   isValid={touched.email && !errors.email}
@@ -105,7 +103,7 @@ const Login = () => {
                   id="password"
                   name="password"
                   type="password"
-                  placeholder="Password"
+                  placeholder="Insira a Password"
                   onChange={handleChange}
                   value={values.password}
                   isValid={touched.password && !errors.password}
@@ -141,7 +139,7 @@ const Login = () => {
             </div>
           </form>
           <p className="mb-1">
-            <Link to="/forgot-password">{t('login.label.forgotPass')}</Link>
+            <Link to="/forgot-password">Esqueceu a password?</Link>
           </p>
         </div>
       </div>

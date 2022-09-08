@@ -4,7 +4,9 @@ import { SearchOutlined, ArrowUpOutlined, EyeOutlined, EditOutlined, PlusOutline
 import emblema from '../../../assets/emblema.png';
 import moment from 'moment';
 import { getEntryPoint } from '@app/models/User'
+import { query } from '../../../utils/beneficiary';
 import ViewIntervention from './ViewIntervention';
+import { calculateAge } from '@app/models/Utils';
 import { addSubService, updateSubService, SubServiceParams } from '@app/utils/service'
 
 import 'antd/dist/antd.css';
@@ -12,19 +14,41 @@ import 'antd/dist/antd.css';
 import '../styles.css'
 import InterventionForm from './InterventionForm';
 
-export function ViewBenefiaryPanel({ beneficiary, columns }) {
+export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, handleModalRefVisible}) {
     const [visible, setVisible] = useState<boolean>(false);
     const [isAdd, setIsAdd] = useState<boolean>(false);
     const [selectedBeneficiary, setSelectedBeneficiary] = useState();
     const [selectedIntervention, setSelectedIntervention] = useState<any>();
     const [interventions, setInterventions] = useState(beneficiary?.beneficiariesInterventionses);
+    const [partner, setPartner] = useState<any>();
 
     const [form] = Form.useForm();
+
+    useEffect(() => { 
+
+        const fetchUser = async () => {
+
+            if(beneficiary.partnerId){
+                const user = await query(beneficiary.partnerId);
+                setPartner(user);
+            }
+            
+        }
+    
+        fetchUser().catch(error => console.log("---: ",error))
+    
+    }, []);
 
     const showDrawer = (record: any) => {
 
         setVisible(true);
         setSelectedBeneficiary(record);
+    };
+
+    const onAddReference = (flag?: boolean, record?: any) => {
+
+        handleModalVisible(); 
+        handleModalRefVisible(flag, record);  
     };
 
     const onAddIntervention = () => {
@@ -44,35 +68,64 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
         setVisible(false);
         setIsAdd(false);
     };
-
+    
     const onSubmit = async (intervention: any) => {
        
         form.validateFields().then(async (values) => {
             
-            let payload: SubServiceParams = {
-                id: intervention?.id,
-                beneficiaries: {
-                    id: '' + beneficiary.id
-                },
-                subServices: {
-                    id: values.subservice
-                },
-                result: "",
-                date: moment(values.dataBeneficio).format('YYYY-MM-DD'),
-                us: { id: values.location},
-                activistId: "6",
-                entryPoint: values.entryPoint,
-                provider: values.provider,
-                remarks: values.outros,
-                status: "1",
-                createdBy: "1"
-            };
+            if (selectedIntervention === undefined) {
+                let payload: SubServiceParams = {
+                    id: {
+                        beneficiaryId: beneficiary.id,
+                        subServiceId: values.subservice,
+                        date: moment(values.dataBeneficio).format('YYYY-MM-DD'),
+                    },
+                    beneficiaries: {
+                        id: '' + beneficiary.id
+                    },
+                    subServices: {
+                        id: values.subservice
+                    },
+                    date: moment(values.dataBeneficio).format('YYYY-MM-DD'),
+                    result: "", 
+                    us: { id: values.location},
+                    activistId: localStorage.user,
+                    entryPoint: values.entryPoint,
+                    provider: values.provider,
+                    remarks: values.outros,
+                    status: "1",
+                    createdBy: localStorage.user
+                };
 
-            const { data } = selectedIntervention === undefined ? await addSubService(payload) : await updateSubService(payload);
-            
-            if(selectedIntervention === undefined){
-                setInterventions(interventions => [...interventions, data]);
+                const { data } = await addSubService(payload);
+
+                setInterventions(interventions => [...interventions, data.intervention]);
             } else {
+                let payload: SubServiceParams = {
+                    id: {
+                        beneficiaryId: beneficiary.id,
+                        subServiceId: selectedIntervention.id.subServiceId,
+                        date: moment(selectedIntervention.id.date).format('YYYY-MM-DD'),
+                    },
+                    beneficiaries: {
+                        id: '' + beneficiary.id
+                    },
+                    subServices: {
+                        id: values.subservice
+                    },
+                    date: moment(values.dataBeneficio).format('YYYY-MM-DD'),
+                    result: "", 
+                    us: { id: values.location},
+                    activistId: localStorage.user,
+                    entryPoint: values.entryPoint,
+                    provider: values.provider,
+                    remarks: values.outros,
+                    status: selectedIntervention.status,
+                    createdBy: localStorage.user
+                };
+
+                const { data } = await updateSubService(payload);
+
                 setInterventions(existingItems => {
                     return existingItems.map((item, j) => {
                       return    item.id.beneficiaryId === selectedIntervention.id.beneficiaryId && 
@@ -129,7 +182,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
                 title: 'Ponto de Entrada',
                 dataIndex: '',
                 key: 'entryPoint',
-                render: (text, record) => getEntryPoint(record.entryPoint),
+                render: (text, record) => record.us.name,
             },
             {
                 title: 'Action',
@@ -170,11 +223,12 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
                                     <span>Serviços de Saúde Reprodutiva</span><br />
                                     <span>de Adolescente e Jovens</span><br />
                                     <span style={{ fontWeight: "bold", color: "#17a2b8" }}>
-                                        {beneficiary?.nui}</span><br />
-                                    <span style={{ fontWeight: "bold", textTransform: "uppercase" }}>
+                                        {`${beneficiary.neighborhood.locality.district.code}/${beneficiary?.nui}`}
+                                    </span><br />
+                                    <span style={{ fontWeight: "bold" /*, textTransform: "uppercase" */}}>
                                         {`${beneficiary?.name} ${beneficiary?.surname}`}</span><br /><br />
-                                    <span>Ponto de Referencia:</span><br />
-                                    <span>{beneficiary?.entryPoint}</span><br />
+                                    <span>Ponto de Referência:</span><br />
+                                    <span style={{ color: "#17a2b8" }}>{beneficiary?.neighborhood.name}</span><br />
                                 </div>
                             </Card>
 
@@ -184,31 +238,31 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
                                 title="Dados Gerais"
                                 bordered={true}
                                 headStyle={{ background: "#17a2b8" }}
-                                bodyStyle={{ paddingLeft: "10px", paddingRight: "10px", height: "244px" }}
+                                bodyStyle={{ paddingLeft: "10px", paddingRight: "10px", height: "244px", textAlign: "left" }}
                             >
                                 <Row gutter={8}>
-                                    <Col className="gutter-row" style={{ background: "#f3f4f5" }} span={12}>Nacionalidade</Col>
-                                    <Col className="gutter-row" style={{ background: "#f3f4f5" }} span={12}>Mozambique</Col>
+                                    <Col className="gutter-row" style={{ fontWeight: "bold", background: "#f3f4f5" }} span={12}>Nacionalidade</Col>
+                                    <Col className="gutter-row" style={{ background: "#f3f4f5" }} span={12}>Moçambicana</Col>
                                 </Row>
                                 <Row gutter={8} >
-                                    <Col className="gutter-row" span={12}>Província</Col>
+                                    <Col className="gutter-row" style={{ fontWeight: "bold"}} span={12}>Província</Col>
                                     <Col className="gutter-row" span={12}>{beneficiary?.neighborhood.locality.district.province.name}</Col>
                                 </Row>
                                 <Row gutter={8}>
-                                    <Col className="gutter-row" style={{ background: "#f3f4f5" }} span={12}>Distrito</Col>
+                                    <Col className="gutter-row" style={{ fontWeight: "bold", background: "#f3f4f5" }} span={12}>Distrito</Col>
                                     <Col className="gutter-row" style={{ background: "#f3f4f5" }} span={12}>{beneficiary?.neighborhood.locality.district.name}</Col>
                                 </Row>
                                 <Row gutter={8} >
-                                    <Col className="gutter-row" span={12}>Idade</Col>
-                                    <Col className="gutter-row" span={12}>{beneficiary?.grade}</Col>
+                                    <Col className="gutter-row" style={{ fontWeight: "bold"}} span={12}>Idade</Col>
+                                    <Col className="gutter-row" span={12}>{calculateAge(beneficiary?.dateOfBirth)} anos</Col>
                                 </Row>
                                 <Row gutter={8}>
-                                    <Col className="gutter-row" style={{ background: "#f3f4f5" }} span={12}>Sexo</Col>
+                                    <Col className="gutter-row" style={{ fontWeight: "bold", background: "#f3f4f5" }} span={12}>Sexo</Col>
                                     <Col className="gutter-row" style={{ background: "#f3f4f5" }} span={12}>{beneficiary?.gender === 1 ? 'M' : 'F'}</Col>
                                 </Row>
                                 <Row gutter={8} >
-                                    <Col className="gutter-row" span={12}>Com quem mora?</Col>
-                                    <Col className="gutter-row" span={12}>{beneficiary?.livesWith}</Col>
+                                    <Col className="gutter-row" style={{ fontWeight: "bold"}} span={12}>Com quem mora?</Col>
+                                    <Col className="gutter-row" span={12}>{beneficiary?.vbltLivesWith}</Col>
                                 </Row>
 
                             </Card>
@@ -222,8 +276,25 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
 
                             >
                                 <span>MZ</span><br />
-                                <span>{`${beneficiary?.neighborhood.description}`}</span><br />
+                                <span>{`${beneficiary?.neighborhood.locality.name}${beneficiary?.address==null? '' : ', ' + beneficiary?.address}`}</span><br />
                                 <span>{beneficiary?.phoneNumber}</span><br />
+                                <span>{beneficiary?.email}</span><br />
+                            </Card>
+                            <br />
+                            <Card
+
+                                title="Parceiro/Acompanhante"
+                                bordered={true}
+                                headStyle={{ background: "#17a2b8" }}
+                            >
+                                <span>
+                                    <Button hidden={beneficiary.partnerId === null} 
+                                        // onClick={} 
+                                        type="primary" 
+                                        style={{ background: "#00a65a", borderColor: "#00a65a", borderRadius:'4px' }} >
+                                        {partner?.nui}
+                                    </Button>
+                                </span><br />
                             </Card>
                         </Col>
                     </Row>
@@ -233,7 +304,9 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
                     title="Lista de Intervenções DREAMS"
                     extra={
                         <Space>
-                            <Button type='primary' icon={<ArrowUpOutlined />} danger >Referir Beneficiaria</Button>
+                            <Button onClick={() => onAddReference(true, beneficiary)} type='primary' icon={<ArrowUpOutlined />} danger >
+                                Referir Beneficiária
+                            </Button>
                             <Button onClick={onAddIntervention} type="primary" icon={<PlusOutlined />} >
                                 Adicionar Serviço Dreams
                             </Button>
@@ -241,7 +314,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
                     }
                 >
                     <Table
-                        rowKey="dateCreated"
+                        rowKey={( record? ) => `${record.id.subServiceId}${record.id.date}`}
                         pagination={false}
                         columns={interventionColumns}
                         dataSource={interventions}
@@ -259,14 +332,14 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
                     style={{ position: 'absolute' }}
                     extra={
                         <Space>
-                            <Button onClick={onClose}>Cancel</Button>
+                            <Button onClick={onClose}>Cancelar</Button>
                             <Button htmlType="submit" onClick={() => onSubmit(selectedIntervention)} type="primary">
-                                Submit
+                                Salvar
                             </Button>
                         </Space>
                     }
                 >
-                    {isAdd ? <Form form={form} layout="vertical" onFinish={() => onSubmit(selectedIntervention)}> <InterventionForm record={selectedIntervention} /></Form> :
+                    {isAdd ? <Form form={form} layout="vertical" onFinish={() => onSubmit(selectedIntervention)}> <InterventionForm record={selectedIntervention} beneficiary={beneficiary} /></Form> :
                         <ViewIntervention record={selectedBeneficiary} beneficiary={beneficiary} />
                     }
                 </Drawer>
@@ -275,13 +348,11 @@ export function ViewBenefiaryPanel({ beneficiary, columns }) {
     );
 }
 
-const ViewBeneficiary = ({ beneficiary, modalVisible, handleAdd, handleModalVisible }) => {
+const ViewBeneficiary = ({ beneficiary, modalVisible, handleModalVisible , handleModalRefVisible}) => {
 
     const okHandle = () => {
-        handleAdd("test");
         handleModalVisible();
     }
-
 
     return (
 
@@ -294,10 +365,10 @@ const ViewBeneficiary = ({ beneficiary, modalVisible, handleAdd, handleModalVisi
             onOk={okHandle}
             onCancel={() => handleModalVisible()}
         >
-            <ViewBenefiaryPanel beneficiary={beneficiary} columns={undefined} />
+            
+            <ViewBenefiaryPanel beneficiary={beneficiary} columns={undefined} handleModalVisible={handleModalVisible} handleModalRefVisible={handleModalRefVisible}/>
 
         </Modal>
-
 
     );
 }

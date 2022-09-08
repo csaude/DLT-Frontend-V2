@@ -13,6 +13,7 @@ export interface BeneficiariesInterventionsModel {
     provider?: any,
     remarks?: string,
     status?: any,
+    online_id?: any
 }
 
 export default class Beneficiaries_interventions extends Model {

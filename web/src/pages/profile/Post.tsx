@@ -7,7 +7,7 @@ const Post = ({isClearfix = false}: {isClearfix?: boolean}) => {
       <div className="user-block">
         <img
           className="img-circle img-bordered-sm"
-          src="/img/default-profile.png"
+          src="img/default-profile.png"
           alt="User"
         />
         <span className="username">

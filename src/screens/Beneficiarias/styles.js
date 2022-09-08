@@ -35,9 +35,10 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       right: 20,
       bottom: 20,
-      backgroundColor: '#0c4a6e',
+      //backgroundColor: '#0c4a6e',
+      backgroundColor: '#14b8a6', //orange.600
       borderRadius: 40,
-      elevation: 8,
+      elevation: 12,
     },
     fab1: {
       position: 'absolute',
@@ -46,7 +47,7 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       justifyContent: 'center',
       right: 20,
-      bottom: 40,
+      bottom: 90,
       backgroundColor: '#e0f2fe',
       borderRadius: 40,
       elevation: 8,
