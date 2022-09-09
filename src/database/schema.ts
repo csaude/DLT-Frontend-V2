@@ -106,6 +106,7 @@ export default appSchema({
           {name: 'neighbourhood_id',  type: "number", isIndexed: true },
           {name: 'locality_id',  type: "number", isOptional: true },
           {name: 'locality_name',  type: "string", isOptional: true },
+          {name: 'district_code',  type: "string"},
           {name: 'nationality',  type: "number", isOptional: true },
           {name: 'us_id',  type: "number", isIndexed: true },
           {name: 'status', type: 'number'},

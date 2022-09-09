@@ -10,8 +10,6 @@ import { SuccessHandler, ErrorHandler } from "../../../components/SyncIndicator"
 import { Context } from '../../../routes/DrawerNavigator';
 import { sync } from '../../../database/sync';
 
-
-
 const InterventionsView: React.FC = ({ route }: any) => {
 
     const {
@@ -94,7 +92,7 @@ const InterventionsView: React.FC = ({ route }: any) => {
                         data={interventions}
                         renderItem={renderItem}
                         renderHiddenItem={renderHiddenItem}
-                        rightOpenValue={-80}
+                        rightOpenValue={-56}
                         previewRowKey={'0'}
                         previewOpenValue={-40}
                         previewOpenDelay={3000}

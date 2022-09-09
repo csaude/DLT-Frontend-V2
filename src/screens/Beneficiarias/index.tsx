@@ -53,15 +53,9 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
             Q.where('beneficiary_id', beneficiaryId),
         ).fetch();
 
-        
-
-
-        
-
         const beneficiaryReferencesSerializable = references.map((e) => {
             return e._raw;
         });
-        //console.log(beneficiaryReferences.length);
 
         const interventions = beneficiaries_interventions.filter((e) => {
             return e._raw.beneficiary_id == beneficiarie.online_id
@@ -131,10 +125,10 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
                 <View style={{width:"50%"}}>
                     <HStack>
                         <Text color="warmGray.400" _dark={{ color: "warmGray.200" }}>
-                            NID:
+                            NUI:
                         </Text>
                         <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
-                            {` ${data.item.nui}`}
+                            {` ${data.item._raw.district_code}/${data.item.nui}`}
                         </Text>
                     </HStack>
                     <HStack style={{alignContent:'center'}}>
@@ -160,11 +154,14 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
                         </Text>
                     </HStack>
                     <HStack>
-                        <Badge colorScheme="info">{   (data.item.entry_point === "1") ?
+                        <Badge colorScheme="info">
+                            {   (data.item.entry_point === "1") ?
                                     "US" :
-                                    (data.item.entry_point === "2") ?
-                                        "ES" : "CM"
-                            }</Badge>
+                                (data.item.entry_point === "2") ?
+                                    "CM" : 
+                                    "ES"
+                            }
+                        </Badge>
                     </HStack>
                     
                 </View>
@@ -184,7 +181,7 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
                 <Icon as={MaterialIcons} name="remove-red-eye" size={6} color="gray.200" />
             </Pressable>
             <Pressable px={4} bg="lightBlue.800" justifyContent="center"
-                onPress={() => navigate({ name: "UserForm", params: { user: data.item._raw } })}
+                onPress={() => navigate({ name: "BeneficiaryForm", params: { beneficiary: data.item._raw } })}
                 _pressed={{ opacity: 0.5 }}
             >
                 <Icon as={MaterialIcons} name="mode-edit" size={6} color="gray.200" />
@@ -216,7 +213,7 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
                 data={filteredBeneficiaries}
                 renderItem={renderItem}
                 renderHiddenItem={renderHiddenItem}
-                rightOpenValue={-150}
+                rightOpenValue={-112}
                 previewRowKey={'0'}
                 previewOpenValue={-40}
                 previewOpenDelay={3000}

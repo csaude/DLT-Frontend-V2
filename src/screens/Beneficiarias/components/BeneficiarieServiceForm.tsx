@@ -6,7 +6,7 @@ import {
     from 'react-native';
 import {
     Center, Box, Select, Text, Heading, VStack, FormControl,
-    Input, Link, Button, CheckIcon, WarningOutlineIcon, HStack,
+    Input, Link, Button, CheckIcon, WarningOutlineIcon, HStack, Checkbox,
     Alert, Flex, useToast, Stack, InputGroup, InputLeftAddon, InputRightAddon, Radio
 }
     from 'native-base';
@@ -22,6 +22,7 @@ import { Q } from "@nozbe/watermelondb";
 import { navigate } from '../../../routes/NavigationRef';
 import withObservables from '@nozbe/with-observables';
 import { database } from '../../../database';
+import ModalSelector from 'react-native-modal-selector-searchable';
 import { MaterialIcons } from "@native-base/icons";
 import Beneficiaries_interventions, { BeneficiariesInterventionsModel } from '../../../models/Beneficiaries_interventions';
 import { sync } from "../../../database/sync";
@@ -36,6 +37,9 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     const entry_points = [{ "id": '1', "name": "US" }, { "id": '3', "name": "CM" }, { "id": '2', "name": "ES" }];
 
     const [date, setDate] = useState(new Date());
+    const [users, setUsers] = useState<any>([]);
+    const [selectedUser, setSelectedUser] = useState<any>("");
+    const [checked, setChecked] = useState(false);
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
     const [text, setText] = useState('');
@@ -48,6 +52,19 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
         // let tempDate = new Date(currentDate);
         // setText(moment(tempDate).format('YYYY-MM-DD'));
         setText(selectedDate);
+    }
+
+    const onChangeUs = async (value: any) => {
+
+        const getUsersList = await database.get('users').query(
+            Q.where('us_ids', Q.like(`%${value}%`))
+        ).fetch();
+        const usersSerialized = getUsersList.map(item => item._raw);
+        setUsers(usersSerialized);
+    }
+
+    const onChangeToOutros = (value) => {
+        setChecked(value);
     }
 
     const showMode = (currentMode) => {
@@ -391,6 +408,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                                                 onValueChange={(itemValue, itemIndex) => {
                                                     if (itemIndex !== 0) {
                                                         setFieldValue('us_id', itemValue);
+                                                        onChangeUs(itemValue);
                                                     }
                                                 }
                                                 }>
@@ -444,10 +462,26 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
 
 
                                         </FormControl>
+                                       
                                         <FormControl isRequired isInvalid={'provider' in errors}>
                                             <FormControl.Label>Provedor do Serviço</FormControl.Label>
 
-                                            <Input onBlur={handleBlur('provider')} placeholder="Insira o seu Nome" onChangeText={handleChange('provider')} value={values.provider} />
+                                            {checked === false ?
+                                                <ModalSelector
+                                                    data={users}
+                                                    keyExtractor={item => item.online_id}
+                                                    labelExtractor={item => `${item.name} ${item.surname}`}
+                                                    renderItem={undefined}
+                                                    initValue="Select something yummy!"
+                                                    accessible={true}
+                                                    cancelButtonAccessibilityLabel={'Cancel Button'}
+                                                    onChange={(option) => { setSelectedUser(`${option.name} ${option.surname}`); setFieldValue('provider', option.online_id); }}>
+                                                    <Input type='text' onBlur={handleBlur('provider')} placeholder="Selecione o Provedor" onChangeText={handleChange('provider')} value={selectedUser} />
+                                                </ModalSelector> :
+                                                <Input onBlur={handleBlur('provider')} placeholder="Insira o Nome do Provedor" onChangeText={handleChange('provider')} value={values.provider} />
+                                            }
+                                            <Checkbox value="one" onChange={onChangeToOutros}>Outro</Checkbox>
+
                                             <FormControl.ErrorMessage>
                                                 {errors.provider}
                                             </FormControl.ErrorMessage>

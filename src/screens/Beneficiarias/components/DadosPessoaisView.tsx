@@ -34,27 +34,24 @@ const DadosPessoaisView: React.FC = ({ route }: any) => {
                                 {
                                     (beneficiary.gender === "1") ?
                                         <Icon as={Ionicons} name="man" color="white" size={70} />
-                                        :
-                                        (beneficiary.gender === "2") ?
-                                            <Icon as={Ionicons} name="woman" color="white" size={70} />
-                                            :
-                                            <Icon as={Ionicons} name="person" color="white" size={70} />
+                                    :
+                                    (beneficiary.gender === "2") ?
+                                        <Icon as={Ionicons} name="woman" color="white" size={70} />
+                                    :
+                                        <Icon as={Ionicons} name="person" color="white" size={70} />
                                 }
                             </Avatar>
                             <Box style={styles.userText}>
                                 <Text>{beneficiary.username}</Text>
                                 <Heading style={styles.username}>{beneficiary.name} {beneficiary.surname}</Heading>
                                 <Text style={styles.nui}>
-                                    {beneficiary.nui}
+                                    {`${beneficiary.district_code}/${beneficiary.nui}`}
                                 </Text>
                             </Box>
                         </Box>
                         <Flex direction="column" mb="2.5" _text={{ color: "coolGray.800" }}>
                             <Box bg="primary.500" p="2" rounded="lg">
-
-
-
-                                <Heading size="md" color="white">Detalhes da Beneficiaria</Heading>
+                                <Heading size="md" color="white">Detalhes da Beneficiária</Heading>
                                 <Divider />
                                 <Text style={styles.txtLabelInfo}>
                                     <Text style={styles.txtLabel}> Idade: </Text>
@@ -66,7 +63,7 @@ const DadosPessoaisView: React.FC = ({ route }: any) => {
                                 <Text style={styles.txtLabelInfo}>
                                     <Text style={styles.txtLabel}> Nivel: </Text>
                                     {
-                                        beneficiary.vblt_school_grade + "ª Classe"
+                                        beneficiary.vblt_school_grade? beneficiary.vblt_school_grade + "ª Classe" : ""
                                     }
                                 </Text>
 
@@ -82,12 +79,12 @@ const DadosPessoaisView: React.FC = ({ route }: any) => {
                                 <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}>Ponto de Entrada: </Text>
                                     {
                                         (beneficiary.entry_point === "1") ?
-                                            "Unidade Sanitaria"
-                                            :
-                                            (beneficiary.entry_point === "2") ?
-                                                "Escola"
-                                                :
-                                                "Comunidade"
+                                            "US"
+                                        :
+                                        (beneficiary.entry_point === "2") ?
+                                            "CM"
+                                        :
+                                            "ES"
                                     }
                                 </Text>
                             </Box>
