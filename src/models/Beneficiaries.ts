@@ -13,7 +13,7 @@ export interface BeneficiariesModel {
     address?: string,
     phone_number?: any,
     e_mail?: string,
-    lives_with?: string,
+    enrollment_date?: string,
     is_orphan?: any,
     via?: any,
     partner_id?: any,
@@ -61,12 +61,13 @@ export default class Beneficiarie extends Model {
     @text("surname") surname;
     @text("name") name;
     @text("nick_name") nick_name;
-    @text("organization_id") organization_id;
+    @field("organization_id") organization_id;
     @field("date_of_birth") date_of_birth;
     @text("gender") gender;
     @text("address") address;
     @text("phone_number") phone_number;
     @text("e_mail") e_mail;
+    @text("enrollment_date") enrollment_date;
     @text("via") via;
     @field("partner_id") partner_id;
     @field("entry_point") entry_point;

@@ -5,6 +5,7 @@ import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
 import { MaterialIcons, Ionicons, MaterialCommunityIcons } from "@native-base/icons";
 import { useFormik } from 'formik';
 import { Picker, PickerProps } from '@react-native-picker/picker';
+import DropDownPicker from 'react-native-dropdown-picker';
 import { Q } from "@nozbe/watermelondb";
 import ModalSelector from 'react-native-modal-selector-searchable';
 import StepperButton from '../../Beneficiarias/components/StapperButton';
@@ -14,10 +15,13 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import { navigate, navigationRef } from '../../../routes/NavigationRef';
 import moment from 'moment';
 import DatePicker, { getToday, getFormatedDate } from 'react-native-modern-datepicker';
+import { Context } from '../../../routes/DrawerNavigator';
 import { calculateAge, getMaxDate, getMinDate } from '../../../models/Utils';
 import styles from './styles';
 
 const BeneficiaryForm: React.FC = ({ route }: any) => {
+    
+    const loggedUser: any = useContext(Context);
 
     const idades = ['9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24'];
 
@@ -25,6 +29,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
 
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState(false);
+    const [beneficiarie, setBeneficairie] = useState(beneficiary);
     const [provinces, setProvinces] = useState<any>([]);
     const [districts, setDistricts] = useState<any>([]);
     const [localities, setLocalities] = useState<any>([]);
@@ -43,16 +48,6 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
     const [birthDate, setBirthDate] = useState<any>(undefined);
 
     
-
-    useEffect(() => {
-        const fetchProvincesData = async () => {
-            const getProvsList = await database.get('provinces').query().fetch();
-            const provSerialized = getProvsList.map(item => item._raw);
-            setProvinces(provSerialized);
-        }
-
-        fetchProvincesData().catch(error => console.log(error));
-    }, []);
 
     useEffect(() => {
         const fetchProvincesData = async () => {
@@ -142,6 +137,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             setLoading(true);
             const ben:any = await handleSaveBeneficiary();
    
+            setBeneficairie(ben?._raw);
             setNewNui(ben?._raw.nui);
             setLoading(false);
             setShowModal(true);
@@ -272,37 +268,104 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
 
     const handleSaveBeneficiary = async () => {
 
-        // get prefix and nui
-        const getPrefix:any = (await database.get('sequences').query().fetch())[0]?._raw;
-        const newNui = Number(getPrefix.last_nui)+1;
-        const fullNUI = `${getPrefix.prefix}${String(newNui).padStart(7, '0')}`
+        
         const district = districts.filter(d => d.online_id === formik.values.district)[0];
         setDistrict(district);
+
+        const partner_nui = formik.values.partner_nui;
+        let partner;
         
+        if(partner_nui && partner_nui !== ''){
+            partner = (await database.get('beneficiaries').query(
+                Q.where('nui', partner_nui)
+            ).fetch())[0]?._raw;
+        }
+        
+        const isEdit = beneficiarie && beneficiarie.id;
+
         const newObject = await database.write(async () => {
+
+            if (isEdit) {
+                const beneficiaryToUpdate = await database.get('beneficiaries').find(beneficiarie.id);
+                const updateBeneficiary = await beneficiaryToUpdate.update(() => {
+                    beneficiarie.surname = formik.values.surname, 
+                    beneficiarie.name = formik.values.name, 
+                    beneficiarie.nick_name = formik.values.nick_name, 
+                    beneficiarie.date_of_birth = formik.values.date_of_birth, 
+                    beneficiarie.gender = '2', 
+                    beneficiarie.address = formik.values.address, 
+                    beneficiarie.phone_number = formik.values.phone_number, 
+                    beneficiarie.e_mail = formik.values.e_mail, 
+                    beneficiarie.partner_id = partner?.online_id,
+                    beneficiarie.entry_point = formik.values.entry_point, 
+                    beneficiarie.us_id = formik.values.us_id,
+                    beneficiarie.neighbourhood_id = formik.values.neighbourhood_id, 
+                    beneficiarie.status = 1, 
+                    beneficiarie.locality_name = formik.values.locality_name, 
+                    beneficiarie.district_code = district.code, 
+                    beneficiarie.enrollment_date = formik.values.enrollment_date
+                    beneficiarie.vblt_lives_with = formik.values.vblt_lives_with, 
+                    beneficiarie.vblt_house_sustainer = Number(formik.values.vblt_house_sustainer),
+                    beneficiarie.vblt_is_orphan = Number(formik.values.vblt_is_orphan),
+                    beneficiarie.vblt_is_student = Number(formik.values.vblt_is_student),
+                    beneficiarie.vblt_school_grade = formik.values.vblt_school_grade,
+                    beneficiarie.vblt_school_name =formik.values.vblt_school_name,
+                    beneficiarie.vblt_is_deficient = Number(formik.values.vblt_is_deficient),
+                    beneficiarie.vblt_deficiency_type = formik.values.vblt_deficiency_type,
+                    beneficiarie.vblt_married_before = Number(formik.values.vblt_married_before),
+                    beneficiarie.vblt_pregnant_before = Number(formik.values.vblt_pregnant_before),
+                    beneficiarie.vblt_children = Number(formik.values.vblt_children),
+                    beneficiarie.vblt_pregnant_or_breastfeeding = Number(formik.values.vblt_pregnant_or_breastfeeding),
+                    beneficiarie.vblt_is_employed = formik.values.vblt_is_employed,
+                    beneficiarie.vblt_tested_hiv = formik.values.vblt_tested_hiv,
+                    beneficiarie.vblt_sexually_active = formik.values.vblt_sexually_active,
+                    beneficiarie.vblt_multiple_partners = formik.values.vblt_multiple_partners,
+                    beneficiarie.vblt_is_migrant = formik.values.vblt_is_migrant,
+                    beneficiarie.vblt_trafficking_victim = formik.values.vblt_trafficking_victim,
+                    beneficiarie.vblt_sexual_exploitation = formik.values.vblt_sexual_exploitation,
+                    beneficiarie.vblt_sexploitation_time = formik.values.vblt_sexploitation_time,
+                    beneficiarie.vblt_vbg_victim = formik.values.vblt_vbg_victim,
+                    beneficiarie.vblt_vbg_type = formik.values.vblt_vbg_type,
+                    beneficiarie.vblt_vbg_time = formik.values.vblt_vbg_time,
+                    beneficiarie.vblt_alcohol_drugs_use = formik.values.vblt_alcohol_drugs_use,
+                    beneficiarie.vblt_sti_history = formik.values.vblt_sti_history,
+                    beneficiarie.vblt_sex_worker = formik.values.vblt_sex_worker
+                })
+                return updateBeneficiary;
+
+            }
+            
+            // get prefix and nui
+            const getPrefix:any = (await database.get('sequences').query().fetch())[0]?._raw;
+            const newNui = Number(getPrefix.last_nui)+1;
+            const fullNUI = `${getPrefix.prefix}${String(newNui).padStart(7, '0')}`
+            
             const newBeneficiary = await database.collections.get('beneficiaries').create((beneficiary: any) => {
                 beneficiary.nui = fullNUI,
                 beneficiary.surname = formik.values.surname, 
                 beneficiary.name = formik.values.name, 
                 beneficiary.nick_name = formik.values.nick_name, 
                 beneficiary.date_of_birth = formik.values.date_of_birth, 
-                beneficiary.gender = '1', 
+                beneficiary.gender = '2', 
                 beneficiary.address = formik.values.address, 
                 beneficiary.phone_number = formik.values.phone_number, 
                 beneficiary.e_mail = formik.values.e_mail, 
-                beneficiary.via = 1, 
-                beneficiary.partner_id = 1,  //FIXME: define correctly
+                beneficiary.organization_id = loggedUser.partners.id, 
+                beneficiary.partner_id = partner?.online_id,
                 beneficiary.entry_point = formik.values.entry_point, 
                 beneficiary.us_id = formik.values.us_id,
                 beneficiary.neighbourhood_id = formik.values.neighbourhood_id, 
                 beneficiary.status = 1, 
                 beneficiary.locality_name = formik.values.locality_name, 
                 beneficiary.district_code = district.code, 
-                beneficiary.nationality = 1,
+                beneficiary.nationality = formik.values.nationality,
+                beneficiary.enrollment_date = formik.values.enrollment_date
                 beneficiary.vblt_lives_with = formik.values.vblt_lives_with, 
                 beneficiary.vblt_house_sustainer = Number(formik.values.vblt_house_sustainer),
                 beneficiary.vblt_is_orphan = Number(formik.values.vblt_is_orphan),
                 beneficiary.vblt_is_student = Number(formik.values.vblt_is_student),
+                beneficiary.vblt_school_grade = formik.values.vblt_school_grade,
+                beneficiary.vblt_school_name =formik.values.vblt_school_name,
                 beneficiary.vblt_is_deficient = Number(formik.values.vblt_is_deficient),
                 beneficiary.vblt_deficiency_type = formik.values.vblt_deficiency_type,
                 beneficiary.vblt_married_before = Number(formik.values.vblt_married_before),
@@ -320,11 +383,33 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             return newBeneficiary;
         });
 
+        console.log(newObject)
+
         return newObject;
     }
 
     const handleSubmit = async (values?: any) => {
-        navigationRef.goBack();
+        
+        const errorsList = validate(formik.values);
+        const hasErrors = JSON.stringify(errorsList) !== '{}';
+
+        if (hasErrors) {
+            setErrors(true);
+        } else {
+
+            // save the Beneficiary locally
+            setLoading(true);
+            const ben:any = await handleSaveBeneficiary();
+   
+            setBeneficairie(ben?._raw);
+            setNewNui(ben?._raw.nui);
+            setLoading(false);
+            setShowModal(true);
+
+            setErrors(false);
+
+            navigationRef.goBack();
+        }
     }
 
     const showDatepicker = () => {
@@ -513,11 +598,13 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                 <FormControl isRequired isInvalid={'enrollment_date' in formik.errors}>
                                     <FormControl.Label>Data Inscrição</FormControl.Label>
                                     {isDatePickerVisible2 && (
-                                        <DateTimePicker
-                                            testID="dateTimePicker"
-                                            value={datePickerValue2}
-                                            // mode={mode}
-                                            onChange={onChangeDatePicker2}
+                                        <DatePicker
+                                            mode="calendar"
+                                            disabled={!isDateRequired}
+                                            current={getFormatedDate(new Date(),'YYYY-MM-DD')}
+                                            minimumDate={'2017-01-01'}
+                                            maximumDate={getFormatedDate(new Date(),'YYYY-MM-DD')}
+                                            onDateChange={date => onChangeDatePicker2(null, date.replaceAll('/', '-'))}
                                         />
                                     )}
                                     <HStack w="100%" flex={1} space={5} alignItems="center"  >
@@ -531,7 +618,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                                 value={formik.values.enrollment_date}
                                                 onChangeText={formik.handleChange('enrollment_date')}
                                                 //value={moment(new Date(datePickerValue)).format('YYYY-MM-DD')}
-                                                placeholder="dd-M-yyyy" />
+                                                placeholder="yyyy-M-dd" />
                                         </InputGroup>
                                     </HStack>
 
@@ -550,7 +637,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                             }
                                         }
                                         }>
-                                        <Picker.Item label="-- Seleccione a Provincia --" value="0" />
+                                        <Picker.Item label="-- Seleccione a Província --" value="0" />
                                         {
                                             provinces.map(item => (
                                                 <Picker.Item key={item.online_id} label={item.name} value={item.online_id} />
@@ -721,6 +808,25 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         <Picker.Item key="3" label="Sozinho" value="Sozinho" />
                                         <Picker.Item key="3" label="Outros familiares" value="Outros familiares" />
                                     </Picker>
+
+                                    {/* <DropDownPicker
+                                        listMode={'MODAL'}
+                                        multiple={true}
+                                        min={0}
+                                        max={5}
+                                        open={this.state.openCurrencyDropDown}
+                                        setOpen={this.setOpenCurrencyDropDown}
+                                        setValue={this.setValue}
+                                        items={[{label:"-- Seleccione --", value:"0"},
+                                                {label:"Pais", value:"Pais"},
+                                                {label:"Avos", value:"Avos"},
+                                                {label:"Parceiro", value:"Parceiro"},
+                                                {label:"Sozinho", value:"Sozinho"},
+                                                {label:"Outros familiares", value:"Outros familiares"}
+                                        ]}
+                                        defaultValue={this.state.value}
+                                    /> */}
+
                                     <FormControl.ErrorMessage>
                                         {formik.errors.vblt_lives_with}
                                     </FormControl.ErrorMessage>
@@ -738,7 +844,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                                 Sim
                                             </Radio>
                                             <Radio key='rd2' value='0' colorScheme="green" size="lg" my={1}>
-                                                Nao
+                                                Não
                                             </Radio>
                                         </Stack>
                                     </Radio.Group>
@@ -759,7 +865,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                                 Sim
                                             </Radio>
                                             <Radio value='0' colorScheme="green" size="lg" my={1}>
-                                                Nao
+                                                Não
                                             </Radio>
                                         </Stack>
                                     </Radio.Group>
@@ -780,7 +886,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                                 Sim
                                             </Radio>
                                             <Radio value='0' colorScheme="green" size="lg" my={1}>
-                                                Nao
+                                                Não
                                             </Radio>
                                         </Stack>
                                     </Radio.Group>
@@ -822,7 +928,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                                 Sim
                                             </Radio>
                                             <Radio value='0' colorScheme="green" size="lg" my={1}>
-                                                Nao
+                                                Não
                                             </Radio>
                                         </Stack>
                                     </Radio.Group>
@@ -860,7 +966,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                                 Sim
                                             </Radio>
                                             <Radio value='0' colorScheme="green" size="lg" my={1}>
-                                                Nao
+                                                Não
                                             </Radio>
                                         </Stack>
                                     </Radio.Group>
@@ -881,7 +987,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                                 Sim
                                             </Radio>
                                             <Radio value='0' colorScheme="green" size="lg" my={1}>
-                                                Nao
+                                                Não
                                             </Radio>
                                         </Stack>
                                     </Radio.Group>
@@ -902,7 +1008,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                                 Sim
                                             </Radio>
                                             <Radio value='0' colorScheme="green" size="lg" my={1}>
-                                                Nao
+                                                Não
                                             </Radio>
                                         </Stack>
                                     </Radio.Group>
@@ -920,7 +1026,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                                 Sim
                                             </Radio>
                                             <Radio value='0' colorScheme="green" size="lg" my={1}>
-                                                Nao
+                                                Não
                                             </Radio>
                                         </Stack>
                                     </Radio.Group>
@@ -994,7 +1100,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                                 Sim
                                             </Radio>
                                             <Radio value='0' colorScheme="green" size="lg" my={1}>
-                                                Nao
+                                                Não
                                             </Radio>
                                         </Stack>
                                     </Radio.Group>
@@ -1015,7 +1121,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                                 Sim
                                             </Radio>
                                             <Radio key='r2' value='0' colorScheme="green" size="lg">
-                                                Nao
+                                                Não
                                             </Radio>
                                         </Stack>
                                     </Radio.Group>
@@ -1036,7 +1142,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                                 Sim
                                             </Radio>
                                             <Radio value='0' colorScheme="green" size="lg" my={1}>
-                                                Nao
+                                                Não
                                             </Radio>
                                         </Stack>
                                     </Radio.Group>
@@ -1057,7 +1163,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                                 Sim
                                             </Radio>
                                             <Radio value='0' colorScheme="green" size="lg" my={1}>
-                                                Nao
+                                                Não
                                             </Radio>
                                         </Stack>
                                     </Radio.Group>
@@ -1078,7 +1184,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                                 Sim
                                             </Radio>
                                             <Radio value='0' colorScheme="green" size="lg" my={1}>
-                                                Nao
+                                                Não
                                             </Radio>
                                         </Stack>
                                     </Radio.Group>
@@ -1116,7 +1222,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                                 Sim
                                             </Radio>
                                             <Radio value='0' colorScheme="green" size="lg" my={1}>
-                                                Nao
+                                                Não
                                             </Radio>
                                         </Stack>
                                     </Radio.Group>
@@ -1171,7 +1277,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                                 Sim
                                             </Radio>
                                             <Radio value='0' colorScheme="green" size="lg" my={1}>
-                                                Nao
+                                                Não
                                             </Radio>
                                         </Stack>
                                     </Radio.Group>
@@ -1191,7 +1297,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                                 Sim
                                             </Radio>
                                             <Radio key='sti2' value='0' colorScheme="green" size="lg" >
-                                                Nao
+                                                Não
                                             </Radio>
                                         </Stack>
                                     </Radio.Group>
@@ -1213,7 +1319,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                                 Sim
                                             </Radio>
                                             <Radio value='0' colorScheme="green" size="lg" my={1}>
-                                                Nao
+                                                Não
                                             </Radio>
                                         </Stack>
                                     </Radio.Group>
