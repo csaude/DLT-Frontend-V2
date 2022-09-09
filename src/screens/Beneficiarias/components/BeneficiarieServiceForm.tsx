@@ -462,16 +462,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
 
 
                                         </FormControl>
-                                        {/* <FormControl isRequired isInvalid={'provider' in errors}>
-                                            <FormControl.Label>Provedor do Serviço</FormControl.Label>
-
-                                            <Input onBlur={handleBlur('provider')} placeholder="Insira o seu Nome" onChangeText={handleChange('provider')} value={values.provider} />
-                                            <FormControl.ErrorMessage>
-                                                {errors.provider}
-                                            </FormControl.ErrorMessage>
-                                        </FormControl> */}
-
-
+                                       
                                         <FormControl isRequired isInvalid={'provider' in errors}>
                                             <FormControl.Label>Provedor do Serviço</FormControl.Label>
 
