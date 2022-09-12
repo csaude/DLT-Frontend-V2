@@ -24,7 +24,6 @@ const InterventionForm = ({ record, beneficiary}: any) => {
     const selectedIntervention = record;
     const service = selectedIntervention?.subServices === undefined? selectedIntervention?.services : selectedIntervention?.subServices.service;
   
-
     const inputRef = useRef<any>(null);
     const [users, setUsers] = React.useState<any>([]);
     const [name, setName] = useState('');
