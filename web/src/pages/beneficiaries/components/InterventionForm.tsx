@@ -48,6 +48,14 @@ const InterventionForm = ({ record, beneficiary}: any) => {
         setUser(user);
         setUs(data);
         setUsers(listUser);
+
+        let entryPoint = user?.entryPoint;
+
+        if(entryPoint != undefined){
+          entryPoint = entryPoint=== '1'? 'CLINIC' : 'COMMUNITY';
+          form.setFieldsValue({ areaServicos: entryPoint});
+          onChangeAreaServiço(entryPoint);
+        }
       } 
 
       const fetchServices = async () => {
@@ -124,7 +132,7 @@ const InterventionForm = ({ record, beneficiary}: any) => {
                   rules={[{ required: true, message: RequiredFieldMessage}]}
                   initialValue={service?.serviceType===undefined? undefined : service?.serviceType === '1'? 'CLINIC' : 'COMMUNITY'}
                 >
-                    <Select placeholder="Select Area Serviço" onChange={onChangeAreaServiço}>
+                    <Select placeholder="Select Area Serviço" onChange={onChangeAreaServiço} disabled={user?.profiles?.name != 'ADMIN'}>
                         {areaServicos.map(item => (
                             <Option key={item.id}>{item.name}</Option>
                         ))}
