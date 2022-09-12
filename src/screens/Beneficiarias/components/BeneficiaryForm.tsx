@@ -42,6 +42,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
     const [step, setStep] = useState(1);
     const [showModal, setShowModal] = useState(false);
     const [newNui, setNewNui] = useState();
+    const [province, setProvince] = useState<any>()
     const [district, setDistrict] = useState<any>()
     const [isDateRequired, setIsDateRequired] = useState<any>(true);
     const [age, setAge] = useState<any>(undefined);
@@ -61,51 +62,51 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
 
     const formik = useFormik({
         initialValues: {
-            surname: '',
-            name: '',
-            date_of_birth: '',
-            age: '',
-            nationality: '',
-            enrollment_date: '',
-            province: '',
-            district: '',
-            locality: '',
-            locality_name: '',
-            entry_point: '',
-            us_id: '',
-            nick_name: '',
-            address: '',
-            phone_number: '',
-            e_mail: '',
-            neighbourhood_id: '',
-            partner_nui: '',
-            vblt_lives_with: '',
-            vblt_is_orphan: '',
-            vblt_is_student: '',
-            vblt_school_grade: '',
-            vblt_school_name: '',
-            vblt_is_deficient: '',
-            vblt_deficiency_type: '',
-            vblt_married_before: '',
-            vblt_pregnant_before: '',
-            vblt_children: '',
-            vblt_pregnant_or_breastfeeding: '',
-            vblt_is_employed: '',
-            vblt_tested_hiv: '',
-            vblt_sexually_active: '',
-            vblt_multiple_partners: '',
-            vblt_is_migrant: '',
-            vblt_trafficking_victim: '',
-            vblt_sexual_exploitation: '',
-            vblt_sexploitation_time: '',
-            vblt_vbg_victim: '',
-            vblt_vbg_type: '',
-            vblt_vbg_time: '',
-            vblt_alcohol_drugs_use: '',
-            vblt_sti_history: '',
-            vblt_sex_worker: '',
-            vblt_house_sustainer: '',
-            references_a: ''
+            surname: beneficiarie?.surname,
+            name: beneficiarie?.name,
+            date_of_birth: beneficiarie?.date_of_birth,
+            age: calculateAge(beneficiarie?.date_of_birth),
+            nationality: beneficiarie?.nationality,
+            enrollment_date: beneficiarie?.enrollment_date,
+            province: provinces.filter(p => beneficiarie?.province === p.id)[0],
+            district: beneficiarie?.district,
+            locality: beneficiarie?.locality,
+            locality_name: beneficiarie?.locality_name,
+            entry_point: beneficiarie?.entry_point,
+            us_id: beneficiarie?.us_id,
+            nick_name: beneficiarie?.nick_name,
+            address: beneficiarie?.address,
+            phone_number: beneficiarie?.phone_number,
+            e_mail: beneficiarie?.e_mail,
+            neighbourhood_id: beneficiarie?.neighbourhood_id,
+            partner_nui: beneficiarie?.partner_nui,
+            vblt_lives_with: beneficiarie?.vblt_lives_with,
+            vblt_is_orphan: beneficiarie?.vblt_is_orphan,
+            vblt_is_student: beneficiarie?.vblt_is_student,
+            vblt_school_grade: beneficiarie?.vblt_school_grade,
+            vblt_school_name: beneficiarie?.vblt_school_name,
+            vblt_is_deficient: beneficiarie?.vblt_is_deficient,
+            vblt_deficiency_type: beneficiarie?.vblt_deficiency_type,
+            vblt_married_before: beneficiarie?.vblt_married_before,
+            vblt_pregnant_before: beneficiarie?.vblt_pregnant_before,
+            vblt_children: beneficiarie?.vblt_children,
+            vblt_pregnant_or_breastfeeding: beneficiarie?.vblt_pregnant_or_breastfeeding,
+            vblt_is_employed: beneficiarie?.vblt_is_employed,
+            vblt_tested_hiv: beneficiarie?.vblt_tested_hiv,
+            vblt_sexually_active: beneficiarie?.vblt_sexually_active,
+            vblt_multiple_partners: beneficiarie?.vblt_multiple_partners,
+            vblt_is_migrant: beneficiarie?.vblt_is_migrant,
+            vblt_trafficking_victim: beneficiarie?.vblt_trafficking_victim,
+            vblt_sexual_exploitation: beneficiarie?.vblt_sexual_exploitation,
+            vblt_sexploitation_time: beneficiarie?.vblt_sex_exploitation_time,
+            vblt_vbg_victim: beneficiarie?.vblt_vbg_victim,
+            vblt_vbg_type: beneficiarie?.vblt_vbg_type,
+            vblt_vbg_time: beneficiarie?.vblt_vbg_time,
+            vblt_alcohol_drugs_use: beneficiarie?.vblt_alchool_drugs_us,
+            vblt_sti_history: beneficiarie?.vblt_sti_history,
+            vblt_sex_worker: beneficiarie?.vblt_sex_worker,
+            vblt_house_sustainer: beneficiarie?.vblt_house_sustainer,
+            references_a: beneficiarie?.references_a
         },
         onSubmit: values => console.log(values),
         validate: values => validate(values)
@@ -330,6 +331,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                     beneficiarie.vblt_alcohol_drugs_use = formik.values.vblt_alcohol_drugs_use,
                     beneficiarie.vblt_sti_history = formik.values.vblt_sti_history,
                     beneficiarie.vblt_sex_worker = formik.values.vblt_sex_worker
+                    beneficiarie.updated_by = loggedUser.id;
                 })
                 return updateBeneficiary;
 
@@ -374,6 +376,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                 beneficiary.vblt_pregnant_or_breastfeeding = Number(formik.values.vblt_pregnant_or_breastfeeding),
                 beneficiary.vblt_is_employed = formik.values.vblt_is_employed,
                 beneficiary.vblt_tested_hiv = formik.values.vblt_tested_hiv
+                beneficiary.created_by = loggedUser.id;
             });
 
             const sequenceToUpdate = await database.get('sequences').find(getPrefix.id);
@@ -402,7 +405,6 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             const ben:any = await handleSaveBeneficiary();
    
             setBeneficairie(ben?._raw);
-            setNewNui(ben?._raw.nui);
             setLoading(false);
             setShowModal(true);
 
@@ -491,8 +493,6 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
 
         const onchangeAge = (value: any) =>{
 
-            console.log(value)
-
             var today = new Date();
             var birthYear = today.getFullYear() - value;
             var bDate = new Date(birthYear + "-01-01");
@@ -542,7 +542,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         <DatePicker
                                             mode="calendar"
                                             disabled={!isDateRequired}
-                                            current={birthDate === undefined? getFormatedDate(getMaxDate(),'YYYY-MM-DD') : getFormatedDate(birthDate,'YYYY-MM-DD')}
+                                            current={beneficiarie === undefined? getFormatedDate(getMaxDate(),'YYYY-MM-DD') : getFormatedDate(beneficiarie.date_of_birth,'YYYY-MM-DD')}
                                             minimumDate={getFormatedDate(getMinDate(),'YYYY-MM-DD')}
                                             maximumDate={getFormatedDate(getMaxDate(),'YYYY-MM-DD')}
                                             onDateChange={date => onChangeDatePicker(null, date.replaceAll('/', '-'))}
@@ -618,7 +618,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                                 value={formik.values.enrollment_date}
                                                 onChangeText={formik.handleChange('enrollment_date')}
                                                 //value={moment(new Date(datePickerValue)).format('YYYY-MM-DD')}
-                                                placeholder="yyyy-M-dd" />
+                                                placeholder="yyyy-MM-dd" />
                                         </InputGroup>
                                     </HStack>
 
@@ -840,10 +840,10 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         <Stack direction={{ base: "row", md: "row" }} alignItems={{
                                             base: "flex-start", md: "center"
                                         }} space={4} w="75%" maxW="300px">
-                                            <Radio key='rd1' value='1' colorScheme="green" size="lg" my={1}>
+                                            <Radio key='rd1' value='1' colorScheme="green" size="md" my={1}>
                                                 Sim
                                             </Radio>
-                                            <Radio key='rd2' value='0' colorScheme="green" size="lg" my={1}>
+                                            <Radio key='rd2' value='0' colorScheme="green" size="md" my={1}>
                                                 Não
                                             </Radio>
                                         </Stack>
@@ -861,10 +861,10 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         <Stack direction={{ base: "row", md: "row" }} alignItems={{
                                             base: "flex-start", md: "center"
                                         }} space={4} w="75%" maxW="300px">
-                                            <Radio value='1' colorScheme="green" size="lg" my={1}>
+                                            <Radio value='1' colorScheme="green" size="md" my={1}>
                                                 Sim
                                             </Radio>
-                                            <Radio value='0' colorScheme="green" size="lg" my={1}>
+                                            <Radio value='0' colorScheme="green" size="md" my={1}>
                                                 Não
                                             </Radio>
                                         </Stack>
@@ -882,10 +882,10 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         <Stack direction={{ base: "row", md: "row" }} alignItems={{
                                             base: "flex-start", md: "center"
                                         }} space={4} w="75%" maxW="300px">
-                                            <Radio value='1' colorScheme="green" size="lg" my={1}>
+                                            <Radio value='1' colorScheme="green" size="md" my={1}>
                                                 Sim
                                             </Radio>
-                                            <Radio value='0' colorScheme="green" size="lg" my={1}>
+                                            <Radio value='0' colorScheme="green" size="md" my={1}>
                                                 Não
                                             </Radio>
                                         </Stack>
@@ -924,10 +924,10 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         <Stack direction={{ base: "row", md: "row" }} alignItems={{
                                             base: "flex-start", md: "center"
                                         }} space={4} w="75%" maxW="300px">
-                                            <Radio value='1' colorScheme="green" size="lg" my={1}>
+                                            <Radio value='1' colorScheme="green" size="md" my={1}>
                                                 Sim
                                             </Radio>
-                                            <Radio value='0' colorScheme="green" size="lg" my={1}>
+                                            <Radio value='0' colorScheme="green" size="md" my={1}>
                                                 Não
                                             </Radio>
                                         </Stack>
@@ -962,10 +962,10 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         <Stack direction={{ base: "row", md: "row" }} alignItems={{
                                             base: "flex-start", md: "center"
                                         }} space={4} w="75%" maxW="300px">
-                                            <Radio value='1' colorScheme="green" size="lg" my={1}>
+                                            <Radio value='1' colorScheme="green" size="md" my={1}>
                                                 Sim
                                             </Radio>
-                                            <Radio value='0' colorScheme="green" size="lg" my={1}>
+                                            <Radio value='0' colorScheme="green" size="md" my={1}>
                                                 Não
                                             </Radio>
                                         </Stack>
@@ -983,10 +983,10 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         <Stack direction={{ base: "row", md: "row" }} alignItems={{
                                             base: "flex-start", md: "center"
                                         }} space={4} w="75%" maxW="300px">
-                                            <Radio value='1' colorScheme="green" size="lg" my={1}>
+                                            <Radio value='1' colorScheme="green" size="md" my={1}>
                                                 Sim
                                             </Radio>
-                                            <Radio value='0' colorScheme="green" size="lg" my={1}>
+                                            <Radio value='0' colorScheme="green" size="md" my={1}>
                                                 Não
                                             </Radio>
                                         </Stack>
@@ -1004,10 +1004,10 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         <Stack direction={{ base: "row", md: "row" }} alignItems={{
                                             base: "flex-start", md: "center"
                                         }} space={4} w="75%" maxW="300px">
-                                            <Radio value='1' colorScheme="green" size="lg" my={1}>
+                                            <Radio value='1' colorScheme="green" size="md" my={1}>
                                                 Sim
                                             </Radio>
-                                            <Radio value='0' colorScheme="green" size="lg" my={1}>
+                                            <Radio value='0' colorScheme="green" size="md" my={1}>
                                                 Não
                                             </Radio>
                                         </Stack>
@@ -1022,10 +1022,10 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         <Stack direction={{ base: "row", md: "row" }} alignItems={{
                                             base: "flex-start", md: "center"
                                         }} space={4} w="75%" maxW="300px">
-                                            <Radio value='1' colorScheme="green" size="lg" my={1}>
+                                            <Radio value='1' colorScheme="green" size="md" my={1}>
                                                 Sim
                                             </Radio>
-                                            <Radio value='0' colorScheme="green" size="lg" my={1}>
+                                            <Radio value='0' colorScheme="green" size="md" my={1}>
                                                 Não
                                             </Radio>
                                         </Stack>
@@ -1085,6 +1085,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                         finishBtnText='Actualizar'
                         previousBtnText='<< Anterior'
                     >
+                        {console.log(beneficiarie)}
                         <View style={{ alignItems: 'center' }}>
                             <VStack space={3} w="90%" >
                                 <FormControl isRequired isInvalid={'vblt_sexually_active' in formik.errors}>
@@ -1096,10 +1097,10 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         <Stack direction={{ base: "row", md: "row" }} alignItems={{
                                             base: "flex-start", md: "center"
                                         }} space={4} w="75%" maxW="300px">
-                                            <Radio value='1' colorScheme="green" size="lg" my={1}>
+                                            <Radio value='1' colorScheme="green" size="md" my={1}>
                                                 Sim
                                             </Radio>
-                                            <Radio value='0' colorScheme="green" size="lg" my={1}>
+                                            <Radio value='0' colorScheme="green" size="md" my={1}>
                                                 Não
                                             </Radio>
                                         </Stack>
@@ -1117,10 +1118,10 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         <Stack direction={{ base: "row", md: "row" }} alignItems={{
                                             base: "flex-start", md: "center"
                                         }} space={4} w="75%" maxW="300px">
-                                            <Radio key='r1' value='1' colorScheme="green" size="lg">
+                                            <Radio key='r1' value='1' colorScheme="green" size="md">
                                                 Sim
                                             </Radio>
-                                            <Radio key='r2' value='0' colorScheme="green" size="lg">
+                                            <Radio key='r2' value='0' colorScheme="green" size="md">
                                                 Não
                                             </Radio>
                                         </Stack>
@@ -1138,10 +1139,10 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         <Stack direction={{ base: "row", md: "row" }} alignItems={{
                                             base: "flex-start", md: "center"
                                         }} space={4} w="75%" maxW="300px">
-                                            <Radio value='1' colorScheme="green" size="lg" my={1}>
+                                            <Radio value='1' colorScheme="green" size="md" my={1}>
                                                 Sim
                                             </Radio>
-                                            <Radio value='0' colorScheme="green" size="lg" my={1}>
+                                            <Radio value='0' colorScheme="green" size="md" my={1}>
                                                 Não
                                             </Radio>
                                         </Stack>
@@ -1159,10 +1160,10 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         <Stack direction={{ base: "row", md: "row" }} alignItems={{
                                             base: "flex-start", md: "center"
                                         }} space={4} w="75%" maxW="300px">
-                                            <Radio value='1' colorScheme="green" size="lg" my={1}>
+                                            <Radio value='1' colorScheme="green" size="md" my={1}>
                                                 Sim
                                             </Radio>
-                                            <Radio value='0' colorScheme="green" size="lg" my={1}>
+                                            <Radio value='0' colorScheme="green" size="md" my={1}>
                                                 Não
                                             </Radio>
                                         </Stack>
@@ -1180,10 +1181,10 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         <Stack direction={{ base: "row", md: "row" }} alignItems={{
                                             base: "flex-start", md: "center"
                                         }} space={4} w="75%" maxW="300px">
-                                            <Radio value='1' colorScheme="green" size="lg" my={1}>
+                                            <Radio value='1' colorScheme="green" size="md" my={1}>
                                                 Sim
                                             </Radio>
-                                            <Radio value='0' colorScheme="green" size="lg" my={1}>
+                                            <Radio value='0' colorScheme="green" size="md" my={1}>
                                                 Não
                                             </Radio>
                                         </Stack>
@@ -1218,10 +1219,10 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         <Stack direction={{ base: "row", md: "row" }} alignItems={{
                                             base: "flex-start", md: "center"
                                         }} space={4} w="75%" maxW="300px">
-                                            <Radio value='1' colorScheme="green" size="lg" my={1}>
+                                            <Radio value='1' colorScheme="green" size="md" my={1}>
                                                 Sim
                                             </Radio>
-                                            <Radio value='0' colorScheme="green" size="lg" my={1}>
+                                            <Radio value='0' colorScheme="green" size="md" my={1}>
                                                 Não
                                             </Radio>
                                         </Stack>
@@ -1273,10 +1274,10 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         <Stack direction={{ base: "row", md: "row" }} alignItems={{
                                             base: "flex-start", md: "center"
                                         }} space={4} w="75%" maxW="300px">
-                                            <Radio value='1' colorScheme="green" size="lg" my={1}>
+                                            <Radio value='1' colorScheme="green" size="md" my={1}>
                                                 Sim
                                             </Radio>
-                                            <Radio value='0' colorScheme="green" size="lg" my={1}>
+                                            <Radio value='0' colorScheme="green" size="md" my={1}>
                                                 Não
                                             </Radio>
                                         </Stack>
@@ -1293,10 +1294,10 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         <Stack direction={{ base: "row", md: "row" }} alignItems={{
                                             base: "flex-start", md: "center"
                                         }} space={4} w="75%" maxW="300px">
-                                            <Radio key='sti1' value='1' colorScheme="green" size="lg">
+                                            <Radio key='sti1' value='1' colorScheme="green" size="md">
                                                 Sim
                                             </Radio>
-                                            <Radio key='sti2' value='0' colorScheme="green" size="lg" >
+                                            <Radio key='sti2' value='0' colorScheme="green" size="md" >
                                                 Não
                                             </Radio>
                                         </Stack>
@@ -1315,10 +1316,10 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         <Stack direction={{ base: "row", md: "row" }} alignItems={{
                                             base: "flex-start", md: "center"
                                         }} space={4} w="75%" maxW="300px">
-                                            <Radio value='1' colorScheme="green" size="lg" my={1}>
+                                            <Radio value='1' colorScheme="green" size="md" my={1}>
                                                 Sim
                                             </Radio>
-                                            <Radio value='0' colorScheme="green" size="lg" my={1}>
+                                            <Radio value='0' colorScheme="green" size="md" my={1}>
                                                 Não
                                             </Radio>
                                         </Stack>
