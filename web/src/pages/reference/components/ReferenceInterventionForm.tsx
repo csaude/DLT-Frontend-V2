@@ -226,7 +226,7 @@ const ReferenceInterventionForm = ({ form, record, beneficiary }: any) => {
               )}
             >
               {users.map((item) => (
-                <Option key={item.username}>{item.username}</Option>
+                <Option key={item.username}>{item.name+' '+item.surname}</Option>
               ))}
             </Select>
           </Form.Item>

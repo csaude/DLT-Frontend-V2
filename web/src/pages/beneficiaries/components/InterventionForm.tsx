@@ -24,7 +24,6 @@ const InterventionForm = ({ record, beneficiary}: any) => {
     const selectedIntervention = record;
     const service = selectedIntervention?.subServices === undefined? selectedIntervention?.services : selectedIntervention?.subServices.service;
   
-
     const inputRef = useRef<any>(null);
     const [users, setUsers] = React.useState<any>([]);
     const [name, setName] = useState('');
@@ -48,6 +47,14 @@ const InterventionForm = ({ record, beneficiary}: any) => {
         setUser(user);
         setUs(data);
         setUsers(listUser);
+
+        let entryPoint = user?.entryPoint;
+
+        if(entryPoint != undefined){
+          entryPoint = entryPoint=== '1'? 'CLINIC' : 'COMMUNITY';
+          form.setFieldsValue({ areaServicos: entryPoint});
+          onChangeAreaServiço(entryPoint);
+        }
       } 
 
       const fetchServices = async () => {
@@ -124,7 +131,7 @@ const InterventionForm = ({ record, beneficiary}: any) => {
                   rules={[{ required: true, message: RequiredFieldMessage}]}
                   initialValue={service?.serviceType===undefined? undefined : service?.serviceType === '1'? 'CLINIC' : 'COMMUNITY'}
                 >
-                    <Select placeholder="Select Area Serviço" onChange={onChangeAreaServiço}>
+                    <Select placeholder="Select Area Serviço" onChange={onChangeAreaServiço} disabled={user?.profiles?.name != 'ADMIN'}>
                         {areaServicos.map(item => (
                             <Option key={item.id}>{item.name}</Option>
                         ))}
@@ -196,7 +203,7 @@ const InterventionForm = ({ record, beneficiary}: any) => {
                   rules={[{ required: true, message: RequiredFieldMessage }]}
                   initialValue={selectedIntervention === undefined? undefined : moment(selectedIntervention?.id.date,'YYYY-MM-DD')}
                 >
-                  <DatePicker style={{width: '100%'}} />
+                  <DatePicker style={{width: '100%'}}  disabledDate={d => !d || d.isAfter(moment(new Date()))} />
                   
                 </Form.Item>
               </Col>
