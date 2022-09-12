@@ -27,6 +27,16 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
 
     const { beneficiary } = route.params;
 
+    const [open, setOpen] = useState(false);
+    const [value, setValue] = useState([]);
+    const [items, setItems] = useState([
+        // {label:"-- Seleccione --", value:"0"},
+        {label:"Pais", value:"Pais"},
+        {label:"Avos", value:"Avos"},
+        {label:"Parceiro", value:"Parceiro"},
+        {label:"Sozinho", value:"Sozinho"},
+        {label:"Outros familiares", value:"Outros familiares"}
+    ]);
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState(false);
     const [beneficiarie, setBeneficairie] = useState(beneficiary);
@@ -47,8 +57,9 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
     const [isDateRequired, setIsDateRequired] = useState<any>(true);
     const [age, setAge] = useState<any>(undefined);
     const [birthDate, setBirthDate] = useState<any>(undefined);
-
-    
+    const [schoolInfoEnabled, setSchoolInfoEnabled] = useState<any>(true);
+    const [deficiencyTypeEnabled, setDeficiencyTypeEnabled] = useState<any>(true);
+    const [childrenEnabled, setChildrenEnabled] = useState<any>(true);
 
     useEffect(() => {
         const fetchProvincesData = async () => {
@@ -341,7 +352,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             const getPrefix:any = (await database.get('sequences').query().fetch())[0]?._raw;
             const newNui = Number(getPrefix.last_nui)+1;
             const fullNUI = `${getPrefix.prefix}${String(newNui).padStart(7, '0')}`
-            
+
             const newBeneficiary = await database.collections.get('beneficiaries').create((beneficiary: any) => {
                 beneficiary.nui = fullNUI,
                 beneficiary.surname = formik.values.surname, 
@@ -385,8 +396,6 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             });
             return newBeneficiary;
         });
-
-        console.log(newObject)
 
         return newObject;
     }
@@ -487,6 +496,18 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             const usSerialized = getUsList.map(item => item._raw);
             setUss(usSerialized);
         }
+    }
+
+    const isStudentChange = async (value: any) => {
+        setSchoolInfoEnabled(value != 1);
+    }
+
+    const onIsDeficientChange = async (value: any) => {
+        setDeficiencyTypeEnabled(value != 1);
+    }
+
+    const onPregnantBeforeChane = async (value: any) => {
+        setChildrenEnabled(value != 1);
     }
 
     const IdadePicker: React.FC<PickerProps> = ({ selectedValue, onValueChange }: PickerProps) => {
@@ -794,38 +815,24 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                             <VStack space={3} w="90%" >
                                 <FormControl isRequired isInvalid={'vblt_lives_with' in formik.errors}>
                                     <FormControl.Label>Com quem mora?</FormControl.Label>
-                                    <Picker
-                                        selectedValue={formik.values.vblt_lives_with}
-                                        onValueChange={(itemValue, itemIndex) => {
-                                            if (itemIndex !== 0) {
-                                                formik.setFieldValue('vblt_lives_with', itemValue);
-                                            }
-                                        }}>
-                                        <Picker.Item label="-- Seleccione --" value="0" />
-                                        <Picker.Item key="1" label="Pais" value="Pais" />
-                                        <Picker.Item key="2" label="Avos" value="Avos" />
-                                        <Picker.Item key="3" label="Parceiro" value="Parceiro" />
-                                        <Picker.Item key="3" label="Sozinho" value="Sozinho" />
-                                        <Picker.Item key="3" label="Outros familiares" value="Outros familiares" />
-                                    </Picker>
-
-                                    {/* <DropDownPicker
-                                        listMode={'MODAL'}
+                                    <DropDownPicker
+                                        listMode="SCROLLVIEW"
                                         multiple={true}
                                         min={0}
                                         max={5}
-                                        open={this.state.openCurrencyDropDown}
-                                        setOpen={this.setOpenCurrencyDropDown}
-                                        setValue={this.setValue}
-                                        items={[{label:"-- Seleccione --", value:"0"},
-                                                {label:"Pais", value:"Pais"},
-                                                {label:"Avos", value:"Avos"},
-                                                {label:"Parceiro", value:"Parceiro"},
-                                                {label:"Sozinho", value:"Sozinho"},
-                                                {label:"Outros familiares", value:"Outros familiares"}
-                                        ]}
-                                        defaultValue={this.state.value}
-                                    /> */}
+                                        open={open}
+                                        value={value}
+                                        items={items}
+                                        setOpen={setOpen}
+                                        setValue={setValue}
+                                        setItems={setItems}
+                                        mode="BADGE"
+                                        badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
+                                        placeholder="-- Seleccione --"
+                                        onChangeValue={(value) => {
+                                            formik.setFieldValue('vblt_lives_with', value?.toString());
+                                        }}
+                                    />
 
                                     <FormControl.ErrorMessage>
                                         {formik.errors.vblt_lives_with}
@@ -877,7 +884,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                     <FormControl.Label>Vai a Escola?</FormControl.Label>
                                     <Radio.Group onChange={(itemValue) => {
                                         formik.setFieldValue('vblt_is_student', itemValue);
-
+                                        isStudentChange(itemValue);
                                     }} name="rg3" accessibilityLabel="pick a size">
                                         <Stack direction={{ base: "row", md: "row" }} alignItems={{
                                             base: "flex-start", md: "center"
@@ -894,7 +901,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         {formik.errors.vblt_is_student}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl >
+                                <FormControl isRequired={!schoolInfoEnabled} isInvalid={'vblt_school_grade' in formik.errors}>
                                     <FormControl.Label>Classe</FormControl.Label>
                                     <Picker
                                         selectedValue={formik.values.vblt_school_grade}
@@ -910,16 +917,22 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                             ))
                                         }
                                     </Picker>
+                                    <FormControl.ErrorMessage>
+                                        {formik.errors.vblt_school_grade}
+                                    </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl >
+                                <FormControl isRequired={!schoolInfoEnabled} isInvalid={'vblt_school_name' in formik.errors}>
                                     <FormControl.Label>Nome da Instituição de Ensino</FormControl.Label>
                                     <Input onBlur={formik.handleBlur('vblt_school_name')} placeholder="Insira o nome da Instituição" onChangeText={formik.handleChange('vblt_school_name')} value={formik.values.vblt_school_name} />
+                                    <FormControl.ErrorMessage>
+                                        {formik.errors.vblt_school_name}
+                                    </FormControl.ErrorMessage>
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'vblt_is_deficient' in formik.errors}>
                                     <FormControl.Label>Tem Deficiência?</FormControl.Label>
                                     <Radio.Group onChange={(itemValue) => {
                                         formik.setFieldValue('vblt_is_deficient', itemValue);
-
+                                        onIsDeficientChange(itemValue);
                                     }} name="rg4" accessibilityLabel="pick a size">
                                         <Stack direction={{ base: "row", md: "row" }} alignItems={{
                                             base: "flex-start", md: "center"
@@ -936,7 +949,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         {formik.errors.vblt_is_deficient}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl >
+                                <FormControl isRequired={!deficiencyTypeEnabled} isInvalid={'vblt_deficiency_type' in formik.errors}>
                                     <FormControl.Label>Tipo de Deficiência</FormControl.Label>
                                     <Picker
                                         selectedValue={formik.values.vblt_deficiency_type}
@@ -952,6 +965,9 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                             ))
                                         }
                                     </Picker>
+                                    <FormControl.ErrorMessage>
+                                        {formik.errors.vblt_deficiency_type}
+                                    </FormControl.ErrorMessage>
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'vblt_married_before' in formik.errors}>
                                     <FormControl.Label>Já foi Casada?</FormControl.Label>
@@ -978,7 +994,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                     <FormControl.Label>Já esteve Gravida?</FormControl.Label>
                                     <Radio.Group onChange={(itemValue) => {
                                         formik.setFieldValue('vblt_pregnant_before', itemValue);
-
+                                        onPregnantBeforeChane(itemValue);
                                     }} name="rg6" accessibilityLabel="pick a size">
                                         <Stack direction={{ base: "row", md: "row" }} alignItems={{
                                             base: "flex-start", md: "center"
@@ -995,7 +1011,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         {formik.errors.vblt_pregnant_before}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl >
+                                <FormControl isRequired={!childrenEnabled} isInvalid={'vblt_children' in formik.errors}>
                                     <FormControl.Label>Tem Filhos?</FormControl.Label>
                                     <Radio.Group onChange={(itemValue) => {
                                         formik.setFieldValue('vblt_children', itemValue);
@@ -1012,6 +1028,9 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                             </Radio>
                                         </Stack>
                                     </Radio.Group>
+                                    <FormControl.ErrorMessage>
+                                        {formik.errors.vblt_children}
+                                    </FormControl.ErrorMessage>
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'vblt_pregnant_or_breastfeeding' in formik.errors}>
                                     <FormControl.Label>Está Grávida ou a amamentar?</FormControl.Label>
