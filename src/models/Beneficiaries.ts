@@ -52,6 +52,8 @@ export interface BeneficiariesModel {
     vblt_sti_history?:any,
     vblt_sex_worker?:any,
     vblt_house_sustainer?:any,
+    created_by?:any,
+    updated_by?:any
 }
 
 export default class Beneficiarie extends Model {
@@ -105,5 +107,6 @@ export default class Beneficiarie extends Model {
     @field("vblt_sex_worker") vblt_sex_worker;
     @field("vblt_house_sustainer") vblt_house_sustainer;
     @field("references_a") references;
-    
+    @field("created_by") created_by;
+    @field("updated_by") updated_by;
 }

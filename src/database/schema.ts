@@ -139,6 +139,8 @@ export default appSchema({
           {name: 'vblt_sex_worker', type: 'number',isOptional: true},
           {name: 'vblt_house_sustainer', type: 'number',isOptional: true},
           {name: 'references_a', type: 'string',isOptional: true},
+          {name: 'created_by', type: 'number', isIndexed: true},
+          {name: 'updated_by', type: 'number', isOptional: true},
         ],
       }),
       tableSchema({
