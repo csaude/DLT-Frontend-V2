@@ -169,7 +169,7 @@ const BeneficiariesList: React.FC = () => {
         
         form.resetFields();
         
-        if (record.gender === "1") {
+        if (record.gender === "2") {
             if (record.partnerId != null) {
                 await fetchPartner(record).catch(error => console.log(error));
             }
