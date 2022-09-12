@@ -47,6 +47,7 @@ export interface SubServiceParams {
     remarks: string;
     status: string;
     createdBy: string;
+    updatedBy?: string;
 }
 
 export async function addSubService(payload: SubServiceParams) {

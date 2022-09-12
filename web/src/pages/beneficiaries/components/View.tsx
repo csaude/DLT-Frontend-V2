@@ -121,7 +121,8 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
                     provider: values.provider,
                     remarks: values.outros,
                     status: selectedIntervention.status,
-                    createdBy: localStorage.user
+                    updatedBy: localStorage.user,
+                    createdBy: selectedIntervention.createdBy
                 };
 
                 const { data } = await updateSubService(payload);
