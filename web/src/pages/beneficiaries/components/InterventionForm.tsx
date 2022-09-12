@@ -196,7 +196,7 @@ const InterventionForm = ({ record, beneficiary}: any) => {
                   rules={[{ required: true, message: RequiredFieldMessage }]}
                   initialValue={selectedIntervention === undefined? undefined : moment(selectedIntervention?.id.date,'YYYY-MM-DD')}
                 >
-                  <DatePicker style={{width: '100%'}} />
+                  <DatePicker style={{width: '100%'}}  disabledDate={d => !d || d.isAfter(moment(new Date()))} />
                   
                 </Form.Item>
               </Col>
