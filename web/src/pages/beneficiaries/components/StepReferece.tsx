@@ -4,6 +4,7 @@ import './index.css';
 import { allPartnersByType, allPartnersByTypeDistrict } from '@app/utils/partners';
 import { query, userById, allUsesByUs } from '@app/utils/users';
 import { allUs, allUsByType } from '@app/utils/uSanitaria';
+import {queryByCreated} from '@app/utils/reference';
 
 const { Option } = Select;
 const { Step } = Steps;
@@ -32,9 +33,13 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
 
       if (reference === undefined) {
         form.setFieldsValue({ createdBy: loggedUser?.name + ' ' + loggedUser?.surname });
+        form.setFieldsValue({ referenceNote: 
+                              ('REFDR' + String(userId).padStart(3, '0') + (loggedUser?.provinces === undefined ? '0': loggedUser?.provinces[0]?.id) + String(((await queryByCreated(localStorage.user))?.length)+ 1).padStart(3, '0'))
+                            });
       } else {
         const regUser = await query(reference?.createdBy);
         form.setFieldsValue({ createdBy: regUser?.name + ' ' + regUser?.surname });
+        form.setFieldsValue({ referenceNote: reference.referenceNote});
       }
       setUser(loggedUser);
     }
@@ -63,10 +68,6 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
     }
 
   }, [us]);
-
-  const getNotaRef = () => {
-    return 'REFDR' + String(userId).padStart(3, '0') + '0' + String(500 + 1).padStart(3, '0');
-  }
 
   const onChangeTipoServico = async (value: any) => {
     var payload = {
@@ -103,7 +104,6 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
             name="referenceNote"
             label="Nota Referência"
             rules={[{ required: true, message: 'Obrigatório' }]}
-            initialValue={reference === undefined ? getNotaRef() : reference.referenceNote}
           >
 
             <Input placeholder="Nota Referência" disabled />
