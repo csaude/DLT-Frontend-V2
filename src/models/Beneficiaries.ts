@@ -13,15 +13,17 @@ export interface BeneficiariesModel {
     address?: string,
     phone_number?: any,
     e_mail?: string,
-    lives_with?: string,
+    enrollment_date?: string,
     is_orphan?: any,
     via?: any,
     partner_id?: any,
     entry_point?: any,
-    neighbourhood_id?: any,
+    neighborhood_id?: any,
     locality_id?: any,
     locality_name?: any,
+    district_id?: any,
     district_code?: any,
+    province_id: any,
     us_id?: any,
     status?: any,
     online_id?:any,
@@ -52,6 +54,8 @@ export interface BeneficiariesModel {
     vblt_sti_history?:any,
     vblt_sex_worker?:any,
     vblt_house_sustainer?:any,
+    created_by?:any,
+    updated_by?:any
 }
 
 export default class Beneficiarie extends Model {
@@ -61,19 +65,22 @@ export default class Beneficiarie extends Model {
     @text("surname") surname;
     @text("name") name;
     @text("nick_name") nick_name;
-    @text("organization_id") organization_id;
+    @field("organization_id") organization_id;
     @field("date_of_birth") date_of_birth;
     @text("gender") gender;
     @text("address") address;
     @text("phone_number") phone_number;
     @text("e_mail") e_mail;
+    @text("enrollment_date") enrollment_date;
     @text("via") via;
     @field("partner_id") partner_id;
     @field("entry_point") entry_point;
-    @field("neighbourhood_id") neighbourhood_id;
+    @field("neighborhood_id") neighborhood_id;
     @field("locality_id") locality_id;
     @field("locality_name") locality_name;
+    @field("district_id") district_id;
     @field("district_code") district_code;
+    @field("province_id") province_id;
     @field("us_id") us_id;
     @field("status") status;
     @field("online_id") online_id;
@@ -104,5 +111,6 @@ export default class Beneficiarie extends Model {
     @field("vblt_sex_worker") vblt_sex_worker;
     @field("vblt_house_sustainer") vblt_house_sustainer;
     @field("references_a") references;
-    
+    @field("created_by") created_by;
+    @field("updated_by") updated_by;
 }
