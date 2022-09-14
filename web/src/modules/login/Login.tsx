@@ -29,7 +29,7 @@ const Login = () => {
       const data = await AuthService.loginByAuth(email, password);
       toast.success('Autenticação efectuada com sucesso!');
       setAuthLoading(false);
-      dispatch(loginUser(data.token));
+      dispatch(loginUser(data));
       navigate('/');
     } catch ( error ) {
       setAuthLoading(false);
