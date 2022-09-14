@@ -18,10 +18,12 @@ export interface BeneficiariesModel {
     via?: any,
     partner_id?: any,
     entry_point?: any,
-    neighbourhood_id?: any,
+    neighborhood_id?: any,
     locality_id?: any,
     locality_name?: any,
+    district_id?: any,
     district_code?: any,
+    province_id: any,
     us_id?: any,
     status?: any,
     online_id?:any,
@@ -73,10 +75,12 @@ export default class Beneficiarie extends Model {
     @text("via") via;
     @field("partner_id") partner_id;
     @field("entry_point") entry_point;
-    @field("neighbourhood_id") neighbourhood_id;
+    @field("neighborhood_id") neighborhood_id;
     @field("locality_id") locality_id;
     @field("locality_name") locality_name;
+    @field("district_id") district_id;
     @field("district_code") district_code;
+    @field("province_id") province_id;
     @field("us_id") us_id;
     @field("status") status;
     @field("online_id") online_id;
