@@ -111,6 +111,4 @@ export default class Beneficiarie extends Model {
     @field("vblt_sex_worker") vblt_sex_worker;
     @field("vblt_house_sustainer") vblt_house_sustainer;
     @field("references_a") references;
-    @field("created_by") created_by;
-    @field("updated_by") updated_by;
 }
