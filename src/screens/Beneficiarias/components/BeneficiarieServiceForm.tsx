@@ -43,6 +43,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
     const [text, setText] = useState('');
+    const [uss, setUss] = useState<any>([]);
 
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
@@ -52,6 +53,16 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
         // let tempDate = new Date(currentDate);
         // setText(moment(tempDate).format('YYYY-MM-DD'));
         setText(selectedDate);
+    }
+
+    const onChangeEntryPoint = async (value: any) => {
+
+        const uss = await database.get('us').query(
+            Q.where('entry_point', parseInt(value)),
+            Q.where('locality_id', parseInt(beneficiarie?.locality_id))
+        ).fetch();
+        const ussSerialied = uss.map(item => item._raw);
+        setUss(ussSerialied);
     }
 
     const onChangeUs = async (value: any) => {
@@ -384,6 +395,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                                                 onValueChange={(itemValue, itemIndex) => {
                                                     if (itemIndex !== 0) {
                                                         setFieldValue('entry_point', itemValue);
+                                                        onChangeEntryPoint(itemValue);
                                                     }
                                                 }
                                                 }>
@@ -414,7 +426,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                                                 }>
                                                 <Picker.Item label="-- Seleccione a US --" value="0" />
                                                 {
-                                                    us.map(item => (
+                                                    uss.map(item => (
                                                         <Picker.Item key={item.online_id} label={item.name} value={parseInt(item.online_id)} />
                                                     ))
                                                 }
