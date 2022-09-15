@@ -34,7 +34,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     const { beneficiarie, intervs, intervention } = route.params;
 
     const areaServicos = [{ "id": '1', "name": "Serviços Clinicos" }, { "id": '2', "name": "Serviços Comunitarios" }];
-    const entry_points = [{ "id": '1', "name": "US" }, { "id": '3', "name": "CM" }, { "id": '2', "name": "ES" }];
+    const entry_points = [{ "id": '1', "name": "US" }, { "id": '2', "name": "CM" }, { "id": '3', "name": "ES" }];
 
     const [date, setDate] = useState(new Date());
     const [users, setUsers] = useState<any>([]);
@@ -43,15 +43,24 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
     const [text, setText] = useState('');
+    const [uss, setUss] = useState<any>([]);
 
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
         setShow(false);
         setDate(currentDate);
 
-        // let tempDate = new Date(currentDate);
-        // setText(moment(tempDate).format('YYYY-MM-DD'));
         setText(selectedDate);
+    }
+
+    const onChangeEntryPoint = async (value: any) => {
+
+        const uss = await database.get('us').query(
+            Q.where('entry_point', parseInt(value)),
+            Q.where('locality_id', parseInt(beneficiarie?.locality_id))
+        ).fetch();
+        const ussSerialied = uss.map(item => item._raw);
+        setUss(ussSerialied);
     }
 
     const onChangeUs = async (value: any) => {
@@ -97,6 +106,12 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                     return e._raw.online_id == selSubService._raw.service_id
                 })[0];
 
+                const selUs = us.filter((e) => {
+                    return e._raw.online_id == intervention.us_id
+                })[0];
+
+                onChangeEntryPoint(intervention.activist_id);
+
                 initValues = {
                     areaServicos_id: selService._raw.service_type,
                     service_id: selService._raw.online_id,
@@ -104,7 +119,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                     sub_service_id: intervention.sub_service_id,
                     result: intervention.result,
                     date: intervention.date,
-                    us_id: intervention.us_id,
+                    us_id: selUs.online_id,
                     activist_id: intervention.activist_id,
                     entry_point: intervention.entry_point,
                     provider: intervention.provider,
@@ -146,7 +161,6 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     const validate = (values: any) => {
         const errors: BeneficiariesInterventionsModel = {};
 
-
         if (!values.service_id) {
             errors.id = message;
         }
@@ -167,13 +181,8 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
             errors.us_id = message;
         }
 
-
         if (!values.entry_point) {
             errors.entry_point = message;
-        }
-
-        if (!values.status) {
-            errors.status = message;
         }
 
         return errors;
@@ -199,7 +208,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                     intervention.entry_point = values.entry_point
                     intervention.provider = values.provider
                     intervention.remarks = values.remarks
-                    intervention.status = values.status
+                    intervention.status = 1
                     intervention._status = "updated"
                 })
                 toast.show({ placement: "bottom", title: "Intervention Updated Successfully: " + updatedIntervention._raw.id });
@@ -217,7 +226,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                     intervention.entry_point = values.entry_point
                     intervention.provider = values.provider
                     intervention.remarks = values.remarks
-                    intervention.status = values.status
+                    intervention.status = 1
 
                 });
                 toast.show({ placement: "bottom", title: "Intervention Saved Successfully: " + newIntervention._raw.id });
@@ -261,10 +270,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                     return (<ErrorHandler />);
                 }
             }));
-
     }
-
-
 
     return (
         <KeyboardAvoidingView>
@@ -384,6 +390,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                                                 onValueChange={(itemValue, itemIndex) => {
                                                     if (itemIndex !== 0) {
                                                         setFieldValue('entry_point', itemValue);
+                                                        onChangeEntryPoint(itemValue);
                                                     }
                                                 }
                                                 }>
@@ -414,7 +421,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                                                 }>
                                                 <Picker.Item label="-- Seleccione a US --" value="0" />
                                                 {
-                                                    us.map(item => (
+                                                    uss.map(item => (
                                                         <Picker.Item key={item.online_id} label={item.name} value={parseInt(item.online_id)} />
                                                     ))
                                                 }
@@ -428,19 +435,12 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                                             <FormControl.Label>Data Benefício</FormControl.Label>
 
                                             {show && (
-                                                // <DateTimePicker
-                                                //     testID="dateTimePicker"
-                                                //     value={date}
-                                                //     // mode={mode}
-                                                //     onChange={onChange}
-                                                // />
                                                 <DatePicker
                                                     mode="calendar"
                                                     maximumDate={getToday()}
                                                     onSelectedChange={date => onChange(null, date.replaceAll('/', '-'))}
                                                 />
                                             )}
-
 
                                             <HStack alignItems="center">
                                                 <InputGroup w={{
@@ -492,29 +492,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
 
                                             <Input onBlur={handleBlur('remarks')} placeholder="" onChangeText={handleChange('remarks')} value={values.remarks} />
 
-                                        </FormControl>
-
-                                        <FormControl isRequired isInvalid={'status' in errors}>
-                                            <FormControl.Label>Status</FormControl.Label>
-                                            <Picker
-                                                style={styles.dropDownPicker}
-                                                selectedValue={values.status}
-                                                onValueChange={(itemValue, itemIndex) => {
-                                                    if (itemIndex !== 0) {
-                                                        setFieldValue('status', itemValue);
-                                                    }
-                                                }
-                                                }>
-
-                                                <Picker.Item value="1" />
-                                                <Picker.Item key={'1'} label={"Activo"} value={1} />
-                                                <Picker.Item key={'2'} label={"Cancelado"} value={2} />
-                                            </Picker>
-                                            <FormControl.ErrorMessage>
-                                                {errors.status}
-                                            </FormControl.ErrorMessage>
-                                        </FormControl>
-
+                                        </FormControl>                                       
                                         <Button isLoading={loading} isLoadingText="Cadastrando" onPress={handleSubmit} my="10" colorScheme="primary">
                                             Cadastrar
                                         </Button>

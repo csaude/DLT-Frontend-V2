@@ -5,6 +5,7 @@ import {DateTime} from 'luxon';
 import {useTranslation} from 'react-i18next';
 import {logoutUser} from '@store/reducers/auth';
 import {Dropdown} from '@components';
+import moment from 'moment';
 import styled from 'styled-components';
 
 const StyledUserImage = styled.img`
@@ -19,6 +20,7 @@ const UserDropdown = () => {
   const [t] = useTranslation();
   const dispatch = useDispatch();
   const user = useSelector((state: any) => state.auth.currentUser);
+  const currentUser = useSelector((state: any) => state.auth.user);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const logOut = (event: any) => {
@@ -50,17 +52,18 @@ const UserDropdown = () => {
       menuTemplate={
         <>
           <li className="user-header bg-info">
+            {console.log(user)}
             <img
               src={user.picture || 'img/default-profile.png'}
               className="img-circle elevation-2"
               alt="User"
             />
             <p>
-              {user.email}
+              {currentUser?.name+' '+currentUser?.surname}
               <small>
-                <span>Member since </span>
+                <span>Membro desde </span>
                 <span>
-                  {DateTime.fromISO(user.createdAt).toFormat('dd LLL yyyy')}
+                  {moment(currentUser?.dateCreated).format('YYYY-MM-DD')}
                 </span>
               </small>
             </p>
@@ -71,14 +74,16 @@ const UserDropdown = () => {
               className="btn btn-default btn-flat"
               onClick={navigateToProfile}
             >
-              {t('header.user.profile')}
+              {/* {t('header.user.profile')} */}
+              Perfil
             </button>
             <button
               type="button"
               className="btn btn-default btn-flat float-right"
               onClick={logOut}
             >
-              {t('login.button.signOut')}
+              {/* {t('login.button.signOut')} */}
+              Sair
             </button>
           </li>
         </>
