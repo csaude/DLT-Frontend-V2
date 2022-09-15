@@ -3,6 +3,7 @@ import {createSlice} from '@reduxjs/toolkit';
 export interface AuthState {
   isLoggedIn: boolean;
   token: string | null;
+  user?: any;
   currentUser: any;
 }
 
@@ -20,9 +21,11 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     loginUser: (state, {payload}) => {
-      localStorage.setItem('token', payload);
+      localStorage.setItem('token', payload?.token);
+      console.log(payload);
+      state.user = payload?.account;
       state.isLoggedIn = true;
-      state.token = payload;
+      state.token = payload?.token;
     },
     logoutUser: (state) => {
       localStorage.removeItem('token');
