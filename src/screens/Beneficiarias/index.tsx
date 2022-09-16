@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { View, StyleSheet, TouchableOpacity, TouchableHighlight, ScrollView, Platform } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
-import { useToast, Alert, HStack, Text, Avatar, Pressable, Icon, Box, Select, Heading, VStack, FormControl, Input, Link, Button, CheckIcon, WarningOutlineIcon, Center, Flex, Badge } from 'native-base';
+import { useToast, Alert, HStack, Text, Avatar, Pressable, Icon, Box, Select, Heading, VStack, FormControl, Input, Link, Button, CheckIcon, WarningOutlineIcon, Center, Flex, Badge, Modal, InfoIcon } from 'native-base';
 import { navigate } from '../../routes/NavigationRef';
 import withObservables from '@nozbe/with-observables';
 import { MaterialIcons, Ionicons } from "@native-base/icons";
@@ -15,6 +15,7 @@ import { SuccessHandler, ErrorHandler } from "../../components/SyncIndicator";
 
 
 const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries_interventions }: any) => {
+    const [showModal, setShowModal] = useState(false);
     const [searchField, setSearchField] = useState('');
     const loggedUser: any = useContext(Context);
     const toast = useToast();
@@ -181,7 +182,7 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
                 <Icon as={MaterialIcons} name="remove-red-eye" size={6} color="gray.200" />
             </Pressable>
             <Pressable px={4} bg="lightBlue.800" justifyContent="center"
-                onPress={() => navigate({ name: "BeneficiaryForm", params: { beneficiary: data.item._raw } })}
+                onPress={() => navigate({ name: data.item._raw.gender == 1 ? "BeneficiaryPartnerForm" : "BeneficiaryForm", params: { beneficiary: data.item._raw } })}
                 _pressed={{ opacity: 0.5 }}
             >
                 <Icon as={MaterialIcons} name="mode-edit" size={6} color="gray.200" />
@@ -200,31 +201,73 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
     )
 
     return (
-        <View style={styles.container}>
-            <View style={styles.heading}>
-                <Box alignItems="center" w="80%" bgColor="white" style={{ borderRadius: 5, }}>
-                    <Input w={{ base: "100%", md: "25%" }} onChangeText={handleChange}
-                        InputLeftElement={<Icon as={MaterialIcons} name="search" size={5} ml="2" color="muted.700" />} placeholder="Search"
-                        style={{ borderRadius: 45 }} />
-                </Box>
+        <>
+            <View style={styles.container}>
+                <View style={styles.heading}>
+                    <Box alignItems="center" w="80%" bgColor="white" style={{ borderRadius: 5, }}>
+                        <Input w={{ base: "100%", md: "25%" }} onChangeText={handleChange}
+                            InputLeftElement={<Icon as={MaterialIcons} name="search" size={5} ml="2" color="muted.700" />} placeholder="Search"
+                            style={{ borderRadius: 45 }} />
+                    </Box>
 
+                </View>
+                <SwipeListView
+                    data={filteredBeneficiaries}
+                    renderItem={renderItem}
+                    renderHiddenItem={renderHiddenItem}
+                    rightOpenValue={-112}
+                    previewRowKey={'0'}
+                    previewOpenValue={-40}
+                    previewOpenDelay={3000}
+                    onRowDidOpen={onRowDidOpen}
+                />
+                <Center flex={1} px="3" >
+                    <StepperButton onAdd={() => setShowModal(true)}
+                        onRefresh={syncronize}
+                        isPrincipal={1} />
+                </Center>
             </View>
-            <SwipeListView
-                data={filteredBeneficiaries}
-                renderItem={renderItem}
-                renderHiddenItem={renderHiddenItem}
-                rightOpenValue={-112}
-                previewRowKey={'0'}
-                previewOpenValue={-40}
-                previewOpenDelay={3000}
-                onRowDidOpen={onRowDidOpen}
-            />
-            <Center flex={1} px="3" >
-                <StepperButton onAdd={() => navigate({ name: "BeneficiaryForm", params: {} })}
-                    onRefresh={syncronize}
-                    isPrincipal={1} />
+            <Center>
+                <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+                    <Modal.Content maxWidth="400px">
+                        <Modal.CloseButton />
+                        <Modal.Header>Registo de Beneficiária(o)</Modal.Header>
+                        <Modal.Body>
+                            <ScrollView>
+                                <Box alignItems='center'>
+                                    {/* <Ionicons name="md-checkmark-circle" size={100} color="#0d9488" /> */}
+                                    <Alert w="100%" status="success">
+                                        <VStack space={2} flexShrink={1}>
+                                            <HStack>
+                                                <InfoIcon mt="1"  />
+                                                <Text fontSize="sm" color="coolGray.800">
+                                                    Escolha Registar Beneficiária ou Parceiro!
+                                                </Text>
+                                            </HStack>
+                                            <Button onPress={() => {
+                                                setShowModal(false);
+                                                navigate({ name: "BeneficiaryForm", params: {} })
+                                            }}>
+                                                Registar Beneficiária
+                                            </Button>
+                                            <Button onPress={() => {
+                                                setShowModal(false);
+                                                navigate({ name: "BeneficiaryPartnerForm", params: {} })
+                                            }}>
+                                                Registar Parceiro
+                                            </Button>
+                                        </VStack>
+                                    </Alert>
+                                    <Text >
+                                    </Text>
+                                </Box>
+                            </ScrollView>
+                        </Modal.Body>
+                    </Modal.Content>
+                </Modal>
             </Center>
-        </View>
+        </>
+        
     );
 }
 
