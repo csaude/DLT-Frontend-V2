@@ -108,6 +108,11 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             fetchNeighborhoodsData().catch(error => console.log(error));
 
             setValue(beneficiarie?.vblt_lives_with.split(','));
+            setSchoolInfoEnabled(beneficiarie.vblt_is_student == 1);
+            setDeficiencyTypeEnabled(beneficiarie.vblt_is_deficient == 1);
+            setChildrenEnabled(beneficiarie.vblt_pregnant_before == 1);
+            setGbvInfoEnabled(beneficiarie.vblt_vbg_victim == 1);
+            setSexExploitationTimeEnabled(beneficiarie.vblt_sexual_exploitation == 1);
         }
     }, []);
 
@@ -149,11 +154,11 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             vblt_is_migrant: beneficiarie?.vblt_is_migrant,
             vblt_trafficking_victim: beneficiarie?.vblt_trafficking_victim,
             vblt_sexual_exploitation: beneficiarie?.vblt_sexual_exploitation,
-            vblt_sexploitation_time: beneficiarie?.vblt_sex_exploitation_time,
+            vblt_sexploitation_time: beneficiarie?.vblt_sexploitation_time,
             vblt_vbg_victim: beneficiarie?.vblt_vbg_victim,
             vblt_vbg_type: beneficiarie?.vblt_vbg_type,
             vblt_vbg_time: beneficiarie?.vblt_vbg_time,
-            vblt_alcohol_drugs_use: beneficiarie?.vblt_alchool_drugs_us,
+            vblt_alcohol_drugs_use: beneficiarie?.vblt_alcohol_drugs_use,
             vblt_sti_history: beneficiarie?.vblt_sti_history,
             vblt_sex_worker: beneficiarie?.vblt_sex_worker,
             vblt_house_sustainer: beneficiarie?.vblt_house_sustainer,
@@ -182,6 +187,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
         const hasErrors = JSON.stringify(errorsList) !== '{}';
 
         if (hasErrors) {
+            console.log(JSON.stringify(errorsList));
             setErrors(true);
         } else {
 
@@ -256,83 +262,83 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             if (!values.vblt_lives_with) {
                 errors.vblt_lives_with = errorMessage;
             }
-            if (!values.vblt_house_sustainer) {
+            if (values.vblt_house_sustainer == null) {
                 errors.vblt_house_sustainer = errorMessage;
             }
-            if (!values.vblt_is_orphan) {
+            if (values.vblt_is_orphan == null) {
                 errors.vblt_is_orphan = errorMessage;
             }
-            if (!values.vblt_is_student) {
+            if (values.vblt_is_student == null) {
                 errors.vblt_is_student = errorMessage;
             } 
-            if (!schoolInfoEnabled && !values.vblt_school_grade) {
+            if (schoolInfoEnabled && values.vblt_school_grade == null) {
                 errors.vblt_school_grade = errorMessage;
             }
-            if (!schoolInfoEnabled && !values.vblt_school_name) {
+            if (schoolInfoEnabled && values.vblt_school_name == null) {
                 errors.vblt_school_name = errorMessage;
             }
-            if (!values.vblt_is_deficient) {
+            if (values.vblt_is_deficient ==  null) {
                 errors.vblt_is_deficient = errorMessage;
             }
-            if (deficiencyTypeEnabled && !values.vblt_deficiency_type) {
-                errors.vblt_deficiency_type;
+            if (deficiencyTypeEnabled && values.vblt_deficiency_type == null) {
+                errors.vblt_deficiency_type = errorMessage;
             }
-            if (!values.vblt_married_before) {
+            if (values.vblt_married_before == null) {
                 errors.vblt_married_before = errorMessage;
             }
-            if (!values.vblt_pregnant_before) {
+            if (values.vblt_pregnant_before == null) {
                 errors.vblt_pregnant_before = errorMessage;
             } 
-            if (childrenEnabled && !values.vblt_children) {
+            if (childrenEnabled && values.vblt_children == null) {
                 errors.vblt_children = errorMessage;
             }
-            if (!values.vblt_pregnant_or_breastfeeding) {
+            if (values.vblt_pregnant_or_breastfeeding == null) {
                 errors.vblt_pregnant_or_breastfeeding = errorMessage;
             }
-            if (!values.vblt_is_employed) {
+            if (values.vblt_is_employed == null) {
                 errors.vblt_is_employed = errorMessage;
             }
-            if (!values.vblt_tested_hiv) {
+            if (values.vblt_tested_hiv == null) {
                 errors.vblt_tested_hiv = errorMessage;
             }
 
         } else if (step == 3) {
-            if (!values.vblt_sexually_active) {
+            if (values.vblt_sexually_active == null) {
                 errors.vblt_sexually_active = errorMessage;
             }
-            if (!values.vblt_multiple_partners) {
+            if (values.vblt_multiple_partners == null) {
                 errors.vblt_multiple_partners = errorMessage;
             }
-            if (!values.vblt_is_migrant) {
+            if (values.vblt_is_migrant == null) {
                 errors.vblt_is_migrant = errorMessage;
             }
-            if (!values.vblt_trafficking_victim) {
+            if (values.vblt_trafficking_victim == null) {
                 errors.vblt_trafficking_victim = errorMessage;
             }
-            if (!values.vblt_sexual_exploitation) {
+            if (values.vblt_sexual_exploitation == null) {
                 errors.vblt_sexual_exploitation = errorMessage;
             }
-            if (sexExploitationTimeEnabled && !values.vblt_sexploitation_time){
+            if (sexExploitationTimeEnabled && values.vblt_sexploitation_time == null){
                 errors.vblt_sexploitation_time = errorMessage;
             }
-            if (!values.vblt_vbg_victim) {
+            if (values.vblt_vbg_victim == null) {
                 errors.vblt_vbg_victim = errorMessage;
             }
             if (gbvInfoEnabled) {
-                if (!values.vblt_vbg_type) {
+                if (values.vblt_vbg_type == null) {
                     errors.vblt_vbg_type = errorMessage;
                 }
-                if (!values.vblt_vbg_time) {
+                if (values.vblt_vbg_time == null) {
                     errors.vblt_vbg_time = errorMessage;
                 }
             }
-            if (!values.vblt_alcohol_drugs_use) {
+            if (values.vblt_alcohol_drugs_use == null) {
                 errors.vblt_alcohol_drugs_use = errorMessage;
             }
-            if (!values.vblt_sti_history) {
+            if (values.vblt_sti_history == null) {
                 errors.vblt_sti_history = errorMessage;
             }
-            if (!values.vblt_sex_worker) {
+            if (values.vblt_sex_worker == null) {
                 errors.vblt_sex_worker = errorMessage;
             }
         }
@@ -358,6 +364,9 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
 
         const newObject = await database.write(async () => {
 
+            const locality = localities.filter(item => item.online_id === formik.values.locality)[0];
+            const partner_id = loggedUser.partner_id == undefined ? loggedUser.partners?.id : loggedUser.partner_id;
+
             if (isEdit) {
                 const beneficiaryToUpdate = await database.get('beneficiaries').find(beneficiarie?.id);
                 const updateBeneficiary = await beneficiaryToUpdate.update(() => {
@@ -368,14 +377,14 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                     beneficiarie.gender = '2', 
                     beneficiarie.address = formik.values.address, 
                     beneficiarie.phone_number = formik.values.phone_number, 
-                    beneficiarie.e_mail = formik.values.e_mail, 
+                    beneficiarie.e_mail = formik.values.e_mail,
                     beneficiarie.partner_id = partner?.online_id,
                     beneficiarie.entry_point = formik.values.entry_point, 
                     beneficiarie.us_id = formik.values.us_id,
                     beneficiarie.neighborhood_id = formik.values.neighborhood_id, 
                     beneficiarie.status = 1, 
                     beneficiarie.locality_id = formik.values.locality,
-                    beneficiarie.locality_name = formik.values.locality_name, 
+                    beneficiarie.locality_name = locality.name, 
                     beneficiarie.district_id = formik.values.district,  
                     beneficiarie.district_code = district.code,  
                     beneficiarie.province_id = formik.values.province, 
@@ -395,19 +404,19 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                     beneficiarie.vblt_pregnant_or_breastfeeding = Number(formik.values.vblt_pregnant_or_breastfeeding),
                     beneficiarie.vblt_is_employed = formik.values.vblt_is_employed,
                     beneficiarie.vblt_tested_hiv = formik.values.vblt_tested_hiv,
-                    beneficiarie.vblt_sexually_active = formik.values.vblt_sexually_active,
-                    beneficiarie.vblt_multiple_partners = formik.values.vblt_multiple_partners,
-                    beneficiarie.vblt_is_migrant = formik.values.vblt_is_migrant,
-                    beneficiarie.vblt_trafficking_victim = formik.values.vblt_trafficking_victim,
-                    beneficiarie.vblt_sexual_exploitation = formik.values.vblt_sexual_exploitation,
+                    beneficiarie.vblt_sexually_active = Number(formik.values.vblt_sexually_active),
+                    beneficiarie.vblt_multiple_partners = Number(formik.values.vblt_multiple_partners),
+                    beneficiarie.vblt_is_migrant = Number(formik.values.vblt_is_migrant),
+                    beneficiarie.vblt_trafficking_victim = Number(formik.values.vblt_trafficking_victim),
+                    beneficiarie.vblt_sexual_exploitation = Number(formik.values.vblt_sexual_exploitation),
                     beneficiarie.vblt_sexploitation_time = formik.values.vblt_sexploitation_time,
-                    beneficiarie.vblt_vbg_victim = formik.values.vblt_vbg_victim,
+                    beneficiarie.vblt_vbg_victim = Number(formik.values.vblt_vbg_victim),
                     beneficiarie.vblt_vbg_type = formik.values.vblt_vbg_type,
                     beneficiarie.vblt_vbg_time = formik.values.vblt_vbg_time,
-                    beneficiarie.vblt_alcohol_drugs_use = formik.values.vblt_alcohol_drugs_use,
-                    beneficiarie.vblt_sti_history = formik.values.vblt_sti_history,
-                    beneficiarie.vblt_sex_worker = formik.values.vblt_sex_worker
-                    beneficiarie.updated_by = loggedUser?.id;
+                    beneficiarie.vblt_alcohol_drugs_use = Number(formik.values.vblt_alcohol_drugs_use),
+                    beneficiarie.vblt_sti_history = Number(formik.values.vblt_sti_history),
+                    beneficiarie.vblt_sex_worker = Number(formik.values.vblt_sex_worker)
+                    beneficiarie._status = "updated"
                 })
                 return updateBeneficiary;
 
@@ -428,14 +437,14 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                 beneficiary.address = formik.values.address, 
                 beneficiary.phone_number = formik.values.phone_number, 
                 beneficiary.e_mail = formik.values.e_mail, 
-                beneficiary.organization_id = loggedUser.partners?.id, 
+                beneficiary.organization_id = partner_id, 
                 beneficiary.partner_id = partner?.online_id,
                 beneficiary.entry_point = formik.values.entry_point, 
                 beneficiary.us_id = formik.values.us_id,
                 beneficiary.neighborhood_id = formik.values.neighborhood_id, 
                 beneficiary.status = 1, 
                 beneficiary.locality_id = formik.values.locality,
-                beneficiary.locality_name = formik.values.locality_name, 
+                beneficiary.locality_name = locality.name, 
                 beneficiary.district_id = formik.values.district,  
                 beneficiary.district_code = district.code,  
                 beneficiary.province_id = formik.values.province, 
@@ -454,8 +463,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                 beneficiary.vblt_children = Number(formik.values.vblt_children),
                 beneficiary.vblt_pregnant_or_breastfeeding = Number(formik.values.vblt_pregnant_or_breastfeeding),
                 beneficiary.vblt_is_employed = formik.values.vblt_is_employed,
-                beneficiary.vblt_tested_hiv = formik.values.vblt_tested_hiv
-                beneficiary.created_by = loggedUser.id;
+                beneficiary.vblt_tested_hiv = formik.values.vblt_tested_hiv;
             });
 
             const sequenceToUpdate = await database.get('sequences').find(getPrefix.id);
@@ -474,6 +482,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
         const hasErrors = JSON.stringify(errorsList) !== '{}';
 
         if (hasErrors) {
+            console.log(JSON.stringify(errorsList));
             setErrors(true);
         } else {
 
@@ -772,12 +781,11 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                 <FormControl isRequired isInvalid={'locality' in formik.errors}>
                                     <FormControl.Label>Posto Administrativo</FormControl.Label>
                                     <Picker
-                                        selectedValue={`${formik.values.locality},${formik.values.locality_name}`}
+                                        selectedValue={formik.values.locality}
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
-                                                formik.setFieldValue('locality', itemValue.split(",")[0]);
-                                                formik.setFieldValue('locality_name', itemValue.split(",")[1]);
-                                                onChangeLocalities(itemValue.split(",")[0]);
+                                                formik.setFieldValue('locality', itemValue);
+                                                onChangeLocalities(itemValue);
                                             }
                                         }
                                         }>
@@ -785,7 +793,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         <Picker.Item label="-- Seleccione o Posto Administrativo --" value="0" />
                                         {
                                             localities.map(item => (
-                                                <Picker.Item key={`${item.online_id},${item.name}`} label={item.name} value={`${item.online_id},${item.name}`} />
+                                                <Picker.Item key={item.online_id} label={item.name} value={item.online_id} />
                                             ))
                                         }
                                     </Picker>
@@ -997,7 +1005,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                             ))
                                         }
                                     </Picker>
-                                    <FormControl.ErrorMessage>
+                                    <FormControl.ErrorMessage >
                                         {formik.errors.vblt_school_grade}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
@@ -1049,7 +1057,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         }
                                     </Picker>
                                     <FormControl.ErrorMessage>
-                                        {formik.errors.vblt_deficiency_type}
+                                        {deficiencyTypeEnabled? formik.errors.vblt_deficiency_type : ''}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'vblt_married_before' in formik.errors}>
@@ -1192,6 +1200,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                         previousBtnText='<< Anterior'
                     >
                         {console.log(beneficiarie)}
+                        {console.log(loggedUser)}
                         <View style={{ alignItems: 'center' }}>
                             <VStack space={3} w="90%" >
                                 <FormControl isRequired isInvalid={'vblt_sexually_active' in formik.errors}>
@@ -1310,7 +1319,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                                 formik.setFieldValue('vblt_sexploitation_time', itemValue);
                                             }
                                         }}
-                                        // enabled={sexExploitationTimeEnabled}
+                                        enabled={sexExploitationTimeEnabled}
                                     >
                                         <Picker.Item label="-- Seleccione --" value="0" />
                                         {
@@ -1354,7 +1363,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                                 formik.setFieldValue('vblt_vbg_type', itemValue);
                                             }
                                         }}
-                                        // enabled={gbvInfoEnabled}
+                                        enabled={gbvInfoEnabled}
                                     >
                                         <Picker.Item label="-- Seleccione --" value="0" />
                                         {
@@ -1367,7 +1376,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         {formik.errors.vblt_vbg_type}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl isRequired={!gbvInfoEnabled} isInvalid={'vblt_vbg_type' in formik.errors}>
+                                <FormControl isRequired={gbvInfoEnabled} isInvalid={'vblt_vbg_time' in formik.errors}>
                                     <FormControl.Label>Tempo</FormControl.Label>
                                     <Picker
                                         selectedValue={formik.values.vblt_vbg_time}
@@ -1376,7 +1385,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                                 formik.setFieldValue('vblt_vbg_time', itemValue);
                                             }
                                         }}
-                                        // enabled={!gbvInfoEnabled}
+                                        enabled={gbvInfoEnabled}
                                     >
                                         <Picker.Item label="-- Seleccione --" value="0" />
                                         {
@@ -1461,7 +1470,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             {loading ?
                 <Spinner
                     visible={true}
-                    textContent={'Registando Beneficiario...'}
+                    textContent={beneficiarie? 'Actualizando Beneficiário...' : 'Registando Beneficiário...'}
                     textStyle={styles.spinnerTextStyle}
                 /> : undefined
 
