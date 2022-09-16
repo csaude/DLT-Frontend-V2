@@ -277,7 +277,7 @@ const BeneficiariesList: React.FC = () => {
         { title: 'Código do Beneficiário (NUI)', dataIndex: '', key: 'nui', ...getColumnSearchProps('nui'),
             render: (text, record)  => (
                 <Text type="danger" >   
-                    {record.neighborhood.locality.district.code}/{record.nui}
+                    {record.neighborhood.locality?.district?.code}/{record.nui}
                 </Text>),
         },
         { title: 'Nome do Beneficiário', dataIndex: 'name', key: 'name', ...getColumnSearchProps('name'),
