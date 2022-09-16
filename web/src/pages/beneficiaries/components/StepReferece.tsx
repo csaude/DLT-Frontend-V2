@@ -229,7 +229,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
             label="Observações"
             initialValue={reference === undefined ? "" : reference?.remarks}
           >
-            <TextArea rows={2} placeholder="Observações" maxLength={6} />
+            <TextArea rows={2} placeholder="Observações" maxLength={600} />
           </Form.Item>
         </Col>
       </Row>
