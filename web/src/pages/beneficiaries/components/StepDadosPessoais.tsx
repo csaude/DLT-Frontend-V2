@@ -20,6 +20,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
     const [us, setUs] = useState<any>([]);
     const [age, setAge] = useState<any>(undefined);
     const [birthDate, setBirthDate] = useState<any>(undefined);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     let userEntryPoint = localStorage.getItem('entryPoint');
 
@@ -112,6 +113,12 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
             const dataDistricts = await queryDistrictsByProvinces({ provinces: [values + ""] });
             setDistricts(dataDistricts);    
         }
+
+        if (isLoading === false) {       
+            form.setFieldsValue({district: ''});
+            form.setFieldsValue({locality: ''});    
+            form.setFieldsValue({neighbourhood_id: ''});               
+        }
         
     }
 
@@ -122,9 +129,18 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
             const dataLocalities = await queryLocalitiesByDistricts({ districts: [values + ""] });
             setLocalities(dataLocalities);
         }
+
+        if (isLoading === false) {
+            form.setFieldsValue({neighbourhood_id: ''});
+            form.setFieldsValue({locality: ''});            
+        }
     }
 
     const onChangeLocality = async (values: any) => {
+
+        if (isLoading === false) {
+            form.setFieldsValue({neighbourhood_id: ''});
+        }
         if (values.length > 0) {
             const dataNeighborhood = await queryNeighborhoodsByLocalities({ localities: [values + ""] });
             setNeighborhoods(dataNeighborhood);
@@ -139,6 +155,8 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                 setUs(data);
             }
         }
+
+        setIsLoading(false);
     }
 
     const onChangeEntryPoint = async (e: any) => {

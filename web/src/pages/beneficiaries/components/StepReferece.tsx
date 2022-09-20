@@ -10,7 +10,7 @@ const { Option } = Select;
 const { Step } = Steps;
 const { TextArea } = Input;
 
-const areaServicos = [{ "id": 'CLINIC', "name": "Clinico" }, { "id": 'COMMUNITY', "name": "Comunitários" }];
+const areaServicos = [{ "id": 'CLINIC', "name": "Clinico" }, { "id": 'COMMUNITY', "name": "Comunitário" }];
 const options = [
   { label: 'US', value: '1' },
   { label: 'CM', value: '2' },
@@ -112,7 +112,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
         <Col span={8}>
           <Form.Item
             name="beneficiary_id"
-            label="Nº de Beneficiário"
+            label="NUI de Beneficiário"
             rules={[{ required: true, message: 'Obrigatório' }]}
             initialValue={reference === undefined ? selectedReference?.nui : reference?.beneficiaries?.nui}
           >
@@ -229,7 +229,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
             label="Observações"
             initialValue={reference === undefined ? "" : reference?.remarks}
           >
-            <TextArea rows={2} placeholder="Observações" maxLength={6} />
+            <TextArea rows={2} placeholder="Observações" maxLength={600} />
           </Form.Item>
         </Col>
       </Row>
