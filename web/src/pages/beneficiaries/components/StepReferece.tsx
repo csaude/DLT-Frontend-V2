@@ -10,7 +10,7 @@ const { Option } = Select;
 const { Step } = Steps;
 const { TextArea } = Input;
 
-const areaServicos = [{ "id": 'CLINIC', "name": "Clinico" }, { "id": 'COMMUNITY', "name": "Comunitários" }];
+const areaServicos = [{ "id": 'CLINIC', "name": "Clinico" }, { "id": 'COMMUNITY', "name": "Comunitário" }];
 const options = [
   { label: 'US', value: '1' },
   { label: 'CM', value: '2' },
