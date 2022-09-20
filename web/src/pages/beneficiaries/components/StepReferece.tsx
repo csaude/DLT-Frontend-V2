@@ -112,7 +112,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
         <Col span={8}>
           <Form.Item
             name="beneficiary_id"
-            label="Nº de Beneficiário"
+            label="NUI de Beneficiário"
             rules={[{ required: true, message: 'Obrigatório' }]}
             initialValue={reference === undefined ? selectedReference?.nui : reference?.beneficiaries?.nui}
           >
