@@ -1197,6 +1197,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                         finishBtnText='Actualizar'
                         previousBtnText='<< Anterior'
                     >
+                        {console.log(beneficiarie)}
                         <View style={{ alignItems: 'center' }}>
                             <VStack space={3} w="90%" >
                                 <FormControl isRequired isInvalid={'vblt_sexually_active' in formik.errors}>
