@@ -722,11 +722,21 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                                 </FormControl>
                                 <FormControl >
                                     <FormControl.Label>Endereço (Ponto de Referência)</FormControl.Label>
-                                    <Input onBlur={formik.handleBlur('address')} placeholder="Insira o Endereço" onChangeText={formik.handleChange('address')} value={formik.values.address} />
+                                    <Input onBlur={formik.handleBlur('address')} 
+                                        placeholder="Insira o Endereço" 
+                                        onChangeText={formik.handleChange('address')} 
+                                        value={formik.values.address} 
+                                        />
                                 </FormControl>
                                 <FormControl >
                                     <FormControl.Label>Telemóvel</FormControl.Label>
-                                    <Input onBlur={formik.handleBlur('phone_number')} placeholder="Insira o Telemóvel" onChangeText={formik.handleChange('phone_number')} value={formik.values.phone_number} />
+                                    <Input onBlur={formik.handleBlur('phone_number')} 
+                                        keyboardType="number-pad"
+                                        maxLength={9}
+                                        placeholder="Insira o Telemóvel" 
+                                        onChangeText={formik.handleChange('phone_number')} 
+                                        value={formik.values.phone_number} 
+                                        />
                                 </FormControl>
                                 <FormControl >
                                     <FormControl.Label>E-mail</FormControl.Label>

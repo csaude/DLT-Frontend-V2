@@ -4,6 +4,7 @@ import { View, HStack, Text, VStack, FormControl, Input, Stack, InputGroup, Inpu
 import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
 import { MaterialIcons, Ionicons, MaterialCommunityIcons } from "@native-base/icons";
 import { useFormik } from 'formik';
+import * as Yup from 'yup';
 import { Picker, PickerProps } from '@react-native-picker/picker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Q } from "@nozbe/watermelondb";
@@ -163,7 +164,25 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             vblt_sex_worker: beneficiarie?.vblt_sex_worker,
             vblt_house_sustainer: beneficiarie?.vblt_house_sustainer,
             references_a: beneficiarie?.references_a
-        },
+        },    
+        validationSchema: Yup.object({
+            e_mail: Yup.string().required('Obrigatório').email(),
+            phone_number: Yup.number().required('Obrigatório').positive().integer(),
+            // username: Yup.string()
+            //     .min(5, 'Deve conter 5 caracter ou mais')
+            //     .required('Obrigatório'),
+            // password: Yup.string()
+            //     .required('Obrigatório')
+            //     .max(25, 'Deve conter 25 caracteres ou menos')
+            //     .matches(/(?=.*\d)/,'Deve conter número')
+            //     .matches(/(?=.*[a-z])/,'Deve conter minúscula')
+            //     .matches(/(?=.*[A-Z])/, 'Deve conter Maiúscula')
+            //     .matches(/(?=.*[@$!%*#?&])/,'Deve conter caracter especial')
+            //     .min(8, 'Deve conter 8 caracter ou mais'),
+            // rePassword: Yup.string()
+            //     .oneOf([Yup.ref('password'), null], 'As senhas devem corresponder')
+            //     .required('Obrigatório')
+        }),
         onSubmit: values => console.log(values),
         validate: values => validate(values)
     });
@@ -850,11 +869,21 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                 </FormControl>
                                 <FormControl >
                                     <FormControl.Label>Telemóvel</FormControl.Label>
-                                    <Input onBlur={formik.handleBlur('phone_number')} placeholder="Insira o Telemóvel" onChangeText={formik.handleChange('phone_number')} value={formik.values.phone_number} />
+                                    <Input onBlur={formik.handleBlur('phone_number')} 
+                                        keyboardType="number-pad"
+                                        maxLength={9}
+                                        placeholder="Insira o Telemóvel" 
+                                        onChangeText={formik.handleChange('phone_number')} 
+                                        value={formik.values.phone_number} 
+                                        />
                                 </FormControl>
                                 <FormControl >
                                     <FormControl.Label>E-mail</FormControl.Label>
-                                    <Input onBlur={formik.handleBlur('e_mail')} placeholder="Insira o E_mail" onChangeText={formik.handleChange('e_mail')} value={formik.values.e_mail} />
+                                    <Input onBlur={formik.handleBlur('e_mail')} 
+                                        placeholder="Insira o E-mail" 
+                                        onChangeText={formik.handleChange('e_mail')} 
+                                        value={formik.values.e_mail} 
+                                        />
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'neighborhood_id' in formik.errors}>
                                     <FormControl.Label>Bairro</FormControl.Label>
@@ -1197,7 +1226,6 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                         finishBtnText='Actualizar'
                         previousBtnText='<< Anterior'
                     >
-                        {console.log(beneficiarie)}
                         <View style={{ alignItems: 'center' }}>
                             <VStack space={3} w="90%" >
                                 <FormControl isRequired isInvalid={'vblt_sexually_active' in formik.errors}>
