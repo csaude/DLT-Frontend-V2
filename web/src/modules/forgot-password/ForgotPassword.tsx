@@ -188,7 +188,10 @@ const ForgotPassword = () => {
             </div>
           </form>
           <p className="mt-3 mb-1">
-            <Link to="/login">{t('login.button.signIn.label')}</Link>
+            <Link to="/login">
+              {/* {t('login.button.signIn.label')} */}
+              Aceder
+            </Link>
           </p>
         </div>
       </div>

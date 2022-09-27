@@ -68,6 +68,15 @@ const styles = StyleSheet.create({
         borderWidth:1, 
         marginHorizontal: 5,       
     },
+    dropDownPickerDisabled:{
+        color: '#222',
+        height:40,
+        fontSize: 14,
+        backgroundColor: '#ddd',
+        borderColor:'#CCCCCC',
+        borderWidth:1, 
+        marginHorizontal: 5,       
+    },
     btnDiv:{
         height: 50,
         marginTop: 20,

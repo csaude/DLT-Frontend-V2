@@ -132,7 +132,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
 
             } else {
                 initValues = {
-                    areaServicos_id: '',
+                    areaServicos_id: loggedUser.entry_point != undefined ? loggedUser.entry_point : "",
                     service_id: '',
                     beneficiary_id: '',
                     sub_service_id: '',
@@ -278,18 +278,18 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                 <View style={styles.webStyle}>
                     <Center w="100%" bgColor="white">
                         <Box safeArea p="2" w="90%" py="8">
-                            <Heading size="lg" color="coolGray.800"
+                            {/* <Heading size="lg" color="coolGray.800"
                                 _dark={{ color: "warmGray.50" }}
                                 fontWeight="semibold"
                                 marginBottom={5}
                                 marginTop={0} >
                                 Prover Serviço
-                            </Heading>
+                            </Heading> */}
                             <Alert status="info" colorScheme="info">
                                 <HStack flexShrink={1} space={2} alignItems="center">
                                     <Alert.Icon />
                                     <Text fontSize="xs" fontWeight="medium" color="coolGray.800">
-                                        Preencha os campos abaixo para prover um serviço a Beneficiaria!
+                                        Preencha os campos abaixo para prover um serviço a Beneficiária!
                                     </Text>
                                 </HStack>
                             </Alert>
@@ -308,7 +308,8 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                                         <FormControl isRequired isInvalid={'areaServicos_id' in errors}>
                                             <FormControl.Label>Área de Serviços</FormControl.Label>
                                             <Picker
-                                                style={styles.dropDownPicker}
+                                                enabled={false}
+                                                style={styles.dropDownPickerDisabled}
                                                 selectedValue={values.areaServicos_id}
                                                 onValueChange={(itemValue, itemIndex) => {
                                                     if (itemIndex !== 0) {

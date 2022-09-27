@@ -25,8 +25,8 @@ const BeneficiariesNavigator: React.FC = () => {
                 }}/>
         <BeneficiaryStack.Screen name="BeneficiarieServiceForm" component={BeneficiarieServiceForm} options={{
                     headerTitle: (props) => (
-                      <Text {...props} style={{ color: 'black', fontWeight: 'bold' }}>
-                        back
+                      <Text {...props} style={{ color: 'black', fontWeight: 'bold' }}>                        
+                        Prover Serviço
                       </Text>
                     ),
                     headerShown:true
