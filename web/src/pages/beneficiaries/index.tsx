@@ -353,7 +353,7 @@ const BeneficiariesList: React.FC = () => {
         { title: 'Atualizado Por', dataIndex: '', key: 'updatedBy',
             render: (text, record)  => users.filter(user => record.updatedBy == user.id).map(filteredUser => `${filteredUser.name} ` + `${filteredUser.surname}`)[0],
         },
-        { title: 'Atualizado Em', dataIndex: 'dateCreated', key: 'dateUpdated',
+        { title: 'Atualizado Em', dataIndex: 'dateUpdated', key: 'dateUpdated',
             render: (val: string) => <span>{moment(val).format('YYYY-MM-DD')}</span>,
         },
         {
