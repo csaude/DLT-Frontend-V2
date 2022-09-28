@@ -19,6 +19,18 @@ export async function queryByType(payload?: any){
     return res;
 }
 
+interface ServicesFilter{
+    serviceType: string,
+    beneficiaryId: number
+}
+
+export async function queryByTypeAndBeneficiary(payload?: ServicesFilter){
+    let url: string;
+    url = '/api/services/byTypeAndBeneficiary/'+payload?.serviceType+'/'+payload?.beneficiaryId;
+    const res = await select(url);
+    return res;
+}
+
 export async function querySubServiceByService(payload?: any){
     let url: string;
     url = '/api/subservices/'.concat(payload);
