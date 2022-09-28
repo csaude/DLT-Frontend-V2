@@ -4,7 +4,7 @@ import { View, HStack, Text, VStack, FormControl, Input, Stack, InputGroup, Inpu
 import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
 import { MaterialIcons, Ionicons, MaterialCommunityIcons } from "@native-base/icons";
 import { useFormik } from 'formik';
-import * as Yup from 'yup';
+import * as yup from 'yup';
 import { Picker, PickerProps } from '@react-native-picker/picker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Q } from "@nozbe/watermelondb";
@@ -23,7 +23,7 @@ import styles from './styles';
 const BeneficiaryForm: React.FC = ({ route }: any) => {
     
     const loggedUser: any = useContext(Context);
-
+    
     const idades = ['9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24'];
 
     const { beneficiary } = route.params;
@@ -165,23 +165,9 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             vblt_house_sustainer: beneficiarie?.vblt_house_sustainer,
             references_a: beneficiarie?.references_a
         },    
-        validationSchema: Yup.object({
-            e_mail: Yup.string().required('Obrigatório').email(),
-            phone_number: Yup.number().required('Obrigatório').positive().integer(),
-            // username: Yup.string()
-            //     .min(5, 'Deve conter 5 caracter ou mais')
-            //     .required('Obrigatório'),
-            // password: Yup.string()
-            //     .required('Obrigatório')
-            //     .max(25, 'Deve conter 25 caracteres ou menos')
-            //     .matches(/(?=.*\d)/,'Deve conter número')
-            //     .matches(/(?=.*[a-z])/,'Deve conter minúscula')
-            //     .matches(/(?=.*[A-Z])/, 'Deve conter Maiúscula')
-            //     .matches(/(?=.*[@$!%*#?&])/,'Deve conter caracter especial')
-            //     .min(8, 'Deve conter 8 caracter ou mais'),
-            // rePassword: Yup.string()
-            //     .oneOf([Yup.ref('password'), null], 'As senhas devem corresponder')
-            //     .required('Obrigatório')
+        validationSchema: e_mail => yup.object({
+            e_mail: yup.string().email('E-mail invalido!!!'),
+            phone_number: yup.number().nullable(true).positive('Apenas numeros!!!').integer('Apenas numeros!!!'),
         }),
         onSubmit: values => console.log(values),
         validate: values => validate(values)
@@ -867,7 +853,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                     <FormControl.Label>Endereço (Ponto de Referência)</FormControl.Label>
                                     <Input onBlur={formik.handleBlur('address')} placeholder="Insira o Endereço" onChangeText={formik.handleChange('address')} value={formik.values.address} />
                                 </FormControl>
-                                <FormControl >
+                                <FormControl isInvalid={'phone_number' in formik.errors}>
                                     <FormControl.Label>Telemóvel</FormControl.Label>
                                     <Input onBlur={formik.handleBlur('phone_number')} 
                                         keyboardType="number-pad"
@@ -876,14 +862,20 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         onChangeText={formik.handleChange('phone_number')} 
                                         value={formik.values.phone_number} 
                                         />
+                                    <FormControl.ErrorMessage>
+                                        Apenas numeros!!!
+                                    </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl >
+                                <FormControl isInvalid={'e_mail' in formik.errors}>
                                     <FormControl.Label>E-mail</FormControl.Label>
                                     <Input onBlur={formik.handleBlur('e_mail')} 
                                         placeholder="Insira o E-mail" 
                                         onChangeText={formik.handleChange('e_mail')} 
                                         value={formik.values.e_mail} 
                                         />
+                                    <FormControl.ErrorMessage>
+                                        {formik.errors.e_mail}
+                                    </FormControl.ErrorMessage>
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'neighborhood_id' in formik.errors}>
                                     <FormControl.Label>Bairro</FormControl.Label>
