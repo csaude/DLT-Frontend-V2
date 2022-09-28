@@ -1,7 +1,7 @@
-import React, { Fragment, useEffect, useState, useRef } from 'react'
-import { Drawer, Form, Button, Col, Row, Input, Select, DatePicker, Space, Radio, Divider } from 'antd';
-import { queryByType, querySubServiceByService } from '@app/utils/service'
-import { allUs, allUsByType, allUsByUser } from '@app/utils/uSanitaria'
+import React, { useEffect, useState, useRef } from 'react'
+import { Form, Button, Col, Row, Input, Select, DatePicker, Space, Radio, Divider } from 'antd';
+import { queryByTypeAndBeneficiary, querySubServiceByService } from '@app/utils/service'
+import { allUs, allUsByUser } from '@app/utils/uSanitaria'
 import moment from 'moment';
 import { query } from '@app/utils/users';
 import { PlusOutlined } from '@ant-design/icons';
@@ -58,7 +58,11 @@ const InterventionForm = ({ record, beneficiary}: any) => {
       } 
 
       const fetchServices = async () => {
-        const data = await queryByType(service.serviceType === '1'? 'CLINIC' : 'COMMUNITY');
+        var payload = {
+          serviceType: service.serviceType === '1'? 'CLINIC' : 'COMMUNITY',
+          beneficiaryId: beneficiary.id
+        }
+        const data = await queryByTypeAndBeneficiary(payload);
         setServices(data);
       }
 
@@ -78,7 +82,11 @@ const InterventionForm = ({ record, beneficiary}: any) => {
     }, []);
 
     const onChangeAreaServiço = async (value:any) => {
-        const data = await queryByType(value);
+        var payload = {
+          serviceType: value,
+          beneficiaryId: beneficiary.id
+        }
+        const data = await queryByTypeAndBeneficiary(payload);
         setServices(data);
     }
 
