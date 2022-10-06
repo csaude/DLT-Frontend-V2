@@ -439,7 +439,7 @@ const ReferenceList: React.FC = () => {
                     ""
         },
         {
-            title: 'Action',
+            title: 'Acção',
             dataIndex: '',
             key: 'x',
             render: (text, record) => (
