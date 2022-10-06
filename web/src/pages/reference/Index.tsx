@@ -446,7 +446,16 @@ const ReferenceList: React.FC = () => {
               <Space>
                 <Button type="primary" icon={<EyeOutlined />} onClick={() =>handleViewModalVisible(true, record)} >
                 </Button>
-                <Button type="primary" icon={<EditOutlined />} onClick={() =>onEditRefence(record) } >
+                    <Button type="primary" icon={<EditOutlined />} onClick={() =>(record.status == 0 ? onEditRefence(record) : 
+                        (
+                            message.info({
+                            content: 'Referência já atendida!', className: 'custom-class',
+                            style: {
+                                marginTop: '10vh',
+                            }
+                            })
+                        )
+                        )} >
                 </Button>
               </Space>
             ),
