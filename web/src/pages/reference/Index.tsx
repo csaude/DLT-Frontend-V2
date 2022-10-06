@@ -119,18 +119,29 @@ const ReferenceList: React.FC = () => {
                 
             };
 
-            const { data } = await editRef(payload);
-            const allReferences: any = await query();
-            setReferences(allReferences);
+            if(servicesObjects.length==0){
+                message.info({
+                    content: 'Referência sem Intervenção!', className: 'custom-class',
+                    style: {
+                        marginTop: '10vh',
+                    }
+                });
 
-            message.success({
-                content: 'Actualizado com Sucesso!'+data?.referenceNote, className: 'custom-class',
-                style: {
-                    marginTop: '10vh',
-                }
-            });
+            }else{
 
-            navigate('/referenceList');            
+                const { data } = await editRef(payload);
+                const allReferences: any = await query();
+                setReferences(allReferences);
+    
+                message.success({
+                    content: 'Actualizado com Sucesso!'+data?.referenceNote, className: 'custom-class',
+                    style: {
+                        marginTop: '10vh',
+                    }
+                });
+    
+                navigate('/referenceList');    
+            }        
         }
     }
    
