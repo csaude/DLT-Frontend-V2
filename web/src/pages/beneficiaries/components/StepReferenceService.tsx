@@ -301,9 +301,9 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
                     style={{ position: 'absolute' }}
                     extra={
                         <Space>
-                            <Button onClick={onClose}>Cancel</Button>
+                            <Button onClick={onClose}>Cancelar</Button>
                             <Button htmlType="submit" onClick={() => onAddService()} type="primary">
-                                Submit
+                                Adicionar
                             </Button>
                         </Space>
                     }

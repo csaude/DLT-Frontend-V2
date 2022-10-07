@@ -119,18 +119,29 @@ const ReferenceList: React.FC = () => {
                 
             };
 
-            const { data } = await editRef(payload);
-            const allReferences: any = await query();
-            setReferences(allReferences);
+            if(servicesObjects.length==0){
+                message.info({
+                    content: 'Referência sem Intervenção!', className: 'custom-class',
+                    style: {
+                        marginTop: '10vh',
+                    }
+                });
 
-            message.success({
-                content: 'Actualizado com Sucesso!'+data?.referenceNote, className: 'custom-class',
-                style: {
-                    marginTop: '10vh',
-                }
-            });
+            }else{
 
-            navigate('/referenceList');            
+                const { data } = await editRef(payload);
+                const allReferences: any = await query();
+                setReferences(allReferences);
+    
+                message.success({
+                    content: 'Actualizado com Sucesso!'+data?.referenceNote, className: 'custom-class',
+                    style: {
+                        marginTop: '10vh',
+                    }
+                });
+    
+                navigate('/referenceList');    
+            }        
         }
     }
    
@@ -439,14 +450,23 @@ const ReferenceList: React.FC = () => {
                     ""
         },
         {
-            title: 'Action',
+            title: 'Acção',
             dataIndex: '',
             key: 'x',
             render: (text, record) => (
               <Space>
                 <Button type="primary" icon={<EyeOutlined />} onClick={() =>handleViewModalVisible(true, record)} >
                 </Button>
-                <Button type="primary" icon={<EditOutlined />} onClick={() =>onEditRefence(record) } >
+                    <Button type="primary" icon={<EditOutlined />} onClick={() =>(record.status == 0 ? onEditRefence(record) : 
+                        (
+                            message.info({
+                            content: 'Referência já atendida!', className: 'custom-class',
+                            style: {
+                                marginTop: '10vh',
+                            }
+                            })
+                        )
+                        )} >
                 </Button>
               </Space>
             ),

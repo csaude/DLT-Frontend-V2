@@ -4,6 +4,7 @@ import { View, HStack, Text, VStack, FormControl, Input, Stack, InputGroup, Inpu
 import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
 import { MaterialIcons, Ionicons, MaterialCommunityIcons } from "@native-base/icons";
 import { useFormik } from 'formik';
+import * as yup from 'yup';
 import { Picker, PickerProps } from '@react-native-picker/picker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Q } from "@nozbe/watermelondb";
@@ -22,7 +23,7 @@ import styles from './styles';
 const BeneficiaryForm: React.FC = ({ route }: any) => {
     
     const loggedUser: any = useContext(Context);
-
+    
     const idades = ['9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24'];
 
     const { beneficiary } = route.params;
@@ -163,7 +164,11 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             vblt_sex_worker: beneficiarie?.vblt_sex_worker,
             vblt_house_sustainer: beneficiarie?.vblt_house_sustainer,
             references_a: beneficiarie?.references_a
-        },
+        },    
+        validationSchema: e_mail => yup.object({
+            e_mail: yup.string().email('E-mail invalido!!!'),
+            phone_number: yup.number().nullable(true).positive('Apenas numeros!!!').integer('Apenas numeros!!!'),
+        }),
         onSubmit: values => console.log(values),
         validate: values => validate(values)
     });
@@ -848,13 +853,29 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                     <FormControl.Label>Endereço (Ponto de Referência)</FormControl.Label>
                                     <Input onBlur={formik.handleBlur('address')} placeholder="Insira o Endereço" onChangeText={formik.handleChange('address')} value={formik.values.address} />
                                 </FormControl>
-                                <FormControl >
+                                <FormControl isInvalid={'phone_number' in formik.errors}>
                                     <FormControl.Label>Telemóvel</FormControl.Label>
-                                    <Input onBlur={formik.handleBlur('phone_number')} placeholder="Insira o Telemóvel" onChangeText={formik.handleChange('phone_number')} value={formik.values.phone_number} />
+                                    <Input onBlur={formik.handleBlur('phone_number')} 
+                                        keyboardType="number-pad"
+                                        maxLength={9}
+                                        placeholder="Insira o Telemóvel" 
+                                        onChangeText={formik.handleChange('phone_number')} 
+                                        value={formik.values.phone_number} 
+                                        />
+                                    <FormControl.ErrorMessage>
+                                        Apenas numeros!!!
+                                    </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl >
+                                <FormControl isInvalid={'e_mail' in formik.errors}>
                                     <FormControl.Label>E-mail</FormControl.Label>
-                                    <Input onBlur={formik.handleBlur('e_mail')} placeholder="Insira o E_mail" onChangeText={formik.handleChange('e_mail')} value={formik.values.e_mail} />
+                                    <Input onBlur={formik.handleBlur('e_mail')} 
+                                        placeholder="Insira o E-mail" 
+                                        onChangeText={formik.handleChange('e_mail')} 
+                                        value={formik.values.e_mail} 
+                                        />
+                                    <FormControl.ErrorMessage>
+                                        {formik.errors.e_mail}
+                                    </FormControl.ErrorMessage>
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'neighborhood_id' in formik.errors}>
                                     <FormControl.Label>Bairro</FormControl.Label>
