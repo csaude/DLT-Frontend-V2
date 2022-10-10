@@ -191,7 +191,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
                                     <Col className="gutter-row" span={3}><b>Data Registo</b></Col>
                                     <Col className="gutter-row" span={3}><b>Referente</b></Col>
                                     <Col className="gutter-row" span={3}><b>Contacto</b></Col>
-                                    <Col className="gutter-row" span={3}><b>No do Livro</b></Col>
+                                    <Col className="gutter-row" span={3}><b>Nº do Livro</b></Col>
                                     <Col className="gutter-row" span={3}><b>Organização</b></Col>
                                     <Col className="gutter-row" span={3}><b>Cod Referências</b></Col>
                                     <Col className="gutter-row" span={3}><b>Tipo Serviço</b></Col>

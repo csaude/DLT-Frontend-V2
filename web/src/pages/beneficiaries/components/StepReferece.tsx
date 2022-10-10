@@ -234,7 +234,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
             name="notifyTo"
             label="Notificar ao"
             rules={[{ required: true, message: 'Obrigatório' }]}
-            initialValue={reference === undefined ? "" : reference?.users?.name + " " + reference?.users?.surname}
+            initialValue={reference === undefined ? "" : reference?.users?.id.toString()}
           >
             <Select placeholder="Notificar ao" disabled={users === undefined}>
               {users?.map(item => (
