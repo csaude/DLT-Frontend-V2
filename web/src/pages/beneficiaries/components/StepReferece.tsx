@@ -33,11 +33,6 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
       const loggedUser = await query(localStorage.user);
 
       if (reference === undefined) {
-        if([3,4,5,6].includes(loggedUser.profiles.id)) {
-          // form.setFieldsValue({ createdBy: loggedUser?.name + ' ' + loggedUser?.surname });
-          setUser(loggedUser);
-          console.log(loggedUser);
-        }
         form.setFieldsValue({ referenceNote: 
                               ('REFDR' + String(userId).padStart(3, '0') + (loggedUser?.provinces === undefined ? '0': loggedUser?.provinces[0]?.id) + String(((await queryByCreated(localStorage.user))?.length)+ 1).padStart(3, '0'))
                             });
@@ -54,8 +49,6 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
 
       const referers = await allUsersByProfilesAndUser(payload);
       setReferers(referers);
-
-      console.log(referers);
     }
 
     fetchData().catch(error => console.log(error));
@@ -139,7 +132,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
             label="Referente"
             rules={[{ required: true, message: 'Obrigatório' }]}
             // initialValue={userId}
-            initialValue={reference === undefined ? user?.id : reference?.referredBy}
+            initialValue={reference === undefined ? "" : reference?.referredBy?.id.toString()}
           >
               <Select placeholder="Seleccione o Referente" >
                   {referers?.map(item => (
