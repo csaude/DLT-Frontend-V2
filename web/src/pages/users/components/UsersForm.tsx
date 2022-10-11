@@ -177,7 +177,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                             name="email"
                             label="Email (Próprio ou do Supervisor)"
                             initialValue={user?.email}
-                            rules={[{ type: 'email', message: 'O email inserido não é válido!' }]}
+                            rules={[{  required: true, type: 'email', message: 'O email inserido não é válido!' }]}
                         >
                             <Input placeholder="Insira o Email" />
                         </Form.Item>
@@ -267,7 +267,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                     <Col span={8}>
                         <Form.Item
                             name="localities"
-                            label="Localidades"
+                            label="Postos Administrativos"
                             rules={[{ required: isRequired, message: RequiredFieldMessage }]}
                             initialValue={user?.localities.map(item => { return item.id.toString() })}
                         >
@@ -319,8 +319,10 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                             initialValue={user?.us.map(item => { return item.id.toString() })}
                         >
                             <Select mode="multiple"
+                                showSearch
                                 placeholder="Seleccione o(s) Local(is)"
                                 disabled={us == undefined}
+                                optionFilterProp="children"
                             >
                                 {us?.map(item => (
                                     <Option key={item.id}>{item.name}</Option>
