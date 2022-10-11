@@ -215,7 +215,7 @@ const UsersList: React.FC = () => {
         ), },
         { title: 'Username', dataIndex: 'username', key: 'username', ...getColumnSearchProps('username') },
         {
-            title: 'Tipo de Utilizador', dataIndex: '', key: 'type',
+            title: 'Perfil', dataIndex: '', key: 'type',
             render: (text, record) => record.profiles.description,
             filters: filterObjects(profiles)(i => i.description),
             onFilter: (value, record) => record.profiles.description == value,
