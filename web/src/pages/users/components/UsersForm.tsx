@@ -177,7 +177,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                             name="email"
                             label="Email (Próprio ou do Supervisor)"
                             initialValue={user?.email}
-                            rules={[{  required: true, type: 'email', message: 'O email inserido não é válido!' }]}
+                            rules={[{ type: 'email', message: 'O email inserido não é válido!' }]}
                         >
                             <Input placeholder="Insira o Email" />
                         </Form.Item>
