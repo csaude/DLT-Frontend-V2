@@ -98,6 +98,9 @@ const ReferenceList: React.FC = () => {
                 beneficiaries: {
                     id: beneficiary?.id
                 },
+                referredBy: {
+                    id: values.referredBy
+                },
                 users: {
                     id: values.notifyTo
                 },

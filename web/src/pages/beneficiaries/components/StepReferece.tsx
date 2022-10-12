@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { Badge, Button, Steps, Row, Col, Input, message, InputNumber, Form, DatePicker, Checkbox, Select, Radio, Divider, SelectProps } from 'antd';
 import './index.css';
 import { allPartnersByType, allPartnersByTypeDistrict } from '@app/utils/partners';
-import { query, userById, allUsesByUs } from '@app/utils/users';
+import { query, userById, allUsesByUs, allUsersByProfilesAndUser } from '@app/utils/users';
 import { allUs, allUsByType } from '@app/utils/uSanitaria';
 import {queryByCreated} from '@app/utils/reference';
 
@@ -21,6 +21,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
 
   const [partners, setPartners] = React.useState<any>();
   const [users, setUsers] = React.useState<any>();
+  const [referers, setReferers] = React.useState<any>(undefined);
   const [user, setUser] = React.useState<any>();
   const [us, setUs] = React.useState<any>();
   const selectedReference = beneficiary;
@@ -32,7 +33,6 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
       const loggedUser = await query(localStorage.user);
 
       if (reference === undefined) {
-        form.setFieldsValue({ createdBy: loggedUser?.name + ' ' + loggedUser?.surname });
         form.setFieldsValue({ referenceNote: 
                               ('REFDR' + String(userId).padStart(3, '0') + (loggedUser?.provinces === undefined ? '0': loggedUser?.provinces[0]?.id) + String(((await queryByCreated(localStorage.user))?.length)+ 1).padStart(3, '0'))
                             });
@@ -41,7 +41,14 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
         form.setFieldsValue({ createdBy: regUser?.name + ' ' + regUser?.surname });
         form.setFieldsValue({ referenceNote: reference.referenceNote});
       }
-      setUser(loggedUser);
+
+      var payload = {
+        profiles: '3,4,5,6',
+        userId: Number(userId)
+      }
+
+      const referers = await allUsersByProfilesAndUser(payload);
+      setReferers(referers);
     }
 
     fetchData().catch(error => console.log(error));
@@ -121,11 +128,17 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
         </Col>
         <Col span={8}>
           <Form.Item
-            name="createdBy"
+            name="referredBy"
             label="Referente"
             rules={[{ required: true, message: 'Obrigatório' }]}
+            // initialValue={userId}
+            initialValue={reference === undefined ? "" : reference?.referredBy?.id.toString()}
           >
-            <Input placeholder="Referente" disabled />
+              <Select placeholder="Seleccione o Referente" >
+                  {referers?.map(item => (
+                      <Option key={item.id}>{item.name + ' ' + item.surname}</Option>
+                  ))}
+              </Select>
           </Form.Item>
         </Col>
       </Row>
