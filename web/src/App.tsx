@@ -53,7 +53,7 @@ const App = () => {
           <Route path="/recover-password" element={<RecoverPassword />} />
         </Route>
         <Route path="/" element={<PrivateRoute />}>
-          // First login after user was creste
+          // First login after user was create
           <Route path="/newPassword" element={<NewPassword />} />
           // Aplication Main
           <Route path="/" element={<Main />}>
@@ -70,6 +70,9 @@ const App = () => {
             <Route path="/usersList" element={<Users />} />
             <Route path="/usersForm" element={<UsersForm />} />
             <Route path="/usersView" element={<UserView />} />
+            // Rota de Configurações
+            <Route path="/provList" element={<BeneficiariesList />} />
+            <Route path="/distList" element={<Profile />} />
           </Route>
         </Route>
       </Routes>
