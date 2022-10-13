@@ -11,6 +11,9 @@ export interface Reference {
   beneficiaries: {
       id: string
   },
+  referredBy: {
+      id:string
+  },
   users: {
       id:string
   },
