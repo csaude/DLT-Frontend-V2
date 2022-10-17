@@ -9,7 +9,8 @@ export default class Partner extends Model {
     @field("abbreviation") abbreviation;
     @field("description") description;
     @field("status") status;     
-    @field("partner_type") partner_type;    
+    @field("partner_type") partner_type;     
+    @field("district_id") district_id;    
     @field("online_id") online_id;   
 
 }

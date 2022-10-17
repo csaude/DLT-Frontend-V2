@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { TouchableHighlight, TouchableOpacity } from 'react-native';
 import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
-import { View, HStack, Text, VStack, FormControl, Input, TextArea, Center, Icon, Box, IconButton, Flex, Heading, Divider } from 'native-base';
+import { View, HStack, Text, VStack, FormControl, Input, TextArea, Center, Icon, Box, IconButton, Flex, Heading, Divider, useToast, Alert } from 'native-base';
 import { MaterialIcons, Ionicons, MaterialCommunityIcons } from "@native-base/icons";
 import { useFormik } from 'formik';
 import { database } from '../../../database';
@@ -13,6 +13,7 @@ import ModalSelector from 'react-native-modal-selector-searchable';
 import StepperButton from '../../Beneficiarias/components/StapperButton';
 import styles from './styles1';
 import moment from 'moment';
+import User from '../../../models/User';
 
 const ReferenceForm: React.FC = ({ route }: any) => {
 
@@ -23,7 +24,8 @@ const ReferenceForm: React.FC = ({ route }: any) => {
         refs
     } = route.params;
 
-    //console.log(userId);
+    const toast = useToast();
+
     const [errors, setErrors] = useState(false);
     const [partners, setPartners] = useState<any>([]);
     const [us, setUs] = useState<any>([]);
@@ -31,25 +33,44 @@ const ReferenceForm: React.FC = ({ route }: any) => {
     const [selectedUser, setSelectedUser] = useState<any>("");
     const [services, setServices] = useState<any>([]);
     const [referServices, setReferServices] = useState<any>([]);
+    const [entryPoints, setEntryPoints] = useState<any>([]);
+    const [entryPointEnabled, setEntryPointEnabled] = useState(true);
+    const [serviceTypes, setServiceTypes] = useState<any>([]);
 
-    const areaServicos = [{ "id": '1', "name": "Clinico" }, { "id": '2', "name": "Comunitario" }];
+    const areaServicos = [{ "id": '1', "name": "Clínico" }, { "id": '2', "name": "Comunitário" }];
 
     useEffect(() => {
 
-        const fetchUsData = async () => {
-            const getUsList = await database.get('us').query().fetch();
-            const usSerialized = getUsList.map(item => item._raw);
-            setUs(usSerialized);
+        const fetchEntryPoints = async () => {
+            const user = await database.get('users').query(
+                Q.where('online_id', userId)
+            ).fetch();
+            const userSerialized = user.map(item => item._raw);
+
+            const partner = await database.get('partners').query(
+                Q.where('online_id', (userSerialized[0] as any).partner_id)
+            ).fetch();
+            const partnerSerialized = partner.map(item => item._raw);
+
+            const partnerType = (partnerSerialized[0] as any).partner_type;
+
+            if ((userSerialized[0] as any).entry_point === "3") {
+                setEntryPoints([{ "id": '1', "name": "US" }, { "id": '2', "name": "CM" }, { "id": '3', "name": "ES" }]);
+            } else if (partnerType === "1") {
+                setEntryPoints([{ "id": '2', "name": "CM" }, { "id": '3', "name": "ES" }]);
+            } else if (partnerType === "2") {
+                setEntryPoints([{ "id": '1', "name": "US" }]);
+                formik.setFieldValue('refer_to', '1');
+                onChangePE('1');
+                onChangeServiceType('1');
+                setEntryPointEnabled(false);
+                // console.log(beneficiary);
+            } else {
+                setEntryPoints([{ "id": '1', "name": "US" }, { "id": '2', "name": "CM" }, { "id": '3', "name": "ES" }]);
+            }
         }
 
-        const fetchServices = async () => {
-            const getServicesList = await database.get('services').query().fetch();
-            const servicesSerialized = getServicesList.map(item => item._raw);
-            setServices(servicesSerialized);
-        }
-
-        fetchUsData().catch(error => console.log(error));
-        fetchServices().catch(error => console.log(error));
+        fetchEntryPoints().catch(error => console.log(error));
     }, []);
 
     const formik = useFormik({
@@ -74,6 +95,20 @@ const ReferenceForm: React.FC = ({ route }: any) => {
 
         if (hasErrors) {
             setErrors(true);
+        } else {
+            setErrors(false);
+        }
+    };
+
+    const onNextStep2 = () => {
+        if (referServices.length == 0) {
+            setErrors(true);
+            toast.show({
+                placement: "top",
+                render: () => {
+                    return (<ErrorHandler />);
+                }
+            })
         } else {
             setErrors(false);
         }
@@ -114,22 +149,51 @@ const ReferenceForm: React.FC = ({ route }: any) => {
         var currmonth = new Date().getMonth() + 1;
         if (value === '1') {
             formik.setFieldValue('reference_code', 'US-' + currmonth + '-');
+            setServiceTypes([{ "id": '1', "name": "Clínico" }]);
+            formik.setFieldValue('service_type', '1');
+            onChangeServiceType('1')
         } else if (value === '2') {
-            formik.setFieldValue('reference_code', 'ES-' + currmonth + '-');
-        } else {
             formik.setFieldValue('reference_code', 'CM-' + currmonth + '-');
+            setServiceTypes([{ "id": '2', "name": "Comunitário" }]);
+            formik.setFieldValue('service_type', '2');
+            onChangeServiceType('2');
+        } else {
+            formik.setFieldValue('reference_code', 'ES-' + currmonth + '-');
+            setServiceTypes([{ "id": '1', "name": "Clínico" }, { "id": '2', "name": "Comunitário" }]);
+            formik.setFieldValue('service_type', '0');
+            onChangeServiceType('0');
         }
+        fetchUsData(Number(value));
     }
 
     const onChangeServiceType = async (value: any) => {
 
-
         const getPartnerList = await database.get('partners').query(
-            Q.where('partner_type', value)
+            Q.where('partner_type', value),
+            Q.where('district_id', Number(beneficiary?.district_id))
         ).fetch();
         const partnersSerialized = getPartnerList.map(item => item._raw);
 
         setPartners(partnersSerialized);
+
+        fetchServices(value);
+    }
+
+    const fetchUsData = async (value: any) => {
+        const getUsList = await database.get('us').query(
+            Q.where('entry_point', value),
+            Q.where('locality_id', Number(beneficiary?.locality_id))
+        ).fetch();
+        const usSerialized = getUsList.map(item => item._raw);
+        setUs(usSerialized);
+    }
+
+    const fetchServices = async (value: any) => {
+        const getServicesList = await database.get('services').query(
+            Q.where('service_type', value)
+        ).fetch();
+        const servicesSerialized = getServicesList.map(item => item._raw);
+        setServices(servicesSerialized);
     }
 
     const onChangeUs = async (value: any) => {
@@ -248,13 +312,14 @@ const ReferenceForm: React.FC = ({ route }: any) => {
         <>
             <View style={{ flex: 1, backgroundColor: "white" }}>
                 <ProgressSteps >
-                    <ProgressStep label="Dados da Referencia" onNext={onNextStep} errors={errors}>
+                    <ProgressStep label="Dados da Referencia" onNext={onNextStep} errors={errors} nextBtnText='Próximo >>'>
                         <View style={{ alignItems: 'center' }}>
                             <VStack space={3} w="90%" >
                                 <FormControl isRequired isInvalid={'refer_to' in formik.errors}>
                                     <FormControl.Label>Referir Para</FormControl.Label>
                                     <Picker
                                         selectedValue={formik.values.refer_to}
+                                        enabled={entryPointEnabled}
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
                                                 formik.setFieldValue('refer_to', itemValue);
@@ -262,9 +327,11 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                                             }
                                         }}>
                                         <Picker.Item label="-- Seleccione o PE --" value="0" />
-                                        <Picker.Item key="1" label="US" value="1" />
-                                        <Picker.Item key="2" label="ES" value="2" />
-                                        <Picker.Item key="3" label="CM" value="3" />
+                                        {
+                                            entryPoints.map(item => (
+                                                <Picker.Item key={item.id} label={item.name} value={item.id} />
+                                            ))
+                                        }
                                     </Picker>
                                     <FormControl.ErrorMessage>
                                         {formik.errors.refer_to}
@@ -298,7 +365,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
 
                                         <Picker.Item label="-- Seleccione o Tipo de Serviço --" value="0" />
                                         {
-                                            areaServicos.map(item => (
+                                            serviceTypes.map(item => (
                                                 <Picker.Item key={item.id} label={item.name} value={item.id} />
                                             ))
                                         }
@@ -322,7 +389,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                                         <Picker.Item label="-- Seleccione a Organização --" value="0" />
                                         {
                                             partners.map(item => (
-                                                <Picker.Item key={item.online_id} label={item.abbreviation} value={item.online_id} />
+                                                <Picker.Item key={item.online_id} label={item.name} value={item.online_id} />
                                             ))
                                         }
                                     </Picker>
@@ -377,7 +444,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                                     <TextArea onBlur={formik.handleBlur('description')} autoCompleteType={false} value={formik.values.description} onChange={formik.handleChange('description')} w="100%" />
 
                                 </FormControl>
-                                <FormControl isRequired isInvalid={'status' in formik.errors}>
+                                {/* <FormControl isRequired isInvalid={'status' in formik.errors}>
                                     <FormControl.Label>Status</FormControl.Label>
                                     <Picker
                                         selectedValue={formik.values.status}
@@ -391,11 +458,11 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                                     <FormControl.ErrorMessage>
                                         {formik.errors.status}
                                     </FormControl.ErrorMessage>
-                                </FormControl>
+                                </FormControl> */}
                             </VStack>
                         </View>
                     </ProgressStep>
-                    <ProgressStep label="Serviços Referidos">
+                    <ProgressStep label="Serviços Referidos" onNext={onNextStep2} previousBtnText='<< Anterior' nextBtnText='Próximo >>' errors={errors}>
                         <Box minH="300" >
 
                             <View >
@@ -428,7 +495,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
 
                         </Box>
                     </ProgressStep>
-                    <ProgressStep label="Concluir" onSubmit={handleSubmit}>
+                    <ProgressStep label="Concluir" onSubmit={handleSubmit} previousBtnText='<< Anterior' finishBtnText='Salvar' >
                         <View style={styles.containerForm}>
 
                             <Flex direction="column" mb="2.5" _text={{ color: "coolGray.800" }}>
@@ -496,4 +563,25 @@ const ReferenceForm: React.FC = ({ route }: any) => {
         </>
     );
 }
+
+const ErrorHandler: React.FC = () => {
+    return (
+        <>
+            <Alert w="100%" variant="left-accent" colorScheme="error" status="error">
+                <VStack space={2} flexShrink={1} w="100%">
+                    <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
+                        <HStack space={2} flexShrink={1} alignItems="center">
+                            <Alert.Icon />
+                            <Text color="coolGray.800">
+                                Nenhum Serviço Solicitado!
+                            </Text>
+                        </HStack>
+                    </HStack>
+                </VStack>
+            </Alert>
+
+        </>
+    );
+}
+
 export default ReferenceForm;
