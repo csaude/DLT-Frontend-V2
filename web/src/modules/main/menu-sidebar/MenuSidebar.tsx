@@ -42,7 +42,17 @@ export const MENU: IMenuItem[] = [
     name: 'menusidebar.label.configurations',
     path: '#',
     icon: 'fas fa-cog',
-    roles: ['ADMIN','M&E','SUPERVISOR']
+    roles: ['ADMIN','M&E','SUPERVISOR'],
+      children: [
+        {
+          name: 'Províncias',
+          path: '/provList',
+        },
+        {
+          name: 'Distritos',
+          path: '/distList',
+        }
+      ]
   },
   {
     name: 'menusidebar.label.users',
