@@ -223,8 +223,8 @@ const Login: React.FC = () => {
 
                         setIsInvalidCredentials(false);
 
-                        setLoggedUser(response.account);
                         setToken(response.token);
+                        setLoggedUser(response.account);
                     }
                     setLoading(false);
                 })
