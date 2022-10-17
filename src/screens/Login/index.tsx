@@ -210,7 +210,7 @@ const Login: React.FC = () => {
                 return showToast('Sem Conexão a Internet', 'Conecte-se a Internet para o primeiro Login!');
             }
 
-            await fetch(`${LOGIN_API_URL}?username=${values.username}&password=${values.password}`)
+            await fetch(`${LOGIN_API_URL}?username=${values.username}&password=${encodeURIComponent(values.password)}`)
                 .then(response => response.json())
                 .then(async (response) => {
 
