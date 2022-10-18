@@ -191,7 +191,7 @@ const UsersList: React.FC = () => {
             .catch(error => {
                 console.log(error);
                 message.error({
-                    content: 'Não foi possivel Registrar Utilizador!', className: 'custom-class',
+                    content: 'Corrija os erros apresentados antes de avançar!', className: 'custom-class',
                     style: {
                         marginTop: '10vh',
                     }
