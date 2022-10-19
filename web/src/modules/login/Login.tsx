@@ -68,7 +68,7 @@ const Login = () => {
         </div>
         <div className="card-body">
           <p className="h1 text-center">
-            <b>Login</b>
+            <b>Autenticação</b>
           </p>
           <p className="login-box-msg">
           </p>
@@ -133,7 +133,7 @@ const Login = () => {
                 >
                   {/* @ts-ignore */}
                   {/* {t('login.button.signIn.label')} */}
-                  Login
+                  Autenticar
                 </Button>
               </div>
             </div>
