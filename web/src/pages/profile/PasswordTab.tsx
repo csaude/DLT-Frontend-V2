@@ -9,11 +9,15 @@ import {faEye, faEyeSlash} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {Form, InputGroup} from 'react-bootstrap';
 import * as AuthService from '../../services/auth';
+import { useDispatch } from 'react-redux';
+import { logoutUser } from '@app/store/reducers/auth';
 
 const PasswordTab = ({isActive}: {isActive: boolean}) => {
 
   const [isAuthLoading, setAuthLoading] = useState(false);
   const [passwordType, setPasswordType] = useState("password");
+
+  const dispatch = useDispatch();
 
   const navigate = useNavigate();
 
@@ -23,7 +27,8 @@ const PasswordTab = ({isActive}: {isActive: boolean}) => {
       const data = await AuthService.newPassword(username, newPassword);            
       toast.success('Password alterado com sucesso!');
       setAuthLoading(false);
-      navigate('/');
+      dispatch(logoutUser());
+      navigate('/login');
 
     } catch ( error ) {
       setAuthLoading(false);
@@ -156,8 +161,8 @@ const PasswordTab = ({isActive}: {isActive: boolean}) => {
                     isInvalid={touched.agreeTerms && !!errors.agreeTerms}
                   />
                   <label htmlFor="agreeTerms">
-                    <span>Concordo com os </span> 
-                    <Link to="/">termos e condições</Link>
+                    <span>Confirmo ter lido e assinado o </span> 
+                    <Link to="/profile">acordo de confidencialidade</Link>
                   </label>
                   <Form.Control.Feedback type="invalid">
                       {errors.agreeTerms}
