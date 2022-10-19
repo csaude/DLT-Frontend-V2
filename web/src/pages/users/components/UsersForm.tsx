@@ -12,6 +12,7 @@ const { TextArea } = Input;
 
 const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) => {
     const [partners, setPartners] = useState<any>([]);
+    const [allPartners1, setAllPartners] = useState<any>([]);
     const [profiles, setProfiles] = useState<any>([]);
     const [provinces, setProvinces] = useState<any>([]);
     const [districts, setDistricts] = useState<any>(undefined);
@@ -42,6 +43,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
             const dataProvinces = await allProvinces();
 
             setPartners(dataPartners);
+            setAllPartners(dataPartners);
             setProfiles(dataProfiles);
             setProvinces(dataProvinces);
 
@@ -84,7 +86,8 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
         fetchDistricts().catch(error => console.log(error));
         fetchLocalities().catch(error => console.log(error));
         fetchUs().catch(error => console.log(error));
-        
+
+        fetchData().catch(error => console.log(error));
 
     }, [user]);
 
@@ -93,6 +96,12 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
             const dataDistricts = await queryDistrictsByProvinces({ provinces: Array.isArray(values)? values : [values] });
             setDistricts(dataDistricts);
         }
+        else {
+            setDistricts(undefined);
+        }
+        setLocalities(undefined);
+        setPartners(allPartners1);
+        setUs(undefined);
 
         form.setFieldsValue({districts: []});
         form.setFieldsValue({localities: []});
@@ -107,6 +116,10 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
 
             const partners = await allPartnersByDistricts({ districts: Array.isArray(values)? values : [values] })
             setPartners(partners);
+        } else {
+            setLocalities(undefined);
+            setPartners(allPartners1);
+            setUs(undefined);
         }
     
         form.setFieldsValue({localities: []});
@@ -118,6 +131,8 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
         if (values.length > 0) {
             const dataUs = await queryUsByLocalities({ localities: Array.isArray(values)? values : [values] });
             setUs(dataUs);
+        } else {
+            setUs(undefined);
         }
 
         form.setFieldsValue({us: []});               
@@ -298,7 +313,6 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                         <Form.Item
                             name="entryPoint"
                             label="Ponto de Entrada"
-                            rules={[{ required: true, message: RequiredFieldMessage }]}
                             initialValue={user?.entryPoint}
                         >
                             <Select placeholder="Seleccione o Ponto de Entrada" >
@@ -311,11 +325,11 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                     <Col span={8}>
                         <Form.Item
                             name="partners"
-                            label="Parceiro"
+                            label="Organização"
                             rules={[{ required: true, message: RequiredFieldMessage }]}
                             initialValue={user?.partners.id.toString()}
                         >
-                            <Select placeholder="Seleccione o Parceiro">
+                            <Select placeholder="Seleccione a Organização">
                                 {partners?.map(item => (
                                     <Option key={item.id}>{item.name}</Option>
                                 ))}
