@@ -52,6 +52,41 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
             }
         };
 
+        const fetchDistricts = async () => {
+            if (user && user.provinces.length > 0) {
+                const pIds = user.provinces.map(item => {
+                    return item.id + ''
+                });
+                const dataDistricts = await queryDistrictsByProvinces({ provinces: pIds });
+                setDistricts(dataDistricts);
+            }
+        };
+
+        const fetchLocalities = async () => {
+            if (user && user.districts.length > 0) {
+                const dIds = user.districts.map(item => {
+                    return item.id + ''
+                });
+                const dataLocalities = await queryLocalitiesByDistricts({ districts: dIds });
+                setLocalities(dataLocalities);
+            }
+        };
+
+        const fetchUs = async () => {
+            if (user && user.localities.length > 0) {
+                const lIds = user.localities.map(item => {
+                    return item.id + ''
+                });
+                const dataUs = await queryUsByLocalities({ localities: lIds });
+                setUs(dataUs);
+            }
+        };
+
+        fetchData().catch(error => console.log(error));
+        fetchDistricts().catch(error => console.log(error));
+        fetchLocalities().catch(error => console.log(error));
+        fetchUs().catch(error => console.log(error));
+
         fetchData().catch(error => console.log(error));
 
     }, [user]);
