@@ -62,7 +62,7 @@ const Profile = () => {
                     <hr />
                     <strong>
                       <i className="fas fa-map-marked mr-2" />
-                      Província
+                      Província(s)
                     </strong>
                     <p className="text-muted">
                       {currentUser?.provinces.map(u => u.name+', ')}
@@ -70,7 +70,7 @@ const Profile = () => {
                     <hr />
                     <strong>
                       <i className="fas fa-map-marked-alt mr-2" />
-                      Distrito
+                      Distrito(s)
                     </strong>
                     <p className="text-muted">
                       {currentUser?.districts.map(u => u.name+', ')}
@@ -78,7 +78,7 @@ const Profile = () => {
                     <hr />
                     <strong>
                       <i className="fas fa-map-marker mr-2" />
-                      Posto Administrativo
+                      Posto(s) Administrativo(s)
                     </strong>
                     <p className="text-muted">
                       {currentUser?.localities.map(u => u.name+', ')}
