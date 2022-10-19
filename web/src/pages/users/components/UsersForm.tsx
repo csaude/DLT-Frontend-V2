@@ -1,6 +1,6 @@
 import { Modal, message, Form, Input, InputNumber, Select, Button, Col, Row, DatePicker, Space, Radio, Divider, Checkbox } from 'antd';
 import React, { Fragment, useEffect, useState } from 'react'
-import { allPartners } from '@app/utils/partners';
+import { allPartners, allPartnersByDistricts } from '@app/utils/partners';
 import { allProfiles } from '@app/utils/profiles';
 import { allUs } from '@app/utils/uSanitaria';
 import { allProvinces, queryDistrictsByProvinces, queryLocalitiesByDistricts, queryUsByLocalities } from '@app/utils/locality';
@@ -84,8 +84,6 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
         fetchDistricts().catch(error => console.log(error));
         fetchLocalities().catch(error => console.log(error));
         fetchUs().catch(error => console.log(error));
-
-        console.log(user);
         
 
     }, [user]);
@@ -95,14 +93,25 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
             const dataDistricts = await queryDistrictsByProvinces({ provinces: Array.isArray(values)? values : [values] });
             setDistricts(dataDistricts);
         }
+
+        form.setFieldsValue({districts: []});
+        form.setFieldsValue({localities: []});
+        form.setFieldsValue({partners: []});    
+        form.setFieldsValue({us: []});               
     }
 
     const onChangeDistricts = async (values: any) => {
         if (values.length > 0) {
             const dataLocalities = await queryLocalitiesByDistricts({ districts: Array.isArray(values)? values : [values] });
             setLocalities(dataLocalities);
-        }
 
+            const partners = await allPartnersByDistricts({ districts: Array.isArray(values)? values : [values] })
+            setPartners(partners);
+        }
+    
+        form.setFieldsValue({localities: []});
+        form.setFieldsValue({partners: []});  
+        form.setFieldsValue({us: []});
     }
 
     const onChangeLocalities = async (values: any) => {
@@ -111,6 +120,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
             setUs(dataUs);
         }
 
+        form.setFieldsValue({us: []});               
     }
 
     const onChangeProfile = async (values: any) => {
@@ -212,8 +222,8 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                         <Form.Item
                             name="phoneNumber"
                             label="Número de Telemóvel"
-                            initialValue={user?.phoneNumber}
-                            rules={[{ required: true, type: 'number', min: 10000001, max:999999999, message: 'O numero inserido não é válido!' }]}
+                            initialValue={user?.phoneNumber? Number(user?.phoneNumber) : user?.phoneNumber}
+                            rules={[{ type: 'number', min: 820000000, max:999999999, message: 'O numero inserido não é válido!' }]}
                         >
                             <InputNumber prefix="+258  " style={{width: '100%',}} placeholder="Insira o Telemóvel" />
                         </Form.Item>
@@ -222,8 +232,8 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                         <Form.Item
                             name="phoneNumber2"
                             label="Número de Telemóvel (Alternativo)"
-                            rules={[{ type: 'number', min: 10000001, max:999999999, message: 'O numero inserido não é válido!' }]}
-                            initialValue={user?.phoneNumber2}
+                            rules={[{ type: 'number', min: 820000000, max:999999999, message: 'O numero inserido não é válido!' }]}
+                            initialValue={user?.phoneNumber2? Number(user?.phoneNumber2) : user?.phoneNumber2}
                         >
                             <InputNumber prefix="+258  " style={{width: '100%',}} placeholder="Insira o Telemóvel" />
                         </Form.Item>
