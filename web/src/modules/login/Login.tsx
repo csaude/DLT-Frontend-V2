@@ -6,7 +6,7 @@ import {useFormik} from 'formik';
 import {useTranslation} from 'react-i18next';
 import {loginUser} from '@store/reducers/auth';
 import {Checkbox, Button} from '@components';
-import {faEnvelope, faLock, faUser} from '@fortawesome/free-solid-svg-icons';
+import {faEnvelope, faEye, faEyeSlash, faLock, faUser} from '@fortawesome/free-solid-svg-icons';
 import {setWindowClass} from '@app/utils/helpers';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import { Center, Box, Text, Heading, VStack, FormControl, Input, Image } from 'native-base';
@@ -19,6 +19,7 @@ import * as AuthService from '../../services/auth';
 const Login = () => {
   const [isAuthLoading, setAuthLoading] = useState(false);
   const dispatch = useDispatch();
+  const [passwordType, setPasswordType] = useState("password");
 
   const navigate = useNavigate();
   const [t] = useTranslation();
@@ -51,6 +52,16 @@ const Login = () => {
       login(values.email, values.password);
     }
   });
+
+  const togglePassword =()=>{
+
+    if(passwordType==="password")
+    {
+     setPasswordType("")
+     return;
+    }
+    setPasswordType("password")
+  };
 
   setWindowClass('hold-transition login-page');
 
@@ -102,7 +113,7 @@ const Login = () => {
                 <Form.Control
                   id="password"
                   name="password"
-                  type="password"
+                  type={passwordType}
                   placeholder="Insira a Password"
                   onChange={handleChange}
                   value={values.password}
@@ -115,8 +126,12 @@ const Login = () => {
                   </Form.Control.Feedback>
                 ) : (
                   <InputGroup.Append>
-                    <InputGroup.Text>
-                      <FontAwesomeIcon icon={faLock} />
+                    <InputGroup.Text>{ 
+                        passwordType==="password"? 
+                          <FontAwesomeIcon icon={faEyeSlash} onClick={togglePassword} />
+                        :
+                          <FontAwesomeIcon icon={faEye} onClick={togglePassword} />
+                      }
                     </InputGroup.Text>
                   </InputGroup.Append>
                 )}
