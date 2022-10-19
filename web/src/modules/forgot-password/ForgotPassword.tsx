@@ -190,7 +190,7 @@ const ForgotPassword = () => {
           <p className="mt-3 mb-1">
             <Link to="/login">
               {/* {t('login.button.signIn.label')} */}
-              Aceder
+              Voltar a Página Principal
             </Link>
           </p>
         </div>
