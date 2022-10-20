@@ -130,6 +130,7 @@ const BeneficiariesList: React.FC = () => {
         });
         setBeneficiary(data);
         setBeneficiaryModalVisible(false);
+        setBeneficiaryPartnerModalVisible(false);
     }
 
     
@@ -332,7 +333,7 @@ const BeneficiariesList: React.FC = () => {
             render: (text, record)  => getEntryPoint(record.entryPoint) 
         },
         { title: 'Distrito', dataIndex: '', key: 'district',
-            render: (text, record)  => record.neighborhood.locality.district.name,
+            render: (text, record)  => record.neighborhood.locality?.district.name,
         },
         { title: 'Idade', dataIndex: 'age', key: 'age',
             render: (text, record) => calculateAge(record.dateOfBirth) + ' anos'
@@ -431,6 +432,7 @@ const BeneficiariesList: React.FC = () => {
             />
             <FormBeneficiaryPartner form={form} beneficiary={beneficiary} modalVisible={beneficiaryPartnerModalVisible}
                 handleAddBeneficiary={handleAddBeneficiary}
+                handleUpdateBeneficiary={handleUpdateBeneficiary}
                 handleModalVisible={handleBeneficiaryPartnerModalVisible} 
             />
             <FormReference  form={form} beneficiary={beneficiary} 
