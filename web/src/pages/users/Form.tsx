@@ -205,14 +205,14 @@ const UserForm: React.FC = ({ user }: any) => {
                             marginTop={0} >
                             Registo do Utilizador
                         </Heading>
-                        <Alert status="info" colorSchem>
+                        {/* <Alert status="info" colorSchem>
                             <HStack flexShrink={1} space={2} alignItems="center">
                                 <Alert.Icon />
                                 <Text fontSize="xs" fontWeight="medium" color="coolGray.800">
                                     Preencha os campos abaixo para registar novo utilizador!
                                 </Text>
                             </HStack>
-                        </Alert>
+                        </Alert> */}
 
                         <Formik initialValues={initialValues}
                             onSubmit={onSubmit}
@@ -250,7 +250,7 @@ const UserForm: React.FC = ({ user }: any) => {
                                         <Input variant="filled"
                                             onBlur={handleBlur('email')}
                                             onChangeText={handleChange('email')}
-                                            id="email" name="email"
+                                            // id="email" name="email"
                                             placeholder="Insira o seu Email"
                                             value={values.email}
                                         />
@@ -261,7 +261,7 @@ const UserForm: React.FC = ({ user }: any) => {
                                         <Input variant="filled"
                                             onBlur={handleBlur('username')}
                                             onChangeText={handleChange('username')}
-                                            id="username" name="username"
+                                            // id="username" name="username"
                                             placeholder="Insira o seu Username"
                                             value={values.username}
                                         />
@@ -271,7 +271,7 @@ const UserForm: React.FC = ({ user }: any) => {
                                         <Input variant="filled"
                                             onBlur={handleBlur('phoneNumber')}
                                             onChangeText={handleChange('phoneNumber')}
-                                            id="phoneNumber" name="phoneNumber"
+                                            // id="phoneNumber" name="phoneNumber"
                                             placeholder="Insira o seu Telemóvel"
                                             value={values.phoneNumber}
                                         />

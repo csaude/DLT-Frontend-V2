@@ -14,7 +14,7 @@ import 'antd/dist/antd.css';
 import '../styles.css'
 import InterventionForm from './InterventionForm';
 
-export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, handleModalRefVisible}) {
+export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, handleModalRefVisible, user}) {
     const [visible, setVisible] = useState<boolean>(false);
     const [isAdd, setIsAdd] = useState<boolean>(false);
     const [selectedBeneficiary, setSelectedBeneficiary] = useState();
@@ -177,7 +177,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
                 title: 'Intervenções',
                 dataIndex: '',
                 key: 'intervention',
-                render: (text, record) => record.subServices.name,
+                render: (text, record) => (user.profiles.id == 4 && record.subServices.service.id == 9)? '' : record.subServices.name,
             },
             {
                 title: 'Ponto de Entrada',
@@ -186,7 +186,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
                 render: (text, record) => record.us.name,
             },
             {
-                title: 'Action',
+                title: 'Acção',
                 dataIndex: '',
                 key: 'x',
                 render: (text, record) => (
@@ -331,7 +331,8 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
                     visible={visible}
                     getContainer={false}
                     style={{ position: 'absolute' }}
-                    extra={
+                    height={440}
+                    footer={
                         <Space>
                             <Button onClick={onClose}>Cancelar</Button>
                             <Button htmlType="submit" onClick={() => onSubmit(selectedIntervention)} type="primary">
@@ -339,6 +340,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
                             </Button>
                         </Space>
                     }
+                    footerStyle={{ textAlign: 'right' }}
                 >
                     {isAdd ? <Form form={form} layout="vertical" onFinish={() => onSubmit(selectedIntervention)}> <InterventionForm record={selectedIntervention} beneficiary={beneficiary} /></Form> :
                         <ViewIntervention record={selectedBeneficiary} beneficiary={beneficiary} />
@@ -349,7 +351,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
     );
 }
 
-const ViewBeneficiary = ({ beneficiary, modalVisible, handleModalVisible , handleModalRefVisible}) => {
+const ViewBeneficiary = ({ beneficiary, modalVisible, handleModalVisible , handleModalRefVisible, user}) => {
 
     const okHandle = () => {
         handleModalVisible();
@@ -367,7 +369,7 @@ const ViewBeneficiary = ({ beneficiary, modalVisible, handleModalVisible , handl
             onCancel={() => handleModalVisible()}
         >
             
-            <ViewBenefiaryPanel beneficiary={beneficiary} columns={undefined} handleModalVisible={handleModalVisible} handleModalRefVisible={handleModalRefVisible}/>
+            <ViewBenefiaryPanel beneficiary={beneficiary} columns={undefined} handleModalVisible={handleModalVisible} handleModalRefVisible={handleModalRefVisible} user={user} />
 
         </Modal>
 
