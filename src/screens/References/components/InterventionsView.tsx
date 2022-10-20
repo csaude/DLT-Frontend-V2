@@ -47,7 +47,7 @@ const InterventionsView: React.FC = ({ route }: any) => {
                     <Text _dark={{
                         color: "warmGray.50"
                     }} color="darkBlue.800" >
-                        {data.item.name}
+                        {loggedUser.profile_id == 4 && [26,67,68].includes(data.item.intervention.sub_service_id) ? 'Aconselhamento e Testagem em Saúde' : data.item.name}
                     </Text>
                     <HStack>
                         <Text color="warmGray.400" _dark={{ color: "warmGray.200" }}>
@@ -55,14 +55,15 @@ const InterventionsView: React.FC = ({ route }: any) => {
                         </Text>
                         <Text color="darkBlue.300" _dark={{ color: "warmGray.200" }}>
                             {` ${
-                                        (data.item.intervention.entry_point === "1") ?
-                                            "US"
-                                            :
-                                            (data.item.intervention.entry_point === "2") ?
-                                                "ES"
-                                                :
-                                                "CM"
-                                    }`}
+                                    (data.item.intervention.entry_point === "1") ?
+                                        "US"
+                                        :
+                                    (data.item.intervention.entry_point === "2") ?
+                                        "CM"
+                                        :
+                                        "ES"
+                                }`
+                            }
                         </Text>
                     </HStack>
                     
