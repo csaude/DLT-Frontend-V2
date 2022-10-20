@@ -142,7 +142,7 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
                 <VStack width='200px' >
                     <HStack>
                         <Text color="warmGray.400" _dark={{ color: "warmGray.200" }}>
-                            NID:
+                            NUI:
                         </Text>
                         <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
                             {` ${getBeneficiary(data.item.beneficiary_id).nui}`}
