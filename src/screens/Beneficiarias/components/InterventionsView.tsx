@@ -37,6 +37,7 @@ const InterventionsView: React.FC = ({ route }: any) => {
 
     const renderItem = (data: any) => (
         <TouchableHighlight
+            onPress={() =>  navigate({ name: "BeneficiarieServiceForm", params: { beneficiarie: beneficiary, intervs: interventions, intervention: data.item.intervention } })}
             style={styles.rowFront}
             underlayColor={'#AAA'}
         >
@@ -56,10 +57,10 @@ const InterventionsView: React.FC = ({ route }: any) => {
                             {` ${(data.item.intervention.entry_point === "1") ?
                                     "US"
                                     :
-                                    (data.item.intervention.entry_point === "2") ?
-                                        "ES"
-                                        :
-                                        "CM"
+                                (data.item.intervention.entry_point === "2") ?
+                                    "CM"
+                                    :
+                                    "ES"
                                 }`}
                         </Text>
                     </HStack>
