@@ -3,17 +3,24 @@ import { Badge, Button, Steps, Row, Col, Input, message, Space, Form, Tabs, Moda
 import './index.css';
 import StepDadosPessoais from './StepDadosPessoaisParceiro';
 import StepVulnerabilidadesGerais from './StepVulnerabilidadesGeraisParceiro';
-import { add } from '@app/utils/beneficiary';
+import { add, edit } from '@app/utils/beneficiary';
 import moment from 'moment';
 import { stringify } from 'qs';
 
 const { Option } = Select;
 const { Step } = Steps;
 
-const BeneficiaryPartnerForm = ({ form, beneficiary, modalVisible, handleAddBeneficiary, handleModalVisible }: any) => {
+const BeneficiaryPartnerForm = ({ form, beneficiary, modalVisible, handleAddBeneficiary, handleUpdateBeneficiary, handleModalVisible }: any) => {
 
     const [current, setCurrent] = useState(0);
     const [firstStepValues, setFirstStepValues] = useState();
+
+    useEffect(() => { 
+        if(!modalVisible){
+            setCurrent(0);
+        }
+        
+    }, [modalVisible]);
 
     const next = () => {
         
@@ -85,7 +92,6 @@ const BeneficiaryPartnerForm = ({ form, beneficiary, modalVisible, handleAddBene
 
             const { data } = await add(ben);
             handleAddBeneficiary(data);
-            handleModalVisible(false);
 
             message.success({
                 content: 'Registado com Sucesso!', className: 'custom-class',
@@ -95,9 +101,8 @@ const BeneficiaryPartnerForm = ({ form, beneficiary, modalVisible, handleAddBene
             });
         })
         .catch(error => {
-
             message.error({
-                content: 'Não foi possivel Registrar a Beneficiária!', className: 'custom-class',
+                content: 'Não foi possivel Registrar o Parceiro!', className: 'custom-class',
                 style: {
                     marginTop: '10vh',
                 }
@@ -105,7 +110,62 @@ const BeneficiaryPartnerForm = ({ form, beneficiary, modalVisible, handleAddBene
         });
     }
 
-    
+    const handleUpdate = (firstStepValues) => {
+        form.validateFields().then(async (values) => {
+            beneficiary.surname = firstStepValues.surname;
+            beneficiary.name = firstStepValues.name;
+            beneficiary.nickName = firstStepValues.nick_name;
+            beneficiary.dateOfBirth = moment(firstStepValues.date_of_birth).format('YYYY-MM-DD');
+            beneficiary.age = firstStepValues.age;
+            beneficiary.address = firstStepValues.address;
+            beneficiary.email = firstStepValues.e_mail;
+            beneficiary.phoneNumber = firstStepValues.phone_number;
+            beneficiary.enrollmentDate = firstStepValues.enrollment_date;
+            beneficiary.nationality = firstStepValues.nationality;
+            beneficiary.entryPoint = firstStepValues.entry_point;
+            beneficiary.neighborhood = { "id": firstStepValues.neighbourhood_id };
+            beneficiary.partnerNUI = firstStepValues.partner_nui;
+            beneficiary.vbltDeficiencyType = values.vblt_deficiency_type;
+            beneficiary.vbltHouseSustainer = values.vblt_house_sustainer;
+            beneficiary.vbltIsDeficient = values.vblt_is_deficient;
+            beneficiary.vbltIsOrphan = values.vblt_is_orphan;
+            beneficiary.vbltIsStudent = values.vblt_is_student;
+            beneficiary.vbltLivesWith = values.vblt_lives_with.toString();
+            beneficiary.vbltSchoolGrade = values.vblt_school_grade;
+            beneficiary.vbltSchoolName = values.vblt_school_name;
+            beneficiary.updatedBy = localStorage.user;
+
+            const us = firstStepValues.us;
+            if (us !== undefined) {
+                beneficiary.us = us;
+            }
+
+            const { data } = await edit(beneficiary);
+            handleUpdateBeneficiary(data);
+            handleModalVisible(false);
+
+            message.success({
+                content: 'Actualizado com Sucesso!', className: 'custom-class',
+                style: {
+                    marginTop: '10vh',
+                }
+            });
+        })
+            .catch(error => {
+
+                message.error({
+                    content: 'Não foi possivel Actualizar o Parceiro!', className: 'custom-class',
+                    style: {
+                        marginTop: '10vh',
+                    }
+                });
+            });
+    };
+
+
+    const onUpdate = async () => {
+        handleUpdate(firstStepValues);
+    }
 
     const steps = [
         {
@@ -140,8 +200,8 @@ const BeneficiaryPartnerForm = ({ form, beneficiary, modalVisible, handleAddBene
                         </Button>
                     )}
                     {(current === 1) && (
-                        <Button type="primary" onClick={() => onSubmit()}>
-                            Salvar
+                        <Button type="primary" onClick={() => beneficiary? onUpdate() : onSubmit()}>
+                            {beneficiary? 'Actualizar' : 'Salvar'}
                         </Button>
                     )}
 
