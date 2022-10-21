@@ -408,7 +408,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                     <Form.Item
                         name="phone_number"
                         label="Telemóvel"
-                        initialValue={beneficiary?.phoneNumber}
+                        initialValue={beneficiary?.phoneNumber? Number(beneficiary?.phoneNumber) : beneficiary?.phoneNumber}
                         rules={[{ type: 'number', min: 10000001, max:999999999, message: 'O numero inserido não é válido!' }]}
                     >
                         <InputNumber prefix="+258  " style={{width: '100%',}} placeholder="Insira o Telemóvel" />

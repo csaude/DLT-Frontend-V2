@@ -138,6 +138,7 @@ const BeneficiariesList: React.FC = () => {
         });
         setBeneficiary(data);
         setBeneficiaryModalVisible(false);
+        setBeneficiaryPartnerModalVisible(false);
     }
 
     
@@ -281,7 +282,7 @@ const BeneficiariesList: React.FC = () => {
         { title: 'Intervenções', 
             dataIndex: '', 
             key: 'intervention',
-            render: (text, record)  => record.subServices.name,
+            render: (text, record)  => (user.profiles.id == 4 && record.subServices.service.id == 9)? '' : record.subServices.name,
         },
         { title: 'Ponto de Entrada', 
             dataIndex: '', 
@@ -429,7 +430,7 @@ const BeneficiariesList: React.FC = () => {
                     rowKey="id"
                     columns={columns}
                     expandable={{
-                        expandedRowRender: record =>  <div style={{border:"2px solid #d9edf7", backgroundColor:"white"}}><ViewBenefiaryPanel beneficiary={record} columns={interventionColumns} handleModalVisible={handleModalVisible} handleModalRefVisible={handleModalRefVisible} /></div>,
+                        expandedRowRender: record =>  <div style={{border:"2px solid #d9edf7", backgroundColor:"white"}}><ViewBenefiaryPanel beneficiary={record} columns={interventionColumns} handleModalVisible={handleModalVisible} handleModalRefVisible={handleModalRefVisible} user={user} /></div>,
                         rowExpandable: record => record.name !== 'Not Expandable',
                     }}
                     dataSource={beneficiaries}
@@ -441,6 +442,7 @@ const BeneficiariesList: React.FC = () => {
                 beneficiary={beneficiary} 
                 modalVisible={modalVisible} 
                 handleModalRefVisible={handleModalRefVisible}
+                user={user}
             />
             <FormBeneficiary form={form} beneficiary={beneficiary} modalVisible={beneficiaryModalVisible}
                 handleAddBeneficiary={handleAddBeneficiary}
@@ -449,6 +451,7 @@ const BeneficiariesList: React.FC = () => {
             />
             <FormBeneficiaryPartner form={form} beneficiary={beneficiary} modalVisible={beneficiaryPartnerModalVisible}
                 handleAddBeneficiary={handleAddBeneficiary}
+                handleUpdateBeneficiary={handleUpdateBeneficiary}
                 handleModalVisible={handleBeneficiaryPartnerModalVisible} 
             />
             <FormReference  form={form} beneficiary={beneficiary} 

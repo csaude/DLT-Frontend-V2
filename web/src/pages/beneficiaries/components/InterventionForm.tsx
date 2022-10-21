@@ -55,6 +55,8 @@ const InterventionForm = ({ record, beneficiary}: any) => {
           form.setFieldsValue({ areaServicos: entryPoint});
           onChangeAreaServiço(entryPoint);
         }
+
+        form.setFieldValue('provider', user.name+' '+user.surname);
       } 
 
       const fetchServices = async () => {
@@ -268,6 +270,7 @@ const InterventionForm = ({ record, beneficiary}: any) => {
                 </Select>
                 </Form.Item>
               </Col>
+              <Col />
               <Col span={8}>
                 <Form.Item
                   name="outros"
