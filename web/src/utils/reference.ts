@@ -60,3 +60,8 @@ export async function queryByCreated(id: any) {
   const res = await select('/api/references/user/'.concat(id));
   return res;
 }
+
+export async function queryByUser(id: any) {
+  const res = await select('/api/references/byUser/'.concat(id));
+  return res;
+}
