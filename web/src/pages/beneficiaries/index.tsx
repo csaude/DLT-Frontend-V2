@@ -38,6 +38,7 @@ const BeneficiariesList: React.FC = () => {
     const [ beneficiaryModalVisible, setBeneficiaryModalVisible ] = useState<boolean>(false);
     const [ beneficiaryPartnerModalVisible, setBeneficiaryPartnerModalVisible ] = useState<boolean>(false);
     const [ referenceModalVisible, setReferenceModalVisible ] = useState<boolean>(false);
+    const [ addStatus, setAddStatus ] = useState<boolean>(false);    
 
     const [ district, setDistrict] = useState<any[]>([]);
     const [ partners, setPartners] = useState<any[]>([]);
@@ -109,18 +110,32 @@ const BeneficiariesList: React.FC = () => {
                 
             };
 
-            const { data } = await addRef(payload);
+            if(servicesObjects.length==0){
+                setAddStatus(false);
+                
+                message.error({
+                    content: 'Referência sem Intervenção!', className: 'custom-class',
+                    style: {
+                        marginTop: '10vh',
+                    }
+                });
+                
+            }else{
+                setAddStatus(true);
+                
+                const { data } = await addRef(payload);
 
-            message.success({
-                content: 'Registado com Sucesso!'+data?.referenceNote, className: 'custom-class',
-                style: {
-                    marginTop: '10vh',
-                }
-            });
-
-            setReferenceModalVisible(false);
-
-            navigate('/referenceList');            
+                message.success({
+                    content: 'Registado com Sucesso!'+data?.referenceNote, className: 'custom-class',
+                    style: {
+                        marginTop: '10vh',
+                    }
+                });
+                
+                setReferenceModalVisible(false);
+                
+                navigate('/referenceList');  
+            }       
         }
     }
 
@@ -196,7 +211,6 @@ const BeneficiariesList: React.FC = () => {
     const getName = (record: any) => {
         return user?.profiles.id === 1 ? record.name + ' ' + record.surname : 'DREAMS'+record.nui;
     }
-
 
     const filterItem = data => formatter => data.map( item => ({
         text: formatter(item),
@@ -362,9 +376,12 @@ const BeneficiariesList: React.FC = () => {
                 );
             },
         },
-        { title: 'Org', dataIndex: 'partner', key: 'partner',
-            render: (text, record)  => record.partner.abbreviation,filters: filterItem(partners)(i => i.name),
-            onFilter: (value, record) => record?.partner?.abbreviation == value,
+        { title: 'Org',
+            dataIndex: 'partner', 
+            key: 'partner',
+            render: (text, record)  => record?.partner?.name,
+            filters: filterItem(partners)(i => i.name),
+            onFilter: (value, record) => (record?.partner?.name == value),
             filterSearch: true,
         },
         { title: 'Criado Por', dataIndex: '', key: 'createdBy',
@@ -456,6 +473,7 @@ const BeneficiariesList: React.FC = () => {
             />
             <FormReference  form={form} beneficiary={beneficiary} 
                 modalVisible={referenceModalVisible}
+                addStatus={addStatus}
                 handleAdd={handleAddRef}   
                 handleModalRefVisible={handleModalRefVisible} 
                 handleRefServicesList={handleRefServicesList}
