@@ -10,12 +10,21 @@ import { stringify } from 'qs';
 const { Option } = Select;
 const { Step } = Steps;
 
-const FormReference = ({ form, beneficiary, reference, modalVisible, handleAdd, handleUpdate, handleModalRefVisible, handleRefServicesList }: any) => {
+
+const FormReference = ({ form, beneficiary, reference, modalVisible, handleAdd, handleUpdate, handleModalRefVisible, addStatus, handleRefServicesList }: any) => {
 
     const [current, setCurrent] = useState(0);
     const [firstStepValues, setFirstStepValues] = useState();
     const [secondStepValues, setSecondStepValues] = useState();
     const [services, setServices] = useState<any>([]);
+
+    useEffect(() => { 
+        if(!modalVisible){
+            setCurrent(0);
+            form.resetFields();
+        }
+        
+    }, [modalVisible]);
 
     const next = () => {
         
@@ -34,10 +43,6 @@ const FormReference = ({ form, beneficiary, reference, modalVisible, handleAdd, 
         setCurrent(inc);
     }
 
-    const okHandle = () => {
-        handleAdd("test");
-        handleModalRefVisible(false);
-    }
     
     const onClose = () => {
         form.resetFields();
@@ -49,23 +54,21 @@ const FormReference = ({ form, beneficiary, reference, modalVisible, handleAdd, 
     }
 
     const onSubmit = async () => {
-        
+
         handleAdd(firstStepValues);
 
-        const inc = current - 1;
-        setCurrent(inc);
-        form.resetFields();
-        handleModalRefVisible(false);
+        if(addStatus){    
+            const inc = current - 1;
+            setCurrent(inc);
+            form.resetFields();
+            handleModalRefVisible(false);
+
+        }
     }
 
     const onUpdate = async () => {
 
         handleUpdate(firstStepValues, beneficiary);
-
-        const inc = current - 1;
-        setCurrent(inc);
-        form.resetFields();
-        handleModalRefVisible(false);
     }
 
     const steps = [

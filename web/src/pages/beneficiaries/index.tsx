@@ -17,6 +17,8 @@ import FormBeneficiaryPartner from './components/FormBeneficiaryPartner';
 import { add, edit } from '../../utils/beneficiary';
 import { add as addRef, Reference } from '../../utils/reference';
 import FormReference from './components/FormReference';
+import { allDistrict } from '@app/utils/district';
+import { allPartners } from '@app/utils/partners';
 
 
 const { Text } = Typography;
@@ -36,7 +38,10 @@ const BeneficiariesList: React.FC = () => {
     const [ beneficiaryModalVisible, setBeneficiaryModalVisible ] = useState<boolean>(false);
     const [ beneficiaryPartnerModalVisible, setBeneficiaryPartnerModalVisible ] = useState<boolean>(false);
     const [ referenceModalVisible, setReferenceModalVisible ] = useState<boolean>(false);
-    const [ params, setParams] = useState<any>(undefined);
+    const [ addStatus, setAddStatus ] = useState<boolean>(false);    
+
+    const [ district, setDistrict] = useState<any[]>([]);
+    const [ partners, setPartners] = useState<any[]>([]);
 
     let searchInput ;
     useEffect(() => { 
@@ -44,9 +49,13 @@ const BeneficiariesList: React.FC = () => {
         const fetchData = async () => {
             const user = await queryUser(localStorage.user);
             const data = await query(getUserParams(user));
+            const districts = await allDistrict();
+            const partners = await allPartners();     
 
             setUser(user);
             setBeneficiaries(data);
+            setDistrict(districts);
+            setPartners(partners);
         } 
 
         const fetchUsers = async () => {
@@ -101,18 +110,32 @@ const BeneficiariesList: React.FC = () => {
                 
             };
 
-            const { data } = await addRef(payload);
+            if(servicesObjects.length==0){
+                setAddStatus(false);
+                
+                message.error({
+                    content: 'Referência sem Intervenção!', className: 'custom-class',
+                    style: {
+                        marginTop: '10vh',
+                    }
+                });
+                
+            }else{
+                setAddStatus(true);
+                
+                const { data } = await addRef(payload);
 
-            message.success({
-                content: 'Registado com Sucesso!'+data?.referenceNote, className: 'custom-class',
-                style: {
-                    marginTop: '10vh',
-                }
-            });
-
-            setReferenceModalVisible(false);
-
-            navigate('/referenceList');            
+                message.success({
+                    content: 'Registado com Sucesso!'+data?.referenceNote, className: 'custom-class',
+                    style: {
+                        marginTop: '10vh',
+                    }
+                });
+                
+                setReferenceModalVisible(false);
+                
+                navigate('/referenceList');  
+            }       
         }
     }
 
@@ -188,6 +211,11 @@ const BeneficiariesList: React.FC = () => {
     const getName = (record: any) => {
         return user?.profiles.id === 1 ? record.name + ' ' + record.surname : 'DREAMS'+record.nui;
     }
+
+    const filterItem = data => formatter => data.map( item => ({
+        text: formatter(item),
+        value: formatter(item)
+    }));
 
     const getColumnSearchProps = (dataIndex:any) => ({
         filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
@@ -333,7 +361,10 @@ const BeneficiariesList: React.FC = () => {
             render: (text, record)  => getEntryPoint(record.entryPoint) 
         },
         { title: 'Distrito', dataIndex: '', key: 'district',
-            render: (text, record)  => record.neighborhood.locality?.district.name,
+            render: (text, record)  => record.neighborhood.locality.district.name,
+            filters: filterItem(district)(i => i.name),
+            onFilter: (value, record) => record?.neighborhood?.locality?.district?.name == value,
+            filterSearch: true,
         },
         { title: 'Idade', dataIndex: 'age', key: 'age',
             render: (text, record) => calculateAge(record.dateOfBirth) + ' anos'
@@ -345,8 +376,13 @@ const BeneficiariesList: React.FC = () => {
                 );
             },
         },
-        { title: 'Org', dataIndex: 'partner', key: 'partner',
-            render: (text, record)  => record.partner.abbreviation,
+        { title: 'Org',
+            dataIndex: 'partner', 
+            key: 'partner',
+            render: (text, record)  => record?.partner?.name,
+            filters: filterItem(partners)(i => i.name),
+            onFilter: (value, record) => (record?.partner?.name == value),
+            filterSearch: true,
         },
         { title: 'Criado Por', dataIndex: '', key: 'createdBy',
             render: (text, record)  => users.filter(user => record.createdBy == user.id).map(filteredUser => `${filteredUser.name} ` + `${filteredUser.surname}`)[0],
@@ -358,7 +394,7 @@ const BeneficiariesList: React.FC = () => {
             render: (text, record)  => users.filter(user => record.updatedBy == user.id).map(filteredUser => `${filteredUser.name} ` + `${filteredUser.surname}`)[0],
         },
         { title: 'Atualizado Em', dataIndex: 'dateUpdated', key: 'dateUpdated',
-            render: (val: string) => <span>{val? moment(val).format('YYYY-MM-DD') : ''}</span>,
+            render: (val: string) =>val != undefined ? <span>{moment(val).format('YYYY-MM-DD')} </span>: '',
         },
         {
           title: 'Acção',
@@ -437,6 +473,7 @@ const BeneficiariesList: React.FC = () => {
             />
             <FormReference  form={form} beneficiary={beneficiary} 
                 modalVisible={referenceModalVisible}
+                addStatus={addStatus}
                 handleAdd={handleAddRef}   
                 handleModalRefVisible={handleModalRefVisible} 
                 handleRefServicesList={handleRefServicesList}
