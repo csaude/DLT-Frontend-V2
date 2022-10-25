@@ -16,7 +16,7 @@ import FormReference from '../beneficiaries/components/FormReference';
 
 const { Text } = Typography;
 
-const ReferenceList: React.FC = () => {
+const ReferenceList: React.FC = ({resetModal}: any) => {
 
     const [ form ] = Form.useForm();
     const [ references, setReferences ] = useState<any[]>([]);
@@ -74,6 +74,7 @@ const ReferenceList: React.FC = () => {
         
     }
 
+    
     const handleModalVisible = (flag?: boolean) => {
         setModalVisible(!!flag);
     };
@@ -123,12 +124,14 @@ const ReferenceList: React.FC = () => {
             };
 
             if(servicesObjects.length==0){
-                message.info({
+                message.error({
                     content: 'Referência sem Intervenção!', className: 'custom-class',
                     style: {
                         marginTop: '10vh',
                     }
                 });
+
+                setReferenceModalVisible(true);
 
             }else{
 
@@ -142,9 +145,13 @@ const ReferenceList: React.FC = () => {
                         marginTop: '10vh',
                     }
                 });
+
+                setReferenceModalVisible(false);
     
                 navigate('/referenceList');    
-            }        
+
+            }      
+              
         }
     }
    
