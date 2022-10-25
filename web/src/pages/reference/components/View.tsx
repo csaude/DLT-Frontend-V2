@@ -17,6 +17,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
     const [interventions, setInterventions] = useState<any>();
     const [selectedService, setSelectedService] = useState<any>();
     const [services, setServices] = useState<any>();
+    const [canAddress, setCanAddress] = useState<boolean>(true);
 
     const [form] = Form.useForm();
 
@@ -24,13 +25,17 @@ export function ViewReferencePanel({selectedReference, columns}) {
 
     useEffect(() => {
         const fetchData = async () => {
-          const data = await queryUser(selectedReference.userCreated);
+          const data = await queryUser(localStorage.user);
           const data1 = await queryBeneficiary(selectedReference.beneficiaries.id);
 
-          setUser(data);
+          setUser(selectedReference.referredBy);
           setInterventions(data1.beneficiariesInterventionses);
           setServices(selectedReference.referencesServiceses);
           setReference(selectedReference);
+
+          if (data.partners.partnerType == selectedReference.referredBy.partners.partnerType) {
+            setCanAddress(false);
+          }
         } 
         
         fetchData().catch(error => console.log(error));
@@ -142,7 +147,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
             key: 'action',
             render: (text, record) => (
               <Space>
-                <Button type="primary" icon={<FileDoneOutlined />} onClick={() => onAddIntervention(record) } >
+                <Button disabled={!canAddress} type="primary" icon={<FileDoneOutlined />} onClick={() => onAddIntervention(record) } >
                 </Button>
               </Space>
             ),

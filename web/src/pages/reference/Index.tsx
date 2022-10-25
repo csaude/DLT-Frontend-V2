@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { query, edit as editRef, Reference} from '@app/utils/reference';
+import { queryByUser, edit as editRef, Reference} from '@app/utils/reference';
 import {allPartners} from '@app/utils/partners';
 import {allDistrict} from '@app/utils/district';
 import { query  as query1} from '@app/utils/users';
@@ -23,7 +23,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
     const [ searchText, setSearchText ] = useState('');
     const [ searchedColumn, setSearchedColumn ] = useState('');
     const [ reference, setReference ] = useState();
-    const [services, setServices] = useState<any>([])
+    const [ services, setServices ] = useState<any>([])
     const [ beneficiary, setBeneficiary ] = useState<any>(undefined);
     const [ modalVisible, setModalVisible ] = useState<boolean>(false);
     const [ referenceModalVisible, setReferenceModalVisible ] = useState<boolean>(false);
@@ -38,7 +38,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
     let searchInput;
     useEffect(() => {
         const fetchData = async () => {
-          const data = await query();
+          const data = await queryByUser(localStorage.user);
           const partners = await allPartners();          
           const data2 = await query1();         
           const us = await allUs();
@@ -136,7 +136,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             }else{
 
                 const { data } = await editRef(payload);
-                const allReferences: any = await query();
+                const allReferences: any = await queryByUser(localStorage.user);
                 setReferences(allReferences);
     
                 message.success({
@@ -380,11 +380,11 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                     value: 1,
                     },
                     {
-                    text: 'ES',
+                    text: 'CM',
                     value: 2,
                 },
                 {
-                    text: 'CM',
+                    text: 'ES',
                     value: 3,
                 },
             ],
@@ -395,9 +395,9 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                     <Text>US </Text>
                 :  
                 (record.users.entryPoint==2) ?
-                    <Text>ES </Text>
+                    <Text>CM </Text>
                 : 
-                <Text>CM </Text>
+                <Text>ES </Text>
         },		
         { 
             title: 'Organização Referida', 
