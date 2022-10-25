@@ -10,12 +10,21 @@ import { stringify } from 'qs';
 const { Option } = Select;
 const { Step } = Steps;
 
+
 const FormReference = ({ form, beneficiary, reference, modalVisible, handleAdd, handleUpdate, handleModalRefVisible, addStatus, handleRefServicesList }: any) => {
 
     const [current, setCurrent] = useState(0);
     const [firstStepValues, setFirstStepValues] = useState();
     const [secondStepValues, setSecondStepValues] = useState();
     const [services, setServices] = useState<any>([]);
+
+    useEffect(() => { 
+        if(!modalVisible){
+            setCurrent(0);
+            form.resetFields();
+        }
+        
+    }, [modalVisible]);
 
     const next = () => {
         
@@ -60,11 +69,6 @@ const FormReference = ({ form, beneficiary, reference, modalVisible, handleAdd, 
     const onUpdate = async () => {
 
         handleUpdate(firstStepValues, beneficiary);
-
-        const inc = current - 1;
-        setCurrent(inc);
-        form.resetFields();
-        handleModalRefVisible(false);
     }
 
     const steps = [
