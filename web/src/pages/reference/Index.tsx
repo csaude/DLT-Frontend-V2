@@ -10,10 +10,12 @@ import 'antd/dist/antd.css';
 import moment from 'moment';
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
+import { Spinner } from 'react-bootstrap';
 
 import { useNavigate } from 'react-router-dom';
 import ViewReferral from './components/View';
 import FormReference from '../beneficiaries/components/FormReference';
+import FullPageLoader from '@app/components/full-page-loader/FullPageLoader';
 
 const { Text } = Typography;
 
@@ -28,6 +30,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
     const [ beneficiary, setBeneficiary ] = useState<any>(undefined);
     const [ modalVisible, setModalVisible ] = useState<boolean>(false);
     const [ referenceModalVisible, setReferenceModalVisible ] = useState<boolean>(false);
+    const [loading, setLoading] = useState(false);
 
     const [ partners, setPartners] = useState<any[]>([]);
     const [ user, setUser] = useState<any[]>([]);
@@ -38,18 +41,21 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
 
     let searchInput;
     useEffect(() => {
+        
         const fetchData = async () => {
-          const data = await queryByUser(localStorage.user);
-          const partners = await allPartners();          
-          const data2 = await query1();         
-          const us = await allUs();
-          const districts = await allDistrict();
+            setLoading(true);
+            const data = await queryByUser(localStorage.user);
+            const partners = await allPartners();          
+            const data2 = await query1();         
+            const us = await allUs();
+            const districts = await allDistrict();
 
-          setReferences(data);
-          setPartners(partners);
-          setUser(data2);
-          setUs(us);
-          setDistrict(districts);
+            setReferences(data);
+            setPartners(partners);
+            setUser(data2);
+            setUs(us);
+            setDistrict(districts);
+            setLoading(false);
         } 
     
         fetchData().catch(error => console.log(error));
@@ -508,12 +514,18 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                 SISTEMA INTEGRADO DE CADASTRO DE ADOLESCENTES E JOVENS
             </Card>
             <Card title="Lista de Referências e Contra-Referências" bordered={false} headStyle={{color:"#17a2b8"}}>
+                {
+                    loading?
+                        <FullPageLoader />
+                    : undefined
+                }
                 <Table
                     rowKey={(record?) => `${record.id}${record.id.date}`}
                     columns={columnsRef}
                     dataSource={references}
                     bordered
-                />
+                >
+                </Table>
             </Card>
             <ViewReferral
                 {...parentMethods}
@@ -527,7 +539,9 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                 modalVisible={referenceModalVisible}
                 handleModalRefVisible={handleModalRefVisible} 
                 handleRefServicesList={handleRefServicesList}/>
-
+                     
+            
+            
         </>
     );
 }
