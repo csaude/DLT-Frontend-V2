@@ -54,7 +54,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
     
         fetchData().catch(error => console.log(error));
     
-    }, []);
+    }, [modalVisible]);
 
     const handleModalRefVisible = (flag?: boolean) => {
         setReferenceModalVisible(!!flag);
