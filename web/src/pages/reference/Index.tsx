@@ -160,6 +160,11 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
         value: formatter(item)
     }));
 
+    const filterUs = data => formatter => data.map( item => ({
+        text: formatter(item),
+        value: formatter(item)
+    }));
+
     const getColumnSearchProps = (dataIndex:any) => ({
         filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
             <div style={{ padding: 8 }}>
@@ -411,21 +416,12 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
         },	
         { 
             title: 'Ponto de Entrada para Referência', 
-            dataIndex: '', 
-            key: '',
-            render: (text, record)  => (
-                user.map(data =>(
-                    data?.id != record?.userCreated ?                        
-                        ''                       
-                        :
-                        (data?.entryPoint==1) ? 
-                            <Text>US </Text> 
-                        : 
-                            (data?.entryPoint==2) ? <Text>ES </Text>
-                            :
-                            <Text>CM </Text>
-                ))
-            ),           
+            dataIndex: 'us', 
+            key: 'us',
+            render: (text, record) => record?.users?.us.map(u => u.name),
+            // filters: filterUs(us)(i => i.name),
+            // onFilter: (value, record) => record?.users?.us?.name == value,
+            // filterSearch: true,
         },	
         { 
             title: 'Estado', 
