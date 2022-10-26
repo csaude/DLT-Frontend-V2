@@ -168,7 +168,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
         { title: 'Intervenções', 
             dataIndex: '', 
             key: 'intervention',
-            render: (text, record)  => record.subServices.name,
+            render: (text, record)  => (user?.profiles.id == 4 && record.subServices.service.id == 9)? '' : record.subServices.name,
         },
         { title: 'Atendido Por', 
             dataIndex: '', 

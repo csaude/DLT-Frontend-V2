@@ -3,6 +3,7 @@ import { queryByUser, edit as editRef, Reference} from '@app/utils/reference';
 import {allPartners} from '@app/utils/partners';
 import {allDistrict} from '@app/utils/district';
 import { query  as query1} from '@app/utils/users';
+import { query as beneficiaryQuery } from '@app/utils/beneficiary';
 import {allUs} from '@app/utils/uSanitaria';
 import { Card, Table, Button, Space, Badge, Input, Typography, Form, message } from 'antd';
 import 'antd/dist/antd.css';
@@ -66,8 +67,13 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
 
     const onEditRefence = (record?: any) => {
         setReference(record);
-        setBeneficiary(record?.beneficiaries);
+        fetchBeneficiary(record?.beneficiaries.id);
         setReferenceModalVisible(true);
+    }
+
+    const fetchBeneficiary = async (beneficiaryId) => {
+        const beneficiary = await beneficiaryQuery(beneficiaryId);
+        setBeneficiary(beneficiary);
     }
 
     const handleAdd = () => {
@@ -134,22 +140,35 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                 setReferenceModalVisible(true);
 
             }else{
-
-                const { data } = await editRef(payload);
-                const allReferences: any = await queryByUser(localStorage.user);
-                setReferences(allReferences);
+                const beneficiaryServices = beneficiary.beneficiariesInterventionses.map(item => item.subServices.service.id);
+                const referenceServices = services.map(item => item.servico.id);
     
-                message.success({
-                    content: 'Actualizado com Sucesso!'+data?.referenceNote, className: 'custom-class',
-                    style: {
-                        marginTop: '10vh',
-                    }
-                });
+                const isFounded = referenceServices.some( item => beneficiaryServices.includes(item) );
 
-                setReferenceModalVisible(false);
-    
-                navigate('/referenceList');    
+                if (isFounded) {                    
+                    message.error({
+                        content: 'Referência Contém um Serviço já Provido à Beneficiária!', className: 'custom-class',
+                        style: {
+                            marginTop: '10vh',
+                        }
+                    });
+                } else {
 
+                    const { data } = await editRef(payload);
+                    const allReferences: any = await queryByUser(localStorage.user);
+                    setReferences(allReferences);
+        
+                    message.success({
+                        content: 'Actualizado com Sucesso!'+data?.referenceNote, className: 'custom-class',
+                        style: {
+                            marginTop: '10vh',
+                        }
+                    });
+
+                    setReferenceModalVisible(false);
+        
+                    navigate('/referenceList');    
+                }
             }      
               
         }
