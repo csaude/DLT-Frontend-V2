@@ -66,15 +66,12 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
   }, []);
 
   useEffect(() => {
-
     let loc = form.getFieldValue('local');
-
-    if (loc !== '' && loc !== undefined && us?.length > 0 && reference != undefined) {
-      const usObj = us.filter(e => { return e.name === loc })[0];
-      onChangeUs(usObj?.id);
+    if (loc) {
+      onChangeUs(loc);
     }
 
-  }, [us]);
+  }, []);
 
   const onChangeTipoServico = async (value: any) => {
     var payload = {
@@ -148,7 +145,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
             name="referTo"
             label="Referir Para"
             rules={[{ required: true, message: 'Obrigatório' }]}
-            initialValue={reference === undefined ? "" : reference?.serviceType}
+            initialValue={reference === undefined ? "" : reference?.referTo.toString()}
           >
             <Radio.Group onChange={onChangeEntryPoint}
               options={options}
@@ -211,7 +208,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
             name="local"
             label="Local"
             rules={[{ required: true, message: 'Obrigatório' }]}
-            initialValue={reference === undefined ? undefined : reference?.users?.us[0]?.name}
+            initialValue={reference === undefined ? undefined : reference?.us.id.toString()}
           >
             <Select placeholder="Seleccione o Local" onChange={onChangeUs} disabled={us === undefined}>
               {us?.map(item => (

@@ -117,6 +117,9 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                 users: {
                     id: values.notifyTo
                 },
+                us: {
+                    id: values.local
+                },
                 referenceNote: values.referenceNote,
                 description: '',
                 referTo: values.referTo,
@@ -124,7 +127,6 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                 referenceCode: values.referenceCode,
                 serviceType: values.serviceType === "CLINIC" ? "1" : "2",
                 remarks: values.remarks,
-                statusRef: '0',
                 status: '0',
                 cancelReason: '0',
                 otherReason: '',
@@ -435,7 +437,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
            
         },	
         { 
-            title: 'Ponto de Entrada para Referência', 
+            title: 'Localização', 
             dataIndex: '', 
             key: '',
             render: (text, record)  => (

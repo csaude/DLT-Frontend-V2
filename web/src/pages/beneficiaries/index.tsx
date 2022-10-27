@@ -93,6 +93,9 @@ const BeneficiariesList: React.FC = () => {
                 users: {
                     id: values.notifyTo
                 },
+                us: {
+                    id: values.local
+                },
                 referenceNote: values.referenceNote,
                 description: '',
                 referTo: values.referTo,
@@ -100,7 +103,6 @@ const BeneficiariesList: React.FC = () => {
                 referenceCode: values.referenceCode,
                 serviceType: values.serviceType === "CLINIC" ? "1" : "2",
                 remarks: values.remarks,
-                statusRef: '0',
                 status: '0',
                 cancelReason: '0',
                 otherReason: '',
