@@ -202,6 +202,7 @@ export default appSchema({
         columns: [
           {name: 'beneficiary_id', type: 'number', isIndexed: true},
           {name: 'refer_to', type: 'string', isIndexed: true},
+          {name: 'referred_by', type: 'number', isIndexed: true},
           {name: 'notify_to', type: 'number', isIndexed: true},
           {name: 'reference_note', type: 'string'},
           {name: 'description', type: 'string'},
@@ -209,8 +210,8 @@ export default appSchema({
           {name: 'reference_code', type: 'string'},
           {name: 'service_type', type: 'string'},
           {name: 'remarks', type: 'string', isOptional: true},
-          {name: 'status_ref', type: 'number'},
           {name: 'status', type: 'number'},
+          {name: 'us_id', type: 'number', isIndexed: true},
           {name: 'cancel_reason', type: 'number', isOptional: true},
           {name: 'other_reason', type: 'string', isOptional: true},
           {name: 'user_created', type: 'string', isOptional: true},
