@@ -233,7 +233,6 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
                                     </span><br />
                                     <span style={{ fontWeight: "bold" /*, textTransform: "uppercase" */}}>
                                         {user?.profiles.id === 1 ? `${beneficiary?.name} ${beneficiary?.surname}` : 'DREAMS'+ `${beneficiary?.nui}`}</span><br /><br />
-                                        {/* {`${beneficiary?.name} ${beneficiary?.surname}`}</span><br /><br /> */}
                                     <span>Ponto de Referência:</span><br />
                                     <span style={{ color: "#17a2b8" }}>{beneficiary?.neighborhood.name}</span><br />
                                 </div>
