@@ -109,6 +109,9 @@ const BeneficiariesList: React.FC = () => {
                 users: {
                     id: values.notifyTo
                 },
+                us: {
+                    id: values.local
+                },
                 referenceNote: values.referenceNote,
                 description: '',
                 referTo: values.referTo,
@@ -116,7 +119,6 @@ const BeneficiariesList: React.FC = () => {
                 referenceCode: values.referenceCode,
                 serviceType: values.serviceType === "CLINIC" ? "1" : "2",
                 remarks: values.remarks,
-                statusRef: '0',
                 status: '0',
                 cancelReason: '0',
                 otherReason: '',
@@ -137,20 +139,38 @@ const BeneficiariesList: React.FC = () => {
                 });
                 
             }else{
-                setAddStatus(true);
-                
-                const { data } = await addRef(payload);
+                const beneficiaryServices = beneficiary.beneficiariesInterventionses.map(item => item.subServices.service.id);
+                const referenceServices = services.map(item => item.servico.id);
+    
+                const isFounded = referenceServices.some( item => beneficiaryServices.includes(item) );
 
-                message.success({
-                    content: 'Registado com Sucesso!'+data?.referenceNote, className: 'custom-class',
-                    style: {
-                        marginTop: '10vh',
-                    }
-                });
-                
-                setReferenceModalVisible(false);
-                
-                navigate('/referenceList');  
+                if (isFounded) {
+                    setAddStatus(false);
+                    
+                    message.error({
+                        content: 'Referência Contém um Serviço já Provido à Beneficiária!', className: 'custom-class',
+                        style: {
+                            marginTop: '10vh',
+                        }
+                    });
+                } else {
+
+                    setAddStatus(true);
+                    
+                    const { data } = await addRef(payload);
+    
+                    message.success({
+                        content: 'Registado com Sucesso!'+data?.referenceNote, className: 'custom-class',
+                        style: {
+                            marginTop: '10vh',
+                        }
+                    });
+                    
+                    setReferenceModalVisible(false);
+                    
+                    navigate('/referenceList');  
+
+                }
             }       
         }
     }

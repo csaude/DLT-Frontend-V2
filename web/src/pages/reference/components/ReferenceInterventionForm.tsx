@@ -18,7 +18,7 @@ const options = [
 ];
 let index = 0;
 
-const ReferenceInterventionForm = ({ form, record, beneficiary }: any) => {
+const ReferenceInterventionForm = ({ form, reference, record, beneficiary }: any) => {
   const [services, setServices] = React.useState<any>(undefined);
   const [interventions, setInterventions] = React.useState<any>(undefined);
   const [us, setUs] = React.useState<any>(undefined);
@@ -27,7 +27,7 @@ const ReferenceInterventionForm = ({ form, record, beneficiary }: any) => {
   const inputRef = useRef<any>(null);
   const [users, setUsers] = React.useState<any>([]);
   const [name, setName] = useState('');
-  //console.log(beneficiary);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
 
@@ -49,6 +49,10 @@ const ReferenceInterventionForm = ({ form, record, beneficiary }: any) => {
     if (selectedIntervention !== undefined) {
       form.setFieldsValue({ areaServicos: service.serviceType === '1' ? 'CLINIC' : 'COMMUNITY' });
       form.setFieldsValue({ service: service?.id + '' });
+      form.setFieldsValue({ entryPoint: reference.referTo });
+      form.setFieldsValue({ location: reference.us.id + '' });
+      form.setFieldsValue({ provider: reference.users.username });
+      onChangeUs(reference.us.id);
 
       fetchServices().catch(error => console.log(error));
 
@@ -77,11 +81,22 @@ const ReferenceInterventionForm = ({ form, record, beneficiary }: any) => {
     }
     const data = await allUsByType(payload);
     setUs(data);
+
+    if (!isLoading) {
+      form.setFieldsValue({location: ''});
+      form.setFieldsValue({provider: ''});
+    }
   }
 
   const onChangeUs = async (value: any) => {
     const data = await allUsesByUs(value);
     setUsers(data);
+
+    if (!isLoading) {
+      form.setFieldsValue({provider: ''});
+    }
+
+    setIsLoading(false);
   }
 
   const onNameChange = (event) => {
@@ -174,8 +189,9 @@ const ReferenceInterventionForm = ({ form, record, beneficiary }: any) => {
             name="dataBeneficio"
             label="Data Benefício"
             rules={[{ required: true, message: 'Please select an owner' }]}
+            initialValue={moment(new Date(),'YYYY-MM-DD')}
           >
-            <DatePicker style={{ width: '100%' }} disabledDate={d => !d || d.isAfter(moment(new Date()))} />
+            <DatePicker style={{ width: '100%' }} defaultPickerValue={moment(new Date(),'YYYY-MM-DD')} disabledDate={d => !d || d.isAfter(moment(new Date()))} />
 
           </Form.Item>
         </Col>
@@ -235,7 +251,7 @@ const ReferenceInterventionForm = ({ form, record, beneficiary }: any) => {
           <Form.Item
             name="outros"
             label="Outras Observações"
-            initialValue={selectedIntervention?.remarks}
+            initialValue={selectedIntervention?.description}
           >
             <TextArea rows={2} placeholder="Insira as Observações" maxLength={50} />
           </Form.Item>

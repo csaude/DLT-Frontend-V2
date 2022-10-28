@@ -3,16 +3,19 @@ import { queryByUser, edit as editRef, Reference} from '@app/utils/reference';
 import {allPartners} from '@app/utils/partners';
 import {allDistrict} from '@app/utils/district';
 import { query  as query1} from '@app/utils/users';
+import { query as beneficiaryQuery } from '@app/utils/beneficiary';
 import {allUs} from '@app/utils/uSanitaria';
 import { Card, Table, Button, Space, Badge, Input, Typography, Form, message } from 'antd';
 import 'antd/dist/antd.css';
 import moment from 'moment';
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
+import { Spinner } from 'react-bootstrap';
 
 import { useNavigate } from 'react-router-dom';
 import ViewReferral from './components/View';
 import FormReference from '../beneficiaries/components/FormReference';
+import FullPageLoader from '@app/components/full-page-loader/FullPageLoader';
 
 const { Text } = Typography;
 
@@ -27,6 +30,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
     const [ beneficiary, setBeneficiary ] = useState<any>(undefined);
     const [ modalVisible, setModalVisible ] = useState<boolean>(false);
     const [ referenceModalVisible, setReferenceModalVisible ] = useState<boolean>(false);
+    const [loading, setLoading] = useState(false);
 
     const [ partners, setPartners] = useState<any[]>([]);
     const [ user, setUser] = useState<any[]>([]);
@@ -37,23 +41,26 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
 
     let searchInput;
     useEffect(() => {
+        
         const fetchData = async () => {
-          const data = await queryByUser(localStorage.user);
-          const partners = await allPartners();          
-          const data2 = await query1();         
-          const us = await allUs();
-          const districts = await allDistrict();
+            setLoading(true);
+            const data = await queryByUser(localStorage.user);
+            const partners = await allPartners();          
+            const data2 = await query1();         
+            const us = await allUs();
+            const districts = await allDistrict();
 
-          setReferences(data);
-          setPartners(partners);
-          setUser(data2);
-          setUs(us);
-          setDistrict(districts);
+            setReferences(data);
+            setPartners(partners);
+            setUser(data2);
+            setUs(us);
+            setDistrict(districts);
+            setLoading(false);
         } 
     
         fetchData().catch(error => console.log(error));
     
-    }, []);
+    }, [modalVisible]);
 
     const handleModalRefVisible = (flag?: boolean) => {
         setReferenceModalVisible(!!flag);
@@ -66,8 +73,13 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
 
     const onEditRefence = (record?: any) => {
         setReference(record);
-        setBeneficiary(record?.beneficiaries);
+        fetchBeneficiary(record?.beneficiaries.id);
         setReferenceModalVisible(true);
+    }
+
+    const fetchBeneficiary = async (beneficiaryId) => {
+        const beneficiary = await beneficiaryQuery(beneficiaryId);
+        setBeneficiary(beneficiary);
     }
 
     const handleAdd = () => {
@@ -105,6 +117,9 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                 users: {
                     id: values.notifyTo
                 },
+                us: {
+                    id: values.local
+                },
                 referenceNote: values.referenceNote,
                 description: '',
                 referTo: values.referTo,
@@ -112,7 +127,6 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                 referenceCode: values.referenceCode,
                 serviceType: values.serviceType === "CLINIC" ? "1" : "2",
                 remarks: values.remarks,
-                statusRef: '0',
                 status: '0',
                 cancelReason: '0',
                 otherReason: '',
@@ -134,22 +148,35 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                 setReferenceModalVisible(true);
 
             }else{
-
-                const { data } = await editRef(payload);
-                const allReferences: any = await queryByUser(localStorage.user);
-                setReferences(allReferences);
+                const beneficiaryServices = beneficiary.beneficiariesInterventionses.map(item => item.subServices.service.id);
+                const referenceServices = services.map(item => item.servico.id);
     
-                message.success({
-                    content: 'Actualizado com Sucesso!'+data?.referenceNote, className: 'custom-class',
-                    style: {
-                        marginTop: '10vh',
-                    }
-                });
+                const isFounded = referenceServices.some( item => beneficiaryServices.includes(item) );
 
-                setReferenceModalVisible(false);
-    
-                navigate('/referenceList');    
+                if (isFounded) {                    
+                    message.error({
+                        content: 'Referência Contém um Serviço já Provido à Beneficiária!', className: 'custom-class',
+                        style: {
+                            marginTop: '10vh',
+                        }
+                    });
+                } else {
 
+                    const { data } = await editRef(payload);
+                    const allReferences: any = await queryByUser(localStorage.user);
+                    setReferences(allReferences);
+        
+                    message.success({
+                        content: 'Actualizado com Sucesso!'+data?.referenceNote, className: 'custom-class',
+                        style: {
+                            marginTop: '10vh',
+                        }
+                    });
+
+                    setReferenceModalVisible(false);
+        
+                    navigate('/referenceList');    
+                }
             }      
               
         }
@@ -485,12 +512,18 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                 SISTEMA INTEGRADO DE CADASTRO DE ADOLESCENTES E JOVENS
             </Card>
             <Card title="Lista de Referências e Contra-Referências" bordered={false} headStyle={{color:"#17a2b8"}}>
+                {
+                    loading?
+                        <FullPageLoader />
+                    : undefined
+                }
                 <Table
                     rowKey={(record?) => `${record.id}${record.id.date}`}
                     columns={columnsRef}
                     dataSource={references}
                     bordered
-                />
+                >
+                </Table>
             </Card>
             <ViewReferral
                 {...parentMethods}
@@ -504,7 +537,9 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                 modalVisible={referenceModalVisible}
                 handleModalRefVisible={handleModalRefVisible} 
                 handleRefServicesList={handleRefServicesList}/>
-
+                     
+            
+            
         </>
     );
 }

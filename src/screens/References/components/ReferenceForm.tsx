@@ -209,12 +209,12 @@ const ReferenceForm: React.FC = ({ route }: any) => {
 
         const beneficiaryId = beneficiary.online_id ? beneficiary.online_id : beneficiary.id;
 
-
         const savedR = await database.write(async () => {
 
             const newReference = await database.get('references').create((ref: any) => {
                 ref.beneficiary_id = beneficiaryId
                 ref.refer_to = formik.values.refer_to
+                ref.referred_by = userId,
                 ref.notify_to = formik.values.notify_to
                 ref.reference_note = getNotaRef()
                 ref.description = formik.values.description
@@ -222,8 +222,8 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                 ref.reference_code = formik.values.reference_code
                 ref.service_type = formik.values.service_type
                 ref.remarks = formik.values.description
-                ref.status_ref = 0
                 ref.status = 0
+                ref.us_id = formik.values.us_id
                 ref.user_created = ""+userId,
                 ref.date_created = moment(new Date()).format('YYYY-MM-DD')
             });

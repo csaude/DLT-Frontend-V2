@@ -17,6 +17,9 @@ export interface Reference {
   users: {
       id:string
   },
+  us: {
+      id:string
+  },
   referenceNote: string;
 	description: string;
 	referTo: string;
@@ -24,7 +27,6 @@ export interface Reference {
 	referenceCode: string; 
 	serviceType: string;
 	remarks: string;
-	statusRef: string;
 	status: string;
 	cancelReason: string; 
 	otherReason: string;
