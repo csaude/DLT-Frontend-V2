@@ -214,7 +214,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
             const newReference = await database.get('references').create((ref: any) => {
                 ref.beneficiary_id = beneficiaryId
                 ref.refer_to = formik.values.refer_to
-                ref.reffered_by = ""+userId,
+                ref.referred_by = userId,
                 ref.notify_to = formik.values.notify_to
                 ref.reference_note = getNotaRef()
                 ref.description = formik.values.description
