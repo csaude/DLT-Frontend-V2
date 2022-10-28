@@ -156,6 +156,13 @@ const ForgotPassword = () => {
                   value={values.rePassword}
                   isValid={touched.rePassword && !errors.rePassword}
                   isInvalid={touched.rePassword && !!errors.rePassword}
+                  onPaste={(e)=>{
+                    e.preventDefault()
+                    return false;
+                  }} onCopy={(e)=>{
+                    e.preventDefault()
+                    return false;
+                  }}
                 />
                 {touched.rePassword && errors.rePassword ? (
                   <Form.Control.Feedback type="invalid">
