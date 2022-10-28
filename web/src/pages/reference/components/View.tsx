@@ -168,7 +168,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
         { title: 'Intervenções', 
             dataIndex: '', 
             key: 'intervention',
-            render: (text, record)  => record.subServices.name,
+            render: (text, record)  => (user?.profiles.id == 4 && record.subServices.service.id == 9)? '' : record.subServices.name,
         },
         { title: 'Atendido Por', 
             dataIndex: '', 
@@ -281,7 +281,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
                     }
                 >
                     <Form form={form} layout="vertical" onFinish={() => onSubmit()}> 
-                        <ReferenceInterventionForm form={form} record={selectedService} beneficiary={reference?.beneficiaries} />
+                        <ReferenceInterventionForm form={form} reference={reference} record={selectedService} beneficiary={reference?.beneficiaries} />
                     </Form> 
                 </Drawer>                
             </div>

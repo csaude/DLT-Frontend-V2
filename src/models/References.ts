@@ -5,6 +5,7 @@ export interface ReferencesModel {
     id?: string,
     beneficiary_id?: any,
     refer_to?: any,
+    referred_by?: any,
     notify_to?: any,
     reference_note?: string,
     description?: string,
@@ -12,8 +13,8 @@ export interface ReferencesModel {
     reference_code?: string,
     service_type?: string,
     remarks?: string,
-    status_ref?: any,
     status?: any,
+    us_id?: any,
     cancel_reason?: any,
     other_reason?: string,
     online_id?: string,
@@ -28,6 +29,7 @@ export default class References extends Model {
 
     @field("beneficiary_id") beneficiary_id;
     @field("refer_to") refer_to;
+    @field("referred_by") referred_by;
     @field("notify_to") notify_to;
     @text("reference_note") reference_note;
     @text("description") description;
@@ -35,8 +37,8 @@ export default class References extends Model {
     @text("reference_code") reference_code;
     @text("service_type") service_type;
     @text("remarks") remarks;
-    @field("status_ref") status_ref;
     @field("status") status;
+    @field("us_id") us_id;
     @field("cancel_reason") cancel_reason;
     @text("other_reason") other_reason;
     @text("user_created") user_created;
