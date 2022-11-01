@@ -89,6 +89,9 @@ const NewPassword = () => {
                       <b>Bem vindo</b>
                     </p>
                   </div>
+                    <h3>
+                      AO
+                    </h3>
                   <Link to="/" className="h4">
                     <p className="login-box-msg">
                       <b>Dreams</b><span> Layering Tool</span>
