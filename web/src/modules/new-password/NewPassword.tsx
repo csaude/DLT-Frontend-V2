@@ -8,10 +8,23 @@ import {faEye, faEyeSlash} from '@fortawesome/free-solid-svg-icons';
 import {setWindowClass} from '@app/utils/helpers';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
+import { notification} from 'antd';
+import type { NotificationPlacement } from 'antd/es/notification';
+
 import * as Yup from 'yup';
 
 import {Form, InputGroup} from 'react-bootstrap';
 import * as AuthService from '../../services/auth';
+
+
+const openNotification = (placement: NotificationPlacement) => {
+  notification.info({
+    message: `Info`,
+    description:
+      'Todas as senhas inseridas devem ter pelo menos 8 caracteres alfanuméricos contendo: 1 letra maiúscula, 1 letra minúscula, 1 símbolo e 1 número.',
+    placement,
+  });
+};
 
 const NewPassword = () => {
   let isNewPassword = localStorage.getItem('isNewPassword');
@@ -79,6 +92,9 @@ const NewPassword = () => {
         isNewPassword === "1" ?        
          
           <div className="login-box">
+
+          {openNotification('topRight')}
+
               <div className="card card-outline card-primary" >
                 <div style={{alignItems  : 'center', width:'50%' }}>
                   <img  style={{  width: "100%", marginLeft: "50%", marginTop:"10%"}}  src={'img/dreams.png'} />
