@@ -127,6 +127,7 @@ const BeneficiaryForm = ({ form, beneficiary, modalVisible, handleAddBeneficiary
             beneficiary.nationality = firstStepValues.nationality;
             beneficiary.entryPoint = firstStepValues.entry_point;
             beneficiary.neighborhood = { "id": firstStepValues.neighbourhood_id };
+            beneficiary.locality = firstStepValues.locality;
             beneficiary.partnerNUI = firstStepValues.partner_nui;
             beneficiary.vbltChildren = secondStepValues.vblt_children;
             beneficiary.vbltDeficiencyType = secondStepValues.vblt_deficiency_type;
