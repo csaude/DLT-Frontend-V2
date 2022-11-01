@@ -64,6 +64,7 @@ const BeneficiaryForm = ({ form, beneficiary, modalVisible, handleAddBeneficiary
             ben.nationality = values.nationality;
             ben.entryPoint = values.entry_point;
             ben.neighborhood = { "id": values.neighbourhood_id };
+            ben.locality = values.locality;
             ben.partnerNUI = values.partner_nui;
             ben.vbltChildren = vblts.vblt_children;
             ben.vbltDeficiencyType = vblts.vblt_deficiency_type;

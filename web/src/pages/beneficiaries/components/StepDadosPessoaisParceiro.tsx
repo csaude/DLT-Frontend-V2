@@ -304,7 +304,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                         name="province"
                         label="Provincia"
                         rules={[{ required: localities.length !== 1, message: RequiredFieldMessage }]}
-                        initialValue={beneficiary?.neighborhood.locality?.district.province.id.toString()}
+                        initialValue={beneficiary?.locality?.id.toString()}
                     >
                         <Select placeholder="Seleccione a Provincia" onChange={onChangeProvinces}>
                             {provinces?.map(item => (
