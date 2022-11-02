@@ -354,7 +354,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                         name="locality"
                         label="Posto Administrativo"
                         rules={[{ required: localities.length !== 1, message: RequiredFieldMessage }]}
-                        initialValue={beneficiary?.neighborhood.locality?.id.toString()}
+                        initialValue={beneficiary?.locality?.id.toString()}
                     >
                         <Select placeholder="Seleccione o Posto Administrativo" 
                             disabled={localities.length == 0 && beneficiary == undefined}
@@ -427,7 +427,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                     <Form.Item
                         name="phone_number"
                         label="Telemóvel"
-                        initialValue={parseInt(beneficiary?.phoneNumber)}
+                        initialValue={beneficiary?.phoneNumber ? Number(beneficiary?.phoneNumber) : beneficiary?.phoneNumber}
                         rules={[{ type: 'number', min: 10000001, max:999999999, message: 'O numero inserido não é válido!' }]}
                     >
                         <InputNumber prefix="+258  " style={{width: '100%',}} placeholder="Insira o Telemóvel" />

@@ -27,6 +27,10 @@ const BeneficiariesList: React.FC = () => {
     const [form] = Form.useForm();
     const navigate = useNavigate();
     const [ users, setUsers ] = useState<UserModel[]>([]);
+    const [visible, setVisible] = useState<boolean>(false);
+    const [isAdd, setIsAdd] = useState<boolean>(false);
+    const [selectedIntervention, setSelectedIntervention] = useState<any>();
+    const [selectedBeneficiary, setSelectedBeneficiary] = useState();
     const [ user, setUser ] = React.useState<any>();
     const [ beneficiaries, setBeneficiaries ] = useState<any[]>([]);
     const [ searchText, setSearchText ] = useState('');
@@ -67,6 +71,18 @@ const BeneficiariesList: React.FC = () => {
         fetchUsers().catch(error => console.log(error));
     
     }, []);
+
+    const showDrawer = (record: any) => {
+
+        setVisible(true);
+        setSelectedBeneficiary(record);
+    };
+
+    const onEditIntervention = (record: any) => {
+        setVisible(true);
+        setIsAdd(true);
+        setSelectedIntervention(record);
+    };
 
     const handleAddRef = async (values:any) => {
     
@@ -322,7 +338,20 @@ const BeneficiariesList: React.FC = () => {
             dataIndex: '', 
             key: 'entryPoint',
             render: (text, record)  => record.us.name,
-        }
+        },
+        // {
+        //     title: 'Acção',
+        //     dataIndex: '',
+        //     key: 'x',
+        //     render: (text, record) => (
+        //         <Space>
+        //             <Button type="primary" icon={<EyeOutlined />} onClick={() => showDrawer(record)} >
+        //             </Button>
+        //             <Button type="primary" icon={<EditOutlined />} onClick={() => onEditIntervention(record)} >
+        //             </Button>
+        //         </Space>
+        //     ),
+        // },
     ];
 
     const columns = [

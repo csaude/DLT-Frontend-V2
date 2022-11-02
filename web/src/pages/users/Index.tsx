@@ -169,6 +169,13 @@ const UsersList: React.FC = () => {
                 const { data } = await add(user);
                 setUsers(users => [...users, data]);
 
+                message.success({
+                    content: 'Registado com Sucesso!', className: 'custom-class',
+                    style: {
+                        marginTop: '10vh',
+                    }
+                });
+
             } else {
                 const { data } = await edit(user);
                 setUsers(existingItems => {
@@ -177,16 +184,16 @@ const UsersList: React.FC = () => {
                             data : item
                     })
                 });
+
+                message.success({
+                    content: 'Actualizado com  Sucesso!', className: 'custom-class',
+                    style: {
+                        marginTop: '10vh',
+                    }
+                });
             }
 
             handleUsersModalVisible(false);
-
-            message.success({
-                content: 'Registado com Sucesso!', className: 'custom-class',
-                style: {
-                    marginTop: '10vh',
-                }
-            });
         })
             .catch(error => {
                 console.log(error);

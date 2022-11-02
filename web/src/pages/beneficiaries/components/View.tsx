@@ -4,6 +4,7 @@ import { SearchOutlined, ArrowUpOutlined, EyeOutlined, EditOutlined, PlusOutline
 import emblema from '../../../assets/emblema.png';
 import moment from 'moment';
 import { getEntryPoint } from '@app/models/User'
+import { query as queryUser } from '../../../utils/users';
 import { query } from '../../../utils/beneficiary';
 import ViewIntervention from './ViewIntervention';
 import { calculateAge } from '@app/models/Utils';
@@ -21,12 +22,16 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
     const [selectedIntervention, setSelectedIntervention] = useState<any>();
     const [interventions, setInterventions] = useState(beneficiary?.beneficiariesInterventionses);
     const [partner, setPartner] = useState<any>();
+    const [ logUser, setLogUser ] = React.useState<any>();
 
     const [form] = Form.useForm();
 
     useEffect(() => { 
 
         const fetchUser = async () => {
+
+            const logUser = await queryUser(localStorage.user);
+            setLogUser(logUser);
 
             if(beneficiary.partnerId){
                 const user = await query(beneficiary.partnerId);
@@ -165,7 +170,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
                 title: 'Data',
                 dataIndex: '',
                 key: 'date',
-                render: (text, record) => <span>{moment(record.id.date).format('YYYY-MM-DD')}</span>,
+                render: (text, record) => <span>{moment(record.dateCreated).format('YYYY-MM-DD')}</span>,
             },
             {
                 title: 'Serviço',
@@ -227,7 +232,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
                                         {`${beneficiary.neighborhood.locality.district.code}/${beneficiary?.nui}`}
                                     </span><br />
                                     <span style={{ fontWeight: "bold" /*, textTransform: "uppercase" */}}>
-                                        {`${beneficiary?.name} ${beneficiary?.surname}`}</span><br /><br />
+                                        {user?.profiles.id === 1 ? `${beneficiary?.name} ${beneficiary?.surname}` : 'DREAMS'+ `${beneficiary?.nui}`}</span><br /><br />
                                     <span>Ponto de Referência:</span><br />
                                     <span style={{ color: "#17a2b8" }}>{beneficiary?.neighborhood.name}</span><br />
                                 </div>
