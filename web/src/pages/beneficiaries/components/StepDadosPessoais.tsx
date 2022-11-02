@@ -386,7 +386,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                 <Col span={8} hidden={user?.us.length === 1 }>
                     <Form.Item
                         name="us"
-                        label="Local"
+                        label="Local de Registo"
                         rules={[{ required: user?.us.length !== 1, message: RequiredFieldMessage }]}
                         initialValue={beneficiary?.us.id.toString()}
                     >
