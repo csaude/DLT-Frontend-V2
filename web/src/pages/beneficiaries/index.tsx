@@ -23,6 +23,8 @@ import { allPartners } from '@app/utils/partners';
 
 const { Text } = Typography;
 
+const ages = [9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26];
+
 const BeneficiariesList: React.FC = () => {
     const [form] = Form.useForm();
     const navigate = useNavigate();
@@ -416,7 +418,10 @@ const BeneficiariesList: React.FC = () => {
             filterSearch: true,
         },
         { title: 'Idade', dataIndex: 'age', key: 'age',
-            render: (text, record) => calculateAge(record.dateOfBirth) + ' anos'
+            render: (text, record) => calculateAge(record.dateOfBirth) + ' anos',
+            filters: filterItem(ages)(i => i),
+            onFilter: (value, record) => calculateAge(record.dateOfBirth) == value,
+            filterSearch: true,
         },
         { title: '#Interv', dataIndex: 'beneficiariesInterventionses', key: 'beneficiariesInterventionses', 
             render(val: any) {
@@ -435,14 +440,20 @@ const BeneficiariesList: React.FC = () => {
         },
         { title: 'Criado Por', dataIndex: '', key: 'createdBy',
             render: (text, record)  => users.filter(user => record.createdBy == user.id).map(filteredUser => `${filteredUser.name} ` + `${filteredUser.surname}`)[0],
+            filters: filterItem(users)(i => i.name +' '+ i.surname),
+            onFilter: (value, record) => (users.filter(user => record.createdBy == user.id).map(filteredUser => `${filteredUser.name} ` + `${filteredUser.surname}`)[0] == value),
+            filterSearch: true,
         },
-        { title: 'Criado Em', dataIndex: 'dateCreated', key: 'dateCreated',
+        { title: 'Criado Em', dataIndex: 'dateCreated', key: 'dateCreated', ...getColumnSearchProps('dateCreated'),
             render: (val: string) => <span>{moment(val).format('YYYY-MM-DD')}</span>,
         },
         { title: 'Atualizado Por', dataIndex: '', key: 'updatedBy',
             render: (text, record)  => users.filter(user => record.updatedBy == user.id).map(filteredUser => `${filteredUser.name} ` + `${filteredUser.surname}`)[0],
+            filters: filterItem(users)(i => i.name +' '+ i.surname),
+            onFilter: (value, record) => (users.filter(user => record.updatedBy == user.id).map(filteredUser => `${filteredUser.name} ` + `${filteredUser.surname}`)[0] == value),
+            filterSearch: true,
         },
-        { title: 'Atualizado Em', dataIndex: 'dateUpdated', key: 'dateUpdated',
+        { title: 'Atualizado Em', dataIndex: 'dateUpdated', key: 'dateUpdated', ...getColumnSearchProps('dateUpdated'),
             render: (val: string) =>val != undefined ? <span>{moment(val).format('YYYY-MM-DD')} </span>: '',
         },
         {
