@@ -337,7 +337,9 @@ const BeneficiariesList: React.FC = () => {
         { title: 'Intervenções', 
             dataIndex: '', 
             key: 'intervention',
-            render: (text, record)  => (user.profiles.id == 4 && record.subServices.service.id == 9)? '' : record.subServices.name,
+            render: (text, record)  => 
+                ((user.profiles.id == 4 || user.profiles.id == 3 && user.partners.partnerType == 2) && record.subServices.service.id == 9)? 
+                '' : record.subServices.name,
         },
         { title: 'Ponto de Entrada', 
             dataIndex: '', 
