@@ -19,6 +19,7 @@ import { add as addRef, Reference } from '../../utils/reference';
 import FormReference from './components/FormReference';
 import { allDistrict } from '@app/utils/district';
 import { allPartners } from '@app/utils/partners';
+import FullPageLoader from '@app/components/full-page-loader/FullPageLoader';
 
 
 const { Text } = Typography;
@@ -45,14 +46,15 @@ const BeneficiariesList: React.FC = () => {
     const [ beneficiaryPartnerModalVisible, setBeneficiaryPartnerModalVisible ] = useState<boolean>(false);
     const [ referenceModalVisible, setReferenceModalVisible ] = useState<boolean>(false);
     const [ addStatus, setAddStatus ] = useState<boolean>(false);    
-
     const [ district, setDistrict] = useState<any[]>([]);
     const [ partners, setPartners] = useState<any[]>([]);
+    const [loading, setLoading] = useState(false);
 
     let searchInput ;
     useEffect(() => { 
 
         const fetchData = async () => {
+            setLoading(true);
             const user = await queryUser(localStorage.user);
             const data = await query(getUserParams(user));
             const districts = await allDistrict();
@@ -62,6 +64,7 @@ const BeneficiariesList: React.FC = () => {
             setBeneficiaries(data);
             setDistrict(districts);
             setPartners(partners);
+            setLoading(false);
         } 
 
         const fetchUsers = async () => {
@@ -503,6 +506,11 @@ const BeneficiariesList: React.FC = () => {
                         </Space>
                     }
             >
+                {
+                    loading?
+                        <FullPageLoader />
+                    : undefined
+                }
                 <Table
                     rowKey="id"
                     columns={columns}
