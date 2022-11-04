@@ -41,12 +41,9 @@ const PasswordTab = ({isActive}: {isActive: boolean}) => {
     initialValues: {
       userName: localStorage.getItem('username'),
       password: '',
-      rePassword: '',
-      agreeTerms: ''
+      rePassword: ''
     },    
     validationSchema: Yup.object({
-      agreeTerms: Yup.boolean()
-        .required('Obrigatório'),
       password: Yup.string()
         .required('Obrigatório')
         .max(25, 'Deve conter 25 caracteres ou menos')
@@ -154,30 +151,6 @@ const PasswordTab = ({isActive}: {isActive: boolean}) => {
                 )}
               </InputGroup>
             </div>
-
-            <div className="form-group row">
-              <InputGroup className="mb-3">
-                <div className="icheck-primary">
-                  <Form.Control
-                    type="checkbox"
-                    id="agreeTerms"
-                    name="agreeTerms"
-                    onChange={handleChange}
-                    value={values.agreeTerms}
-                    isValid={touched.agreeTerms && !errors.agreeTerms}
-                    isInvalid={touched.agreeTerms && !!errors.agreeTerms}
-                  />
-                  <label htmlFor="agreeTerms">
-                    <span>Confirmo ter lido e assinado o </span> 
-                    <Link to="/profile">acordo de confidencialidade</Link>
-                  </label>
-                  <Form.Control.Feedback type="invalid">
-                      {errors.agreeTerms}
-                  </Form.Control.Feedback>
-                </div>
-              </InputGroup>
-            </div>
-
             <div className="form-group row">
               <div className="col-12">
                 <span className="float-right">
