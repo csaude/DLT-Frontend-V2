@@ -309,7 +309,6 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                     >
                         <DatePicker  
                             inputReadOnly={true} 
-                            disabled={!isDateRequired} 
                             style={{ width: '100%' }} 
                             placeholder="Selecione a data"
                             disabledDate={d => !d || d.isAfter(new Date()) || d.isSameOrBefore("2017/01/01") }
