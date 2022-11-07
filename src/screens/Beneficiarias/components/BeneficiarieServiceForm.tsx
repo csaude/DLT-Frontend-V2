@@ -90,8 +90,6 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     const loggedUser: any = useContext(Context);
     const toast = useToast();
 
-    console.log(loggedUser.entryPoint);
-
     useEffect(() => {
 
         if (mounted) {
