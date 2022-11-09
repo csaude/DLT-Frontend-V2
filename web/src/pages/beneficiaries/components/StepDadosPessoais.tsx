@@ -243,7 +243,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                         initialValue={beneficiary?.surname}
                     >
-                        <Input placeholder="Insira o apelido da Beneficiária"  disabled={visibleName}/>
+                        <Input placeholder="Insira o apelido da Beneficiária"/>
                     </Form.Item>
                 </Col>
                 <Col className="gutter-row" span={12}>
@@ -253,7 +253,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                         initialValue={beneficiary?.name}
                     >
-                        <Input placeholder="Insira o nome da Beneficiária"  disabled={visibleName}/>
+                        <Input placeholder="Insira o nome da Beneficiária" />
                     </Form.Item>
                 </Col>
             </Row>
