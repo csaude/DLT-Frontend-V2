@@ -20,6 +20,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
     const [us, setUs] = useState<any>([]);
     const [age, setAge] = useState<any>(undefined);
     const [birthDate, setBirthDate] = useState<any>(undefined);
+    const [visibleName, setVisibleName] = useState<any>(true);
 
     let userEntryPoint = localStorage.getItem('entryPoint');
 
@@ -34,6 +35,10 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
 
             const loggedUser = await query(localStorage.user);
             let dataProvinces;
+
+            if(loggedUser.profiles.id === 1 || loggedUser.profiles.id === 2 || loggedUser.profiles.id === 3){
+                setVisibleName(false);
+            }
 
             if(loggedUser.provinces.length > 0) {
                 dataProvinces = loggedUser.provinces;
@@ -211,7 +216,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                     </Form.Item>
                 </Col>
             </Row>
-            <Row gutter={16}>
+            <Row gutter={16} hidden={beneficiary !== undefined && visibleName}>
                 <Col className="gutter-row" span={12}>
                     <Form.Item
                         name="surname"
@@ -285,7 +290,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                     <Form.Item
                         name="enrollment_date"
                         label="Data Inscrição"
-                        rules={[{ required: isDateRequired, message: RequiredFieldMessage }]}
+                        rules={[{ required: true, message: RequiredFieldMessage }]}
                         initialValue={beneficiary && beneficiary.enrollmentDate ? moment(beneficiary?.enrollmentDate,'YYYY-MM-DD') : ''}
                     >
                     <DatePicker  

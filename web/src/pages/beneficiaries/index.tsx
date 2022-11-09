@@ -48,6 +48,7 @@ const BeneficiariesList: React.FC = () => {
     const [ addStatus, setAddStatus ] = useState<boolean>(false);    
     const [ district, setDistrict] = useState<any[]>([]);
     const [ partners, setPartners] = useState<any[]>([]);
+    const [visibleName, setVisibleName] = useState<any>(true);
     const [loading, setLoading] = useState(false);
 
     let searchInput ;
@@ -58,14 +59,18 @@ const BeneficiariesList: React.FC = () => {
             const user = await queryUser(localStorage.user);
             const data = await query(getUserParams(user));
             const districts = await allDistrict();
-            const partners = await allPartners();     
+            const partners = await allPartners();
 
             setUser(user);
             setBeneficiaries(data);
             setDistrict(districts);
             setPartners(partners);
             setLoading(false);
-        } 
+
+            if(user.profiles.id === 1 || user.profiles.id === 2 || user.profiles.id === 3){
+                setVisibleName(false);
+            }
+        }
 
         const fetchUsers = async () => {
             const users = await queryUser();
@@ -250,7 +255,7 @@ const BeneficiariesList: React.FC = () => {
     };
 
     const getName = (record: any) => {
-        return user?.profiles.id === 1 ? record.name + ' ' + record.surname : 'DREAMS'+record.nui;
+        return visibleName === false ? record.name + ' ' + record.surname : 'DREAMS'+record.nui;
     }
 
     const filterItem = data => formatter => data.map( item => ({

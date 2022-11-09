@@ -106,7 +106,7 @@ const NewPassword = () => {
                     </p>
                   </div>
                     <h3>
-                      AO
+                      ao
                     </h3>
                   <Link to="/" className="h4">
                     <p className="login-box-msg">
@@ -115,7 +115,7 @@ const NewPassword = () => {
                   </Link>
                 </div>
                 <div className="card-body">
-                  <p className="login-box-msg">A alteração da password é obrigatória no primeiro login</p>
+                  <p className="login-box-msg">A alteração da password é obrigatória na primeira autenticação.</p>
                   <form onSubmit={handleSubmit}>              
                     <div className="mb-3">
                       <InputGroup className="mb-3">
