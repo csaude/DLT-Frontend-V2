@@ -183,11 +183,13 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                 }
             }
             else if (dataSelection.profile == 3) {
-                const neighborhoodsAndSchools = usByLocality?.filter(item => item.usType.entryPoint in [2, 3])
+                const entryPoints = [2, 3];
+                const neighborhoodsAndSchools = usByLocality?.filter(item => entryPoints.includes(item.usType.entryPoint))
                 setUs(neighborhoodsAndSchools)
             }
             else if (dataSelection.profile == 5 || dataSelection.profile == 6) {
-                const usAndSchools = usByLocality?.filter(item => item.usType.entryPoint in [1, 3])
+                const entryPoints = [1, 3];
+                const usAndSchools = usByLocality?.filter(item => entryPoints.includes(item.usType.entryPoint))
                 setUs(usAndSchools)
             }
         }
