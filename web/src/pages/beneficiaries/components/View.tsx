@@ -23,6 +23,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
     const [interventions, setInterventions] = useState(beneficiary?.beneficiariesInterventionses);
     const [partner, setPartner] = useState<any>();
     const [ logUser, setLogUser ] = React.useState<any>();
+    const [visibleName, setVisibleName] = useState<any>(true);
 
     const [form] = Form.useForm();
 
@@ -36,6 +37,10 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
             if(beneficiary.partnerId){
                 const user = await query(beneficiary.partnerId);
                 setPartner(user);
+            }
+            
+            if(user.profiles.id === 1 || user.profiles.id === 2 || user.profiles.id === 3){
+                setVisibleName(false);
             }
             
         }
@@ -234,7 +239,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
                                         {`${beneficiary.neighborhood.locality.district.code}/${beneficiary?.nui}`}
                                     </span><br />
                                     <span style={{ fontWeight: "bold" /*, textTransform: "uppercase" */}}>
-                                        {user?.profiles.id === 1 ? `${beneficiary?.name} ${beneficiary?.surname}` : 'DREAMS'+ `${beneficiary?.nui}`}</span><br /><br />
+                                        { visibleName === false ? `${beneficiary?.name} ${beneficiary?.surname}` : 'DREAMS'+ `${beneficiary?.nui}`}</span><br /><br />
                                     <span>Ponto de Referência:</span><br />
                                     <span style={{ color: "#17a2b8" }}>{beneficiary?.neighborhood.name}</span><br />
                                 </div>
