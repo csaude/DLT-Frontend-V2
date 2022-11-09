@@ -93,7 +93,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
 
             setVisible(false);
             form.resetFields();
-           
+            setSelectedService(undefined);
         })
             .catch(error => {
                 message.error({
@@ -109,6 +109,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
     const onClose = () => {
         form.resetFields();
         setVisible(false);
+        setSelectedService(undefined);
     };
 
 

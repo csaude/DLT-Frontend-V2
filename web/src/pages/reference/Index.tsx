@@ -30,12 +30,14 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
     const [ beneficiary, setBeneficiary ] = useState<any>(undefined);
     const [ modalVisible, setModalVisible ] = useState<boolean>(false);
     const [ referenceModalVisible, setReferenceModalVisible ] = useState<boolean>(false);
-    const [loading, setLoading] = useState(false);
-
+    const [ loading, setLoading ] = useState(false);
     const [ partners, setPartners] = useState<any[]>([]);
-    const [ user, setUser] = useState<any[]>([]);
+    const [ referredPartners, setReferredPartners] = useState<any[]>([]);
+    const [ referrers, setReferrers] = useState<any[]>([]);
+    const [ users, setUsers] = useState<any[]>([]);
     const [ district, setDistrict] = useState<any[]>([]);
     const [ us, setUs] = useState<any[]>([]);
+    const [ loggedUser, setLoggedUser ] = useState<any>(undefined);
     
     const navigate = useNavigate();
 
@@ -49,13 +51,27 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             const data2 = await query1();         
             const us = await allUs();
             const districts = await allDistrict();
+            const loggedUser = await query1(localStorage.user);
 
-            setReferences(data);
-            setPartners(partners);
-            setUser(data2);
-            setUs(us);
+            const existingUs = data.map(reference => reference.us).filter((value, index, self) => self.findIndex(v => v.id === value.id) === index);
+            const referrers = data.map(reference => reference.referredBy).filter((value, index, self) => self.findIndex(v => v.id === value.id) === index);
+            const referreds = data.map(reference => reference.users).filter((value, index, self) => self.findIndex(v => v.id === value.id) === index);
+            const referringPartners = referrers.map(referrer => referrer.partners).filter((value, index, self) => self.findIndex(v => v.id === value.id) === index);
+            const referredPartners = referreds.map(referred => referred.partners).filter((value, index, self) => self.findIndex(v => v.id === value.id) === index);
+
+            const sortedReferences = data.sort((ref1, ref2) => (ref1.status > ref2.status) ? 1 : -1);
+
+            setReferences(sortedReferences);
+            setPartners(referringPartners);
+            setReferredPartners(referredPartners);
+            setReferrers(referrers);
+            setUsers(referreds);
+            setUs(existingUs);
             setDistrict(districts);
+            setLoggedUser(loggedUser);
             setLoading(false);
+
+
         } 
     
         fetchData().catch(error => console.log(error));
@@ -151,9 +167,9 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                 const beneficiaryServices = beneficiary.beneficiariesInterventionses.map(item => item.subServices.service.id);
                 const referenceServices = services.map(item => item.servico.id);
     
-                const isFounded = referenceServices.some( item => beneficiaryServices.includes(item) );
+                const founded = referenceServices.some( item => beneficiaryServices.includes(item) );
 
-                if (isFounded) {                    
+                if (founded) {                    
                     message.error({
                         content: 'Referência Contém um Serviço já Provido à Beneficiária!', className: 'custom-class',
                         style: {
@@ -164,7 +180,8 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
 
                     const { data } = await editRef(payload);
                     const allReferences: any = await queryByUser(localStorage.user);
-                    setReferences(allReferences);
+                    const sortedReferences = allReferences.sort((ref1, ref2) => (ref1.status > ref2.status) ? 1 : -1);
+                    setReferences(sortedReferences);
         
                     message.success({
                         content: 'Actualizado com Sucesso!'+data?.referenceNote, className: 'custom-class',
@@ -181,16 +198,6 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
               
         }
     }
-   
-    const filterPartner = data => formatter => data.map( item => ({
-        text: formatter(item),
-        value: formatter(item)
-    }));
-
-    const filterUs = data => formatter => data.map( item => ({
-        text: formatter(item),
-        value: formatter(item)
-    }));
 
     const getColumnSearchProps = (dataIndex:any) => ({
         filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
@@ -257,6 +264,11 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
         handleAdd: handleAdd,
         handleModalVisible: handleModalVisible
     };
+
+    const filterItem = data => formatter => data.map( item => ({
+        text: formatter(item),
+        value: formatter(item)
+    }));
 
     const getColumnSearchBenProps = (dataIndex:any) => ({
         filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
@@ -342,7 +354,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             dataIndex: '', 
             key: 'type',
             render: (text, record)  => record?.beneficiaries?.neighborhood?.locality?.district?.name,
-            filters: filterPartner(district)(i => i.name),
+            filters: filterItem(district)(i => i.name),
             onFilter: (value, record) => record?.beneficiaries?.neighborhood?.locality?.district?.name == value,
             filterSearch: true,
         },
@@ -350,14 +362,10 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             title: 'Organização Referente', 
             dataIndex: '', 
             key: 'type',
-            render: (text, record)  => (
-                user.map(data =>(
-                    data?.id == record?.userCreated ?                        
-                        data?.partners?.name                        
-                        :
-                        ''
-                ))
-            ),           
+            render: (text, record)  => record?.referredBy?.partners?.name,
+            filters: filterItem(partners)(i => i.name),
+            onFilter: (value, record) => record?.referredBy?.partners?.name == value,
+            filterSearch: true,         
         },
         { 
             title: 'Referido em', 
@@ -381,14 +389,10 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             title: 'Referente', 
             dataIndex: 'createdBy', 
             key: 'createdBy',
-            render: (text, record)  => (
-                user.map(data =>(
-                    data?.id == record?.userCreated ?                        
-                        data?.name+' '+data?.surname                       
-                        :
-                        ''
-                ))
-            ),
+            render: (text, record)  => record?.referredBy?.name+' '+record?.referredBy?.surname,
+            filters: filterItem(referrers)(i => i.name +' '+ i.surname),
+            onFilter: (value, record) => (referrers.filter(user => record.referredBy.id == user.id).map(filteredUser => `${filteredUser.name} ` + `${filteredUser.surname}`)[0] == value),
+            filterSearch: true,
         },		
         { 
             title: 'Contacto', 
@@ -401,6 +405,9 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             dataIndex: 'record.users.name', 
             key: '',
             render: (text, record)  => record?.users?.name+' '+record?.users?.surname,
+            filters: filterItem(users)(i => i.name +' '+ i.surname),
+            onFilter: (value, record) => (users.filter(user => record.users.id == user.id).map(filteredUser => `${filteredUser.name} ` + `${filteredUser.surname}`)[0] == value),
+            filterSearch: true,
         },		
         { 
             title: 'Ref. Para', 
@@ -436,7 +443,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             dataIndex: '', 
             key: '',
             render: (text, record)  => record?.users?.partners?.name,
-            filters: filterPartner(partners)(i => i.name),
+            filters: filterItem(referredPartners)(i => i.name),
             onFilter: (value, record) => record?.users?.partners?.name == value,
             filterSearch: true,
            
@@ -445,10 +452,10 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             title: 'Ponto de Entrada para Referência', 
             dataIndex: 'us', 
             key: 'us',
-            render: (text, record) => record?.users?.us.map(u => u.name),
-            // filters: filterUs(us)(i => i.name),
-            // onFilter: (value, record) => record?.users?.us?.name == value,
-            // filterSearch: true,
+            render: (text, record) => record?.us.name,
+            filters: filterItem(us)(i => i.name),
+            onFilter: (value, record) => record?.us?.name == value,
+            filterSearch: true,
         },	
         { 
             title: 'Estado', 
@@ -490,7 +497,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
               <Space>
                 <Button type="primary" icon={<EyeOutlined />} onClick={() =>handleViewModalVisible(true, record)} >
                 </Button>
-                    <Button type="primary" icon={<EditOutlined />} onClick={() =>(record.status == 0 ? onEditRefence(record) : 
+                    <Button type="primary" disabled={loggedUser?.profiles.id !== 1 && record.referredBy?.partners?.partnerType !== loggedUser?.partners?.partnerType} icon={<EditOutlined />} onClick={() =>(record.status == 0 ? onEditRefence(record) : 
                         (
                             message.info({
                             content: 'Referência já atendida!', className: 'custom-class',
