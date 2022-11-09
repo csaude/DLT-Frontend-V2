@@ -21,7 +21,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
     const [age, setAge] = useState<any>(undefined);
     const [birthDate, setBirthDate] = useState<any>(undefined);
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [visibleName, setVisibleName] = useState<any>(false);
+    const [visibleName, setVisibleName] = useState<any>(true);
 
     let userEntryPoint = localStorage.getItem('entryPoint');
 
@@ -37,8 +37,8 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
             const loggedUser = await query(localStorage.user);
             let dataProvinces;
 
-            if(loggedUser.profiles.id !== 1){
-                setVisibleName(true);
+            if(loggedUser.profiles.id === 1 || loggedUser.profiles.id === 2 || loggedUser.profiles.id === 3){
+                setVisibleName(false);
             }
             
             if(loggedUser.provinces.length > 0) {
