@@ -4,7 +4,6 @@ import { query as queryBeneficiary } from "@app/utils/beneficiary";
 import { Button, Card, Col, Drawer, Form, message, Modal, Row, Space, Table, Typography } from "antd";
 import { SearchOutlined, EditOutlined, PlusOutlined, EyeOutlined, CloseOutlined, CheckOutlined,FileDoneOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import InterventionForm from "@app/pages/beneficiaries/components/InterventionForm";
 import ReferenceInterventionForm from "@app/pages/reference/components/ReferenceInterventionForm";
 import { addSubService, SubServiceParams } from '@app/utils/service'
 
@@ -93,7 +92,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
 
             setVisible(false);
             form.resetFields();
-           
+            setSelectedService(undefined);
         })
             .catch(error => {
                 message.error({
@@ -109,6 +108,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
     const onClose = () => {
         form.resetFields();
         setVisible(false);
+        setSelectedService(undefined);
     };
 
 

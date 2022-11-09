@@ -10,20 +10,16 @@ const { Option } = Select;
 const { Step } = Steps;
 const { TextArea } = Input;
 
-const areaServicos = [{ "id": 'CLINIC', "name": "Clinico" }, { "id": 'COMMUNITY', "name": "Comunitário" }];
-const options = [
-  { label: 'US', value: '1' },
-  { label: 'CM', value: '2' },
-  { label: 'ES', value: '3' },
-];
-
 const StepReference = ({ form, beneficiary, reference }: any) => {
 
   const [partners, setPartners] = React.useState<any>();
   const [users, setUsers] = React.useState<any>();
   const [referers, setReferers] = React.useState<any>(undefined);
-  const [user, setUser] = React.useState<any>();
   const [us, setUs] = React.useState<any>();
+  const [entryPoints, setEntryPoints] = useState<any>([]);
+  const [entryPointEnabled, setEntryPointEnabled] = useState(true);
+  const [serviceTypes, setServiceTypes] = useState<any>([]);
+  const [serviceTypeEnabled, setServiceTypeEnabled] = useState(false);
   const selectedReference = beneficiary;
   let userId = localStorage.getItem('user');
 
@@ -32,16 +28,6 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
     const fetchData = async () => {
       const loggedUser = await query(localStorage.user);
 
-      if (reference === undefined) {
-        form.setFieldsValue({ referenceNote: 
-                              ('REFDR' + String(userId).padStart(3, '0') + (loggedUser?.provinces === undefined ? '0': loggedUser?.provinces[0]?.id) + String(((await queryByCreated(localStorage.user))?.length)+ 1).padStart(3, '0'))
-                            });
-      } else {
-        const regUser = await query(reference?.createdBy);
-        form.setFieldsValue({ createdBy: regUser?.name + ' ' + regUser?.surname });
-        form.setFieldsValue({ referenceNote: reference.referenceNote});
-      }
-
       var payload = {
         profiles: '3,4,5,6',
         userId: Number(userId)
@@ -49,6 +35,33 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
 
       const referers = await allUsersByProfilesAndUser(payload);
       setReferers(referers);
+
+      if (reference === undefined) {
+        form.setFieldsValue({ referenceNote: 
+                              ('REFDR' + String(userId).padStart(3, '0') + (loggedUser?.provinces === undefined ? '0': loggedUser?.provinces[0]?.id) + String(((await queryByCreated(localStorage.user))?.length)+ 1).padStart(3, '0'))
+                            });
+        form.setFieldsValue({ referredBy: [3,4,5,6].includes(loggedUser.profiles.id)? localStorage.user : '' });
+      } else {
+        const regUser = await query(reference?.createdBy);
+        form.setFieldsValue({ createdBy: regUser?.name + ' ' + regUser?.surname });
+        form.setFieldsValue({ referenceNote: reference.referenceNote});
+      }
+
+      const partnerType = loggedUser.partners.partnerType;
+
+      if (loggedUser.entry_point === "3") {
+          setEntryPoints([{ value: '1', label: "US" }, { value: '2', label: "CM" }, { value: '3', label: "ES" }]);
+      } else if (partnerType === "1") {
+          setEntryPoints([{ value: '2', label: "CM" }, { value: '3', label: "ES" }]);
+      } else if (partnerType === "2") {
+          setEntryPoints([{ value: '1', label: "US" }]);
+          form.setFieldsValue({ referTo: '1' });
+          onChangeEntryPoint('1');
+          onChangeTipoServico('CLINIC');
+          setEntryPointEnabled(false);
+      } else {
+          setEntryPoints([{ value: '1', label: "US" }, { value: '2', label: "CM" }, { value: '3', label: "ES" }]);
+      }
     }
 
     fetchData().catch(error => console.log(error));
@@ -93,6 +106,33 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
     }
     const data = await allUsByType(payload);
     setUs(data);
+
+    // FIXME: Rever a limpeza dos campos ao alterar o ponto de entrada
+    // if (reference === undefined) {
+    //   form.setFieldsValue({ local: '' });
+    //   form.setFieldsValue({ partner_id: '' });
+    //   form.setFieldsValue({ notifyTo: '' });
+    //   setUsers(undefined);
+    // }
+
+    const value = e.target?.value;
+
+    if (e === '1' || value === '1') {
+        setServiceTypes([{ "id": 'CLINIC', "name": "Clínico" }]);
+        form.setFieldsValue({ serviceType: 'CLINIC' });
+        onChangeTipoServico('CLINIC');
+        setServiceTypeEnabled(false);
+    } else if (e === '2' || value === '2') {
+        setServiceTypes([{ "id": 'COMMUNITY', "name": "Comunitário" }]);
+        form.setFieldsValue({ serviceType: 'COMMUNITY' });
+        onChangeTipoServico('COMMUNITY');
+        setServiceTypeEnabled(false);
+    } else {
+        setServiceTypes([{ "id": 'CLINIC', "name": "Clínico" }, { "id": 'COMMUNITY', "name": "Comunitário" }]);
+        // form.setFieldsValue({ serviceType: '' });
+        // setPartners(undefined);
+        setServiceTypeEnabled(true);
+    }
   }
 
   const onChangeUs = async (value: any) => {
@@ -148,7 +188,8 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
             initialValue={reference === undefined ? "" : reference?.referTo.toString()}
           >
             <Radio.Group onChange={onChangeEntryPoint}
-              options={options}
+              options={entryPoints}
+              disabled={!entryPointEnabled}
               optionType="button"
             />
           </Form.Item>
@@ -182,8 +223,8 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
             rules={[{ required: true, message: 'Obrigatório' }]}
             initialValue={reference === undefined ? undefined : reference?.serviceType === '1' ? 'CLINIC' : 'COMMUNITY'}
           >
-            <Select placeholder="Seleccione o Tipo de Serviço" onChange={onChangeTipoServico}>
-              {areaServicos.map(item => (
+            <Select placeholder="Seleccione o Tipo de Serviço" onChange={onChangeTipoServico} disabled={!serviceTypeEnabled}>
+              {serviceTypes.map(item => (
                 <Option key={item.id}>{item.name}</Option>
               ))}
             </Select>
