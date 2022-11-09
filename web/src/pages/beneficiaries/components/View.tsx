@@ -375,7 +375,7 @@ const ViewBeneficiary = ({ beneficiary, modalVisible, handleModalVisible , handl
             width={1000}
             centered
             destroyOnClose
-            title={` Dados de Registo do Beneficiário: ${beneficiary?.name}`}
+            title={` Dados de Registo do Beneficiário`}
             visible={modalVisible}
             onOk={okHandle}
             onCancel={() => handleModalVisible()}
