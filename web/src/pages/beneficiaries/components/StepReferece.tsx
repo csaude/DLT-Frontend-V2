@@ -15,7 +15,6 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
   const [partners, setPartners] = React.useState<any>();
   const [users, setUsers] = React.useState<any>();
   const [referers, setReferers] = React.useState<any>(undefined);
-  const [user, setUser] = React.useState<any>();
   const [us, setUs] = React.useState<any>();
   const [entryPoints, setEntryPoints] = useState<any>([]);
   const [entryPointEnabled, setEntryPointEnabled] = useState(true);

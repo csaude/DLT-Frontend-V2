@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { queryByUser, edit as editRef, Reference} from '@app/utils/reference';
-import {allPartners} from '@app/utils/partners';
 import {allDistrict} from '@app/utils/district';
 import { query  as query1} from '@app/utils/users';
 import { query as beneficiaryQuery } from '@app/utils/beneficiary';
-import {allUs} from '@app/utils/uSanitaria';
 import { Card, Table, Button, Space, Badge, Input, Typography, Form, message } from 'antd';
 import 'antd/dist/antd.css';
 import moment from 'moment';
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
-import { Spinner } from 'react-bootstrap';
 
 import { useNavigate } from 'react-router-dom';
 import ViewReferral from './components/View';
@@ -47,9 +44,6 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
         const fetchData = async () => {
             setLoading(true);
             const data = await queryByUser(localStorage.user);
-            const partners = await allPartners();          
-            const data2 = await query1();         
-            const us = await allUs();
             const districts = await allDistrict();
             const loggedUser = await query1(localStorage.user);
 
