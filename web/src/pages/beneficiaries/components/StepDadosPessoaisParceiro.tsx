@@ -285,7 +285,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                     <Form.Item
                         name="enrollment_date"
                         label="Data Inscrição"
-                        rules={[{ required: isDateRequired, message: RequiredFieldMessage }]}
+                        rules={[{ required: true, message: RequiredFieldMessage }]}
                         initialValue={beneficiary && beneficiary.enrollmentDate ? moment(beneficiary?.enrollmentDate,'YYYY-MM-DD') : ''}
                     >
                     <DatePicker  
