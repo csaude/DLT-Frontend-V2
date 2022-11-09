@@ -21,6 +21,8 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
     const [selectMode, setSelectMode] = useState<any>();
     const [localityMode, setLocalityMode] = useState<any>();
     const [isRequired, setRequired] = useState<any>(false);
+    const [dataSelection, setDataSelection] = useState<any>({ entryPoint: undefined, profile: undefined, locality: undefined });
+    const [usByLocality, setUsByLocality] = useState<any>(undefined);
 
     const RequiredFieldMessage = "Obrigatório!";
 
@@ -93,7 +95,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
 
     const onChangeProvinces = async (values: any) => {
         if (values.length > 0) {
-            const dataDistricts = await queryDistrictsByProvinces({ provinces: Array.isArray(values)? values : [values] });
+            const dataDistricts = await queryDistrictsByProvinces({ provinces: Array.isArray(values) ? values : [values] });
             setDistricts(dataDistricts);
         }
         else {
@@ -103,39 +105,42 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
         setPartners(allPartners1);
         setUs(undefined);
 
-        form.setFieldsValue({districts: []});
-        form.setFieldsValue({localities: []});
-        form.setFieldsValue({partners: []});    
-        form.setFieldsValue({us: []});               
+        form.setFieldsValue({ districts: [] });
+        form.setFieldsValue({ localities: [] });
+        form.setFieldsValue({ partners: [] });
+        form.setFieldsValue({ us: [] });
     }
 
     const onChangeDistricts = async (values: any) => {
         if (values.length > 0) {
-            const dataLocalities = await queryLocalitiesByDistricts({ districts: Array.isArray(values)? values : [values] });
+            const dataLocalities = await queryLocalitiesByDistricts({ districts: Array.isArray(values) ? values : [values] });
             setLocalities(dataLocalities);
 
-            const partners = await allPartnersByDistricts({ districts: Array.isArray(values)? values : [values] })
+            const partners = await allPartnersByDistricts({ districts: Array.isArray(values) ? values : [values] })
             setPartners(partners);
         } else {
             setLocalities(undefined);
             setPartners(allPartners1);
             setUs(undefined);
         }
-    
-        form.setFieldsValue({localities: []});
-        form.setFieldsValue({partners: []});  
-        form.setFieldsValue({us: []});
+
+        form.setFieldsValue({ localities: [] });
+        form.setFieldsValue({ partners: [] });
+        form.setFieldsValue({ us: [] });
     }
 
     const onChangeLocalities = async (values: any) => {
         if (values.length > 0) {
-            const dataUs = await queryUsByLocalities({ localities: Array.isArray(values)? values : [values] });
+            const dataUs = await queryUsByLocalities({ localities: Array.isArray(values) ? values : [values] });
             setUs(dataUs);
+            setUsByLocality(dataUs);
         } else {
             setUs(undefined);
         }
 
-        form.setFieldsValue({us: []});               
+        form.setFieldsValue({ us: [] });
+
+        onChangeDataSelection("locality", values)
     }
 
     const onChangeProfile = async (values: any) => {
@@ -154,7 +159,40 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
             setRequired(true);
         }
 
+        onChangeDataSelection("profile", values)
     }
+
+    const onChangeDataSelection = (name: string, value: any) => {
+        setDataSelection({ ...dataSelection, [name]: value })
+    }
+
+    useEffect(() => {
+        if (dataSelection.profile !== undefined
+            && dataSelection.locality !== undefined) {
+
+            form.setFieldsValue({ us: [] });
+
+            if (dataSelection.profile == 4 && dataSelection.entryPoint !== undefined) {
+                if (dataSelection.entryPoint == 2) {
+                    let neighborhoods = usByLocality?.filter(item => item.usType.entryPoint == 2)
+                    setUs(neighborhoods)
+                }
+                else if (dataSelection.entryPoint == 3) {
+                    let schools = usByLocality?.filter(item => item.usType.entryPoint == 3)
+                    setUs(schools)
+                }
+            }
+            else if (dataSelection.profile == 3) {
+                const neighborhoodsAndSchools = usByLocality?.filter(item => item.usType.entryPoint in [2, 3])
+                setUs(neighborhoodsAndSchools)
+            }
+            else if (dataSelection.profile == 5 || dataSelection.profile == 6) {
+                const usAndSchools = usByLocality?.filter(item => item.usType.entryPoint in [1, 3])
+                setUs(usAndSchools)
+            }
+        }
+
+    }, [dataSelection])
 
     return (
         <Modal
@@ -237,20 +275,20 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                         <Form.Item
                             name="phoneNumber"
                             label="Número de Telemóvel"
-                            initialValue={user?.phoneNumber? Number(user?.phoneNumber) : user?.phoneNumber}
-                            rules={[{ type: 'number', min: 820000000, max:999999999, message: 'O numero inserido não é válido!' }]}
+                            initialValue={user?.phoneNumber ? Number(user?.phoneNumber) : user?.phoneNumber}
+                            rules={[{ type: 'number', min: 820000000, max: 999999999, message: 'O numero inserido não é válido!' }]}
                         >
-                            <InputNumber prefix="+258  " style={{width: '100%',}} placeholder="Insira o Telemóvel" />
+                            <InputNumber prefix="+258  " style={{ width: '100%', }} placeholder="Insira o Telemóvel" />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
                         <Form.Item
                             name="phoneNumber2"
                             label="Número de Telemóvel (Alternativo)"
-                            rules={[{ type: 'number', min: 820000000, max:999999999, message: 'O numero inserido não é válido!' }]}
-                            initialValue={user?.phoneNumber2? Number(user?.phoneNumber2) : user?.phoneNumber2}
+                            rules={[{ type: 'number', min: 820000000, max: 999999999, message: 'O numero inserido não é válido!' }]}
+                            initialValue={user?.phoneNumber2 ? Number(user?.phoneNumber2) : user?.phoneNumber2}
                         >
-                            <InputNumber prefix="+258  " style={{width: '100%',}} placeholder="Insira o Telemóvel" />
+                            <InputNumber prefix="+258  " style={{ width: '100%', }} placeholder="Insira o Telemóvel" />
                         </Form.Item>
                     </Col>
                 </Row>
@@ -278,7 +316,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                             rules={[{ required: isRequired, message: RequiredFieldMessage }]}
                             initialValue={user?.districts.map(item => { return item.id.toString() })}
                         >
-                            <Select mode={selectMode} 
+                            <Select mode={selectMode}
                                 placeholder="Seleccione  o(s) Distrito(s)"
                                 disabled={districts == undefined}
                                 onChange={onChangeDistricts}
@@ -296,7 +334,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                             rules={[{ required: isRequired, message: RequiredFieldMessage }]}
                             initialValue={user?.localities.map(item => { return item.id.toString() })}
                         >
-                            <Select mode={localityMode} 
+                            <Select mode={localityMode}
                                 placeholder="Seleccione a(s) Localidade(s)"
                                 disabled={localities == undefined}
                                 onChange={onChangeLocalities}
@@ -315,7 +353,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                             label="Ponto de Entrada"
                             initialValue={user?.entryPoint}
                         >
-                            <Select placeholder="Seleccione o Ponto de Entrada" >
+                            <Select placeholder="Seleccione o Ponto de Entrada" onChange={(value) => { onChangeDataSelection("entryPoint", value) }} >
                                 <Option key="1">{"Unidade Sanitária"}</Option>
                                 <Option key="2">{"Comunidade"}</Option>
                                 <Option key="3">{"Escola"}</Option>
