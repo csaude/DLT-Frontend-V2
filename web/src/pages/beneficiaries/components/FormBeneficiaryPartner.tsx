@@ -93,6 +93,7 @@ const BeneficiaryPartnerForm = ({ form, beneficiary, modalVisible, handleAddBene
 
             const { data } = await add(ben);
             handleAddBeneficiary(data);
+            handleModalVisible(false);
 
             message.success({
                 content: 'Registado com Sucesso!', className: 'custom-class',

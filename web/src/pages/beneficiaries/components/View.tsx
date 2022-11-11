@@ -271,7 +271,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
                                 </Row>
                                 <Row gutter={8}>
                                     <Col className="gutter-row" style={{ fontWeight: "bold", background: "#f3f4f5" }} span={12}>Sexo</Col>
-                                    <Col className="gutter-row" style={{ background: "#f3f4f5" }} span={12}>{beneficiary?.gender === 1 ? 'M' : 'F'}</Col>
+                                    <Col className="gutter-row" style={{ background: "#f3f4f5" }} span={12}>{beneficiary?.gender === '1' ? 'M' : 'F' }</Col>
                                 </Row>
                                 <Row gutter={8} >
                                     <Col className="gutter-row" style={{ fontWeight: "bold"}} span={12}>Com quem mora?</Col>
