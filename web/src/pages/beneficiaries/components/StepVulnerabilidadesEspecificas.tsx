@@ -2,6 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { Badge, Button, Steps, Row, Col, Input, message, Space, Form, Tabs, Modal, DatePicker, Checkbox, Select, Radio, Divider } from 'antd';
 import './index.css';
 import { query } from '@app/utils/beneficiary';
+import moment from 'moment';
 const { Option } = Select;
 const { Step } = Steps;
 
@@ -9,15 +10,27 @@ const StepVulnerabilidadesEspecificas = ({ form, beneficiary }: any) => {
     const [gbvTypeEnabled, setGbvTypeEnabled] = useState<any>(true);
     const [gbvTimeEnabled, setGbvTimeEnabled] = useState<any>(true);
     const [sexExploitationTimeEnabled, setSexExploitationTimeEnabled] = useState<any>(true);
-
-    //console.log(beneficiary);
+    const [minAge, setMinAge] = useState<boolean>();
 
     useEffect(() => { 
         if (beneficiary){
             form.setFieldsValue({nui: beneficiary?.nui});
         }
+        ageBeneficiary()
     
     }, [beneficiary]);
+
+    const ageBeneficiary = () => {
+
+        var today = new Date();
+        var bday = moment(beneficiary?.dateOfBirth).format('YYYY-MM-DD')
+        var birthDate = new Date(bday);
+        var age = today.getFullYear() - birthDate.getFullYear();
+        var validate = (age >= 18 ? true : false);
+
+        setMinAge(!validate);
+        console.log(!validate);
+    }
 
     const sexExploitationChange = async (values: any) => {
         setSexExploitationTimeEnabled(values.target.value != 1);
@@ -234,7 +247,7 @@ const StepVulnerabilidadesEspecificas = ({ form, beneficiary }: any) => {
                         </Radio.Group>
                     </Form.Item>
                 </Col>
-                <Col className="gutter-row" span={8}>
+                <Col className="gutter-row" span={8} hidden={minAge}>
                     <Form.Item
                         name="vblt_sex_worker"
                         label="Trabalhadora do Sexo"
