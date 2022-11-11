@@ -21,6 +21,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
     const [age, setAge] = useState<any>(undefined);
     const [birthDate, setBirthDate] = useState<any>(undefined);
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [visibleName, setVisibleName] = useState<any>(true);
 
     let userEntryPoint = localStorage.getItem('entryPoint');
 
@@ -36,6 +37,10 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
             const loggedUser = await query(localStorage.user);
             let dataProvinces;
 
+            if(loggedUser.profiles.id === 1 || loggedUser.profiles.id === 2 || loggedUser.profiles.id === 3){
+                setVisibleName(false);
+            }
+            
             if(loggedUser.provinces.length > 0) {
                 dataProvinces = loggedUser.provinces;
                 if (loggedUser.provinces.length === 1) {
@@ -230,7 +235,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                     </Form.Item>
                 </Col>
             </Row>
-            <Row gutter={16}>
+            <Row gutter={16} hidden={beneficiary !== undefined && visibleName}>
                 <Col className="gutter-row" span={12}>
                     <Form.Item
                         name="surname"
@@ -238,7 +243,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                         initialValue={beneficiary?.surname}
                     >
-                        <Input placeholder="Insira o apelido da Beneficiária" />
+                        <Input placeholder="Insira o apelido da Beneficiária"/>
                     </Form.Item>
                 </Col>
                 <Col className="gutter-row" span={12}>
@@ -304,12 +309,11 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                     <Form.Item
                         name="enrollment_date"
                         label="Data Inscrição"
-                        rules={[{ required: isDateRequired, message: RequiredFieldMessage }]}
+                        rules={[{ required: true, message: RequiredFieldMessage }]}
                         initialValue={beneficiary && beneficiary.enrollmentDate ? moment(beneficiary?.enrollmentDate,'YYYY-MM-DD') : ''}
                     >
                         <DatePicker  
                             inputReadOnly={true} 
-                            disabled={!isDateRequired} 
                             style={{ width: '100%' }} 
                             placeholder="Selecione a data"
                             disabledDate={d => !d || d.isAfter(new Date()) || d.isSameOrBefore("2017/01/01") }
@@ -386,7 +390,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                 <Col span={8} hidden={user?.us.length === 1 }>
                     <Form.Item
                         name="us"
-                        label="Local"
+                        label="Local de Registo"
                         rules={[{ required: user?.us.length !== 1, message: RequiredFieldMessage }]}
                         initialValue={beneficiary?.us.id.toString()}
                     >

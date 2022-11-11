@@ -29,6 +29,8 @@ const ReferenceInterventionForm = ({ form, reference, record, beneficiary }: any
   const [name, setName] = useState('');
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  const RequiredFieldMessage = "Obrigatório!";
+
   useEffect(() => {
 
     const fetchData = async () => {
@@ -60,6 +62,8 @@ const ReferenceInterventionForm = ({ form, reference, record, beneficiary }: any
     }
 
     fetchData().catch(error => console.log(error));
+
+    setIsLoading(true);
 
   }, [selectedIntervention]);
 
@@ -121,7 +125,7 @@ const ReferenceInterventionForm = ({ form, reference, record, beneficiary }: any
         <Form.Item
           name="areaServicos"
           label="Área de Serviços"
-          rules={[{ required: true, message: 'This field is required' }]}
+          rules={[{ required: true, message: RequiredFieldMessage }]}
         >
           <Select placeholder="Select Area Serviço" onChange={onChangeAreaServiço} disabled>
             {areaServicos.map(item => (
@@ -134,7 +138,7 @@ const ReferenceInterventionForm = ({ form, reference, record, beneficiary }: any
         <Form.Item
           name="service"
           label="Serviço"
-          rules={[{ required: true, message: 'Please enter url' }]}
+          rules={[{ required: true, message: RequiredFieldMessage }]}
         >
           <Select placeholder="Select Serviço" onChange={onChangeServices} disabled>
             {services?.map(item => (
@@ -147,7 +151,7 @@ const ReferenceInterventionForm = ({ form, reference, record, beneficiary }: any
         <Form.Item
           name="subservice"
           label="Sub-Serviço/Intervenção"
-          rules={[{ required: true, message: 'Please enter url' }]}
+          rules={[{ required: true, message: RequiredFieldMessage }]}
         >
           <Select placeholder="Select Sub Serviço" disabled={interventions === undefined} value={undefined}>
             {interventions?.map(item => (
@@ -162,7 +166,7 @@ const ReferenceInterventionForm = ({ form, reference, record, beneficiary }: any
           <Form.Item
             name="entryPoint"
             label="Ponto de Entrada"
-            rules={[{ required: true, message: 'Please select an owner' }]}
+            rules={[{ required: true, message: RequiredFieldMessage }]}
           >
             <Radio.Group
               onChange={onChangeEntryPoint}
@@ -175,7 +179,7 @@ const ReferenceInterventionForm = ({ form, reference, record, beneficiary }: any
           <Form.Item
             name="location"
             label="Localização"
-            rules={[{ required: true, message: 'Please choose the type' }]}
+            rules={[{ required: true, message: RequiredFieldMessage }]}
           >
             <Select placeholder="Select Localização" onChange={onChangeUs}>
               {us?.map(item => (
@@ -188,7 +192,7 @@ const ReferenceInterventionForm = ({ form, reference, record, beneficiary }: any
           <Form.Item
             name="dataBeneficio"
             label="Data Benefício"
-            rules={[{ required: true, message: 'Please select an owner' }]}
+            rules={[{ required: true, message: RequiredFieldMessage }]}
             initialValue={moment(new Date(),'YYYY-MM-DD')}
           >
             <DatePicker style={{ width: '100%' }} defaultPickerValue={moment(new Date(),'YYYY-MM-DD')} disabledDate={d => !d || d.isAfter(moment(new Date()))} />
@@ -201,8 +205,7 @@ const ReferenceInterventionForm = ({ form, reference, record, beneficiary }: any
           <Form.Item
             name="provider"
             label="Provedor do Serviço"
-            rules={[{ required: true, message: 'Nome do Provedor do Serviço' }]}
-            initialValue={selectedIntervention?.provider}
+            rules={[{ required: true, message: RequiredFieldMessage }]}
           >
             <Select
               showSearch

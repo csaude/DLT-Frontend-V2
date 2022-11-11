@@ -132,7 +132,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
 
             } else {
                 initValues = {
-                    areaServicos_id: loggedUser.entry_point != undefined ? loggedUser.entry_point : "",
+                    areaServicos_id: loggedUser.entryPoint != undefined ? loggedUser.entryPoint : "",
                     service_id: '',
                     beneficiary_id: '',
                     sub_service_id: '',

@@ -23,6 +23,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
     const [interventions, setInterventions] = useState(beneficiary?.beneficiariesInterventionses);
     const [partner, setPartner] = useState<any>();
     const [ logUser, setLogUser ] = React.useState<any>();
+    const [visibleName, setVisibleName] = useState<any>(true);
 
     const [form] = Form.useForm();
 
@@ -36,6 +37,10 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
             if(beneficiary.partnerId){
                 const user = await query(beneficiary.partnerId);
                 setPartner(user);
+            }
+            
+            if(user.profiles.id === 1 || user.profiles.id === 2 || user.profiles.id === 3){
+                setVisibleName(false);
             }
             
         }
@@ -182,7 +187,9 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
                 title: 'Intervenções',
                 dataIndex: '',
                 key: 'intervention',
-                render: (text, record) => (user.profiles.id == 4 && record.subServices.service.id == 9)? '' : record.subServices.name,
+                render: (text, record)  => 
+                    ((user.profiles.id == 4 || user.profiles.id == 3 && user.partners.partnerType == 2) && record.subServices.service.id == 9)? 
+                    '' : record.subServices.name,
             },
             {
                 title: 'Ponto de Entrada',
@@ -232,7 +239,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
                                         {`${beneficiary.neighborhood.locality.district.code}/${beneficiary?.nui}`}
                                     </span><br />
                                     <span style={{ fontWeight: "bold" /*, textTransform: "uppercase" */}}>
-                                        {user?.profiles.id === 1 ? `${beneficiary?.name} ${beneficiary?.surname}` : 'DREAMS'+ `${beneficiary?.nui}`}</span><br /><br />
+                                        { visibleName === false ? `${beneficiary?.name} ${beneficiary?.surname}` : 'DREAMS'+ `${beneficiary?.nui}`}</span><br /><br />
                                     <span>Ponto de Referência:</span><br />
                                     <span style={{ color: "#17a2b8" }}>{beneficiary?.neighborhood.name}</span><br />
                                 </div>
@@ -368,7 +375,7 @@ const ViewBeneficiary = ({ beneficiary, modalVisible, handleModalVisible , handl
             width={1000}
             centered
             destroyOnClose
-            title={` Dados de Registo do Beneficiário: ${beneficiary?.name}`}
+            title={` Dados de Registo do Beneficiário`}
             visible={modalVisible}
             onOk={okHandle}
             onCancel={() => handleModalVisible()}
