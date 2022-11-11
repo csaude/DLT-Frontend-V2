@@ -39,7 +39,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     const service = services.filter(item => item._raw.online_id === intervention?.service.service_id)[0]?._raw;
 
     const areaServicos = [{ "id": '1', "name": "Serviços Clinicos" }, { "id": '2', "name": "Serviços Comunitarios" }];
-    const entry_points = [{ "id": '1', "name": "US" }, { "id": '3', "name": "CM" }, { "id": '2', "name": "ES" }];
+    const entry_points = [{ "id": '1', "name": "US" }, { "id": '2', "name": "CM" }, { "id": '3', "name": "ES" }];
     const message = "Este campo é Obrigatório";
 
     const formik = useFormik({
