@@ -29,7 +29,6 @@ const StepVulnerabilidadesEspecificas = ({ form, beneficiary }: any) => {
         var validate = (age >= 18 ? true : false);
 
         setMinAge(!validate);
-        console.log(!validate);
     }
 
     const sexExploitationChange = async (values: any) => {
