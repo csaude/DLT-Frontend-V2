@@ -5,7 +5,6 @@ import {useDispatch, useSelector} from 'react-redux';
 import {toggleControlSidebar, toggleSidebarMenu} from '@app/store/reducers/ui';
 import {Button} from '@app/components';
 import UserDropdown from '@app/modules/main/header/user-dropdown/UserDropdown';
-import './index.css'
 
 const Header = () => {
   const [t] = useTranslation();
@@ -30,7 +29,6 @@ const Header = () => {
   }, [navbarVariant, headerBorder]);
 
   return (
-    <div className='apply-z-index-1'>
     <nav className={getContainerClasses()}>
       <ul className="navbar-nav">
         <li className="nav-item">
@@ -47,7 +45,6 @@ const Header = () => {
         <UserDropdown />
       </ul>
     </nav>
-    </div>
   );
 };
 
