@@ -10,7 +10,7 @@ import { allUsByType } from '@app/utils/uSanitaria';
 const { Option } = Select;
 const { Step } = Steps;
 
-const StepDadosPessoais = ({ form, beneficiary }: any) => {
+const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
     const [isDateRequired, setIsDateRequired] = useState<any>(true);
     const [user, setUser] = useState<any>(undefined);
     const [provinces, setProvinces] = useState<any>([]);
@@ -22,6 +22,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
     const [birthDate, setBirthDate] = useState<any>(undefined);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [visibleName, setVisibleName] = useState<any>(true);
+    const [partners, setPartners] = useState<any>([])
 
     let userEntryPoint = localStorage.getItem('entryPoint');
 
@@ -30,6 +31,9 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
 
     useEffect(() => {
         const fetchData = async () => {
+            const partners = beneficiaries.filter(b => b.gender == '1');
+            setPartners(partners);
+
             if(beneficiary === undefined) {
                 form.setFieldsValue({entry_point: userEntryPoint});
             }
@@ -219,6 +223,13 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                 ))}
             </Select>
         );
+    }
+
+    function onClear() {
+        form.setFieldsValue({partner_nui: null});
+        if (beneficiary){
+            beneficiary.partnerNUI = null;
+        }
     }
 
     return (
@@ -468,10 +479,21 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                 <Col className="gutter-row" span={12}>
                     <Form.Item
                         name="partner_nui"
-                        label="NUI do Parceiro"
+                        label="NUI do Parceiro?"
                         initialValue={beneficiary?.partnerNUI}
                     >
-                        <Input placeholder="Insira o NUI do parceiro" />
+                        <Select
+                            showSearch
+                            allowClear
+                            size='middle'
+                            onClear={onClear}
+                            placeholder="Seleccione o NUI do parceiro"
+                            style={{width: '100%',}}
+                        >
+                            {partners.map(item => (
+                                <Option key={item.nui}>{item.nui}</Option>
+                            ))}
+                        </Select>
                     </Form.Item>
                 </Col>
             </Row>
