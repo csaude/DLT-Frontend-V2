@@ -174,7 +174,7 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
             if (locality !== '' && locality !== undefined) {
                 var payload = {
                     typeId: e?.target?.value === undefined ? e : e?.target?.value,
-                    localityId: locality
+                    localityId: locality.id
                 }
                 const data = await allUsByType(payload);
                 setUs(data);
