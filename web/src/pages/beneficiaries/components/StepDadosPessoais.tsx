@@ -170,11 +170,11 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
 
     const onChangeEntryPoint = async (e: any) => {
         if (user?.us.length !== 1){
-            let locality = user?.localities.length === 1? user.localities[0] : form.getFieldValue('locality');
+            let locality = user?.localities.length === 1? user.localities[0].id : form.getFieldValue('locality');
             if (locality !== '' && locality !== undefined) {
                 var payload = {
                     typeId: e?.target?.value === undefined ? e : e?.target?.value,
-                    localityId: locality.id
+                    localityId: locality
                 }
                 const data = await allUsByType(payload);
                 setUs(data);
