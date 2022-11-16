@@ -175,7 +175,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
                 title: 'Data',
                 dataIndex: '',
                 key: 'date',
-                render: (text, record) => <span>{moment(record.dateCreated).format('YYYY-MM-DD')}</span>,
+                render: (text, record) => <span>{moment(record.id.date).format('YYYY-MM-DD')}</span>,
             },
             {
                 title: 'Serviço',

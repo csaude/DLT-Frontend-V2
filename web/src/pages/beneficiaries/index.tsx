@@ -80,7 +80,7 @@ const BeneficiariesList: React.FC = () => {
         fetchData().catch(error => console.log(error));
         fetchUsers().catch(error => console.log(error));
     
-    }, []);
+    }, [modalVisible]);
 
     const showDrawer = (record: any) => {
 
@@ -332,7 +332,7 @@ const BeneficiariesList: React.FC = () => {
         { title: 'Data', 
             dataIndex: 'date', 
             key: 'date',
-            render: (text, record) => <span>{moment(record.dateCreated).format('YYYY-MM-DD')}</span>,
+            render: (text, record) => <span>{moment(record.id.date).format('YYYY-MM-DD')}</span>,
         },
         { title: 'Serviço', 
             dataIndex: '', 
