@@ -9,6 +9,7 @@ class FullPageLoader extends Component {
             <div className="loader-container">
                 <div className="loader">
                     <Spinner animation="border" variant="primary" />
+                    <span className="visually-hidden">Carregando. Aguarde Por Favor.</span>
                 </div>
             </div>
         );
