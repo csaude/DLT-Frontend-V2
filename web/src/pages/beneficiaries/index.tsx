@@ -536,7 +536,8 @@ const BeneficiariesList: React.FC = () => {
                 handleModalRefVisible={handleModalRefVisible}
                 user={user}
             />
-            <FormBeneficiary form={form} beneficiary={beneficiary} modalVisible={beneficiaryModalVisible}
+            <FormBeneficiary form={form} beneficiary={beneficiary} beneficiaries={beneficiaries}
+                modalVisible={beneficiaryModalVisible}
                 handleAddBeneficiary={handleAddBeneficiary}
                 handleUpdateBeneficiary={handleUpdateBeneficiary}
                 handleModalVisible={handleBeneficiaryModalVisible} 
