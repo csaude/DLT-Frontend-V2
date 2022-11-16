@@ -49,7 +49,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
 
       const partnerType = loggedUser.partners.partnerType;
 
-      if (loggedUser.entry_point === "3") {
+      if (loggedUser.entryPoint === "3") {
           setEntryPoints([{ value: '1', label: "US" }, { value: '2', label: "CM" }, { value: '3', label: "ES" }]);
       } else if (partnerType === "1") {
           setEntryPoints([{ value: '2', label: "CM" }, { value: '3', label: "ES" }]);
