@@ -38,7 +38,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
 
       if (reference === undefined) {
         form.setFieldsValue({ referenceNote: 
-                              ('REFDR' + String(userId).padStart(3, '0') + (loggedUser?.provinces === undefined ? '0': loggedUser?.provinces[0]?.id) + String(((await queryByCreated(localStorage.user))?.length)+ 1).padStart(3, '0'))
+                              ('REFDR' + String(userId).padStart(3, '0') + String(beneficiary.locality.district.province.id) + String(((await queryByCreated(localStorage.user))?.length)+ 1).padStart(3, '0'))
                             });
         form.setFieldsValue({ referredBy: [3,4,5,6].includes(loggedUser.profiles.id)? localStorage.user : '' });
       } else {
