@@ -80,7 +80,7 @@ const BeneficiariesList: React.FC = () => {
         fetchData().catch(error => console.log(error));
         fetchUsers().catch(error => console.log(error));
     
-    }, []);
+    }, [modalVisible]);
 
     const showDrawer = (record: any) => {
 
@@ -149,38 +149,20 @@ const BeneficiariesList: React.FC = () => {
                 });
                 
             }else{
-                const beneficiaryServices = beneficiary.beneficiariesInterventionses.map(item => item.subServices.service.id);
-                const referenceServices = services.map(item => item.servico.id);
-    
-                const isFounded = referenceServices.some( item => beneficiaryServices.includes(item) );
+                setAddStatus(true);
+                
+                const { data } = await addRef(payload);
 
-                if (isFounded) {
-                    setAddStatus(false);
-                    
-                    message.error({
-                        content: 'Referência Contém um Serviço já Provido à Beneficiária!', className: 'custom-class',
-                        style: {
-                            marginTop: '10vh',
-                        }
-                    });
-                } else {
-
-                    setAddStatus(true);
-                    
-                    const { data } = await addRef(payload);
-    
-                    message.success({
-                        content: 'Registado com Sucesso!'+data?.referenceNote, className: 'custom-class',
-                        style: {
-                            marginTop: '10vh',
-                        }
-                    });
-                    
-                    setReferenceModalVisible(false);
-                    
-                    navigate('/referenceList');  
-
-                }
+                message.success({
+                    content: 'Registado com Sucesso!'+data?.referenceNote, className: 'custom-class',
+                    style: {
+                        marginTop: '10vh',
+                    }
+                });
+                
+                setReferenceModalVisible(false);
+                
+                navigate('/referenceList');  
             }       
         }
     }
@@ -332,7 +314,7 @@ const BeneficiariesList: React.FC = () => {
         { title: 'Data', 
             dataIndex: 'date', 
             key: 'date',
-            render: (text, record) => <span>{moment(record.dateCreated).format('YYYY-MM-DD')}</span>,
+            render: (text, record) => <span>{moment(record.id.date).format('YYYY-MM-DD')}</span>,
         },
         { title: 'Serviço', 
             dataIndex: '', 
