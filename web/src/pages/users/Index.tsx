@@ -214,12 +214,12 @@ const UsersList: React.FC = () => {
             key: 'order',
             render: (text, record) => users.indexOf(record) + 1,
         },
-        { title: 'Nome do Utilizador', dataIndex: 'name', key: 'name',
+        { title: 'Nome do Utilizador', dataIndex: 'name', key: 'name',  ...getColumnSearchProps('name') ,
         render: (text, record) => (
             <div>
                 {record.name} {record.surname}
             </div>
-        ), },
+        ),  },
         { title: 'Username', dataIndex: 'username', key: 'username', ...getColumnSearchProps('username') },
         {
             title: 'Perfil', dataIndex: '', key: 'type',
