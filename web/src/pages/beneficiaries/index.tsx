@@ -4,7 +4,8 @@ import { query } from '../../utils/beneficiary';
 import { query as queryUser } from '../../utils/users';
 import classNames from "classnames";
 import {matchSorter} from "match-sorter";
-import { Badge, Button, message, Card, Input, Space, Table, Typography, Form } from 'antd';
+import { Badge, Button, message, Card, Input, Space, Table, Typography, Form, ConfigProvider } from 'antd';
+import ptPT  from 'antd/lib/locale-provider/pt_PT';
 import Highlighter from 'react-highlight-words';
 import 'antd/dist/antd.css';
 import { SearchOutlined, EditOutlined, PlusOutlined, EyeOutlined } from '@ant-design/icons';
@@ -30,6 +31,7 @@ const BeneficiariesList: React.FC = () => {
     const [form] = Form.useForm();
     const navigate = useNavigate();
     const [ users, setUsers ] = useState<UserModel[]>([]);
+    const [ updaters, setUpdaters ] = useState<UserModel[]>([]);
     const [visible, setVisible] = useState<boolean>(false);
     const [isAdd, setIsAdd] = useState<boolean>(false);
     const [selectedIntervention, setSelectedIntervention] = useState<any>();
@@ -58,27 +60,32 @@ const BeneficiariesList: React.FC = () => {
             setLoading(true);
             const user = await queryUser(localStorage.user);
             const data = await query(getUserParams(user));
-            const districts = await allDistrict();
-            const partners = await allPartners();
 
             setUser(user);
             setBeneficiaries(data);
+
+            const localities = data.map(beneficiary => beneficiary.locality).filter((value, index, self) => self.findIndex(v => v.id === value.id) === index);
+            const districts = localities.map(locality => locality.district).filter((value, index, self) => self.findIndex(v => v.id === value.id) === index);
+            const partners = data.map(beneficiary => beneficiary.partner).filter((value, index, self) => self.findIndex(v => v.id === value.id) === index);
+            const creatorsIds = data.map(beneficiary => beneficiary.createdBy).filter((value, index, self) => self.findIndex(v => v === value) === index);
+            const updatersIds = data.map(beneficiary => beneficiary.updatedBy).filter((value, index, self) => self.findIndex(v => v === value) === index);
+
+            const users = await queryUser();
+            const creators = users.filter(u => creatorsIds.includes(u.id));
+            const updaters = users.filter(u => updatersIds.includes(u.id));
+            
             setDistrict(districts);
             setPartners(partners);
-            setLoading(false);
+            setUsers(creators);
+            setUpdaters(updaters);
 
             if(user.profiles.id === 1 || user.profiles.id === 2 || user.profiles.id === 3){
                 setVisibleName(false);
             }
-        }
-
-        const fetchUsers = async () => {
-            const users = await queryUser();
-            setUsers(users);
+            setLoading(false);
         }
     
         fetchData().catch(error => console.log(error));
-        fetchUsers().catch(error => console.log(error));
     
     }, [modalVisible]);
 
@@ -252,7 +259,7 @@ const BeneficiariesList: React.FC = () => {
                     ref={node => {
                         searchInput = node;
                     }}
-                    placeholder={`Search ${dataIndex}`}
+                    placeholder={`Pesquisar ${dataIndex}`}
                     value={selectedKeys[0]}
                     onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
                     onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
@@ -266,10 +273,10 @@ const BeneficiariesList: React.FC = () => {
                     size="small"
                     style={{ width: 90 }}
                 >
-                    Search
+                    Pesquisar
                 </Button>
                 <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
-                    Reset
+                    Limpar
                 </Button>
                 <Button
                     type="link"
@@ -280,7 +287,7 @@ const BeneficiariesList: React.FC = () => {
                     setSearchedColumn(dataIndex);
                     }}
                 >
-                    Filter
+                    Filtrar
                 </Button>
                 </Space>
             </div>
@@ -355,7 +362,7 @@ const BeneficiariesList: React.FC = () => {
                     {record.neighborhood.locality?.district?.code}/{record.nui}
                 </Text>),
         },
-        { title: 'Nome do Beneficiário', dataIndex: 'name', key: 'name', ...getColumnSearchProps('name'),
+        { title: 'Nome do Beneficiário', dataIndex: 'name', key: 'name', ...getColumnSearchProps('nome'),
             render: (text, record) => getName(record),
         },
         { title: 'Sexo', dataIndex: 'gender', key: 'gender',
@@ -436,16 +443,16 @@ const BeneficiariesList: React.FC = () => {
             onFilter: (value, record) => (users.filter(user => record.createdBy == user.id).map(filteredUser => `${filteredUser.name} ` + `${filteredUser.surname}`)[0] == value),
             filterSearch: true,
         },
-        { title: 'Criado Em', dataIndex: 'dateCreated', key: 'dateCreated', ...getColumnSearchProps('dateCreated'),
+        { title: 'Criado Em', dataIndex: 'dateCreated', key: 'dateCreated', ...getColumnSearchProps('data criação'),
             render: (val: string) => <span>{moment(val).format('YYYY-MM-DD')}</span>,
         },
         { title: 'Atualizado Por', dataIndex: '', key: 'updatedBy',
-            render: (text, record)  => users.filter(user => record.updatedBy == user.id).map(filteredUser => `${filteredUser.name} ` + `${filteredUser.surname}`)[0],
-            filters: filterItem(users)(i => i.name +' '+ i.surname),
-            onFilter: (value, record) => (users.filter(user => record.updatedBy == user.id).map(filteredUser => `${filteredUser.name} ` + `${filteredUser.surname}`)[0] == value),
+            render: (text, record)  => updaters.filter(user => record.updatedBy == user.id).map(filteredUser => `${filteredUser.name} ` + `${filteredUser.surname}`)[0],
+            filters: filterItem(updaters)(i => i.name +' '+ i.surname),
+            onFilter: (value, record) => (updaters.filter(user => record.updatedBy == user.id).map(filteredUser => `${filteredUser.name} ` + `${filteredUser.surname}`)[0] == value),
             filterSearch: true,
         },
-        { title: 'Atualizado Em', dataIndex: 'dateUpdated', key: 'dateUpdated', ...getColumnSearchProps('dateUpdated'),
+        { title: 'Atualizado Em', dataIndex: 'dateUpdated', key: 'dateUpdated', ...getColumnSearchProps('data actualização'),
             render: (val: string) =>val != undefined ? <span>{moment(val).format('YYYY-MM-DD')} </span>: '',
         },
         {
@@ -500,16 +507,18 @@ const BeneficiariesList: React.FC = () => {
                         <FullPageLoader />
                     : undefined
                 }
-                <Table
-                    rowKey="id"
-                    columns={columns}
-                    expandable={{
-                        expandedRowRender: record =>  <div style={{border:"2px solid #d9edf7", backgroundColor:"white"}}><ViewBenefiaryPanel beneficiary={record} columns={interventionColumns} handleModalVisible={handleModalVisible} handleModalRefVisible={handleModalRefVisible} user={user} /></div>,
-                        rowExpandable: record => record.name !== 'Not Expandable',
-                    }}
-                    dataSource={beneficiaries}
-                    bordered
-                />
+                <ConfigProvider locale={ptPT}>
+                    <Table
+                        rowKey="id"
+                        columns={columns}
+                        expandable={{
+                            expandedRowRender: record =>  <div style={{border:"2px solid #d9edf7", backgroundColor:"white"}}><ViewBenefiaryPanel beneficiary={record} columns={interventionColumns} handleModalVisible={handleModalVisible} handleModalRefVisible={handleModalRefVisible} user={user} /></div>,
+                            rowExpandable: record => record.name !== 'Not Expandable',
+                        }}
+                        dataSource={beneficiaries}
+                        bordered
+                    />
+                </ConfigProvider>
             </Card>
             <ViewBeneficiary 
                 {...parentMethods}

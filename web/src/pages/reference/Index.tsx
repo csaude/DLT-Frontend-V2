@@ -3,7 +3,8 @@ import { queryByUser, edit as editRef, Reference} from '@app/utils/reference';
 import {allDistrict} from '@app/utils/district';
 import { query  as query1} from '@app/utils/users';
 import { query as beneficiaryQuery } from '@app/utils/beneficiary';
-import { Card, Table, Button, Space, Badge, Input, Typography, Form, message } from 'antd';
+import { Card, Table, Button, Space, Badge, Input, Typography, Form, message, ConfigProvider } from 'antd';
+import ptPT  from 'antd/lib/locale-provider/pt_PT';
 import 'antd/dist/antd.css';
 import moment from 'moment';
 import Highlighter from 'react-highlight-words';
@@ -202,7 +203,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                     Pesquisar
                 </Button>
                 <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
-                    Reset
+                    Limpar
                 </Button>
                 <Button
                     type="link"
@@ -213,7 +214,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                     setSearchedColumn(dataIndex);
                     }}
                 >
-                    Filter
+                    Filtrar
                 </Button>
                 </Space>
             </div>
@@ -273,7 +274,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                     Pesquisar
                 </Button>
                 <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
-                    Reset
+                    Limpar
                 </Button>
                 <Button
                     type="link"
@@ -284,7 +285,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                     setSearchedColumn(dataIndex);
                     }}
                 >
-                    Filter
+                    Filtrar
                 </Button>
                 </Space>
             </div>
@@ -503,13 +504,15 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                         <FullPageLoader />
                     : undefined
                 }
-                <Table
-                    rowKey={(record?) => `${record.id}${record.id.date}`}
-                    columns={columnsRef}
-                    dataSource={references}
-                    bordered
-                >
-                </Table>
+                <ConfigProvider locale={ptPT}>
+                    <Table
+                        rowKey={(record?) => `${record.id}${record.id.date}`}
+                        columns={columnsRef}
+                        dataSource={references}
+                        bordered
+                    >
+                    </Table>
+                </ConfigProvider>
             </Card>
             <ViewReferral
                 {...parentMethods}
