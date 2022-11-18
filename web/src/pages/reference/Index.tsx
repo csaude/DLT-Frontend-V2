@@ -3,7 +3,8 @@ import { queryByUser, edit as editRef, Reference} from '@app/utils/reference';
 import {allDistrict} from '@app/utils/district';
 import { query  as query1} from '@app/utils/users';
 import { query as beneficiaryQuery } from '@app/utils/beneficiary';
-import { Card, Table, Button, Space, Badge, Input, Typography, Form, message } from 'antd';
+import { Card, Table, Button, Space, Badge, Input, Typography, Form, message, ConfigProvider } from 'antd';
+import ptPT  from 'antd/lib/locale-provider/pt_PT';
 import 'antd/dist/antd.css';
 import moment from 'moment';
 import Highlighter from 'react-highlight-words';
@@ -158,36 +159,21 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                 setReferenceModalVisible(true);
 
             }else{
-                const beneficiaryServices = beneficiary.beneficiariesInterventionses.map(item => item.subServices.service.id);
-                const referenceServices = services.map(item => item.servico.id);
+                const { data } = await editRef(payload);
+                const allReferences: any = await queryByUser(localStorage.user);
+                const sortedReferences = allReferences.sort((ref1, ref2) =>  (ref1.status - ref2.status) || moment(ref2.dateCreated).format('YYYY-MM-DD').localeCompare(moment(ref1.dateCreated).format('YYYY-MM-DD')));
+                setReferences(sortedReferences);
     
-                const founded = referenceServices.some( item => beneficiaryServices.includes(item) );
+                message.success({
+                    content: 'Actualizado com Sucesso!'+data?.referenceNote, className: 'custom-class',
+                    style: {
+                        marginTop: '10vh',
+                    }
+                });
 
-                if (founded) {                    
-                    message.error({
-                        content: 'Referência Contém um Serviço já Provido à Beneficiária!', className: 'custom-class',
-                        style: {
-                            marginTop: '10vh',
-                        }
-                    });
-                } else {
-
-                    const { data } = await editRef(payload);
-                    const allReferences: any = await queryByUser(localStorage.user);
-                    const sortedReferences = allReferences.sort((ref1, ref2) =>  (ref1.status - ref2.status) || moment(ref2.dateCreated).format('YYYY-MM-DD').localeCompare(moment(ref1.dateCreated).format('YYYY-MM-DD')));
-                    setReferences(sortedReferences);
-        
-                    message.success({
-                        content: 'Actualizado com Sucesso!'+data?.referenceNote, className: 'custom-class',
-                        style: {
-                            marginTop: '10vh',
-                        }
-                    });
-
-                    setReferenceModalVisible(false);
-        
-                    navigate('/referenceList');    
-                }
+                setReferenceModalVisible(false);
+    
+                navigate('/referenceList');    
             }      
               
         }
@@ -217,7 +203,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                     Pesquisar
                 </Button>
                 <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
-                    Reset
+                    Limpar
                 </Button>
                 <Button
                     type="link"
@@ -228,7 +214,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                     setSearchedColumn(dataIndex);
                     }}
                 >
-                    Filter
+                    Filtrar
                 </Button>
                 </Space>
             </div>
@@ -288,7 +274,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                     Pesquisar
                 </Button>
                 <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
-                    Reset
+                    Limpar
                 </Button>
                 <Button
                     type="link"
@@ -299,7 +285,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                     setSearchedColumn(dataIndex);
                     }}
                 >
-                    Filter
+                    Filtrar
                 </Button>
                 </Space>
             </div>
@@ -518,13 +504,15 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                         <FullPageLoader />
                     : undefined
                 }
-                <Table
-                    rowKey={(record?) => `${record.id}${record.id.date}`}
-                    columns={columnsRef}
-                    dataSource={references}
-                    bordered
-                >
-                </Table>
+                <ConfigProvider locale={ptPT}>
+                    <Table
+                        rowKey={(record?) => `${record.id}${record.id.date}`}
+                        columns={columnsRef}
+                        dataSource={references}
+                        bordered
+                    >
+                    </Table>
+                </ConfigProvider>
             </Card>
             <ViewReferral
                 {...parentMethods}
