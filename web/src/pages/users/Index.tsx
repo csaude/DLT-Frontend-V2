@@ -204,12 +204,10 @@ const UsersList: React.FC = () => {
             handleUsersModalVisible(false);
         })
             .catch(error => {
-                debugger;
                 const errSt = JSON.stringify(error);
                 const errObj = JSON.parse(errSt)
                 message.error({
-                    content: getMessage(errObj.status), 
-                    className: 'custom-class',
+                    content: getMessage(errObj.status), className: 'custom-class',
                     style: {
                         marginTop: '10vh',
                     }
