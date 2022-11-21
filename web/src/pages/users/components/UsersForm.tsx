@@ -51,6 +51,10 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
 
             if (user) {
                 onChangeProfile(user.profiles.id);
+            }else {
+                setDistricts(undefined);
+                setLocalities(undefined);
+                setUs(undefined);
             }
         };
 
@@ -91,7 +95,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
 
         fetchData().catch(error => console.log(error));
 
-    }, [user]);
+    }, [user,modalVisible]);
 
     const onChangeProvinces = async (values: any) => {
         if (values.length > 0) {

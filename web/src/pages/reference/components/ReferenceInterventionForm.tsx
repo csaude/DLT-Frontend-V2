@@ -54,6 +54,7 @@ const ReferenceInterventionForm = ({ form, reference, record, beneficiary }: any
       form.setFieldsValue({ entryPoint: reference.referTo });
       form.setFieldsValue({ location: reference.us.id + '' });
       form.setFieldsValue({ provider: reference.users.username });
+      form.setFieldsValue({ outros: selectedIntervention.description });
       onChangeUs(reference.us.id);
 
       fetchServices().catch(error => console.log(error));

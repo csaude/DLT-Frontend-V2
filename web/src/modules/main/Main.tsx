@@ -10,6 +10,7 @@ import Header from '@app/modules/main/header/Header';
 import MenuSidebar from '@app/modules/main/menu-sidebar/MenuSidebar';
 import Footer from '@app/modules/main/footer/Footer';
 import {useNavigate, useLocation} from 'react-router-dom';
+import './index.css'
 
 const Main = () => {
   
@@ -100,7 +101,7 @@ const Main = () => {
       );
     }
     return (
-      <>
+      <div className='apply-z-index-1'>
         <Header />
 
         <MenuSidebar />
@@ -119,7 +120,7 @@ const Main = () => {
           onClick={handleToggleMenuSidebar}
           onKeyDown={() => {}}
         />
-      </>
+      </div>
     );
   }, [isAppLoaded]);
 

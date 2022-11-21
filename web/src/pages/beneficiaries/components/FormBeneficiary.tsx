@@ -11,7 +11,7 @@ import { stringify } from 'qs';
 const { Option } = Select;
 const { Step } = Steps;
 
-const BeneficiaryForm = ({ form, beneficiary, modalVisible, handleAddBeneficiary, handleUpdateBeneficiary, handleModalVisible }: any) => {
+const BeneficiaryForm = ({ form, beneficiary, beneficiaries, modalVisible, handleAddBeneficiary, handleUpdateBeneficiary, handleModalVisible }: any) => {
 
     const [current, setCurrent] = useState(0);
     const [firstStepValues, setFirstStepValues] = useState();
@@ -196,7 +196,7 @@ const BeneficiaryForm = ({ form, beneficiary, modalVisible, handleAddBeneficiary
     const steps = [
         {
             title: 'Dados Pessoais',
-            content: <StepDadosPessoais form={form} beneficiary={beneficiary} />,
+            content: <StepDadosPessoais form={form} beneficiary={beneficiary} beneficiaries={beneficiaries} />,
         },
         {
             title: 'Critérios de Eligibilidade Gerais',
