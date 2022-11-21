@@ -12,6 +12,7 @@ import {Form, InputGroup} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 import * as AuthService from '../../services/auth';
+import {verifyUserByUsername} from '../../utils/login';
 
 const ForgotPassword = () => {
   const [isAuthLoading, setAuthLoading] = useState(false);
@@ -30,6 +31,25 @@ const ForgotPassword = () => {
       toast.error( 'Failed');
     }
   };
+
+  const getMessage = status => {
+      if(status==404){
+          return 'O utilizador informado não está cadastrado no sistema, para autenticar precisa estar cadastrado no sistema'
+      }
+      else if(status==423){
+          return 'O utilizador informado encontra-se inactivo, por favor contacte a equipe de suporte para activação do utilizador'
+      }
+      else if(status==401){
+          return 'A password informada não está correcta, por favor corrija a password e tente novamente'
+      }
+      else if(status==500){
+          return 'Ocorreu um Erro na autenticação do seu utilizador, por favor contacte a equipe de suporte para mais detalhes!'
+      }
+      else if (status==undefined) {
+        return 'Do momento o sistema encontra-se em manutenção, por favor aguarde a disponibilidade do sistema e tente novamente'
+      }
+  } 
+
   
   const {handleChange, values, handleSubmit, touched, errors} = useFormik({
     initialValues: {
@@ -53,9 +73,16 @@ const ForgotPassword = () => {
         .oneOf([Yup.ref('password'), null], 'As senhas devem corresponder')
         .required('Obrigatório')
     }),
-    onSubmit: (values) => {
-      updatePassword(values.username, values.password);
-      toast.success('Um email de confirmação foi enviado!');
+    onSubmit: async (values) => {
+      try{
+          await verifyUserByUsername(values.username);
+          updatePassword(values.username, values.password);
+          toast.success('Um email de confirmação foi enviado!');
+       } catch ( error ) {
+          const errSt = JSON.stringify(error);
+          const errObj = JSON.parse(errSt)
+          toast.error(getMessage(errObj.status));
+       }
     }
   });
 
