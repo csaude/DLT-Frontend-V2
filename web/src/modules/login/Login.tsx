@@ -15,6 +15,7 @@ import * as Yup from 'yup';
 
 import {Form, InputGroup} from 'react-bootstrap';
 import * as AuthService from '../../services/auth';
+import {verifyUserByUsername} from '../../utils/login';
 
 const Login = () => {
   const [isAuthLoading, setAuthLoading] = useState(false);
@@ -24,17 +25,38 @@ const Login = () => {
   const navigate = useNavigate();
   const [t] = useTranslation();
 
+  const getMessage = status => {
+      if(status==404){
+          return 'O utilizador informado não está cadastrado no sistema, para autenticar precisa estar cadastrado no sistema'
+      }
+      else if(status==423){
+          return 'O utilizador informado encontra-se inactivo, por favor contacte a equipe de suporte para activação do utilizador'
+      }
+      else if(status==401){
+          return 'A password informada não está correcta, por favor corrija a password e tente novamente'
+      }
+      else if(status==500){
+          return 'Ocorreu um Erro na autenticação do seu utilizador, por favor contacte a equipe de suporte para mais detalhes!'
+      }
+      else if (status==undefined) {
+        return 'Do momento o sistema encontra-se em manutenção, por favor aguarde a disponibilidade do sistema e tente novamente'
+      }
+  } 
+
   const login = async (email: string, password: string) => {
     try {
       setAuthLoading(true);
+      await verifyUserByUsername(email);
       const data = await AuthService.loginByAuth(email, password);
       toast.success('Autenticação efectuada com sucesso!');
       setAuthLoading(false);
       dispatch(loginUser(data));
       navigate('/');
     } catch ( error ) {
+      const errSt = JSON.stringify(error);
+      const errObj = JSON.parse(errSt)
       setAuthLoading(false);
-      toast.error( 'Erro de autenticação!');
+      toast.error(getMessage(errObj.status));
     }
   };
 
