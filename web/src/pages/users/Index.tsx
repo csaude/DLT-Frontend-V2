@@ -131,6 +131,14 @@ const UsersList: React.FC = () => {
         setSearchText(searchText);
     };
 
+    const getMessage = status => {
+        if(status==403){
+            return 'O username informado ja existe no sistema, por favor escolha um username diferente'
+        }else {
+            return 'Corrija os erros apresentados antes de avançar!'
+        }
+    } 
+
 
     const handleAdd = () => {
 
@@ -196,9 +204,10 @@ const UsersList: React.FC = () => {
             handleUsersModalVisible(false);
         })
             .catch(error => {
-                console.log(error);
+                const errSt = JSON.stringify(error);
+                const errObj = JSON.parse(errSt)
                 message.error({
-                    content: 'Corrija os erros apresentados antes de avançar!', className: 'custom-class',
+                    content: getMessage(errObj.status), className: 'custom-class',
                     style: {
                         marginTop: '10vh',
                     }
