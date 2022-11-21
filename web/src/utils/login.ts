@@ -20,3 +20,8 @@ export async function userNewPassword(payload: NewPasswordParams) {
     const res = await update('/api/users/change-password', payload);
     return res;
 }
+
+export async function verifyUserByUsername(username:string) {
+    const res = await select(`/api/users/username/${username}`);
+    return res;
+}
