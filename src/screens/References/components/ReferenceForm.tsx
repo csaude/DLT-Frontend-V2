@@ -506,7 +506,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                                     <Heading size="md" color="coolGray.800">Detalhes da Referência</Heading>
                                     <Divider />
                                     <Text style={styles.txtLabelInfo}>
-                                        <Text style={styles.txtLabel}> NID do Beneficiário : </Text>
+                                        <Text style={styles.txtLabel}> NUI da Beneficiária: </Text>
                                         {
                                             beneficiary?.nui
                                         }
