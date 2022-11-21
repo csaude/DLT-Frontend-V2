@@ -218,6 +218,7 @@ const BeneficiaryForm = ({ form, beneficiary, beneficiaries, modalVisible, handl
                 title={` Registo de Beneficiária`}
                 visible={modalVisible}
                 onCancel={() => handleModalVisible(false)}
+                maskClosable={false}
                 footer={<div className="steps-action">
                     <Button key="Cancel" onClick={() => handleModalVisible()} >
                         Cancelar

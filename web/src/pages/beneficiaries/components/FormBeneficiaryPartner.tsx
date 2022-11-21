@@ -191,6 +191,7 @@ const BeneficiaryPartnerForm = ({ form, beneficiary, modalVisible, handleAddBene
                 title={` Registo de Parceiro de Beneficiária`}
                 visible={modalVisible}
                 onCancel={() => handleModalVisible(false)}
+                maskClosable={false}
                 footer={<div className="steps-action">
                     {(current === 0) && (
                         <Button type="primary" onClick={() => next()}>
