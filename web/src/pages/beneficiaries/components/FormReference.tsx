@@ -93,6 +93,7 @@ const FormReference = ({ form, beneficiary, reference, modalVisible, handleAdd, 
                 destroyOnClose
                 title={` Referências Dreams`}
                 visible={modalVisible}
+                maskClosable={false}
                 onCancel={() => onClose()}
                 footer={<div className="steps-action">
                     <Button key="Cancel" onClick={() => onClose()} >
