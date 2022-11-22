@@ -304,6 +304,7 @@ const ViewReferral = ({reference, modalVisible, handleModalVisible}) => {
             destroyOnClose
             title={`Dados Referência `}
             visible={modalVisible}
+            maskClosable={false}
             onOk={okHandle}
             onCancel={() => handleModalVisible()}
         >
