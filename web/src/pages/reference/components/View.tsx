@@ -269,6 +269,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
                     closable={false}
                     onClose={onClose}
                     visible={visible}
+                    maskClosable={false}
                     getContainer={false}
                     style={{ position: 'absolute' }}
                     extra={
