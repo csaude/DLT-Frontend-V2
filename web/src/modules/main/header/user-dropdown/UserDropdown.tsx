@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useNavigate, Link} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 import {DateTime} from 'luxon';
@@ -19,9 +19,9 @@ const UserDropdown = () => {
   const navigate = useNavigate();
   const [t] = useTranslation();
   const dispatch = useDispatch();
-  const user = useSelector((state: any) => state.auth.currentUser);
-  const currentUser = useSelector((state: any) => state.auth.user);
+  const currentUser = useSelector((state: any) => state.auth.currentUser);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [time, setTime] = useState()
 
   const logOut = (event: any) => {
     event.preventDefault();
@@ -36,6 +36,16 @@ const UserDropdown = () => {
     navigate('/profile');
   };
 
+  let userRole = localStorage.getItem('userRole');
+
+  useEffect(() => {
+    const timer = setTimeout(() => {   
+      dispatch(logoutUser());
+      navigate('/login');
+    }, userRole==="ADMIN" ? 86400000 : 1800000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <Dropdown
       isOpen={dropdownOpen}
@@ -44,7 +54,7 @@ const UserDropdown = () => {
       menuContainerTag="ul"
       buttonTemplate={
         <StyledUserImage
-          src={user.picture || 'img/default-profile.png'}
+          src={currentUser.picture || 'img/default-profile.png'}
           className="user-image img-circle elevation-2"
           alt="User"
         />
@@ -53,7 +63,7 @@ const UserDropdown = () => {
         <>
           <li className="user-header bg-info">
             <img
-              src={user.picture || 'img/default-profile.png'}
+              src={currentUser.picture || 'img/default-profile.png'}
               className="img-circle elevation-2"
               alt="User"
             />

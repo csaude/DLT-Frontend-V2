@@ -12,8 +12,11 @@ const initialState: AuthState = {
   token: localStorage.getItem('token'),
   currentUser: {
     email: 'mail@example.com',
-    picture: null
-  }
+    picture: null,
+    name: null,
+    surname: null,
+    dateCreated: null
+  },
 };
 
 export const authSlice = createSlice({
@@ -26,6 +29,8 @@ export const authSlice = createSlice({
       state.user = payload?.account;
       state.isLoggedIn = true;
       state.token = payload?.token;
+      localStorage.setItem('name', payload?.account.name);
+      localStorage.setItem('surname', payload?.account.surname);
     },
     logoutUser: (state) => {
       localStorage.removeItem('token');
