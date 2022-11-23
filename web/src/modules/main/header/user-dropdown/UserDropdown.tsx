@@ -19,8 +19,7 @@ const UserDropdown = () => {
   const navigate = useNavigate();
   const [t] = useTranslation();
   const dispatch = useDispatch();
-  const user = useSelector((state: any) => state.auth.currentUser);
-  const currentUser = useSelector((state: any) => state.auth.user);
+  const currentUser = useSelector((state: any) => state.auth.currentUser);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const logOut = (event: any) => {
@@ -44,7 +43,7 @@ const UserDropdown = () => {
       menuContainerTag="ul"
       buttonTemplate={
         <StyledUserImage
-          src={user.picture || 'img/default-profile.png'}
+          src={currentUser.picture || 'img/default-profile.png'}
           className="user-image img-circle elevation-2"
           alt="User"
         />
@@ -53,7 +52,7 @@ const UserDropdown = () => {
         <>
           <li className="user-header bg-info">
             <img
-              src={user.picture || 'img/default-profile.png'}
+              src={currentUser.picture || 'img/default-profile.png'}
               className="img-circle elevation-2"
               alt="User"
             />
