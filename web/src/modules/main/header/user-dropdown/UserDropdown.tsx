@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useNavigate, Link} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 import {DateTime} from 'luxon';
@@ -21,6 +21,7 @@ const UserDropdown = () => {
   const dispatch = useDispatch();
   const currentUser = useSelector((state: any) => state.auth.currentUser);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [time, setTime] = useState()
 
   const logOut = (event: any) => {
     event.preventDefault();
@@ -34,6 +35,16 @@ const UserDropdown = () => {
     setDropdownOpen(false);
     navigate('/profile');
   };
+
+  let userRole = localStorage.getItem('userRole');
+
+  useEffect(() => {
+    const timer = setTimeout(() => {   
+      dispatch(logoutUser());
+      navigate('/login');
+    }, userRole==="ADMIN" ? 86400000 : 1800000);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <Dropdown
