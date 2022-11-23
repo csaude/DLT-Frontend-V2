@@ -190,6 +190,18 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
         setAge(calculateAge(value)+'');
     }
 
+    const onChangeName = (e) => {
+
+        const result = e.target.value.replace(/[^a-zA-Z_-àáâãèéêìíòóõúçÀÁÂÃÈÉÊÌÍÒÓÕÚÇ]/gi, '');
+        form.setFieldsValue({name: result});
+    }
+
+    const onChangeSurname = (e) => {
+
+        const result = e.target.value.replace(/[^a-zA-Z_-àáâãèéêìíòóõúçÀÁÂÃÈÉÊÌÍÒÓÕÚÇ\s]/gi, '');
+        form.setFieldsValue({surname: result});
+    }
+
     const IdadeSelect: React.FC<SelectProps> = ({ value, onChange, defaultValue }: SelectProps) => {
         
         const onchangeAge = (value: any) =>{
@@ -242,7 +254,7 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
                         style={{ textAlign: 'left' }}
                         initialValue={beneficiary?.nui}
                     >
-                       <Input disabled={true} />
+                       <Input disabled={true} size="large" />
                     </Form.Item>
                 </Col>
             </Row>
@@ -254,7 +266,7 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                         initialValue={beneficiary?.surname}
                     >
-                        <Input placeholder="Insira o apelido da Beneficiária"/>
+                        <Input placeholder="Insira o apelido da Beneficiária" onChange={e => { onChangeSurname(e); }} />
                     </Form.Item>
                 </Col>
                 <Col className="gutter-row" span={12}>
@@ -264,7 +276,7 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
                         rules={[{ required: true, message: RequiredFieldMessage }]}
                         initialValue={beneficiary?.name}
                     >
-                        <Input placeholder="Insira o nome da Beneficiária" />
+                        <Input placeholder="Insira o nome da Beneficiária" onChange={e => { onChangeName(e); }} />
                     </Form.Item>
                 </Col>
             </Row>
