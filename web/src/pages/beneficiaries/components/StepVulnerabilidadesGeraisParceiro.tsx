@@ -57,20 +57,6 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
                 </Col>
                 <Col className="gutter-row" span={8}>
                     <Form.Item
-                        name="vblt_house_sustainer"
-                        label="Sustenta a Casa?"
-                        rules={[{ required: true, message: RequiredFieldMessage }]}
-                        style={{ textAlign: 'left' }}
-                        initialValue={beneficiary?.vbltHouseSustainer}
-                    >
-                        <Radio.Group>
-                            <Radio.Button value={1}>SIM</Radio.Button>
-                            <Radio.Button value={0}>NÃO</Radio.Button>
-                        </Radio.Group>
-                    </Form.Item>
-                </Col>
-                <Col className="gutter-row" span={8}>
-                    <Form.Item
                         name="vblt_is_orphan"
                         label="É Orfã?"
                         rules={[{ required: true, message: RequiredFieldMessage }]}
