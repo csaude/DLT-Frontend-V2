@@ -341,6 +341,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
                     closable={false}
                     onClose={onClose}
                     visible={visible}
+                    maskClosable={false}
                     getContainer={false}
                     style={{ position: 'absolute' }}
                     height={440}
@@ -377,6 +378,7 @@ const ViewBeneficiary = ({ beneficiary, modalVisible, handleModalVisible , handl
             destroyOnClose
             title={` Dados de Registo do Beneficiário`}
             visible={modalVisible}
+            maskClosable={false}
             onOk={okHandle}
             onCancel={() => handleModalVisible()}
         >

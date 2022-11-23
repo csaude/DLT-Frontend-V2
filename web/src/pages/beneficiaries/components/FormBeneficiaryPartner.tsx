@@ -67,10 +67,8 @@ const BeneficiaryPartnerForm = ({ form, beneficiary, modalVisible, handleAddBene
             ben.entryPoint = values.entry_point;
             ben.neighborhood = { "id": values.neighbourhood_id };
             ben.locality = values.locality;
-            ben.partnerNUI = values.partner_nui;
             ben.vbltChildren = vblts.vblt_children;
             ben.vbltDeficiencyType = vblts.vblt_deficiency_type;
-            ben.vbltHouseSustainer = vblts.vblt_house_sustainer;
             ben.vbltIsDeficient = vblts.vblt_is_deficient;
             ben.vbltIsEmployed = vblts.vblt_is_employed;
             ben.vbltIsOrphan = vblts.vblt_is_orphan;
@@ -127,9 +125,7 @@ const BeneficiaryPartnerForm = ({ form, beneficiary, modalVisible, handleAddBene
             beneficiary.entryPoint = firstStepValues.entry_point;
             beneficiary.neighborhood = { "id": firstStepValues.neighbourhood_id };
             beneficiary.locality = firstStepValues.locality;
-            beneficiary.partnerNUI = firstStepValues.partner_nui;
             beneficiary.vbltDeficiencyType = values.vblt_deficiency_type;
-            beneficiary.vbltHouseSustainer = values.vblt_house_sustainer;
             beneficiary.vbltIsDeficient = values.vblt_is_deficient;
             beneficiary.vbltIsOrphan = values.vblt_is_orphan;
             beneficiary.vbltIsStudent = values.vblt_is_student;
@@ -191,6 +187,7 @@ const BeneficiaryPartnerForm = ({ form, beneficiary, modalVisible, handleAddBene
                 title={` Registo de Parceiro de Beneficiária`}
                 visible={modalVisible}
                 onCancel={() => handleModalVisible(false)}
+                maskClosable={false}
                 footer={<div className="steps-action">
                     {(current === 0) && (
                         <Button type="primary" onClick={() => next()}>
