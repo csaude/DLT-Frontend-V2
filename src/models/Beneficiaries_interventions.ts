@@ -4,6 +4,7 @@ import { field, text, children } from "@nozbe/watermelondb/decorators";
 export interface BeneficiariesInterventionsModel {
     id?: string,
     beneficiary_id?: any,
+    beneficiary_offline_id?: string,
     sub_service_id?: any,
     result?: string,
     date?: string,
@@ -20,6 +21,7 @@ export default class Beneficiaries_interventions extends Model {
     static table = "beneficiaries_interventions"
 
     @field("beneficiary_id") beneficiary_id;
+    @text("beneficiary_offline_id") beneficiary_offline_id;
     @field("sub_service_id") sub_service_id;
     @text("result") result;
     @field("date") date;

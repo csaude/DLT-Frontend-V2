@@ -13,7 +13,10 @@ import ModalSelector from 'react-native-modal-selector-searchable';
 import StepperButton from '../../Beneficiarias/components/StapperButton';
 import styles from './styles1';
 import moment from 'moment';
+import { sync } from "../../../database/sync";
 import User from '../../../models/User';
+import { SuccessHandler } from '../../../components/SyncIndicator';
+import { Context } from '../../../routes/DrawerNavigator';
 
 const ReferenceForm: React.FC = ({ route }: any) => {
 
@@ -36,6 +39,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
     const [entryPoints, setEntryPoints] = useState<any>([]);
     const [entryPointEnabled, setEntryPointEnabled] = useState(true);
     const [serviceTypes, setServiceTypes] = useState<any>([]);
+    const loggedUser: any = useContext(Context);
 
     const areaServicos = [{ "id": '1', "name": "Clínico" }, { "id": '2', "name": "Comunitário" }];
 
@@ -207,12 +211,11 @@ const ReferenceForm: React.FC = ({ route }: any) => {
 
     const handleSubmit = async (values?: any) => {
 
-        const beneficiaryId = beneficiary.online_id ? beneficiary.online_id : beneficiary.id;
-
         const savedR = await database.write(async () => {
 
             const newReference = await database.get('references').create((ref: any) => {
-                ref.beneficiary_id = beneficiaryId
+                ref.beneficiary_id = beneficiary.online_id
+                ref.beneficiary_offline_id = beneficiary.id
                 ref.refer_to = formik.values.refer_to
                 ref.referred_by = userId,
                 ref.notify_to = formik.values.notify_to
@@ -253,6 +256,20 @@ const ReferenceForm: React.FC = ({ route }: any) => {
             },
             merge: true,
         });
+
+        sync({ username: loggedUser.username })
+            .then(() => toast.show({
+                placement: "top",
+                render: () => {
+                    return (<SuccessHandler />);
+                }
+            }))
+            .catch(() => toast.show({
+                placement: "top",
+                render: () => {
+                    return (<ErrorHandler />);
+                }
+            }));
     }
 
     const onRemoveService = (value: any) => {
@@ -506,7 +523,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                                     <Heading size="md" color="coolGray.800">Detalhes da Referência</Heading>
                                     <Divider />
                                     <Text style={styles.txtLabelInfo}>
-                                        <Text style={styles.txtLabel}> NUI da Beneficiária: </Text>
+                                        <Text style={styles.txtLabel}> NUI da Beneficiária : </Text>
                                         {
                                             beneficiary?.nui
                                         }

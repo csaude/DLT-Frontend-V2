@@ -185,6 +185,7 @@ export default appSchema({
         name: 'beneficiaries_interventions',
         columns: [
           {name: 'beneficiary_id', type: "number", isIndexed: true },
+          {name: 'beneficiary_offline_id', type: "string" },
           {name: 'sub_service_id',type: "number", isIndexed: true },
           {name: 'result', type: 'string'},
           {name: 'date', type: 'string'},
@@ -201,6 +202,7 @@ export default appSchema({
         name: 'references',
         columns: [
           {name: 'beneficiary_id', type: 'number', isIndexed: true},
+          {name: 'beneficiary_offline_id', type: "string" },
           {name: 'refer_to', type: 'string', isIndexed: true},
           {name: 'referred_by', type: 'number', isIndexed: true},
           {name: 'notify_to', type: 'number', isIndexed: true},

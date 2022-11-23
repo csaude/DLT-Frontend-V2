@@ -4,6 +4,7 @@ import { field, text, relation } from "@nozbe/watermelondb/decorators";
 export interface ReferencesModel {
     id?: string,
     beneficiary_id?: any,
+    beneficiary_offline_id?: string,
     refer_to?: any,
     referred_by?: any,
     notify_to?: any,
@@ -28,6 +29,7 @@ export default class References extends Model {
     static table = 'references'
 
     @field("beneficiary_id") beneficiary_id;
+    @text("beneficiary_offline_id") beneficiary_offline_id;
     @field("refer_to") refer_to;
     @field("referred_by") referred_by;
     @field("notify_to") notify_to;
