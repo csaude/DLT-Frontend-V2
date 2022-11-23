@@ -29,7 +29,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
                         style={{ textAlign: 'left' }}
                         initialValue={beneficiary?.nui}
                     >
-                    <Input disabled={true} />
+                    <Input disabled={true} style={{ fontWeight: "bold", color: "#17a2b8" }} />
                     </Form.Item>
                 </Col>
             </Row>
@@ -53,20 +53,6 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
                                 <Option key={item}>{item}</Option>
                             ))}
                         </Select>
-                    </Form.Item>
-                </Col>
-                <Col className="gutter-row" span={8}>
-                    <Form.Item
-                        name="vblt_house_sustainer"
-                        label="Sustenta a Casa?"
-                        rules={[{ required: true, message: RequiredFieldMessage }]}
-                        style={{ textAlign: 'left' }}
-                        initialValue={beneficiary?.vbltHouseSustainer}
-                    >
-                        <Radio.Group>
-                            <Radio.Button value={1}>SIM</Radio.Button>
-                            <Radio.Button value={0}>NÃO</Radio.Button>
-                        </Radio.Group>
                     </Form.Item>
                 </Col>
                 <Col className="gutter-row" span={8}>
