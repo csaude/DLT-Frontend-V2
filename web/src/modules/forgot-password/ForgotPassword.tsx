@@ -13,6 +13,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 import * as AuthService from '../../services/auth';
 import {verifyUserByUsername} from '../../utils/login';
+import { Alert } from 'antd';
 
 const ForgotPassword = () => {
   const [isAuthLoading, setAuthLoading] = useState(false);
@@ -113,6 +114,9 @@ const ForgotPassword = () => {
         </div>
         <div className="card-body">
           <p className="login-box-msg">Redefinir a senha</p>
+              <div className="row alert">                     
+                    <Alert message="Todas as senhas inseridas devem ter pelo menos 8 caracteres alfanuméricos contendo: 1 letra maiúscula, 1 letra minúscula, 1 símbolo e 1 número." type="warning" showIcon closable />
+              </div>  
           <form onSubmit={handleSubmit}>
            
             <div className="mb-3">
