@@ -254,7 +254,7 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
                         style={{ textAlign: 'left' }}
                         initialValue={beneficiary?.nui}
                     >
-                       <Input disabled={true} size="large" />
+                       <Input disabled={true} style={{ fontWeight: "bold", color: "#17a2b8" }}/>
                     </Form.Item>
                 </Col>
             </Row>
