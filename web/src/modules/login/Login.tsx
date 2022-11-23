@@ -46,11 +46,12 @@ const Login = () => {
   const login = async (email: string, password: string) => {
     try {
       setAuthLoading(true);
-      await verifyUserByUsername(email);
+      const user= await verifyUserByUsername(email);
       const data = await AuthService.loginByAuth(email, password);
       toast.success('Autenticação efectuada com sucesso!');
       setAuthLoading(false);
       dispatch(loginUser(data));
+      localStorage.setItem('dateCreated', user?.dateCreated);
       navigate('/');
     } catch ( error ) {
       const errSt = JSON.stringify(error);
