@@ -6,7 +6,7 @@ import moment from 'moment';
 const { Option } = Select;
 const { Step } = Steps;
 
-const StepVulnerabilidadesEspecificas = ({ form, beneficiary }: any) => {
+const StepVulnerabilidadesEspecificas = ({ form, beneficiary, firstStepValues }: any) => {
     const [gbvTypeEnabled, setGbvTypeEnabled] = useState<any>(true);
     const [gbvTimeEnabled, setGbvTimeEnabled] = useState<any>(true);
     const [sexExploitationTimeEnabled, setSexExploitationTimeEnabled] = useState<any>(true);
@@ -23,7 +23,7 @@ const StepVulnerabilidadesEspecificas = ({ form, beneficiary }: any) => {
     const ageBeneficiary = () => {
 
         var today = new Date();
-        var bday = moment(beneficiary?.dateOfBirth).format('YYYY-MM-DD')
+        var bday = (moment(firstStepValues.date_of_birth).format('YYYY-MM-DD'));
         var birthDate = new Date(bday);
         var age = today.getFullYear() - birthDate.getFullYear();
         var validate = (age >= 18 ? true : false);
