@@ -57,7 +57,7 @@ const StepVulnerabilidadesEspecificas = ({ form, beneficiary }: any) => {
                         label="Código da Beneficiária (NUI)"
                         style={{ textAlign: 'left' }}
                     >
-                       <Input disabled={true} />
+                       <Input disabled={true} style={{ fontWeight: "bold", color: "#17a2b8" }} />
                     </Form.Item>
                 </Col>
             </Row>

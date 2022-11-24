@@ -30,7 +30,7 @@ import { Context } from '../../../routes/DrawerNavigator';
 
 import styles from './styles';
 
-const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }: any) => {    // console.log(route.params);
+const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }: any) => {
     const { beneficiarie, intervs, intervention } = route.params;
 
     const areaServicos = [{ "id": '1', "name": "Serviços Clinicos" }, { "id": '2', "name": "Serviços Comunitarios" }];
@@ -198,13 +198,12 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
             if (isEdit) {
                 const interventionToUpdate = await database.get('beneficiaries_interventions').find(intervention.id);
                 const updatedIntervention = await interventionToUpdate.update(() => {
-                    intervention.beneficiary_id = beneficiarie.online_id
                     intervention.sub_service_id = values.sub_service_id
                     intervention.remarks = values.remarks
                     intervention.result = values.result
                     intervention.date = '' + text
                     intervention.us_id = values.us_id
-                    intervention.activist_id = 1 //values.activist_id
+                    intervention.activist_id = loggedUser.id //values.activist_id
                     intervention.entry_point = values.entry_point
                     intervention.provider = values.provider
                     intervention.remarks = values.remarks
@@ -216,8 +215,8 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                 return updatedIntervention;
             } else {
                 const newIntervention = await database.collections.get('beneficiaries_interventions').create((intervention: any) => {
-
-                    intervention.beneficiary_id = beneficiarie.online_id
+                    intervention.beneficiary_id = beneficiarie.online_id 
+                    intervention.beneficiary_offline_id = beneficiarie.id
                     intervention.sub_service_id = values.sub_service_id
                     intervention.result = values.result
                     intervention.date = '' + text
@@ -227,7 +226,6 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                     intervention.provider = values.provider
                     intervention.remarks = values.remarks
                     intervention.status = 1
-
                 });
                 toast.show({ placement: "bottom", title: "Intervention Saved Successfully: " + newIntervention._raw.id });
                 return newIntervention;
@@ -517,8 +515,6 @@ const enhance = withObservables([], () => ({
     us: database.collections
         .get("us")
         .query().observe(),
-
-
 }));
 
 export default enhance(BeneficiarieServiceForm);

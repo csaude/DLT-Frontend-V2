@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { TouchableHighlight, TouchableOpacity } from 'react-native';
-import { View, HStack, Text, VStack, FormControl, Input, Stack, InputGroup, InputLeftAddon, TextArea, Center, Icon, Box, IconButton, Flex, Heading, Divider, Button, Radio, WarningOutlineIcon, Modal, ScrollView, Alert, Checkbox } from 'native-base';
+import { View, HStack, Text, VStack, FormControl, Input, Stack, InputGroup, InputLeftAddon, TextArea, Center, Icon, Box, IconButton, Flex, Heading, Divider, Button, Radio, WarningOutlineIcon, Modal, ScrollView, Alert, Checkbox, useToast } from 'native-base';
 import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
 import { MaterialIcons, Ionicons, MaterialCommunityIcons } from "@native-base/icons";
 import { useFormik } from 'formik';
@@ -19,6 +19,8 @@ import DatePicker, { getToday, getFormatedDate } from 'react-native-modern-datep
 import { Context } from '../../../routes/DrawerNavigator';
 import { calculateAge, getMaxDate, getMinDate } from '../../../models/Utils';
 import styles from './styles';
+import { SuccessHandler, ErrorHandler } from "../../../components/SyncIndicator";
+import { sync } from "../../../database/sync";
 
 const BeneficiaryForm: React.FC = ({ route }: any) => {
     
@@ -116,6 +118,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             setSexExploitationTimeEnabled(beneficiarie.vblt_sexual_exploitation == 1);
         }
     }, []);
+    const toast = useToast();
 
     const formik = useFormik({
         initialValues: {
@@ -476,6 +479,20 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             });
             return newBeneficiary;
         });
+
+        sync({ username: loggedUser.username })
+            .then(() => toast.show({
+                placement: "top",
+                render: () => {
+                    return (<SuccessHandler />);
+                }
+            }))
+            .catch(() => toast.show({
+                placement: "top",
+                render: () => {
+                    return (<ErrorHandler />);
+                }
+            }));
 
         return newObject;
     }
@@ -1218,7 +1235,6 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                         finishBtnText='Actualizar'
                         previousBtnText='<< Anterior'
                     >
-                        {console.log(beneficiarie)}
                         <View style={{ alignItems: 'center' }}>
                             <VStack space={3} w="90%" >
                                 <FormControl isRequired isInvalid={'vblt_sexually_active' in formik.errors}>
