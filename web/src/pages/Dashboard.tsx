@@ -1,5 +1,5 @@
 import React from 'react';
-import {ContentHeader, Title} from '@components';
+import { Title} from '@components';
 import { Image } from 'antd';
 import Background from '../assets/Background.png';
 
