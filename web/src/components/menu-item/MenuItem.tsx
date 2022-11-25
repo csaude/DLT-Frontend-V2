@@ -1,9 +1,10 @@
-import React, {useEffect, useState} from 'react';
-import {NavLink, useNavigate, useLocation, Location} from 'react-router-dom';
-import {useTranslation} from 'react-i18next';
-import {IMenuItem} from '@app/modules/main/menu-sidebar/MenuSidebar';
+import React, { Fragment, useEffect, useState } from "react";
+import { NavLink, useNavigate, useLocation, Location } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { IMenuItem } from "@app/modules/main/menu-sidebar/MenuSidebar";
+import { useSelector } from "react-redux";
 
-const MenuItem = ({menuItem}: {menuItem: IMenuItem}) => {
+const MenuItem = ({ menuItem }: { menuItem: IMenuItem }) => {
   const [t] = useTranslation();
   const [isMenuExtended, setIsMenuExtended] = useState(false);
   const [isExpandable, setIsExpandable] = useState(false);
@@ -11,7 +12,12 @@ const MenuItem = ({menuItem}: {menuItem: IMenuItem}) => {
   const [isOneOfChildrenActive, setIsOneOfChildrenActive] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-
+  const benefiarySelector = useSelector(
+    (state: any) => state.beneficiary.total
+  );
+  const referenceSelector = useSelector(
+    (state: any) => state.reference.total
+  );
   const toggleMenu = () => {
     setIsMenuExtended(!isMenuExtended);
   };
@@ -37,6 +43,14 @@ const MenuItem = ({menuItem}: {menuItem: IMenuItem}) => {
     } else if (menuItem.path === url.pathname) {
       setIsMainActive(true);
     }
+  };
+
+  const getTotalRegistered = (menuName) => {
+    if (menuName === "menusidebar.label.beneficiariesList") {
+      return <Fragment>({benefiarySelector})</Fragment>;
+    } else if (menuName === "menusidebar.label.referenceList") {
+      return <Fragment> ({referenceSelector}) </Fragment>;
+    }else return
   };
 
   useEffect(() => {
@@ -68,7 +82,9 @@ const MenuItem = ({menuItem}: {menuItem: IMenuItem}) => {
         style={{cursor: 'pointer'}}
       >
         <i className={`nav-icon ${menuItem.icon}`} />
-        <p>{t(menuItem.name)}</p>
+        <p>
+          {t(menuItem.name)} {getTotalRegistered(menuItem.name)}{" "}
+        </p>
         {isExpandable ? <i className="right fas fa-angle-left" /> : null}
       </a>
 
