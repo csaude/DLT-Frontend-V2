@@ -37,7 +37,6 @@ const InterventionForm = ({ record, beneficiary}: any) => {
 
       const fetchData = async () => {
         const user = await query(localStorage.user);
-        const data = await allUs();
         const data1 = await query();
 
         const listUser = data1?.map(item => (
@@ -45,15 +44,16 @@ const InterventionForm = ({ record, beneficiary}: any) => {
         ))
 
         setUser(user);
-        setUs(data);
         setUsers(listUser);
 
         let entryPoint = user?.entryPoint;
 
         if(entryPoint != undefined){
-          entryPoint = entryPoint=== '1'? 'CLINIC' : 'COMMUNITY';
-          form.setFieldsValue({ areaServicos: entryPoint});
-          onChangeAreaServiço(entryPoint);
+          const serviceType = entryPoint=== '1'? 'CLINIC' : 'COMMUNITY';
+          form.setFieldsValue({ areaServicos: serviceType});
+          form.setFieldsValue({ entryPoint: entryPoint });
+          onChangeAreaServiço(serviceType);
+          onChangeEntryPoint(entryPoint);
         }
 
         form.setFieldValue('provider', user.name+' '+user.surname);
@@ -98,37 +98,32 @@ const InterventionForm = ({ record, beneficiary}: any) => {
       setInterventions(data);
     }
 
-    const fetchData = async () => {
-      const data = await allUs();
+    const onNameChange = (event) => {
+      setName(event.target.value);
+    }
+    const addItem = (e) => {
+      e.preventDefault();
+      if (name !== undefined || name !== '') {
+        const newItem = { username: name };
+        setUsers([...users, newItem]);
+
+      }
+      setName('');
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 0);
+    };
+
+    const onChangeEntryPoint = async (e: any) => {
+
+      var payload = {
+        typeId: e?.target?.value === undefined ? e : e?.target?.value,
+        userId: localStorage.user
+      }
+      
+      const data = await allUsByUser(payload);
       setUs(data);
     }
-
-  const onNameChange = (event) => {
-    setName(event.target.value);
-  }
-  const addItem = (e) => {
-    e.preventDefault();
-    if (name !== undefined || name !== '') {
-      const newItem = { username: name };
-      setUsers([...users, newItem]);
-
-    }
-    setName('');
-    setTimeout(() => {
-      inputRef.current?.focus();
-    }, 0);
-  };
-
-
-  const onChangeEntryPoint = async (e: any) => {
-
-    var payload = {
-      typeId: e?.target?.value === undefined ? e : e?.target?.value,
-      userId: localStorage.user
-    }
-    const data = await allUsByUser(payload);
-    setUs(data);
-  }
 
     return (
       
