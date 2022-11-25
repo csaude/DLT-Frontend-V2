@@ -21,7 +21,7 @@ import FormReference from './components/FormReference';
 import { allDistrict } from '@app/utils/district';
 import { allPartners } from '@app/utils/partners';
 import FullPageLoader from '@app/components/full-page-loader/FullPageLoader';
-
+import { Title } from '@app/components';
 
 const { Text } = Typography;
 
@@ -484,10 +484,8 @@ const BeneficiariesList: React.FC = () => {
     
     return (
         
-        <>
-            <Card  bordered={false} style={{marginBottom:'10px', textAlign:"center", fontWeight:"bold", color:"#17a2b8"}} >
-                SISTEMA INTEGRADO DE CADASTRO DE ADOLESCENTES E JOVENS
-            </Card>
+        <>        
+            <Title />
             <Card title="Lista de Adolescentes e Jovens" 
                     bordered={false} 
                     headStyle={{color:"#17a2b8"}}
