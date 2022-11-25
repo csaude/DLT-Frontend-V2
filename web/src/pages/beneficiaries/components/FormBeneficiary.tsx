@@ -204,7 +204,7 @@ const BeneficiaryForm = ({ form, beneficiary, beneficiaries, modalVisible, handl
         },
         {
             title: ' Critérios de Eligibilidade Específicos',
-            content: <StepVulnerabilidadesEspecificas form={form} beneficiary={beneficiary} />,
+            content: <StepVulnerabilidadesEspecificas form={form} beneficiary={beneficiary} firstStepValues={firstStepValues}/>,
         }
     ];
 

@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import ViewReferral from './components/View';
 import FormReference from '../beneficiaries/components/FormReference';
 import FullPageLoader from '@app/components/full-page-loader/FullPageLoader';
+import { Title } from '@app/components';
 
 const { Text } = Typography;
 
@@ -495,9 +496,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
     
     return (
         <>
-            <Card  bordered={false} style={{marginBottom:'10px', textAlign:"center", fontWeight:"bold", color:"#17a2b8"}} >
-                SISTEMA INTEGRADO DE CADASTRO DE ADOLESCENTES E JOVENS
-            </Card>
+            <Title />
             <Card title="Lista de Referências e Contra-Referências" bordered={false} headStyle={{color:"#17a2b8"}}>
                 {
                     loading?
