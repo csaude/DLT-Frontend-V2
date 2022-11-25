@@ -9,6 +9,7 @@ import { SearchOutlined, PlusOutlined, EditOutlined, EyeOutlined } from '@ant-de
 import Highlighter from 'react-highlight-words';
 import UsersForm from './components/UsersForm';
 import { add, edit } from '@app/utils/users';
+import { Title } from '@app/components';
 
 
 const UsersList: React.FC = () => {
@@ -326,9 +327,7 @@ const UsersList: React.FC = () => {
 
     return (
         <>
-            <Card bordered={false} style={{ marginBottom: '10px', textAlign: "center", fontWeight: "bold", color: "#17a2b8" }} >
-                SISTEMA INTEGRADO DE CADASTRO DE ADOLESCENTES E JOVENS
-            </Card>
+            <Title />
             <Card title="Lista de Utilizadores" bordered={false} headStyle={{ color: "#17a2b8" }}
                 extra={
                     <Space>

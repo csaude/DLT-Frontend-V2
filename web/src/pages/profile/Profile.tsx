@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import { useSelector } from 'react-redux';
-import {ContentHeader, Button} from '@components'
+import {ContentHeader, Button, Title} from '@components'
 import PasswordTab from './PasswordTab';
 import { Card } from 'antd';
 
@@ -17,11 +17,7 @@ const Profile = () => {
   };
   return (
     <>
-    {console.log(currentUser)}
-      <Card bordered={false} style={{ marginBottom: '10px', textAlign: "center", fontWeight: "bold", color: "#17a2b8" }} >
-          SISTEMA INTEGRADO DE CADASTRO DE ADOLESCENTES E JOVENS
-      </Card>
-
+      <Title />
       <Card title="Perfil" bordered={false} headStyle={{ color: "#17a2b8", fontSize:"150%", }}>         
         <section className="content">
           <div className="container-fluid">
