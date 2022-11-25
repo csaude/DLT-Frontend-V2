@@ -5,5 +5,6 @@ import Dropdown from './dropdown/Dropdown';
 import MenuItem from './menu-item/MenuItem';
 import Checkbox from './checkbox/Checkbox';
 import Select from './select/Select';
+import Title from './title/Title';
 
-export {Button, ContentHeader, SmallBox, Dropdown, MenuItem, Checkbox, Select};
+export {Button, ContentHeader, SmallBox, Dropdown, MenuItem, Checkbox, Select, Title};
