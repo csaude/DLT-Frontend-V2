@@ -34,8 +34,7 @@ const ReferenceInterventionForm = ({ form, reference, record, beneficiary }: any
   useEffect(() => {
 
     const fetchData = async () => {
-      const data = await allUs();
-      setUs(data);
+      onChangeEntryPoint(reference.referTo);
     }
 
     const fetchServices = async () => {
