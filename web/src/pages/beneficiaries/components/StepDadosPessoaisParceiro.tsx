@@ -12,6 +12,7 @@ const { Step } = Steps;
 
 const StepDadosPessoais = ({ form, beneficiary }: any) => {
     const [isDateRequired, setIsDateRequired] = useState<any>(true);
+    const [isDateSet, setIsDateSet] = useState<any>(false);
     const [user, setUser] = useState<any>(undefined);
     const [provinces, setProvinces] = useState<any>([]);
     const [districts, setDistricts] = useState<any>([]);
@@ -165,6 +166,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
 
     const onChangeBirthDate = (value:any) => {
         setAge(calculateAge(value)+'');
+        value === null ? setIsDateSet(false) : setIsDateSet(true);
     }
 
     const onChangeName = (e) => {
@@ -186,6 +188,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
             var birthYear = today.getFullYear() - value;
             var birthDate = new Date(birthYear + "/01/01");
             setBirthDate(birthDate);
+            value === null ? setIsDateSet(false) : setIsDateSet(true);
 
             setAge(value);
         }
@@ -272,7 +275,11 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                             </Form.Item>
                         </Col>
                         <Col span={14}>
-                            <Checkbox style={{ marginTop: '30px' }} onChange={onChangeCheckbox} > <span style={{ color: '#008d4c', fontWeight: 'normal' }}>Não Conhece a Data de Nascimento</span> </Checkbox>
+                            <Checkbox style={{ marginTop: '30px' }} onChange={onChangeCheckbox} disabled={isDateSet} > 
+                                <span style={{ color: '#008d4c', fontWeight: 'normal' }}>
+                                    Não Conhece a Data de Nascimento
+                                </span> 
+                            </Checkbox>
                         </Col>
                     </Row>
                 </Col>
