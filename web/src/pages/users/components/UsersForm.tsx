@@ -1,6 +1,7 @@
 import { Modal, message, Form, Input, InputNumber, Select, Button, Col, Row, DatePicker, Space, Radio, Divider, Checkbox } from 'antd';
 import React, { Fragment, useEffect, useState } from 'react'
 import { allPartners, allPartnersByDistricts } from '@app/utils/partners';
+import { ExclamationCircleFilled } from '@ant-design/icons';
 import { allProfiles } from '@app/utils/profiles';
 import { allUs } from '@app/utils/uSanitaria';
 import { allProvinces, queryDistrictsByProvinces, queryLocalitiesByDistricts, queryUsByLocalities } from '@app/utils/locality';
@@ -9,6 +10,7 @@ import { ok } from 'assert';
 const FormItem = Form.Item;
 const { Option } = Select;
 const { TextArea } = Input;
+const { confirm } = Modal;
 
 const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) => {
     const [partners, setPartners] = useState<any>([]);
@@ -170,6 +172,21 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
         setDataSelection({ ...dataSelection, [name]: value })
     }
 
+    const showCloseConfirm = () => {
+        confirm({
+        title: 'Deseja fechar este formulário?',
+        icon: <ExclamationCircleFilled />,
+        okText: 'Sim',
+        okType: 'danger',
+        cancelText: 'Não',
+        onOk() {
+            handleModalVisible();
+        },
+        onCancel() {
+        },
+        });
+    };
+
     useEffect(() => {
         if (dataSelection.profile !== undefined
             && dataSelection.locality !== undefined) {
@@ -202,10 +219,10 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
             destroyOnClose
             title='Dados de Registo do Utilizador'
             visible={modalVisible}
-            onCancel={() => handleModalVisible(false)}
+            onCancel={() => showCloseConfirm()}
             maskClosable={false}
             footer={[
-                <Button key="Cancel" onClick={() => handleModalVisible()} >
+                <Button key="Cancel" onClick={() => showCloseConfirm()} >
                     Cancelar
                 </Button>,
                 <Button key="OK" onClick={handleAdd} type="primary">
