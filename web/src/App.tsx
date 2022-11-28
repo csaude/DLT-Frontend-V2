@@ -44,7 +44,6 @@ const App = () => {
   }, [windowSize]);
 
   const getTotals = async () =>{
-      debugger
       const user = await queryUser(localStorage.user);
       const beneficiaryData = await beneficiaryQuery(getUserParams(user));
       const referenceData = await referenceQuery();

@@ -259,7 +259,7 @@ const BeneficiariesList: React.FC = () => {
                     ref={node => {
                         searchInput = node;
                     }}
-                    placeholder={`Pesquisar ${dataIndex}`}
+                    placeholder={`Pesquisar ${dataIndex=='name'?'nome':dataIndex}`}
                     value={selectedKeys[0]}
                     onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
                     onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
@@ -275,7 +275,7 @@ const BeneficiariesList: React.FC = () => {
                 >
                     Pesquisar
                 </Button>
-                <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+                <Button onClick={() => handleReset(clearFilters,selectedKeys, confirm, dataIndex)} size="small" style={{ width: 90 }}>
                     Limpar
                 </Button>
                 <Button
@@ -362,7 +362,7 @@ const BeneficiariesList: React.FC = () => {
                     {record.neighborhood.locality?.district?.code}/{record.nui}
                 </Text>),
         },
-        { title: 'Nome do Beneficiário', dataIndex: 'name', key: 'name', ...getColumnSearchProps('nome'),
+        { title: 'Nome do Beneficiário', dataIndex: 'name', key: 'name', ...getColumnSearchProps('name'),
             render: (text, record) => getName(record),
         },
         { title: 'Sexo', dataIndex: 'gender', key: 'gender',
@@ -477,9 +477,11 @@ const BeneficiariesList: React.FC = () => {
         
     };
 
-    const handleReset = clearFilters => {
+    const handleReset = (clearFilters,selectedKeys, confirm, dataIndex) => {
+        debugger
         clearFilters();
         setSearchText(searchText);
+        handleSearch(selectedKeys, confirm, dataIndex)
     };
     
     return (
