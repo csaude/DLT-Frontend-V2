@@ -188,7 +188,12 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
     }
 
     const onChangeBirthDate = (value:any) => {
+        if (value != undefined){
         setAge(calculateAge(value)+'');
+        }else{
+            setAge(undefined);
+        }
+
         value === null ? setIsDateSet(false) : setIsDateSet(true);
     }
 
@@ -211,9 +216,9 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
             var birthYear = today.getFullYear() - value;
             var birthDate = new Date(birthYear + "/01/01");
             setBirthDate(birthDate);
-            value === null ? setIsDateSet(false) : setIsDateSet(true);
-
             setAge(value);
+                
+            value === null ? setIsDateSet(false) : setIsDateSet(true);
         }
 
         useEffect(() => {
