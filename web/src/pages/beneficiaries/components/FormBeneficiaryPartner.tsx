@@ -1,6 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Badge, Button, Steps, Row, Col, Input, message, Space, Form, Tabs, Modal, DatePicker, Checkbox, Select, Radio, Divider } from 'antd';
 import './index.css';
+import { ExclamationCircleFilled } from '@ant-design/icons';
 import StepDadosPessoais from './StepDadosPessoaisParceiro';
 import StepVulnerabilidadesGerais from './StepVulnerabilidadesGeraisParceiro';
 import { add, edit } from '@app/utils/beneficiary';
@@ -9,6 +10,7 @@ import { stringify } from 'qs';
 
 const { Option } = Select;
 const { Step } = Steps;
+const { confirm } = Modal;
 
 const BeneficiaryPartnerForm = ({ form, beneficiary, modalVisible, handleAddBeneficiary, handleUpdateBeneficiary, handleModalVisible }: any) => {
 
@@ -166,6 +168,21 @@ const BeneficiaryPartnerForm = ({ form, beneficiary, modalVisible, handleAddBene
         handleUpdate(firstStepValues);
     }
 
+    const showCloseConfirm = () => {
+        confirm({
+        title: 'Deseja fechar este formulário?',
+        icon: <ExclamationCircleFilled />,
+        okText: 'Sim',
+        okType: 'danger',
+        cancelText: 'Não',
+        onOk() {
+            handleModalVisible(false);
+        },
+        onCancel() {
+        },
+        });
+    };
+
     const steps = [
         {
             title: 'Dados Pessoais',
@@ -186,9 +203,12 @@ const BeneficiaryPartnerForm = ({ form, beneficiary, modalVisible, handleAddBene
                 destroyOnClose
                 title={` Registo de Parceiro de Beneficiária`}
                 visible={modalVisible}
-                onCancel={() => handleModalVisible(false)}
+                onCancel={() => showCloseConfirm()}
                 maskClosable={false}
                 footer={<div className="steps-action">
+                    <Button key="Cancel" onClick={() => showCloseConfirm()} >
+                        Cancelar
+                    </Button>
                     {(current === 0) && (
                         <Button type="primary" onClick={() => next()}>
                             Próximo
