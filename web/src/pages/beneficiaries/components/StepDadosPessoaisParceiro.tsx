@@ -12,7 +12,7 @@ const { Step } = Steps;
 
 const StepDadosPessoais = ({ form, beneficiary }: any) => {
     const [isDateRequired, setIsDateRequired] = useState<any>(true);
-    const [isDateSet, setIsDateSet] = useState<any>(false);
+    const [isDateSet, setIsDateSet] = useState<any>(beneficiary === undefined? false : true);
     const [user, setUser] = useState<any>(undefined);
     const [provinces, setProvinces] = useState<any>([]);
     const [districts, setDistricts] = useState<any>([]);
