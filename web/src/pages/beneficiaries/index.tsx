@@ -61,8 +61,10 @@ const BeneficiariesList: React.FC = () => {
             const user = await queryUser(localStorage.user);
             const data = await query(getUserParams(user));
 
+            const sortedBeneficiaries = data.sort((benf1, benf2) => moment(benf2.dateCreated).format('YYYY-MM-DD').localeCompare(moment(benf1.dateCreated).format('YYYY-MM-DD')));
+
             setUser(user);
-            setBeneficiaries(data);
+            setBeneficiaries(sortedBeneficiaries);
 
             const localities = data.map(beneficiary => beneficiary.locality).filter((value, index, self) => self.findIndex(v => v.id === value.id) === index);
             const districts = localities.map(locality => locality.district).filter((value, index, self) => self.findIndex(v => v.id === value.id) === index);
@@ -445,7 +447,7 @@ const BeneficiariesList: React.FC = () => {
         },
         { title: 'Criado Em', dataIndex: 'dateCreated', key: 'dateCreated', ...getColumnSearchProps('data criação'),
             render: (val: string) => <span>{moment(val).format('YYYY-MM-DD')}</span>,
-            sorter: (a, b) => moment(a.dateCreated).unix() - moment(b.dateCreated).unix(),
+            sorter: (benf1, benf2) => moment(benf2.dateCreated).format('YYYY-MM-DD').localeCompare(moment(benf1.dateCreated).format('YYYY-MM-DD')),
         },
         { title: 'Atualizado Por', dataIndex: '', key: 'updatedBy',
             render: (text, record)  => updaters.filter(user => record.updatedBy == user.id).map(filteredUser => `${filteredUser.name} ` + `${filteredUser.surname}`)[0],
@@ -455,7 +457,7 @@ const BeneficiariesList: React.FC = () => {
         },
         { title: 'Atualizado Em', dataIndex: 'dateUpdated', key: 'dateUpdated', ...getColumnSearchProps('data actualização'),
             render: (val: string) =>val != undefined ? <span>{moment(val).format('YYYY-MM-DD')} </span>: '',
-            sorter: (a, b) => moment(a.dateUpdated).unix() - moment(b.dateUpdated).unix(),
+            sorter: (benf1, benf2) => moment(benf2.dateCreated).format('YYYY-MM-DD').localeCompare(moment(benf1.dateCreated).format('YYYY-MM-DD')),
         },
         {
           title: 'Acção',
