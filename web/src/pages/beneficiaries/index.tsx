@@ -515,7 +515,6 @@ const BeneficiariesList: React.FC = () => {
                     <Table
                         rowKey="id"
                         sortDirections={["descend", "ascend"]}
-                        // sortDirections={["ascend","descend"]}
                         columns={columns}
                         expandable={{
                             expandedRowRender: record =>  <div style={{border:"2px solid #d9edf7", backgroundColor:"white"}}><ViewBenefiaryPanel beneficiary={record} columns={interventionColumns} handleModalVisible={handleModalVisible} handleModalRefVisible={handleModalRefVisible} user={user} /></div>,
