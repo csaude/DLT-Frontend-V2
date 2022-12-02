@@ -24,12 +24,7 @@ import ReferenceList from '@pages/reference/Index';
 
 import PublicRoute from './routes/PublicRoute';
 import PrivateRoute from './routes/PrivateRoute';
-import { query as beneficiaryQuery } from './utils/beneficiary';
-import { query as referenceQuery } from './utils/reference';
-import { query as queryUser } from './utils/users';
-import { getUserParams } from '@app/models/Utils';
-import { getReferencesTotal } from './store/actions/reference';
-import { getBeneficiaryTotal } from './store/actions/beneficiary';
+
 
 const App = () => {
   const windowSize = useWindowSize();
@@ -43,17 +38,7 @@ const App = () => {
     }
   }, [windowSize]);
 
-  const getTotals = async () =>{
-      const user = await queryUser(localStorage.user);
-      const beneficiaryData = await beneficiaryQuery(getUserParams(user));
-      const referenceData = await referenceQuery();
-      dispatch(getBeneficiaryTotal(beneficiaryData.length))
-      dispatch(getReferencesTotal(referenceData.length))
-    }
-  useEffect(()=>{
-    getTotals()
-  },[getTotals])
-
+ 
   return (
     <HashRouter>
       <Routes>
