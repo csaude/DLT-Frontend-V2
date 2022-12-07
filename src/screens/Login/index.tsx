@@ -8,6 +8,7 @@ import { Q } from '@nozbe/watermelondb'
 import NetInfo from "@react-native-community/netinfo";
 import { database } from '../../database';
 import { LOGIN_API_URL, SYNC_API_URL_PREFIX, UPDATE_PASSWORD_URL } from '../../services/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { sync } from "../../database/sync";
 import { toast } from 'react-toastify';
 import bcrypt from 'bcryptjs';
@@ -176,6 +177,15 @@ const Login: React.FC = () => {
             } else {
                 navigate({ name: "Main", params: { loggedUser: loggedUser } });
             }
+        }
+        
+        if(loggedUser!==undefined && loggedUser.profiles?.id==4){
+            const user_prov=loggedUser.provinces[0].id
+            const user_dist=loggedUser.districts[0].id
+            const user_loc =loggedUser.localities[0].id
+            AsyncStorage.setItem('user_province',user_prov+'');
+            AsyncStorage.setItem('user_district',user_dist+'');
+            AsyncStorage.setItem('user_locality',user_loc+'');
         }
 
     }, [loggedUser]);
