@@ -74,7 +74,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             const provSerialized = getProvsList.map(item => item._raw);
             setProvinces(provSerialized);
 
-            if( loggedUser.districts[0].id != undefined){
+            if( loggedUser?.districts[0]?.id != undefined){
                 const districtsList = await database.get('districts').query().fetch();                              
                 const districts = districtsList.map(item => item._raw);
                 setDistricts(districts);
@@ -82,7 +82,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                 setIsProvEnable(false);
                 setIsDisEnable(false);
 
-                if( loggedUser.localities[0].id != undefined){
+                if( loggedUser?.localities[0]?.id != undefined){
                     const getLocList = await database.get('localities').query( Q.where('district_id', loggedUser.districts[0].id )).fetch();                              
                     const locsSerialized = getLocList.map(item => item._raw);
                     setLocalities(locsSerialized);
