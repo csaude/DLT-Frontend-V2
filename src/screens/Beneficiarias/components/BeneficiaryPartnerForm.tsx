@@ -140,7 +140,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
             name: beneficiarie?.name,
             date_of_birth: beneficiarie?.date_of_birth,
             age: calculateAge(beneficiarie?.date_of_birth),
-            nationality: beneficiarie?.nationality+"",
+            nationality: beneficiarie?.nationality === undefined ? "1" : beneficiarie?.nationality+"",
             enrollment_date: beneficiarie?.enrollment_date,
             province: beneficiarie?.province_id 
             === undefined ? loggedUser?.provinces[0]?.id : beneficiarie?.province_id
