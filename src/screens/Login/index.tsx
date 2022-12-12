@@ -177,7 +177,7 @@ const Login: React.FC = () => {
                 navigate({ name: "Main", params: { loggedUser: loggedUser } });
             }
         }
-
+        
     }, [loggedUser]);
 
     const validate = (values: any) => {
@@ -256,7 +256,7 @@ const Login: React.FC = () => {
 
 
         <KeyboardAvoidingView style={styles.container}>
-            <ScrollView contentInsetAdjustmentBehavior="automatic" >
+            <ScrollView contentInsetAdjustmentBehavior="automatic" keyboardShouldPersistTaps='handled'>
 
                 <Box safeArea p="2" w="100%" py="8" bgColor="white" >
 

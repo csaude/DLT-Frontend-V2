@@ -10,7 +10,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 function VulnerabilitiesScreen() {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Vulnerabilities</Text>
+      <Text>vulnerabilidades</Text>
     </View>
   );
 }

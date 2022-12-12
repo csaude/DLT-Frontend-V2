@@ -25,7 +25,6 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
 
 
   const onLogout = (e?: any) => {
-    console.log("logged out", loggedUser);
     navigate({
       name: "Login"
     });
