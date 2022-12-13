@@ -50,7 +50,6 @@ const UserDropdown = () => {
     const handleTabClose = event => {
       event.preventDefault();
       dispatch(logoutUser());
-      return (event.returnValue = 'Deseja fechar o sistema e terminar a sessão?');
     };
     window.addEventListener('beforeunload', handleTabClose);
     return () => {
