@@ -236,19 +236,24 @@ const Login: React.FC = () => {
 
 
         } else {
-            var logguedUser: any = (await users.query(Q.where('username', values.username)).fetch())[0];
+            try {           
+                var logguedUser: any = (await users.query(Q.where('username', values.username)).fetch())[0];
 
-            var authenticated = bcrypt.compareSync(values.password, logguedUser?._raw.password);
+                var authenticated = bcrypt.compareSync(values.password, logguedUser?._raw?.password);
 
-            if (!authenticated) {
-                setIsInvalidCredentials(true);
+                if (!authenticated) {
+                    setIsInvalidCredentials(true);
 
-            } else {
-                setIsInvalidCredentials(false);
-                setLoggedUser(logguedUser._raw);
-                navigate({ name: "Main", params: { loggedUser: logguedUser._raw } });
+                } else {
+                    setIsInvalidCredentials(false);
+                    setLoggedUser(logguedUser._raw);
+                    navigate({ name: "Main", params: { loggedUser: logguedUser._raw } });
+                }
+                setLoading(false);
+             } catch (error) {
+                 setIsInvalidCredentials(true);
+                 setLoading(false);
             }
-            setLoading(false);
         }
     };
 
