@@ -305,7 +305,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
                                         // onClick={} 
                                         type="primary" 
                                         style={{ background: "#00a65a", borderColor: "#00a65a", borderRadius:'4px' }} >
-                                        {partner?.nui}
+                                        {`${partner.neighborhood.locality.district.code}/${partner?.nui}`}
                                     </Button>
                                 </span><br />
                             </Card>
