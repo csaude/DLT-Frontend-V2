@@ -31,7 +31,7 @@ import { Context } from '../../../routes/DrawerNavigator';
 import styles from './styles';
 
 const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }: any) => {
-    const { beneficiarie, intervs, intervention } = route.params;
+    const { beneficiarie, intervs, intervention, isNewIntervention } = route.params;
 
     const areaServicos = [{ "id": '1', "name": "Serviços Clinicos" }, { "id": '2', "name": "Serviços Comunitarios" }];
     const entry_points = [{ "id": '1', "name": "US" }, { "id": '2', "name": "CM" }, { "id": '3', "name": "ES" }];
@@ -110,7 +110,9 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                     return e._raw.online_id == intervention.us_id
                 })[0];
 
-                onChangeEntryPoint(intervention.activist_id);
+                onChangeEntryPoint(intervention.entry_point);
+                onChangeUs(intervention.us_id)
+                //console.log(intervention)
 
                 initValues = {
                     areaServicos_id: selService._raw.service_type,
@@ -270,6 +272,32 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
             }));
     }
 
+    // function isNumber(str) {
+    //     return !isNaN(str);
+    // }
+
+    // const currentInformedProvider = () =>{
+    //     if(isNewIntervention) {
+    //         return "Selecione o Provedor" 
+    //     }
+    //     else if (isNumber(intervention.provider)){   
+                  
+    //         const user = users.filter(item =>{return item.online_id=intervention.provider})[0]
+    //         console.log('----user----',user);
+
+    //         if(user !==undefined){
+    //            //const userSt = JSON.stringify(user)
+    //            const currentProvider = JSON.parse(user)
+    //            console.log('----name----',currentProvider.name);
+    //         }
+
+    //         //return currentProvider.name
+    //         return intervention.provider
+    //     }
+    //     else 
+    //         return intervention.provider+''
+    // }
+
     return (
         <KeyboardAvoidingView>
             <ScrollView>
@@ -306,7 +334,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                                         <FormControl isRequired isInvalid={'areaServicos_id' in errors}>
                                             <FormControl.Label>Área de Serviços</FormControl.Label>
                                             <Picker
-                                                enabled={false}
+                                                enabled={isNewIntervention}
                                                 style={styles.dropDownPickerDisabled}
                                                 selectedValue={values.areaServicos_id}
                                                 onValueChange={(itemValue, itemIndex) => {
