@@ -46,6 +46,17 @@ const UserDropdown = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    const handleTabClose = event => {
+      event.preventDefault();
+      dispatch(logoutUser());
+    };
+    window.addEventListener('beforeunload', handleTabClose);
+    return () => {
+      window.removeEventListener('beforeunload', handleTabClose);
+    };
+  }, []);
+
   return (
     <Dropdown
       isOpen={dropdownOpen}
