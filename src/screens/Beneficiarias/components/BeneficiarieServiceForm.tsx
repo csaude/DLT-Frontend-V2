@@ -44,6 +44,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     const [show, setShow] = useState(false);
     const [text, setText] = useState('');
     const [uss, setUss] = useState<any>([]);
+    const [currentInformedProvider, setCurrentInformedProvider] = useState('') ;
 
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
@@ -112,7 +113,6 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
 
                 onChangeEntryPoint(intervention.entry_point);
                 onChangeUs(intervention.us_id)
-                //console.log(intervention)
 
                 initValues = {
                     areaServicos_id: selService._raw.service_type,
@@ -122,7 +122,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                     result: intervention.result,
                     date: intervention.date,
                     us_id: selUs.online_id,
-                    activist_id: intervention.activist_id,
+                    activist_id: loggedUser.online_id,
                     entry_point: intervention.entry_point,
                     provider: intervention.provider,
                     remarks: intervention.remarks,
@@ -205,7 +205,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                     intervention.result = values.result
                     intervention.date = '' + text
                     intervention.us_id = values.us_id
-                    intervention.activist_id = loggedUser.id //values.activist_id
+                    intervention.activist_id = loggedUser.online_id
                     intervention.entry_point = values.entry_point
                     intervention.provider = values.provider
                     intervention.remarks = values.remarks
@@ -272,31 +272,22 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
             }));
     }
 
-    // function isNumber(str) {
-    //     return !isNaN(str);
-    // }
-
-    // const currentInformedProvider = () =>{
-    //     if(isNewIntervention) {
-    //         return "Selecione o Provedor" 
-    //     }
-    //     else if (isNumber(intervention.provider)){   
-                  
-    //         const user = users.filter(item =>{return item.online_id=intervention.provider})[0]
-    //         console.log('----user----',user);
-
-    //         if(user !==undefined){
-    //            //const userSt = JSON.stringify(user)
-    //            const currentProvider = JSON.parse(user)
-    //            console.log('----name----',currentProvider.name);
-    //         }
-
-    //         //return currentProvider.name
-    //         return intervention.provider
-    //     }
-    //     else 
-    //         return intervention.provider+''
-    // }
+    useEffect(()=>{
+        function isNumber(str) {
+            return !isNaN(str);
+        }
+        if(isNewIntervention || intervention.provider==='') {
+            setCurrentInformedProvider("Selecione o Provedor" )
+        }
+        else if (isNumber(intervention.provider)){
+            const user = users.filter(user=>{
+                return user.online_id == intervention.provider
+            })[0]
+            setCurrentInformedProvider(user?.name)
+        }
+        else 
+            setCurrentInformedProvider(intervention.provider+'')
+    },[users])
 
     return (
         <KeyboardAvoidingView>
@@ -503,7 +494,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                                                     accessible={true}
                                                     cancelButtonAccessibilityLabel={'Cancel Button'}
                                                     onChange={(option) => { setSelectedUser(`${option.name} ${option.surname}`); setFieldValue('provider', option.online_id); }}>
-                                                    <Input type='text' onBlur={handleBlur('provider')} placeholder="Selecione o Provedor" onChangeText={handleChange('provider')} value={selectedUser} />
+                                                    <Input type='text' onBlur={handleBlur('provider')} placeholder={currentInformedProvider} onChangeText={handleChange('provider')} value={selectedUser} />
                                                 </ModalSelector> :
                                                 <Input onBlur={handleBlur('provider')} placeholder="Insira o Nome do Provedor" onChangeText={handleChange('provider')} value={values.provider} />
                                             }
