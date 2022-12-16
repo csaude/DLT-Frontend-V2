@@ -61,8 +61,10 @@ const BeneficiariesList: React.FC = () => {
             const user = await queryUser(localStorage.user);
             const data = await query(getUserParams(user));
 
+            const sortedBeneficiaries = data.sort((benf1, benf2) => moment(benf2.dateCreated).format('YYYY-MM-DD').localeCompare(moment(benf1.dateCreated).format('YYYY-MM-DD')));
+
             setUser(user);
-            setBeneficiaries(data);
+            setBeneficiaries(sortedBeneficiaries);
 
             const localities = data.map(beneficiary => beneficiary.locality).filter((value, index, self) => self.findIndex(v => v.id === value.id) === index);
             const districts = localities.map(locality => locality.district).filter((value, index, self) => self.findIndex(v => v.id === value.id) === index);
@@ -259,7 +261,7 @@ const BeneficiariesList: React.FC = () => {
                     ref={node => {
                         searchInput = node;
                     }}
-                    placeholder={`Pesquisar ${dataIndex}`}
+                    placeholder={`Pesquisar ${dataIndex=='name'?'nome':dataIndex}`}
                     value={selectedKeys[0]}
                     onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
                     onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
@@ -275,7 +277,7 @@ const BeneficiariesList: React.FC = () => {
                 >
                     Pesquisar
                 </Button>
-                <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+                <Button onClick={() => handleReset(clearFilters,selectedKeys, confirm, dataIndex)} size="small" style={{ width: 90 }}>
                     Limpar
                 </Button>
                 <Button
@@ -362,7 +364,7 @@ const BeneficiariesList: React.FC = () => {
                     {record.neighborhood.locality?.district?.code}/{record.nui}
                 </Text>),
         },
-        { title: 'Nome do Beneficiário', dataIndex: 'name', key: 'name', ...getColumnSearchProps('nome'),
+        { title: 'Nome do Beneficiário', dataIndex: 'name', key: 'name', ...getColumnSearchProps('name'),
             render: (text, record) => getName(record),
         },
         { title: 'Sexo', dataIndex: 'gender', key: 'gender',
@@ -445,6 +447,7 @@ const BeneficiariesList: React.FC = () => {
         },
         { title: 'Criado Em', dataIndex: 'dateCreated', key: 'dateCreated', ...getColumnSearchProps('data criação'),
             render: (val: string) => <span>{moment(val).format('YYYY-MM-DD')}</span>,
+            sorter: (benf1, benf2) => moment(benf2.dateCreated).format('YYYY-MM-DD').localeCompare(moment(benf1.dateCreated).format('YYYY-MM-DD')),
         },
         { title: 'Atualizado Por', dataIndex: '', key: 'updatedBy',
             render: (text, record)  => updaters.filter(user => record.updatedBy == user.id).map(filteredUser => `${filteredUser.username}`)[0],
@@ -454,6 +457,7 @@ const BeneficiariesList: React.FC = () => {
         },
         { title: 'Atualizado Em', dataIndex: 'dateUpdated', key: 'dateUpdated', ...getColumnSearchProps('data actualização'),
             render: (val: string) =>val != undefined ? <span>{moment(val).format('YYYY-MM-DD')} </span>: '',
+            sorter: (benf1, benf2) => moment(benf2.dateCreated).format('YYYY-MM-DD').localeCompare(moment(benf1.dateCreated).format('YYYY-MM-DD')),
         },
         {
           title: 'Acção',
@@ -477,9 +481,11 @@ const BeneficiariesList: React.FC = () => {
         
     };
 
-    const handleReset = clearFilters => {
+    const handleReset = (clearFilters,selectedKeys, confirm, dataIndex) => {
+        debugger
         clearFilters();
         setSearchText(searchText);
+        handleSearch(selectedKeys, confirm, dataIndex)
     };
     
     return (
@@ -508,6 +514,7 @@ const BeneficiariesList: React.FC = () => {
                 <ConfigProvider locale={ptPT}>
                     <Table
                         rowKey="id"
+                        sortDirections={["descend", "ascend"]}
                         columns={columns}
                         expandable={{
                             expandedRowRender: record =>  <div style={{border:"2px solid #d9edf7", backgroundColor:"white"}}><ViewBenefiaryPanel beneficiary={record} columns={interventionColumns} handleModalVisible={handleModalVisible} handleModalRefVisible={handleModalRefVisible} user={user} /></div>,

@@ -25,6 +25,7 @@ import ReferenceList from '@pages/reference/Index';
 import PublicRoute from './routes/PublicRoute';
 import PrivateRoute from './routes/PrivateRoute';
 
+
 const App = () => {
   const windowSize = useWindowSize();
   const screenSize = useSelector((state: any) => state.ui.screenSize);
@@ -37,6 +38,7 @@ const App = () => {
     }
   }, [windowSize]);
 
+ 
   return (
     <HashRouter>
       <Routes>

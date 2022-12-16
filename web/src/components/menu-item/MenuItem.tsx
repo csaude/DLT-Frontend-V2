@@ -1,9 +1,16 @@
-import React, {useEffect, useState} from 'react';
-import {NavLink, useNavigate, useLocation, Location} from 'react-router-dom';
-import {useTranslation} from 'react-i18next';
-import {IMenuItem} from '@app/modules/main/menu-sidebar/MenuSidebar';
+import React, { Fragment, useEffect, useState } from "react";
+import { NavLink, useNavigate, useLocation, Location } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { IMenuItem } from "@app/modules/main/menu-sidebar/MenuSidebar";
+import { useSelector,useDispatch } from "react-redux";
+import { query as beneficiaryQuery } from '../../utils/beneficiary';
+import { query as referenceQuery } from '../../utils/reference';
+import { query as queryUser } from '../../utils/users';
+import { getUserParams } from '@app/models/Utils';
+import { getReferencesTotal } from '../../store/actions/reference';
+import { getBeneficiaryTotal } from '../../store/actions/beneficiary';
 
-const MenuItem = ({menuItem}: {menuItem: IMenuItem}) => {
+const MenuItem = ({ menuItem }: { menuItem: IMenuItem }) => {
   const [t] = useTranslation();
   const [isMenuExtended, setIsMenuExtended] = useState(false);
   const [isExpandable, setIsExpandable] = useState(false);
@@ -11,7 +18,13 @@ const MenuItem = ({menuItem}: {menuItem: IMenuItem}) => {
   const [isOneOfChildrenActive, setIsOneOfChildrenActive] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-
+  const dispatch = useDispatch();
+  const benefiarySelector = useSelector(
+    (state: any) => state.beneficiary.total
+  );
+  const referenceSelector = useSelector(
+    (state: any) => state.reference.total
+  );
   const toggleMenu = () => {
     setIsMenuExtended(!isMenuExtended);
   };
@@ -39,6 +52,14 @@ const MenuItem = ({menuItem}: {menuItem: IMenuItem}) => {
     }
   };
 
+  const getTotalRegistered = (menuName) => {
+    if (menuName === "menusidebar.label.beneficiariesList") {
+      return benefiarySelector && <Fragment>({benefiarySelector})</Fragment>;
+    } else if (menuName === "menusidebar.label.referenceList") {
+      return referenceSelector && <Fragment> ({referenceSelector}) </Fragment>;
+    }else return
+  };
+
   useEffect(() => {
     if (location) {
       calculateIsActive(location);
@@ -57,6 +78,17 @@ const MenuItem = ({menuItem}: {menuItem: IMenuItem}) => {
     );
   }, [menuItem]);
 
+   const getTotals = async () =>{
+      const user = await queryUser(localStorage.user);
+      const beneficiaryData = await beneficiaryQuery(getUserParams(user));
+      const referenceData = await referenceQuery();
+      dispatch(getBeneficiaryTotal(beneficiaryData.length))
+      dispatch(getReferencesTotal(referenceData.length))
+    }
+  useEffect(()=>{
+    getTotals()
+  },[getTotals,dispatch])
+
   return (
     <li className={`nav-item${isMenuExtended ? ' menu-open' : ''}`}>
       <a
@@ -68,7 +100,9 @@ const MenuItem = ({menuItem}: {menuItem: IMenuItem}) => {
         style={{cursor: 'pointer'}}
       >
         <i className={`nav-icon ${menuItem.icon}`} />
-        <p>{t(menuItem.name)}</p>
+        <p>
+          {t(menuItem.name)} {getTotalRegistered(menuItem.name)}{" "}
+        </p>
         {isExpandable ? <i className="right fas fa-angle-left" /> : null}
       </a>
 

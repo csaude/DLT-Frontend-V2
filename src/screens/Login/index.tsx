@@ -28,7 +28,7 @@ const Login: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [isOffline, setIsOffline] = useState(false);
     const [spinner, setSpinner] = useState(false);
-    const [showModal, setShowModal] = useState(false);
+
     const [passwordType, setPasswordType] = useState("password");
     const [token, setToken] = useState();
 
@@ -177,7 +177,7 @@ const Login: React.FC = () => {
                 navigate({ name: "Main", params: { loggedUser: loggedUser } });
             }
         }
-
+        
     }, [loggedUser]);
 
     const validate = (values: any) => {
@@ -236,19 +236,24 @@ const Login: React.FC = () => {
 
 
         } else {
-            var logguedUser: any = (await users.query(Q.where('username', values.username)).fetch())[0];
+            try {           
+                var logguedUser: any = (await users.query(Q.where('username', values.username)).fetch())[0];
 
-            var authenticated = bcrypt.compareSync(values.password, logguedUser?._raw.password);
+                var authenticated = bcrypt.compareSync(values.password, logguedUser?._raw?.password);
 
-            if (!authenticated) {
-                setIsInvalidCredentials(true);
+                if (!authenticated) {
+                    setIsInvalidCredentials(true);
 
-            } else {
-                setIsInvalidCredentials(false);
-                setLoggedUser(logguedUser._raw);
-                navigate({ name: "Main", params: { loggedUser: logguedUser._raw } });
+                } else {
+                    setIsInvalidCredentials(false);
+                    setLoggedUser(logguedUser._raw);
+                    navigate({ name: "Main", params: { loggedUser: logguedUser._raw } });
+                }
+                setLoading(false);
+             } catch (error) {
+                 setIsInvalidCredentials(true);
+                 setLoading(false);
             }
-            setLoading(false);
         }
     };
 
@@ -256,7 +261,7 @@ const Login: React.FC = () => {
 
 
         <KeyboardAvoidingView style={styles.container}>
-            <ScrollView contentInsetAdjustmentBehavior="automatic" >
+            <ScrollView contentInsetAdjustmentBehavior="automatic" keyboardShouldPersistTaps='handled'>
 
                 <Box safeArea p="2" w="100%" py="8" bgColor="white" >
 
@@ -332,7 +337,7 @@ const Login: React.FC = () => {
                                         </Button>
                                         <Link
                                             // href="https://nativebase.io" 
-                                            onPress={() => setShowModal(true)}
+                                            onPress={() => navigate({ name:'ResetPassword'})}    
                                             isExternal _text={{
                                                 color: "blue.400"
                                             }} mt={-0.5} _web={{
@@ -347,87 +352,6 @@ const Login: React.FC = () => {
                     </VStack>
 
                 </Box>
-
-                <Center>
-                    <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
-                        <Modal.Content width="100%" style={{ marginBottom: 0, marginTop: "auto" }}>
-
-                            <Formik initialValues={{
-                                username: '',
-                                password: '',
-                                rePassword: ''
-                            }}
-                                onSubmit={onSubmit}
-                                validate={validate}
-                                validationSchema={Yup.object({
-                                    email: Yup.string().email('Endereço de email inválido').required('Obrigatório'),
-                                    password: Yup.string()
-                                        .required('Obrigatório')
-                                        .max(25, 'Deve conter 25 caracteres ou menos')
-                                        .matches(/(?=.*\d)/, 'Deve conter número')
-                                        .matches(/(?=.*[a-z])/, 'Deve conter minúscula')
-                                        .matches(/(?=.*[A-Z])/, 'Deve conter Maiúscula')
-                                        .matches(/(?=.*[@$!%*#?&])/, 'Deve conter caracter especial')
-                                        .min(8, 'Deve conter 8 caracteres ou mais'),
-                                    rePassword: Yup.string()
-                                        .oneOf([Yup.ref('password'), null], 'As senhas devem corresponder')
-                                        .required('Obrigatório')
-                                })}>
-                                {({
-                                    handleChange,
-                                    handleBlur,
-                                    handleSubmit,
-                                    values,
-                                    errors
-                                }) => <VStack space={3} w="100%">
-                                        <Modal.CloseButton />
-                                        <Modal.Header>Redefinir a Senha</Modal.Header>
-                                        <Modal.Body>
-
-
-
-                                            <FormControl isRequired isInvalid={'username' in errors}>
-                                                <FormControl.Label>Username</FormControl.Label>
-                                                <Input onBlur={handleBlur('username')} placeholder="Insira o Username" onChangeText={handleChange('username')} value={values.username} />
-                                                <FormControl.ErrorMessage>
-                                                    {errors.username}
-                                                </FormControl.ErrorMessage>
-                                            </FormControl>
-
-                                            <FormControl isRequired isInvalid={'password' in errors}>
-                                                <FormControl.Label>Nova Password</FormControl.Label>
-                                                <Input type="password" onBlur={handleBlur('password')} placeholder="Insira a nova password" onChangeText={handleChange('password')} value={values.password} />
-                                                <FormControl.ErrorMessage>
-                                                    {errors.password}
-                                                </FormControl.ErrorMessage>
-                                            </FormControl>
-
-                                            <FormControl isRequired isInvalid={'rePassword' in errors}>
-                                                <FormControl.Label>Repetir a nova Password</FormControl.Label>
-                                                <Input type="password" onBlur={handleBlur('rePassword')} placeholder="Repita a nova password" onChangeText={handleChange('rePassword')} value={values.rePassword} />
-                                                <FormControl.ErrorMessage>
-                                                    {errors.rePassword}
-                                                </FormControl.ErrorMessage>
-                                            </FormControl>
-                                        </Modal.Body>
-                                        <Modal.Footer>
-                                            <Button.Group space={2}>
-
-                                                <Button onPress={() => {
-                                                    updatePassword(values.username, values.password);
-                                                    toast.success('Um email de confirmação foi enviado!');
-                                                    setShowModal(false);
-                                                }}>
-                                                    Solicitar
-                                                </Button>
-                                            </Button.Group>
-                                        </Modal.Footer>
-                                    </VStack>
-                                }
-                            </Formik>
-                        </Modal.Content>
-                    </Modal>
-                </Center>
 
             </ScrollView>
         </KeyboardAvoidingView>

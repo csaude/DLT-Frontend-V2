@@ -1,6 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Badge, Button, Steps, Row, Col, Input, message, Space, Form, Tabs, Modal, DatePicker, Checkbox, Select, Radio, Divider } from 'antd';
 import './index.css';
+import { ExclamationCircleFilled } from '@ant-design/icons';
 import StepReference from './StepReferece';
 import StepReferenceService from './StepReferenceService';
 import { add } from '@app/utils/reference';
@@ -9,7 +10,7 @@ import { stringify } from 'qs';
 
 const { Option } = Select;
 const { Step } = Steps;
-
+const { confirm } = Modal;
 
 const FormReference = ({ form, beneficiary, reference, modalVisible, handleAdd, handleUpdate, handleModalRefVisible, addStatus, handleRefServicesList }: any) => {
 
@@ -66,6 +67,21 @@ const FormReference = ({ form, beneficiary, reference, modalVisible, handleAdd, 
         }
     }
 
+    const showCloseConfirm = () => {
+        confirm({
+        title: 'Deseja fechar este formulário?',
+        icon: <ExclamationCircleFilled />,
+        okText: 'Sim',
+        okType: 'danger',
+        cancelText: 'Não',
+        onOk() {
+            onClose();
+        },
+        onCancel() {
+        },
+        });
+    };
+
     const onUpdate = async () => {
 
         handleUpdate(firstStepValues, beneficiary);
@@ -94,9 +110,9 @@ const FormReference = ({ form, beneficiary, reference, modalVisible, handleAdd, 
                 title={` Referências Dreams`}
                 visible={modalVisible}
                 maskClosable={false}
-                onCancel={() => onClose()}
+                onCancel={() => showCloseConfirm()}
                 footer={<div className="steps-action">
-                    <Button key="Cancel" onClick={() => onClose()} >
+                    <Button key="Cancel" onClick={() => showCloseConfirm()} >
                         Cancelar
                     </Button>
                     {( (current > 0 && (beneficiary != undefined || reference != undefined))) && (

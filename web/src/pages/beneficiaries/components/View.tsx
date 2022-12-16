@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import { message, Form, Modal, Card, Row, Col, Image, Table, Button, Drawer, Space } from 'antd';
-import { SearchOutlined, ArrowUpOutlined, EyeOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { SearchOutlined, ArrowUpOutlined, EyeOutlined, EditOutlined, PlusOutlined, ExclamationCircleFilled } from '@ant-design/icons';
 import emblema from '../../../assets/emblema.png';
 import moment from 'moment';
 import { getEntryPoint } from '@app/models/User'
@@ -14,6 +14,8 @@ import 'antd/dist/antd.css';
 
 import '../styles.css'
 import InterventionForm from './InterventionForm';
+
+const { confirm } = Modal;
 
 export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, handleModalRefVisible, user}) {
     const [visible, setVisible] = useState<boolean>(false);
@@ -74,9 +76,20 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
         setSelectedIntervention(record);
     };
 
-    const onClose = () => {
-        setVisible(false);
-        setIsAdd(false);
+    const showCloseConfirm = () => {
+        confirm({
+        title: 'Deseja fechar este formulário?',
+        icon: <ExclamationCircleFilled />,
+        okText: 'Sim',
+        okType: 'danger',
+        cancelText: 'Não',
+        onOk() {
+            setVisible(false);
+            setIsAdd(false);
+        },
+        onCancel() {
+        },
+        });
     };
     
     const onSubmit = async (intervention: any) => {
@@ -339,7 +352,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
                     title="Intervenções Dreams"
                     placement="top"
                     closable={false}
-                    onClose={onClose}
+                    onClose={showCloseConfirm}
                     visible={visible}
                     maskClosable={false}
                     getContainer={false}
@@ -347,7 +360,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
                     height={440}
                     footer={
                         <Space>
-                            <Button onClick={onClose}>Cancelar</Button>
+                            <Button onClick={showCloseConfirm}>Cancelar</Button>
                             <Button htmlType="submit" onClick={() => onSubmit(selectedIntervention)} type="primary">
                                 Salvar
                             </Button>
@@ -370,6 +383,21 @@ const ViewBeneficiary = ({ beneficiary, modalVisible, handleModalVisible , handl
         handleModalVisible();
     }
 
+    const showCloseConfirm = () => {
+        confirm({
+        title: 'Deseja fechar este formulário?',
+        icon: <ExclamationCircleFilled />,
+        okText: 'Sim',
+        okType: 'danger',
+        cancelText: 'Não',
+        onOk() {
+            handleModalVisible();
+        },
+        onCancel() {
+        },
+        });
+    };
+
     return (
 
         <Modal
@@ -380,7 +408,7 @@ const ViewBeneficiary = ({ beneficiary, modalVisible, handleModalVisible , handl
             visible={modalVisible}
             maskClosable={false}
             onOk={okHandle}
-            onCancel={() => handleModalVisible()}
+            onCancel={() => showCloseConfirm()}
         >
             
             <ViewBenefiaryPanel beneficiary={beneficiary} columns={undefined} handleModalVisible={handleModalVisible} handleModalRefVisible={handleModalRefVisible} user={user} />

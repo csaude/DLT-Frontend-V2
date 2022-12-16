@@ -1,6 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Badge, Button, Steps, Row, Col, Input, message, Space, Form, Tabs, Modal, DatePicker, Checkbox, Select, Radio, Divider } from 'antd';
 import './index.css';
+import { ExclamationCircleFilled } from '@ant-design/icons';
 import StepDadosPessoais from './StepDadosPessoais';
 import StepVulnerabilidadesGerais from './StepVulnerabilidadesGerais';
 import StepVulnerabilidadesEspecificas from './StepVulnerabilidadesEspecificas';
@@ -10,6 +11,7 @@ import { stringify } from 'qs';
 
 const { Option } = Select;
 const { Step } = Steps;
+const { confirm } = Modal;
 
 const BeneficiaryForm = ({ form, beneficiary, beneficiaries, modalVisible, handleAddBeneficiary, handleUpdateBeneficiary, handleModalVisible }: any) => {
 
@@ -183,7 +185,6 @@ const BeneficiaryForm = ({ form, beneficiary, beneficiaries, modalVisible, handl
             });
     };
 
-
     const onUpdate = async () => {
 
         handleUpdate(firstStepValues, secondStepValues);
@@ -192,6 +193,21 @@ const BeneficiaryForm = ({ form, beneficiary, beneficiaries, modalVisible, handl
        // form.resetFields();
 
     }
+   
+    const showCloseConfirm = () => {
+        confirm({
+        title: 'Deseja fechar este formulário?',
+        icon: <ExclamationCircleFilled />,
+        okText: 'Sim',
+        okType: 'danger',
+        cancelText: 'Não',
+        onOk() {
+            handleModalVisible(false);
+        },
+        onCancel() {
+        },
+        });
+    };
 
     const steps = [
         {
@@ -217,10 +233,10 @@ const BeneficiaryForm = ({ form, beneficiary, beneficiaries, modalVisible, handl
                 destroyOnClose
                 title={` Registo de Beneficiária`}
                 visible={modalVisible}
-                onCancel={() => handleModalVisible(false)}
+                onCancel={() => showCloseConfirm()}
                 maskClosable={false}
                 footer={<div className="steps-action">
-                    <Button key="Cancel" onClick={() => handleModalVisible()} >
+                    <Button key="Cancel" onClick={() => showCloseConfirm()} >
                         Cancelar
                     </Button>
                     {(current === 1 || (current === 2 && beneficiary != undefined)) && (

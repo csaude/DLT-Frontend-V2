@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import { query  as queryUser} from '@app/utils/users';
 import { query as queryBeneficiary } from "@app/utils/beneficiary";
 import { Button, Card, Col, Drawer, Form, message, Modal, Row, Space, Table, Typography } from "antd";
-import { SearchOutlined, EditOutlined, PlusOutlined, EyeOutlined, CloseOutlined, CheckOutlined,FileDoneOutlined } from '@ant-design/icons';
+import { ExclamationCircleFilled ,FileDoneOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import ReferenceInterventionForm from "@app/pages/reference/components/ReferenceInterventionForm";
 import { addSubService, SubServiceParams } from '@app/utils/service'
 
 const { Text } = Typography;
+const { confirm } = Modal;
 
 export function ViewReferencePanel({selectedReference, columns}) {
     const [visible, setVisible] = useState<boolean>(false);
@@ -111,7 +112,20 @@ export function ViewReferencePanel({selectedReference, columns}) {
         setSelectedService(undefined);
     };
 
-
+    const showCloseConfirm = () => {
+        confirm({
+        title: 'Deseja fechar este formulário?',
+        icon: <ExclamationCircleFilled />,
+        okText: 'Sim',
+        okType: 'danger',
+        cancelText: 'Não',
+        onOk() {
+            onClose();
+        },
+        onCancel() {
+        },
+        });
+    };
 
     const servicesColumns = [
         { title: '#', 
@@ -267,14 +281,14 @@ export function ViewReferencePanel({selectedReference, columns}) {
                     title="Intervenções Dreams"
                     placement="top"
                     closable={false}
-                    onClose={onClose}
+                    onClose={showCloseConfirm}
                     visible={visible}
                     maskClosable={false}
                     getContainer={false}
                     style={{ position: 'absolute' }}
                     extra={
                         <Space>
-                            <Button onClick={onClose}>Cancel</Button>
+                            <Button onClick={showCloseConfirm}>Cancel</Button>
                             <Button htmlType="submit" onClick={() => onSubmit()} type="primary">
                                 Submit
                             </Button>
@@ -296,6 +310,20 @@ const ViewReferral = ({reference, modalVisible, handleModalVisible}) => {
         handleModalVisible();
     }
 
+    const showCloseConfirm = () => {
+        confirm({
+        title: 'Deseja fechar este formulário?',
+        icon: <ExclamationCircleFilled />,
+        okText: 'Sim',
+        okType: 'danger',
+        cancelText: 'Não',
+        onOk() {
+            handleModalVisible();
+        },
+        onCancel() {
+        },
+        });
+    };
     
     return (
         <Modal
@@ -306,7 +334,7 @@ const ViewReferral = ({reference, modalVisible, handleModalVisible}) => {
             visible={modalVisible}
             maskClosable={false}
             onOk={okHandle}
-            onCancel={() => handleModalVisible()}
+            onCancel={() => showCloseConfirm()}
         >
             <ViewReferencePanel selectedReference={reference} columns={undefined} />
         </Modal>
