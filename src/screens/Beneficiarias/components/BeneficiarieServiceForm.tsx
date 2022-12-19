@@ -44,7 +44,8 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     const [show, setShow] = useState(false);
     const [text, setText] = useState('');
     const [uss, setUss] = useState<any>([]);
-    const [currentInformedProvider, setCurrentInformedProvider] = useState('') ;
+    const [isClinicalOrCommunityPartner, setClinicalOrCommunityPartner]= useState(false);
+    const [organization, setOrganization] = useState<any>([]);
 
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
@@ -73,6 +74,14 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
         setUsers(usersSerialized);
     }
 
+    const getPartner = async() => {
+        const partners = await database.get('partners').query(
+            Q.where('online_id', parseInt(loggedUser.partner_id))
+        ).fetch();
+        const partnerSerialied = partners.map(item => item._raw)[0];
+        setOrganization(partnerSerialied);
+    }
+
     const onChangeToOutros = (value) => {
         setChecked(value);
     }
@@ -90,10 +99,12 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     const [loading, setLoading] = useState(false);
     const loggedUser: any = useContext(Context);
     const toast = useToast();
+    let currentInformedProvider = "Selecione o Provedor"  ;
 
     useEffect(() => {
 
         if (mounted) {
+            getPartner()   
             const isEdit = intervention && intervention.id;
             let initValues = {};
 
@@ -276,18 +287,56 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
         function isNumber(str) {
             return !isNaN(str);
         }
-        if(isNewIntervention || intervention.provider==='') {
-            setCurrentInformedProvider("Selecione o Provedor" )
+
+        if(isNewIntervention){
+            if(organization?.partner_type !==undefined  && (organization?.partner_type==1 || organization?.partner_type==2))
+            {    
+                setClinicalOrCommunityPartner(true);
+                
+                if(loggedUser.entry_point !== undefined){
+                    onChangeEntryPoint(loggedUser.entry_point);
+                }
+
+                if(organization?.partner_type==1){
+                    setInitialValues({
+                        areaServicos_id: 1,
+                        entry_point: loggedUser.entry_point,
+                        provider: loggedUser.online_id,
+                    })
+                }
+                else if(organization?.partner_type==2){
+                    setInitialValues({
+                        areaServicos_id: 2,
+                        entry_point: loggedUser.entry_point ,
+                        provider: loggedUser.online_id,
+                    })
+                }
+                console.log('-------loggedUser.entry_point------', loggedUser.entry_point)
+            }else{
+                setClinicalOrCommunityPartner(false);
+            }
+
+            if(isClinicalOrCommunityPartner){
+                currentInformedProvider = loggedUser?.name
+            }
+        }   
+
+        if(!isNewIntervention){
+            if (isNumber(intervention.provider)){
+                const user = users.filter(user=>{
+                    return user.online_id == intervention.provider
+                })[0]
+                currentInformedProvider = user?.name
+            }
+            else if(intervention.provider ===undefined || intervention.provider==='') {
+                currentInformedProvider="Selecione o Provedor" 
+            }
+            else 
+                currentInformedProvider=intervention.provider+''
         }
-        else if (isNumber(intervention.provider)){
-            const user = users.filter(user=>{
-                return user.online_id == intervention.provider
-            })[0]
-            setCurrentInformedProvider(user?.name)
-        }
-        else 
-            setCurrentInformedProvider(intervention.provider+'')
-    },[users])
+    },[ users, organization, loggedUser] )
+
+
 
     return (
         <KeyboardAvoidingView>
@@ -325,7 +374,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                                         <FormControl isRequired isInvalid={'areaServicos_id' in errors}>
                                             <FormControl.Label>Área de Serviços</FormControl.Label>
                                             <Picker
-                                                enabled={isNewIntervention}
+                                                enabled={isNewIntervention && !isClinicalOrCommunityPartner}
                                                 style={styles.dropDownPickerDisabled}
                                                 selectedValue={values.areaServicos_id}
                                                 onValueChange={(itemValue, itemIndex) => {
@@ -403,6 +452,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                                         <FormControl isRequired isInvalid={'entry_point' in errors}>
                                             <FormControl.Label>Ponto de Entrada</FormControl.Label>
                                             <Picker
+                                                enabled={(isNewIntervention && !isClinicalOrCommunityPartner) || loggedUser.entry_point === undefined }
                                                 style={styles.dropDownPicker}
                                                 selectedValue={values.entry_point}
                                                 onValueChange={(itemValue, itemIndex) => {
