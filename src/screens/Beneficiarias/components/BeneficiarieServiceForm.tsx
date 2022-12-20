@@ -310,11 +310,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                 }
             }else{
                 setClinicalOrCommunityPartner(false);
-            }
-
-            // console.log(isNewIntervention )
-            // console.log(isClinicalOrCommunityPartner) 
-            // console.log(loggedUser.entry_point)        
+            }       
     },[ users, organization, loggedUser] )
 
     useEffect(()=>{        
