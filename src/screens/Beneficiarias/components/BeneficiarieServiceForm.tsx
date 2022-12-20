@@ -46,6 +46,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     const [uss, setUss] = useState<any>([]);
     const [isClinicalOrCommunityPartner, setClinicalOrCommunityPartner]= useState(false);
     const [organization, setOrganization] = useState<any>([]);
+    const [currentInformedProvider, setCurrentInformedProvider] = useState('') ;
 
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
@@ -99,7 +100,6 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     const [loading, setLoading] = useState(false);
     const loggedUser: any = useContext(Context);
     const toast = useToast();
-    let currentInformedProvider = "Selecione o Provedor"  ;
 
     useEffect(() => {
 
@@ -284,59 +284,57 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     }
 
     useEffect(()=>{
-        function isNumber(str) {
-            return !isNaN(str);
-        }
-
-        if(isNewIntervention){
-            if(organization?.partner_type !==undefined  && (organization?.partner_type==1 || organization?.partner_type==2))
+        if(organization?.partner_type !==undefined  && (organization?.partner_type==1 || organization?.partner_type==2))
             {    
                 setClinicalOrCommunityPartner(true);
-                
-                if(loggedUser.entry_point !== undefined){
-                    onChangeEntryPoint(loggedUser.entry_point);
-                }
+                setCurrentInformedProvider(loggedUser?.name)          
 
-                if(organization?.partner_type==1){
-                    setInitialValues({
-                        areaServicos_id: 1,
-                        entry_point: loggedUser.entry_point,
-                        provider: loggedUser.online_id,
-                    })
+                if(isNewIntervention){
+                    if(loggedUser?.entry_point !== undefined){
+                        onChangeEntryPoint(loggedUser?.entry_point);
+                    }
+                    if(organization?.partner_type==1){
+                        setInitialValues({
+                            areaServicos_id: 1,
+                            entry_point: loggedUser?.entry_point,
+                            provider: loggedUser?.online_id,
+                        })
+                    }
+                    else if(organization?.partner_type==2){
+                        setInitialValues({
+                            areaServicos_id: 2,
+                            entry_point: loggedUser?.entry_point ,
+                            provider: loggedUser?.online_id,
+                        })
+                    }
                 }
-                else if(organization?.partner_type==2){
-                    setInitialValues({
-                        areaServicos_id: 2,
-                        entry_point: loggedUser.entry_point ,
-                        provider: loggedUser.online_id,
-                    })
-                }
-                console.log('-------loggedUser.entry_point------', loggedUser.entry_point)
             }else{
                 setClinicalOrCommunityPartner(false);
             }
 
-            if(isClinicalOrCommunityPartner){
-                currentInformedProvider = loggedUser?.name
-            }
-        }   
-
-        if(!isNewIntervention){
-            if (isNumber(intervention.provider)){
-                const user = users.filter(user=>{
-                    return user.online_id == intervention.provider
-                })[0]
-                currentInformedProvider = user?.name
-            }
-            else if(intervention.provider ===undefined || intervention.provider==='') {
-                currentInformedProvider="Selecione o Provedor" 
-            }
-            else 
-                currentInformedProvider=intervention.provider+''
-        }
+            // console.log(isNewIntervention )
+            // console.log(isClinicalOrCommunityPartner) 
+            // console.log(loggedUser.entry_point)        
     },[ users, organization, loggedUser] )
 
-
+    useEffect(()=>{        
+        if(isNewIntervention || intervention?.provider==='') {
+            setCurrentInformedProvider("Selecione o Provedor" )
+        }
+        else if (isNumber(intervention?.provider)){
+            const user = users.filter(user=>{
+                return user.online_id == intervention?.provider
+            })[0]
+            setCurrentInformedProvider(user?.name)
+        }
+        else{
+            setCurrentInformedProvider(intervention?.provider+'')
+        }
+        
+        function isNumber(str) {
+            return !isNaN(str);
+        }
+    },[users, intervention]) 
 
     return (
         <KeyboardAvoidingView>
@@ -452,7 +450,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                                         <FormControl isRequired isInvalid={'entry_point' in errors}>
                                             <FormControl.Label>Ponto de Entrada</FormControl.Label>
                                             <Picker
-                                                enabled={(isNewIntervention && !isClinicalOrCommunityPartner) || loggedUser.entry_point === undefined }
+                                                enabled={!isClinicalOrCommunityPartner}
                                                 style={styles.dropDownPicker}
                                                 selectedValue={values.entry_point}
                                                 onValueChange={(itemValue, itemIndex) => {
@@ -544,7 +542,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                                                     accessible={true}
                                                     cancelButtonAccessibilityLabel={'Cancel Button'}
                                                     onChange={(option) => { setSelectedUser(`${option.name} ${option.surname}`); setFieldValue('provider', option.online_id); }}>
-                                                    <Input type='text' onBlur={handleBlur('provider')} placeholder={currentInformedProvider} onChangeText={handleChange('provider')} value={selectedUser} />
+                                                    <Input type='text' onBlur={handleBlur('provider')} placeholder={currentInformedProvider}  onChangeText={handleChange('provider')} value={selectedUser} />
                                                 </ModalSelector> :
                                                 <Input onBlur={handleBlur('provider')} placeholder="Insira o Nome do Provedor" onChangeText={handleChange('provider')} value={values.provider} />
                                             }
