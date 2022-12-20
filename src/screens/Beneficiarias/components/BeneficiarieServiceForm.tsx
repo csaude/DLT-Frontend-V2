@@ -145,7 +145,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
 
             } else {
                 initValues = {
-                    areaServicos_id: loggedUser.entryPoint != undefined ? loggedUser.entryPoint : "",
+                    areaServicos_id: '',
                     service_id: '',
                     beneficiary_id: '',
                     sub_service_id: '',
@@ -295,14 +295,14 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                     }
                     if(organization?.partner_type==1){
                         setInitialValues({
-                            areaServicos_id: 1,
+                            areaServicos_id: '1',
                             entry_point: loggedUser?.entry_point,
                             provider: loggedUser?.online_id,
                         })
                     }
                     else if(organization?.partner_type==2){
                         setInitialValues({
-                            areaServicos_id: 2,
+                            areaServicos_id: '2',
                             entry_point: loggedUser?.entry_point ,
                             provider: loggedUser?.online_id,
                         })
