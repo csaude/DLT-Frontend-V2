@@ -103,31 +103,47 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
 
     const avanteEstudanteOnlineIds = [45,48,51];
     const avanteRaparigaOnlineIds = [44,47,50];
+    const guiaFacilitacaoOnlineIds = [46,49,52];
 
     useEffect(() => {
-
+     
         if (mounted) {
             getPartner()  
             
-            const disableRapariga = services.filter(service=>{              
+            const disableRapariga =(hasFacilitacao)=> services.filter(service=>{  
+                if(hasFacilitacao)            
                     return !avanteRaparigaOnlineIds.includes(service._raw.online_id) ;
+                else    
+                    return !avanteRaparigaOnlineIds.includes(service._raw.online_id )&& !guiaFacilitacaoOnlineIds.includes(service._raw.online_id);
             });
 
-            const disableEstudante =   services.filter(service=>{              
+            const disableEstudante =(hasFacilitacao) =>  services.filter(service=>{              
+                if(hasFacilitacao)     
                     return !avanteEstudanteOnlineIds.includes(service._raw.online_id) ;
+                else    
+                    return !avanteEstudanteOnlineIds.includes(service._raw.online_id) && !guiaFacilitacaoOnlineIds.includes(service._raw.online_id);
             })
+
             const disableEstudanteAndRapariga =   services.filter(service=>{              
-                    return !avanteRaparigaOnlineIds.includes(service._raw.online_id) && !avanteEstudanteOnlineIds.includes(service._raw.online_id) ;;
+                    return !avanteRaparigaOnlineIds.includes(service._raw.online_id) && !avanteEstudanteOnlineIds.includes(service._raw.online_id) ;
             })
-            
-            if(beneficiarie.vblt_is_student==1 && getBeneficiarieAge() < 15){
-                services = disableRapariga(services);
+
+            if(beneficiarie.vblt_is_student==1 && getBeneficiarieAge() < 15){                    
+                if(getBeneficiarieAge()>= 14 && getBeneficiarieAge() < 15 ){      
+                    services = disableRapariga(true); 
+                }else{
+                    services = disableRapariga(false)           
+                }
             }
-            else if(beneficiarie.vblt_is_student == 0 && getBeneficiarieAge() < 15){                
-                services = disableEstudante;
+            else if(beneficiarie.vblt_is_student == 0 && getBeneficiarieAge() < 15){               
+                if(getBeneficiarieAge() >= 14 && getBeneficiarieAge() < 15 ){
+                    services = disableEstudante(true);    
+                }else{
+                    services = disableEstudante(false)   
+                }                     
             }
             else if(getBeneficiarieAge() > 15){
-                 services = disableEstudanteAndRapariga
+                services = disableEstudanteAndRapariga
             }
             
             const isEdit = intervention && intervention.id;
@@ -195,7 +211,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     }, [intervention]);
 
     const getBeneficiarieAge = ()=>{
-        return new Date().getFullYear() - new Date(beneficiarie.date_of_birth).getFullYear();
+        return new Date().getFullYear() - new Date(beneficiarie.date_of_birth).getFullYear();;
     }
 
     const message = "Este campo é Obrigatório"
