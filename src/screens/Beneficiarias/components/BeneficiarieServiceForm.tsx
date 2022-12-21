@@ -101,10 +101,35 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     const loggedUser: any = useContext(Context);
     const toast = useToast();
 
+    const avanteEstudanteOnlineIds = [45,48,51];
+    const avanteRaparigaOnlineIds = [44,47,50];
+
     useEffect(() => {
 
         if (mounted) {
-            getPartner()   
+            getPartner()  
+            
+            const disableRapariga = services.filter(service=>{              
+                    return !avanteRaparigaOnlineIds.includes(service._raw.online_id) ;
+            });
+
+            const disableEstudante =   services.filter(service=>{              
+                    return !avanteEstudanteOnlineIds.includes(service._raw.online_id) ;
+            })
+            const disableEstudanteAndRapariga =   services.filter(service=>{              
+                    return !avanteRaparigaOnlineIds.includes(service._raw.online_id) && !avanteEstudanteOnlineIds.includes(service._raw.online_id) ;;
+            })
+            
+            if(beneficiarie.vblt_is_student==1 && getBeneficiarieAge() < 15){
+                services = disableRapariga(services);
+            }
+            else if(beneficiarie.vblt_is_student == 0 && getBeneficiarieAge() < 15){                
+                services = disableEstudante;
+            }
+            else if(getBeneficiarieAge() > 15){
+                 services = disableEstudanteAndRapariga
+            }
+            
             const isEdit = intervention && intervention.id;
             let initValues = {};
 
@@ -168,6 +193,10 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
 
 
     }, [intervention]);
+
+    const getBeneficiarieAge = ()=>{
+        return new Date().getFullYear() - new Date(beneficiarie.date_of_birth).getFullYear();
+    }
 
     const message = "Este campo é Obrigatório"
 
@@ -286,10 +315,10 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     useEffect(()=>{
         if(organization?.partner_type !==undefined  && (organization?.partner_type==1 || organization?.partner_type==2))
             {    
-                setClinicalOrCommunityPartner(true);
-                setCurrentInformedProvider(loggedUser?.name)          
+                setClinicalOrCommunityPartner(true);                       
 
                 if(isNewIntervention){
+                    setCurrentInformedProvider(loggedUser?.name+' '+loggedUser?.surname)   
                     if(loggedUser?.entry_point !== undefined){
                         onChangeEntryPoint(loggedUser?.entry_point);
                     }
@@ -321,7 +350,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
             const user = users.filter(user=>{
                 return user.online_id == intervention?.provider
             })[0]
-            setCurrentInformedProvider(user?.name)
+            setCurrentInformedProvider(user?.name+' '+user?.surname)
         }
         else{
             setCurrentInformedProvider(intervention?.provider+'')
@@ -331,6 +360,12 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
             return !isNaN(str);
         }
     },[users, intervention]) 
+
+    useEffect(()=>{
+        if(isNewIntervention && isClinicalOrCommunityPartner){
+            setCurrentInformedProvider(loggedUser?.name+' '+loggedUser?.surname) 
+        }
+    },[onChangeUs,beneficiarie])
 
     return (
         <KeyboardAvoidingView>
@@ -446,7 +481,6 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                                         <FormControl isRequired isInvalid={'entry_point' in errors}>
                                             <FormControl.Label>Ponto de Entrada</FormControl.Label>
                                             <Picker
-                                                enabled={!isClinicalOrCommunityPartner}
                                                 style={styles.dropDownPicker}
                                                 selectedValue={values.entry_point}
                                                 onValueChange={(itemValue, itemIndex) => {
