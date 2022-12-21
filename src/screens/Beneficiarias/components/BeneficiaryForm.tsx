@@ -592,8 +592,6 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
         ).fetch();
         const distsSerialized = getDistList.map(item => item._raw);
         setDistricts(distsSerialized);
-
-        // console.log();
     }
 
     const onChangeDistricts = async (distId: any) => {
@@ -603,8 +601,6 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
         ).fetch();
         const locsSerialized = getLocList.map(item => item._raw);
         setLocalities(locsSerialized);
-
-        // console.log();
     }
 
     const onChangeLocalities = async (locId: any) => {
