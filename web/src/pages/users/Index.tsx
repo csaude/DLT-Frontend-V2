@@ -134,7 +134,7 @@ const UsersList: React.FC = () => {
 
     const getMessage = status => {
         if(status==403){
-            return 'O username informado ja existe no sistema, por favor escolha um username diferente'
+            return 'O username informado já existe no sistema, por favor escolha um username diferente'
         }else {
             return 'Corrija os erros apresentados antes de avançar!'
         }
