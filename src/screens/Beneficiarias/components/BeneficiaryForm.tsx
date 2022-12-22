@@ -106,7 +106,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                     const neiSerialized = getNeiList.map(item => item._raw);
                     setNeighborhoods(neiSerialized);
 
-                    setIsEnable(false);
+                    loggedUser?.districts?.length > 1 ? setIsEnable(true) : setIsEnable(false);
                 }
             }
         }
