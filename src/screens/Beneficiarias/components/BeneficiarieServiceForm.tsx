@@ -47,6 +47,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     const [isClinicalOrCommunityPartner, setClinicalOrCommunityPartner]= useState(false);
     const [organization, setOrganization] = useState<any>([]);
     const [currentInformedProvider, setCurrentInformedProvider] = useState('') ;
+    const [servicesState,setServicesState] = useState<any>([]);
 
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
@@ -108,6 +109,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     useEffect(() => {
      
         if (mounted) {
+            setServicesState(services)
             getPartner()  
             
             const disableRapariga =(hasFacilitacao)=> services.filter(service=>{  
@@ -130,20 +132,25 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
 
             if(beneficiarie.vblt_is_student==1 && getBeneficiarieAge() < 15){                    
                 if(getBeneficiarieAge()>= 14 && getBeneficiarieAge() < 15 ){      
-                    services = disableRapariga(true); 
+                    const foundServices = disableRapariga(true); 
+                    setServicesState(foundServices)
                 }else{
-                    services = disableRapariga(false)           
+                    const foundServices = disableRapariga(false)    
+                    setServicesState(foundServices)       
                 }
             }
             else if(beneficiarie.vblt_is_student == 0 && getBeneficiarieAge() < 15){               
                 if(getBeneficiarieAge() >= 14 && getBeneficiarieAge() < 15 ){
-                    services = disableEstudante(true);    
+                    const foundServices = disableEstudante(true);    
+                    setServicesState(foundServices)
                 }else{
-                    services = disableEstudante(false)   
+                    const foundServices = disableEstudante(false)   
+                    setServicesState(foundServices)
                 }                     
             }
             else if(getBeneficiarieAge() > 15){
-                services = disableEstudanteAndRapariga
+                const foundServices = disableEstudanteAndRapariga
+                setServicesState(foundServices)
             }
             
             const isEdit = intervention && intervention.id;
@@ -455,7 +462,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                                                 }>
                                                 <Picker.Item label="-- Seleccione o Serviço --" value="0" />
                                                 {
-                                                    services.filter((e) => {
+                                                    servicesState.filter((e) => {
                                                         return e.service_type == values.areaServicos_id
                                                     }
                                                     ).map(item => (
