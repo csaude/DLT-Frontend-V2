@@ -37,7 +37,7 @@ const InterventionsView: React.FC = ({ route }: any) => {
 
     const renderItem = (data: any) => (
         <TouchableHighlight
-            onPress={() =>  navigate({ name: "BeneficiarieServiceForm", params: { beneficiarie: beneficiary, intervs: interventions, intervention: data.item.intervention } })}
+            onPress={() =>  navigate({ name: "BeneficiarieServiceForm", params: { beneficiarie: beneficiary, intervs: interventions, intervention: data.item.intervention, isNewIntervention: false  } })}
             style={styles.rowFront}
             underlayColor={'#AAA'}
         >
@@ -76,7 +76,7 @@ const InterventionsView: React.FC = ({ route }: any) => {
 
         <HStack flex={1} pl={2}>
             <Pressable px={4} ml="auto" bg="lightBlue.700" justifyContent="center"
-                onPress={() => navigate({ name: "BeneficiarieServiceForm", params: { beneficiarie: beneficiary, intervs: interventions, intervention: data.item.intervention } })}
+                onPress={() => navigate({ name: "BeneficiarieServiceForm", params: { beneficiarie: beneficiary, intervs: interventions, intervention: data.item.intervention, isNewIntervention: false } })}
                 _pressed={{ opacity: 0.5 }}
             >
                 <Icon as={MaterialIcons} name="mode-edit" size={6} color="gray.200" />
@@ -105,7 +105,7 @@ const InterventionsView: React.FC = ({ route }: any) => {
                 </View>
             }
             <Center flex={1} px="3" >
-                <StepperButton onAdd={() => navigate({ name: "BeneficiarieServiceForm", params: { beneficiarie: beneficiary, intervs: interventions } })}
+                <StepperButton onAdd={() => navigate({ name: "BeneficiarieServiceForm", params: { beneficiarie: beneficiary, intervs: interventions, isNewIntervention: true  } })}
                     onRefresh={syncronize} />
             </Center>
 
