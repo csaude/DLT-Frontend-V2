@@ -146,7 +146,7 @@ const ViewBeneficiaries: React.FC = ({ route }: any) => {
                                                 <Text style={{ color: 'white' }} key={item.id.toString()}>
                                                     {item.name}
                                                 </Text>
-                                                <Button onPress={() => navigate({ name: "BeneficiarieServiceForm", params: { beneficiarie: beneficiary, intervention: item.intervention } })}>
+                                                <Button onPress={() => navigate({ name: "BeneficiarieServiceForm", params: { beneficiarie: beneficiary, intervention: item.intervention, isNewIntervention: false  } })}>
                                                 <Icon as={MaterialIcons} name="edit" size={5} color="gray.200" />
                                                 </Button>
                                             </View>
@@ -157,7 +157,7 @@ const ViewBeneficiaries: React.FC = ({ route }: any) => {
                                 }
 
                                 <Stack direction="row" space={3}>
-                                    <Button mt="3" colorScheme="success" ml="85%" onPress={() => navigate({ name: "BeneficiarieServiceForm", params: { beneficiarie: beneficiary } })}>
+                                    <Button mt="3" colorScheme="success" ml="85%" onPress={() => navigate({ name: "BeneficiarieServiceForm", params: { beneficiarie: beneficiary, isNewIntervention: false  } })}>
                                         <Icon as={MaterialIcons} name="add" size={5} color="gray.200" />
                                     </Button>
                                 </Stack>
