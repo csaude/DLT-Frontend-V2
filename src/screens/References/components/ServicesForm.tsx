@@ -14,7 +14,7 @@ import { database } from '../../../database';
 import { navigate } from '../../../routes/NavigationRef';
 import ModalSelector from 'react-native-modal-selector-searchable';
 import { Q } from "@nozbe/watermelondb";
-import { useFormik } from 'formik';
+import { Formik } from 'formik';
 import { Context } from '../../../routes/DrawerNavigator';
 import Beneficiaries_interventions, { BeneficiariesInterventionsModel } from '../../../models/Beneficiaries_interventions';
 
@@ -36,31 +36,29 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     const [us, setUs] = useState<any>([]);
     const [checked, setChecked] = useState(false);
     const [selectedUser, setSelectedUser] = useState<any>("");
+    const [organization, setOrganization] = useState<any>();
+    const [isClinicalOrCommunityPartner, setClinicalOrCommunityPartner]= useState(false);
+    const [currentInformedProvider, setCurrentInformedProvider] = useState('') ;
     const service = services.filter(item => item._raw.online_id === intervention?.service.service_id)[0]?._raw;
 
     const areaServicos = [{ "id": '1', "name": "Serviços Clinicos" }, { "id": '2', "name": "Serviços Comunitarios" }];
     const entry_points = [{ "id": '1', "name": "US" }, { "id": '2', "name": "CM" }, { "id": '3', "name": "ES" }];
     const message = "Este campo é Obrigatório";
 
-    const formik = useFormik({
-        initialValues: {
+    let initialVal = {
             areaServicos_id: service?.service_type,
             service_id: service?.online_id,
-            beneficiary_id: '',
+            beneficiary_id: beneficiarie?.online_id,
             sub_service_id: '',
             result: '',
             date: '',
             us_id: '',
-            activist_id: '',
-            entry_point: '',
-            provider: '',
+            activist_id: loggedUser?.online_id,
+            entry_point: loggedUser?.entry_point,
+            provider: loggedUser?.online_id ,
             remarks: '',
             status: '1'
-
-        },
-        onSubmit: values => onSubmit(values),
-        validate: values => validate(values)
-    });
+        }
 
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
@@ -70,6 +68,8 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
         // let tempDate = new Date(currentDate);
         // setText(moment(tempDate).format('YYYY-MM-DD'));
         setText(selectedDate);
+        console.log('-----selectedDate---', selectedDate)
+        console.log('----text----', text)
     }
 
     const onChangeToOutros = (value) => {
@@ -139,19 +139,18 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     }
 
     const onSubmit = async (values: any) => {
-        //console.log(values);
-
+        console.log(values);
 
         const newObject = await database.write(async () => {
             
             const newIntervention = await database.collections.get('beneficiaries_interventions').create((intervention: any) => {
 
-                intervention.beneficiary_id = beneficiarie.online_id
+                intervention.beneficiary_id = initialVal.beneficiary_id
                 intervention.sub_service_id = values.sub_service_id
                 intervention.result = values.result
                 intervention.date = '' + text
                 intervention.us_id = values.us_id
-                intervention.activist_id = loggedUser.id
+                intervention.activist_id = initialVal.activist_id
                 intervention.entry_point = values.entry_point
                 intervention.provider = values.provider
                 intervention.remarks = values.remarks
@@ -202,6 +201,52 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
 
     }
 
+    const getPartner = async() => {
+        const partners = await database.get('partners').query(
+            Q.where('online_id', parseInt(loggedUser.partner_id))
+        ).fetch();
+        const partnerSerialied = partners.map(item => item._raw)[0];
+        setOrganization(partnerSerialied);
+    }
+
+    useEffect(()=>{    
+        setInitialValues(initialVal);
+
+        getPartner();
+
+        if(loggedUser?.entry_point !== undefined && (organization?.partner_type==1 || organization?.partner_type==2)){
+            setCurrentInformedProvider(loggedUser?.name+' '+loggedUser?.surname)
+            setClinicalOrCommunityPartner(true)
+            onChangeEntryPoint(loggedUser?.entry_point);
+        }
+
+    },[loggedUser,intervention, organization])
+
+    useEffect(()=>{        
+        if( intervention?.provider==='') {
+            setCurrentInformedProvider("Selecione o Provedor" )
+        }
+        else if (isNumber(intervention?.provider)){
+            const user = users.filter(user=>{
+                return user.online_id == intervention?.provider
+            })[0]
+            setCurrentInformedProvider(user?.name+' '+user?.surname)
+        }
+        else{
+            setCurrentInformedProvider(intervention?.provider+'')
+        }
+        
+        function isNumber(str) {
+            return !isNaN(str);
+        }
+    },[users, intervention]) 
+
+    useEffect(()=>{
+        if( isClinicalOrCommunityPartner){
+            setCurrentInformedProvider(loggedUser?.name+' '+loggedUser?.surname) 
+        }
+    },[onChangeUs,beneficiarie])
+
     return (
         <KeyboardAvoidingView>
             <ScrollView>
@@ -217,17 +262,26 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                                     </Text>
                                 </HStack>
                             </Alert>
-                            <VStack space={3} mt="5">
+                            <Formik initialValues={initialValues}
+                                onSubmit={onSubmit} validate={validate} enableReinitialize={true}>
+                                {({
+                                    handleChange,
+                                    handleBlur,
+                                    handleSubmit,
+                                    setFieldValue,
+                                    values,
+                                    errors
+                                }) =><VStack space={3} mt="5">
 
                                 <FormControl isRequired >
                                     <FormControl.Label>Área de Serviços</FormControl.Label>
                                     <Picker
                                         enabled={false}
                                         style={styles.dropDownPickerDisabled}
-                                        selectedValue={formik.values.areaServicos_id}
+                                        selectedValue={values.areaServicos_id}
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
-                                                formik.setFieldValue('areaServicos_id', itemValue);
+                                                setFieldValue('areaServicos_id', itemValue);
                                             }
                                         }
                                         }>
@@ -240,27 +294,27 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                                         }
                                     </Picker>
                                     <FormControl.ErrorMessage>
-                                        {formik.errors.areaServicos_id}
+                                        {errors.areaServicos_id}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
 
 
-                                <FormControl isRequired isInvalid={'service_id' in formik.errors}>
+                                <FormControl isRequired isInvalid={'service_id' in errors}>
                                     <FormControl.Label>Serviço</FormControl.Label>
                                     <Picker
                                         enabled={false}
                                         style={styles.dropDownPickerDisabled}
-                                        selectedValue={formik.values.service_id}
+                                        selectedValue={values.service_id}
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
-                                                formik.setFieldValue('service_id', itemValue);
+                                                setFieldValue('service_id', itemValue);
                                             }
                                         }
                                         }>
                                         <Picker.Item label="-- Seleccione o Serviço --" value="0" />
                                         {
                                             services.filter((e) => {
-                                                return e.service_type == formik.values.areaServicos_id
+                                                return e.service_type == values.areaServicos_id
                                             }
                                             ).map(item => (
                                                 <Picker.Item key={item._raw.online_id} label={item._raw.name} value={parseInt(item._raw.online_id)} />
@@ -268,25 +322,25 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                                         }
                                     </Picker>
                                     <FormControl.ErrorMessage>
-                                        {formik.errors.service_id}
+                                        {errors.service_id}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
 
-                                <FormControl isRequired isInvalid={'sub_service_id' in formik.errors}>
+                                <FormControl isRequired isInvalid={'sub_service_id' in errors}>
                                     <FormControl.Label>Sub-Serviço/Intervenção</FormControl.Label>
                                     <Picker
                                         style={styles.dropDownPicker}
-                                        selectedValue={formik.values.sub_service_id}
+                                        selectedValue={values.sub_service_id}
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
-                                                formik.setFieldValue('sub_service_id', itemValue);
+                                                setFieldValue('sub_service_id', itemValue);
                                             }
                                         }
                                         }>
                                         <Picker.Item label="-- Seleccione o SubServiço --" value="0" />
                                         {
                                             subServices.filter((e) => {
-                                                return e.service_id == formik.values.service_id
+                                                return e.service_id == values.service_id
                                             }
                                             ).map(item => (
                                                 <Picker.Item key={item._raw.online_id} label={item._raw.name} value={parseInt(item._raw.online_id)} />
@@ -294,18 +348,18 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                                         }
                                     </Picker>
                                     <FormControl.ErrorMessage>
-                                        {formik.errors.sub_service_id}
+                                        {errors.sub_service_id}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
 
-                                <FormControl isRequired isInvalid={'entry_point' in formik.errors}>
+                                <FormControl isRequired isInvalid={'entry_point' in errors}>
                                     <FormControl.Label>Ponto de Entrada</FormControl.Label>
                                     <Picker
                                         style={styles.dropDownPicker}
-                                        selectedValue={formik.values.entry_point}
+                                        selectedValue={values.entry_point}
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
-                                                formik.setFieldValue('entry_point', itemValue);
+                                                setFieldValue('entry_point', itemValue);
                                                 onChangeEntryPoint(itemValue);
                                             }
                                         }
@@ -319,18 +373,18 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                                         }
                                     </Picker>
                                     <FormControl.ErrorMessage>
-                                        {formik.errors.entry_point}
+                                        {errors.entry_point}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
 
-                                <FormControl isRequired isInvalid={'us_id' in formik.errors}>
+                                <FormControl isRequired isInvalid={'us_id' in errors}>
                                     <FormControl.Label>Localização</FormControl.Label>
                                     <Picker
                                         style={styles.dropDownPicker}
-                                        selectedValue={formik.values.us_id}
+                                        selectedValue={values.us_id}
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
-                                                formik.setFieldValue('us_id', itemValue);
+                                                setFieldValue('us_id', itemValue);
                                                 onChangeUs(itemValue);
                                             }
                                         }
@@ -343,7 +397,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                                         }
                                     </Picker>
                                     <FormControl.ErrorMessage>
-                                        {formik.errors.us_id}
+                                        {errors.us_id}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
 
@@ -380,7 +434,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
 
 
                                 </FormControl>
-                                <FormControl isRequired isInvalid={'provider' in formik.errors}>
+                                <FormControl isRequired isInvalid={'provider' in errors}>
                                     <FormControl.Label>Provedor do Serviço</FormControl.Label>
 
                                     {checked === false ?
@@ -392,33 +446,33 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                                             initValue="Select something yummy!"
                                             accessible={true}
                                             cancelButtonAccessibilityLabel={'Cancel Button'}
-                                            onChange={(option) => { setSelectedUser(`${option.name} ${option.surname}`); formik.setFieldValue('provider', option.online_id); }}>
-                                            <Input type='text' onBlur={formik.handleBlur('provider')} placeholder="Selecione o Provedor" onChangeText={formik.handleChange('provider')} value={selectedUser} />
+                                            onChange={(option) => { setSelectedUser(`${option.name} ${option.surname}`); setFieldValue('provider', option.online_id); }}>
+                                            <Input type='text' onBlur={handleBlur('provider')} placeholder={currentInformedProvider} onChangeText={handleChange('provider')} value={selectedUser} />
                                         </ModalSelector> :
-                                        <Input onBlur={formik.handleBlur('provider')} placeholder="Insira o Nome do Provedor" onChangeText={formik.handleChange('provider')} value={formik.values.provider} />
+                                        <Input onBlur={handleBlur('provider')} placeholder="Insira o Nome do Provedor" onChangeText={handleChange('provider')} value={values.provider} />
                                     }
                                     <Checkbox value="one" onChange={onChangeToOutros}>Outro</Checkbox>
 
                                     <FormControl.ErrorMessage>
-                                        {formik.errors.provider}
+                                        {errors.provider}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
 
                                 <FormControl>
                                     <FormControl.Label>Outras Observações</FormControl.Label>
 
-                                    <Input onBlur={formik.handleBlur('remarks')} placeholder="" onChangeText={formik.handleChange('remarks')} value={formik.values.remarks} />
+                                    <Input onBlur={handleBlur('remarks')} placeholder="" onChangeText={handleChange('remarks')} value={values.remarks} />
 
                                 </FormControl>
 
-                                <FormControl isRequired isInvalid={'status' in formik.errors}>
+                                <FormControl isRequired isInvalid={'status' in errors}>
                                     <FormControl.Label>Status</FormControl.Label>
                                     <Picker
                                         style={styles.dropDownPicker}
-                                        selectedValue={formik.values.status}
+                                        selectedValue={values.status}
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
-                                                formik.setFieldValue('status', itemValue);
+                                                setFieldValue('status', itemValue);
                                             }
                                         }
                                         }>
@@ -427,14 +481,16 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                                         <Picker.Item key={'2'} label={"Cancelado"} value={2} />
                                     </Picker>
                                     <FormControl.ErrorMessage>
-                                        {formik.errors.status}
+                                        {errors.status}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
 
-                                <Button isLoading={loading} isLoadingText="Cadastrando" onPress={formik.handleSubmit} my="10" colorScheme="primary">
+                                <Button isLoading={loading} isLoadingText="Cadastrando" onPress={handleSubmit} my="10" colorScheme="primary">
                                     Cadastrar
                                 </Button>
                             </VStack>
+                            }
+                            </Formik>
 
                         </Box>
                     </Center>
