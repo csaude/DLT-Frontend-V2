@@ -57,7 +57,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
             entry_point: loggedUser?.entry_point,
             provider: loggedUser?.online_id ,
             remarks: '',
-            status: '1'
+            status: 1
         }
 
     const onChange = (event, selectedDate) => {
@@ -152,7 +152,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                 intervention.entry_point = values.entry_point
                 intervention.provider = ''+values.provider
                 intervention.remarks = values.remarks
-                intervention.status = values.status
+                intervention.status = initialVal.status
 
             });
             return newIntervention;
@@ -462,27 +462,6 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                                     <Input onBlur={handleBlur('remarks')} placeholder="" onChangeText={handleChange('remarks')} value={values.remarks} />
 
                                 </FormControl>
-
-                                <FormControl isRequired isInvalid={'status' in errors}>
-                                    <FormControl.Label>Status</FormControl.Label>
-                                    <Picker
-                                        style={styles.dropDownPicker}
-                                        selectedValue={values.status}
-                                        onValueChange={(itemValue, itemIndex) => {
-                                            if (itemIndex !== 0) {
-                                                setFieldValue('status', itemValue);
-                                            }
-                                        }
-                                        }>
-
-                                        <Picker.Item key={'1'} label={"Activo"} value={1} />
-                                        <Picker.Item key={'2'} label={"Cancelado"} value={2} />
-                                    </Picker>
-                                    <FormControl.ErrorMessage>
-                                        {errors.status}
-                                    </FormControl.ErrorMessage>
-                                </FormControl>
-
                                 <Button isLoading={loading} isLoadingText="Cadastrando" onPress={handleSubmit} my="10" colorScheme="primary">
                                     Cadastrar
                                 </Button>
