@@ -68,8 +68,6 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
         // let tempDate = new Date(currentDate);
         // setText(moment(tempDate).format('YYYY-MM-DD'));
         setText(selectedDate);
-        console.log('-----selectedDate---', selectedDate)
-        console.log('----text----', text)
     }
 
     const onChangeToOutros = (value) => {
@@ -139,20 +137,20 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     }
 
     const onSubmit = async (values: any) => {
-        console.log(values);
-
+  
         const newObject = await database.write(async () => {
             
             const newIntervention = await database.collections.get('beneficiaries_interventions').create((intervention: any) => {
 
                 intervention.beneficiary_id = initialVal.beneficiary_id
+                intervention.beneficiary_offline_id = beneficiarie.id
                 intervention.sub_service_id = values.sub_service_id
                 intervention.result = values.result
                 intervention.date = '' + text
                 intervention.us_id = values.us_id
                 intervention.activist_id = initialVal.activist_id
                 intervention.entry_point = values.entry_point
-                intervention.provider = values.provider
+                intervention.provider = ''+values.provider
                 intervention.remarks = values.remarks
                 intervention.status = values.status
 
