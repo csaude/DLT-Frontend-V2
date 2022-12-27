@@ -25,6 +25,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
     const [isRequired, setRequired] = useState<any>(false);
     const [dataSelection, setDataSelection] = useState<any>({ entryPoint: undefined, profile: undefined, locality: undefined });
     const [usByLocality, setUsByLocality] = useState<any>(undefined);
+    const [isEntryPointRequired,setEntryPointRequired] =useState(false)
 
     const RequiredFieldMessage = "Obrigatório!";
 
@@ -210,6 +211,12 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
             }
         }
 
+        if (dataSelection?.profile == 4 || dataSelection?.profile == 5) {
+            setEntryPointRequired(true)
+        }else{
+            setEntryPointRequired(false)
+        }
+
     }, [dataSelection])
 
     return (
@@ -370,6 +377,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                         <Form.Item
                             name="entryPoint"
                             label="Ponto de Entrada"
+                            rules={[{ required: isEntryPointRequired, message: RequiredFieldMessage }]}
                             initialValue={user?.entryPoint}
                         >
                             <Select placeholder="Seleccione o Ponto de Entrada" onChange={(value) => { onChangeDataSelection("entryPoint", value) }} >

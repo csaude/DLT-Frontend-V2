@@ -31,7 +31,7 @@ import { Context } from '../../../routes/DrawerNavigator';
 import styles from './styles';
 
 const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }: any) => {
-    const { beneficiarie, intervs, intervention } = route.params;
+    const { beneficiarie, intervs, intervention, isNewIntervention } = route.params;
 
     const areaServicos = [{ "id": '1', "name": "Serviços Clinicos" }, { "id": '2', "name": "Serviços Comunitarios" }];
     const entry_points = [{ "id": '1', "name": "US" }, { "id": '2', "name": "CM" }, { "id": '3', "name": "ES" }];
@@ -44,6 +44,10 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     const [show, setShow] = useState(false);
     const [text, setText] = useState('');
     const [uss, setUss] = useState<any>([]);
+    const [isClinicalOrCommunityPartner, setClinicalOrCommunityPartner]= useState(false);
+    const [organization, setOrganization] = useState<any>([]);
+    const [currentInformedProvider, setCurrentInformedProvider] = useState('') ;
+    const [servicesState,setServicesState] = useState<any>([]);
 
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
@@ -72,6 +76,14 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
         setUsers(usersSerialized);
     }
 
+    const getPartner = async() => {
+        const partners = await database.get('partners').query(
+            Q.where('online_id', parseInt(loggedUser.partner_id))
+        ).fetch();
+        const partnerSerialied = partners.map(item => item._raw)[0];
+        setOrganization(partnerSerialied);
+    }
+
     const onChangeToOutros = (value) => {
         setChecked(value);
     }
@@ -90,9 +102,57 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     const loggedUser: any = useContext(Context);
     const toast = useToast();
 
-    useEffect(() => {
+    const avanteEstudanteOnlineIds = [45,48,51];
+    const avanteRaparigaOnlineIds = [44,47,50];
+    const guiaFacilitacaoOnlineIds = [46,49,52];
 
+    useEffect(() => {
+     
         if (mounted) {
+            setServicesState(services)
+            getPartner()  
+            
+            const disableRapariga =(hasFacilitacao)=> services.filter(service=>{  
+                if(hasFacilitacao)            
+                    return !avanteRaparigaOnlineIds.includes(service._raw.online_id) ;
+                else    
+                    return !avanteRaparigaOnlineIds.includes(service._raw.online_id )&& !guiaFacilitacaoOnlineIds.includes(service._raw.online_id);
+            });
+
+            const disableEstudante =(hasFacilitacao) =>  services.filter(service=>{              
+                if(hasFacilitacao)     
+                    return !avanteEstudanteOnlineIds.includes(service._raw.online_id) ;
+                else    
+                    return !avanteEstudanteOnlineIds.includes(service._raw.online_id) && !guiaFacilitacaoOnlineIds.includes(service._raw.online_id);
+            })
+
+            const disableEstudanteAndRapariga =   services.filter(service=>{              
+                    return !avanteRaparigaOnlineIds.includes(service._raw.online_id) && !avanteEstudanteOnlineIds.includes(service._raw.online_id) ;
+            })
+
+            if(beneficiarie.vblt_is_student==1 && getBeneficiarieAge() < 15){                    
+                if(getBeneficiarieAge()>= 14 && getBeneficiarieAge() < 15 ){      
+                    const foundServices = disableRapariga(true); 
+                    setServicesState(foundServices)
+                }else{
+                    const foundServices = disableRapariga(false)    
+                    setServicesState(foundServices)       
+                }
+            }
+            else if(beneficiarie.vblt_is_student == 0 && getBeneficiarieAge() < 15){               
+                if(getBeneficiarieAge() >= 14 && getBeneficiarieAge() < 15 ){
+                    const foundServices = disableEstudante(true);    
+                    setServicesState(foundServices)
+                }else{
+                    const foundServices = disableEstudante(false)   
+                    setServicesState(foundServices)
+                }                     
+            }
+            else if(getBeneficiarieAge() > 15){
+                const foundServices = disableEstudanteAndRapariga
+                setServicesState(foundServices)
+            }
+            
             const isEdit = intervention && intervention.id;
             let initValues = {};
 
@@ -110,7 +170,8 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                     return e._raw.online_id == intervention.us_id
                 })[0];
 
-                onChangeEntryPoint(intervention.activist_id);
+                onChangeEntryPoint(intervention.entry_point);
+                onChangeUs(intervention.us_id)
 
                 initValues = {
                     areaServicos_id: selService._raw.service_type,
@@ -120,7 +181,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                     result: intervention.result,
                     date: intervention.date,
                     us_id: selUs.online_id,
-                    activist_id: intervention.activist_id,
+                    activist_id: loggedUser.online_id,
                     entry_point: intervention.entry_point,
                     provider: intervention.provider,
                     remarks: intervention.remarks,
@@ -132,7 +193,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
 
             } else {
                 initValues = {
-                    areaServicos_id: loggedUser.entryPoint != undefined ? loggedUser.entryPoint : "",
+                    areaServicos_id: '',
                     service_id: '',
                     beneficiary_id: '',
                     sub_service_id: '',
@@ -155,6 +216,10 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
 
 
     }, [intervention]);
+
+    const getBeneficiarieAge = ()=>{
+        return new Date().getFullYear() - new Date(beneficiarie.date_of_birth).getFullYear();;
+    }
 
     const message = "Este campo é Obrigatório"
 
@@ -203,7 +268,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                     intervention.result = values.result
                     intervention.date = '' + text
                     intervention.us_id = values.us_id
-                    intervention.activist_id = loggedUser.id //values.activist_id
+                    intervention.activist_id = loggedUser.online_id
                     intervention.entry_point = values.entry_point
                     intervention.provider = values.provider
                     intervention.remarks = values.remarks
@@ -270,6 +335,61 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
             }));
     }
 
+    useEffect(()=>{
+        if(organization?.partner_type !==undefined  && (organization?.partner_type==1 || organization?.partner_type==2))
+            {    
+                setClinicalOrCommunityPartner(true);                       
+
+                if(isNewIntervention){
+                    setCurrentInformedProvider(loggedUser?.name+' '+loggedUser?.surname)   
+                    if(loggedUser?.entry_point !== undefined){
+                        onChangeEntryPoint(loggedUser?.entry_point);
+                    }
+                    if(organization?.partner_type==1){
+                        setInitialValues({
+                            areaServicos_id: '1',
+                            entry_point: loggedUser?.entry_point,
+                            provider: loggedUser?.online_id,
+                        })
+                    }
+                    else if(organization?.partner_type==2){
+                        setInitialValues({
+                            areaServicos_id: '2',
+                            entry_point: loggedUser?.entry_point ,
+                            provider: loggedUser?.online_id,
+                        })
+                    }
+                }
+            }else{
+                setClinicalOrCommunityPartner(false);
+            }       
+    },[ users, organization, loggedUser] )
+
+    useEffect(()=>{        
+        if(isNewIntervention || intervention?.provider==='') {
+            setCurrentInformedProvider("Selecione o Provedor" )
+        }
+        else if (isNumber(intervention?.provider)){
+            const user = users.filter(user=>{
+                return user.online_id == intervention?.provider
+            })[0]
+            setCurrentInformedProvider(user?.name+' '+user?.surname)
+        }
+        else{
+            setCurrentInformedProvider(intervention?.provider+'')
+        }
+        
+        function isNumber(str) {
+            return !isNaN(str);
+        }
+    },[users, intervention]) 
+
+    useEffect(()=>{
+        if(isNewIntervention && isClinicalOrCommunityPartner){
+            setCurrentInformedProvider(loggedUser?.name+' '+loggedUser?.surname) 
+        }
+    },[onChangeUs,beneficiarie])
+
     return (
         <KeyboardAvoidingView>
             <ScrollView>
@@ -306,7 +426,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                                         <FormControl isRequired isInvalid={'areaServicos_id' in errors}>
                                             <FormControl.Label>Área de Serviços</FormControl.Label>
                                             <Picker
-                                                enabled={false}
+                                                enabled={isNewIntervention && !isClinicalOrCommunityPartner}
                                                 style={styles.dropDownPickerDisabled}
                                                 selectedValue={values.areaServicos_id}
                                                 onValueChange={(itemValue, itemIndex) => {
@@ -342,7 +462,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                                                 }>
                                                 <Picker.Item label="-- Seleccione o Serviço --" value="0" />
                                                 {
-                                                    services.filter((e) => {
+                                                    servicesState.filter((e) => {
                                                         return e.service_type == values.areaServicos_id
                                                     }
                                                     ).map(item => (
@@ -475,7 +595,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                                                     accessible={true}
                                                     cancelButtonAccessibilityLabel={'Cancel Button'}
                                                     onChange={(option) => { setSelectedUser(`${option.name} ${option.surname}`); setFieldValue('provider', option.online_id); }}>
-                                                    <Input type='text' onBlur={handleBlur('provider')} placeholder="Selecione o Provedor" onChangeText={handleChange('provider')} value={selectedUser} />
+                                                    <Input type='text' onBlur={handleBlur('provider')} placeholder={currentInformedProvider}  onChangeText={handleChange('provider')} value={selectedUser} />
                                                 </ModalSelector> :
                                                 <Input onBlur={handleBlur('provider')} placeholder="Insira o Nome do Provedor" onChangeText={handleChange('provider')} value={values.provider} />
                                             }

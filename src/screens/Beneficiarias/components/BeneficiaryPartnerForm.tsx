@@ -45,6 +45,9 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
     const [localities, setLocalities] = useState<any>([]);
     const [uss, setUss] = useState<any>([]);
     const [neighborhoods, setNeighborhoods] = useState<any>([]);
+    const [isEnable, setIsEnable] = useState(true);
+    const [isDisEnable, setIsDisEnable] = useState(true);
+    const [isProvEnable, setIsProvEnable] = useState(true);
     const [isDatePickerVisible2, setIsDatePickerVisible2] = useState(false);
     const [datePickerValue2, setDatePickerValue2] = useState<any>(new Date());
     const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
@@ -67,8 +70,45 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
         const fetchProvincesData = async () => {
             const getProvsList = await database.get('provinces').query().fetch();
             const provSerialized = getProvsList.map(item => item._raw);
+
             setProvinces(provSerialized);
+
+            if( loggedUser?.provinces[0]?.id != undefined){
+                const getDistList = await database.get('districts').query(
+                    Q.where('province_id', loggedUser?.provinces[0]?.id )
+                ).fetch();
+                const distsSerialized = getDistList.map(item => item._raw);
+                setDistricts(distsSerialized);
+
+                loggedUser?.provinces?.length > 1 ? setIsProvEnable(true) : setIsProvEnable(false);
+            }
+
+            if( loggedUser?.districts[0]?.id != undefined){
+                const getDistList = await database.get('districts').query(
+                    Q.where('province_id', loggedUser?.provinces[0]?.id )
+                ).fetch();
+                const distsSerialized = getDistList.map(item => item._raw);
+                setDistricts(distsSerialized);
+
+                loggedUser?.districts?.length > 1 ? setIsDisEnable(true) : setIsDisEnable(false);
+
+                const getLocList = await database.get('localities').query( Q.where('district_id', loggedUser.districts[0].id )).fetch();                              
+                    const locsSerialized = getLocList.map(item => item._raw);
+                    setLocalities(locsSerialized);
+
+                if( loggedUser?.localities[0]?.id != undefined){                    
+
+                    const getNeiList = await database.get('neighborhoods').query(
+                        Q.where('locality_id', Number(loggedUser?.localities[0]?.id))
+                    ).fetch();
+                    const neiSerialized = getNeiList.map(item => item._raw);
+                    setNeighborhoods(neiSerialized);
+
+                    loggedUser?.districts?.length > 1 ? setIsEnable(true) : ( loggedUser?.localities?.length > 1 ? setIsEnable(true) : setIsEnable(false));
+                }
+            }
         }
+
 
         fetchProvincesData().catch(error => console.log(error));
 
@@ -120,11 +160,11 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
             name: beneficiarie?.name,
             date_of_birth: beneficiarie?.date_of_birth,
             age: calculateAge(beneficiarie?.date_of_birth),
-            nationality: beneficiarie?.nationality+"",
+            nationality: beneficiarie?.nationality === undefined ? "1" : beneficiarie?.nationality+"",
             enrollment_date: beneficiarie?.enrollment_date,
-            province: beneficiarie?.province_id,
-            district: beneficiarie?.district_id,
-            locality: beneficiarie?.locality_id,
+            province: beneficiarie?.province_id === undefined ? loggedUser?.provinces[0]?.id : beneficiarie?.province_id,
+            district: beneficiarie?.district_id === undefined ? loggedUser?.districts[0]?.id : beneficiarie?.district_id,
+            locality: beneficiarie?.locality_id === undefined ? loggedUser?.localities[0]?.id : beneficiarie?.locality_id,
             locality_name: beneficiarie?.locality_name,
             entry_point: beneficiarie?.entry_point,
             us_id: beneficiarie?.us_id,
@@ -568,6 +608,8 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                                 <FormControl isRequired isInvalid={'nationality' in formik.errors}>
                                     <FormControl.Label>Nacionalidade</FormControl.Label>
                                     <Picker
+                                        enabled={false}
+                                        style={styles.dropDownPickerDisabled}
                                         selectedValue={formik.values.nationality}
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
@@ -615,6 +657,8 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                                 <FormControl isRequired isInvalid={'province' in formik.errors}>
                                     <FormControl.Label>Provincia</FormControl.Label>
                                     <Picker
+                                        enabled={isProvEnable}
+                                        style={styles.dropDownPickerDisabled}
                                         selectedValue={formik.values.province}
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
@@ -637,6 +681,8 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                                 <FormControl isRequired isInvalid={'district' in formik.errors}>
                                     <FormControl.Label>Distrito</FormControl.Label>
                                     <Picker
+                                        enabled={isDisEnable}
+                                        style={styles.dropDownPickerDisabled}
                                         selectedValue={formik.values.district}
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
@@ -660,6 +706,8 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                                 <FormControl isRequired isInvalid={'locality' in formik.errors}>
                                     <FormControl.Label>Posto Administrativo</FormControl.Label>
                                     <Picker
+                                        enabled={isEnable}
+                                        style={styles.dropDownPickerDisabled}
                                         selectedValue={formik.values.locality}
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
