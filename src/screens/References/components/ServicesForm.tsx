@@ -19,6 +19,9 @@ import { Context } from '../../../routes/DrawerNavigator';
 import Beneficiaries_interventions, { BeneficiariesInterventionsModel } from '../../../models/Beneficiaries_interventions';
 
 import styles from './styles';
+import { sync } from '../../../database/sync';
+import { ErrorHandler, SuccessHandler } from '../../../components/SyncIndicator';
+import { ErrorHandlerInterventionAlreadyExists } from '../../../components/General';
 
 const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     const { beneficiarie, intervention } = route.params;
@@ -135,6 +138,28 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
 
         return errors;
     }
+            
+    const validateBeneficiaryIntervention = async (values: any) => {
+        
+        const benefInterv = await database.get('beneficiaries_interventions').query(
+            Q.where('beneficiary_id', parseInt(initialVal.beneficiary_id)),
+            Q.where('sub_service_id', parseInt(values.sub_service_id)),
+            Q.where('date','' + text)
+        ).fetch();
+
+        const benefIntervSerialied = benefInterv.map(item => item._raw);
+
+        if(benefIntervSerialied.length>0){
+             () => toast.show({
+                placement: "top",
+                render: () => {
+                    return (<ErrorHandlerInterventionAlreadyExists />);
+                }})
+        }else{
+            onSubmit(values)
+        }
+
+    }
 
     const onSubmit = async (values: any) => {
   
@@ -197,6 +222,23 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
             merge: true,
         });*/
 
+        syncronize();
+    }
+
+    const syncronize = () => {
+        sync({username: loggedUser.username})
+                .then(() => toast.show({
+                                placement: "top",
+                                render:() => {
+                                    return (<SuccessHandler />);
+                                }
+                            }))
+                .catch(() => toast.show({
+                                placement: "top",
+                                render:() => {
+                                    return (<ErrorHandler />);
+                                }
+                            }))
     }
 
     const getPartner = async() => {
@@ -261,7 +303,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                                 </HStack>
                             </Alert>
                             <Formik initialValues={initialValues}
-                                onSubmit={onSubmit} validate={validate} enableReinitialize={true}>
+                                onSubmit={validateBeneficiaryIntervention} validate={validate} enableReinitialize={true}>
                                 {({
                                     handleChange,
                                     handleBlur,
