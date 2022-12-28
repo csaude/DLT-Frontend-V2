@@ -20,6 +20,11 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
   const [entryPointEnabled, setEntryPointEnabled] = useState(true);
   const [serviceTypes, setServiceTypes] = useState<any>([]);
   const [serviceTypeEnabled, setServiceTypeEnabled] = useState(false);
+  const [status, setStatus] = useState<any>([]);
+  const [cancelReasons, setCancelReasons] = useState<any>([]);
+  const [statusEnabled, setStatusEnabled] = useState(false);
+  const [cancelReasonEnabled, setCancelReasonEnabled] = useState(false);
+  const [otherReasonEnabled, setOtherReasonEnabled] = useState(false);
   const selectedReference = beneficiary;
   let userId = localStorage.getItem('user');
 
@@ -36,6 +41,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
       const referers = await allUsersByProfilesAndUser(payload);
       setReferers(referers);
 
+      setStatus([{ value: '0', label: "Activo" }, { value: '3', label: "Cancelado" }]);
       if (reference === undefined) {
         form.setFieldsValue({ referenceNote: 
                               ('REFDR' + String(userId).padStart(3, '0') + String(beneficiary.locality.district.province.id) + String(((await queryByCreated(localStorage.user))?.length)+ 1).padStart(3, '0'))
@@ -45,6 +51,8 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
         const regUser = await query(reference?.createdBy);
         form.setFieldsValue({ createdBy: regUser?.name + ' ' + regUser?.surname });
         form.setFieldsValue({ referenceNote: reference.referenceNote});
+
+        setStatusEnabled(reference.userCreated === userId || ![4,5].includes(loggedUser.profiles.id));
       }
 
       const partnerType = loggedUser.partners.partnerType;
@@ -68,12 +76,20 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
 
     let orgType = form.getFieldValue('serviceType');
     let refer = form.getFieldValue('referTo');
+    let status = form.getFieldValue('status');
+    let cancelReason = form.getFieldValue('cancelReason');
     if (refer !== '' && refer !== undefined) {
 
       onChangeEntryPoint(refer);
     }
     if (orgType !== '' && orgType !== undefined) {
       onChangeTipoServico(orgType);
+    }
+    if (status !== undefined) {
+      onChangeStatus(status);
+    }
+    if (cancelReason !== undefined) {
+      onChangeCancelReason(cancelReason)
     }
 
   }, []);
@@ -138,6 +154,32 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
   const onChangeUs = async (value: any) => {
     const data = await allUsesByUs(value);
     setUsers(data);
+  }
+
+  const onChangeStatus =async (e:any) => {
+    if (e === '0') {
+      setCancelReasons([]);
+      setCancelReasonEnabled(false);
+      form.setFieldsValue({ cancelReason: undefined });
+    } else {
+      setCancelReasons([{ "id": '1', "name": "Serviço nã provido nos últimos 6 meses" }, 
+                       { "id": '2', "name": "Beneficiária não encontrada" }, 
+                       { "id": '3', "name": "Abandono" },
+                       { "id": '4', "name": "Beneficiária recusou o serviço" },
+                       { "id": '5', "name": "Outro Motivo" }
+                      ]);
+      setCancelReasonEnabled(true);
+    }
+  }
+
+  const onChangeCancelReason =async (e:any) => {
+    console.log(e);
+    if (e === '5') {
+      setOtherReasonEnabled(true);
+    } else {
+      setOtherReasonEnabled(false);
+      form.setFieldsValue({ otherReason: undefined });
+    }   
   }
 
   return (
@@ -281,6 +323,46 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
             initialValue={reference === undefined ? "" : reference?.remarks}
           >
             <TextArea rows={2} placeholder="Observações" maxLength={600} />
+          </Form.Item>
+        </Col>
+      </Row>
+      <Row gutter={8}>
+        <Col span={8}>
+          <Form.Item
+            name="status"
+            label="Estado"
+            rules={[{ required: true, message: 'Obrigatório' }]}
+            initialValue={reference === undefined ? "0" : reference?.status?.toString()}
+          >
+            <Select disabled={!statusEnabled} onChange={onChangeStatus}>
+              {status?.map(item => (
+                <Option key={item.value}>{item.label}</Option>
+              ))}
+            </Select>
+          </Form.Item>
+        </Col>
+        <Col span={8}>
+          <Form.Item
+            name="cancelReason"
+            label="Motivo de Cancelamento"
+            rules={[{ required: cancelReasonEnabled, message: 'Obrigatório' }]}
+            initialValue={reference === undefined ? "" : reference?.cancelReason?.toString()}
+          >
+            <Select placeholder="Motivo Cancelamento" disabled={!cancelReasonEnabled} onChange={onChangeCancelReason}>
+              {cancelReasons?.map(item => (
+                <Option key={item.id}>{item.name}</Option>
+              ))}
+            </Select>
+          </Form.Item>
+        </Col>
+        <Col span={8}>
+          <Form.Item
+            name="otherReason"
+            label="Outro Motivo"
+            rules={[{ required: otherReasonEnabled, message: 'Obrigatório' }]}
+            initialValue={reference === undefined ? "" : reference?.otherReason}
+          >
+            <TextArea rows={2} placeholder="Motivo" maxLength={600} disabled={!otherReasonEnabled} />
           </Form.Item>
         </Col>
       </Row>
