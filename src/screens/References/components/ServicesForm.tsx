@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext} from 'react';
 import {
     View, KeyboardAvoidingView, ScrollView
 } from 'react-native';
@@ -21,7 +21,6 @@ import Beneficiaries_interventions, { BeneficiariesInterventionsModel } from '..
 import styles from './styles';
 import { sync } from '../../../database/sync';
 import { ErrorHandler, SuccessHandler } from '../../../components/SyncIndicator';
-import { ErrorHandlerInterventionAlreadyExists } from '../../../components/General';
 
 const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     const { beneficiarie, intervention } = route.params;
@@ -150,11 +149,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
         const benefIntervSerialied = benefInterv.map(item => item._raw);
 
         if(benefIntervSerialied.length>0){
-             () => toast.show({
-                placement: "top",
-                render: () => {
-                    return (<ErrorHandlerInterventionAlreadyExists />);
-                }})
+             toast.show({ placement: "top", title: "Beneficiário já tem esta intervenção para esta data ! " });
         }else{
             onSubmit(values)
         }
