@@ -12,11 +12,16 @@ import StepperButton from './components/StapperButton';
 import styles from './styles';
 import { sync } from '../../database/sync';
 import { SuccessHandler, ErrorHandler } from "../../components/SyncIndicator";
+import { getUserParams } from '../../models/Utils';
 
 
 const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries_interventions }: any) => {
     const [showModal, setShowModal] = useState(false);
     const [searchField, setSearchField] = useState('');
+    const [neighborhoods, setNeighborhoods] = useState<any>([])
+    const [ provinces, setProvinces ] = useState<any>([])
+    const [ districts, setDistricts ] = useState<any>([])
+    const [localities, setLocalities ] = useState<any>([])
     const loggedUser: any = useContext(Context);
     const toast = useToast();
 
@@ -196,9 +201,86 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
         setSearchField(e);
     };
 
-    const filteredBeneficiaries = beneficiaries.filter(beneficiarie =>
-        (beneficiarie.name + ' ' + beneficiarie.surname).toLowerCase().includes(searchField.toLowerCase())
-    )
+    let filteredBeneficiaries ;
+
+    const getUserBeneficiaries = async () =>{        
+        const parms = getUserParams(loggedUser);
+
+        const mountProvinces = async () =>{
+            const provincesQ = await database.get('province').query(
+                                                                Q.where('online_id', Q.oneOf(parms.params))
+                                                        ).fetch();
+                const provincesSerializable = provincesQ.map((e) => {
+                    return e._raw;
+                });
+                setProvinces(provincesSerializable);
+        }
+
+        const mountDistricts = async (cascade) =>{
+            const attribute = cascade ? 'province_id' : 'online_id'
+            const arg = cascade ? provinces : parms.params
+
+            const districtsQ = await database.get('district').query(
+                                                                Q.where(attribute, Q.oneOf(arg))
+                                                        ).fetch();
+                const districtsSerializable = districtsQ.map((e) => {
+                    return e._raw;
+                });
+                setDistricts(districtsSerializable);
+        }
+
+        const mountLocalities = async (cascade) =>{
+
+            const attribute =  cascade ? 'district_id' : 'online_id'
+            const arg = cascade ? districts : parms.params
+
+            const localitiesQ = await database.get('locality').query(
+                                                                Q.where('district_id', Q.oneOf(arg))
+                                                        ).fetch();
+                const localitiesSerializable = localitiesQ.map((e) => {
+                    return e._raw;
+                });
+                setLocalities(localitiesSerializable);
+        }
+
+        const mountNeighborhoods = async()=>{
+            const neighborhoodsQ = await database.get('neighborhood').query(
+                                                                Q.where('online_id', Q.oneOf(localities))
+                                                        ).fetch();
+                const neighborhoodsSerializable = neighborhoodsQ.map((e) => {
+                    return e._raw;
+                });
+                setNeighborhoods(neighborhoodsSerializable)  
+        }
+
+        if (parms.level==="CENTRAL") {
+            filteredBeneficiaries = beneficiaries.filter(beneficiarie => (beneficiarie.name + ' ' + beneficiarie.surname).toLowerCase().includes(searchField.toLowerCase())
+        )} 
+        else {
+            if (parms.level === "PROVINCIAL"){
+                mountProvinces()
+                mountDistricts(true)
+                mountLocalities(true) 
+                mountNeighborhoods()                          
+            } 
+            else if (parms.level === "DISTRITAL"){
+                mountDistricts(false)
+                mountLocalities(true) 
+                mountNeighborhoods()                 
+            } 
+            else{
+                mountLocalities(false) 
+                mountNeighborhoods() 
+            }       
+
+            beneficiaries = beneficiaries.filter(beneficiary=>neighborhoods.contains(beneficiary.neighborhood))
+            filteredBeneficiaries = beneficiaries.filter(beneficiarie => (beneficiarie.name + ' ' + beneficiarie.surname).toLowerCase().includes(searchField.toLowerCase()))
+        }    
+    }
+
+    useEffect(()=>{
+        getUserBeneficiaries()
+    },[])
 
     return (
         <>
