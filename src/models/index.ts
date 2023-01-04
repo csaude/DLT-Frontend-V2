@@ -13,8 +13,9 @@ import Province from './Province'
 import District from './District'
 import References_Services from './References_Services'
 import Sequences from './Sequences'
+import UserDetails from './UserDetails'
 
 export const dbModels = [Locality, Province, District, Partner, Profile, Us, User, 
                         Beneficiaries, Services, Sub_services,
                         Neighborhoods, 
-                        Beneficiaries_interventions, References, References_Services, Sequences];
+                        Beneficiaries_interventions, References, References_Services, Sequences, UserDetails];
