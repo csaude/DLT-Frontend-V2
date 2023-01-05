@@ -12,8 +12,6 @@ import StepperButton from './components/StapperButton';
 import styles from './styles';
 import { sync } from '../../database/sync';
 import { SuccessHandler, ErrorHandler } from "../../components/SyncIndicator";
-import { getUserParams } from '../../models/Utils';
-
 
 const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries_interventions }: any) => {
     const [showModal, setShowModal] = useState(false);
@@ -22,8 +20,10 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
     const [ provinces, setProvinces ] = useState<any>([])
     const [ districts, setDistricts ] = useState<any>([])
     const [localities, setLocalities ] = useState<any>([])
+    const [userState, setUserState] = useState<any>()
     const loggedUser: any = useContext(Context);
     const toast = useToast();
+    var params;
 
     const syncronize = () => {
         sync({ username: loggedUser.username })
@@ -201,14 +201,9 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
         setSearchField(e);
     };
 
-    let filteredBeneficiaries ;
-
-    const getUserBeneficiaries = async () =>{        
-        const parms = getUserParams(loggedUser);
-
-        const mountProvinces = async () =>{
+    const mountProvinces = async () =>{
             const provincesQ = await database.get('province').query(
-                                                                Q.where('online_id', Q.oneOf(parms.params))
+                                                                Q.where('online_id', Q.oneOf(params))
                                                         ).fetch();
                 const provincesSerializable = provincesQ.map((e) => {
                     return e._raw;
@@ -218,7 +213,7 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
 
         const mountDistricts = async (cascade) =>{
             const attribute = cascade ? 'province_id' : 'online_id'
-            const arg = cascade ? provinces : parms.params
+            const arg = cascade ? provinces : params
 
             const districtsQ = await database.get('district').query(
                                                                 Q.where(attribute, Q.oneOf(arg))
@@ -232,7 +227,7 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
         const mountLocalities = async (cascade) =>{
 
             const attribute =  cascade ? 'district_id' : 'online_id'
-            const arg = cascade ? districts : parms.params
+            const arg = cascade ? districts : params
 
             const localitiesQ = await database.get('locality').query(
                                                                 Q.where('district_id', Q.oneOf(arg))
@@ -252,18 +247,43 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
                 });
                 setNeighborhoods(neighborhoodsSerializable)  
         }
+ 
+    const findDetails = async () =>{
+        const userDetails = await database.get('user_details').query(
+            Q.where('user_id', parseInt(loggedUser?.online_id))
+        ).fetch();
+        setUserState(userDetails[0]?._raw)
+    }
+    let filteredBeneficiaries ;
 
-        if (parms.level==="CENTRAL") {
+    const getUserBeneficiaries = async () =>{   
+        
+        var level;
+        if (userState?.provinces?.length === 0) {
+            level = "CENTRAL";
+            params = [];
+        } else if (userState?.districts?.length === 0) {
+            level = "PROVINCIAL";
+            params = userState?.provinces//.map(p => p.id);
+        } else if (userState?.localities?.length === 0) {
+            level = "DISTRITAL";
+            params = userState?.districts//?.map(d => d.id);
+        } else {
+            level = "LOCAL";
+            params = userState?.localities//?.map(l => l.id);
+        }    
+  
+        if (level==="CENTRAL") {
             filteredBeneficiaries = beneficiaries.filter(beneficiarie => (beneficiarie.name + ' ' + beneficiarie.surname).toLowerCase().includes(searchField.toLowerCase())
         )} 
         else {
-            if (parms.level === "PROVINCIAL"){
+            if (level === "PROVINCIAL"){
                 mountProvinces()
                 mountDistricts(true)
                 mountLocalities(true) 
                 mountNeighborhoods()                          
             } 
-            else if (parms.level === "DISTRITAL"){
+            else if (level === "DISTRITAL"){
                 mountDistricts(false)
                 mountLocalities(true) 
                 mountNeighborhoods()                 
@@ -279,8 +299,12 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
     }
 
     useEffect(()=>{
+        findDetails()
+    },[loggedUser])    
+
+    useEffect(()=>{
         getUserBeneficiaries()
-    },[])
+    },[userState])
 
     return (
         <>
