@@ -19,7 +19,7 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
     const [neighborhoods, setNeighborhoods] = useState<any>([])
     const [ districts, setDistricts ] = useState<any>([])
     const [localities, setLocalities ] = useState<any>([])
-    const [userState, setUserState] = useState<any>()
+    const [userDetails, setUserDetails] = useState<any>()
     const loggedUser: any = useContext(Context);
     const toast = useToast();
 
@@ -208,18 +208,18 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
         const userDetails = await userDetailsCollection.query(
             Q.where('user_id', parseInt(loggedUser?.online_id))
         ).fetch();
-        setUserState(userDetails[0]?._raw)
+        setUserDetails(userDetails[0]?._raw)
     }
     let filteredBeneficiaries ;
 
     const getUserBeneficiaries = async () =>{   
-        if (userState?.provinces?.length === 0) {
+        if (userDetails?.provinces?.length === 0) {
             //"CENTRAL"
             filteredBeneficiaries = beneficiaries.filter(beneficiarie => (beneficiarie.name + ' ' + beneficiarie.surname).toLowerCase().includes(searchField.toLowerCase()))
         
-        } else if (userState?.districts?.length === 0) {
+        } else if (userDetails?.districts?.length === 0) {
             //"PROVINCIAL";
-            const districtsQ = await districtCollection.query(Q.where('province_id', Q.oneOf(userState?.provinces))).fetch();
+            const districtsQ = await districtCollection.query(Q.where('province_id', Q.oneOf(userDetails?.provinces))).fetch();
             const districtsSerializable = districtsQ.map((e) => {return e._raw;});
             setDistricts(districtsSerializable);
 
@@ -233,13 +233,13 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
             const neiBeneficiaries = beneficiaries.filter(beneficiary=>neighborhoods.includes(beneficiary.neighborhood))
 
             filteredBeneficiaries = neiBeneficiaries.filter(beneficiarie => (beneficiarie.name + ' ' + beneficiarie.surname).toLowerCase().includes(searchField.toLowerCase()))
-        } else if (userState?.localities?.length === 0) {
+        } else if (userDetails?.localities?.length === 0) {
             //"DISTRITAL";
-            const localitiesQ = await localityCollection.query(Q.where('district_id', Q.oneOf(userState?.districts))).fetch();
+            const localitiesQ = await localityCollection.query(Q.where('district_id', Q.oneOf(userDetails?.districts))).fetch();
             const localitiesSerializable = localitiesQ.map((e) => { return e._raw;});
             setLocalities(localitiesSerializable);
 
-            const neighborhoodsQ = await neighborhoodCollection.query(Q.where('online_id', Q.oneOf(userState?.localities))).fetch();
+            const neighborhoodsQ = await neighborhoodCollection.query(Q.where('online_id', Q.oneOf(userDetails?.localities))).fetch();
             const neighborhoodsSerializable = neighborhoodsQ.map((e) => { return e._raw; });
             setNeighborhoods(neighborhoodsSerializable)
             const neiBeneficiaries = beneficiaries.filter(beneficiary=>neighborhoods.includes(beneficiary.neighborhood))
@@ -267,7 +267,7 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
 
     useEffect(()=>{
         getUserBeneficiaries()
-    },[userState])
+    },[userDetails])
 
     return (
         <>
