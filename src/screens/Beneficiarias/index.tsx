@@ -16,18 +16,9 @@ import { SuccessHandler, ErrorHandler } from "../../components/SyncIndicator";
 const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries_interventions }: any) => {
     const [showModal, setShowModal] = useState(false);
     const [searchField, setSearchField] = useState('');
-    const [neighborhoods, setNeighborhoods] = useState<any>([])
-    const [ districts, setDistricts ] = useState<any>([])
-    const [localities, setLocalities ] = useState<any>([])
-    const [userDetails, setUserDetails] = useState<any>()
+    const [userBeneficiaries, setUserBeneficiaries] = useState<any>([]);
     const loggedUser: any = useContext(Context);
     const toast = useToast();
-
-    const districtCollection = database.get('districts')
-    const localityCollection = database.get('localities')
-    const neighborhoodCollection = database.get('neighborhoods')
-    const userDetailsCollection = database.get('user_details')
-
     const syncronize = () => {
         sync({ username: loggedUser.username })
             .then(() => toast.show({
@@ -203,72 +194,78 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
 
         setSearchField(e);
     };
+    
+    const getUserBeneficiaries = async () =>{
+        const districtCollection = database.get('districts')
+        const localityCollection = database.get('localities')
+        const neighborhoodCollection = database.get('neighborhoods')
+        const userDetailsCollection = database.get('user_details')
+        const beneficiariesCollection = database.get("beneficiaries")
 
-    const findDetails = async () =>{
-        const userDetails = await userDetailsCollection.query(
-            Q.where('user_id', parseInt(loggedUser?.online_id))
-        ).fetch();
-        setUserDetails(userDetails[0]?._raw)
-    }
-    let filteredBeneficiaries ;
+        const userDetailsQ = await userDetailsCollection.query(
+                Q.where('user_id', parseInt(loggedUser?.online_id))
+            ).fetch();
+        const userDetailsRaw = userDetailsQ[0]?._raw
 
-    const getUserBeneficiaries = async () =>{   
-        if (userDetails?.provinces?.length === 0) {
-            //"CENTRAL"
-            filteredBeneficiaries = beneficiaries.filter(beneficiarie => (beneficiarie.name + ' ' + beneficiarie.surname).toLowerCase().includes(searchField.toLowerCase()))
-        
-        } else if (userDetails?.districts?.length === 0) {
-            //"PROVINCIAL";
-            const districtsQ = await districtCollection.query(Q.where('province_id', Q.oneOf(userDetails?.provinces))).fetch();
-            const districtsSerializable = districtsQ.map((e) => {return e._raw;});
-            setDistricts(districtsSerializable);
-
-            const localitiesQ = await localityCollection.query(Q.where('district_id', Q.oneOf(districts))).fetch();
-            const localitiesSerializable = localitiesQ.map((e) => { return e._raw;});
-            setLocalities(localitiesSerializable);
-
-            const neighborhoodsQ = await neighborhoodCollection.query(Q.where('online_id', Q.oneOf(localities))).fetch();
-            const neighborhoodsSerializable = neighborhoodsQ.map((e) => { return e._raw; });
-            setNeighborhoods(neighborhoodsSerializable)
-            const neiBeneficiaries = beneficiaries.filter(beneficiary=>neighborhoods.includes(beneficiary.neighborhood))
-
-            filteredBeneficiaries = neiBeneficiaries.filter(beneficiarie => (beneficiarie.name + ' ' + beneficiarie.surname).toLowerCase().includes(searchField.toLowerCase()))
-        } else if (userDetails?.localities?.length === 0) {
-            //"DISTRITAL";
-            const localitiesQ = await localityCollection.query(Q.where('district_id', Q.oneOf(userDetails?.districts))).fetch();
-            const localitiesSerializable = localitiesQ.map((e) => { return e._raw;});
-            setLocalities(localitiesSerializable);
-
-            const neighborhoodsQ = await neighborhoodCollection.query(Q.where('online_id', Q.oneOf(userDetails?.localities))).fetch();
-            const neighborhoodsSerializable = neighborhoodsQ.map((e) => { return e._raw; });
-            setNeighborhoods(neighborhoodsSerializable)
-            const neiBeneficiaries = beneficiaries.filter(beneficiary=>neighborhoods.includes(beneficiary.neighborhood))
-
-            filteredBeneficiaries = neiBeneficiaries.filter(beneficiarie => (beneficiarie.name + ' ' + beneficiarie.surname).toLowerCase().includes(searchField.toLowerCase()))
-        } else {
-            //"LOCAL";
-            // console.log('---------Array.from(userState?.localities)---------',Array.from(userState?.localities))
-
-            const neighborhoodsQ = await neighborhoodCollection.query(
-                Q.where('locality_id', Q.oneOf([17,7,60]))
-                ).fetch();            
-            const neighborhoodsRaws = neighborhoodsQ.map((e) => { return e._raw.online_id; });
-            const beneficiariesRaws = beneficiaries.map(e =>{return e._raw})
-            const neiBeneficiaries = beneficiariesRaws.filter(beneficiary=>{return neighborhoodsRaws.includes(beneficiary.neighborhood_id)})
+        if (userDetailsRaw?.provinces?.length === 0) {
+                //"CENTRAL"
+                setUserBeneficiaries(beneficiaries)     
+            } else if (userDetailsRaw?.districts?.length === 0) {
+                //"PROVINCIAL";
+                const districtsQ = await districtCollection.query(Q.where('province_id', Q.oneOf(userDetailsRaw?.provinces))).fetch();
+                const districts = districtsQ.map((e) => {return e._raw.online_id;});
             
-            filteredBeneficiaries = neiBeneficiaries.filter(beneficiarie => (beneficiarie.name + ' ' + beneficiarie.surname).toLowerCase().includes(searchField.toLowerCase()))
-            console.log('---------------filteredBeneficiaries--',filteredBeneficiaries)
-        }      
-    }
+                const localitiesQ = await localityCollection.query(Q.where('district_id', Q.oneOf(districts))).fetch();
+                const localities = localitiesQ.map((e) => { return e._raw.online_id;});
+            
+                const neighborhoodsQ = await neighborhoodCollection.query(
+                    Q.where('locality_id', Q.oneOf(localities))
+                    ).fetch();            
+                const neighborhoodsRaws = neighborhoodsQ.map((e) => { return e._raw.online_id; });
 
-    useEffect(()=>{
-        findDetails()
-    },[loggedUser])    
+                const neiBeneficiaries = await beneficiariesCollection.query(
+                    Q.where('neighborhood_id',Q.oneOf(neighborhoodsRaws))
+                ).fetch()
+                setUserBeneficiaries(neiBeneficiaries)             
+            } else if (userDetailsRaw?.localities?.length === 0) {
+                //"DISTRITAL";
+                const localitiesQ = await localityCollection.query(Q.where('district_id', Q.oneOf(userDetailsRaw?.districts))).fetch();
+                const localities = localitiesQ.map((e) => { return e._raw.online_id;});
+
+                const neighborhoodsQ = await neighborhoodCollection.query(
+                    Q.where('locality_id', Q.oneOf(localities))
+                    ).fetch();            
+                const neighborhoodsRaws = neighborhoodsQ.map((e) => { return e._raw.online_id; });
+                const neiBeneficiaries = await beneficiariesCollection.query(
+                    Q.where('neighborhood_id',Q.oneOf(neighborhoodsRaws))
+                ).fetch()
+                setUserBeneficiaries(neiBeneficiaries)              
+            } else {
+                //"LOCAL";
+                const locArray = userDetailsRaw?.localities
+                console.log('---------locArray---------',locArray)
+
+                const neighborhoodsQ = await neighborhoodCollection.query(
+                    Q.where('locality_id', Q.oneOf(locArray))
+                    ).fetch();
+                const neighborhoodsRaws = neighborhoodsQ.map((e) => { return e._raw.online_id; });
+                console.log('-------vizinhanca-------',neighborhoodsRaws.length)
+
+                const neiBeneficiaries = await beneficiariesCollection.query(
+                    Q.where('neighborhood_id',Q.oneOf(neighborhoodsRaws))
+                ).fetch()
+                setUserBeneficiaries(neiBeneficiaries)
+                console.log('--------nei beneficiary-----------',neiBeneficiaries.map(e=>{return e._raw}).length)
+                console.log('--------observ beneficiary-----------',beneficiaries.map(e=>{return e._raw}).length)
+            }  
+    }
 
     useEffect(()=>{
         getUserBeneficiaries()
-    },[userDetails])
+    },[])
 
+    const filteredBeneficiaries = userBeneficiaries?.filter(beneficiarie => (beneficiarie.name + ' ' + beneficiarie.surname).toLowerCase().includes(searchField.toLowerCase()))
+       
     return (
         <>
             <View style={styles.container}>
