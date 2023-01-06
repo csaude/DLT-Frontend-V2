@@ -267,10 +267,10 @@ const Login: React.FC = () => {
         
         await database.write(async () => {
             await userDetails.create((userDetail: any) => {
-                userDetail.user_id = user.id;
-                userDetail.provinces = JSON.stringify(provinces_ids);
-                userDetail.districts = JSON.stringify(district_ids);
-                userDetail.localities = JSON.stringify(localities_ids);
+                userDetail.user_id = user.id
+                userDetail.provinces = provinces_ids.toString();;
+                userDetail.districts = district_ids.toString();;
+                userDetail.localities = localities_ids.toString();;
             });
         })
     }
