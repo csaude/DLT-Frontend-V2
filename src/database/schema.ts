@@ -234,5 +234,15 @@ export default appSchema({
           {name: 'online_id', type: 'string', isOptional: true}
         ],
       }),
+      tableSchema({
+        name: 'user_details',
+        columns: [
+          {name: 'provinces', type: "string" },
+          {name: 'districts',type: "string"},
+          {name: 'localities', type: 'string'},
+          {name: 'uss', type: 'string'},
+          {name: 'user_id', type: 'number', isIndexed: true}
+        ],
+      }),
     ], 
 });

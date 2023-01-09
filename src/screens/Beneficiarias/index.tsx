@@ -13,13 +13,12 @@ import styles from './styles';
 import { sync } from '../../database/sync';
 import { SuccessHandler, ErrorHandler } from "../../components/SyncIndicator";
 
-
 const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries_interventions }: any) => {
     const [showModal, setShowModal] = useState(false);
     const [searchField, setSearchField] = useState('');
+    const [userBeneficiaries, setUserBeneficiaries] = useState<any>([]);
     const loggedUser: any = useContext(Context);
     const toast = useToast();
-
     const syncronize = () => {
         sync({ username: loggedUser.username })
             .then(() => toast.show({
@@ -195,11 +194,82 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
 
         setSearchField(e);
     };
+    
+    const getUserBeneficiaries = async () =>{
+        const districtCollection = database.get('districts')
+        const localityCollection = database.get('localities')
+        const neighborhoodCollection = database.get('neighborhoods')
+        const userDetailsCollection = database.get('user_details')
+        const beneficiariesCollection = database.get("beneficiaries")
 
-    const filteredBeneficiaries = beneficiaries.filter(beneficiarie =>
-        (beneficiarie.name + ' ' + beneficiarie.surname).toLowerCase().includes(searchField.toLowerCase())
-    )
+        const userDetailsQ = await userDetailsCollection.query(
+                Q.where('user_id', parseInt(loggedUser?.online_id))
+            ).fetch();
+        const userDetailsRaw = userDetailsQ[0]?._raw
 
+        if (userDetailsRaw?.provinces?.length === 0) {
+                //"CENTRAL"
+                setUserBeneficiaries(beneficiaries)     
+            } else if (userDetailsRaw?.districts?.length === 0) {
+                //"PROVINCIAL";
+                var a = userDetailsRaw?.provinces
+                var b = a.split(',').map(Number);
+
+                const districtsQ = await districtCollection.query(Q.where('province_id', Q.oneOf(b))).fetch();
+                const districtsByProv = districtsQ.map((e) => {return e._raw.online_id;});
+            
+                const localitiesQ = await localityCollection.query(Q.where('district_id', Q.oneOf(districtsByProv))).fetch();
+                const localitiesByDist = localitiesQ.map((e) => { return e._raw.online_id;});
+            
+                const neighborhoodsQ = await neighborhoodCollection.query(
+                    Q.where('locality_id', Q.oneOf(localitiesByDist))
+                    ).fetch();            
+                const neighborhoodsByLoc = neighborhoodsQ.map((e) => { return e._raw.online_id; });
+
+                const beneficiariesByNeighb = await beneficiariesCollection.query(
+                    Q.where('neighborhood_id',Q.oneOf(neighborhoodsByLoc))
+                ).fetch()
+                setUserBeneficiaries(beneficiariesByNeighb)             
+            } else if (userDetailsRaw?.localities?.length === 0) {
+                //"DISTRITAL";
+                var a = userDetailsRaw?.districts
+                var b = a.split(',').map(Number);
+
+                const localitiesQ = await localityCollection.query(Q.where('district_id', Q.oneOf(b))).fetch();
+                const localitiesByDist = localitiesQ.map((e) => { return e._raw.online_id;});
+
+                const neighborhoodsQ = await neighborhoodCollection.query(
+                    Q.where('locality_id', Q.oneOf(localitiesByDist))
+                    ).fetch();            
+                const neighborhoodsByLoc = neighborhoodsQ.map((e) => { return e._raw.online_id; });
+
+                const beneficiariesByNeighb = await beneficiariesCollection.query(
+                    Q.where('neighborhood_id',Q.oneOf(neighborhoodsByLoc))
+                ).fetch()
+                setUserBeneficiaries(beneficiariesByNeighb)              
+            } else {
+                //"LOCAL";
+                var a = userDetailsRaw?.localities
+                var b = a.split(',').map(Number);
+
+                const neighborhoodsQ = await neighborhoodCollection.query(
+                    Q.where('locality_id', Q.oneOf(b))
+                    ).fetch();
+                const neighborhoodsRaws = neighborhoodsQ.map((e) => { return e._raw.online_id; });
+
+                const neiBeneficiaries = await beneficiariesCollection.query(
+                    Q.where('neighborhood_id',Q.oneOf(neighborhoodsRaws))
+                ).fetch()
+                setUserBeneficiaries(neiBeneficiaries)
+            }
+    }
+
+    useEffect(()=>{
+        getUserBeneficiaries()
+    },[])
+
+    const filteredBeneficiaries = userBeneficiaries?.filter(beneficiarie => (beneficiarie.name + ' ' + beneficiarie.surname).toLowerCase().includes(searchField.toLowerCase()))
+       
     return (
         <>
             <View style={styles.container}>

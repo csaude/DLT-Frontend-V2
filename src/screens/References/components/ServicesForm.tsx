@@ -500,7 +500,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
 
                                 </FormControl>
                                 <Button isLoading={loading} isLoadingText="Cadastrando" onPress={handleSubmit} my="10" colorScheme="primary">
-                                    Cadastrar
+                                    Submeter
                                 </Button>
                             </VStack>
                             }
