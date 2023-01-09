@@ -272,7 +272,7 @@ const Login: React.FC = () => {
                 userDetail.provinces = provinces_ids.toString();
                 userDetail.districts = district_ids.toString();
                 userDetail.localities = localities_ids.toString();
-                userDetail.us = uss_ids.toString();
+                userDetail.uss = uss_ids.toString();
             });
         })
     }
