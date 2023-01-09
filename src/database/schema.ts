@@ -240,6 +240,7 @@ export default appSchema({
           {name: 'provinces', type: "string" },
           {name: 'districts',type: "string"},
           {name: 'localities', type: 'string'},
+          {name: 'uss', type: 'string'},
           {name: 'user_id', type: 'number', isIndexed: true}
         ],
       }),

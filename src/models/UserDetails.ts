@@ -6,6 +6,7 @@ export default class UserDetails extends Model {
 
     @text("districts") districts;
     @text("provinces") provinces;
-    @text("localities") localities;     
+    @text("localities") localities;    
+    @text("uss") uss;
     @field("user_id") user_id;   
 }

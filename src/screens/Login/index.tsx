@@ -264,13 +264,15 @@ const Login: React.FC = () => {
         const provinces_ids = user.provinces.map(province=>{return province.id})
         const district_ids = user.districts.map(district=>{return district.id})
         const localities_ids = user.localities.map(locality=>{return locality.id})
+        const uss_ids = user.us.map(us=>{return us.id})
         
         await database.write(async () => {
             await userDetails.create((userDetail: any) => {
                 userDetail.user_id = user.id
-                userDetail.provinces = provinces_ids.toString();;
-                userDetail.districts = district_ids.toString();;
-                userDetail.localities = localities_ids.toString();;
+                userDetail.provinces = provinces_ids.toString();
+                userDetail.districts = district_ids.toString();
+                userDetail.localities = localities_ids.toString();
+                userDetail.us = uss_ids.toString();
             });
         })
     }
