@@ -228,10 +228,6 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
     )
 
     const getUserReferences = async () =>{
-        const referencesCollection = database.get("references")
-
-
-    const getUserReferences = async () =>{
         const userDetailsCollection = database.get('user_details')
         const referencesCollection = database.get("references")
 
