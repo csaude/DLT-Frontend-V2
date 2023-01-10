@@ -226,13 +226,10 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
     const filteredReferences = userReferences?.filter(reference =>
         (getUser(reference.notify_to).name + " " + getUser(reference.notify_to).surname).toLowerCase().includes(searchField.toLowerCase())
     )
-    //console.log(filteredReferences);
 
     const getUserReferences = async () =>{
-        const userDetailsCollection = database.get('user_details')
         const referencesCollection = database.get("references")
 
-        console.log('---loggedUser---',typeof(loggedUser.online_id))
         if(loggedUser?.profile_id == 1 || loggedUser?.profiles ==1 ){
                 setUserReferences(references)    
         }else{
