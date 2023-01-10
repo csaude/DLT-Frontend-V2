@@ -49,6 +49,8 @@ const DadosReferenciaView: React.FC = ({ route }: any) => {
                                 <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}> Data: </Text> {reference.date_created} </Text>
 
                                 <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}> Referente: </Text> {maskName} </Text>
+                                
+                                <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}> Referente: </Text> {beneficiary.name + ' ' + beneficiary.surname} </Text>
 
                                 <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}> Notificar a(o) : </Text> {notify} </Text>
 

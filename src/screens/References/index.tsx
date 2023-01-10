@@ -230,6 +230,11 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
     const getUserReferences = async () =>{
         const referencesCollection = database.get("references")
 
+
+    const getUserReferences = async () =>{
+        const userDetailsCollection = database.get('user_details')
+        const referencesCollection = database.get("references")
+
         if(loggedUser?.profile_id == 1 || loggedUser?.profiles ==1 ){
                 setUserReferences(references)    
         }else{

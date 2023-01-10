@@ -203,7 +203,18 @@ const ReferenceForm: React.FC = ({ route }: any) => {
     const onChangeUs = async (value: any) => {
 
         const getUsersList = await database.get('users').query(
-           Q.where('us_ids', Q.like(`%${value}%`))
+           Q.where('us_ids', Q.like(`%${value}%`)),
+           Q.where('partner_id', formik.values.partner_id)
+        ).fetch();
+        const usersSerialized = getUsersList.map(item => item._raw);
+        setUsers(usersSerialized);
+    }
+
+    const onChangePartner = async (value: any) => {
+
+        const getUsersList = await database.get('users').query(
+           Q.where('us_ids', Q.like(`%${formik.values.us_id}%`)),
+           Q.where('partner_id', value)
         ).fetch();
         const usersSerialized = getUsersList.map(item => item._raw);
         setUsers(usersSerialized);
@@ -372,6 +383,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                                     <FormControl.Label>Tipo de Serviço</FormControl.Label>
                                     <Picker
                                         selectedValue={formik.values.service_type}
+                                        enabled={serviceTypes.length > 1}
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
                                                 formik.setFieldValue('service_type', itemValue);
@@ -398,7 +410,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
                                                 formik.setFieldValue('partner_id', itemValue);
-
+                                                onChangePartner(itemValue);
                                             }
                                         }
                                         }>
