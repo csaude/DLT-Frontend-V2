@@ -36,6 +36,7 @@ const Login: React.FC = () => {
 
     const users = database.collections.get('users');
     const sequences = database.collections.get('sequences');
+    const userDetails = database.collections.get('user_details');
 
     // Inicio Do Reset
 
@@ -225,6 +226,8 @@ const Login: React.FC = () => {
 
                         setToken(response.token);
                         setLoggedUser(response.account);
+
+                        saveUserDatails(response.account)
                     }
                     setLoading(false);
                 })
@@ -256,6 +259,23 @@ const Login: React.FC = () => {
             }
         }
     };
+
+    const saveUserDatails=async (user)=>{
+        const provinces_ids = user.provinces.map(province=>{return province.id})
+        const district_ids = user.districts.map(district=>{return district.id})
+        const localities_ids = user.localities.map(locality=>{return locality.id})
+        const uss_ids = user.us.map(us=>{return us.id})
+        
+        await database.write(async () => {
+            await userDetails.create((userDetail: any) => {
+                userDetail.user_id = user.id
+                userDetail.provinces = provinces_ids.toString();
+                userDetail.districts = district_ids.toString();
+                userDetail.localities = localities_ids.toString();
+                userDetail.uss = uss_ids.toString();
+            });
+        })
+    }
 
     return (
 

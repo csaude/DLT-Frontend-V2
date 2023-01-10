@@ -16,6 +16,7 @@ import styles from './styles';
 
 const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, services, subServices }: any) => {
     const [searchField, setSearchField] = useState('');
+    const [userReferences, setUserReferences] = useState<any>([]);
     const loggedUser: any = useContext(Context);
     const toast = useToast();
 
@@ -222,10 +223,34 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
         setSearchField(e);
     };
 
-    const filteredReferences = references?.filter(reference =>
+    const filteredReferences = userReferences?.filter(reference =>
         (getUser(reference.notify_to).name + " " + getUser(reference.notify_to).surname).toLowerCase().includes(searchField.toLowerCase())
     )
     //console.log(filteredReferences);
+
+    const getUserReferences = async () =>{
+        const userDetailsCollection = database.get('user_details')
+        const referencesCollection = database.get("references")
+
+        console.log('---loggedUser---',typeof(loggedUser.online_id))
+        if(loggedUser?.profile_id == 1 || loggedUser?.profiles ==1 ){
+                setUserReferences(references)    
+        }else{
+                const beneficiariesByUserId = await referencesCollection.query(
+                    Q.or(
+                        Q.where('user_created',loggedUser.online_id.toString()),
+                        Q.where('referred_by',loggedUser.online_id),
+                    ),
+                    Q.where('status',Q.notEq(3))
+                ).fetch()
+                setUserReferences(beneficiariesByUserId) 
+        }        
+    }
+
+    useEffect(()=>{
+        getUserReferences()
+    },[])
+
     return (
         <View style={styles.container}>
             <View style={styles.heading}>
