@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { View, KeyboardAvoidingView, ScrollView, Text } from 'react-native';
 import { Box, Heading, Divider, Avatar, Icon, Flex } from "native-base";
+import { Context } from '../../../routes/DrawerNavigator';
 import { Ionicons } from "@native-base/icons";
 import styles from './styles';
 
 const DadosReferenciaView: React.FC = ({ route }: any) => {
+
+    const loggedUser: any = useContext(Context);
 
     const {
         reference,
@@ -13,6 +16,11 @@ const DadosReferenciaView: React.FC = ({ route }: any) => {
         notify,
         organization
     } = route.params;
+
+    const maskName = loggedUser?.profile_id === 1 || loggedUser?.profile_id === 2 || loggedUser?.profile_id === 3 ||
+                        loggedUser?.profiles?.id === 1 || loggedUser?.profiles?.id === 2 || loggedUser?.profiles?.id === 3 
+    ? beneficiary.name + ' ' + beneficiary.surname 
+    : 'DREAMS'+beneficiary.nui 
 
     return (
         <KeyboardAvoidingView style={styles.background}>
@@ -40,7 +48,7 @@ const DadosReferenciaView: React.FC = ({ route }: any) => {
                                 <Divider />
                                 <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}> Data: </Text> {reference.date_created} </Text>
 
-                                <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}> Referente: </Text> {beneficiary.name + ' ' + beneficiary.surname} </Text>
+                                <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}> Referente: </Text> {maskName} </Text>
 
                                 <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}> Notificar a(o) : </Text> {notify} </Text>
 
