@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { View, KeyboardAvoidingView, ScrollView, Text } from 'react-native';
 import { Box, Heading, Divider, Avatar, Icon, Flex } from "native-base";
+import { Context } from '../../../routes/DrawerNavigator';
 import { Ionicons } from "@native-base/icons";
 import styles from './styles';
 
 const DadosPessoaisView: React.FC = ({ route }: any) => {
+    const [maskName,setMaskName,] = useState(false)
+    const loggedUser: any = useContext(Context);
 
     const {
         beneficiary,
@@ -24,6 +27,17 @@ const DadosPessoaisView: React.FC = ({ route }: any) => {
         return age;
     };
 
+    useEffect(()=>{
+        if( loggedUser?.profile_id === 1 || loggedUser?.profile_id === 2 || loggedUser?.profile_id === 3 ||
+                        loggedUser?.profiles?.id === 1 || loggedUser?.profiles?.id === 2 || loggedUser?.profiles?.id === 3)
+        {
+            setMaskName(false)
+        }
+        else{
+            setMaskName(true)
+        }
+    },[])
+    
     return (
         <KeyboardAvoidingView style={styles.background}>
             <ScrollView>
@@ -43,7 +57,7 @@ const DadosPessoaisView: React.FC = ({ route }: any) => {
                             </Avatar>
                             <Box style={styles.userText}>
                                 <Text>{beneficiary.username}</Text>
-                                <Heading style={styles.username}>{beneficiary.name} {beneficiary.surname}</Heading>
+                                <Heading style={styles.username}>{maskName ? 'DREAMS'+beneficiary.nui  : beneficiary.name+' '+beneficiary.surname}</Heading>
                                 <Text style={styles.nui}>
                                     {`${beneficiary.district_code}/${beneficiary.nui}`}
                                 </Text>

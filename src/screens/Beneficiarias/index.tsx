@@ -17,6 +17,7 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
     const [showModal, setShowModal] = useState(false);
     const [searchField, setSearchField] = useState('');
     const [userBeneficiaries, setUserBeneficiaries] = useState<any>([]);
+    const [maskName,setMaskName,] = useState(false)
     const loggedUser: any = useContext(Context);
     const toast = useToast();
     const syncronize = () => {
@@ -108,6 +109,18 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
 
         return age;
     };
+
+    useEffect(()=>{
+        if( loggedUser?.profile_id === 1 || loggedUser?.profile_id === 2 || loggedUser?.profile_id === 3 ||
+                        loggedUser?.profiles?.id === 1 || loggedUser?.profiles?.id === 2 || loggedUser?.profiles?.id === 3)
+        {
+            setMaskName(false)
+        }
+        else{
+            setMaskName(true)
+        }
+    },[])
+
     const renderItem = (data: any) => (
         <TouchableHighlight
             onPress={() => viewBeneficiaries(data)}
@@ -135,7 +148,7 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
                         <View style={{paddingTop:5}}><Ionicons name="person" size={11} color="#17a2b8"/></View>
                         
                         <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
-                           {` ${data.item.name} ${data.item.surname}`}
+                           {maskName ? 'DREAMS'+data.item.nui  : ` ${data.item.name} ${data.item.surname}`}
                         </Text>
                     </HStack>
                     <HStack>
