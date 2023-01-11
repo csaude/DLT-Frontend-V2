@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { View, KeyboardAvoidingView, ScrollView, Text } from 'react-native';
 import { Box, Heading, Divider, Avatar, Icon, Flex } from "native-base";
+import { Context } from '../../../routes/DrawerNavigator';
 import { Ionicons } from "@native-base/icons";
 import styles from './styles';
+import { database } from "../../../database";
+import { Q } from "@nozbe/watermelondb";
 
 const DadosReferenciaView: React.FC = ({ route }: any) => {
 
@@ -14,6 +17,20 @@ const DadosReferenciaView: React.FC = ({ route }: any) => {
         organization
     } = route.params;
 
+    const [referred_by,setReferred_by] = useState<any>()
+      
+    const userCollection = database.get('users');
+
+    const getUserById = async (userId) => {
+        const userQ = await userCollection.query(Q.where('online_id', userId)).fetch()
+        const fullname = userQ[0]?._raw.name +' '+userQ[0]?._raw.surname
+      
+        setReferred_by(fullname)
+    }
+
+    useEffect(()=>{
+        getUserById(route.params?.reference.referred_by)
+    },[route.params.reference, getUserById])
     return (
         <KeyboardAvoidingView style={styles.background}>
             <ScrollView>
@@ -40,8 +57,8 @@ const DadosReferenciaView: React.FC = ({ route }: any) => {
                                 <Divider />
                                 <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}> Data: </Text> {reference.date_created} </Text>
 
-                                <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}> Referente: </Text> {beneficiary.name + ' ' + beneficiary.surname} </Text>
-
+                                <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}> Referente: </Text> {referred_by} </Text>
+                                
                                 <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}> Notificar a(o) : </Text> {notify} </Text>
 
                                 <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}> Contacto: </Text> {beneficiary.phone_number} </Text>
