@@ -10,9 +10,11 @@ import { database } from '../../database';
 import { LOGIN_API_URL, SYNC_API_URL_PREFIX, UPDATE_PASSWORD_URL } from '../../services/api';
 import { sync } from "../../database/sync";
 import { toast } from 'react-toastify';
+import {useDispatch, useSelector} from 'react-redux';
 import bcrypt from 'bcryptjs';
 import Spinner from 'react-native-loading-spinner-overlay';
 import styles from './style'
+import { fetchUsers } from "../../store/userListSlice";
 
 interface LoginData {
     email?: string | undefined;
@@ -38,6 +40,7 @@ const Login: React.FC = () => {
     const sequences = database.collections.get('sequences');
     const userDetails = database.collections.get('user_details');
 
+    const dispatch = useDispatch()
     // Inicio Do Reset
 
     const updatePassword = async (username: string, password: string) => {
@@ -258,6 +261,9 @@ const Login: React.FC = () => {
                  setLoading(false);
             }
         }
+
+    dispatch(fetchUsers({page: 1}));
+
     };
 
     const saveUserDatails=async (user)=>{
