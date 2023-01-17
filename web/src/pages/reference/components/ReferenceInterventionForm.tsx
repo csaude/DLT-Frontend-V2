@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState, useRef } from 'react'
-import { Drawer, Form, Button, Col, Row, Input, Select, DatePicker, Space, Radio, Divider } from 'antd';
+import { Drawer, Form, Button, Col, Row, Input, Select, DatePicker, Space, Radio, Divider, Modal } from 'antd';
 import { queryByType, querySubServiceByService } from '@app/utils/service'
 import { allUs, allUsByType } from '@app/utils/uSanitaria'
 import { PlusOutlined } from '@ant-design/icons';
@@ -35,20 +35,37 @@ const ReferenceInterventionForm = ({ form, reference, records, beneficiary }: an
       onChangeEntryPoint(reference.referTo);
     }
 
+    const fetchSubServices = async (serviceId) => {
+      const data = await querySubServiceByService(serviceId);
+      setInterventions(data);
+    }
+
     if (selectedIntervention !== undefined) {
-      form.setFieldsValue({ areaServicos: selectedIntervention?.service?.serviceType === '1' ? 'CLINIC' : 'COMMUNITY' });
+      form.setFieldsValue({ areaServicos: selectedIntervention?.services?.serviceType === '1' ? 'CLINIC' : 'COMMUNITY' });
+      form.setFieldsValue({ service: selectedIntervention?.services?.id + '' });
       form.setFieldsValue({ entryPoint: reference.referTo });
       form.setFieldsValue({ location: reference.us.id + '' });
       form.setFieldsValue({ provider: reference.users.username });
-      form.setFieldsValue({ outros: selectedIntervention.description });
+      form.setFieldsValue({ outros: selectedIntervention?.description });
       onChangeUs(reference.us.id);
+      fetchSubServices(selectedIntervention?.service?.id).catch(error => console.log(error));
+    }else{
+      const lastIntervention = records[records.length-1]
+      form.setFieldsValue({ areaServicos: lastIntervention?.services?.serviceType === '1' ? 'CLINIC' : 'COMMUNITY' });
+      form.setFieldsValue({ service: lastIntervention?.services?.id + '' });
+      form.setFieldsValue({ entryPoint: reference.referTo });
+      form.setFieldsValue({ location: reference.us.id + '' });
+      form.setFieldsValue({ provider: reference.users.username });
+      form.setFieldsValue({ outros: lastIntervention?.description });
+      onChangeUs(reference.us.id);
+      fetchSubServices(lastIntervention?.services?.id).catch(error => console.log(error));
     }
 
     fetchData().catch(error => console.log(error));
 
     setIsLoading(true);
 
-  }, [selectedIntervention]);
+  }, []);
 
   const onChangeServices = async (value: any) => {
     const data = await querySubServiceByService(value);
@@ -57,7 +74,7 @@ const ReferenceInterventionForm = ({ form, reference, records, beneficiary }: an
 
   const onChangeSubservice = async (value: any) => {
     const intervention = interventions.filter(item=>item.id==value)
-    setSelectedIntervention(intervention)
+    setSelectedIntervention(intervention[0])
   }
 
   const onChangeEntryPoint = async (e: any) => {

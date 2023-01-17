@@ -38,8 +38,21 @@ export function ViewReferencePanel({selectedReference, columns}) {
     const attendToRequiredServices = (refServices) =>{
         const selectServices = refServices.filter(refServ=>{return selectedRowKeys.includes(refServ?.id?.serviceId?.toString())})
         setRequiredServices(selectServices)
-        setVisible(true);
+        if(selectServices.length > 0){
+            setVisible(true);
+        }else{
+            showSelectServices()
+        }
     }
+
+    const { confirm } = Modal;
+
+    const showSelectServices = () => {
+        confirm({
+        title: 'Nenhum serviço Selecionado, Selecione os serviços a atender',
+        icon: <ExclamationCircleFilled />,
+        });
+    };
 
     const goToNextIntervention = () =>{
         setVisible(true);
@@ -128,7 +141,6 @@ export function ViewReferencePanel({selectedReference, columns}) {
     };
 
     const onClose = () => {
-        form.resetFields();
         setVisible(false);
     };
 
