@@ -18,6 +18,33 @@ export function ViewReferencePanel({selectedReference, columns}) {
     const [selectedService, setSelectedService] = useState<any>();
     const [services, setServices] = useState<any>();
     const [canAddress, setCanAddress] = useState<boolean>(true);
+    const [requiredServices, setRequiredServices] = useState<any>([]);
+    const [select, setSelect] = useState<any>({
+        selectedRowKeys: [],
+        loading: false
+    });
+
+    const { selectedRowKeys, loading } = select;
+
+    const rowSelection = {
+        selectedRowKeys,
+        onChange: (selectedRowKeys) => {
+        setSelect({
+            ...select,
+            selectedRowKeys: selectedRowKeys
+        });
+        }
+    };
+
+    const attendToRequiredServices = (services) =>{
+        const selectServices = services.filter(refServ=>{return selectedRowKeys.includes(refServ?.id?.serviceId?.toString())})
+        setRequiredServices(selectServices)
+        setVisible(true);
+    }
+
+    const goToNextIntervention = () =>{
+        setVisible(true);
+    }
 
     const [form] = Form.useForm();
 
@@ -41,11 +68,6 @@ export function ViewReferencePanel({selectedReference, columns}) {
         fetchData().catch(error => console.log(error));
     
     }, []);
-
-    const onAddIntervention = (record: any) => {
-        setSelectedService(record);
-        setVisible(true);
-    };
 
     const onSubmit = async () => {
        
@@ -92,8 +114,8 @@ export function ViewReferencePanel({selectedReference, columns}) {
             });
 
             setVisible(false);
-            form.resetFields();
-            setSelectedService(undefined);
+
+            goToNextIntervention();
         })
             .catch(error => {
                 message.error({
@@ -109,7 +131,6 @@ export function ViewReferencePanel({selectedReference, columns}) {
     const onClose = () => {
         form.resetFields();
         setVisible(false);
-        setSelectedService(undefined);
     };
 
     const showCloseConfirm = () => {
@@ -156,15 +177,11 @@ export function ViewReferencePanel({selectedReference, columns}) {
                     <Text type="success" >Atendido </Text>
             ,
         },
-        { title: 'Atender', 
-            dataIndex: '', 
+        Table.SELECTION_COLUMN,
+        { 
+            title: 'Selecionar', 
+            dataIndex: 'action', 
             key: 'action',
-            render: (text, record) => (
-              <Space>
-                <Button disabled={!canAddress} type="primary" icon={<FileDoneOutlined />} onClick={() => onAddIntervention(record) } >
-                </Button>
-              </Space>
-            ),
         }
     ];
 
@@ -256,7 +273,11 @@ export function ViewReferencePanel({selectedReference, columns}) {
                                     columns={servicesColumns}
                                     dataSource={services}
                                     pagination={false}
+                                    rowSelection={rowSelection}                                    
                                 />
+                                <Button htmlType="submit" onClick={() => attendToRequiredServices(services)} type="primary">
+                                    Atender
+                                </Button>
                             </Card>
                         </Col>
                         <Col className="gutter-row" span={12}>
@@ -296,7 +317,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
                     }
                 >
                     <Form form={form} layout="vertical" onFinish={() => onSubmit()}> 
-                        <ReferenceInterventionForm form={form} reference={reference} record={selectedService} beneficiary={reference?.beneficiaries} />
+                        <ReferenceInterventionForm form={form} reference={reference} records={requiredServices} beneficiary={reference?.beneficiaries} />
                     </Form> 
                 </Drawer>                
             </div>
