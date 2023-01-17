@@ -15,8 +15,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
     const [reference, setReference] = useState<any>();
     const [user, setUser] = useState<any>();
     const [interventions, setInterventions] = useState<any>();
-    const [selectedService, setSelectedService] = useState<any>();
-    const [services, setServices] = useState<any>();
+    const [refServices, setRefServices] = useState<any>();
     const [canAddress, setCanAddress] = useState<boolean>(true);
     const [requiredServices, setRequiredServices] = useState<any>([]);
     const [select, setSelect] = useState<any>({
@@ -36,8 +35,8 @@ export function ViewReferencePanel({selectedReference, columns}) {
         }
     };
 
-    const attendToRequiredServices = (services) =>{
-        const selectServices = services.filter(refServ=>{return selectedRowKeys.includes(refServ?.id?.serviceId?.toString())})
+    const attendToRequiredServices = (refServices) =>{
+        const selectServices = refServices.filter(refServ=>{return selectedRowKeys.includes(refServ?.id?.serviceId?.toString())})
         setRequiredServices(selectServices)
         setVisible(true);
     }
@@ -48,7 +47,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
 
     const [form] = Form.useForm();
 
-    // const services = reference.referencesServiceses;
+    // const refServices = reference.referencesServiceses;
 
     useEffect(() => {
         const fetchData = async () => {
@@ -57,7 +56,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
 
           setUser(selectedReference.referredBy);
           setInterventions(data1.beneficiariesInterventionses);
-          setServices(selectedReference.referencesServiceses);
+          setRefServices(selectedReference.referencesServiceses);
           setReference(selectedReference);
 
           if (data.partners.partnerType == selectedReference.referredBy.partners.partnerType) {
@@ -103,7 +102,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
             
             if (ref.length > 0) {
                 setReference(ref[0]);
-                setServices(ref[0].referencesServiceses)
+                setRefServices(ref[0].referencesServiceses)
             }
 
             message.success({
@@ -152,7 +151,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
         { title: '#', 
             dataIndex: '', 
             key: 'order',
-            render: (text, record) => services.indexOf(record) + 1,
+            render: (text, record) => refServices.indexOf(record) + 1,
         },
         { title: 'Cod Referência', 
             dataIndex: 'date', 
@@ -162,7 +161,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
         { title: 'Serviço', 
             dataIndex: '', 
             key: 'service',
-            render: (text, record)  => record.services.name,
+            render: (text, record)  => record.refServices.name,
         },
         { title: 'Status', 
             dataIndex: '', 
@@ -269,13 +268,13 @@ export function ViewReferencePanel({selectedReference, columns}) {
                                 bodyStyle={{ paddingLeft: "10px", paddingRight: "10px" }}
                             >
                                 <Table
-                                    rowKey={(record?) => `${record?.services?.id}`}
+                                    rowKey={(record?) => `${record?.refServices?.id}`}
                                     columns={servicesColumns}
-                                    dataSource={services}
+                                    dataSource={refServices}
                                     pagination={false}
                                     rowSelection={rowSelection}                                    
                                 />
-                                <Button htmlType="submit" onClick={() => attendToRequiredServices(services)} type="primary">
+                                <Button htmlType="submit" onClick={() => attendToRequiredServices(refServices)} type="primary">
                                     Atender
                                 </Button>
                             </Card>
