@@ -51,7 +51,7 @@ export const MENU: IMenuItem[] = [
       children: [
         {
           name: 'Províncias',
-          path: '/provList',
+          path: '/provinceList',
         },
         {
           name: 'Distritos',
