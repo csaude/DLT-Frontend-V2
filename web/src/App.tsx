@@ -21,6 +21,7 @@ import UserView from '@pages/users/View';
 import BeneficiariesList from '@pages/beneficiaries';
 import ReferenceList from '@pages/reference/Index';
 import ServicesList from '@pages/services/index';
+import ProvinceList from '@pages/province/index';
 
 
 import PublicRoute from './routes/PublicRoute';
@@ -77,6 +78,7 @@ const App = () => {
             <Route path="/provList" element={<BeneficiariesList />} />
             <Route path="/distList" element={<Profile />} />
             <Route path="/servicesList" element={<ServicesList />} />
+            <Route path="/provinceList" element={<ProvinceList />} />
           </Route>
         </Route>
       </Routes>
