@@ -161,7 +161,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
         { title: 'Serviço', 
             dataIndex: '', 
             key: 'service',
-            render: (text, record)  => record.refServices.name,
+            render: (text, record)  => record.services.name,
         },
         { title: 'Status', 
             dataIndex: '', 
@@ -268,7 +268,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
                                 bodyStyle={{ paddingLeft: "10px", paddingRight: "10px" }}
                             >
                                 <Table
-                                    rowKey={(record?) => `${record?.refServices?.id}`}
+                                    rowKey={(record?) => `${record?.services?.id}`}
                                     columns={servicesColumns}
                                     dataSource={refServices}
                                     pagination={false}
