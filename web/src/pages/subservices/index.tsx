@@ -171,7 +171,7 @@ const SubServicesList: React.FC = () => {
         {
             title: "Serviço",
             dataIndex: 'serviceId',
-            // key: 'type',
+            key: 'record.service.id',
             render: (text, record) => record.service.name
         },
         {
@@ -184,31 +184,22 @@ const SubServicesList: React.FC = () => {
         {
             title: "Observação",
             dataIndex: 'remarks',
-            // key: 'remarks',
+            key: 'remarks',
             ...getColumnSearchProps('remarks'),
             render: (text, record) => record.remarks
         },
         {
             title: "Mandatório",
             dataIndex: 'mandatory',
-            // key: 'mandatory',
-            filters: [
-                {
-                    text: '1',
-                    value: 1,
-                },
-                {
-                    text: '0',
-                    value: 0,
-                },
-            ],
+            key: 'mandatory',
+            filters: filterItem([0, 1])(i => i),
             onFilter: (value, record) => record?.mandatory == value,
             render: (text, record) => record.mandatory
         },
         {
             title: "Estado",
             dataIndex:'status',
-            // key: 'type',
+            key: 'status',
             render: (text, record) => (
 
                 <Badge
@@ -219,7 +210,16 @@ const SubServicesList: React.FC = () => {
                     }
                 />
             ),
-            filters: filterItem([0,1])(i => i),
+            filters: [
+                {
+                    text: 'Activo',
+                    value: 1,
+                },
+                {
+                    text: 'Inactivo',
+                    value: 0,
+                },
+            ],
             onFilter: (value, record) => record?.status == value,
             filterSearch: true
         },
