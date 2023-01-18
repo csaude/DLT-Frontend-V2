@@ -6,6 +6,8 @@ import { ExclamationCircleFilled ,FileDoneOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import ReferenceInterventionForm from "@app/pages/reference/components/ReferenceInterventionForm";
 import { addSubService, SubServiceParams } from '@app/utils/service'
+import { Checkbox } from 'antd';
+import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 
 const { Text } = Typography;
 const { confirm } = Modal;
@@ -18,25 +20,10 @@ export function ViewReferencePanel({selectedReference, columns}) {
     const [refServices, setRefServices] = useState<any>();
     const [canAddress, setCanAddress] = useState<boolean>(true);
     const [requiredServices, setRequiredServices] = useState<any>([]);
-    const [select, setSelect] = useState<any>({
-        selectedRowKeys: [],
-        loading: false
-    });
-
-    const { selectedRowKeys, loading } = select;
-
-    const rowSelection = {
-        selectedRowKeys,
-        onChange: (selectedRowKeys) => {
-        setSelect({
-            ...select,
-            selectedRowKeys: selectedRowKeys
-        });
-        }
-    };
+    const [select, setSelect] = useState<any>([]);
 
     const attendToRequiredServices = (refServices) =>{
-        const selectServices = refServices.filter(refServ=>{return selectedRowKeys.includes(refServ?.id?.serviceId?.toString())})
+        const selectServices = refServices.filter(refServ=>{return select.includes(refServ?.id?.serviceId)})
         setRequiredServices(selectServices)
         if(selectServices.length > 0){
             setVisible(true);
@@ -58,6 +45,17 @@ export function ViewReferencePanel({selectedReference, columns}) {
         setVisible(true);
     }
 
+    const onChange = (e: CheckboxChangeEvent, value) => {
+        if(e.target.checked){
+            setSelect([...select, value]);
+        }else{
+            const myArray = select
+            const index = myArray.indexOf(value);
+            myArray.splice(index);
+            console.log('----my array----', myArray)
+            setSelect([...myArray]);
+        }
+    };
     const [form] = Form.useForm();
 
     // const refServices = reference.referencesServiceses;
@@ -193,6 +191,13 @@ export function ViewReferencePanel({selectedReference, columns}) {
             title: 'Selecionar', 
             dataIndex: 'action', 
             key: 'action',
+            render: (text, record) => (
+              <Space>
+                <Checkbox 
+                   disabled={!canAddress}  
+                   onChange={e => onChange(e, record.id.serviceId)}/>
+              </Space>
+            ),
         }
     ];
 
@@ -283,8 +288,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
                                     rowKey={(record?) => `${record?.services?.id}`}
                                     columns={servicesColumns}
                                     dataSource={refServices}
-                                    pagination={false}
-                                    rowSelection={rowSelection}                                    
+                                    pagination={false}                                
                                 />
                                 <Button htmlType="submit" onClick={() => attendToRequiredServices(refServices)} type="primary">
                                     Atender
