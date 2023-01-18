@@ -4,6 +4,7 @@ import { ExclamationCircleFilled } from '@ant-design/icons';
 
 const { Option } = Select;
 const { confirm } = Modal;
+const { TextArea } = Input;
 const serviceTypes = [ { label: 'Serviços Clínicos', value: '1' }, { label: 'Serviços Comunitários', value: '2' } ];
 const ageBands = ['9-14', '15-19', '20-24'];
 const status = [{ value: '0', label: "Inactivo" }, { value: '1', label: "Activo" }];
@@ -52,7 +53,7 @@ const ServiceForm = ({ form, service, modalVisible, handleModalVisible, handleAd
             ]}
         >
             <Form form={form} layout="vertical">
-                <Row gutter={8}>
+                <Row gutter={20}>
                     <Col span={8}>
                         <Form.Item
                             name="serviceType"
@@ -67,8 +68,6 @@ const ServiceForm = ({ form, service, modalVisible, handleModalVisible, handleAd
                             </Select>
                         </Form.Item>
                     </Col>
-                </Row>
-                <Row gutter={8}>
                     <Col span={12}>
                         <Form.Item
                             name="name"
@@ -80,18 +79,16 @@ const ServiceForm = ({ form, service, modalVisible, handleModalVisible, handleAd
                         </Form.Item>
                     </Col>
                 </Row>
-                <Row gutter={8}>
-                    <Col span={12}>
+                <Row gutter={16}>
+                    <Col span={8}>
                         <Form.Item
                             name="description"
                             label="Descrição"
                             initialValue={service?.description}
                         >
-                            <Input placeholder="Insira a Descrição" />
+                            <TextArea rows={2} placeholder="Insira a Descrição" maxLength={600} />
                         </Form.Item>
                     </Col>
-                </Row>
-                <Row gutter={8}>
                     <Col className="gutter-row" span={8}>
                         <Form.Item
                             name="ageBands"

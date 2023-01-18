@@ -5,7 +5,7 @@ import { create, select, update } from './crud';
 export async function queryAll(){
     const url = '/api/services/all';
     const res = await select(url);
-    return res
+    return res;
 }
 
 export async function query(payload?: any){

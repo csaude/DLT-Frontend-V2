@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Title } from "@app/components";
 import { add, edit, queryAll } from "@app/utils/service";
-import { Badge, Button, Card, Form, Input, message, Space, Table, Typography } from "antd";
+import { Badge, Button, Card, ConfigProvider, Form, Input, message, Space, Table, Typography } from "antd";
+import ptPT  from 'antd/lib/locale-provider/pt_PT';
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import ServiceForm from "./components/ServiceForm";
 
 const { Text } = Typography;
-const serviceTypes = [ { label: 'Clínico', value: '1' }, { label: 'Comunitário', value: '2' } ];
 
 const ServicesList: React.FC = () => {
 
@@ -263,14 +263,14 @@ const ServicesList: React.FC = () => {
                     </Space>
                 }
             >
-                <Table
-                    rowKey="id"
-                    columns={columns}
-                    dataSource={services}
-                    bordered
-                >
-                    
-                </Table>
+                <ConfigProvider locale={ptPT}>
+                    <Table
+                        rowKey="id"
+                        columns={columns}
+                        dataSource={services}
+                        bordered
+                    />
+                </ConfigProvider>
             </Card>
             <ServiceForm form={form} service={selectedService} modalVisible={serviceModalVisible} handleModalVisible={handleServiceModalVisible} handleAdd={handleAdd} />
         </>
