@@ -289,7 +289,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
                                     dataSource={refServices}
                                     pagination={false}                                
                                 />
-                                <Button htmlType="submit" onClick={() => attendToRequiredServices(refServices)} type="primary">
+                                <Button htmlType="submit" disabled={!canAddress} onClick={() => attendToRequiredServices(refServices)} type="primary">
                                     Atender
                                 </Button>
                             </Card>
