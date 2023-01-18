@@ -481,8 +481,7 @@ const BeneficiariesList: React.FC = () => {
         
     };
 
-    const handleReset = (clearFilters,selectedKeys, confirm, dataIndex) => {
-        debugger
+    const handleReset = (clearFilters,selectedKeys, confirm, dataIndex) => { 
         clearFilters();
         setSearchText(searchText);
         handleSearch(selectedKeys, confirm, dataIndex)

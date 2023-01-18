@@ -6,6 +6,8 @@ import { ExclamationCircleFilled ,FileDoneOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import ReferenceInterventionForm from "@app/pages/reference/components/ReferenceInterventionForm";
 import { addSubService, SubServiceParams } from '@app/utils/service'
+import { Checkbox } from 'antd';
+import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 
 const { Text } = Typography;
 const { confirm } = Modal;
@@ -15,13 +17,47 @@ export function ViewReferencePanel({selectedReference, columns}) {
     const [reference, setReference] = useState<any>();
     const [user, setUser] = useState<any>();
     const [interventions, setInterventions] = useState<any>();
-    const [selectedService, setSelectedService] = useState<any>();
-    const [services, setServices] = useState<any>();
+    const [refServices, setRefServices] = useState<any>();
     const [canAddress, setCanAddress] = useState<boolean>(true);
+    const [requiredServices, setRequiredServices] = useState<any>([]);
+    const [select, setSelect] = useState<any>([]);
 
+    const attendToRequiredServices = (refServices) =>{
+        const selectServices = refServices.filter(refServ=>{return select.includes(refServ?.id?.serviceId)})
+        setRequiredServices(selectServices)
+        if(selectServices.length > 0){
+            setVisible(true);
+        }else{
+            showSelectServices()
+        }
+    }
+
+    const { confirm } = Modal;
+
+    const showSelectServices = () => {
+        confirm({
+        title: 'Nenhum serviço Selecionado, Selecione os serviços a atender',
+        icon: <ExclamationCircleFilled />,
+        });
+    };
+
+    const goToNextIntervention = () =>{
+        setVisible(true);
+    }
+
+    const onChange = (e: CheckboxChangeEvent, value) => {
+        if(e.target.checked){
+            setSelect([...select, value]);
+        }else{
+            const myArray = select
+            const index = myArray.indexOf(value);
+            myArray.splice(index);
+            setSelect([...myArray]);
+        }
+    };
     const [form] = Form.useForm();
 
-    // const services = reference.referencesServiceses;
+    // const refServices = reference.referencesServiceses;
 
     useEffect(() => {
         const fetchData = async () => {
@@ -30,7 +66,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
 
           setUser(selectedReference.referredBy);
           setInterventions(data1.beneficiariesInterventionses);
-          setServices(selectedReference.referencesServiceses);
+          setRefServices(selectedReference.referencesServiceses);
           setReference(selectedReference);
 
           if (data.partners.partnerType == selectedReference.referredBy.partners.partnerType) {
@@ -41,11 +77,6 @@ export function ViewReferencePanel({selectedReference, columns}) {
         fetchData().catch(error => console.log(error));
     
     }, []);
-
-    const onAddIntervention = (record: any) => {
-        setSelectedService(record);
-        setVisible(true);
-    };
 
     const onSubmit = async () => {
        
@@ -81,7 +112,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
             
             if (ref.length > 0) {
                 setReference(ref[0]);
-                setServices(ref[0].referencesServiceses)
+                setRefServices(ref[0].referencesServiceses)
             }
 
             message.success({
@@ -92,8 +123,8 @@ export function ViewReferencePanel({selectedReference, columns}) {
             });
 
             setVisible(false);
-            form.resetFields();
-            setSelectedService(undefined);
+
+            goToNextIntervention();
         })
             .catch(error => {
                 message.error({
@@ -107,9 +138,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
     };
 
     const onClose = () => {
-        form.resetFields();
         setVisible(false);
-        setSelectedService(undefined);
     };
 
     const showCloseConfirm = () => {
@@ -131,7 +160,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
         { title: '#', 
             dataIndex: '', 
             key: 'order',
-            render: (text, record) => services.indexOf(record) + 1,
+            render: (text, record) => refServices.indexOf(record) + 1,
         },
         { title: 'Cod Referência', 
             dataIndex: 'date', 
@@ -156,13 +185,16 @@ export function ViewReferencePanel({selectedReference, columns}) {
                     <Text type="success" >Atendido </Text>
             ,
         },
-        { title: 'Atender', 
-            dataIndex: '', 
+        Table.SELECTION_COLUMN,
+        { 
+            title: 'Selecionar', 
+            dataIndex: 'action', 
             key: 'action',
             render: (text, record) => (
               <Space>
-                <Button disabled={!canAddress} type="primary" icon={<FileDoneOutlined />} onClick={() => onAddIntervention(record) } >
-                </Button>
+                <Checkbox 
+                   disabled={!canAddress}  
+                   onChange={e => onChange(e, record.id.serviceId)}/>
               </Space>
             ),
         }
@@ -254,9 +286,12 @@ export function ViewReferencePanel({selectedReference, columns}) {
                                 <Table
                                     rowKey={(record?) => `${record?.services?.id}`}
                                     columns={servicesColumns}
-                                    dataSource={services}
-                                    pagination={false}
+                                    dataSource={refServices}
+                                    pagination={false}                                
                                 />
+                                <Button htmlType="submit" disabled={!canAddress} onClick={() => attendToRequiredServices(refServices)} type="primary">
+                                    Atender
+                                </Button>
                             </Card>
                         </Col>
                         <Col className="gutter-row" span={12}>
@@ -296,7 +331,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
                     }
                 >
                     <Form form={form} layout="vertical" onFinish={() => onSubmit()}> 
-                        <ReferenceInterventionForm form={form} reference={reference} record={selectedService} beneficiary={reference?.beneficiaries} />
+                        <ReferenceInterventionForm form={form} reference={reference} records={requiredServices} beneficiary={reference?.beneficiaries} />
                     </Form> 
                 </Drawer>                
             </div>
