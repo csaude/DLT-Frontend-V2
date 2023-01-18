@@ -52,7 +52,6 @@ export function ViewReferencePanel({selectedReference, columns}) {
             const myArray = select
             const index = myArray.indexOf(value);
             myArray.splice(index);
-            console.log('----my array----', myArray)
             setSelect([...myArray]);
         }
     };
