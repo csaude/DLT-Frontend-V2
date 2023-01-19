@@ -20,9 +20,10 @@ import UsersForm from '@pages/users/Form';
 import UserView from '@pages/users/View';
 import BeneficiariesList from '@pages/beneficiaries';
 import ReferenceList from '@pages/reference/Index';
+import ProvinceList from '@pages/province/index';
 import ServicesList from '@pages/services/index';
 import ProvinceList from '@pages/province/index';
-import DistrictList from '@pages/district';
+
 
 import PublicRoute from './routes/PublicRoute';
 import PrivateRoute from './routes/PrivateRoute';
@@ -73,9 +74,9 @@ const App = () => {
             <Route path="/usersForm" element={<UsersForm />} />
             <Route path="/usersView" element={<UserView />} />
             // Rota de Configurações
+            <Route path="/provinceList" element={<ProvinceList />} />
             <Route path="/servicesList" element={<ServicesList />} />
             <Route path="/provinceList" element={<ProvinceList />} />
-            <Route path="/districtList" element={<DistrictList />} />
           </Route>
         </Route>
       </Routes>
