@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Button, Col, Form, Input, Modal, Row, Select } from "antd";
 import { ExclamationCircleFilled } from '@ant-design/icons';
-import { allProvinces } from "@app/utils/locality";
 import { queryAll } from "@app/utils/province";
 
 const { Option } = Select;
 const { confirm } = Modal;
-const ageBands = ['9-14', '15-19', '20-24'];
 const status = [{ value: '0', label: "Inactivo" }, { value: '1', label: "Activo" }];
 
 const DistrictForm = ({ form, district, modalVisible, handleModalVisible, handleAdd }) => {
@@ -19,7 +17,6 @@ const DistrictForm = ({ form, district, modalVisible, handleModalVisible, handle
 
     useEffect(() => {
         setStatusEnabled(district !== undefined);
-        const serviceTypes = [ { label: 'Serviços Clínicos', value: '1' }, { label: 'Serviços Comunitários', value: '2' } ];
     },[district]);
 
     useEffect(() => {
@@ -27,8 +24,7 @@ const DistrictForm = ({ form, district, modalVisible, handleModalVisible, handle
            
             const provinces = await queryAll();
 
-            setProvinces(provinces);
-            
+            setProvinces(provinces);            
         }
 
         fetchData().catch(error => console.log(error));
@@ -93,7 +89,7 @@ const DistrictForm = ({ form, district, modalVisible, handleModalVisible, handle
                             rules={[{ required: true, message: RequiredFieldMessage }]}
                             initialValue={district?.code}
                         >
-                            <Input placeholder="Insira o code da província" />
+                            <Input placeholder="Insira o code do distrito" />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
@@ -103,7 +99,7 @@ const DistrictForm = ({ form, district, modalVisible, handleModalVisible, handle
                             rules={[{ required: true, message: RequiredFieldMessage }]}
                             initialValue={district?.name}
                         >
-                            <Input placeholder="Insira o nome da província" />
+                            <Input placeholder="Insira o nome da distrito" />
                         </Form.Item>
                     </Col>
                 </Row>
