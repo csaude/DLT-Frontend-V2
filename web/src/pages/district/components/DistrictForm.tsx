@@ -85,11 +85,11 @@ const DistrictForm = ({ form, district, modalVisible, handleModalVisible, handle
                     <Col span={8}>
                         <Form.Item
                             name="code"
-                            label="Codigo"
+                            label="Código"
                             rules={[{ required: true, message: RequiredFieldMessage }]}
                             initialValue={district?.code}
                         >
-                            <Input placeholder="Insira o code do distrito" />
+                            <Input placeholder="Insira o código do distrito" />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
