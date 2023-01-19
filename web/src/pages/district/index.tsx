@@ -21,23 +21,18 @@ const DistrictList: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             const districts = await allDistrict();
-
-            districtSort(districts);
-
             const sortedDistricts = districts.sort((ser1, ser2) => ser2.code - ser1.code);
 
             const provinces = await allProvinces();
 
             setDistricts(sortedDistricts);
-            setProvince(provinces);
-            
+            setProvince(provinces);            
         }
 
         fetchData().catch(error => console.log(error));
     }, []);
 
     const districtSort = (data: any) => {
-        // var dists : any[];
         const dists = ([...districts, data]);
         const sortedDistricts = (dists).sort((ser1, ser2) => ser2.code - ser1.code);
 
@@ -50,7 +45,7 @@ const DistrictList: React.FC = () => {
         setDistrictModalVisible(!!flag);
     };
 
-    const onEditProvincia = (record: any) => {
+    const onEditDistrict = (record: any) => {
         form.resetFields();
         setSelectedDistrict(record)
         setDistrictModalVisible(true);
@@ -71,7 +66,6 @@ const DistrictList: React.FC = () => {
                 district.createdBy = localStorage.user;
 
                 const { data } = await add(district);
-                // setDistricts(districts => [...districts, data]);
                 districtSort(data);
 
                 message.success({
@@ -245,7 +239,7 @@ const DistrictList: React.FC = () => {
             key: 'x',
             render: (text, record) => (
                 <Space>
-                    <Button type="primary" icon={<EditOutlined />} onClick={() => onEditProvincia(record)} />
+                    <Button type="primary" icon={<EditOutlined />} onClick={() => onEditDistrict(record)} />
                 </Space>
             )
         }
