@@ -60,6 +60,10 @@ export const MENU: IMenuItem[] = [
         {
           name: 'Serviços',
           path: '/servicesList',
+        },
+        {
+          name: 'Sub-Serviços',
+          path: '/subServicesList',
         }
       ]
   },
