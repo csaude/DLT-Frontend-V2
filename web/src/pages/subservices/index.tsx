@@ -20,7 +20,8 @@ const SubServicesList: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             const subServices = await queryAll();
-            setSubServices(subServices);
+            const sortedSubServices = subServices.sort((s1, s2) => s2.id - s1.id);
+            setSubServices(sortedSubServices);
         }
 
         fetchData().catch(error => console.log(error));
@@ -51,7 +52,9 @@ const SubServicesList: React.FC = () => {
                 subService.createdBy = localStorage.user;
                 subService.status = 1;
                 const { data } = await add(subService);
-                setSubServices(subServices => [...subServices, data]);
+                const ss = [...subServices, data];
+                const sortedSubServices = ss.sort((s1, s2) => s2.id - s1.id);
+                setSubServices(sortedSubServices);
 
                 message.success({
                     content: 'Registado com Sucesso!', className: 'custom-class',
@@ -182,19 +185,19 @@ const SubServicesList: React.FC = () => {
             render: (text, record) => record.name
         },
         {
-            title: "Observação",
-            dataIndex: 'remarks',
-            key: 'remarks',
-            ...getColumnSearchProps('remarks'),
-            render: (text, record) => record.remarks
-        },
-        {
             title: "Mandatório",
             dataIndex: 'mandatory',
             key: 'mandatory',
             filters: filterItem([0, 1])(i => i),
             onFilter: (value, record) => record?.mandatory == value,
             render: (text, record) => record.mandatory
+        },
+        {
+            title: "Observação",
+            dataIndex: 'remarks',
+            key: 'remarks',
+            ...getColumnSearchProps('remarks'),
+            render: (text, record) => record.remarks
         },
         {
             title: "Estado",
