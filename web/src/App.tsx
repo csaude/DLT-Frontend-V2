@@ -21,8 +21,9 @@ import UserView from '@pages/users/View';
 import BeneficiariesList from '@pages/beneficiaries';
 import ReferenceList from '@pages/reference/Index';
 import ProvinceList from '@pages/province/index';
+import DistrictList from '@pages/district';
 import ServicesList from '@pages/services/index';
-import ProvinceList from '@pages/province/index';
+import SubServicesList from './pages/subservices';
 
 
 import PublicRoute from './routes/PublicRoute';
@@ -75,8 +76,9 @@ const App = () => {
             <Route path="/usersView" element={<UserView />} />
             // Rota de Configurações
             <Route path="/provinceList" element={<ProvinceList />} />
+            <Route path="/districtList" element={<DistrictList />} />
             <Route path="/servicesList" element={<ServicesList />} />
-            <Route path="/provinceList" element={<ProvinceList />} />
+            <Route path="/subServicesList" element={<SubServicesList />} />
           </Route>
         </Route>
       </Routes>
