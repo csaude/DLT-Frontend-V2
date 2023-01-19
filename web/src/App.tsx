@@ -28,6 +28,7 @@ import SubServicesList from './pages/subservices';
 
 import PublicRoute from './routes/PublicRoute';
 import PrivateRoute from './routes/PrivateRoute';
+import RenewPassword from './modules/new-password/RenewPassword';
 
 const App = () => {
   const windowSize = useWindowSize();
@@ -59,6 +60,8 @@ const App = () => {
         <Route path="/" element={<PrivateRoute />}>
           // First login after user was create
           <Route path="/newPassword" element={<NewPassword />} />
+          // Password Expired
+          <Route path="/renewPassword" element={<RenewPassword />} />
           // Aplication Main
           <Route path="/" element={<Main />}>
             <Route path="/sub-menu-2" element={<Blank />} />
