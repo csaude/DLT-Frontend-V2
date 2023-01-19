@@ -85,7 +85,7 @@ const DistrictForm = ({ form, district, modalVisible, handleModalVisible, handle
                     <Col span={8}>
                         <Form.Item
                             name="code"
-                            label="code"
+                            label="Codigo"
                             rules={[{ required: true, message: RequiredFieldMessage }]}
                             initialValue={district?.code}
                         >
