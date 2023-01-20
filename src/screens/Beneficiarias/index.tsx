@@ -208,7 +208,8 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
         setSearchField(e);
     };
     
-    const getUserBeneficiaries = async () =>{
+    const getUserBeneficiaries = async (currentUserId) =>{
+
         const districtCollection = database.get('districts')
         const localityCollection = database.get('localities')
         const neighborhoodCollection = database.get('neighborhoods')
@@ -216,7 +217,7 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
         const beneficiariesCollection = database.get("beneficiaries")
 
         const userDetailsQ = await userDetailsCollection.query(
-                Q.where('user_id', parseInt(loggedUser?.online_id))
+                Q.where('user_id', parseInt(currentUserId))
             ).fetch();
         const userDetailsRaw = userDetailsQ[0]?._raw
 
@@ -278,8 +279,15 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
     }
 
     useEffect(()=>{
-        getUserBeneficiaries()
-    },[])
+        if(loggedUser?.online_id !== undefined){
+              /** the user logged at least one time***/
+            getUserBeneficiaries(loggedUser?.online_id) 
+        }
+        else{
+           /** is first time the user logs, is using API* */  
+            getUserBeneficiaries(loggedUser?.id) 
+        }          
+    },[loggedUser])
 
     const filteredBeneficiaries = userBeneficiaries?.filter(beneficiarie => (beneficiarie.name + ' ' + beneficiarie.surname).toLowerCase().includes(searchField.toLowerCase()))
        
