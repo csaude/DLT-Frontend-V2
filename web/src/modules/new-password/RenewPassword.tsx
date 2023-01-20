@@ -100,7 +100,7 @@ const RenewPassword = () => {
             <div className="card-body">
               <div className="row alert">
                 <Alert
-                  message="A alteração da password é obrigatória na primeira autenticação, Todas as senhas inseridas devem ter pelo menos 8 caracteres alfanuméricos contendo: 1 letra maiúscula, 1 letra minúscula, 1 símbolo e 1 número."
+                  message="A alteração da password é obrigatória a cada 6 meses, Todas as senhas inseridas devem ter pelo menos 8 caracteres alfanuméricos contendo: 1 letra maiúscula, 1 letra minúscula, 1 símbolo e 1 número."
                   type="warning"
                   showIcon
                   closable
