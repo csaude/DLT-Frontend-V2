@@ -25,3 +25,8 @@ export async function verifyUserByUsername(username:string) {
     const res = await select(`/api/users/username/${username}`);
     return res;
 }
+
+export async function checkPasswordValidity(username:string) {
+    const res = await select(`/api/users/username/${username}/password-validity`);
+    return res;
+}
