@@ -20,14 +20,15 @@ import UsersForm from '@pages/users/Form';
 import UserView from '@pages/users/View';
 import BeneficiariesList from '@pages/beneficiaries';
 import ReferenceList from '@pages/reference/Index';
-import ServicesList from '@pages/services/index';
 import ProvinceList from '@pages/province/index';
+import DistrictList from '@pages/district';
+import ServicesList from '@pages/services/index';
+import SubServicesList from './pages/subservices';
 
 
 import PublicRoute from './routes/PublicRoute';
 import PrivateRoute from './routes/PrivateRoute';
 import RenewPassword from './modules/new-password/RenewPassword';
-
 
 const App = () => {
   const windowSize = useWindowSize();
@@ -40,7 +41,6 @@ const App = () => {
       dispatch(setWindowSize(size));
     }
   }, [windowSize]);
-
  
   return (
     <HashRouter>
@@ -78,8 +78,10 @@ const App = () => {
             <Route path="/usersForm" element={<UsersForm />} />
             <Route path="/usersView" element={<UserView />} />
             // Rota de Configurações
-            <Route path="/servicesList" element={<ServicesList />} />
             <Route path="/provinceList" element={<ProvinceList />} />
+            <Route path="/districtList" element={<DistrictList />} />
+            <Route path="/servicesList" element={<ServicesList />} />
+            <Route path="/subServicesList" element={<SubServicesList />} />
           </Route>
         </Route>
       </Routes>

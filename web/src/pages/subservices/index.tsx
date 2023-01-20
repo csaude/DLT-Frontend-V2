@@ -1,65 +1,60 @@
 import React, { useEffect, useState } from "react";
 import { Title } from "@app/components";
-import { add, edit, queryAll } from "@app/utils/service";
-import { Badge, Button, Card, ConfigProvider, Form, Input, message, Space, Table, Typography } from "antd";
+import { Badge, Button, Card, ConfigProvider, Form, Input, message, Space, Table } from "antd";
 import ptPT  from 'antd/lib/locale-provider/pt_PT';
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
-import ServiceForm from "./components/ServiceForm";
+import { add, edit, queryAll } from "@app/utils/subservice";
+import SubServiceForm from "./components/SubServiceForm";
 
-const { Text } = Typography;
+const SubServicesList: React.FC = () => {
 
-const ServicesList: React.FC = () => {
-
-    const [ services, setServices ] = useState<any[]>([]);
+    const [ subServices, setSubServices ] = useState<any[]>([]);
     const [ searchText, setSearchText ] = useState('');
     const [ searchedColumn, setSearchedColumn ] = useState('');
-    const [ serviceModalVisible, setServiceModalVisible ] = useState<boolean>(false);
-    const [ selectedService, setSelectedService ] = useState<any>(undefined);
+    const [ subServiceModalVisible, setSubServiceModalVisible ] = useState<boolean>(false);
+    const [ selectedSubService, setSelectedSubService ] = useState<any>(undefined);
     const [ form ] = Form.useForm();
 
     let searchInput;
     useEffect(() => {
         const fetchData = async () => {
-            const services = await queryAll();
-            const sortedServices = services.sort((ser1, ser2) => ser1.serviceType - ser2.serviceType);
-            setServices(sortedServices);
+            const subServices = await queryAll();
+            const sortedSubServices = subServices.sort((s1, s2) => s2.id - s1.id);
+            setSubServices(sortedSubServices);
         }
 
         fetchData().catch(error => console.log(error));
     }, []);
 
-    const handleServiceModalVisible = (flag?: boolean) => {
+    const handleSubServiceModalVisible = (flag?: boolean) => {
         form.resetFields();
-        setSelectedService(undefined);
-        setServiceModalVisible(!!flag);
-    };
+        setSelectedSubService(undefined);
+        setSubServiceModalVisible(!!flag);
+    }
 
-    const onEditService = (record: any) => {
+    const onEditSubService = (record: any) => {
         form.resetFields();
-        setSelectedService(record)
-        setServiceModalVisible(true);
-    };
-
-    const filterItem = data => formatter => data.map( item => ({
-        text: formatter(item),
-        value: formatter(item)
-    }));
+        setSelectedSubService(record);
+        setSubServiceModalVisible(true);
+    }
 
     const handleAdd = () => {
         form.validateFields().then(async (values) => {
-            const service: any = selectedService ? selectedService : {};
+            const subService: any = selectedSubService ? selectedSubService : {}
 
-            service.serviceType = values.serviceType;
-            service.name = values.name;
-            service.description = values.description;
-            service.ageBands = values.ageBands.toString();
-            
-            if (selectedService === undefined) {
-                service.createdBy = localStorage.user;
-                service.status = 1;
-                const { data } = await add(service);
-                setServices(services => [...services, data]);
+            subService.service = {"id": values.service};
+            subService.name = values.name;
+            subService.remarks = values.remarks;
+            subService.mandatory = values.mandatory;
+
+            if (selectedSubService === undefined) {
+                subService.createdBy = localStorage.user;
+                subService.status = 1;
+                const { data } = await add(subService);
+                const ss = [...subServices, data];
+                const sortedSubServices = ss.sort((s1, s2) => s2.id - s1.id);
+                setSubServices(sortedSubServices);
 
                 message.success({
                     content: 'Registado com Sucesso!', className: 'custom-class',
@@ -68,12 +63,12 @@ const ServicesList: React.FC = () => {
                     }
                 });
             } else {
-                service.updatedBy = localStorage.user;
-                service.status = values.status;
-                const { data } = await edit(service);
-                setServices(existingItems => {
+                subService.updatedBy = localStorage.user;
+                subService.status = values.status;
+                const { data } = await edit(subService);
+                setSubServices(existingItems => {
                     return existingItems.map((item, j) => {
-                        return item.id === selectedService.id ? data : item;
+                        return item.id === selectedSubService.id ? data : item;
                     })
                 });
 
@@ -84,18 +79,23 @@ const ServicesList: React.FC = () => {
                     }
                 });
             }
-            handleServiceModalVisible(false);
+            handleSubServiceModalVisible(false);
         }).catch(error => {
             const errSt = JSON.stringify(error);
             const errObj = JSON.parse(errSt);
             message.error({
-                content: 'Não foi possível Registar o Serviço', className: 'custom-class',
+                content: 'Não foi possível Registar o Sub-Serviço', className: 'custom-class',
                 style: {
                     marginTop: '10vh',
                 }
             })
         })
-    };
+    }
+
+    const filterItem = data => formatter => data.map( item => ({
+        text: formatter(item),
+        value: formatter(item)
+    }));
 
     const getColumnSearchProps = (dataIndex:any) => ({
         filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
@@ -172,50 +172,37 @@ const ServicesList: React.FC = () => {
 
     const columns = [
         {
-            title: "Tipo de Serviço",
-            dataIndex:'serviceType',
-            key: 'type',
-            render: (text, record) => 
-            (record?.serviceType == 1) ?
-                <Text>Clínico</Text>
-            :
-                <Text>Comunitário</Text>,
-            filters: [
-                {
-                    text: 'Clínico',
-                    value: 1,
-                },
-                {
-                    text: 'Comunitário',
-                    value: 2,
-                },
-            ],
-            onFilter: (value, record) => record.serviceType == value,
-            filterSearch: true,
-        },
-        {
             title: "Serviço",
-            dataIndex:'name',
-            key: 'type',
+            dataIndex: 'serviceId',
+            key: 'record.service.id',
+            render: (text, record) => record.service.name
+        },
+        {
+            title: "Sub-Serviço",
+            dataIndex: 'id',
+            key: 'id',
             ...getColumnSearchProps('name'),
-            render: (text, record) => record?.name
+            render: (text, record) => record.name
         },
         {
-            title: "Descrição",
-            dataIndex:'descriptin',
-            key: 'type',
-            render: (text, record) => record?.description
+            title: "Mandatório",
+            dataIndex: 'mandatory',
+            key: 'mandatory',
+            filters: filterItem([0, 1])(i => i),
+            onFilter: (value, record) => record?.mandatory == value,
+            render: (text, record) => record.mandatory
         },
         {
-            title: "Faixas Etárias",
-            dataIndex:'ageBands',
-            key: 'type',
-            render: (text, record) => record?.ageBands,
+            title: "Observação",
+            dataIndex: 'remarks',
+            key: 'remarks',
+            ...getColumnSearchProps('remarks'),
+            render: (text, record) => record.remarks
         },
         {
             title: "Estado",
             dataIndex:'status',
-            key: 'type',
+            key: 'status',
             render: (text, record) => (
 
                 <Badge
@@ -245,20 +232,20 @@ const ServicesList: React.FC = () => {
             key: 'x',
             render: (text, record) => (
                 <Space>
-                    <Button type="primary" icon={<EditOutlined />} onClick={() => onEditService(record)} />
+                    <Button type="primary" icon={<EditOutlined />} onClick={() => onEditSubService(record)} />
                 </Space>
             )
         }
     ]
-    
-    return (
+
+    return  (
         <>
             <Title />
-            <Card title="Lista de Serviços DREAMS" bordered={false} headStyle={{color:"#17a2b8"}}
+            <Card title="Lista de Sub-Serviços DREAMS" bordered={false} headStyle={{color:"#17a2b8"}}
                 extra={
                     <Space>
-                        <Button type="primary" icon={<PlusOutlined />} onClick = {() => handleServiceModalVisible(true)}>
-                            Adicionar Serviço
+                        <Button type="primary" icon={<PlusOutlined />} onClick = {() => handleSubServiceModalVisible(true)}>
+                            Adicionar Sub-Serviço
                         </Button>
                     </Space>
                 }
@@ -267,14 +254,14 @@ const ServicesList: React.FC = () => {
                     <Table
                         rowKey="id"
                         columns={columns}
-                        dataSource={services}
+                        dataSource={subServices}
                         bordered
                     />
                 </ConfigProvider>
             </Card>
-            <ServiceForm form={form} service={selectedService} modalVisible={serviceModalVisible} handleModalVisible={handleServiceModalVisible} handleAdd={handleAdd} />
+            <SubServiceForm form={form} subService={selectedSubService} modalVisible={subServiceModalVisible} handleModalVisible={handleSubServiceModalVisible} handleAdd={handleAdd} />
         </>
     );
 }
 
-export default ServicesList;
+export default SubServicesList;

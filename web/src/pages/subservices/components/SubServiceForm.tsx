@@ -1,23 +1,32 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Form, Input, Modal, Row, Select } from "antd";
+import { query } from "@app/utils/service";
 import { ExclamationCircleFilled } from '@ant-design/icons';
+import { Button, Col, Form, Input, Modal, Radio, Row, Select } from "antd";
 
 const { Option } = Select;
 const { confirm } = Modal;
 const { TextArea } = Input;
-const serviceTypes = [ { label: 'Serviços Clínicos', value: '1' }, { label: 'Serviços Comunitários', value: '2' } ];
-const ageBands = ['9-14', '15-19', '20-24'];
 const status = [{ value: '0', label: "Inactivo" }, { value: '1', label: "Activo" }];
 
-const ServiceForm = ({ form, service, modalVisible, handleModalVisible, handleAdd }) => {
+const SubServiceForm = ({ form, subService, modalVisible, handleModalVisible, handleAdd }) => {
 
-    const [statusEnabled, setStatusEnabled] = useState(false);
+    const [ services, setServices ] = useState<any[]>([]);
+    const [ statusEnabled, setStatusEnabled ] = useState<boolean>(false);
 
     const RequiredFieldMessage = "Obrigatório!";
 
     useEffect(() => {
-        setStatusEnabled(service !== undefined);
-    },[service]);
+        const fetchData = async () => {
+            const services = await query();
+            const sortedServices = services.sort((ser1, ser2) => ser1.name.localeCompare(ser2.name));
+            setServices(sortedServices);
+        }
+        fetchData().catch(error => console.log(error));
+    }, []);
+
+    useEffect(() => {
+        setStatusEnabled(subService !== undefined);
+    },[subService]);
 
     const showCloseConfirm = () => {
         confirm({
@@ -39,7 +48,7 @@ const ServiceForm = ({ form, service, modalVisible, handleModalVisible, handleAd
             width={1200}
             centered
             destroyOnClose
-            title='Dados de Registo do Serviço'
+            title='Dados de Registo do Sub-Serviço'
             visible={modalVisible}
             onCancel={() => showCloseConfirm()}
             maskClosable={false}
@@ -53,17 +62,17 @@ const ServiceForm = ({ form, service, modalVisible, handleModalVisible, handleAd
             ]}
         >
             <Form form={form} layout="vertical">
-                <Row gutter={20}>
-                    <Col span={8}>
+                <Row gutter={24}>
+                    <Col span={12}>
                         <Form.Item
-                            name="serviceType"
-                            label="Tipo de Serviço"
+                            name="service"
+                            label="Serviço"
                             rules={[{ required: true, message: RequiredFieldMessage}]}
-                            initialValue={service?.serviceType}
+                            initialValue={subService ? subService?.service.id+'' : undefined}
                         >
                             <Select placeholder="Seleccione o Tipo Serviço">
-                                {serviceTypes.map(item => (
-                                    <Option key={item.value}>{item.label}</Option>
+                                {services.map(item => (
+                                    <Option key={item.id}>{item.name}</Option>
                                 ))}
                             </Select>
                         </Form.Item>
@@ -71,9 +80,9 @@ const ServiceForm = ({ form, service, modalVisible, handleModalVisible, handleAd
                     <Col span={12}>
                         <Form.Item
                             name="name"
-                            label="Serviço"
+                            label="Sub-Serviço"
                             rules={[{ required: true, message: RequiredFieldMessage }]}
-                            initialValue={service?.name}
+                            initialValue={subService?.name}
                         >
                             <Input placeholder="Insira o Serviço" />
                         </Form.Item>
@@ -82,30 +91,25 @@ const ServiceForm = ({ form, service, modalVisible, handleModalVisible, handleAd
                 <Row gutter={16}>
                     <Col span={8}>
                         <Form.Item
-                            name="description"
-                            label="Descrição"
-                            initialValue={service?.description}
+                            name="remarks"
+                            label="Observação"
+                            initialValue={subService?.remarks}
                         >
-                            <TextArea rows={2} placeholder="Insira a Descrição" maxLength={600} />
+                            <TextArea rows={2} placeholder="Insira a Observação" maxLength={600} />
                         </Form.Item>
                     </Col>
                     <Col className="gutter-row" span={8}>
                         <Form.Item
-                            name="ageBands"
-                            label="Faixas Etárias"
+                            name="mandatory"
+                            label="Mandatório"
                             rules={[{ required: true, message: RequiredFieldMessage }]}
-                            initialValue={service?.ageBands.split(",")}
+                            style={{ textAlign: 'left' }}
+                            initialValue={subService?.mandatory}
                         >
-                            <Select
-                                mode="multiple"
-                                size='middle'
-                                placeholder="Seleccione as faixas etárias"
-                                style={{width: '100%',}}
-                            >
-                                {ageBands.map(item => (
-                                    <Option key={item}>{item}</Option>
-                                ))}
-                            </Select>
+                            <Radio.Group>
+                                <Radio.Button value={1}>SIM</Radio.Button>
+                                <Radio.Button value={0}>NÃO</Radio.Button>
+                            </Radio.Group>
                         </Form.Item>
                     </Col>
                 </Row>
@@ -115,12 +119,12 @@ const ServiceForm = ({ form, service, modalVisible, handleModalVisible, handleAd
                             name="status"
                             label="Estado"
                             rules={[{ required: true, message: 'Obrigatório' }]}
-                            initialValue={service === undefined ? "1" : service?.status?.toString()}
+                            initialValue={subService === undefined ? "1" : subService?.status?.toString()}
                         >
                             <Select disabled={!statusEnabled}>
-                            {status?.map(item => (
-                                <Option key={item.value}>{item.label}</Option>
-                            ))}
+                                {status?.map(item => (
+                                    <Option key={item.value}>{item.label}</Option>
+                                ))}
                             </Select>
                         </Form.Item>
                     </Col>
@@ -128,6 +132,7 @@ const ServiceForm = ({ form, service, modalVisible, handleModalVisible, handleAd
             </Form>
         </Modal>
     )
+
 }
 
-export default ServiceForm;
+export default SubServiceForm;

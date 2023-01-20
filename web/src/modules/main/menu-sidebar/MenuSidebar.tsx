@@ -55,11 +55,15 @@ export const MENU: IMenuItem[] = [
         },
         {
           name: 'Distritos',
-          path: '/distList',
+          path: '/districtList',
         },
         {
           name: 'Serviços',
           path: '/servicesList',
+        },
+        {
+          name: 'Sub-Serviços',
+          path: '/subServicesList',
         }
       ]
   },
