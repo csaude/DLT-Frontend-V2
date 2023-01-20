@@ -227,7 +227,7 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
         (getUser(reference.notify_to).name + " " + getUser(reference.notify_to).surname).toLowerCase().includes(searchField.toLowerCase())
     )
 
-    const getUserReferences = async () =>{
+    const getUserReferences = async (currentUserId) =>{
         const userDetailsCollection = database.get('user_details')
         const referencesCollection = database.get("references")
 
@@ -236,8 +236,8 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
         }else{
                 const beneficiariesByUserId = await referencesCollection.query(
                     Q.or(
-                        Q.where('user_created',loggedUser.online_id.toString()),
-                        Q.where('referred_by',loggedUser.online_id),
+                        Q.where('user_created',currentUserId.toString()),
+                        Q.where('referred_by',currentUserId),
                     ),
                     Q.where('status',Q.notEq(3))
                 ).fetch()
@@ -245,9 +245,16 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
         }        
     }
 
-    useEffect(()=>{
-        getUserReferences()
-    },[])
+     useEffect(()=>{
+        if(loggedUser?.online_id !== undefined){
+            /** the user logged at least one time***/
+            getUserReferences(loggedUser?.online_id)
+        }
+        else {
+            /** is first time the user logs, is using API* */
+            getUserReferences(loggedUser?.id)
+        }          
+    },[loggedUser])
 
     return (
         <View style={styles.container}>
