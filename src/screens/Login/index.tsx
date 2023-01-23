@@ -38,7 +38,7 @@ const Login: React.FC = () => {
     const users = database.collections.get('users');
     const sequences = database.collections.get('sequences');
     const userDetails = database.collections.get('user_details');
-
+    const [passwordExpired,setPasswordExpired] = useState(false)
     // Inicio Do Reset
 
     const updatePassword = async (username: string, password: string) => {
@@ -176,7 +176,7 @@ const Login: React.FC = () => {
             if (loggedUser.newPassword == '1') {
                 navigate({ name: "ChangePassword", params: { loggedUser: loggedUser, token: token } });
             } else {
-                navigate({ name: "Main", params: { loggedUser: loggedUser } });
+                navigate({ name: "Main", params: { loggedUser: loggedUser, token: token, passwordExpired: true } });
             }
         }
         
@@ -281,10 +281,14 @@ const Login: React.FC = () => {
         const lastChangeDate = moment(passwordLastChangeDate);
         const diff = moment.duration(today.diff(lastChangeDate));
   
-        return diff.asDays()>182 ? 
-        navigate({ name: "ChangePassword", params: { loggedUser: user, token: token, passwordExpired: true } }) 
-        : navigate({ name: "Main", params: { loggedUser: loggedUser } })
+        return diff.asDays()>182 ? setPasswordExpired(true) : setPasswordExpired(false)
     }
+
+    useEffect(()=>{
+        if(passwordExpired){
+            navigate({ name: "ChangePassword", params: { loggedUser: loggedUser, token: token, passwordExpired: passwordExpired } }) 
+        }
+    },[loggedUser,setPasswordExpired])
 
     const saveUserDatails=async (user)=>{        
         const provinces_ids = user.provinces.map(province=>{return province.id})
