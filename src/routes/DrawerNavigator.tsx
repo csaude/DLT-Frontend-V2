@@ -1,4 +1,4 @@
-import React, { createContext } from 'react';
+import React, { createContext, useEffect } from 'react';
 import { Button, View , Text} from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
@@ -21,8 +21,8 @@ export const Context = createContext({});
 const Drawer = createDrawerNavigator();
 
 const DrawerNavigation: React.FC = ({ route }: any) => {
-  const { loggedUser } = route.params;
-
+  const { loggedUser } = route?.params;
+  //const params:any = route?.params;
 
   const onLogout = (e?: any) => {
     navigate({
@@ -30,6 +30,12 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
     });
   };
 
+  // useEffect(()=>{
+  //   console.log('-----change pass-----',params?.passwordExpired )
+  //       if(params?.passwordExpired ){
+  //           navigate({ name: "ChangePassword", params: { loggedUser: loggedUser, token: params?.token, passwordExpired: true } }) 
+  //       }
+  // },[loggedUser,params])
 
   return (
     <Context.Provider value={loggedUser}>

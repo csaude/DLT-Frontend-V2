@@ -15,6 +15,7 @@ export interface IMenuItem {
   name: string;
   path?: string;
   roles?: string[];
+  level?: number[],
   icon?: string;
   children?: Array<IMenuItem>;
 }
@@ -24,33 +25,45 @@ export const MENU: IMenuItem[] = [
     name: 'menusidebar.label.beneficiariesList',
     path: '/beneficiariesList',
     icon: 'fas fa-users', // icon set: https://fontawesome.com/v5/search
+    level: [0,1,2,3,4,5,6,7,8,9],
     roles: ['ADMIN','M&E','SUPERVISOR','MENTORA','ENFERMEIRA','CONSELHEIRA']
   },
   {
     name: 'menusidebar.label.referenceList',
     path: '/referenceList',
     icon: 'fas fa-sync',
+    level: [0,1,2,3,4,5,6,7,8,9],
     roles: ['ADMIN','M&E','SUPERVISOR','MENTORA','ENFERMEIRA','CONSELHEIRA']
   },
   {
     name: 'menusidebar.label.reports',
     path: '#',
     icon: 'fas fa-file-alt',
+    level: [0,1,2,3,4,5,6,7,8,9],
     roles: ['ADMIN','M&E','SUPERVISOR','DOADOR']
   },
   {
     name: 'menusidebar.label.configurations',
     path: '#',
     icon: 'fas fa-cog',
+    level: [0,1,2,3,4,5,6,7,8,9],
     roles: ['ADMIN','M&E','SUPERVISOR'],
       children: [
         {
           name: 'Províncias',
-          path: '/provList',
+          path: '/provinceList',
         },
         {
           name: 'Distritos',
-          path: '/distList',
+          path: '/districtList',
+        },
+        {
+          name: 'Serviços',
+          path: '/servicesList',
+        },
+        {
+          name: 'Sub-Serviços',
+          path: '/subServicesList',
         }
       ]
   },
@@ -59,26 +72,13 @@ export const MENU: IMenuItem[] = [
     path: '/usersList',
     roles: ['ADMIN'],
     icon: 'fas fa-user',
-    /*children: [
-      {
-        name: 'menusidebar.label.usersList',
-        path: '/usersList',
-        role: 'ADMIN',
-      },
-
-      {
-        name: 'menusidebar.label.usersForm',
-        path: '/usersForm',
-        role: 'ADMIN',
-      }
-    ]*/
+    level: [0]
   },
 ];
 
 
-
-
 const MenuSidebar = () => {
+  const userlogged = useSelector((state: any) => state.auth.user);
   const user = useSelector((state: any) => state.auth.currentUser);
   const sidebarSkin = useSelector((state: any) => state.ui.sidebarSkin);
   const menuItemFlat = useSelector((state: any) => state.ui.menuItemFlat);
@@ -105,7 +105,7 @@ const MenuSidebar = () => {
           >
             {
               MENU.map((menuItem: IMenuItem) => (
-                menuItem.roles?.includes(user.role) ? <MenuItem key={menuItem.name} menuItem={menuItem} /> : undefined
+                menuItem.roles?.includes(user.role) && menuItem.level?.includes(userlogged?.provinces?.length) ?  <MenuItem key={menuItem.name} menuItem={menuItem} /> : undefined
               ))
             }
           </ul>

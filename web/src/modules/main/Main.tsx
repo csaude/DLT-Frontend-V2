@@ -11,12 +11,31 @@ import MenuSidebar from '@app/modules/main/menu-sidebar/MenuSidebar';
 import Footer from '@app/modules/main/footer/Footer';
 import {useNavigate, useLocation} from 'react-router-dom';
 import './index.css'
+import { checkPasswordValidity } from '@app/utils/login';
 
 const Main = () => {
   
   const dispatch = useDispatch();
   
   let isNewPassword = localStorage.getItem('isNewPassword');
+
+  const navigate = useNavigate();
+
+  const username = useSelector(
+    (state: any) => state.auth.user.username
+  );
+  
+  const verifyUser = async () =>{
+    try {
+        await checkPasswordValidity(username)
+    } catch (error) {
+        const errSt = JSON.stringify(error);
+        const errObj = JSON.parse(errSt)
+        if(errObj.status==307){
+             navigate('/renewPassword');
+        }
+    }
+  }
 
   const menuSidebarCollapsed = useSelector(
     (state: any) => state.ui.menuSidebarCollapsed
@@ -64,6 +83,7 @@ const Main = () => {
 
     addWindowClass('sidebar-mini');
 
+    verifyUser();
     fetchProfile();
     return () => {
       removeWindowClass('sidebar-mini');

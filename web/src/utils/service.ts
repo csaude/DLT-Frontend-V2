@@ -1,6 +1,13 @@
 import { stringify } from 'qs';
 import { create, select, update } from './crud';
 
+
+export async function queryAll(){
+    const url = '/api/services/all';
+    const res = await select(url);
+    return res;
+}
+
 export async function query(payload?: any){
     let url: string;
     if(payload) {
@@ -35,6 +42,16 @@ export async function querySubServiceByService(payload?: any){
     let url: string;
     url = '/api/subservices/'.concat(payload);
     const res = await select(url);
+    return res;
+}
+
+export async function add(payload:any) {
+    const res = await create('/api/services', payload);
+    return res;
+}
+
+export async function edit(payload:any) {
+    const res = await update('/api/services', payload);
     return res;
 }
 

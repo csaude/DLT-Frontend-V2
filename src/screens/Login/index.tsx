@@ -15,7 +15,7 @@ import bcrypt from 'bcryptjs';
 import Spinner from 'react-native-loading-spinner-overlay';
 import styles from './style'
 import { loadUser } from "../../store/authSlice";
-
+import moment from 'moment';
 
 interface LoginData {
     email?: string | undefined;
@@ -40,8 +40,9 @@ const Login: React.FC = () => {
     const users = database.collections.get('users');
     const sequences = database.collections.get('sequences');
     const userDetails = database.collections.get('user_details');
-
     const dispatch = useDispatch()
+    const [passwordExpired,setPasswordExpired] = useState(false)
+
     // Inicio Do Reset
 
     const updatePassword = async (username: string, password: string) => {
@@ -179,7 +180,7 @@ const Login: React.FC = () => {
             if (loggedUser.newPassword == '1') {
                 navigate({ name: "ChangePassword", params: { loggedUser: loggedUser, token: token } });
             } else {
-                navigate({ name: "Main", params: { loggedUser: loggedUser } });
+                navigate({ name: "Main", params: { loggedUser: loggedUser, token: token, passwordExpired: true } });
             }
         }
         
@@ -234,6 +235,8 @@ const Login: React.FC = () => {
                         dispatch(loadUser(response.account));
 
                         saveUserDatails(response.account)
+                          
+                        isVeryOldPassword(response.account)
                     }
                     setLoading(false);
                 })
@@ -258,6 +261,7 @@ const Login: React.FC = () => {
                     setLoggedUser(logguedUser._raw);
 
                     dispatch(loadUser(logguedUser._raw));
+                    isVeryOldPassword(logguedUser._raw)
 
                     navigate({ name: "Main", params: { loggedUser: logguedUser._raw } });
                 }
@@ -270,11 +274,40 @@ const Login: React.FC = () => {
 
     };
 
-    const saveUserDatails=async (user)=>{
+    const isVeryOldPassword = async (user) =>{
+        let passwordLastChangeDate;
+        const today = moment(new Date());
+
+        if(user.passwordLastChangeDate===undefined){
+            /***Is StandALone**/
+            const userDetailss = await userDetails.query(Q.where('user_id', parseInt(user.online_id))).fetch();
+      
+            passwordLastChangeDate = userDetailss[0].password_last_change_date
+        }else{
+            /**Is Online */
+            passwordLastChangeDate = user.passwordLastChangeDate !== null ? user.passwordLastChangeDate : user.dateCreated
+        }
+       
+        const lastChangeDate = moment(passwordLastChangeDate);
+        const diff = moment.duration(today.diff(lastChangeDate));
+  
+        return diff.asDays()>182 ? setPasswordExpired(true) : setPasswordExpired(false)
+    }
+
+    useEffect(()=>{
+        if(passwordExpired){
+            navigate({ name: "ChangePassword", params: { loggedUser: loggedUser, token: token, passwordExpired: passwordExpired } }) 
+        }
+    },[loggedUser,setPasswordExpired])
+
+    const saveUserDatails=async (user)=>{        
         const provinces_ids = user.provinces.map(province=>{return province.id})
         const district_ids = user.districts.map(district=>{return district.id})
         const localities_ids = user.localities.map(locality=>{return locality.id})
         const uss_ids = user.us.map(us=>{return us.id})
+        const timestamp = user.passwordLastChangeDate !== null ? user.passwordLastChangeDate : user.dateCreated
+        const date = new Date(timestamp);
+        const formattedDate = date.toISOString().slice(0, 10);
         
         await database.write(async () => {
             await userDetails.create((userDetail: any) => {
@@ -283,6 +316,7 @@ const Login: React.FC = () => {
                 userDetail.districts = district_ids.toString();
                 userDetail.localities = localities_ids.toString();
                 userDetail.uss = uss_ids.toString();
+                userDetail.password_last_change_date =formattedDate
             });
         })
     }

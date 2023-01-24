@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState, useRef } from 'react'
-import { Drawer, Form, Button, Col, Row, Input, Select, DatePicker, Space, Radio, Divider } from 'antd';
+import { Drawer, Form, Button, Col, Row, Input, Select, DatePicker, Space, Radio, Divider, Modal } from 'antd';
 import { queryByType, querySubServiceByService } from '@app/utils/service'
 import { allUs, allUsByType } from '@app/utils/uSanitaria'
 import { PlusOutlined } from '@ant-design/icons';
@@ -18,12 +18,10 @@ const options = [
 ];
 let index = 0;
 
-const ReferenceInterventionForm = ({ form, reference, record, beneficiary }: any) => {
-  const [services, setServices] = React.useState<any>(undefined);
+const ReferenceInterventionForm = ({ form, reference, records, beneficiary }: any) => {
   const [interventions, setInterventions] = React.useState<any>(undefined);
   const [us, setUs] = React.useState<any>(undefined);
-  const selectedIntervention = record;
-  const service = selectedIntervention?.services;
+  const [selectedIntervention, setSelectedIntervention] = useState<any>(undefined);
   const inputRef = useRef<any>(null);
   const [users, setUsers] = React.useState<any>([]);
   const [name, setName] = useState('');
@@ -37,44 +35,46 @@ const ReferenceInterventionForm = ({ form, reference, record, beneficiary }: any
       onChangeEntryPoint(reference.referTo);
     }
 
-    const fetchServices = async () => {
-      const data = await queryByType(service.serviceType === '1' ? 'CLINIC' : 'COMMUNITY');
-      setServices(data);
-    }
-
-    const fetchSubServices = async () => {
-      const data = await querySubServiceByService(service.id);
+    const fetchSubServices = async (serviceId) => {
+      const data = await querySubServiceByService(serviceId);
       setInterventions(data);
     }
 
     if (selectedIntervention !== undefined) {
-      form.setFieldsValue({ areaServicos: service.serviceType === '1' ? 'CLINIC' : 'COMMUNITY' });
-      form.setFieldsValue({ service: service?.id + '' });
+      form.setFieldsValue({ areaServicos: selectedIntervention?.services?.serviceType === '1' ? 'CLINIC' : 'COMMUNITY' });
+      form.setFieldsValue({ service: selectedIntervention?.services?.id + '' });
       form.setFieldsValue({ entryPoint: reference.referTo });
       form.setFieldsValue({ location: reference.us.id + '' });
       form.setFieldsValue({ provider: reference.users.username });
-      form.setFieldsValue({ outros: selectedIntervention.description });
+      form.setFieldsValue({ outros: selectedIntervention?.description });
       onChangeUs(reference.us.id);
-
-      fetchServices().catch(error => console.log(error));
-
-      fetchSubServices().catch(error => console.log(error));
+      fetchSubServices(selectedIntervention?.service?.id).catch(error => console.log(error));
+    }else{
+      const lastIntervention = records[records.length-1]
+      form.setFieldsValue({ areaServicos: lastIntervention?.services?.serviceType === '1' ? 'CLINIC' : 'COMMUNITY' });
+      form.setFieldsValue({ service: lastIntervention?.services?.id + '' });
+      form.setFieldsValue({ entryPoint: reference.referTo });
+      form.setFieldsValue({ location: reference.us.id + '' });
+      form.setFieldsValue({ provider: reference.users.username });
+      form.setFieldsValue({ outros: lastIntervention?.description });
+      onChangeUs(reference.us.id);
+      fetchSubServices(lastIntervention?.services?.id).catch(error => console.log(error));
     }
 
     fetchData().catch(error => console.log(error));
 
     setIsLoading(true);
 
-  }, [selectedIntervention]);
-
-  const onChangeAreaServiço = async (value: any) => {
-    const data = await queryByType(value);
-    setServices(data);
-  }
+  }, []);
 
   const onChangeServices = async (value: any) => {
     const data = await querySubServiceByService(value);
     setInterventions(data);
+  }
+
+  const onChangeSubservice = async (value: any) => {
+    const intervention = interventions.filter(item=>item.id==value)
+    setSelectedIntervention(intervention[0])
   }
 
   const onChangeEntryPoint = async (e: any) => {
@@ -127,7 +127,7 @@ const ReferenceInterventionForm = ({ form, reference, record, beneficiary }: any
           label="Área de Serviços"
           rules={[{ required: true, message: RequiredFieldMessage }]}
         >
-          <Select placeholder="Select Area Serviço" onChange={onChangeAreaServiço} disabled>
+          <Select placeholder="Select Area Serviço"  disabled>
             {areaServicos.map(item => (
               <Option key={item.id}>{item.name}</Option>
             ))}
@@ -140,9 +140,9 @@ const ReferenceInterventionForm = ({ form, reference, record, beneficiary }: any
           label="Serviço"
           rules={[{ required: true, message: RequiredFieldMessage }]}
         >
-          <Select placeholder="Select Serviço" onChange={onChangeServices} disabled>
-            {services?.map(item => (
-              <Option key={item.id}>{item.name}</Option>
+          <Select placeholder="Select Serviço" onChange={onChangeServices} >
+            {records?.map((item) => (
+              <Option key={item.services.id}>{item.services.name}</Option>
             ))}
           </Select>
         </Form.Item>
@@ -153,7 +153,7 @@ const ReferenceInterventionForm = ({ form, reference, record, beneficiary }: any
           label="Sub-Serviço/Intervenção"
           rules={[{ required: true, message: RequiredFieldMessage }]}
         >
-          <Select placeholder="Select Sub Serviço" disabled={interventions === undefined} value={undefined}>
+          <Select placeholder="Select Sub Serviço" disabled={interventions === undefined} value={undefined} onChange={onChangeSubservice}>
             {interventions?.map(item => (
               <Option key={item.id}>{item.name}</Option>
             ))}

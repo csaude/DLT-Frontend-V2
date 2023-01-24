@@ -20,11 +20,15 @@ import UsersForm from '@pages/users/Form';
 import UserView from '@pages/users/View';
 import BeneficiariesList from '@pages/beneficiaries';
 import ReferenceList from '@pages/reference/Index';
+import ProvinceList from '@pages/province/index';
+import DistrictList from '@pages/district';
+import ServicesList from '@pages/services/index';
+import SubServicesList from './pages/subservices';
 
 
 import PublicRoute from './routes/PublicRoute';
 import PrivateRoute from './routes/PrivateRoute';
-
+import RenewPassword from './modules/new-password/RenewPassword';
 
 const App = () => {
   const windowSize = useWindowSize();
@@ -37,7 +41,6 @@ const App = () => {
       dispatch(setWindowSize(size));
     }
   }, [windowSize]);
-
  
   return (
     <HashRouter>
@@ -57,6 +60,8 @@ const App = () => {
         <Route path="/" element={<PrivateRoute />}>
           // First login after user was create
           <Route path="/newPassword" element={<NewPassword />} />
+          // Password Expired
+          <Route path="/renewPassword" element={<RenewPassword />} />
           // Aplication Main
           <Route path="/" element={<Main />}>
             <Route path="/sub-menu-2" element={<Blank />} />
@@ -73,8 +78,10 @@ const App = () => {
             <Route path="/usersForm" element={<UsersForm />} />
             <Route path="/usersView" element={<UserView />} />
             // Rota de Configurações
-            <Route path="/provList" element={<BeneficiariesList />} />
-            <Route path="/distList" element={<Profile />} />
+            <Route path="/provinceList" element={<ProvinceList />} />
+            <Route path="/districtList" element={<DistrictList />} />
+            <Route path="/servicesList" element={<ServicesList />} />
+            <Route path="/subServicesList" element={<SubServicesList />} />
           </Route>
         </Route>
       </Routes>
