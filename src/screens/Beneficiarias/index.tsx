@@ -12,8 +12,6 @@ import StepperButton from './components/StapperButton';
 import styles from './styles';
 import { sync } from '../../database/sync';
 import { SuccessHandler, ErrorHandler } from "../../components/SyncIndicator";
-import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../../store';
 
 const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries_interventions }: any) => {    
     const [showModal, setShowModal] = useState(false);
@@ -21,7 +19,6 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
     const [userBeneficiaries, setUserBeneficiaries] = useState<any>([]);
     const [maskName,setMaskName,] = useState(false)
     const loggedUser: any = useContext(Context);
-    const userDetail = useSelector((state: RootState) => state.userDetails);
     const toast = useToast();
     const syncronize = () => {
         sync({ username: loggedUser.username })

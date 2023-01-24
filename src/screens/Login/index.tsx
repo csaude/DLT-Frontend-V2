@@ -278,19 +278,16 @@ const Login: React.FC = () => {
         let passwordLastChangeDate;
         const today = moment(new Date());
 
-        if(user.passwordLastChangeDate===undefined){
-            /***Is StandALone**/
+        if(user.online_id!==undefined){
             const userDetailss = await userDetails.query(Q.where('user_id', parseInt(user.online_id))).fetch();
       
             passwordLastChangeDate = userDetailss[0].password_last_change_date
         }else{
-            /**Is Online */
             passwordLastChangeDate = user.passwordLastChangeDate !== null ? user.passwordLastChangeDate : user.dateCreated
         }
        
         const lastChangeDate = moment(passwordLastChangeDate);
-        const diff = moment.duration(today.diff(lastChangeDate));
-  
+        const diff = moment.duration(today.diff(lastChangeDate)); 
         return diff.asDays()>182 ? setPasswordExpired(true) : setPasswordExpired(false)
     }
 
@@ -298,7 +295,7 @@ const Login: React.FC = () => {
         if(passwordExpired){
             navigate({ name: "ChangePassword", params: { loggedUser: loggedUser, token: token, passwordExpired: passwordExpired } }) 
         }
-    },[loggedUser,setPasswordExpired])
+    },[loggedUser,passwordExpired])
 
     const saveUserDatails=async (user)=>{        
         const provinces_ids = user.provinces.map(province=>{return province.id})

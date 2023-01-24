@@ -22,20 +22,12 @@ const Drawer = createDrawerNavigator();
 
 const DrawerNavigation: React.FC = ({ route }: any) => {
   const { loggedUser } = route?.params;
-  //const params:any = route?.params;
 
   const onLogout = (e?: any) => {
     navigate({
       name: "Login"
     });
   };
-
-  // useEffect(()=>{
-  //   console.log('-----change pass-----',params?.passwordExpired )
-  //       if(params?.passwordExpired ){
-  //           navigate({ name: "ChangePassword", params: { loggedUser: loggedUser, token: params?.token, passwordExpired: true } }) 
-  //       }
-  // },[loggedUser,params])
 
   return (
     <Context.Provider value={loggedUser}>
