@@ -42,15 +42,13 @@ export const authSlice = createSlice({
     loadUser: (state, {payload}) => {
       state.currentUser = payload;
       state.isLoggedIn = true;
-    },
-    loadUserDetails: (state, {payload}) => {
-        state.userDetails = {
+      state.userDetails = {
           user_id : payload.online_id !==undefined ? payload.online_id : payload.id
-        }
-    }
+      }
+    },
   }
 });
 
-export const { logoutUser, loadUser, loadUserDetails} = authSlice.actions;
+export const { logoutUser, loadUser} = authSlice.actions;
 
 export default authSlice.reducer;

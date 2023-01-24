@@ -14,8 +14,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import bcrypt from 'bcryptjs';
 import Spinner from 'react-native-loading-spinner-overlay';
 import styles from './style'
-import { fetchUsers } from "../../store/userListSlice";
-import { loginUser } from "../../store/auth";
+import { loadUser } from "../../store/authSlice";
 
 
 interface LoginData {
@@ -232,7 +231,8 @@ const Login: React.FC = () => {
                         setToken(response.token);
                         setLoggedUser(response.account);
 
-                        dispatch(loginUser(response.account));
+                        dispatch(loadUser(response.account));
+
                         saveUserDatails(response.account)
                     }
                     setLoading(false);
@@ -256,7 +256,9 @@ const Login: React.FC = () => {
                 } else {
                     setIsInvalidCredentials(false);
                     setLoggedUser(logguedUser._raw);
-                    dispatch(loginUser(logguedUser._raw));
+
+                    dispatch(loadUser(logguedUser._raw));
+
                     navigate({ name: "Main", params: { loggedUser: logguedUser._raw } });
                 }
                 setLoading(false);
