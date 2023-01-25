@@ -280,7 +280,6 @@ const Login: React.FC = () => {
 
         if(user.online_id!==undefined){
             const userDetailss = await userDetails.query(Q.where('user_id', parseInt(user.online_id))).fetch();
-      
             passwordLastChangeDate = userDetailss[0].password_last_change_date
         }else{
             passwordLastChangeDate = user.passwordLastChangeDate !== null ? user.passwordLastChangeDate : user.dateCreated
@@ -295,7 +294,7 @@ const Login: React.FC = () => {
         if(passwordExpired){
             navigate({ name: "ChangePassword", params: { loggedUser: loggedUser, token: token, passwordExpired: passwordExpired } }) 
         }
-    },[loggedUser,passwordExpired])
+    },[passwordExpired, setPasswordExpired])
 
     const saveUserDatails=async (user)=>{        
         const provinces_ids = user.provinces.map(province=>{return province.id})
