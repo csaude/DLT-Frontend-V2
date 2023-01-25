@@ -23,6 +23,7 @@ import { SuccessHandler, ErrorHandler } from "../../../components/SyncIndicator"
 import { sync } from "../../../database/sync";
 
 const BeneficiaryForm: React.FC = ({ route }: any) => {
+    const [partners, setPartners] = useState<any>([])
     
     const loggedUser: any = useContext(Context);
     
@@ -143,18 +144,26 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                 const neighborhoodsSerialized = neighborhoodsList.map(item => item._raw);
                 setNeighborhoods(neighborhoodsSerialized);
             }
+            const fetchPartners = async () => {
+                const partnersQ = await database.get('beneficiaries').query(
+                        Q.where('gender', '1'),
+                    ).fetch();
+                const partinersSerialized = partnersQ.map(item=>item._raw)
+                setPartners(partinersSerialized);
+            }
 
             fetchDistricstData().catch(error => console.log(error));
             fetchLocalitiesData().catch(error => console.log(error));
             fetchUssData().catch(error => console.log(error));
             fetchNeighborhoodsData().catch(error => console.log(error));
+            fetchPartners().catch(error => console.log(error))
 
             setValue(beneficiarie?.vblt_lives_with.split(','));
             setSchoolInfoEnabled(beneficiarie.vblt_is_student == 1);
             setDeficiencyTypeEnabled(beneficiarie.vblt_is_deficient == 1);
             setChildrenEnabled(beneficiarie.vblt_pregnant_before == 1);
             setGbvInfoEnabled(beneficiarie.vblt_vbg_victim == 1);
-            setSexExploitationTimeEnabled(beneficiarie.vblt_sexual_exploitation == 1);
+            setSexExploitationTimeEnabled(beneficiarie.vblt_sexual_exploitation == 1);        
         }
     }, []);
     const toast = useToast();
@@ -178,7 +187,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             phone_number: beneficiarie?.phone_number,
             e_mail: beneficiarie?.e_mail,
             neighborhood_id: beneficiarie?.neighborhood_id,
-            partner_nui: beneficiarie?.partner_nui,
+            partner_id: beneficiarie?.partner_id,
             vblt_lives_with: beneficiarie?.vblt_lives_with,
             vblt_is_orphan: beneficiarie?.vblt_is_orphan,
             vblt_is_student: beneficiarie?.vblt_is_student,
@@ -229,7 +238,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
     };
 
     const onNextStep2 = async () => {
-
+        console.log('-------onNextStep2------',formik.values)
         const errorsList = validate(formik.values);
         const hasErrors = JSON.stringify(errorsList) !== '{}';
 
@@ -395,23 +404,14 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
     const handleSaveBeneficiary = async () => {
         
         const district = districts.filter(d => d.online_id === formik.values.district)[0];
-        setDistrict(district);
-
-        const partner_nui = formik.values.partner_nui;
-        let partner;
-        
-        if(partner_nui && partner_nui !== ''){
-            partner = (await database.get('beneficiaries').query(
-                Q.where('nui', partner_nui)
-            ).fetch())[0]?._raw;
-        }
+        setDistrict(district);       
         
         const isEdit = beneficiarie && beneficiarie?.id;
 
         const newObject = await database.write(async () => {
 
             const locality = localities.filter(item => item.online_id === formik.values.locality)[0];
-            const partner_id = loggedUser.partner_id == undefined ? loggedUser.partners?.id : loggedUser.partner_id;
+            const organization_id = loggedUser.partner_id == undefined ? loggedUser.partners?.id : loggedUser.partner_id;
 
             if (isEdit) {
                 const beneficiaryToUpdate = await database.get('beneficiaries').find(beneficiarie?.id);
@@ -424,7 +424,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                     beneficiarie.address = formik.values.address, 
                     beneficiarie.phone_number = formik.values.phone_number, 
                     beneficiarie.e_mail = formik.values.e_mail,
-                    beneficiarie.partner_id = partner?.online_id,
+                    beneficiarie.partner_id = Number(formik.values?.partner_id),
                     beneficiarie.entry_point = formik.values.entry_point, 
                     beneficiarie.us_id = formik.values.us_id,
                     beneficiarie.neighborhood_id = formik.values.neighborhood_id, 
@@ -483,8 +483,8 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                 beneficiary.address = formik.values.address, 
                 beneficiary.phone_number = formik.values.phone_number, 
                 beneficiary.e_mail = formik.values.e_mail, 
-                beneficiary.organization_id = partner_id, 
-                beneficiary.partner_id = partner?.online_id,
+                beneficiary.organization_id = organization_id, 
+                beneficiary.partner_id = Number(formik.values?.partner_id),
                 beneficiary.entry_point = formik.values.entry_point, 
                 beneficiary.us_id = formik.values.us_id,
                 beneficiary.neighborhood_id = formik.values.neighborhood_id, 
@@ -965,7 +965,22 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                 </FormControl>
                                 <FormControl >
                                     <FormControl.Label>NUI do Parceiro</FormControl.Label>
-                                    <Input onBlur={formik.handleBlur('partner_nui')} placeholder="Insira o NUI do Parceiro" onChangeText={formik.handleChange('partner_nui')} value={formik.values.partner_nui} />
+                                    <Picker
+                                        selectedValue={formik.values.partner_id}
+                                        onValueChange={(itemValue, itemIndex) => {
+                                            if (itemIndex !== 0) {
+                                                formik.setFieldValue('partner_id', itemValue);
+                                            }
+                                        }
+                                        }>
+
+                                        <Picker.Item label="-- Seleccione o NUI do Parceiro --" value="0" />
+                                        {
+                                            partners.map(item => (
+                                                <Picker.Item key={item.online_id} label={item.nui} value={item.online_id} />
+                                            ))
+                                        }
+                                    </Picker>
                                 </FormControl>
 
                             </VStack>
