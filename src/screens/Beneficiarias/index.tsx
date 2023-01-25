@@ -13,7 +13,7 @@ import styles from './styles';
 import { sync } from '../../database/sync';
 import { SuccessHandler, ErrorHandler } from "../../components/SyncIndicator";
 
-const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries_interventions }: any) => {
+const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries_interventions }: any) => {    
     const [showModal, setShowModal] = useState(false);
     const [searchField, setSearchField] = useState('');
     const [userBeneficiaries, setUserBeneficiaries] = useState<any>([]);

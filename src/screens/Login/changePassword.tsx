@@ -5,6 +5,11 @@ import { navigate } from '../../routes/NavigationRef';
 import { Formik, useFormik } from 'formik';
 import * as Yup from 'yup';
 import { CHANGE_PASSWORD_URL } from '../../services/api';
+import UserDetails from "../../models/UserDetails";
+import { Q } from "@nozbe/watermelondb";
+import { database } from "../../database";
+import { useSelector } from 'react-redux'
+import { RootState } from "../../store";
 
 interface LoginData{
     username?: string | undefined;
@@ -19,7 +24,13 @@ const ChangePassword: React.FC = ({ route }: any) => {
     const [username, setUsername] = useState(loggedUser.username);
 
     const toast = useToast();
+
+    const userDetails = database.collections.get('user_details');
+
+    const errorMessage = params.passwordExpired ? 'Alteração da senha é obrigatório a cada 6 meses ' : 'Alteração da senha é obrigatório no primeiro login '
     
+    const userDetail = useSelector((state: RootState) => state.auth.userDetails);
+
     const validate = (values: any) => {
         const errors: LoginData = {};        
 
@@ -56,7 +67,19 @@ const ChangePassword: React.FC = ({ route }: any) => {
 
             console.log(data);
             console.log("Alterado com sucesso");
-            navigate({ name: "Main", params: { loggedUser: loggedUser } });
+
+            const userDetailsQ = await userDetails.query(Q.where('user_id', parseInt(userDetail.user_id))).fetch();
+            const date = new Date();
+            const formattedDate = date.toISOString().slice(0, 10);
+
+            await database.write(async () => {
+                const uDetail = await database.get('user_details').find(userDetailsQ[0]._raw.id)
+                await uDetail.update(() => {
+                    uDetail.password_last_change_date = formattedDate
+                })
+            })
+
+            navigate({ name: "Main", params: { loggedUser: loggedUser } });        
 
         } catch (error) {
             console.log(error);
@@ -85,7 +108,7 @@ const ChangePassword: React.FC = ({ route }: any) => {
                     <Heading  color="coolGray.400"
                                 _dark={{ color: "warmGray.200" }}
                                 fontWeight="light" size="md" py="2">
-                        <Text color="darkBlue.800">Alteração da senha é obrigatório no primeiro login </Text>
+                        <Text color="darkBlue.800"> {errorMessage} </Text>
                     </Heading>
                 </Center>
                 <Center w="90%">

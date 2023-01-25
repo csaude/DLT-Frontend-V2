@@ -241,7 +241,8 @@ export default appSchema({
           {name: 'districts',type: "string"},
           {name: 'localities', type: 'string'},
           {name: 'uss', type: 'string'},
-          {name: 'user_id', type: 'number', isIndexed: true}
+          {name: 'user_id', type: 'number', isIndexed: true},
+          {name: 'password_last_change_date',  type: "string"} 
         ],
       }),
     ], 
