@@ -65,7 +65,6 @@ const ChangePassword: React.FC = ({ route }: any) => {
                 })
             });
 
-            console.log(data);
             console.log("Alterado com sucesso");
 
             const userDetailsQ = await userDetails.query(Q.where('user_id', parseInt(userDetail.user_id))).fetch();
