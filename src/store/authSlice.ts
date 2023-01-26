@@ -19,7 +19,11 @@ const initialState: AuthState = {
   isLoggedIn: false,
   token: '',
   userDetails: { 
-    user_id: ''
+    user_id: '',
+    provinces : [],
+    districts : [],
+    localities : [],
+    uss : []
   }
 };
 
@@ -43,12 +47,25 @@ export const authSlice = createSlice({
       state.currentUser = payload;
       state.isLoggedIn = true;
       state.userDetails = {
-          user_id : payload.online_id !==undefined ? payload.online_id : payload.id
+          user_id : payload.id !==undefined ? payload.id : payload.online_id,
+          provinces : payload.provinces !==undefined ?  payload.provinces : '',
+          districts : payload.districts !==undefined ? payload.districts : '', 
+          localities : payload.localities !==undefined ? payload.localities : '', 
+          uss : payload.us !==undefined ? payload.us : ''
       }
     },
+    loadUserDetails:(state, {payload}) => {
+        console.log('---------payload--------',payload)
+        state.userDetails = {
+            provinces :  payload.provinces,
+            districts :  payload.districts,
+            localities : payload.localities,
+            uss : payload.us
+        }
+    }
   }
 });
 
-export const { logoutUser, loadUser} = authSlice.actions;
+export const { logoutUser, loadUser, loadUserDetails} = authSlice.actions;
 
 export default authSlice.reducer;

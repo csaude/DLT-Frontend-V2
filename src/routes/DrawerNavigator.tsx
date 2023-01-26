@@ -1,4 +1,4 @@
-import React, { createContext, useEffect } from 'react';
+import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react';
 import { Button, View , Text} from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
@@ -7,7 +7,11 @@ import UsersNavigator from './UsersNavigator';
 import BeneficiariesNavigator from './BeneficiariesNavigator';
 import RefencesNavigator from './ReferencesNavigator'
 import { navigate } from './NavigationRef';
-
+import { Q } from "@nozbe/watermelondb";
+import { database } from '../database';
+import { loadLocalRawResource } from 'react-native-svg';
+import { useDispatch } from 'react-redux';
+import { loadUserDetails } from '../store/authSlice';
 
 function HomeScreen({ navigation }: any) {
   return (
@@ -22,6 +26,80 @@ const Drawer = createDrawerNavigator();
 
 const DrawerNavigation: React.FC = ({ route }: any) => {
   const { loggedUser } = route?.params;
+
+  const userDetailsCollection = database.get('user_details')
+  const dispatch = useDispatch()
+
+  useEffect(()=>{
+      const getUserDetails = async()=>{              
+          const userDetailsQ = await userDetailsCollection.query(
+                            Q.where('user_id', loggedUser.online_id)
+                        ).fetch();
+          const userDetailRaw = userDetailsQ[0]?._raw
+          getProvincesByIds(userDetailRaw).catch(err => console.error(err));
+          getDistrictsByIds(userDetailRaw).catch(err => console.error(err));
+          getLocalitiesByIds(userDetailRaw).catch(err => console.error(err));
+          getUssByIds(userDetailRaw).catch(err => console.error(err));        
+      }   
+      getUserDetails().catch(error=>console.log(error));   
+  },[])
+
+  const getProvincesByIds =async (userDetails)=>{   
+                var a = userDetails?.provinces                
+                if(a!==''){
+                    var b = a?.split(',').map(Number); 
+                    const provincesQ = await database.get('provinces').query(Q.where('online_id', Q.oneOf(b))).fetch();
+                    const provRaws = provincesQ.map(item=>item._raw)
+                    console.log('------provRaw------',provRaws)   
+                    dispatch(loadUserDetails({provinces:provRaws}))            
+                }else{
+                    const getAllProvs = await database.get('provinces').query().fetch();
+                    const provRaws = getAllProvs.map(item => item._raw)
+                    dispatch(loadUserDetails({provinces:provRaws}))
+                }   
+          }
+
+          const getDistrictsByIds =async (userDetails)=>{
+              var a = userDetails?.districts
+              if(a!==''){
+                var b = a?.split(',').map(Number);                
+                const districtsQ = await database.get('districts').query(Q.where('online_id', Q.oneOf(b))).fetch();
+                const districtRaws= districtsQ.map(item=>item._raw)
+                dispatch(loadUserDetails({districts:districtRaws}))  
+              }else{
+                  const getAllDists = await database.get('districts').query().fetch();
+                  const distRaws = getAllDists.map(item => item._raw)
+                  dispatch(loadUserDetails({districts:distRaws}))   
+              }
+          }
+
+          const getLocalitiesByIds=async (userDetails)=>{
+              var a = userDetails?.localities
+              if(a!==''){
+                var b = a?.split(',').map(Number);                
+                const localitiesQ = await database.get('localities').query(Q.where('online_id', Q.oneOf(b))).fetch();
+                const localRaws = localitiesQ.map(item=>item._raw)
+                dispatch(loadUserDetails({localities:localRaws}))
+              }else{
+                  const getAllLocalits = await database.get('localities').query().fetch();
+                  const localRaws = getAllLocalits.map(item => item._raw)
+                  dispatch(loadUserDetails({localities:localRaws})) 
+              }
+          }
+
+          const getUssByIds=async (userDetails)=>{
+                var a = userDetails?.uss
+                if(a!==''){
+                  var b = a?.split(',').map(Number);                
+                  const ussQ = await database.get('us').query(Q.where('online_id', Q.oneOf(b))).fetch();
+                  const usRaws = ussQ.map(item=>item._raw)
+                  dispatch(loadUserDetails({uss:usRaws})) 
+                }else{
+                  const getAllUss = await database.get('us').query().fetch();
+                  const usRaws = getAllUss.map(item => item._raw)
+                  dispatch(loadUserDetails({uss:usRaws})) 
+                }
+          }
 
   const onLogout = (e?: any) => {
     navigate({
