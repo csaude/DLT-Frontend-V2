@@ -82,7 +82,7 @@ const LocalityList: React.FC = () => {
             const errSt = JSON.stringify(error);
             const errObj = JSON.parse(errSt);
             message.error({
-                content: 'Não foi possível Registar a Província', className: 'custom-class',
+                content: 'Não foi possível Registar o  Posto Administrativo', className: 'custom-class',
                 style: {
                     marginTop: '10vh',
                 }
