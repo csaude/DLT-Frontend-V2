@@ -61,7 +61,7 @@ const LocalityForm = ({ form, locality, modalVisible, handleModalVisible, handle
             setEnabledDistricts(false);
         };
 
-        form.setFieldsValue({ districts: [] });
+        form.setFieldsValue({ district: null });
     }
 
     const showCloseConfirm = () => {
