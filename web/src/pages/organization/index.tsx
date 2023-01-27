@@ -6,11 +6,12 @@ import { Badge, Button, Card, Form, Input, message, Space, Table, Typography } f
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import OrganizationForm from "./components/OrganizationForm";
+import { allDistrict } from "@app/utils/district";
 
 const OrganizationList: React.FC = () => {
 
     const [organizations, setOrganizations] = useState<any[]>([]);    
-    const [province, setProvince] = useState<any[]>([]);
+    const [district, setDistrict] = useState<any[]>([]);
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
     const [organizationModalVisible, setOrganizationModalVisible] = useState<boolean>(false);
@@ -22,19 +23,18 @@ const OrganizationList: React.FC = () => {
         const fetchData = async () => {
             const organizations = await allOrganization();
             const sortedOrganizations = organizations.sort((ser1, ser2) => ser2.code - ser1.code);
-
-            const provinces = await allProvinces();
+            const districts = await allDistrict()
 
             setOrganizations(sortedOrganizations);
-            setProvince(provinces);            
+            setDistrict(districts)           
         }
 
         fetchData().catch(error => console.log(error));
     }, []);
 
     const organizationSort = (data: any) => {
-        const dists = ([...organizations, data]);
-        const sortedOrganizations = (dists).sort((ser1, ser2) => ser2.code - ser1.code);
+        const orgs = ([...organizations, data]);
+        const sortedOrganizations = (orgs).sort((ser1, ser2) => ser2.code - ser1.code);
 
         setOrganizations(sortedOrganizations);
     }
@@ -55,10 +55,13 @@ const OrganizationList: React.FC = () => {
         form.validateFields().then(async (values) => {
             const organization: any = selectedOrganization ? selectedOrganization : {};
 
-            organization.code = values.code;
             organization.name = values.name;
+            organization.abbreviation = values.abbreviation;
+            organization.description = values.description;
+            organization.partnerType = values.partnerType;
+            organization.logo = values.logo
             organization.status = values.status;
-            organization.province = {id: values.province};
+            organization.district = {id: values.district};
 
             if (selectedOrganization === undefined) {
 
@@ -75,6 +78,7 @@ const OrganizationList: React.FC = () => {
                     }
                 });
             } else {
+                console.log('-------organization-------',organization)
                 organization.updatedBy = localStorage.user;
                 
                 const { data } = await edit(organization);
@@ -97,7 +101,7 @@ const OrganizationList: React.FC = () => {
             const errObj = JSON.parse(errSt);
             console.log(error);
             message.error({
-                content: 'Não foi possível Registar o Distrito', className: 'custom-class',
+                content: 'Não foi possível Registar o Organização', className: 'custom-class',
                 style: {
                     marginTop: '10vh',
                 }
@@ -182,28 +186,35 @@ const OrganizationList: React.FC = () => {
         setSearchText(searchText);
     };
 
-    const columns = [
+    const columns = [        
         {
-            title: "Código do Distrito",
-            dataIndex: 'serviceType',
-            key: 'type',
-            render: (text, record) =>
-                (record?.code)
-        },
-        {
-            title: "Nome do Distrito",
+            title: "Nome do Organização",
             dataIndex: 'name',
             key: 'type',
             ...getColumnSearchProps('name'),
             render: (text, record) => record?.name
         },
         {
-            title: "Província",
+            title: "Abreviação",
+            dataIndex: 'abbreviation',
+            key: 'type',
+            ...getColumnSearchProps('abbreviation'),
+            render: (text, record) => record?.abbreviation
+        },
+        {
+            title: "Descrição",
+            dataIndex: 'desctiption',
+            key: 'type',
+            ...getColumnSearchProps('description'),
+            render: (text, record) => record?.description
+        },
+        {
+            title: "Distrito",
             dataIndex: 'name',
             key: 'type',
-            render: (text, record) => record?.province?.name,
-            filters: filterItem(province)(i => i.name),
-            onFilter: (value, record) => record?.province?.name == value,
+            render: (text, record) => record?.district?.name,
+            filters: filterItem(district)(i => i.name),
+            onFilter: (value, record) => record?.district?.name == value,
             filterSearch: true,
         },
         {
@@ -248,11 +259,11 @@ const OrganizationList: React.FC = () => {
     return (
         <>
             <Title />
-            <Card title="Lista de Distritos" bordered={false} headStyle={{ color: "#17a2b8" }}
+            <Card title="Lista de Organizações" bordered={false} headStyle={{ color: "#17a2b8" }}
                 extra={
                     <Space>
                         <Button type="primary" icon={<PlusOutlined />} onClick={() => handleOrganizationModalVisible(true)}>
-                            Adicionar Distrito
+                            Adicionar Organização
                         </Button>
                     </Space>
                 }

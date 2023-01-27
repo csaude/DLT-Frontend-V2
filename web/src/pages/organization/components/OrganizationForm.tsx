@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, Col, Form, Input, Modal, Row, Select } from "antd";
 import { ExclamationCircleFilled } from '@ant-design/icons';
-import { queryAll } from "@app/utils/province";
+import { allDistrict } from "@app/utils/district";
 
 const { Option } = Select;
 const { confirm } = Modal;
@@ -10,7 +10,14 @@ const status = [{ value: '0', label: "Inactivo" }, { value: '1', label: "Activo"
 const OrganizationForm = ({ form, organization, modalVisible, handleModalVisible, handleAdd }) => {
 
     const [statusEnabled, setStatusEnabled] = useState(false);   
-    const [provinces, setProvinces] = useState<any[]>([]);
+    const [districts, setDistricts] = useState<any[]>([]);
+
+    const partnerTypes =[
+                            {value:1,label:'Parceiro Clínico'},
+                            {value:2,label:'Parceiro Comunitário'},
+                            {value:3,label:'Apoio Técnico'},
+                            {value:4,label:'Doadores'},
+                        ]
 
     const RequiredFieldMessage = "Obrigatório!";
     console.log(organization);
@@ -20,11 +27,9 @@ const OrganizationForm = ({ form, organization, modalVisible, handleModalVisible
     },[organization]);
 
     useEffect(() => {
-        const fetchData = async () => {
-           
-            const provinces = await queryAll();
-
-            setProvinces(provinces);            
+        const fetchData = async () => {           
+            const districts = await allDistrict()
+            setDistricts(districts)         
         }
 
         fetchData().catch(error => console.log(error));
@@ -68,30 +73,18 @@ const OrganizationForm = ({ form, organization, modalVisible, handleModalVisible
                 <Row gutter={12}>
                     <Col className="gutter-row" span={8}>
                         <Form.Item
-                            name="province"
-                            label="Província"
+                            name="district"
+                            label="Distrito"
                             rules={[{ required: true, message: 'Obrigatório' }]}
-                            initialValue={organization === undefined ? "" : organization?.province?.id.toString()}
+                            initialValue={organization === undefined ? "" : organization?.district?.id.toString()}
                         >
-                            <Select placeholder="Seleccione a Província">
-                            {provinces?.map(item => (
+                            <Select placeholder="Seleccione o Distrito">
+                            {districts?.map(item => (
                                 <Option key={item.id}>{item.name}</Option>
                             ))}
                             </Select>
                         </Form.Item>
-                    </Col>                    
-                </Row>
-                <Row gutter={8}>
-                    <Col span={8}>
-                        <Form.Item
-                            name="code"
-                            label="Código"
-                            rules={[{ required: true, message: RequiredFieldMessage }]}
-                            initialValue={organization?.code}
-                        >
-                            <Input placeholder="Insira o código do distrito" />
-                        </Form.Item>
-                    </Col>
+                    </Col>  
                     <Col span={12}>
                         <Form.Item
                             name="name"
@@ -99,11 +92,47 @@ const OrganizationForm = ({ form, organization, modalVisible, handleModalVisible
                             rules={[{ required: true, message: RequiredFieldMessage }]}
                             initialValue={organization?.name}
                         >
-                            <Input placeholder="Insira o nome da distrito" />
+                            <Input placeholder="Insira o nome da Organização" />
+                        </Form.Item>
+                    </Col>                  
+                </Row>
+                <Row gutter={8}>
+                    <Col span={8}>
+                        <Form.Item
+                            name="abbreviation"
+                            label="Abreviação"
+                            rules={[{ required: true, message: RequiredFieldMessage }]}
+                            initialValue={organization?.abbreviation}
+                        >
+                            <Input placeholder="Insira a abreviação da organização" />
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            name="description"
+                            label="Descrição"
+                            rules={[{ required: true, message: RequiredFieldMessage }]}
+                            initialValue={organization?.description}
+                        >
+                            <Input placeholder="Insira a descrição da Organização" />
                         </Form.Item>
                     </Col>
                 </Row>
                 <Row gutter={8}>
+                    <Col className="gutter-row" span={8}>
+                        <Form.Item
+                            name="partnerType"
+                            label="Tipo"
+                            rules={[{ required: true, message: 'Obrigatório' }]}
+                            initialValue={organization === undefined ? "1" : organization?.partnerType?.toString()}
+                        >
+                            <Select >
+                            {partnerTypes?.map(item => (
+                                <Option key={item.value}>{item.label}</Option>
+                            ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
                 </Row>
                 <Row gutter={8}>
                     <Col className="gutter-row" span={8}>
