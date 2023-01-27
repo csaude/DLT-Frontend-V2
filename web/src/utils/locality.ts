@@ -17,6 +17,17 @@ export async function allLocality(payload?: LocalityFilter){
     return res;
 }
 
+export async function add(payload:any) {
+    const res = await create('/api/localities', payload);
+    return res;
+}
+
+export async function edit(payload:any) {
+    const res = await update('/api/localities', payload);
+    return res;
+}
+
+
 
 export async function allProvinces(payload?: any){
     let url: string;
