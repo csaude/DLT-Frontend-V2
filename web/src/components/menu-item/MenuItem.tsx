@@ -2,13 +2,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import { NavLink, useNavigate, useLocation, Location } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { IMenuItem } from "@app/modules/main/menu-sidebar/MenuSidebar";
-import { useSelector,useDispatch } from "react-redux";
-import { query as beneficiaryQuery } from '../../utils/beneficiary';
-import { query as referenceQuery } from '../../utils/reference';
-import { query as queryUser } from '../../utils/users';
-import { getUserParams } from '@app/models/Utils';
-import { getReferencesTotal } from '../../store/actions/reference';
-import { getBeneficiaryTotal } from '../../store/actions/beneficiary';
+import { useSelector} from "react-redux";
 
 const MenuItem = ({ menuItem }: { menuItem: IMenuItem }) => {
   const [t] = useTranslation();
@@ -18,7 +12,6 @@ const MenuItem = ({ menuItem }: { menuItem: IMenuItem }) => {
   const [isOneOfChildrenActive, setIsOneOfChildrenActive] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const dispatch = useDispatch();
   const benefiarySelector = useSelector(
     (state: any) => state.beneficiary.total
   );
@@ -78,17 +71,7 @@ const MenuItem = ({ menuItem }: { menuItem: IMenuItem }) => {
     );
   }, [menuItem]);
 
-   const getTotals = async () =>{
-      const user = await queryUser(localStorage.user);
-      const beneficiaryData = await beneficiaryQuery(getUserParams(user));
-      const referenceData = await referenceQuery();
-      dispatch(getBeneficiaryTotal(beneficiaryData.length))
-      dispatch(getReferencesTotal(referenceData.length))
-    }
-  useEffect(()=>{
-    getTotals()
-  },[getTotals,dispatch])
-
+  
   return (
     <li className={`nav-item${isMenuExtended ? ' menu-open' : ''}`}>
       <a

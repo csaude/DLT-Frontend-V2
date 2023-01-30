@@ -30,6 +30,7 @@ import SubServicesList from './pages/subservices';
 import PublicRoute from './routes/PublicRoute';
 import PrivateRoute from './routes/PrivateRoute';
 import RenewPassword from './modules/new-password/RenewPassword';
+import OrganizationList from './pages/organization';
 
 
 const App = () => {
@@ -85,6 +86,7 @@ const App = () => {
             <Route path="/localityList" element={<LocalityList />} />
             <Route path="/servicesList" element={<ServicesList />} />
             <Route path="/subServicesList" element={<SubServicesList />} />
+            <Route path="/organizationsList" element={<OrganizationList />} />
           </Route>
         </Route>
       </Routes>
