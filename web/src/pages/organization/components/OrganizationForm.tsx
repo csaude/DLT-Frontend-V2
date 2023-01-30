@@ -26,6 +26,9 @@ const OrganizationForm = ({ form, organization, modalVisible, handleModalVisible
 
     useEffect(() => {
         setStatusEnabled(organization !== undefined);
+        if(organization !== undefined){
+            fetchDistricts(organization?.district?.province?.id.toString())
+        }        
     },[organization]);
 
     useEffect(() => {
