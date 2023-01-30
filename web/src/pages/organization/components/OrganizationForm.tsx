@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Col, Form, Input, Modal, Row, Select } from "antd";
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { allDistrict } from "@app/utils/district";
+import { queryAll } from "@app/utils/province";
 
 const { Option } = Select;
 const { confirm } = Modal;
@@ -10,7 +11,9 @@ const status = [{ value: '0', label: "Inactivo" }, { value: '1', label: "Activo"
 const OrganizationForm = ({ form, organization, modalVisible, handleModalVisible, handleAdd }) => {
 
     const [statusEnabled, setStatusEnabled] = useState(false);   
+    const [provinces, setProvinces] = useState<any[]>([]);
     const [districts, setDistricts] = useState<any[]>([]);
+    const [provDistricts, setProvDistricts] = useState<any[]>([]);
 
     const partnerTypes =[
                             {value:1,label:'Parceiro Clínico'},
@@ -20,21 +23,33 @@ const OrganizationForm = ({ form, organization, modalVisible, handleModalVisible
                         ]
 
     const RequiredFieldMessage = "Obrigatório!";
-    console.log(organization);
 
     useEffect(() => {
         setStatusEnabled(organization !== undefined);
     },[organization]);
 
     useEffect(() => {
-        const fetchData = async () => {           
-            const districts = await allDistrict()
-            setDistricts(districts)         
+        const fetchData = async () => {
+           const provinces = await queryAll();
+           setProvinces(provinces);    
+           const districts = await allDistrict()
+           setDistricts(districts)        
         }
-
         fetchData().catch(error => console.log(error));
     }, []);
 
+    const handleOnChangeProvince =(e)=>{
+        form.setFieldsValue({ district: null });
+        fetchDistricts(e)
+    }
+
+    const fetchDistricts = (province_id) => {     
+        let districtsByProvince = districts.filter(item=>{
+            return item?.province?.id.toString()===province_id
+        })
+        setProvDistricts(districtsByProvince)         
+    }
+       
     const showCloseConfirm = () => {
         confirm({
         title: 'Deseja fechar este formulário?',
@@ -69,17 +84,16 @@ const OrganizationForm = ({ form, organization, modalVisible, handleModalVisible
             ]}
         >
             <Form form={form} layout="vertical">
-                
-                <Row gutter={12}>
+                 <Row gutter={12}>
                     <Col className="gutter-row" span={8}>
                         <Form.Item
-                            name="district"
-                            label="Distrito"
+                            name="province"
+                            label="Província"
                             rules={[{ required: true, message: 'Obrigatório' }]}
-                            initialValue={organization === undefined ? "" : organization?.district?.id.toString()}
+                            initialValue={organization === undefined ? "" : organization?.district?.province?.id.toString()}
                         >
-                            <Select placeholder="Seleccione o Distrito">
-                            {districts?.map(item => (
+                            <Select placeholder="Seleccione a Província" onChange={handleOnChangeProvince}>
+                            {provinces?.map(item => (
                                 <Option key={item.id}>{item.name}</Option>
                             ))}
                             </Select>
@@ -94,7 +108,35 @@ const OrganizationForm = ({ form, organization, modalVisible, handleModalVisible
                         >
                             <Input placeholder="Insira o nome da Organização" />
                         </Form.Item>
-                    </Col>                  
+                    </Col>                   
+                </Row>
+                
+                <Row gutter={12}>
+                    <Col className="gutter-row" span={8}>
+                        <Form.Item
+                            name="district"
+                            label="Distrito"
+                            rules={[{ required: true, message: 'Obrigatório' }]}
+                            initialValue={organization === undefined ? "" : organization?.district?.id.toString()}
+                        >
+                            <Select placeholder="Seleccione o Distrito">
+                            {provDistricts?.map(item => (
+                                <Option key={item.id}>{item.name}</Option>
+                            ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>  
+                     <Col span={12}>
+                        <Form.Item
+                            name="description"
+                            label="Descrição"
+                            rules={[{ required: true, message: RequiredFieldMessage }]}
+                            initialValue={organization?.description}
+                        >
+                            <Input placeholder="Insira a descrição da Organização" />
+                        </Form.Item>
+                    </Col>
+                                     
                 </Row>
                 <Row gutter={8}>
                     <Col span={8}>
@@ -107,18 +149,6 @@ const OrganizationForm = ({ form, organization, modalVisible, handleModalVisible
                             <Input placeholder="Insira a abreviação da organização" />
                         </Form.Item>
                     </Col>
-                    <Col span={12}>
-                        <Form.Item
-                            name="description"
-                            label="Descrição"
-                            rules={[{ required: true, message: RequiredFieldMessage }]}
-                            initialValue={organization?.description}
-                        >
-                            <Input placeholder="Insira a descrição da Organização" />
-                        </Form.Item>
-                    </Col>
-                </Row>
-                <Row gutter={8}>
                     <Col className="gutter-row" span={8}>
                         <Form.Item
                             name="partnerType"
@@ -133,8 +163,11 @@ const OrganizationForm = ({ form, organization, modalVisible, handleModalVisible
                             </Select>
                         </Form.Item>
                     </Col>
+                   
                 </Row>
                 <Row gutter={8}>
+                    
+          
                     <Col className="gutter-row" span={8}>
                         <Form.Item
                             name="status"
