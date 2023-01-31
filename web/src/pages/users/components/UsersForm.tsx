@@ -392,7 +392,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                             name="partners"
                             label="Organização"
                             rules={[{ required: true, message: RequiredFieldMessage }]}
-                            initialValue={user?.partners.id.toString()}
+                            initialValue={user?.partners?.id?.toString()}
                         >
                             <Select placeholder="Seleccione a Organização">
                                 {partners?.map(item => (
