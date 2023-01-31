@@ -21,13 +21,6 @@ const UsForm = ({ form, us, modalVisible, handleModalVisible, handleAdd }) => {
     const [provDistricts, setProvDistricts] = useState<any[]>([]);
     const [distLocality, setDistLocality] = useState<any[]>([]);
 
-    const partnerTypes =[
-                            {value:1,label:'Parceiro Clínico'},
-                            {value:2,label:'Parceiro Comunitário'},
-                            {value:3,label:'Apoio Técnico'},
-                            {value:4,label:'Doadores'},
-                        ]
-
     const RequiredFieldMessage = "Obrigatório!";
 
     useEffect(() => {
