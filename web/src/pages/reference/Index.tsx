@@ -49,11 +49,11 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             const districts = await allDistrict();
             const loggedUser = await query1(localStorage.user);
 
-            const existingUs = data.map(reference => reference.us).filter((value, index, self) => self.findIndex(v => v.id === value.id) === index);
-            const referrers = data.map(reference => reference.referredBy).filter((value, index, self) => self.findIndex(v => v.id === value.id) === index);
-            const referreds = data.map(reference => reference.users).filter((value, index, self) => self.findIndex(v => v.id === value.id) === index);
-            const referringPartners = referrers.map(referrer => referrer.partners).filter((value, index, self) => self.findIndex(v => v.id === value.id) === index);
-            const referredPartners = referreds.map(referred => referred.partners).filter((value, index, self) => self.findIndex(v => v.id === value.id) === index);
+            const existingUs = data.map(reference => reference.us).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
+            const referrers = data.map(reference => reference.referredBy).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
+            const referreds = data.map(reference => reference.users).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
+            const referringPartners = referrers.map(referrer => referrer.partners).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
+            const referredPartners = referreds.map(referred => referred?.partners).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
 
             const sortedReferences = data.sort((ref1, ref2) => (ref1.status - ref2.status) || moment(ref2.dateCreated).format('YYYY-MM-DD').localeCompare(moment(ref1.dateCreated).format('YYYY-MM-DD')));
 
@@ -386,8 +386,8 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             dataIndex: 'record.users.name', 
             key: '',
             render: (text, record)  => record?.users?.name+' '+record?.users?.surname,
-            filters: filterItem(users)(i => i.name +' '+ i.surname),
-            onFilter: (value, record) => (users.filter(user => record.users.id == user.id).map(filteredUser => `${filteredUser.name} ` + `${filteredUser.surname}`)[0] == value),
+            filters: filterItem(users)(i => i?.name +' '+ i?.surname),
+            onFilter: (value, record) => (users.filter(user => record.users?.id == user.id).map(filteredUser => `${filteredUser?.name} ` + `${filteredUser?.surname}`)[0] == value),
             filterSearch: true,
         },		
         { 
@@ -411,10 +411,10 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             onFilter: (value, record) => record?.users?.entryPoint == value,
             filterSearch: true,
             render: (text, record)  => 
-                (record.users.entryPoint==1) ?
+                (record.users?.entryPoint==1) ?
                     <Text>US </Text>
                 :  
-                (record.users.entryPoint==2) ?
+                (record.users?.entryPoint==2) ?
                     <Text>CM </Text>
                 : 
                 <Text>ES </Text>
@@ -424,7 +424,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             dataIndex: '', 
             key: '',
             render: (text, record)  => record?.users?.partners?.name,
-            filters: filterItem(referredPartners)(i => i.name),
+            filters: filterItem(referredPartners)(i => i?.name),
             onFilter: (value, record) => record?.users?.partners?.name == value,
             filterSearch: true,
            
@@ -433,8 +433,8 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             title: 'Ponto de Entrada para Referência', 
             dataIndex: 'us', 
             key: 'us',
-            render: (text, record) => record?.us.name,
-            filters: filterItem(us)(i => i.name),
+            render: (text, record) => record?.us?.name,
+            filters: filterItem(us)(i => i?.name),
             onFilter: (value, record) => record?.us?.name == value,
             filterSearch: true,
         },	

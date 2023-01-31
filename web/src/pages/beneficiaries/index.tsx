@@ -427,7 +427,7 @@ const BeneficiariesList: React.FC = () => {
         { title: '#Interv', dataIndex: 'beneficiariesInterventionses', key: 'beneficiariesInterventionses', 
             render(val: any) {
                 return (
-                    <Badge count={val.length} />
+                    <Badge count={val?.length} />
                 );
             },
         },
