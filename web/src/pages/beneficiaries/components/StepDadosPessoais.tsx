@@ -427,7 +427,7 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
                         name="us"
                         label="Local de Registo"
                         rules={[{ required: user?.us.length !== 1, message: RequiredFieldMessage }]}
-                        initialValue={beneficiary?.us.id.toString()}
+                        initialValue={beneficiary?.us?.id.toString()}
                     >
                         <Select
                             placeholder="Seleccione o Local"
