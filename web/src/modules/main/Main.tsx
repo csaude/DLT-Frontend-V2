@@ -22,7 +22,7 @@ const Main = () => {
   const navigate = useNavigate();
 
   const username = useSelector(
-    (state: any) => state.auth.user.username
+    (state: any) => state.auth.user?.username
   );
   
   const verifyUser = async () =>{
