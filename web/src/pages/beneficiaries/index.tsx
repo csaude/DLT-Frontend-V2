@@ -50,8 +50,8 @@ const BeneficiariesList: React.FC = () => {
     const [ addStatus, setAddStatus ] = useState<boolean>(false);    
     const [ district, setDistrict] = useState<any[]>([]);
     const [ partners, setPartners] = useState<any[]>([]);
-    const [visibleName, setVisibleName] = useState<any>(true);
-    const [loading, setLoading] = useState(false);
+    const [ visibleName, setVisibleName ] = useState<any>(true);
+    const [ loading, setLoading ] = useState(false);
 
     let searchInput ;
     useEffect(() => { 
@@ -66,11 +66,11 @@ const BeneficiariesList: React.FC = () => {
             setUser(user);
             setBeneficiaries(sortedBeneficiaries);
 
-            const localities = data.map(beneficiary => beneficiary.locality).filter((value, index, self) => self.findIndex(v => v.id === value.id) === index);
-            const districts = localities.map(locality => locality.district).filter((value, index, self) => self.findIndex(v => v.id === value.id) === index);
-            const partners = data.map(beneficiary => beneficiary.partner).filter((value, index, self) => self.findIndex(v => v.id === value.id) === index);
-            const creatorsIds = data.map(beneficiary => beneficiary.createdBy).filter((value, index, self) => self.findIndex(v => v === value) === index);
-            const updatersIds = data.map(beneficiary => beneficiary.updatedBy).filter((value, index, self) => self.findIndex(v => v === value) === index);
+            const localities = data.map(beneficiary => beneficiary?.locality).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
+            const districts = localities.map(locality => locality?.district).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
+            const partners = data.map(beneficiary => beneficiary?.partner).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
+            const creatorsIds = data.map(beneficiary => beneficiary?.createdBy).filter((value, index, self) => self.findIndex(v => v === value) === index);
+            const updatersIds = data.map(beneficiary => beneficiary?.updatedBy).filter((value, index, self) => self.findIndex(v => v === value) === index);
 
             const users = await queryUser();
             const creators = users.filter(u => creatorsIds.includes(u.id));
@@ -361,7 +361,7 @@ const BeneficiariesList: React.FC = () => {
         { title: 'Código do Beneficiário (NUI)', dataIndex: '', key: 'nui', ...getColumnSearchProps('nui'),
             render: (text, record)  => (
                 <Text type="danger" >   
-                    {record.neighborhood.locality?.district?.code}/{record.nui}
+                    {record.neighborhood?.locality?.district?.code}/{record.nui}
                 </Text>),
         },
         { title: 'Nome do Beneficiário', dataIndex: 'name', key: 'name', ...getColumnSearchProps('name'),
@@ -413,8 +413,8 @@ const BeneficiariesList: React.FC = () => {
             render: (text, record)  => getEntryPoint(record.entryPoint) 
         },
         { title: 'Distrito', dataIndex: '', key: 'district',
-            render: (text, record)  => record.neighborhood.locality.district.name,
-            filters: filterItem(district)(i => i.name),
+            render: (text, record)  => record.neighborhood?.locality?.district.name,
+            filters: filterItem(district)(i => i?.name),
             onFilter: (value, record) => record?.neighborhood?.locality?.district?.name == value,
             filterSearch: true,
         },
@@ -435,7 +435,7 @@ const BeneficiariesList: React.FC = () => {
             dataIndex: 'partner', 
             key: 'partner',
             render: (text, record)  => record?.partner?.name,
-            filters: filterItem(partners)(i => i.name),
+            filters: filterItem(partners)(i => i?.name),
             onFilter: (value, record) => (record?.partner?.name == value),
             filterSearch: true,
         },
