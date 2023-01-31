@@ -28,3 +28,11 @@ export async function edit(payload: any) {
   const res = await update('/api/beneficiaries', payload);
   return res;
 }
+
+export async function total() {
+    let url: string;
+      url = '/api/beneficiaries/total';
+
+    const res = await select(url);
+    return res;
+}
