@@ -1,5 +1,6 @@
-import { Card, Table, message, Button, Space, Badge, Form, Input } from 'antd';
 import React, { Fragment, useEffect, useState } from 'react';
+import { Card, Table, message, Button, Space, Badge, Form, Input, ConfigProvider } from 'antd';
+import ptPT  from 'antd/lib/locale-provider/pt_PT';
 import { query } from '../../utils/users';
 import {allPartners} from '@app/utils/partners';
 import {allProfiles} from '@app/utils/profiles';
@@ -10,6 +11,7 @@ import Highlighter from 'react-highlight-words';
 import UsersForm from './components/UsersForm';
 import { add, edit } from '@app/utils/users';
 import { Title } from '@app/components';
+import FullPageLoader from '@app/components/full-page-loader/FullPageLoader';
 
 
 const UsersList: React.FC = () => {
@@ -23,11 +25,13 @@ const UsersList: React.FC = () => {
     const [ partners, setPartners] = useState<any[]>([]);
     const [ profiles, setProfiles] = useState<any[]>([]);
     const [ provinces, setProvinces] = useState<any[]>([]);
+    const [ loading, setLoading ] = useState(false);
 
     let searchInput ;
 
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true);
             const data = await query();
             const partners = await allPartners();
             const profiles = await allProfiles();
@@ -36,6 +40,7 @@ const UsersList: React.FC = () => {
             setPartners(partners);
             setProfiles(profiles);
             setProvinces(provinces);
+            setLoading(false);
         }
 
         fetchData().catch(error => console.log(error));
@@ -283,7 +288,7 @@ const UsersList: React.FC = () => {
             title: 'Organização', dataIndex: '', key: 'type',
             render: (text, record) => record.partners?.name,
             filters: filterObjects(partners)(i => i.name),
-            onFilter: (value, record) => record.partners.name == value,
+            onFilter: (value, record) => record.partners?.name == value,
             filterSearch: true,
         },
         { title: 'Email', dataIndex: 'email', key: 'email' },
@@ -337,12 +342,19 @@ const UsersList: React.FC = () => {
                     </Space>
                 }
             >
-                <Table
-                    rowKey="id"
-                    columns={columns}
-                    dataSource={users}
-                    bordered
-                />
+                <ConfigProvider locale={ptPT}>
+                    {
+                        loading?
+                            <FullPageLoader />
+                        : undefined
+                    }
+                    <Table
+                        rowKey="id"
+                        columns={columns}
+                        dataSource={users}
+                        bordered
+                    />
+                </ConfigProvider>
             </Card>
             <UsersForm form={form} user={selectedUser} modalVisible={usersModalVisible} handleModalVisible={handleUsersModalVisible} handleAdd={handleAdd} />
         </>
