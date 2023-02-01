@@ -6,6 +6,7 @@ import moment from 'moment';
 import { getEntryPoint } from '@app/models/User'
 import { query as queryUser } from '../../../utils/users';
 import { query } from '../../../utils/beneficiary';
+import { query as beneficiaryInterventionQuery } from '../../../utils/beneficiaryIntervention';
 import ViewIntervention from './ViewIntervention';
 import { calculateAge } from '@app/models/Utils';
 import { addSubService, updateSubService, SubServiceParams } from '@app/utils/service'
@@ -46,8 +47,13 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
             }
             
         }
+        const fetchBeneficiariesInterventionses = async () => { 
+             const benIntervs = await beneficiaryInterventionQuery(beneficiary?.id);
+             setInterventions(benIntervs);
+        }
     
-        fetchUser().catch(error => console.log("---: ",error))
+        fetchUser().catch(error => console.log("---: ",error));        
+        fetchBeneficiariesInterventionses().catch(err => console.log(err))
     
     }, []);
 
@@ -418,3 +424,7 @@ const ViewBeneficiary = ({ beneficiary, modalVisible, handleModalVisible , handl
     );
 }
 export default ViewBeneficiary;
+
+function async(id: any) {
+    throw new Error('Function not implemented.');
+}

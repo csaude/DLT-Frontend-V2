@@ -109,7 +109,7 @@ const MenuSidebar = () => {
 
   useEffect(()=>{
     getTotals().catch(err=>console.log(err))
-  },[])
+  },[dispatch])
 
 
   return (
