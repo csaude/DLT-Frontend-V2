@@ -44,20 +44,20 @@ const ReferenceInterventionForm = ({ form, reference, records, beneficiary }: an
       form.setFieldsValue({ areaServicos: selectedIntervention?.services?.serviceType === '1' ? 'CLINIC' : 'COMMUNITY' });
       form.setFieldsValue({ service: selectedIntervention?.services?.id + '' });
       form.setFieldsValue({ entryPoint: reference.referTo });
-      form.setFieldsValue({ location: reference.us.id + '' });
-      form.setFieldsValue({ provider: reference.users.username });
+      form.setFieldsValue({ location: reference.us? reference.us?.id + '' : undefined });
+      form.setFieldsValue({ provider: reference.users?.username });
       form.setFieldsValue({ outros: selectedIntervention?.description });
-      onChangeUs(reference.us.id);
+      onChangeUs(reference.us?.id);
       fetchSubServices(selectedIntervention?.service?.id).catch(error => console.log(error));
     }else{
       const lastIntervention = records[records.length-1]
       form.setFieldsValue({ areaServicos: lastIntervention?.services?.serviceType === '1' ? 'CLINIC' : 'COMMUNITY' });
       form.setFieldsValue({ service: lastIntervention?.services?.id + '' });
       form.setFieldsValue({ entryPoint: reference.referTo });
-      form.setFieldsValue({ location: reference.us.id + '' });
-      form.setFieldsValue({ provider: reference.users.username });
+      form.setFieldsValue({ location: reference.us? reference.us?.id + '' : undefined });
+      form.setFieldsValue({ provider: reference.users?.username });
       form.setFieldsValue({ outros: lastIntervention?.description });
-      onChangeUs(reference.us.id);
+      onChangeUs(reference.us?.id);
       fetchSubServices(lastIntervention?.services?.id).catch(error => console.log(error));
     }
 
@@ -78,10 +78,10 @@ const ReferenceInterventionForm = ({ form, reference, records, beneficiary }: an
   }
 
   const onChangeEntryPoint = async (e: any) => {
-
+    
     var payload = {
       typeId: e?.target?.value === undefined ? e : e?.target?.value,
-      localityId: beneficiary?.neighborhood?.locality?.id
+      localityId: reference.users?.localities[0].id
     }
     const data = await allUsByType(payload);
     setUs(data);

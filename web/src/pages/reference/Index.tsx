@@ -478,7 +478,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
               <Space>
                 <Button type="primary" icon={<EyeOutlined />} onClick={() =>handleViewModalVisible(true, record)} >
                 </Button>
-                    <Button type="primary" disabled={loggedUser?.profiles.id !== 1 && record.referredBy?.partners?.partnerType !== loggedUser?.partners?.partnerType} icon={<EditOutlined />} onClick={() =>(record.status == 0 ? onEditRefence(record) : 
+                    <Button type="primary" disabled={loggedUser?.profiles.id !== 20 && record.referredBy?.partners?.partnerType !== loggedUser?.partners?.partnerType} icon={<EditOutlined />} onClick={() =>(record.status == 0 ? onEditRefence(record) : 
                         (
                             message.info({
                             content: 'Referência já atendida!', className: 'custom-class',
