@@ -2,8 +2,8 @@ import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {Link} from 'react-router-dom';
 import {MenuItem} from '@components';
-import { query as beneficiaryQuery, total as beneficiariesTotal } from '../../../utils/beneficiary';
-import { query as referenceQuery, total as referencesTotal } from '../../../utils/reference';
+import { query as beneficiaryQuery } from '../../../utils/beneficiary';
+import { query as referenceQuery } from '../../../utils/reference';
 import { query as queryUser } from '../../../utils/users';
 import { getUserParams } from '@app/models/Utils';
 import { getReferencesTotal } from '../../../store/actions/reference';
@@ -101,15 +101,15 @@ const MenuSidebar = () => {
 
   const getTotals = async () =>{
       const user = await queryUser(localStorage.user);
-      const beneficiaryData = await beneficiariesTotal();
-      const referenceData = await referencesTotal();
-      dispatch(getBeneficiaryTotal(beneficiaryData))
-      dispatch(getReferencesTotal(referenceData))
+      const beneficiaryData = await beneficiaryQuery(getUserParams(user));
+      const referenceData = await referenceQuery();
+      dispatch(getBeneficiaryTotal(beneficiaryData.length))
+      dispatch(getReferencesTotal(referenceData.length))
   }
 
   useEffect(()=>{
     getTotals().catch(err=>console.log(err))
-  },[])
+  },[dispatch])
 
 
   return (

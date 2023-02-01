@@ -67,10 +67,3 @@ export async function queryByUser(id: any) {
   const res = await select('/api/references/byUser/'.concat(id));
   return res;
 }
-
-export async function total() {
-    let url: string;
-      url = '/api/references/total';
-    const res = await select(url);
-    return res;
-}
