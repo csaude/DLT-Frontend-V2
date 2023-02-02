@@ -434,7 +434,7 @@ const BeneficiariesList: React.FC = () => {
         { title: 'Org',
             dataIndex: 'partner', 
             key: 'partner',
-            render: (text, record)  => record?.partner?.name,
+            render: (text, record)  => record?.partners?.name,
             filters: filterItem(partners)(i => i?.name),
             onFilter: (value, record) => (record?.partner?.name == value),
             filterSearch: true,
