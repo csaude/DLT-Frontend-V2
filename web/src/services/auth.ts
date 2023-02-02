@@ -35,7 +35,8 @@ export const newPassword = async (username: string, newPassword: string) => {
  };
 
 export const updatePassword = async (username: string, password: string) => {
-  const response = await requestUpdatePassword({username:username, recoverPassword:password});
+  const recoverPasswordOrigin = document.location.origin;
+  const response = await requestUpdatePassword({username:username, recoverPassword:password, recoverPasswordOrigin:recoverPasswordOrigin});
   const { status, data } = response;
   return data;
 };
