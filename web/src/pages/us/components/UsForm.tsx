@@ -92,7 +92,7 @@ const UsForm = ({ form, us, modalVisible, handleModalVisible, handleAdd }) => {
             width={1200}
             centered
             destroyOnClose
-            title='Dados de Registo do Distrito'
+            title='Dados de Registo da Unidade Sanitária'
             visible={modalVisible}
             onCancel={() => showCloseConfirm()}
             maskClosable={false}
