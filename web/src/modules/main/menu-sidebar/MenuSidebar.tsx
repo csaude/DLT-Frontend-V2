@@ -68,6 +68,10 @@ export const MENU: IMenuItem[] = [
           path: '/localityList',
         },
         {
+          name: 'Unidades Sanitárias ',
+          path: '/usList',
+        },
+        {
           name: 'Serviços',
           path: '/servicesList',
         },
