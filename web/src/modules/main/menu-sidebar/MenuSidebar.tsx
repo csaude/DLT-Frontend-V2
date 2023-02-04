@@ -32,14 +32,14 @@ export const MENU: IMenuItem[] = [
     path: '/beneficiariesList',
     icon: 'fas fa-users', // icon set: https://fontawesome.com/v5/search
     level: [0,1,2,3,4,5,6,7,8,9],
-    roles: ['ADMIN','M&E','SUPERVISOR','MENTORA','ENFERMEIRA','CONSELHEIRA']
+    roles: ['ADMIN','M&E','SUPERVISOR','MENTORA','ENFERMEIRA','CONSELHEIRA','GESTOR']
   },
   {
     name: 'menusidebar.label.referenceList',
     path: '/referenceList',
     icon: 'fas fa-sync',
     level: [0,1,2,3,4,5,6,7,8,9],
-    roles: ['ADMIN','M&E','SUPERVISOR','MENTORA','ENFERMEIRA','CONSELHEIRA']
+    roles: ['ADMIN','M&E','SUPERVISOR','MENTORA','ENFERMEIRA','CONSELHEIRA','GESTOR']
   },
   {
     name: 'menusidebar.label.reports',

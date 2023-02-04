@@ -15,6 +15,7 @@ import 'antd/dist/antd.css';
 
 import '../styles.css'
 import InterventionForm from './InterventionForm';
+import { ADMIN, MNE, SUPERVISOR } from '@app/utils/contants';
 
 const { confirm } = Modal;
 
@@ -42,7 +43,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
                 setPartner(user);
             }
             
-            if(user.profiles.id === 1 || user.profiles.id === 2 || user.profiles.id === 3){
+            if(user.profiles.id === ADMIN || user.profiles.id === MNE || user.profiles.id === SUPERVISOR){
                 setVisibleName(false);
             }
             
