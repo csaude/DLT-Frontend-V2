@@ -19,6 +19,7 @@ export async function query(payload?: UsersFilter) {
 interface UserParams {
     username: string;
     recoverPassword: string;
+    recoverPasswordOrigin: string;
 }
 export async function add(payload: any) {
     const res = await create('/api/users', payload);
