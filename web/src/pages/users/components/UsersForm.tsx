@@ -6,6 +6,7 @@ import { allProfiles } from '@app/utils/profiles';
 import { allUs } from '@app/utils/uSanitaria';
 import { allProvinces, queryDistrictsByProvinces, queryLocalitiesByDistricts, queryUsByLocalities } from '@app/utils/locality';
 import { ok } from 'assert';
+import { ADMIN, COUNSELOR, DONOR, MANAGER, MENTOR, MNE, NURSE, SUPERVISOR } from '@app/utils/contants';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -151,11 +152,11 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
     }
 
     const onChangeProfile = async (values: any) => {
-        if (values == 1 || values == 2 || values == 7) {
+        if (values == MNE || values == DONOR || values == ADMIN) { 
             setSelectMode("multiple");
             setLocalityMode("multiple");
             setRequired(false);
-        } else if (values == 3) {
+        } else if (values == SUPERVISOR) { 
             setSelectMode("");
             setLocalityMode("multiple");
             setRequired(true);
@@ -194,7 +195,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
 
             form.setFieldsValue({ us: [] });
 
-            if (dataSelection.profile == 4 && dataSelection.entryPoint !== undefined) {
+            if ((dataSelection.profile == MENTOR || dataSelection.profile == MANAGER) && dataSelection.entryPoint !== undefined) { 
                 if (dataSelection.entryPoint == 2) {
                     let neighborhoods = usByLocality?.filter(item => item.usType.entryPoint == 2)
                     setUs(neighborhoods)
@@ -204,14 +205,14 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                     setUs(schools)
                 }
             }
-            else if (dataSelection.profile == 5 || dataSelection.profile == 6) {
+            else if (dataSelection.profile == NURSE || dataSelection.profile == MANAGER || dataSelection.profile == COUNSELOR) {
                 const entryPoints = [1, 3];
                 const usAndSchools = usByLocality?.filter(item => entryPoints.includes(item.usType.entryPoint))
                 setUs(usAndSchools)
             }
         }
 
-        if (dataSelection?.profile == 4 || dataSelection?.profile == 5) {
+        if (dataSelection?.profile == MENTOR || dataSelection?.profile == NURSE || dataSelection.profile == MANAGER) {
             setEntryPointRequired(true)
         }else{
             setEntryPointRequired(false)

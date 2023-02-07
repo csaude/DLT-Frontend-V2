@@ -22,6 +22,7 @@ import { allDistrict } from '@app/utils/district';
 import { allPartners } from '@app/utils/partners';
 import FullPageLoader from '@app/components/full-page-loader/FullPageLoader';
 import { Title } from '@app/components';
+import { ADMIN, MNE, SUPERVISOR } from '@app/utils/contants';
 import { useSelector } from 'react-redux';
 
 const { Text } = Typography;
@@ -33,17 +34,12 @@ const BeneficiariesList: React.FC = () => {
     const navigate = useNavigate();
     const [ users, setUsers ] = useState<UserModel[]>([]);
     const [ updaters, setUpdaters ] = useState<UserModel[]>([]);
-    const [visible, setVisible] = useState<boolean>(false);
-    const [isAdd, setIsAdd] = useState<boolean>(false);
-    const [selectedIntervention, setSelectedIntervention] = useState<any>();
-    const [selectedBeneficiary, setSelectedBeneficiary] = useState();
     const [ user, setUser ] = React.useState<any>();
     const [ beneficiaries, setBeneficiaries ] = useState<any[]>([]);
     const [ searchText, setSearchText ] = useState('');
     const [ services, setServices ] = useState<any>([]);
     const [ searchedColumn, setSearchedColumn ] = useState('');
     const [ beneficiary, setBeneficiary ] = useState<any>(undefined);
-    const [ reference, setReference ] = useState<any>(undefined);
     const [ modalVisible, setModalVisible ] = useState<boolean>(false);
     const [ beneficiaryModalVisible, setBeneficiaryModalVisible ] = useState<boolean>(false);
     const [ beneficiaryPartnerModalVisible, setBeneficiaryPartnerModalVisible ] = useState<boolean>(false);
@@ -91,7 +87,7 @@ const BeneficiariesList: React.FC = () => {
             setUsers(creators);
             setUpdaters(updaters);
 
-            if(user.profiles.id === 1 || user.profiles.id === 2 || user.profiles.id === 3){
+            if(user.profiles.id === ADMIN || user.profiles.id === MNE || user.profiles.id === SUPERVISOR){
                 setVisibleName(false);
             }
             setLoading(false);
@@ -100,18 +96,6 @@ const BeneficiariesList: React.FC = () => {
         fetchData().catch(error => console.log(error));
     
     }, [modalVisible]);
-
-    const showDrawer = (record: any) => {
-
-        setVisible(true);
-        setSelectedBeneficiary(record);
-    };
-
-    const onEditIntervention = (record: any) => {
-        setVisible(true);
-        setIsAdd(true);
-        setSelectedIntervention(record);
-    };
 
     const handleAddRef = async (values:any) => {
     
@@ -187,7 +171,9 @@ const BeneficiariesList: React.FC = () => {
     }
 
     const handleAddBeneficiary = (data: any) => {
-        setBeneficiaries(beneficiaries => [...beneficiaries, data]);
+        const bens = [...beneficiaries, data];
+        const sortedBeneficiaries = bens.sort((benf1, benf2) => moment(benf2.dateCreated).format('YYYY-MM-DD').localeCompare(moment(benf1.dateCreated).format('YYYY-MM-DD')));
+        setBeneficiaries(sortedBeneficiaries);
         setBeneficiary(data);
     }
 

@@ -15,6 +15,7 @@ import ViewReferral from './components/View';
 import FormReference from '../beneficiaries/components/FormReference';
 import FullPageLoader from '@app/components/full-page-loader/FullPageLoader';
 import { Title } from '@app/components';
+import { ADMIN } from '@app/utils/contants';
 
 const { Text } = Typography;
 
@@ -478,7 +479,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
               <Space>
                 <Button type="primary" icon={<EyeOutlined />} onClick={() =>handleViewModalVisible(true, record)} >
                 </Button>
-                    <Button type="primary" disabled={loggedUser?.profiles.id !== 1 && record.referredBy?.partners?.partnerType !== loggedUser?.partners?.partnerType} icon={<EditOutlined />} onClick={() =>(record.status == 0 ? onEditRefence(record) : 
+                    <Button type="primary" disabled={loggedUser?.profiles.id !== ADMIN && record.referredBy?.partners?.partnerType !== loggedUser?.partners?.partnerType} icon={<EditOutlined />} onClick={() =>(record.status == 0 ? onEditRefence(record) : 
                         (
                             message.info({
                             content: 'Referência já atendida!', className: 'custom-class',
