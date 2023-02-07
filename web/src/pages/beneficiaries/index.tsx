@@ -74,6 +74,15 @@ const BeneficiariesList: React.FC = () => {
         }
     },[beneficiaries])
 
+    const interventionSelector = useSelector((state: any) => state?.intervention);
+
+    const getBeneficiaryIntervention = (beneficiaryId) =>{
+        const currentInterventin = interventionSelector?.interventions?.map(item => {if(item[1]==beneficiaryId){
+            return item[0]
+        }})
+        return currentInterventin
+    }
+
     let searchInput ;
     useEffect(() => { 
 
