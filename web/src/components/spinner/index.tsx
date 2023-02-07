@@ -5,7 +5,7 @@ import './styles.css'
 const Spinner: React.FC = () => (
   <Space direction="vertical" style={{ width: "100%" }}>    
     <Space>
-      <Spin tip="Loading" size="large">
+      <Spin tip="Carregando. Aguarde Por Favor." size="large">
         <div className="content" />
       </Spin>
     </Space>   
