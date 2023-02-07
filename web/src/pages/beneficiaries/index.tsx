@@ -63,7 +63,7 @@ const BeneficiariesList: React.FC = () => {
 
     const getNames = (userId) =>{
         const currentNames = userSelector?.users?.map(item => {if(item[0]==userId){
-            return item[1] + ' ' + item[2]
+            return item[1] 
         }})
         return currentNames
     }
