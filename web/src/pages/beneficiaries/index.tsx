@@ -23,6 +23,7 @@ import { allPartners } from '@app/utils/partners';
 import FullPageLoader from '@app/components/full-page-loader/FullPageLoader';
 import { Title } from '@app/components';
 import { ADMIN, MNE, SUPERVISOR } from '@app/utils/contants';
+import { useSelector } from 'react-redux';
 
 const { Text } = Typography;
 
@@ -48,6 +49,15 @@ const BeneficiariesList: React.FC = () => {
     const [ partners, setPartners] = useState<any[]>([]);
     const [ visibleName, setVisibleName ] = useState<any>(true);
     const [ loading, setLoading ] = useState(false);
+
+    const interventionSelector = useSelector((state: any) => state?.intervention);
+
+    const getBeneficiaryIntervention = (beneficiaryId) =>{
+        const currentInterventin = interventionSelector?.interventions?.map(item => {if(item[1]==beneficiaryId){
+            return item[0]
+        }})
+        return currentInterventin
+    }
 
     let searchInput ;
     useEffect(() => { 
@@ -411,9 +421,9 @@ const BeneficiariesList: React.FC = () => {
             filterSearch: true,
         },
         { title: '#Interv', dataIndex: 'beneficiariesInterventionses', key: 'beneficiariesInterventionses', 
-            render(val: any) {
+            render(val: any, record) {
                 return (
-                    <Badge count={val?.length} />
+                    <Badge count={getBeneficiaryIntervention(record.id)} />
                 );
             },
         },

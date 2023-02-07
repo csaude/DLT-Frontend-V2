@@ -13,3 +13,12 @@ export async function query(payload?: any) {
     const res = await select(url);
     return res;
 }
+
+
+export async function interventionCountQuery() {
+    let url: string;
+    url = '/api/beneficiary-intervention/countByBeneficiary';
+
+    const res = await select(url);
+    return res;
+}
