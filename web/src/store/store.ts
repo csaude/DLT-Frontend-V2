@@ -5,6 +5,7 @@ import {uiSlice} from '@app/store/reducers/ui';
 import {createLogger} from 'redux-logger';
 import referenceReducer from './reducers/reference';
 import beneficiaryReducer from './reducers/beneficiary';
+import interventionReducer from './reducers/interventions';
 
 const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ const store = configureStore({
     ui: uiSlice.reducer,
     beneficiary: beneficiaryReducer,
     reference: referenceReducer,
+    intervention: interventionReducer
   },
   middleware: (getDefaultMiddleware) => [
     ...getDefaultMiddleware().concat(createLogger())

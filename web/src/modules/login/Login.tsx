@@ -5,6 +5,7 @@ import {toast} from 'react-toastify';
 import {useFormik} from 'formik';
 import {useTranslation} from 'react-i18next';
 import {loginUser} from '@store/reducers/auth';
+import { getInterventionsCount } from '@app/store/actions/interventions'; 
 import {Checkbox, Button} from '@components';
 import {faEnvelope, faEye, faEyeSlash, faLock, faUser} from '@fortawesome/free-solid-svg-icons';
 import {setWindowClass} from '@app/utils/helpers';
@@ -51,6 +52,7 @@ const Login = () => {
       toast.success('Autenticação efectuada com sucesso!');
       setAuthLoading(false);
       dispatch(loginUser(data));
+      dispatch(getInterventionsCount())
       localStorage.setItem('dateCreated', user?.dateCreated);
       navigate('/');
     } catch ( error ) {
