@@ -16,6 +16,7 @@ import FormReference from '../beneficiaries/components/FormReference';
 import FullPageLoader from '@app/components/full-page-loader/FullPageLoader';
 import { Title } from '@app/components';
 import { ADMIN } from '@app/utils/contants';
+import LoadingModal from '@app/components/modal/LoadingModal';
 
 const { Text } = Typography;
 
@@ -30,7 +31,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
     const [ beneficiary, setBeneficiary ] = useState<any>(undefined);
     const [ modalVisible, setModalVisible ] = useState<boolean>(false);
     const [ referenceModalVisible, setReferenceModalVisible ] = useState<boolean>(false);
-    const [ loading, setLoading ] = useState(false);
+    const [ loading, setLoading ] = useState(true);
     const [ partners, setPartners] = useState<any[]>([]);
     const [ referredPartners, setReferredPartners] = useState<any[]>([]);
     const [ referrers, setReferrers] = useState<any[]>([]);
@@ -41,11 +42,16 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
     
     const navigate = useNavigate();
 
+    useEffect(()=>{
+        if(references.length>0){
+            setLoading(false);
+        }
+    },[references])
+
     let searchInput;
     useEffect(() => {
         
         const fetchData = async () => {
-            setLoading(true);
             const data = await queryByUser(localStorage.user);
             const districts = await allDistrict();
             const loggedUser = await query1(localStorage.user);
@@ -66,9 +72,6 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             setUs(existingUs);
             setDistrict(districts);
             setLoggedUser(loggedUser);
-            setLoading(false);
-
-
         } 
     
         fetchData().catch(error => console.log(error));
@@ -499,11 +502,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
         <>
             <Title />
             <Card title="Lista de Referências e Contra-Referências" bordered={false} headStyle={{color:"#17a2b8"}}>
-                {
-                    loading?
-                        <FullPageLoader />
-                    : undefined
-                }
+               
                 <ConfigProvider locale={ptPT}>
                     <Table
                         rowKey={(record?) => `${record.id}${record.id.date}`}
@@ -513,6 +512,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                     >
                     </Table>
                 </ConfigProvider>
+                {<LoadingModal modalVisible={loading} />}
             </Card>
             <ViewReferral
                 {...parentMethods}
