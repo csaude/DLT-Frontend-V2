@@ -17,6 +17,7 @@ import * as Yup from 'yup';
 import {Form, InputGroup} from 'react-bootstrap';
 import * as AuthService from '../../services/auth';
 import {verifyUserByUsername} from '../../utils/login';
+import { getNames } from '@app/store/actions/users';
 
 const Login = () => {
   const [isAuthLoading, setAuthLoading] = useState(false);
@@ -53,6 +54,7 @@ const Login = () => {
       setAuthLoading(false);
       dispatch(loginUser(data));
       dispatch(getInterventionsCount())
+      dispatch(getNames())
       localStorage.setItem('dateCreated', user?.dateCreated);
       navigate('/');
     } catch ( error ) {

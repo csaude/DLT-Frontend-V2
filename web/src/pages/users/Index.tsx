@@ -12,6 +12,7 @@ import UsersForm from './components/UsersForm';
 import { add, edit } from '@app/utils/users';
 import { Title } from '@app/components';
 import FullPageLoader from '@app/components/full-page-loader/FullPageLoader';
+import LoadingModal from '@app/components/modal/LoadingModal';
 
 
 const UsersList: React.FC = () => {
@@ -25,13 +26,18 @@ const UsersList: React.FC = () => {
     const [ partners, setPartners] = useState<any[]>([]);
     const [ profiles, setProfiles] = useState<any[]>([]);
     const [ provinces, setProvinces] = useState<any[]>([]);
-    const [ loading, setLoading ] = useState(false);
+    const [ loading, setLoading ] = useState(true);
 
+    useEffect(()=>{
+        if(users.length>0){
+            setLoading(false);
+        }
+    },[users])
+    
     let searchInput ;
 
     useEffect(() => {
         const fetchData = async () => {
-            setLoading(true);
             const data = await query();
             const partners = await allPartners();
             const profiles = await allProfiles();
@@ -40,7 +46,6 @@ const UsersList: React.FC = () => {
             setPartners(partners);
             setProfiles(profiles);
             setProvinces(provinces);
-            setLoading(false);
         }
 
         fetchData().catch(error => console.log(error));
@@ -343,11 +348,6 @@ const UsersList: React.FC = () => {
                 }
             >
                 <ConfigProvider locale={ptPT}>
-                    {
-                        loading?
-                            <FullPageLoader />
-                        : undefined
-                    }
                     <Table
                         rowKey="id"
                         columns={columns}
@@ -355,6 +355,8 @@ const UsersList: React.FC = () => {
                         bordered
                     />
                 </ConfigProvider>
+
+                 {<LoadingModal modalVisible={loading} />}
             </Card>
             <UsersForm form={form} user={selectedUser} modalVisible={usersModalVisible} handleModalVisible={handleUsersModalVisible} handleAdd={handleAdd} />
         </>
