@@ -19,6 +19,7 @@ export async function query(payload?: UsersFilter) {
 interface UserParams {
     username: string;
     recoverPassword: string;
+    recoverPasswordOrigin: string;
 }
 export async function add(payload: any) {
     const res = await create('/api/users', payload);
@@ -57,6 +58,14 @@ export async function allUsersByProfilesAndUser(payload?: Filter){
 export async function userById(payload?: any){
     let url: string;
     url = '/api/users/'.concat(payload);
+    const res = await select(url);
+    return res;
+}
+
+export async function getNamesQuery() {
+    let url: string;
+    url = '/api/users/get-names';
+
     const res = await select(url);
     return res;
 }

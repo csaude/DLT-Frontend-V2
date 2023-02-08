@@ -22,13 +22,16 @@ import BeneficiariesList from '@pages/beneficiaries';
 import ReferenceList from '@pages/reference/Index';
 import ProvinceList from '@pages/province/index';
 import DistrictList from '@pages/district';
+import LocalityList from './pages/locality';
 import ServicesList from '@pages/services/index';
 import SubServicesList from './pages/subservices';
-
+import UsList from '@pages/us';
 
 import PublicRoute from './routes/PublicRoute';
 import PrivateRoute from './routes/PrivateRoute';
 import RenewPassword from './modules/new-password/RenewPassword';
+import OrganizationList from './pages/organization';
+
 
 const App = () => {
   const windowSize = useWindowSize();
@@ -80,8 +83,11 @@ const App = () => {
             // Rota de Configurações
             <Route path="/provinceList" element={<ProvinceList />} />
             <Route path="/districtList" element={<DistrictList />} />
+            <Route path="/localityList" element={<LocalityList />} />
             <Route path="/servicesList" element={<ServicesList />} />
             <Route path="/subServicesList" element={<SubServicesList />} />
+            <Route path="/organizationsList" element={<OrganizationList />} />
+            <Route path="/usList" element={<UsList />} />
           </Route>
         </Route>
       </Routes>

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { query  as queryUser} from '@app/utils/users';
 import { query as queryBeneficiary } from "@app/utils/beneficiary";
+import { query as queryReferenceService } from "@app/utils/reference-service";
+import { query as queryBeneficiaryIntervention } from "@app/utils/beneficiaryIntervention";
 import { Button, Card, Col, Drawer, Form, message, Modal, Row, Space, Table, Typography } from "antd";
 import { ExclamationCircleFilled ,FileDoneOutlined } from '@ant-design/icons';
 import moment from 'moment';
@@ -23,7 +25,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
     const [select, setSelect] = useState<any>([]);
 
     const attendToRequiredServices = (refServices) =>{
-        const selectServices = refServices.filter(refServ=>{return select.includes(refServ?.id?.serviceId)})
+        const selectServices = refServices?.filter(refServ=>{return select.includes(refServ?.id?.serviceId)})
         setRequiredServices(selectServices)
         if(selectServices.length > 0){
             setVisible(true);
@@ -63,10 +65,23 @@ export function ViewReferencePanel({selectedReference, columns}) {
         const fetchData = async () => {
           const data = await queryUser(localStorage.user);
           const data1 = await queryBeneficiary(selectedReference.beneficiaries.id);
-
+          const refServices = await queryReferenceService(selectedReference.id)
+          const beneficiaryInterventions = await queryBeneficiaryIntervention(selectedReference.beneficiaries.id)
+   
           setUser(selectedReference.referredBy);
-          setInterventions(data1.beneficiariesInterventionses);
-          setRefServices(selectedReference.referencesServiceses);
+
+          if(data1.beneficiariesInterventionses !== undefined){
+                setInterventions(data1.beneficiariesInterventionses);
+          }else{
+                setInterventions(beneficiaryInterventions);
+          }
+
+          if(selectedReference.referencesServiceses !==undefined){
+                setRefServices(selectedReference.referencesServiceses);
+          }else{
+                setRefServices(refServices);
+          }
+
           setReference(selectedReference);
 
           if (data.partners.partnerType == selectedReference.referredBy.partners.partnerType) {

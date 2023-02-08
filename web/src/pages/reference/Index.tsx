@@ -15,6 +15,8 @@ import ViewReferral from './components/View';
 import FormReference from '../beneficiaries/components/FormReference';
 import FullPageLoader from '@app/components/full-page-loader/FullPageLoader';
 import { Title } from '@app/components';
+import { ADMIN } from '@app/utils/contants';
+import LoadingModal from '@app/components/modal/LoadingModal';
 
 const { Text } = Typography;
 
@@ -29,7 +31,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
     const [ beneficiary, setBeneficiary ] = useState<any>(undefined);
     const [ modalVisible, setModalVisible ] = useState<boolean>(false);
     const [ referenceModalVisible, setReferenceModalVisible ] = useState<boolean>(false);
-    const [ loading, setLoading ] = useState(false);
+    const [ loading, setLoading ] = useState(true);
     const [ partners, setPartners] = useState<any[]>([]);
     const [ referredPartners, setReferredPartners] = useState<any[]>([]);
     const [ referrers, setReferrers] = useState<any[]>([]);
@@ -40,20 +42,25 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
     
     const navigate = useNavigate();
 
+    useEffect(()=>{
+        if(references.length>0){
+            setLoading(false);
+        }
+    },[references])
+
     let searchInput;
     useEffect(() => {
         
         const fetchData = async () => {
-            setLoading(true);
             const data = await queryByUser(localStorage.user);
             const districts = await allDistrict();
             const loggedUser = await query1(localStorage.user);
 
-            const existingUs = data.map(reference => reference.us).filter((value, index, self) => self.findIndex(v => v.id === value.id) === index);
-            const referrers = data.map(reference => reference.referredBy).filter((value, index, self) => self.findIndex(v => v.id === value.id) === index);
-            const referreds = data.map(reference => reference.users).filter((value, index, self) => self.findIndex(v => v.id === value.id) === index);
-            const referringPartners = referrers.map(referrer => referrer.partners).filter((value, index, self) => self.findIndex(v => v.id === value.id) === index);
-            const referredPartners = referreds.map(referred => referred.partners).filter((value, index, self) => self.findIndex(v => v.id === value.id) === index);
+            const existingUs = data.map(reference => reference.us).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
+            const referrers = data.map(reference => reference.referredBy).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
+            const referreds = data.map(reference => reference.users).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
+            const referringPartners = referrers.map(referrer => referrer.partners).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
+            const referredPartners = referreds.map(referred => referred?.partners).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
 
             const sortedReferences = data.sort((ref1, ref2) => (ref1.status - ref2.status) || moment(ref2.dateCreated).format('YYYY-MM-DD').localeCompare(moment(ref1.dateCreated).format('YYYY-MM-DD')));
 
@@ -65,9 +72,6 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             setUs(existingUs);
             setDistrict(districts);
             setLoggedUser(loggedUser);
-            setLoading(false);
-
-
         } 
     
         fetchData().catch(error => console.log(error));
@@ -386,8 +390,8 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             dataIndex: 'record.users.name', 
             key: '',
             render: (text, record)  => record?.users?.name+' '+record?.users?.surname,
-            filters: filterItem(users)(i => i.name +' '+ i.surname),
-            onFilter: (value, record) => (users.filter(user => record.users.id == user.id).map(filteredUser => `${filteredUser.name} ` + `${filteredUser.surname}`)[0] == value),
+            filters: filterItem(users)(i => i?.name +' '+ i?.surname),
+            onFilter: (value, record) => (users.filter(user => record.users?.id == user.id).map(filteredUser => `${filteredUser?.name} ` + `${filteredUser?.surname}`)[0] == value),
             filterSearch: true,
         },		
         { 
@@ -411,10 +415,10 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             onFilter: (value, record) => record?.users?.entryPoint == value,
             filterSearch: true,
             render: (text, record)  => 
-                (record.users.entryPoint==1) ?
+                (record.users?.entryPoint==1) ?
                     <Text>US </Text>
                 :  
-                (record.users.entryPoint==2) ?
+                (record.users?.entryPoint==2) ?
                     <Text>CM </Text>
                 : 
                 <Text>ES </Text>
@@ -424,7 +428,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             dataIndex: '', 
             key: '',
             render: (text, record)  => record?.users?.partners?.name,
-            filters: filterItem(referredPartners)(i => i.name),
+            filters: filterItem(referredPartners)(i => i?.name),
             onFilter: (value, record) => record?.users?.partners?.name == value,
             filterSearch: true,
            
@@ -433,8 +437,8 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             title: 'Ponto de Entrada para Referência', 
             dataIndex: 'us', 
             key: 'us',
-            render: (text, record) => record?.us.name,
-            filters: filterItem(us)(i => i.name),
+            render: (text, record) => record?.us?.name,
+            filters: filterItem(us)(i => i?.name),
             onFilter: (value, record) => record?.us?.name == value,
             filterSearch: true,
         },	
@@ -478,7 +482,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
               <Space>
                 <Button type="primary" icon={<EyeOutlined />} onClick={() =>handleViewModalVisible(true, record)} >
                 </Button>
-                    <Button type="primary" disabled={loggedUser?.profiles.id !== 1 && record.referredBy?.partners?.partnerType !== loggedUser?.partners?.partnerType} icon={<EditOutlined />} onClick={() =>(record.status == 0 ? onEditRefence(record) : 
+                    <Button type="primary" disabled={loggedUser?.profiles.id !== ADMIN && record.referredBy?.partners?.partnerType !== loggedUser?.partners?.partnerType} icon={<EditOutlined />} onClick={() =>(record.status == 0 ? onEditRefence(record) : 
                         (
                             message.info({
                             content: 'Referência já atendida!', className: 'custom-class',
@@ -498,11 +502,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
         <>
             <Title />
             <Card title="Lista de Referências e Contra-Referências" bordered={false} headStyle={{color:"#17a2b8"}}>
-                {
-                    loading?
-                        <FullPageLoader />
-                    : undefined
-                }
+               
                 <ConfigProvider locale={ptPT}>
                     <Table
                         rowKey={(record?) => `${record.id}${record.id.date}`}
@@ -512,6 +512,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                     >
                     </Table>
                 </ConfigProvider>
+                {<LoadingModal modalVisible={loading} />}
             </Card>
             <ViewReferral
                 {...parentMethods}

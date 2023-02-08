@@ -5,6 +5,7 @@ import { allPartnersByType, allPartnersByTypeDistrict } from '@app/utils/partner
 import { query, userById, allUsesByUs, allUsersByProfilesAndUser } from '@app/utils/users';
 import { allUs, allUsByType } from '@app/utils/uSanitaria';
 import {queryByCreated} from '@app/utils/reference';
+import { COUNSELOR, MANAGER, MENTOR, NURSE, SUPERVISOR } from '@app/utils/contants';
 
 const { Option } = Select;
 const { Step } = Steps;
@@ -34,7 +35,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
       const loggedUser = await query(localStorage.user);
 
       var payload = {
-        profiles: '3,4,5,6',
+        profiles: [MANAGER, SUPERVISOR, MENTOR, NURSE, COUNSELOR].toString(),
         userId: Number(userId)
       }
 
@@ -46,13 +47,13 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
         form.setFieldsValue({ referenceNote: 
                               ('REFDR' + String(userId).padStart(3, '0') + String(beneficiary.locality.district.province.id) + String(((await queryByCreated(localStorage.user))?.length)+ 1).padStart(3, '0'))
                             });
-        form.setFieldsValue({ referredBy: [3,4,5,6].includes(loggedUser.profiles.id)? localStorage.user : '' });
+        form.setFieldsValue({ referredBy: [MANAGER, SUPERVISOR, MENTOR, NURSE, COUNSELOR].includes(loggedUser.profiles.id)? localStorage.user : '' });
       } else {
         const regUser = await query(reference?.createdBy);
         form.setFieldsValue({ createdBy: regUser?.name + ' ' + regUser?.surname });
         form.setFieldsValue({ referenceNote: reference.referenceNote});
 
-        setStatusEnabled(reference.userCreated === userId || ![4,5].includes(loggedUser.profiles.id));
+        setStatusEnabled(reference.userCreated === userId || ![MANAGER, MENTOR, NURSE, COUNSELOR].includes(loggedUser.profiles.id));
       }
 
       const partnerType = loggedUser.partners.partnerType;
@@ -117,7 +118,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
     var payload = {
       typeId: e?.target?.value === undefined ? e : e?.target?.value,
       localityId: reference !== undefined ? 
-                                reference?.beneficiaries?.neighborhood?.locality?.id :
+                                reference.users?.localities[0].id :
                                 beneficiary?.neighborhood?.locality?.id
     }
     const data = await allUsByType(payload);
@@ -291,7 +292,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
             name="local"
             label="Local"
             rules={[{ required: true, message: 'Obrigatório' }]}
-            initialValue={reference === undefined ? undefined : reference?.us.id.toString()}
+            initialValue={reference === undefined ? undefined : reference?.us?.id.toString()}
           >
             <Select placeholder="Seleccione o Local" onChange={onChangeUs} disabled={us === undefined}>
               {us?.map(item => (

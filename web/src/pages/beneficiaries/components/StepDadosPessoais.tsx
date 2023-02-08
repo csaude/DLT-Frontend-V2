@@ -6,6 +6,7 @@ import moment from 'moment';
 import { query } from '@app/utils/users';
 import { calculateAge, getMaxDate, getMinDate } from '@app/models/Utils';
 import { allUsByType } from '@app/utils/uSanitaria';
+import { ADMIN, MNE, SUPERVISOR } from '@app/utils/contants';
 
 const { Option } = Select;
 const { Step } = Steps;
@@ -42,7 +43,7 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
             const loggedUser = await query(localStorage.user);
             let dataProvinces;
 
-            if(loggedUser.profiles.id === 1 || loggedUser.profiles.id === 2 || loggedUser.profiles.id === 3){
+            if(loggedUser.profiles.id === ADMIN || loggedUser.profiles.id === MNE || loggedUser.profiles.id === SUPERVISOR){
                 setVisibleName(false);
             }
             
@@ -427,7 +428,7 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
                         name="us"
                         label="Local de Registo"
                         rules={[{ required: user?.us.length !== 1, message: RequiredFieldMessage }]}
-                        initialValue={beneficiary?.us.id.toString()}
+                        initialValue={beneficiary?.us?.id.toString()}
                     >
                         <Select
                             placeholder="Seleccione o Local"

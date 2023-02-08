@@ -22,6 +22,9 @@ import { allDistrict } from '@app/utils/district';
 import { allPartners } from '@app/utils/partners';
 import FullPageLoader from '@app/components/full-page-loader/FullPageLoader';
 import { Title } from '@app/components';
+import { ADMIN, MNE, SUPERVISOR } from '@app/utils/contants';
+import { useSelector } from 'react-redux';
+import LoadingModal from '@app/components/modal/LoadingModal';
 
 const { Text } = Typography;
 
@@ -32,17 +35,12 @@ const BeneficiariesList: React.FC = () => {
     const navigate = useNavigate();
     const [ users, setUsers ] = useState<UserModel[]>([]);
     const [ updaters, setUpdaters ] = useState<UserModel[]>([]);
-    const [visible, setVisible] = useState<boolean>(false);
-    const [isAdd, setIsAdd] = useState<boolean>(false);
-    const [selectedIntervention, setSelectedIntervention] = useState<any>();
-    const [selectedBeneficiary, setSelectedBeneficiary] = useState();
     const [ user, setUser ] = React.useState<any>();
     const [ beneficiaries, setBeneficiaries ] = useState<any[]>([]);
     const [ searchText, setSearchText ] = useState('');
     const [ services, setServices ] = useState<any>([]);
     const [ searchedColumn, setSearchedColumn ] = useState('');
     const [ beneficiary, setBeneficiary ] = useState<any>(undefined);
-    const [ reference, setReference ] = useState<any>(undefined);
     const [ modalVisible, setModalVisible ] = useState<boolean>(false);
     const [ beneficiaryModalVisible, setBeneficiaryModalVisible ] = useState<boolean>(false);
     const [ beneficiaryPartnerModalVisible, setBeneficiaryPartnerModalVisible ] = useState<boolean>(false);
@@ -50,14 +48,37 @@ const BeneficiariesList: React.FC = () => {
     const [ addStatus, setAddStatus ] = useState<boolean>(false);    
     const [ district, setDistrict] = useState<any[]>([]);
     const [ partners, setPartners] = useState<any[]>([]);
-    const [visibleName, setVisibleName] = useState<any>(true);
-    const [loading, setLoading] = useState(false);
+    const [ visibleName, setVisibleName ] = useState<any>(true);
+    const [ loading, setLoading ] = useState(true);
+
+    const interventionSelector = useSelector((state: any) => state?.intervention);
+    const userSelector = useSelector((state: any) => state?.user);
+
+    const getBeneficiaryIntervention = (beneficiaryId) =>{
+        const currentInterventin = interventionSelector?.interventions?.map(item => {if(item[1]==beneficiaryId){
+            return item[0]
+        }})
+        return currentInterventin
+    }
+
+    const getNames = (userId) =>{
+        const currentNames = userSelector?.users?.map(item => {if(item[0]==userId){
+            return item[1] 
+        }})
+        return currentNames
+    }
+
+    useEffect(()=>{
+        if(beneficiaries.length>0){
+            setLoading(false);
+        }
+    },[beneficiaries])
 
     let searchInput ;
     useEffect(() => { 
 
         const fetchData = async () => {
-            setLoading(true);
+          
             const user = await queryUser(localStorage.user);
             const data = await query(getUserParams(user));
 
@@ -66,11 +87,11 @@ const BeneficiariesList: React.FC = () => {
             setUser(user);
             setBeneficiaries(sortedBeneficiaries);
 
-            const localities = data.map(beneficiary => beneficiary.locality).filter((value, index, self) => self.findIndex(v => v.id === value.id) === index);
-            const districts = localities.map(locality => locality.district).filter((value, index, self) => self.findIndex(v => v.id === value.id) === index);
-            const partners = data.map(beneficiary => beneficiary.partner).filter((value, index, self) => self.findIndex(v => v.id === value.id) === index);
-            const creatorsIds = data.map(beneficiary => beneficiary.createdBy).filter((value, index, self) => self.findIndex(v => v === value) === index);
-            const updatersIds = data.map(beneficiary => beneficiary.updatedBy).filter((value, index, self) => self.findIndex(v => v === value) === index);
+            const localities = data.map(beneficiary => beneficiary?.locality).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
+            const districts = localities.map(locality => locality?.district).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
+            const partners = data.map(beneficiary => beneficiary?.partner).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
+            const creatorsIds = data.map(beneficiary => beneficiary?.createdBy).filter((value, index, self) => self.findIndex(v => v === value) === index);
+            const updatersIds = data.map(beneficiary => beneficiary?.updatedBy).filter((value, index, self) => self.findIndex(v => v === value) === index);
 
             const users = await queryUser();
             const creators = users.filter(u => creatorsIds.includes(u.id));
@@ -81,27 +102,15 @@ const BeneficiariesList: React.FC = () => {
             setUsers(creators);
             setUpdaters(updaters);
 
-            if(user.profiles.id === 1 || user.profiles.id === 2 || user.profiles.id === 3){
+            if(user.profiles.id === ADMIN || user.profiles.id === MNE || user.profiles.id === SUPERVISOR){
                 setVisibleName(false);
             }
-            setLoading(false);
+
         }
     
         fetchData().catch(error => console.log(error));
     
     }, [modalVisible]);
-
-    const showDrawer = (record: any) => {
-
-        setVisible(true);
-        setSelectedBeneficiary(record);
-    };
-
-    const onEditIntervention = (record: any) => {
-        setVisible(true);
-        setIsAdd(true);
-        setSelectedIntervention(record);
-    };
 
     const handleAddRef = async (values:any) => {
     
@@ -177,7 +186,9 @@ const BeneficiariesList: React.FC = () => {
     }
 
     const handleAddBeneficiary = (data: any) => {
-        setBeneficiaries(beneficiaries => [...beneficiaries, data]);
+        const bens = [...beneficiaries, data];
+        const sortedBeneficiaries = bens.sort((benf1, benf2) => moment(benf2.dateCreated).format('YYYY-MM-DD').localeCompare(moment(benf1.dateCreated).format('YYYY-MM-DD')));
+        setBeneficiaries(sortedBeneficiaries);
         setBeneficiary(data);
     }
 
@@ -361,7 +372,7 @@ const BeneficiariesList: React.FC = () => {
         { title: 'Código do Beneficiário (NUI)', dataIndex: '', key: 'nui', ...getColumnSearchProps('nui'),
             render: (text, record)  => (
                 <Text type="danger" >   
-                    {record.neighborhood.locality?.district?.code}/{record.nui}
+                    {record.neighborhood?.locality?.district?.code}/{record.nui}
                 </Text>),
         },
         { title: 'Nome do Beneficiário', dataIndex: 'name', key: 'name', ...getColumnSearchProps('name'),
@@ -413,8 +424,8 @@ const BeneficiariesList: React.FC = () => {
             render: (text, record)  => getEntryPoint(record.entryPoint) 
         },
         { title: 'Distrito', dataIndex: '', key: 'district',
-            render: (text, record)  => record.neighborhood.locality.district.name,
-            filters: filterItem(district)(i => i.name),
+            render: (text, record)  => record.neighborhood?.locality?.district.name,
+            filters: filterItem(district)(i => i?.name),
             onFilter: (value, record) => record?.neighborhood?.locality?.district?.name == value,
             filterSearch: true,
         },
@@ -425,22 +436,22 @@ const BeneficiariesList: React.FC = () => {
             filterSearch: true,
         },
         { title: '#Interv', dataIndex: 'beneficiariesInterventionses', key: 'beneficiariesInterventionses', 
-            render(val: any) {
+            render(val: any, record) {
                 return (
-                    <Badge count={val.length} />
+                    <Badge count={getBeneficiaryIntervention(record.id)} />
                 );
             },
         },
         { title: 'Org',
             dataIndex: 'partner', 
             key: 'partner',
-            render: (text, record)  => record?.partner?.name,
-            filters: filterItem(partners)(i => i.name),
+            render: (text, record)  => record?.partners?.name,
+            filters: filterItem(partners)(i => i?.name),
             onFilter: (value, record) => (record?.partner?.name == value),
             filterSearch: true,
         },
         { title: 'Criado Por', dataIndex: '', key: 'createdBy',
-            render: (text, record)  => users.filter(user => record.createdBy == user.id).map(filteredUser => `${filteredUser.username}`)[0],
+            render: (text, record)  => getNames(record.createdBy),
             filters: filterItem(users)(i => i.username),
             onFilter: (value, record) => (users.filter(user => record.createdBy == user.id).map(filteredUser => `${filteredUser.username}`)[0] == value),
             filterSearch: true,
@@ -450,7 +461,7 @@ const BeneficiariesList: React.FC = () => {
             sorter: (benf1, benf2) => moment(benf2.dateCreated).format('YYYY-MM-DD').localeCompare(moment(benf1.dateCreated).format('YYYY-MM-DD')),
         },
         { title: 'Atualizado Por', dataIndex: '', key: 'updatedBy',
-            render: (text, record)  => updaters.filter(user => record.updatedBy == user.id).map(filteredUser => `${filteredUser.username}`)[0],
+            render: (text, record)  => getNames(record.updatedBy),
             filters: filterItem(updaters)(i => i.username),
             onFilter: (value, record) => (updaters.filter(user => record.updatedBy == user.id).map(filteredUser => `${filteredUser.username}`)[0] == value),
             filterSearch: true,
@@ -490,40 +501,36 @@ const BeneficiariesList: React.FC = () => {
     return (
         
         <>        
-            <Title />
-            <Card title="Lista de Adolescentes e Jovens" 
-                    bordered={false} 
-                    headStyle={{color:"#17a2b8"}}
-                    extra={
-                        <Space>
-                          <Button type="primary" onClick={()=>handleBeneficiaryModalVisible(true)} icon={<PlusOutlined />} style={{ background: "#00a65a", borderColor: "#00a65a", borderRadius:'4px' }}>
-                            Adicionar Nova Beneficiária
-                          </Button>
-                          <Button type="primary" onClick={()=>handleBeneficiaryPartnerModalVisible(true)} icon={<PlusOutlined />} style={{ background: "#a69e00", borderColor: "#a69e00", borderRadius:'4px' }}>
-                            Adicionar Novo Parceiro
-                          </Button>
-                        </Space>
-                    }
-            >
-                {
-                    loading?
-                        <FullPageLoader />
-                    : undefined
-                }
-                <ConfigProvider locale={ptPT}>
-                    <Table
-                        rowKey="id"
-                        sortDirections={["descend", "ascend"]}
-                        columns={columns}
-                        expandable={{
-                            expandedRowRender: record =>  <div style={{border:"2px solid #d9edf7", backgroundColor:"white"}}><ViewBenefiaryPanel beneficiary={record} columns={interventionColumns} handleModalVisible={handleModalVisible} handleModalRefVisible={handleModalRefVisible} user={user} /></div>,
-                            rowExpandable: record => record.name !== 'Not Expandable',
-                        }}
-                        dataSource={beneficiaries}
-                        bordered
-                    />
-                </ConfigProvider>
-            </Card>
+            <Title /> 
+                <Card title="Lista de Adolescentes e Jovens" 
+                        bordered={false}
+                        headStyle={{color:"#17a2b8"}}
+                        extra={
+                            <Space>
+                            <Button type="primary" onClick={()=>handleBeneficiaryModalVisible(true)} icon={<PlusOutlined />} style={{ background: "#00a65a", borderColor: "#00a65a", borderRadius:'4px' }}>
+                                Adicionar Nova Beneficiária
+                            </Button>
+                            <Button type="primary" onClick={()=>handleBeneficiaryPartnerModalVisible(true)} icon={<PlusOutlined />} style={{ background: "#a69e00", borderColor: "#a69e00", borderRadius:'4px' }}>
+                                Adicionar Novo Parceiro
+                            </Button>
+                            </Space>
+                        }
+                >                
+                    <ConfigProvider locale={ptPT}>
+                        <Table
+                            rowKey="id"
+                            sortDirections={["descend", "ascend"]}
+                            columns={columns}
+                            expandable={{
+                                expandedRowRender: record =>  <div style={{border:"2px solid #d9edf7", backgroundColor:"white"}}><ViewBenefiaryPanel beneficiary={record} columns={interventionColumns} handleModalVisible={handleModalVisible} handleModalRefVisible={handleModalRefVisible} user={user} /></div>,
+                                rowExpandable: record => record.name !== 'Not Expandable',
+                            }}
+                            dataSource={beneficiaries}
+                            bordered
+                        />
+                    </ConfigProvider> 
+                    {<LoadingModal modalVisible={loading} />}
+                </Card>
             <ViewBeneficiary 
                 {...parentMethods}
                 beneficiary={beneficiary} 

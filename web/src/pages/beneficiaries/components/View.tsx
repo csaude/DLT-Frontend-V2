@@ -6,6 +6,7 @@ import moment from 'moment';
 import { getEntryPoint } from '@app/models/User'
 import { query as queryUser } from '../../../utils/users';
 import { query } from '../../../utils/beneficiary';
+import { query as beneficiaryInterventionQuery } from '../../../utils/beneficiaryIntervention';
 import ViewIntervention from './ViewIntervention';
 import { calculateAge } from '@app/models/Utils';
 import { addSubService, updateSubService, SubServiceParams } from '@app/utils/service'
@@ -14,6 +15,7 @@ import 'antd/dist/antd.css';
 
 import '../styles.css'
 import InterventionForm from './InterventionForm';
+import { ADMIN, MNE, SUPERVISOR } from '@app/utils/contants';
 
 const { confirm } = Modal;
 
@@ -41,13 +43,18 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
                 setPartner(user);
             }
             
-            if(user.profiles.id === 1 || user.profiles.id === 2 || user.profiles.id === 3){
+            if(user.profiles.id === ADMIN || user.profiles.id === MNE || user.profiles.id === SUPERVISOR){
                 setVisibleName(false);
             }
             
         }
+        const fetchBeneficiariesInterventionses = async () => { 
+             const benIntervs = await beneficiaryInterventionQuery(beneficiary?.id);
+             setInterventions(benIntervs);
+        }
     
-        fetchUser().catch(error => console.log("---: ",error))
+        fetchUser().catch(error => console.log("---: ",error));        
+        fetchBeneficiariesInterventionses().catch(err => console.log(err))
     
     }, []);
 
@@ -418,3 +425,7 @@ const ViewBeneficiary = ({ beneficiary, modalVisible, handleModalVisible , handl
     );
 }
 export default ViewBeneficiary;
+
+function async(id: any) {
+    throw new Error('Function not implemented.');
+}
