@@ -55,12 +55,11 @@ export const authSlice = createSlice({
       }
     },
     loadUserDetails:(state, {payload}) => {
-        console.log('---------payload--------',payload)
         state.userDetails = {
-            provinces :  payload.provinces,
-            districts :  payload.districts,
-            localities : payload.localities,
-            uss : payload.us
+            provinces :  { ...state, provinces : payload.provinces },
+            districts :  { ...state, districts : payload.districts },
+            localities : { ...state, localities : payload.localities },
+            uss : {...state, uss : payload.us}
         }
     }
   }
