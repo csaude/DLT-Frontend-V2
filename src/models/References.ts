@@ -47,4 +47,5 @@ export default class References extends Model {
     @text("date_created") date_created;
     @text("is_awaiting_sync") is_awaiting_sync;
     @text("online_id") online_id;
+    @field("beneficiary_nui") beneficiary_nui;
 }

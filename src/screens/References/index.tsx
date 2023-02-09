@@ -22,19 +22,19 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
 
     const getBeneficiary = (beneficiary_id: any) => {
         return beneficiaries.filter((e) => {
-            return e._raw.online_id == beneficiary_id
+            return e?._raw.online_id == beneficiary_id
         })[0];
     }
 
     const getUser = (user_id: any) => {
         return users.filter((e) => {
-            return e._raw.online_id == user_id
+            return e?._raw.online_id == user_id
         })[0];
     }
 
     const getOrganization = (partner_id: any) => {
         return partners.filter((e) => {
-            return e._raw.online_id == partner_id
+            return e?._raw.online_id == partner_id
         })[0];
     }
 
@@ -54,13 +54,13 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
     const viewReference = async (data: any) => {
         //console.log(data.item?._raw);
         const reference = data.item?._raw;
-        const beneficiary = getBeneficiary(reference.beneficiary_id)._raw;
-        //const referer = getUser(reference.createdby)._raw;
-        const notifyTo = `${getUser(data.item._raw.notify_to).name + " " + getUser(data.item._raw.notify_to).surname}`
+        const beneficiary = getBeneficiary(reference.beneficiary_id)?._raw;
+        //const referer = getUser(reference.createdby)?._raw;
+        const notifyTo = `${getUser(data.item?._raw.notify_to)?.name + " " + getUser(data.item?._raw.notify_to)?.surname}`
         const organization = 'FGH'//getOrganization(referer.partner_id)._raw.name
 
 
-        const beneficiaryId = beneficiary.online_id ? beneficiary.online_id : beneficiary.id;
+        const beneficiaryId = beneficiary?.online_id ? beneficiary?.online_id : beneficiary?.id;
 
         const interventions = await database.get('beneficiaries_interventions').query(
             Q.where('beneficiary_id', beneficiaryId),
@@ -68,12 +68,12 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
 
         const interventionObjects = interventions.map((e: any) => {
             let subservice = subServices.filter((item) => {
-                return item._raw.online_id == e._raw.sub_service_id
+                return item?._raw.online_id == e?._raw.sub_service_id
             })[0];
-            return { id: subservice._raw.online_id, name: subservice._raw.name, intervention: e._raw }
+            return { id: subservice?._raw.online_id, name: subservice?._raw.name, intervention: e?._raw }
         });
 
-        const referenceId = reference.online_id ? reference.online_id : reference.id;
+        const referenceId = reference?.online_id ? reference?.online_id : reference?.id;
 
         const referenceServices = await database.get('references_services').query(
             Q.where('reference_id', referenceId + ""),
@@ -81,9 +81,9 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
 
         const servicesObjects = referenceServices.map((e: any) => {
             let service: any = services.filter((item: any) => {
-                return item._raw.online_id == e._raw.service_id
+                return item?._raw.online_id == e?._raw.service_id
             })[0];
-            return { id: service._raw.online_id, name: service._raw.name, service: e._raw }
+            return { id: service?._raw.online_id, name: service?._raw.name, service: e?._raw }
         });
 
         navigate({
@@ -146,28 +146,28 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
                             NUI:
                         </Text>
                         <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
-                            {` ${getBeneficiary(data.item.beneficiary_id).nui}`}
+                            {` ${data.item.beneficiary_nui}`}
                         </Text>
                     </HStack>
                     <HStack>
                         <View style={{ paddingTop: 5 }}><Ionicons name="notifications" size={11} color="#17a2b8" /></View>
                         <View style={{ paddingTop: 5 }}><Ionicons name="person" size={11} color="#17a2b8" /></View>
                         <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
-                            {` ${getUser(data.item._raw.notify_to).name + " " + getUser(data.item._raw.notify_to).surname}`}
+                            {` ${getUser(data.item?._raw.notify_to).name + " " + getUser(data.item?._raw.notify_to).surname}`}
                         </Text>
                     </HStack>
                     <HStack>
                         <View style={{ paddingTop: 5 }}><Ionicons name="notifications" size={11} color="#17a2b8" /></View>
                         <View style={{ paddingTop: 5 }}><Ionicons name="md-home" size={11} color="#17a2b8" /></View>
                         <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
-                            {` ${getOrganization(getUser(data.item._raw.user_created).partner_id).name}`}
+                            {` ${getOrganization(getUser(data.item?._raw.user_created).partner_id).name}`}
                         </Text>
                     </HStack>
                 </VStack>
                 <VStack alignSelf="flex-start" marginTop={2} width='100px'>
 
 
-                    {data.item._raw.is_awaiting_sync === 1 && data.item._raw._status === "updated" ?
+                    {data.item?._raw.is_awaiting_sync === 1 && data.item?._raw._status === "updated" ?
                         <>
                             <Text color="coolGray.500" >{` ${data.item.date_created}`}</Text>
 
@@ -185,9 +185,9 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
                             <HStack>
                                 <View style={{ paddingTop: 5 }}><Ionicons name="checkmark-circle" size={11} color="#17a2b8" /></View>
 
-                                <Text color={data.item._raw.status == 0 ? "danger.700" :
-                                    data.item._raw.status == 1 ? "warning.700" : "success.700"} _dark={{ color: "warmGray.200" }}>
-                                    {` ${getStatus(data.item._raw.status)}`}
+                                <Text color={data.item?._raw.status == 0 ? "danger.700" :
+                                    data.item?._raw.status == 1 ? "warning.700" : "success.700"} _dark={{ color: "warmGray.200" }}>
+                                    {` ${getStatus(data.item?._raw.status)}`}
                                 </Text>
                             </HStack>
                         </>
@@ -238,6 +238,7 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
                     Q.or(
                         Q.where('user_created',currentUserId.toString()),
                         Q.where('referred_by',currentUserId),
+                        Q.where('notify_to' ,currentUserId)
                     ),
                     Q.where('status',Q.notEq(3))
                 ).fetch()
