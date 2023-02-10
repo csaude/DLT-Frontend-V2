@@ -44,9 +44,9 @@ const DadosReferenciaView: React.FC = ({ route }: any) => {
                             </Avatar>
                             <Box style={styles.userText}>
                                 {/* <Text>{reference.username}</Text> */}
-                                {/* <Heading style={styles.username}>{beneficiary.name} {beneficiary.surname}</Heading> */}
+                                {/* <Heading style={styles.username}>{beneficiary?.name} {beneficiary?.surname}</Heading> */}
                                 <Text style={styles.nui}>
-                                    {reference.reference_note} | {beneficiary.nui}
+                                    {reference.reference_note} | {beneficiary?.nui}
                                 </Text>
                             </Box>
                         </Box>
@@ -55,19 +55,19 @@ const DadosReferenciaView: React.FC = ({ route }: any) => {
 
                                 <Heading size="md" color="white">Detalhes da Referência</Heading>
                                 <Divider />
-                                <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}> Data: </Text> {reference.date_created} </Text>
+                                <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}> Data: </Text> {reference?.date_created} </Text>
 
                                 <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}> Referente: </Text> {referred_by} </Text>
                                 
                                 <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}> Notificar a(o) : </Text> {notify} </Text>
 
-                                <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}> Contacto: </Text> {beneficiary.phone_number} </Text>
+                                <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}> Contacto: </Text> {beneficiary?.phone_number} </Text>
 
-                                <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}> No do Livro: </Text> {reference.book_number} </Text>
+                                <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}> No do Livro: </Text> {reference?.book_number} </Text>
 
                                 <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}> Organização: </Text> {organization} </Text>
 
-                                <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}> Cod. Referência: </Text> {reference.reference_code} </Text>
+                                <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}> Cod. Referência: </Text> {reference?.reference_code} </Text>
 
                                 <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}> Tipo Serviço: </Text>
                                     {
