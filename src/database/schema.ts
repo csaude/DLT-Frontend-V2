@@ -219,7 +219,8 @@ export default appSchema({
           {name: 'user_created', type: 'string', isOptional: true},
           {name: 'date_created', type: 'string', isOptional: true},
           {name: 'is_awaiting_sync', type: 'number', isOptional: true}, // flag to control if reference status is synced
-          {name: 'online_id', type: 'number',isOptional: true}
+          {name: 'online_id', type: 'number',isOptional: true},
+          {name: 'beneficiary_nui', type: 'string', isOptional: false},
         ],
       }),
       tableSchema({

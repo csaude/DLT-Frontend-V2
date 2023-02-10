@@ -61,3 +61,11 @@ export async function userById(payload?: any){
     const res = await select(url);
     return res;
 }
+
+export async function getNamesQuery() {
+    let url: string;
+    url = '/api/users/get-names';
+
+    const res = await select(url);
+    return res;
+}
