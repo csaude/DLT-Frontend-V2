@@ -179,7 +179,6 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
                     
                 </View>
             </HStack>
-
         </TouchableHighlight>
     );
 
@@ -200,7 +199,6 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
                 <Icon as={MaterialIcons} name="mode-edit" size={6} color="gray.200" />
             </Pressable>
         </HStack>
-
     );
 
     const handleChange = (e: any) => {
@@ -289,7 +287,9 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
         }          
     },[loggedUser])
 
-    const filteredBeneficiaries = userBeneficiaries?.filter(beneficiarie => (beneficiarie.name + ' ' + beneficiarie.surname).toLowerCase().includes(searchField.toLowerCase()))
+    const filteredBeneficiaries = userBeneficiaries?.filter(beneficiarie => (beneficiarie._raw.nui).toLowerCase().includes(searchField.toLowerCase()))
+    // const sortedBeneficiaries = filteredBeneficiaries.sort((benf1, benf2) => benf2._raw.nui.localeCompare(benf1._raw.nui));
+    const sortedBeneficiaries = filteredBeneficiaries.sort((ben1, ben2) => ben2._raw.online_id - ben1._raw.online_id);
        
     return (
         <>
@@ -303,7 +303,7 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
 
                 </View>
                 <SwipeListView
-                    data={filteredBeneficiaries}
+                    data={sortedBeneficiaries}
                     renderItem={renderItem}
                     renderHiddenItem={renderHiddenItem}
                     rightOpenValue={-112}

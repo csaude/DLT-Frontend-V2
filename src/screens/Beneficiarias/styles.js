@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
       borderBottomColor: '#ccc',
       borderBottomWidth: 1,
       justifyContent: 'center',
-      height: 90,
+      height: 108,
   },
   rowBack: {
       alignItems: 'center',
