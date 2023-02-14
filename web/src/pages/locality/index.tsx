@@ -113,7 +113,7 @@ const LocalityList: React.FC = () => {
                     >
                         Pesquisar
                     </Button>
-                    <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+                    <Button onClick={() =>  handleReset(clearFilters, selectedKeys, confirm, dataIndex)} size="small" style={{ width: 90 }}>
                         Limpar
                     </Button>
                     <Button
@@ -158,9 +158,10 @@ const LocalityList: React.FC = () => {
 
     };
 
-    const handleReset = clearFilters => {
+    const handleReset = (clearFilters,selectedKeys, confirm, dataIndex) => { 
         clearFilters();
         setSearchText(searchText);
+        handleSearch(selectedKeys, confirm, dataIndex)
     };
 
     const columns = [
