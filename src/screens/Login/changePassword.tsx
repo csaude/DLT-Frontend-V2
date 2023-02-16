@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { KeyboardAvoidingView, ScrollView } from 'react-native';
-import { Center, Box, Text, Heading, VStack, FormControl, Input, Button, Image, useToast } from 'native-base';
+import { Center, Box, Text, Heading, VStack, FormControl, Input, Button, Image, useToast, Pressable, Icon } from 'native-base';
 import { navigate } from '../../routes/NavigationRef';
 import { Formik, useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -10,6 +10,7 @@ import { Q } from "@nozbe/watermelondb";
 import { database } from "../../database";
 import { useSelector } from 'react-redux'
 import { RootState } from "../../store";
+import { MaterialIcons } from "@native-base/icons";
 
 interface LoginData{
     username?: string | undefined;
@@ -20,6 +21,8 @@ interface LoginData{
 const ChangePassword: React.FC = ({ route }: any) => {
     const params:any = route.params;
     const loggedUser:any = params.loggedUser;
+	const [show, setShow] = React.useState(false);
+	const [showPass, setShowPass] = React.useState(false);
 
     const [username, setUsername] = useState(loggedUser.username);
 
@@ -74,7 +77,7 @@ const ChangePassword: React.FC = ({ route }: any) => {
             await database.write(async () => {
                 const uDetail = await database.get('user_details').find(userDetailsQ[0]._raw.id)
                 await uDetail.update(() => {
-                    uDetail.password_last_change_date = formattedDate
+                    uDetail['password_last_change_date'] = formattedDate
                 })
             })
 
@@ -141,14 +144,30 @@ const ChangePassword: React.FC = ({ route }: any) => {
                                 <FormControl isRequired isInvalid={'password' in errors}>
                                     <FormControl.Label>Password</FormControl.Label>
              
-                                    <Input type="password" onBlur={handleBlur('password')} placeholder="Password" onChangeText={handleChange('password')} value={values.password} />
+                                    <Input 
+                                        type={showPass ? "text" : "password"} 
+                                        onBlur={handleBlur('password')} 
+                                        placeholder="Password" 
+                                        InputRightElement={<Pressable onPress={() => setShowPass(!showPass)}>
+													<Icon as={<MaterialIcons name={showPass ? "visibility" : "visibility-off"} />} size={5} mr="2" color="muted.400" />
+												</Pressable>}
+                                        onChangeText={handleChange('password')} 
+                                        value={values.password} />
                                     <FormControl.ErrorMessage>
                                         {errors.password}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'rePassword' in errors}>
                                     <FormControl.Label>Confirm Password</FormControl.Label>
-                                    <Input type="password" onBlur={handleBlur('rePassword')} placeholder="Confirme o Password" onChangeText={handleChange('rePassword')} value={values.rePassword} />
+                                    <Input 
+                                        type={show ? "text" : "password"}
+                                        onBlur={handleBlur('rePassword')} 
+                                        placeholder="Confirme o Password" 
+                                        InputRightElement={<Pressable onPress={() => setShow(!show)}>
+                                                <Icon as={<MaterialIcons name={show ? "visibility" : "visibility-off"} />} size={5} mr="2" color="muted.400" />
+                                            </Pressable>}
+                                        onChangeText={handleChange('rePassword')} 
+                                        value={values.rePassword} />
                                     <FormControl.ErrorMessage>
                                         {errors.rePassword}
                                     </FormControl.ErrorMessage>
