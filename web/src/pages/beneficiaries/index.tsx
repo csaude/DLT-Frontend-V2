@@ -291,17 +291,6 @@ const BeneficiariesList: React.FC = () => {
                 <Button onClick={() => handleReset(clearFilters,selectedKeys, confirm, dataIndex)} size="small" style={{ width: 90 }}>
                     Limpar
                 </Button>
-                <Button
-                    type="link"
-                    size="small"
-                    onClick={() => {
-                    confirm({ closeDropdown: false });
-                    setSearchText(selectedKeys[0]);
-                    setSearchedColumn(dataIndex);
-                    }}
-                >
-                    Filtrar
-                </Button>
                 </Space>
             </div>
         ),

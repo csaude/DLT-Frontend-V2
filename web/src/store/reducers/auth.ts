@@ -33,7 +33,7 @@ export const authSlice = createSlice({
       localStorage.setItem('surname', payload?.account.surname);
     },
     logoutUser: (state) => {
-      localStorage.removeItem('token');
+      localStorage.clear();
       state.currentUser = {};
       state.isLoggedIn = false;
       state.token = null;

@@ -90,21 +90,10 @@ const UsersList: React.FC = () => {
                     size="small"
                     style={{ width: 90 }}
                 >
-                    Search
+                    Pesquisar
                 </Button>
-                <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
-                    Reset
-                </Button>
-                <Button
-                    type="link"
-                    size="small"
-                    onClick={() => {
-                    confirm({ closeDropdown: false });
-                    setSearchText(selectedKeys[0]);
-                    setSearchedColumn(dataIndex);
-                    }}
-                >
-                    Filter
+                <Button onClick={() => handleReset(clearFilters, selectedKeys, confirm, dataIndex)} size="small" style={{ width: 90 }}>
+                    Limpar
                 </Button>
                 </Space>
             </div>
@@ -137,10 +126,12 @@ const UsersList: React.FC = () => {
         
     };
 
-    const handleReset = clearFilters => {
+    const handleReset = (clearFilters,selectedKeys, confirm, dataIndex) => { 
         clearFilters();
         setSearchText(searchText);
+        handleSearch(selectedKeys, confirm, dataIndex)
     };
+    
 
     const getMessage = status => {
         if(status==403){

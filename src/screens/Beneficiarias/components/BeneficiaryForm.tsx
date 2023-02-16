@@ -174,7 +174,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             name: beneficiarie?.name,
             date_of_birth: beneficiarie?.date_of_birth,
             age: calculateAge(beneficiarie?.date_of_birth),
-            nationality: beneficiarie?.nationality === undefined ? "1" : beneficiarie?.nationality+"",
+            nationality: "1",
             enrollment_date: beneficiarie?.enrollment_date,
             province: beneficiarie?.province_id === undefined ? loggedUser?.provinces[0]?.id : beneficiarie?.province_id,
             district: beneficiarie?.district_id === undefined ? loggedUser?.districts[0]?.id : beneficiarie?.district_id,

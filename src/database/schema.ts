@@ -86,6 +86,7 @@ export default appSchema({
           {name: "profile_id", type: "number", isIndexed: true },
           {name: "us_ids", type: "string", isOptional:true},
           {name: 'online_id', type: 'number',isOptional: true }, // flag to control if entity is synchronized with the backend
+          {name: 'organization_name', type: 'string'}
         ],
       }),
       tableSchema({

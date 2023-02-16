@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Platform, View, KeyboardAvoidingView, ScrollView } from 'react-native';
-import { Center, Box, Text, Heading, VStack, FormControl, Input, HStack, InfoIcon, Alert, Button, Image, useToast, IconButton, CloseIcon, Link, Modal, InputGroup } from 'native-base';
+import { Center, Box, Text, Heading, VStack, FormControl, Input, HStack, InfoIcon, Alert, Button, Image, useToast, IconButton, CloseIcon, Link, Modal, InputGroup, Pressable, Icon } from 'native-base';
 import { navigate } from '../../routes/NavigationRef';
 import { Formik, useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -8,9 +8,10 @@ import { Q } from '@nozbe/watermelondb'
 import NetInfo from "@react-native-community/netinfo";
 import { database } from '../../database';
 import { LOGIN_API_URL, SYNC_API_URL_PREFIX, UPDATE_PASSWORD_URL } from '../../services/api';
+import { MaterialIcons } from "@native-base/icons";
 import { sync } from "../../database/sync";
 import { toast } from 'react-toastify';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import bcrypt from 'bcryptjs';
 import Spinner from 'react-native-loading-spinner-overlay';
 import styles from './style'
@@ -31,6 +32,7 @@ const Login: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [isOffline, setIsOffline] = useState(false);
     const [spinner, setSpinner] = useState(false);
+    const [show, setShow] = React.useState(false);
 
     const [passwordType, setPasswordType] = useState("password");
     const [token, setToken] = useState();
@@ -41,7 +43,7 @@ const Login: React.FC = () => {
     const sequences = database.collections.get('sequences');
     const userDetails = database.collections.get('user_details');
     const dispatch = useDispatch()
-    const [passwordExpired,setPasswordExpired] = useState(false)
+    const [passwordExpired, setPasswordExpired] = useState(false)
 
     // Inicio Do Reset
 
@@ -183,7 +185,7 @@ const Login: React.FC = () => {
                 navigate({ name: "Main", params: { loggedUser: loggedUser, token: token, passwordExpired: true } });
             }
         }
-        
+
     }, [loggedUser]);
 
     const validate = (values: any) => {
@@ -235,20 +237,21 @@ const Login: React.FC = () => {
                         dispatch(loadUser(response.account));
 
                         saveUserDatails(response.account)
-                          
+
                         isVeryOldPassword(response.account)
                     }
                     setLoading(false);
                 })
                 .catch(error => {
                     showToast('Falha de Conexão', 'Por favor contacte o suporte!');
+                    console.log(error);
                     setLoading(false);
                 });
 
 
 
         } else {
-            try {           
+            try {
                 var logguedUser: any = (await users.query(Q.where('username', values.username)).fetch())[0];
 
                 var authenticated = bcrypt.compareSync(values.password, logguedUser?._raw?.password);
@@ -266,45 +269,45 @@ const Login: React.FC = () => {
                     navigate({ name: "Main", params: { loggedUser: logguedUser._raw } });
                 }
                 setLoading(false);
-             } catch (error) {
-                 setIsInvalidCredentials(true);
-                 setLoading(false);
+            } catch (error) {
+                setIsInvalidCredentials(true);
+                setLoading(false);
             }
         }
 
     };
 
-    const isVeryOldPassword = async (user) =>{
+    const isVeryOldPassword = async (user) => {
         let passwordLastChangeDate;
         const today = moment(new Date());
 
-        if(user.online_id!==undefined){
+        if (user.online_id !== undefined) {
             const userDetailss = await userDetails.query(Q.where('user_id', parseInt(user.online_id))).fetch();
-            passwordLastChangeDate = userDetailss[0].password_last_change_date
-        }else{
+            passwordLastChangeDate = userDetailss[0]['password_last_change_date']
+        } else {
             passwordLastChangeDate = user.passwordLastChangeDate !== null ? user.passwordLastChangeDate : user.dateCreated
         }
-       
+
         const lastChangeDate = moment(passwordLastChangeDate);
-        const diff = moment.duration(today.diff(lastChangeDate)); 
-        return diff.asDays()>182 ? setPasswordExpired(true) : setPasswordExpired(false)
+        const diff = moment.duration(today.diff(lastChangeDate));
+        return diff.asDays() > 182 ? setPasswordExpired(true) : setPasswordExpired(false)
     }
 
-    useEffect(()=>{
-        if(passwordExpired){
-            navigate({ name: "ChangePassword", params: { loggedUser: loggedUser, token: token, passwordExpired: passwordExpired } }) 
+    useEffect(() => {
+        if (passwordExpired) {
+            navigate({ name: "ChangePassword", params: { loggedUser: loggedUser, token: token, passwordExpired: passwordExpired } })
         }
-    },[passwordExpired, setPasswordExpired])
+    }, [passwordExpired, setPasswordExpired])
 
-    const saveUserDatails=async (user)=>{        
-        const provinces_ids = user.provinces.map(province=>{return province.id})
-        const district_ids = user.districts.map(district=>{return district.id})
-        const localities_ids = user.localities.map(locality=>{return locality.id})
-        const uss_ids = user.us.map(us=>{return us.id})
+    const saveUserDatails = async (user) => {
+        const provinces_ids = user.provinces.map(province => { return province.id })
+        const district_ids = user.districts.map(district => { return district.id })
+        const localities_ids = user.localities.map(locality => { return locality.id })
+        const uss_ids = user.us.map(us => { return us.id })
         const timestamp = user.passwordLastChangeDate !== null ? user.passwordLastChangeDate : user.dateCreated
         const date = new Date(timestamp);
         const formattedDate = date.toISOString().slice(0, 10);
-        
+
         await database.write(async () => {
             await userDetails.create((userDetail: any) => {
                 userDetail.user_id = user.id
@@ -312,7 +315,7 @@ const Login: React.FC = () => {
                 userDetail.districts = district_ids.toString();
                 userDetail.localities = localities_ids.toString();
                 userDetail.uss = uss_ids.toString();
-                userDetail.password_last_change_date =formattedDate
+                userDetail.password_last_change_date = formattedDate
             });
         })
     }
@@ -379,7 +382,13 @@ const Login: React.FC = () => {
 
                                         <FormControl isRequired isInvalid={'password' in errors}>
                                             <FormControl.Label>Password</FormControl.Label>
-                                            <Input type="password" onBlur={handleBlur('password')} placeholder="Insira a Password" onChangeText={handleChange('password')} value={values.password} />
+                                            <Input type={show ? "text" : "password"} onBlur={handleBlur('password')}
+                                                InputRightElement={
+                                                    <Pressable onPress={() => setShow(!show)}>
+                                                        <Icon as={<MaterialIcons name={show ? "visibility" : "visibility-off"} />} size={5} mr="2" color="muted.400" />
+                                                    </Pressable>}
+                                                placeholder="Insira a Password" onChangeText={handleChange('password')}
+                                                value={values.password} />
                                             <FormControl.ErrorMessage>
                                                 {errors.password}
                                             </FormControl.ErrorMessage>
@@ -397,7 +406,7 @@ const Login: React.FC = () => {
                                         </Button>
                                         <Link
                                             // href="https://nativebase.io" 
-                                            onPress={() => navigate({ name:'ResetPassword'})}    
+                                            onPress={() => navigate({ name: 'ResetPassword' })}
                                             isExternal _text={{
                                                 color: "blue.400"
                                             }} mt={-0.5} _web={{

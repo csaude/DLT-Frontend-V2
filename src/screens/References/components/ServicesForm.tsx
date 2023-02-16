@@ -237,8 +237,9 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     }
 
     const getPartner = async() => {
+        const partner_id =  loggedUser.partner_id !== undefined ?  loggedUser.partner_id : loggedUser.partners.id
         const partners = await database.get('partners').query(
-            Q.where('online_id', parseInt(loggedUser.partner_id))
+            Q.where('online_id', parseInt(partner_id))
         ).fetch();
         const partnerSerialied = partners.map(item => item._raw)[0];
         setOrganization(partnerSerialied);
