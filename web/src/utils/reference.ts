@@ -67,3 +67,8 @@ export async function queryByUser(id: any) {
   const res = await select('/api/references/byUser/'.concat(id));
   return res;
 }
+
+export async function queryCount(id: any) {
+    const res = await select('/api/references/byUser/'.concat(id).concat('/count'));
+    return res;
+}
