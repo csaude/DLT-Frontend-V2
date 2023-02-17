@@ -28,3 +28,10 @@ export async function edit(payload: any) {
   const res = await update('/api/beneficiaries', payload);
   return res;
 }
+
+export async function queryCount(payload?: any) {
+    let url = '/api/beneficiaries/count?'.concat(stringify(payload));
+
+    const res = await select(url);
+    return res;
+}
