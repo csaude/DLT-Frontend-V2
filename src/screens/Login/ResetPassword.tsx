@@ -402,8 +402,6 @@ const ResetPassword: React.FC = () => {
 										<Button
 											onPress={() => {
 												updatePassword(values.username, values.password);
-												// toast.success("Um email de confirmação foi enviado!");
-												// navigate({ name: 'Login' });
 											}}
 										>
 											Solicitar
