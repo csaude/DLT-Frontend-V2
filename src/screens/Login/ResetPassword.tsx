@@ -34,9 +34,7 @@ import {
 	UPDATE_PASSWORD_URL,
 } from "../../services/api";
 import { sync } from "../../database/sync";
-// import { toast } from "react-toastify";
 import bcrypt from "bcryptjs";
-import Spinner from "react-native-loading-spinner-overlay";
 import styles from "./style";
 import { MaterialIcons } from "@native-base/icons";
 
@@ -52,8 +50,6 @@ const ResetPassword: React.FC = () => {
 	const [isInvalidCredentials, setIsInvalidCredentials] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [isOffline, setIsOffline] = useState(false);
-	const [spinner, setSpinner] = useState(false);
-	const [passwordType, setPasswordType] = useState("password");
 	const [token, setToken] = useState();
 	const [show, setShow] = React.useState(false);
 	const [showPass, setShowPass] = React.useState(false);
