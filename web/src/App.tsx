@@ -31,6 +31,8 @@ import PublicRoute from './routes/PublicRoute';
 import PrivateRoute from './routes/PrivateRoute';
 import RenewPassword from './modules/new-password/RenewPassword';
 import OrganizationList from './pages/organization';
+import ReportAgyw from './pages/report/ReportAgyw';
+import PreviewAgyw from './pages/report/PreviewAgyw';
 
 
 const App = () => {
@@ -88,6 +90,9 @@ const App = () => {
             <Route path="/subServicesList" element={<SubServicesList />} />
             <Route path="/organizationsList" element={<OrganizationList />} />
             <Route path="/usList" element={<UsList />} />
+            // Relatorios
+            <Route path="/reportAgyw" element={<ReportAgyw />}/>
+            <Route path="/previewAgyw" element={<PreviewAgyw />}/>
           </Route>
         </Route>
       </Routes>
