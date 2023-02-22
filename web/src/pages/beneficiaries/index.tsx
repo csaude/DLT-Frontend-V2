@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import {useNavigate, Link} from 'react-router-dom';
-import { query } from '../../utils/beneficiary';
+import { pagedQuery, query } from '../../utils/beneficiary';
 import { query as queryUser } from '../../utils/users';
 import classNames from "classnames";
 import {matchSorter} from "match-sorter";
@@ -50,6 +50,8 @@ const BeneficiariesList: React.FC = () => {
     const [ partners, setPartners] = useState<any[]>([]);
     const [ visibleName, setVisibleName ] = useState<any>(true);
     const [ loading, setLoading ] = useState(true);
+    const [ currentPageIndex, setCurrentPageIndex ] = useState(0);
+    const pageSize = 500;
 
     const interventionSelector = useSelector((state: any) => state?.intervention);
     const userSelector = useSelector((state: any) => state?.user);
@@ -80,7 +82,7 @@ const BeneficiariesList: React.FC = () => {
         const fetchData = async () => {
           
             const user = await queryUser(localStorage.user);
-            const data = await query(getUserParams(user));
+            const data = await pagedQuery(getUserParams(user), currentPageIndex, pageSize);
 
             const sortedBeneficiaries = data.sort((benf1, benf2) => moment(benf2.dateCreated).format('YYYY-MM-DD').localeCompare(moment(benf1.dateCreated).format('YYYY-MM-DD')));
 
@@ -110,7 +112,7 @@ const BeneficiariesList: React.FC = () => {
     
         fetchData().catch(error => console.log(error));
     
-    }, [modalVisible]);
+    }, [modalVisible, currentPageIndex]);
 
     const handleAddRef = async (values:any) => {
     
@@ -487,6 +489,16 @@ const BeneficiariesList: React.FC = () => {
         handleSearch(selectedKeys, confirm, dataIndex)
     };
     
+    const loadPreviousPage = () =>{
+        if(currentPageIndex>0){
+            setCurrentPageIndex(currentPageIndex-1)
+        }
+    }
+
+    const loadNextPage = () =>{
+        setCurrentPageIndex(currentPageIndex+1)
+    }
+    
     return (
         
         <>        
@@ -517,6 +529,14 @@ const BeneficiariesList: React.FC = () => {
                             dataSource={beneficiaries}
                             bordered
                         />
+                         <Space >                            
+                            <Button disabled={currentPageIndex===0} onClick={loadPreviousPage} size="small" style={{ width: 90 }}>
+                                {'<<'} Previous 
+                            </Button>
+                            <Button onClick={loadNextPage} size="small" style={{ width: 90 }}>
+                                Next {'>>'}
+                            </Button>
+                        </Space>
                     </ConfigProvider> 
                     {<LoadingModal modalVisible={loading} />}
                 </Card>
