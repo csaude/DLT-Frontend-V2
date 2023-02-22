@@ -531,10 +531,10 @@ const BeneficiariesList: React.FC = () => {
                         />
                          <Space >                            
                             <Button disabled={currentPageIndex===0} onClick={loadPreviousPage} size="small" style={{ width: 90 }}>
-                                {'<<'} Previous 
+                                {'<<'} Anterior 
                             </Button>
                             <Button onClick={loadNextPage} size="small" style={{ width: 90 }}>
-                                Next {'>>'}
+                                Próxima {'>>'}
                             </Button>
                         </Space>
                     </ConfigProvider> 
