@@ -31,15 +31,17 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
   const dispatch = useDispatch()
 
   useEffect(()=>{
-      const getUserDetails = async()=>{              
-          const userDetailsQ = await userDetailsCollection.query(
-                            Q.where('user_id', loggedUser.online_id)
-                        ).fetch();
-          const userDetailRaw = userDetailsQ[0]?._raw
-          getProvincesByIds(userDetailRaw).catch(err => console.error(err));
-          getDistrictsByIds(userDetailRaw).catch(err => console.error(err));
-          getLocalitiesByIds(userDetailRaw).catch(err => console.error(err));
-          getUssByIds(userDetailRaw).catch(err => console.error(err));        
+      const getUserDetails = async()=>{   
+        if(loggedUser.online_id !== undefined)    {
+            const userDetailsQ = await userDetailsCollection.query(
+                              Q.where('user_id', loggedUser.online_id)
+                          ).fetch();
+            const userDetailRaw = userDetailsQ[0]?._raw
+            getProvincesByIds(userDetailRaw).catch(err => console.error(err));
+            getDistrictsByIds(userDetailRaw).catch(err => console.error(err));
+            getLocalitiesByIds(userDetailRaw).catch(err => console.error(err));
+            getUssByIds(userDetailRaw).catch(err => console.error(err)); 
+        }               
       }   
       getUserDetails().catch(error=>console.log(error));   
   },[])
@@ -59,6 +61,7 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
           }
 
           const getDistrictsByIds =async (userDetails)=>{
+            console.log('-------districts-------', userDetails?.districts)
               var a = userDetails?.districts
               if(a!==''){
                 var b = a?.split(',').map(Number);                
