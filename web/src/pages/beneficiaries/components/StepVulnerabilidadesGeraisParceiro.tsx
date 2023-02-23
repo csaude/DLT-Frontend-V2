@@ -95,6 +95,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
                     >
                         <Select
                             size='middle'
+                            allowClear
                             placeholder="Please select"
                             //defaultValue={['a10', 'c12']}
                             //onChange={handleChange}

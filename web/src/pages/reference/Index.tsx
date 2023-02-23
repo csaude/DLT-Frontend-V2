@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { queryByUser, edit as editRef, Reference} from '@app/utils/reference';
+import { edit as editRef, Reference, pagedQueryByUser} from '@app/utils/reference';
 import {allDistrict} from '@app/utils/district';
 import { query  as query1} from '@app/utils/users';
 import { query as beneficiaryQuery } from '@app/utils/beneficiary';
@@ -39,6 +39,8 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
     const [ district, setDistrict] = useState<any[]>([]);
     const [ us, setUs] = useState<any[]>([]);
     const [ loggedUser, setLoggedUser ] = useState<any>(undefined);
+    const [ currentPageIndex, setCurrentPageIndex] = useState(0);
+    const pageSize = 500;
     
     const navigate = useNavigate();
 
@@ -52,7 +54,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
     useEffect(() => {
         
         const fetchData = async () => {
-            const data = await queryByUser(localStorage.user);
+            const data = await pagedQueryByUser(localStorage.user, currentPageIndex, pageSize);
             const districts = await allDistrict();
             const loggedUser = await query1(localStorage.user);
 
@@ -76,7 +78,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
     
         fetchData().catch(error => console.log(error));
     
-    }, [modalVisible]);
+    }, [modalVisible, currentPageIndex]);
 
     const handleModalRefVisible = (flag?: boolean) => {
         setReferenceModalVisible(!!flag);
@@ -165,7 +167,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
 
             }else{
                 const { data } = await editRef(payload);
-                const allReferences: any = await queryByUser(localStorage.user);
+                const allReferences: any = await pagedQueryByUser(localStorage.user, currentPageIndex, pageSize);
                 const sortedReferences = allReferences.sort((ref1, ref2) =>  (ref1.status - ref2.status) || moment(ref2.dateCreated).format('YYYY-MM-DD').localeCompare(moment(ref1.dateCreated).format('YYYY-MM-DD')));
                 setReferences(sortedReferences);
     
@@ -497,6 +499,16 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             ),
         },
     ];
+
+    const loadPreviousPage = () =>{
+        if(currentPageIndex>0){
+            setCurrentPageIndex(currentPageIndex-1)
+        }
+    }
+
+    const loadNextPage = () =>{
+        setCurrentPageIndex(currentPageIndex+1)
+    }
     
     return (
         <>
@@ -511,6 +523,14 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                         bordered
                     >
                     </Table>
+                     <Space >                            
+                            <Button disabled={currentPageIndex===0} onClick={loadPreviousPage} size="small" style={{ width: 90 }}>
+                                {'<<'} Anterior 
+                            </Button>
+                            <Button onClick={loadNextPage} size="small" style={{ width: 90 }}>
+                                Próxima {'>>'}
+                            </Button>
+                        </Space>
                 </ConfigProvider>
                 {<LoadingModal modalVisible={loading} />}
             </Card>

@@ -34,11 +34,10 @@ import {
 	UPDATE_PASSWORD_URL,
 } from "../../services/api";
 import { sync } from "../../database/sync";
-import { toast } from "react-toastify";
 import bcrypt from "bcryptjs";
-import Spinner from "react-native-loading-spinner-overlay";
 import styles from "./style";
 import { MaterialIcons } from "@native-base/icons";
+import Spinner from "react-native-loading-spinner-overlay/lib";
 
 interface LoginData {
 	email?: string | undefined;
@@ -52,8 +51,6 @@ const ResetPassword: React.FC = () => {
 	const [isInvalidCredentials, setIsInvalidCredentials] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [isOffline, setIsOffline] = useState(false);
-	const [spinner, setSpinner] = useState(false);
-	const [passwordType, setPasswordType] = useState("password");
 	const [token, setToken] = useState();
 	const [show, setShow] = React.useState(false);
 	const [showPass, setShowPass] = React.useState(false);
@@ -66,56 +63,38 @@ const ResetPassword: React.FC = () => {
 	// Inicio Do Reset
 
 	const updatePassword = async (username: string, password: string) => {
-		try {
-			const data = await fetch(`${UPDATE_PASSWORD_URL}`, {
-				method: "PUT",
-				headers: {
-					Accept: "application/json",
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					username: username,
-					recoverPassword: password,
-				}),
-			});
-			toast.success("Redefinição de senha submetida com sucesso!");
-		} catch (error) {
-			toast.error("Failed");
-		}
+
+		console.log(isOffline);
+		console.log(loading);
+		// try {
+		// 	const data = await fetch(`${UPDATE_PASSWORD_URL}`, {
+		// 		method: "PUT",
+		// 		headers: {
+		// 			Accept: "application/json",
+		// 			"Content-Type": "application/json",
+		// 		},
+		// 		body: JSON.stringify({
+		// 			username: username,
+		// 			recoverPassword: password,
+		// 		}),
+		// 	});
+
+		// 	showToast("success", "Solicitado com sucesso!!!", "Redefinição de senha submetida com sucesso!");			
+		// 	navigate({ name: 'Login' });
+		// } catch (error) {
+
+		// 	showToast("error","Falha!!!", "Erro ao redefinir a senha!");
+
+			
+		// }
 	};
 
-	const fetchPrefix = async (username: string): Promise<any> => {
-		// fetch the prefix
-		await fetch(`${SYNC_API_URL_PREFIX}?username=${username}`)
-			.then((response) => response.json())
-			.then(async (response) => {
-				if (response.status && response.status !== 200) {
-					// unauthorized
-
-					setIsInvalidCredentials(true);
-				} else {
-					await database.write(async () => {
-						await sequences.create((sequence: any) => {
-							sequence.prefix = response.sequence;
-							sequence.last_nui = "11111";
-						});
-					});
-				}
-			})
-			.catch((error) => {
-				showToast("Falha de Conexão", "Por favor contacte o suporte!");
-				return undefined;
-			});
-	};
-
-
-
-	const showToast = (message, description) => {
+	const showToast = (status, message, description) => {
 		return toasty.show({
 			placement: "top",
 			render: () => {
 				return (
-					<Alert w="100%" status="error">
+					<Alert w="100%" status={status}>
 						<VStack space={2} flexShrink={1} w="100%">
 							<HStack flexShrink={1} space={2} justifyContent="space-between">
 								<HStack space={2} flexShrink={1}>
@@ -159,77 +138,44 @@ const ResetPassword: React.FC = () => {
 			errors.password = "Obrigatório";
 		}
 
+		if (!values.rePassword) {
+			errors.rePassword = "Obrigatório";
+		}
 		return errors;
 	};
 
+	// Inicio Do Reset
 	const onSubmit = async (values: any) => {
 		setLoading(true);
-
-		// check if users table is synced
-		var checkSynced = await users
-			.query(Q.where("_status", "synced"))
-			.fetchCount();
-
-		console.log(checkSynced);
-		if (checkSynced == 0) {
-			// checkSynced=0 when db have not synced yet
-
-			if (isOffline) {
+		try {
+			
+			if(isOffline){
 				setLoading(false);
-				return showToast(
-					"Sem Conexão a Internet",
-					"Conecte-se a Internet para o primeiro Login!"
-				);
-			}
-
-			await fetch(
-				`${LOGIN_API_URL}?username=${values.username
-				}&password=${encodeURIComponent(values.password)}`
-			)
-				.then((response) => response.json())
-				.then(async (response) => {
-					if (response.status && response.status !== 200) {
-						// unauthorized
-
-						setIsInvalidCredentials(true);
-					} else {
-						await fetchPrefix(values.username);
-
-						setIsInvalidCredentials(false);
-
-						setToken(response.token);
-						setLoggedUser(response.account);
-					}
-					setLoading(false);
-				})
-				.catch((error) => {
-					showToast("Falha de Conexão", "Por favor contacte o suporte!");
-					setLoading(false);
+				showToast("error", "E-mail não enviado!!!", "É necessarrio uma conexão a internet!");
+			}else{
+				const data = await fetch(`${UPDATE_PASSWORD_URL}`, {
+					method: "PUT",
+					headers: {
+						Accept: "application/json",
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						username: values.username,
+						recoverPassword: values.password,
+					}),
 				});
-		} else {
-			try {
-				var logguedUser: any = (
-					await users.query(Q.where("username", values.username)).fetch()
-				)[0];
-
-				var authenticated = bcrypt.compareSync(
-					values.password,
-					logguedUser?._raw?.password
-				);
-
-				if (!authenticated) {
-					setIsInvalidCredentials(true);
-				} else {
-					setIsInvalidCredentials(false);
-					setLoggedUser(logguedUser._raw);
-					navigate({ name: "Main", params: { loggedUser: logguedUser._raw } });
-				}
 				setLoading(false);
-			} catch (error) {
-				setIsInvalidCredentials(true);
-				setLoading(false);
-			}
+				showToast("success", "E-mail enviado!!!", "Redefinição de senha submetida com sucesso!");	
+				
+				navigate({ name: 'Login',  params: { loggedUser: undefined } });			
+			}						
+
+		} catch (error) {
+
+			setLoading(false);
+			showToast("error","Falha!!!", "Erro ao redefinir a senha!");			
 		}
+
 	};
 
 	return (
@@ -263,8 +209,8 @@ const ResetPassword: React.FC = () => {
 								onSubmit={onSubmit}
 								validate={validate}
 								validationSchema={Yup.object({
-									email: Yup.string()
-										.email("Endereço de email inválido")
+									username: Yup.string()
+										.max(45, "Deve conter no máximo 45 caracteres")
 										.required("Obrigatório"),
 									password: Yup.string()
 										.required("Obrigatório")
@@ -342,14 +288,19 @@ const ResetPassword: React.FC = () => {
 												{errors.rePassword}
 											</FormControl.ErrorMessage>
 										</FormControl>
+                                        {loading ?
+                                            <Spinner
+                                                visible={true}
+                                                textContent={'Autenticando...'}
+                                                textStyle={styles.spinnerTextStyle}
+                                            /> : undefined
 
-
+                                        }
 										<Button
-											onPress={() => {
-												updatePassword(values.username, values.password);
-												toast.success("Um email de confirmação foi enviado!");
-												navigate({ name: 'Login' });
-											}}
+											onPress={handleSubmit}
+											// onPress={() => {
+											// 	updatePassword(values.username, values.password);
+											// }}
 										>
 											Solicitar
 										</Button>

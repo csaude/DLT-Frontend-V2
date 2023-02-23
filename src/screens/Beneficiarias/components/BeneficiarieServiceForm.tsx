@@ -7,7 +7,7 @@ import {
 import {
     Center, Box, Select, Text, Heading, VStack, FormControl,
     Input, Link, Button, CheckIcon, WarningOutlineIcon, HStack, Checkbox,
-    Alert, Flex, useToast, Stack, InputGroup, InputLeftAddon, InputRightAddon, Radio
+    Alert, Flex, useToast, Stack, InputGroup, InputLeftAddon, InputRightAddon, Radio, IconButton, CloseIcon
 }
     from 'native-base';
 import { SuccessHandler, ErrorHandler } from "../../../components/SyncIndicator";
@@ -221,7 +221,34 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
         return new Date().getFullYear() - new Date(beneficiarie.date_of_birth).getFullYear();;
     }
 
-    const message = "Este campo é Obrigatório"
+    const message = "Este campo é Obrigatório";
+
+
+    const showToast = (status, message, description) => {
+        return toast.show({
+            placement: "top",
+            render: () => {
+                return (
+                    <Alert w="100%" status={status}>
+                        <VStack space={2} flexShrink={1} w="100%">
+                            <HStack flexShrink={1} space={2} justifyContent="space-between">
+                                <HStack space={2} flexShrink={1}>
+                                    <Alert.Icon mt="1" />
+                                    <Text fontSize="md" color="coolGray.800">
+                                        {message}
+                                    </Text>
+                                </HStack>
+                                <IconButton variant="unstyled" _focus={{ borderWidth: 0 }} icon={<CloseIcon size="3" color="coolGray.600" />} />
+                            </HStack>
+                            <Box pl="6" _text={{ color: "coolGray.600" }}>
+                                {description}
+                            </Box>
+                        </VStack>
+                    </Alert>
+                );
+            }
+        });
+    }
 
     const validate = (values: any) => {
         const errors: BeneficiariesInterventionsModel = {};
@@ -275,8 +302,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                     intervention.status = 1
                     intervention._status = "updated"
                 })
-                toast.show({ placement: "bottom", title: "Intervention Updated Successfully: " + updatedIntervention._raw.id });
-
+                showToast('success','Actualizado', 'Serviço actualizado com sucesso!');
                 return updatedIntervention;
             } else {
                 const newIntervention = await database.collections.get('beneficiaries_interventions').create((intervention: any) => {
@@ -292,7 +318,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                     intervention.remarks = values.remarks
                     intervention.status = 1
                 });
-                toast.show({ placement: "bottom", title: "Intervention Saved Successfully: " + newIntervention._raw.id });
+                showToast('success','Provido', 'Serviço provido com sucesso!');
                 return newIntervention;
             }
 
