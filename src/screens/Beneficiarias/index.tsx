@@ -131,8 +131,11 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
                 flex={1} space={5} alignItems="center">
                 {/* <Avatar color="white" bg={'warning.600'} > */}
                 <Avatar color="white" bg={randomHexColor()} >
-                    {data.item.name.charAt(0).toUpperCase() + data.item.surname.charAt(0).toUpperCase()}
-                    {/* {"A"} */}
+                    {
+                        maskName ? 
+                        "D"  : 
+                        data.item.name.charAt(0).toUpperCase() + data.item.surname.charAt(0).toUpperCase()}
+                    
                 </Avatar>
 
                 <View style={{width:"50%"}}>

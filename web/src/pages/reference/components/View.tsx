@@ -177,11 +177,6 @@ export function ViewReferencePanel({selectedReference, columns}) {
             key: 'order',
             render: (text, record) => refServices.indexOf(record) + 1,
         },
-        { title: 'Cod Referência', 
-            dataIndex: 'date', 
-            key: 'date',
-            render: (text, record) => reference?.referenceCode
-        },
         { title: 'Serviço', 
             dataIndex: '', 
             key: 'service',
