@@ -156,14 +156,7 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
                             {` ${getUser(data.item?._raw.notify_to).name + " " + getUser(data.item?._raw.notify_to).surname}`}
                         </Text>
                     </HStack>
-                    <HStack>
-                        <View style={{ paddingTop: 5 }}><Ionicons name="notifications" size={11} color="#17a2b8" /></View>
-                        <View style={{ paddingTop: 5 }}><Ionicons name="md-home" size={11} color="#17a2b8" /></View>
-                        <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
-                            {` ${getOrganization(getUser(data.item?._raw.user_created).partner_id).name}`}
-
-                        </Text>
-                    </HStack>
+                   
                         <HStack>
                             <View style={{ paddingTop: 5 }}><Ionicons name="notifications" size={11} color="#17a2b8" /></View>
                             <View style={{ paddingTop: 5 }}><Ionicons name="md-home" size={11} color="#17a2b8" /></View>
