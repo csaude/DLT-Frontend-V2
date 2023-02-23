@@ -68,6 +68,11 @@ export async function queryByUser(id: any) {
   return res;
 }
 
+export async function pagedQueryByUser(id?: any, pageIndex?: any, pageSize?: any) {
+    const res = await select('/api/references/byUser/'.concat(id).concat('?pageIndex='.concat(pageIndex).concat('&pageSize=').concat(pageSize)));
+    return res;
+}
+
 export async function queryCount(id: any) {
     const res = await select('/api/references/byUser/'.concat(id).concat('/count'));
     return res;
