@@ -114,6 +114,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
                     >
                         <Select
                             size='middle'
+                            allowClear
                             placeholder="Please select"
                             // disabled={schoolInfoEnabled}
                             //defaultValue={['a10', 'c12']}

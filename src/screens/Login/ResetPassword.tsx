@@ -34,9 +34,7 @@ import {
 	UPDATE_PASSWORD_URL,
 } from "../../services/api";
 import { sync } from "../../database/sync";
-import { toast } from "react-toastify";
 import bcrypt from "bcryptjs";
-import Spinner from "react-native-loading-spinner-overlay";
 import styles from "./style";
 import { MaterialIcons } from "@native-base/icons";
 
@@ -52,13 +50,13 @@ const ResetPassword: React.FC = () => {
 	const [isInvalidCredentials, setIsInvalidCredentials] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [isOffline, setIsOffline] = useState(false);
-	const [spinner, setSpinner] = useState(false);
-	const [passwordType, setPasswordType] = useState("password");
 	const [token, setToken] = useState();
 	const [show, setShow] = React.useState(false);
 	const [showPass, setShowPass] = React.useState(false);
 
 	const toasty = useToast();
+
+    const toast = useToast();
 
 	const users = database.collections.get("users");
 	const sequences = database.collections.get("sequences");
@@ -78,9 +76,66 @@ const ResetPassword: React.FC = () => {
 					recoverPassword: password,
 				}),
 			});
-			toast.success("Redefinição de senha submetida com sucesso!");
+
+			toast.show({
+                placement: "top",
+                render: () => {
+                    return (
+                        <Alert w="100%" variant="left-accent" colorScheme="success" status="success">
+                            <VStack space={2} flexShrink={1} w="100%">
+                                <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
+                                    <HStack space={2} flexShrink={1} alignItems="center">
+                                        <Alert.Icon />
+                                        <Text color="coolGray.800">
+											Redefinição de senha submetida com sucesso!
+                                        </Text>
+                                    </HStack>
+                                </HStack>
+                            </VStack>
+                        </Alert>
+                    );
+                }
+            });
+
+			navigate({ name: 'Login' });
 		} catch (error) {
-			toast.error("Failed");
+			toast.show({
+                placement: "top",
+                render: () => {toast.show({
+                placement: "top",
+                render: () => {
+                    return (
+                        <Alert w="100%" variant="left-accent" colorScheme="error" status="error">
+                            <VStack space={2} flexShrink={1} w="100%">
+                                <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
+                                    <HStack space={2} flexShrink={1} alignItems="center">
+                                        <Alert.Icon />
+                                        <Text color="coolGray.800">
+                                            Sync Failed!
+                                        </Text>
+                                    </HStack>
+                                </HStack>
+                            </VStack>
+                        </Alert>
+                    );
+                }
+            })
+                    return (
+                        <Alert w="100%" variant="left-accent" colorScheme="error" status="error">
+                            <VStack space={2} flexShrink={1} w="100%">
+                                <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
+                                    <HStack space={2} flexShrink={1} alignItems="center">
+                                        <Alert.Icon />
+                                        <Text color="coolGray.800">
+                                            Erro!
+                                        </Text>
+                                    </HStack>
+                                </HStack>
+                            </VStack>
+                        </Alert>
+                    );
+                }
+            });
 		}
 	};
 
@@ -347,8 +402,6 @@ const ResetPassword: React.FC = () => {
 										<Button
 											onPress={() => {
 												updatePassword(values.username, values.password);
-												toast.success("Um email de confirmação foi enviado!");
-												navigate({ name: 'Login' });
 											}}
 										>
 											Solicitar
