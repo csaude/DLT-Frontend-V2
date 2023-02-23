@@ -11,7 +11,7 @@ import { Q } from "@nozbe/watermelondb";
 import { database } from '../database';
 import { loadLocalRawResource } from 'react-native-svg';
 import { useDispatch } from 'react-redux';
-import { loadUserDetails } from '../store/authSlice';
+import { loadUserProvinces, loadUserDistricts, loadUserLocalities, loadUserUss } from '../store/authSlice';
 
 function HomeScreen({ navigation }: any) {
   return (
@@ -50,12 +50,11 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
                     var b = a?.split(',').map(Number); 
                     const provincesQ = await database.get('provinces').query(Q.where('online_id', Q.oneOf(b))).fetch();
                     const provRaws = provincesQ.map(item=>item._raw)
-                    console.log('------provRaw------',provRaws)   
-                    dispatch(loadUserDetails({provinces:provRaws}))            
+                    dispatch(loadUserProvinces({provinces:provRaws}))          
                 }else{
                     const getAllProvs = await database.get('provinces').query().fetch();
                     const provRaws = getAllProvs.map(item => item._raw)
-                    dispatch(loadUserDetails({provinces:provRaws}))
+                    dispatch(loadUserProvinces({provinces:provRaws}))
                 }   
           }
 
@@ -65,11 +64,11 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
                 var b = a?.split(',').map(Number);                
                 const districtsQ = await database.get('districts').query(Q.where('online_id', Q.oneOf(b))).fetch();
                 const districtRaws= districtsQ.map(item=>item._raw)
-                dispatch(loadUserDetails({districts:districtRaws}))  
+                dispatch(loadUserDistricts({districts:districtRaws})) 
               }else{
                   const getAllDists = await database.get('districts').query().fetch();
                   const distRaws = getAllDists.map(item => item._raw)
-                  dispatch(loadUserDetails({districts:distRaws}))   
+                  dispatch(loadUserDistricts({districts:distRaws}))   
               }
           }
 
@@ -79,11 +78,11 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
                 var b = a?.split(',').map(Number);                
                 const localitiesQ = await database.get('localities').query(Q.where('online_id', Q.oneOf(b))).fetch();
                 const localRaws = localitiesQ.map(item=>item._raw)
-                dispatch(loadUserDetails({localities:localRaws}))
+                dispatch(loadUserLocalities({localities:localRaws}))
               }else{
                   const getAllLocalits = await database.get('localities').query().fetch();
                   const localRaws = getAllLocalits.map(item => item._raw)
-                  dispatch(loadUserDetails({localities:localRaws})) 
+                  dispatch(loadUserLocalities({localities:localRaws})) 
               }
           }
 
@@ -93,11 +92,11 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
                   var b = a?.split(',').map(Number);                
                   const ussQ = await database.get('us').query(Q.where('online_id', Q.oneOf(b))).fetch();
                   const usRaws = ussQ.map(item=>item._raw)
-                  dispatch(loadUserDetails({uss:usRaws})) 
+                  dispatch(loadUserUss({uss:usRaws})) 
                 }else{
                   const getAllUss = await database.get('us').query().fetch();
                   const usRaws = getAllUss.map(item => item._raw)
-                  dispatch(loadUserDetails({uss:usRaws})) 
+                  dispatch(loadUserUss({uss:usRaws})) 
                 }
           }
 

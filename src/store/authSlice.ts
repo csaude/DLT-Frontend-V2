@@ -54,17 +54,21 @@ export const authSlice = createSlice({
           uss : payload.us !==undefined ? payload.us : ''
       }
     },
-    loadUserDetails:(state, {payload}) => {
-        state.userDetails = {
-            provinces :  { ...state, provinces : payload.provinces },
-            districts :  { ...state, districts : payload.districts },
-            localities : { ...state, localities : payload.localities },
-            uss : {...state, uss : payload.us}
-        }
+    loadUserProvinces:(state, {payload}) => {
+        state.userDetails.provinces =  payload.provinces 
+    },
+    loadUserDistricts:(state, {payload})=>{
+        state.userDetails.districts = payload.districts 
+    },
+    loadUserLocalities:(state, {payload})=>{
+        state.userDetails.localities = payload.localities
+    },
+    loadUserUss:(state, {payload})=>{
+        state.userDetails.uss = payload.uss
     }
   }
 });
 
-export const { logoutUser, loadUser, loadUserDetails} = authSlice.actions;
+export const { logoutUser, loadUser, loadUserProvinces, loadUserDistricts, loadUserLocalities, loadUserUss} = authSlice.actions;
 
 export default authSlice.reducer;
