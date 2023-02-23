@@ -19,6 +19,8 @@ import DatePicker, { getToday, getFormatedDate } from 'react-native-modern-datep
 import { Context } from '../../../routes/DrawerNavigator';
 import { calculateAge, getMaxDate, getMinDate } from '../../../models/Utils';
 import styles from './styles';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store';
 
 const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
     
@@ -65,6 +67,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
     const [childrenEnabled, setChildrenEnabled] = useState<any>(true);
     const [gbvInfoEnabled, setGbvInfoEnabled] = useState<any>(true);
     const [sexExploitationTimeEnabled, setSexExploitationTimeEnabled] = useState<any>(true);
+    const userDetail = useSelector((state: RootState) => state.auth.userDetails);
 
     useEffect(() => {
         const fetchProvincesData = async () => {
@@ -73,38 +76,38 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
 
             setProvinces(provSerialized);
 
-            if( loggedUser?.provinces[0]?.id != undefined){
+            if( userDetail?.provinces[0]?.id != undefined){
                 const getDistList = await database.get('districts').query(
-                    Q.where('province_id', loggedUser?.provinces[0]?.id )
+                    Q.where('province_id', userDetail?.provinces[0]?.id )
                 ).fetch();
                 const distsSerialized = getDistList.map(item => item._raw);
                 setDistricts(distsSerialized);
 
-                loggedUser?.provinces?.length > 1 ? setIsProvEnable(true) : setIsProvEnable(false);
+                userDetail?.provinces?.length > 1 ? setIsProvEnable(true) : setIsProvEnable(false);
             }
 
-            if( loggedUser?.districts[0]?.id != undefined){
+            if( userDetail?.districts[0]?.id != undefined){
                 const getDistList = await database.get('districts').query(
-                    Q.where('province_id', loggedUser?.provinces[0]?.id )
+                    Q.where('province_id', userDetail?.provinces[0]?.id )
                 ).fetch();
                 const distsSerialized = getDistList.map(item => item._raw);
                 setDistricts(distsSerialized);
 
-                loggedUser?.districts?.length > 1 ? setIsDisEnable(true) : setIsDisEnable(false);
+                userDetail?.districts?.length > 1 ? setIsDisEnable(true) : setIsDisEnable(false);
 
-                const getLocList = await database.get('localities').query( Q.where('district_id', loggedUser.districts[0].id )).fetch();                              
+                const getLocList = await database.get('localities').query( Q.where('district_id', userDetail.districts[0].id )).fetch();                              
                     const locsSerialized = getLocList.map(item => item._raw);
                     setLocalities(locsSerialized);
 
-                if( loggedUser?.localities[0]?.id != undefined){                    
+                if( userDetail?.localities[0]?.id != undefined){                    
 
                     const getNeiList = await database.get('neighborhoods').query(
-                        Q.where('locality_id', Number(loggedUser?.localities[0]?.id))
+                        Q.where('locality_id', Number(userDetail?.localities[0]?.id))
                     ).fetch();
                     const neiSerialized = getNeiList.map(item => item._raw);
                     setNeighborhoods(neiSerialized);
 
-                    loggedUser?.districts?.length > 1 ? setIsEnable(true) : ( loggedUser?.localities?.length > 1 ? setIsEnable(true) : setIsEnable(false));
+                    userDetail?.districts?.length > 1 ? setIsEnable(true) : ( userDetail?.localities?.length > 1 ? setIsEnable(true) : setIsEnable(false));
                 }
             }
         }
@@ -162,9 +165,9 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
             age: calculateAge(beneficiarie?.date_of_birth),
             nationality: beneficiarie?.nationality === undefined ? "1" : beneficiarie?.nationality+"",
             enrollment_date: beneficiarie?.enrollment_date,
-            province: beneficiarie?.province_id === undefined ? loggedUser?.provinces[0]?.id : beneficiarie?.province_id,
-            district: beneficiarie?.district_id === undefined ? loggedUser?.districts[0]?.id : beneficiarie?.district_id,
-            locality: beneficiarie?.locality_id === undefined ? loggedUser?.localities[0]?.id : beneficiarie?.locality_id,
+            province: beneficiarie?.province_id === undefined ? userDetail?.provinces[0]?.id : beneficiarie?.province_id,
+            district: beneficiarie?.district_id === undefined ? userDetail?.districts[0]?.id : beneficiarie?.district_id,
+            locality: beneficiarie?.locality_id === undefined ? userDetail?.localities[0]?.id : beneficiarie?.locality_id,
             locality_name: beneficiarie?.locality_name,
             entry_point: beneficiarie?.entry_point,
             us_id: beneficiarie?.us_id,
