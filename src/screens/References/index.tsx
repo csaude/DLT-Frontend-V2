@@ -32,6 +32,12 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
         })[0];
     }
 
+    const getOrganization = (partner_id: any) => {
+        return partners.filter((e) => {
+            return e?._raw.online_id == partner_id
+        })[0];
+    }
+
     const getStatus = (status: any) => {
 
         if (status === 0) {
@@ -148,6 +154,14 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
                         <View style={{ paddingTop: 5 }}><Ionicons name="person" size={11} color="#17a2b8" /></View>
                         <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
                             {` ${getUser(data.item?._raw.notify_to).name + " " + getUser(data.item?._raw.notify_to).surname}`}
+                        </Text>
+                    </HStack>
+                    <HStack>
+                        <View style={{ paddingTop: 5 }}><Ionicons name="notifications" size={11} color="#17a2b8" /></View>
+                        <View style={{ paddingTop: 5 }}><Ionicons name="md-home" size={11} color="#17a2b8" /></View>
+                        <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
+                            {` ${getOrganization(getUser(data.item?._raw.user_created).partner_id).name}`}
+
                         </Text>
                     </HStack>
                         <HStack>
