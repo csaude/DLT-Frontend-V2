@@ -47,7 +47,7 @@ export const authSlice = createSlice({
       state.currentUser = payload;
       state.isLoggedIn = true;
       state.userDetails = {
-          user_id : payload.id !==undefined ? payload.id : payload.online_id,
+          user_id : payload.online_id !==undefined ? payload.online_id : payload.id,
           provinces : payload.provinces !==undefined ?  payload.provinces : '',
           districts : payload.districts !==undefined ? payload.districts : '', 
           localities : payload.localities !==undefined ? payload.localities : '', 
@@ -55,17 +55,49 @@ export const authSlice = createSlice({
       }
     },
     loadUserProvinces:(state, {payload}) => {
-        state.userDetails.provinces =  payload.provinces 
+        const provinces: any = [];
+        payload.provinces.map(item => {
+            const province = {
+                id :item.online_id, 
+                name: item.name
+            }
+            provinces.push(province);
+        })
+        state.userDetails.provinces =  provinces 
     },
     loadUserDistricts:(state, {payload})=>{
-        state.userDetails.districts = payload.districts 
+        const districts: any = [];
+        payload.districts.map(item=>{
+          const district = {
+                id :item.online_id, 
+                name: item.name
+          }
+          districts.push(district)
+        })
+        state.userDetails.districts = districts 
     },
     loadUserLocalities:(state, {payload})=>{
-        state.userDetails.localities = payload.localities
+       const localities : any = []; 
+       payload.localities.map(item=>{
+          const locality = {
+                id :item.online_id, 
+                name: item.name
+          }
+          localities.push(locality);
+       })
+        state.userDetails.localities = localities
     },
     loadUserUss:(state, {payload})=>{
-        state.userDetails.uss = payload.uss
-    }
+        const uss: any =[]
+        payload.uss.map(item =>{
+          const us = {
+              id :item.online_id, 
+              name: item.name
+          }
+        uss.push(us)
+        })
+        state.userDetails.uss = uss
+    },
   }
 });
 

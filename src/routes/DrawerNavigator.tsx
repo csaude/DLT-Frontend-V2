@@ -60,8 +60,7 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
                 }   
           }
 
-          const getDistrictsByIds =async (userDetails)=>{
-            console.log('-------districts-------', userDetails?.districts)
+          const getDistrictsByIds =async (userDetails)=>{         
               var a = userDetails?.districts
               if(a!==''){
                 var b = a?.split(',').map(Number);                
