@@ -60,3 +60,16 @@ package-lock.json
 
 # CocoaPods
 /ios/Pods/
+android/app/src/main/res/drawable-mdpi/node_modules_reactnativemoderndatepicker_src_assets_arrow.png
+android/app/src/main/res/drawable-mdpi/node_modules_reactnativedropdownpicker_src_themes_dark_icons_close.png
+android/app/src/main/res/drawable-mdpi/node_modules_reactnativedropdownpicker_src_themes_dark_icons_tick.png
+android/app/src/main/res/drawable-mdpi/node_modules_reactnativedropdownpicker_src_themes_light_icons_arrowdown.png
+android/app/src/main/res/drawable-mdpi/node_modules_reactnativedropdownpicker_src_themes_light_icons_tick.png
+android/app/src/main/res/drawable-mdpi/node_modules_reactnativedropdownpicker_src_themes_light_icons_close.png
+android/app/src/main/res/drawable-mdpi/node_modules_reactnativedropdownpicker_src_themes_light_icons_arrowup.png
+android/app/src/main/res/drawable-mdpi/node_modules_reactnativedropdownpicker_src_themes_dark_icons_arrowup.png
+android/app/src/main/res/drawable-mdpi/node_modules_reactnativedropdownpicker_src_themes_dark_icons_arrowdown.png
+android/app/src/main/res/drawable-mdpi/assets_dreams.png
+src/services/api.ts
+.env
+web/.env
