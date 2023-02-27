@@ -209,19 +209,8 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                 >
                     Pesquisar
                 </Button>
-                <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+                <Button onClick={() => handleReset(clearFilters,selectedKeys, confirm, dataIndex)} size="small" style={{ width: 90 }}>
                     Limpar
-                </Button>
-                <Button
-                    type="link"
-                    size="small"
-                    onClick={() => {
-                    confirm({ closeDropdown: false });
-                    setSearchText(selectedKeys[0]);
-                    setSearchedColumn(dataIndex);
-                    }}
-                >
-                    Filtrar
                 </Button>
                 </Space>
             </div>
@@ -280,19 +269,8 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                 >
                     Pesquisar
                 </Button>
-                <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+                <Button onClick={() => handleReset(clearFilters,selectedKeys, confirm, dataIndex)} size="small" style={{ width: 90 }}>
                     Limpar
-                </Button>
-                <Button
-                    type="link"
-                    size="small"
-                    onClick={() => {
-                    confirm({ closeDropdown: false });
-                    setSearchText(selectedKeys[0]);
-                    setSearchedColumn(dataIndex);
-                    }}
-                >
-                    Filtrar
                 </Button>
                 </Space>
             </div>
@@ -326,9 +304,10 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
         
     };
 
-    const handleReset = clearFilters => {
+    const handleReset = (clearFilters,selectedKeys, confirm, dataIndex) => { 
         clearFilters();
         setSearchText(searchText);
+        handleSearch(selectedKeys, confirm, dataIndex)
     };
 
     const handleRefServicesList = (data?: any) => {
