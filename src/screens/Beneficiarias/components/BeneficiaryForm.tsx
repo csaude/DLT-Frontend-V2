@@ -796,7 +796,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         {formik.errors.enrollment_date}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl isRequired isInvalid={'province' in formik.errors}>
+                                <FormControl isRequired isInvalid={'province' in formik.errors} style={{ display : isProvEnable ? "flex" : "none" }} >
                                     <FormControl.Label>Provincia</FormControl.Label>
                                     <Picker
                                         enabled={isProvEnable}
@@ -820,7 +820,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         {formik.errors.province}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl isRequired isInvalid={'district' in formik.errors}>
+                                <FormControl isRequired isInvalid={'district' in formik.errors} style={{ display : isDisEnable ? "flex" : "none" }} >
                                     <FormControl.Label>Distrito</FormControl.Label>
                                     <Picker
                                         enabled={isDisEnable}
@@ -845,7 +845,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         {formik.errors.district}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl isRequired isInvalid={'locality' in formik.errors}>
+                                <FormControl isRequired isInvalid={'locality' in formik.errors} style={{ display : isEnable ? "flex" : "none" }} >
                                     <FormControl.Label>Posto Administrativo</FormControl.Label>
                                     <Picker
                                         enabled={isEnable}
