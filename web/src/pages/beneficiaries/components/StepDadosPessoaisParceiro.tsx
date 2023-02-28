@@ -327,13 +327,13 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                     </Form.Item>
                 </Col>
             </Row>
-            <Row gutter={16}>
+            <Row gutter={16} hidden={localities.length === 1} >
                 <Col className="gutter-row" span={8}>
                     <Form.Item
                         name="province"
                         label="Provincia"
                         rules={[{ required: localities.length !== 1, message: RequiredFieldMessage }]}
-                        initialValue={beneficiary?.locality?.id.toString()}
+                        initialValue={beneficiary?.neighborhood.locality?.district.province.id.toString()}
                     >
                         <Select placeholder="Seleccione a Provincia" onChange={onChangeProvinces}>
                             {provinces?.map(item => (

@@ -31,10 +31,8 @@ const Login: React.FC = () => {
     const [isInvalidCredentials, setIsInvalidCredentials] = useState(false);
     const [loading, setLoading] = useState(false);
     const [isOffline, setIsOffline] = useState(false);
-    const [spinner, setSpinner] = useState(false);
     const [show, setShow] = React.useState(false);
 
-    const [passwordType, setPasswordType] = useState("password");
     const [token, setToken] = useState();
 
     const toasty = useToast();
@@ -43,28 +41,7 @@ const Login: React.FC = () => {
     const sequences = database.collections.get('sequences');
     const userDetails = database.collections.get('user_details');
     const dispatch = useDispatch()
-    const [passwordExpired, setPasswordExpired] = useState(false)
-
-    // Inicio Do Reset
-
-    const updatePassword = async (username: string, password: string) => {
-        try {
-            const data = await fetch(`${UPDATE_PASSWORD_URL}`, {
-                method: 'PUT',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    username: username,
-                    recoverPassword: password
-                })
-            });
-            toast.success('Redefinição de senha submetida com sucesso!');
-        } catch (error) {
-            toast.error('Failed');
-        }
-    };
+    const [passwordExpired, setPasswordExpired] = useState(false);
 
     const fetchPrefix = async (username: string): Promise<any> => {
         // fetch the prefix 
@@ -89,16 +66,6 @@ const Login: React.FC = () => {
                 return undefined;
             });
     }
-
-
-    const togglePassword = () => {
-
-        if (passwordType === "password") {
-            setPasswordType("")
-            return;
-        }
-        setPasswordType("password")
-    };
 
     const showToast = (message, description) => {
         return toasty.show({
@@ -322,7 +289,6 @@ const Login: React.FC = () => {
 
     return (
 
-
         <KeyboardAvoidingView style={styles.container}>
             <ScrollView contentInsetAdjustmentBehavior="automatic" keyboardShouldPersistTaps='handled'>
 
@@ -362,7 +328,6 @@ const Login: React.FC = () => {
                             }}
                                 onSubmit={onSubmit}
                                 validate={validate}
-
                             >
                                 {({
                                     handleChange,
