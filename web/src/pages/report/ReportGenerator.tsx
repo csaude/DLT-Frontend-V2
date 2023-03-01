@@ -164,6 +164,327 @@ export async function generateXlsReport(currentUserName) {
   const cj3 = worksheet.getCell("CJ3");
   cj3.value = "Data Check";
 
+  /** Linhas 7 e 8 */
+  worksheet.mergeCells("E7:E8");
+const e7 = worksheet.getCell("E7");
+  e7.value = "10-14";
+
+  worksheet.mergeCells("F7:F8");
+  const f7 = worksheet.getCell("F7");
+  f7.value = "15-19";
+
+  worksheet.mergeCells("G7:G8");
+  const g7 = worksheet.getCell("G7");
+  g7.value = "20-24";
+
+  worksheet.mergeCells("H7:H8");
+  const h7 = worksheet.getCell("H7");
+  h7.value = "25-29";
+
+  worksheet.mergeCells("I7:I8");
+  const i7 = worksheet.getCell("I7");
+  i7.value = "Subtotal";
+
+  worksheet.mergeCells("J7:J8");
+  const j7 = worksheet.getCell("J7");
+  j7.value = "10-14";
+
+  worksheet.mergeCells("K7:K8");
+  const k7 = worksheet.getCell("K7");
+  k7.value = "15-19";
+
+  worksheet.mergeCells("L7:L8");
+  const l7 = worksheet.getCell("L7");
+  l7.value = "20-24";
+
+  worksheet.mergeCells("M7:M8");
+  const m7 = worksheet.getCell("M7");
+  m7.value = "25-29";
+
+  worksheet.mergeCells("N7:N8");
+  const n7 = worksheet.getCell("N7");
+  n7.value = "Subtotal";
+
+  worksheet.mergeCells("O7:O8");
+  const o7 = worksheet.getCell("O7");
+  o7.value = "10-14";
+
+  worksheet.mergeCells("P7:P8");
+  const p7 = worksheet.getCell("P7");
+  p7.value = "15-19";
+
+  worksheet.mergeCells("Q7:Q8");
+  const q7 = worksheet.getCell("Q7");
+  q7.value = "20-24";
+
+  worksheet.mergeCells("R7:R8");
+  const r7 = worksheet.getCell("R7");
+  r7.value = "25-29";
+
+  worksheet.mergeCells("S7:S8");
+  const s7 = worksheet.getCell("S7");
+  s7.value = "Subtotal";
+
+  worksheet.mergeCells("T7:T8");
+  const t7 = worksheet.getCell("T7");
+  t7.value = "10-14";
+
+  worksheet.mergeCells("U7:U8");
+  const u7 = worksheet.getCell("U7");
+  u7.value = "15-19";
+
+  worksheet.mergeCells("V7:V8");
+  const v7 = worksheet.getCell("V7");
+  v7.value = "20-24";
+
+  worksheet.mergeCells("W7:W8");
+  const w7 = worksheet.getCell("W7");
+  w7.value = "25-29";
+
+  worksheet.mergeCells("X7:X8");
+  const x7 = worksheet.getCell("X7");
+  x7.value = "Subtotal";
+
+  worksheet.mergeCells("Y7:Y8");
+  const y7 = worksheet.getCell("Y7");
+  y7.value = "10-14";
+
+  worksheet.mergeCells("Z7:Z8");
+  const z7 = worksheet.getCell("Z7");
+  z7.value = "15-19";
+
+  worksheet.mergeCells("AA7:AA8");
+  const aa7 = worksheet.getCell("AA7");
+  aa7.value = "20-24";
+
+  worksheet.mergeCells("AB7:AB8");
+  const ab7 = worksheet.getCell("AB7");
+  ab7.value = "25-29";
+
+  worksheet.mergeCells("AC7:AC8");
+  const ac7 = worksheet.getCell("AC7");
+  ac7.value = "Subtotal";
+
+  worksheet.mergeCells("AD7:AD8");
+  const ad7 = worksheet.getCell("AD7");
+  ad7.value = "10-14";
+
+  worksheet.mergeCells("AE7:AE8");
+  const ae7 = worksheet.getCell("AE7");
+  ae7.value = "15-19";
+
+  worksheet.mergeCells("AF7:AF8");
+  const af7 = worksheet.getCell("AF7");
+  af7.value = "20-24";
+
+  worksheet.mergeCells("AG7:AG8");
+  const ag7 = worksheet.getCell("AG7");
+  ag7.value = "25-29";
+
+  worksheet.mergeCells("AH7:AH8");
+  const ah7 = worksheet.getCell("AH7");
+  ah7.value = "Subtotal";
+
+  worksheet.mergeCells("AI7:AI8");
+  const ai7 = worksheet.getCell("AI7");
+  ai7.value = "10-14";
+
+  worksheet.mergeCells("AJ7:AJ8");
+  const aj7 = worksheet.getCell("AJ7");
+  aj7.value = "15-19";
+
+  worksheet.mergeCells("AK7:AK8");
+  const ak7 = worksheet.getCell("AK7");
+  ak7.value = "20-24";
+
+  worksheet.mergeCells("AL7:AL8");
+  const al7 = worksheet.getCell("AL7");
+  al7.value = "25-29";
+
+  worksheet.mergeCells("AM7:AM8");
+  const am7 = worksheet.getCell("AM7");
+  am7.value = "Subtotal";
+
+  worksheet.mergeCells("AN7:AN8");
+  const an7 = worksheet.getCell("AN7");
+  an7.value = "10-14";
+
+  worksheet.mergeCells("AO7:AO8");
+  const ao7 = worksheet.getCell("AO7");
+  ao7.value = "15-19";
+
+  worksheet.mergeCells("AP7:AP8");
+  const ap7 = worksheet.getCell("AP7");
+  ap7.value = "20-24";
+
+  worksheet.mergeCells("AQ7:AQ8");
+  const aq7 = worksheet.getCell("AQ7");
+  aq7.value = "25-29";
+
+  worksheet.mergeCells("AR7:AR8");
+  const ar7 = worksheet.getCell("AR7");
+  ar7.value = "Subtotal";
+
+  worksheet.mergeCells("AS7:AS8");
+  const as7 = worksheet.getCell("AS7");
+  as7.value = "10-14";
+
+  worksheet.mergeCells("AT7:AT8");
+  const at7 = worksheet.getCell("AT7");
+  at7.value = "15-19";
+
+  worksheet.mergeCells("AU7:AU8");
+  const au7 = worksheet.getCell("AU7");
+  au7.value = "20-24";
+
+  worksheet.mergeCells("AV7:AV8");
+  const av7 = worksheet.getCell("AV7");
+  av7.value = "25-29";
+
+  worksheet.mergeCells("AW7:AW8");
+  const aw7 = worksheet.getCell("AW7");
+  aw7.value = "Subtotal";
+
+  worksheet.mergeCells("AX7:AX8");
+  const ax7 = worksheet.getCell("AX7");
+  ax7.value = "10-14";
+
+  worksheet.mergeCells("AY7:AY8");
+  const ay7 = worksheet.getCell("AY7");
+  ay7.value = "15-19";
+
+  worksheet.mergeCells("AZ7:AZ8");
+  const az7 = worksheet.getCell("AZ7");
+  az7.value = "20-24";
+
+  worksheet.mergeCells("BA7:BA8");
+  const ba7 = worksheet.getCell("BA7");
+  ba7.value = "25-29";
+
+  worksheet.mergeCells("BB7:BB8");
+  const bb7 = worksheet.getCell("BB7");
+  bb7.value = "Subtotal";
+
+  worksheet.mergeCells("BC7:BC8");
+  const bc7 = worksheet.getCell("BC7");
+  bc7.value = "10-14";
+
+  worksheet.mergeCells("BD7:BD8");
+  const bd7 = worksheet.getCell("BD7");
+  bd7.value = "15-19";
+
+  worksheet.mergeCells("BE7:BE8");
+  const be7 = worksheet.getCell("BE7");
+  be7.value = "20-24";
+
+  worksheet.mergeCells("BF7:BF8");
+  const bf7 = worksheet.getCell("BF7");
+  bf7.value = "25-29";
+
+  worksheet.mergeCells("BG7:BG8");
+  const bg7 = worksheet.getCell("BG7");
+  bg7.value = "Subtotal";
+
+  worksheet.mergeCells("BH7:BH8");
+  const bh7 = worksheet.getCell("BH7");
+  bh7.value = "10-14";
+
+  worksheet.mergeCells("BI7:BI8");
+  const bi7 = worksheet.getCell("BI7");
+  bi7.value = "15-19";
+
+  worksheet.mergeCells("BJ7:BJ8");
+  const bj7 = worksheet.getCell("BJ7");
+  bj7.value = "20-24";
+
+  worksheet.mergeCells("BK7:BK8");
+  const bk7 = worksheet.getCell("BK7");
+  bk7.value = "25-29";
+
+  worksheet.mergeCells("BL7:BL8");
+  const bl7 = worksheet.getCell("BL7");
+  bl7.value = "Subtotal";
+
+  worksheet.mergeCells("BM7:BM8");
+  const bm7 = worksheet.getCell("BM7");
+  bm7.value = "10-14";
+
+  worksheet.mergeCells("BN7:BN8");
+  const bn7 = worksheet.getCell("BN7");
+  bn7.value = "15-19";
+
+  worksheet.mergeCells("BO7:BO8");
+  const bo7 = worksheet.getCell("BO7");
+  bo7.value = "20-24";
+
+  worksheet.mergeCells("BP7:BP8");
+  const bp7 = worksheet.getCell("BP7");
+  bp7.value = "25-29";
+
+  worksheet.mergeCells("BQ7:BQ8");
+  const bq7 = worksheet.getCell("BQ7");
+  bq7.value = "Subtotal";
+
+  worksheet.mergeCells("BR7:BR8");
+  const br7 = worksheet.getCell("BR7");
+  br7.value = "10-14";
+
+  worksheet.mergeCells("BS7:BS8");
+  const bs7 = worksheet.getCell("BS7");
+  bs7.value = "15-19";
+
+  worksheet.mergeCells("BT7:BT8");
+  const bt7 = worksheet.getCell("BT7");
+  bt7.value = "20-24";
+
+  worksheet.mergeCells("BU7:BU8");
+  const bu7 = worksheet.getCell("BU7");
+  bu7.value = "25-29";
+
+  worksheet.mergeCells("BV7:BV8");
+  const bv7 = worksheet.getCell("BV7");
+  bv7.value = "Subtotal";
+
+  worksheet.mergeCells("BW7:BW8");
+  const bw7 = worksheet.getCell("BW7");
+  bw7.value = "10-14";
+
+  worksheet.mergeCells("BX7:BX8");
+  const bx7 = worksheet.getCell("BX7");
+  bx7.value = "15-19";
+
+  worksheet.mergeCells("BY7:BY8");
+  const by7 = worksheet.getCell("BY7");
+  by7.value = "20-24";
+
+  worksheet.mergeCells("BZ7:BZ8");
+  const bz7 = worksheet.getCell("BZ7");
+  bz7.value = "25-29";
+
+  worksheet.mergeCells("CA7:CA8");
+  const ca7 = worksheet.getCell("CA7");
+  ca7.value = "Subtotal";
+
+  worksheet.mergeCells("CB7:CB8");
+  const cb7 = worksheet.getCell("CB7");
+  cb7.value = "10-14";
+
+  worksheet.mergeCells("CC7:CC8");
+  const cc7 = worksheet.getCell("CC7");
+  cc7.value = "15-19";
+
+  worksheet.mergeCells("CD7:CD8");
+  const cd7 = worksheet.getCell("CD7");
+  cd7.value = "20-24";
+
+  worksheet.mergeCells("CE7:CE8");
+  const ce7 = worksheet.getCell("CE7");
+  ce7.value = "25-29";
+
+  worksheet.mergeCells("CF7:CF8");
+  const cf7 = worksheet.getCell("CF7");
+  cf7.value = "Subtotal";
+
   worksheet.columns = [
     { header: "Reporting_Period", key: "reporting_period", width: 10 },
     { header: "NameProvince", key: "name_province", width: 32 },
