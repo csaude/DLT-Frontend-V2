@@ -52,7 +52,7 @@ export const MENU: IMenuItem[] = [
     name: 'menusidebar.label.configurations',
     path: '#',
     icon: 'fas fa-cog',
-    level: [0,1,2,3,4,5,6,7,8,9],
+    level: [0],
     roles: ['ADMIN','M&E','SUPERVISOR'],
       children: [
         {
