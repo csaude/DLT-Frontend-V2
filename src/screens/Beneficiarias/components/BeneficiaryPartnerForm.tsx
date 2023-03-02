@@ -47,9 +47,9 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
     const [localities, setLocalities] = useState<any>([]);
     const [uss, setUss] = useState<any>([]);
     const [neighborhoods, setNeighborhoods] = useState<any>([]);
-    const [isEnable, setIsEnable] = useState(true);
-    const [isDisEnable, setIsDisEnable] = useState(true);
-    const [isProvEnable, setIsProvEnable] = useState(true);
+    const [isEnable, setIsEnable] = useState(false);
+    const [isDisEnable, setIsDisEnable] = useState(false);
+    const [isProvEnable, setIsProvEnable] = useState(false);
     const [isDatePickerVisible2, setIsDatePickerVisible2] = useState(false);
     const [datePickerValue2, setDatePickerValue2] = useState<any>(new Date());
     const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
@@ -657,7 +657,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                                         {formik.errors.enrollment_date}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl isRequired isInvalid={'province' in formik.errors}>
+                                <FormControl isRequired isInvalid={'province' in formik.errors} style={{ display : isProvEnable ? "flex" : "none" }} >
                                     <FormControl.Label>Provincia</FormControl.Label>
                                     <Picker
                                         enabled={isProvEnable}
@@ -681,7 +681,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                                         {formik.errors.province}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl isRequired isInvalid={'district' in formik.errors}>
+                                <FormControl isRequired isInvalid={'district' in formik.errors} style={{ display : isDisEnable ? "flex" : "none" }} >
                                     <FormControl.Label>Distrito</FormControl.Label>
                                     <Picker
                                         enabled={isDisEnable}
@@ -706,7 +706,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                                         {formik.errors.district}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl isRequired isInvalid={'locality' in formik.errors}>
+                                <FormControl isRequired isInvalid={'locality' in formik.errors} style={{ display : isEnable ? "flex" : "none" }} >
                                     <FormControl.Label>Posto Administrativo</FormControl.Label>
                                     <Picker
                                         enabled={isEnable}

@@ -203,7 +203,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
             render: (text, record) => (
               <Space>
                 <Checkbox 
-                   disabled={!canAddress}  
+                   disabled={record.status >= 2 ? true : false } 
                    onChange={e => onChange(e, record.id.serviceId)}/>
               </Space>
             ),
