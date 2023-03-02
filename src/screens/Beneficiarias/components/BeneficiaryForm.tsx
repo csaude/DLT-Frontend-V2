@@ -50,9 +50,9 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
     const [localities, setLocalities] = useState<any>([]);
     const [uss, setUss] = useState<any>([]);
     const [neighborhoods, setNeighborhoods] = useState<any>([]);
-    const [isEnable, setIsEnable] = useState(true);
-    const [isDisEnable, setIsDisEnable] = useState(true);
-    const [isProvEnable, setIsProvEnable] = useState(true);
+    const [isEnable, setIsEnable] = useState(false);
+    const [isDisEnable, setIsDisEnable] = useState(false);
+    const [isProvEnable, setIsProvEnable] = useState(false);
     const [isDatePickerVisible2, setIsDatePickerVisible2] = useState(false);
     const [datePickerValue2, setDatePickerValue2] = useState<any>(new Date());
     const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
