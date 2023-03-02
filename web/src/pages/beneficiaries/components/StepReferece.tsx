@@ -118,7 +118,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
     var payload = {
       typeId: e?.target?.value === undefined ? e : e?.target?.value,
       localityId: reference !== undefined ? 
-                                reference.users?.localities[0].id :
+                                reference.notifyTo?.localities[0].id :
                                 beneficiary?.neighborhood?.locality?.id
     }
     const data = await allUsByType(payload);
@@ -278,7 +278,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
             name="partner_id"
             label="Organização"
             rules={[{ required: true, message: 'Obrigatório' }]}
-            initialValue={reference === undefined ? undefined : reference?.users?.partners?.name}
+            initialValue={reference === undefined ? undefined : reference?.notifyTo?.partners?.name}
           >
             <Select placeholder="Organização" disabled={partners === undefined}>
               {partners?.map(item => (
@@ -308,7 +308,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
             name="notifyTo"
             label="Notificar ao"
             rules={[{ required: true, message: 'Obrigatório' }]}
-            initialValue={reference === undefined ? "" : reference?.users?.id.toString()}
+            initialValue={reference === undefined ? "" : reference?.notifyTo?.id.toString()}
           >
             <Select placeholder="Notificar ao" disabled={users === undefined}>
               {users?.map(item => (

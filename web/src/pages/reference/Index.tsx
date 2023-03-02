@@ -60,7 +60,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
 
             const existingUs = data.map(reference => reference.us).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
             const referrers = data.map(reference => reference.referredBy).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
-            const referreds = data.map(reference => reference.users).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
+            const referreds = data.map(reference => reference.notifyTo).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
             const referringPartners = referrers.map(referrer => referrer.partners).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
             const referredPartners = referreds.map(referred => referred?.partners).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
 
@@ -209,19 +209,8 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                 >
                     Pesquisar
                 </Button>
-                <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+                <Button onClick={() => handleReset(clearFilters,selectedKeys, confirm, dataIndex)} size="small" style={{ width: 90 }}>
                     Limpar
-                </Button>
-                <Button
-                    type="link"
-                    size="small"
-                    onClick={() => {
-                    confirm({ closeDropdown: false });
-                    setSearchText(selectedKeys[0]);
-                    setSearchedColumn(dataIndex);
-                    }}
-                >
-                    Filtrar
                 </Button>
                 </Space>
             </div>
@@ -280,19 +269,8 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                 >
                     Pesquisar
                 </Button>
-                <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+                <Button onClick={() => handleReset(clearFilters,selectedKeys, confirm, dataIndex)} size="small" style={{ width: 90 }}>
                     Limpar
-                </Button>
-                <Button
-                    type="link"
-                    size="small"
-                    onClick={() => {
-                    confirm({ closeDropdown: false });
-                    setSearchText(selectedKeys[0]);
-                    setSearchedColumn(dataIndex);
-                    }}
-                >
-                    Filtrar
                 </Button>
                 </Space>
             </div>
@@ -326,9 +304,10 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
         
     };
 
-    const handleReset = clearFilters => {
+    const handleReset = (clearFilters,selectedKeys, confirm, dataIndex) => { 
         clearFilters();
         setSearchText(searchText);
+        handleSearch(selectedKeys, confirm, dataIndex)
     };
 
     const handleRefServicesList = (data?: any) => {
@@ -385,21 +364,21 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             title: 'Contacto', 
             dataIndex: '', 
             key: '',
-            render: (text, record)  => record?.users?.phoneNumber,
+            render: (text, record)  => record?.notifyTo?.phoneNumber,
         },		
         { 
             title: 'Notificar ao', 
-            dataIndex: 'record.users.name', 
+            dataIndex: 'record.notifyTo.name', 
             key: '',
-            render: (text, record)  => record?.users?.name+' '+record?.users?.surname,
+            render: (text, record)  => record?.notifyTo?.name+' '+record?.notifyTo?.surname,
             filters: filterItem(users)(i => i?.name +' '+ i?.surname),
-            onFilter: (value, record) => (users.filter(user => record.users?.id == user.id).map(filteredUser => `${filteredUser?.name} ` + `${filteredUser?.surname}`)[0] == value),
+            onFilter: (value, record) => (users.filter(user => record.notifyTo?.id == user.id).map(filteredUser => `${filteredUser?.name} ` + `${filteredUser?.surname}`)[0] == value),
             filterSearch: true,
         },		
         { 
             title: 'Ref. Para', 
-            dataIndex: 'record.users.entryPoint', 
-            key: 'record.users.entryPoint',
+            dataIndex: 'record.notifyTo.entryPoint', 
+            key: 'record.notifyTo.entryPoint',
             filters: [
                 {
                     text: 'US',
@@ -414,13 +393,13 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                     value: 3,
                 },
             ],
-            onFilter: (value, record) => record?.users?.entryPoint == value,
+            onFilter: (value, record) => record?.notifyTo?.entryPoint == value,
             filterSearch: true,
             render: (text, record)  => 
-                (record.users?.entryPoint==1) ?
+                (record.notifyTo?.entryPoint==1) ?
                     <Text>US </Text>
                 :  
-                (record.users?.entryPoint==2) ?
+                (record.notifyTo?.entryPoint==2) ?
                     <Text>CM </Text>
                 : 
                 <Text>ES </Text>
@@ -429,9 +408,9 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             title: 'Organização Referida', 
             dataIndex: '', 
             key: '',
-            render: (text, record)  => record?.users?.partners?.name,
+            render: (text, record)  => record?.notifyTo?.partners?.name,
             filters: filterItem(referredPartners)(i => i?.name),
-            onFilter: (value, record) => record?.users?.partners?.name == value,
+            onFilter: (value, record) => record?.notifyTo?.partners?.name == value,
             filterSearch: true,
            
         },	
