@@ -364,21 +364,21 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             title: 'Contacto', 
             dataIndex: '', 
             key: '',
-            render: (text, record)  => record?.users?.phoneNumber,
+            render: (text, record)  => record?.notifyTo?.phoneNumber,
         },		
         { 
             title: 'Notificar ao', 
-            dataIndex: 'record.users.name', 
+            dataIndex: 'record.notifyTo.name', 
             key: '',
-            render: (text, record)  => record?.users?.name+' '+record?.users?.surname,
+            render: (text, record)  => record?.notifyTo?.name+' '+record?.notifyTo?.surname,
             filters: filterItem(users)(i => i?.name +' '+ i?.surname),
-            onFilter: (value, record) => (users.filter(user => record.users?.id == user.id).map(filteredUser => `${filteredUser?.name} ` + `${filteredUser?.surname}`)[0] == value),
+            onFilter: (value, record) => (users.filter(user => record.notifyTo?.id == user.id).map(filteredUser => `${filteredUser?.name} ` + `${filteredUser?.surname}`)[0] == value),
             filterSearch: true,
         },		
         { 
             title: 'Ref. Para', 
-            dataIndex: 'record.users.entryPoint', 
-            key: 'record.users.entryPoint',
+            dataIndex: 'record.notifyTo.entryPoint', 
+            key: 'record.notifyTo.entryPoint',
             filters: [
                 {
                     text: 'US',
@@ -393,13 +393,13 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                     value: 3,
                 },
             ],
-            onFilter: (value, record) => record?.users?.entryPoint == value,
+            onFilter: (value, record) => record?.notifyTo?.entryPoint == value,
             filterSearch: true,
             render: (text, record)  => 
-                (record.users?.entryPoint==1) ?
+                (record.notifyTo?.entryPoint==1) ?
                     <Text>US </Text>
                 :  
-                (record.users?.entryPoint==2) ?
+                (record.notifyTo?.entryPoint==2) ?
                     <Text>CM </Text>
                 : 
                 <Text>ES </Text>
@@ -408,9 +408,9 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             title: 'Organização Referida', 
             dataIndex: '', 
             key: '',
-            render: (text, record)  => record?.users?.partners?.name,
+            render: (text, record)  => record?.notifyTo?.partners?.name,
             filters: filterItem(referredPartners)(i => i?.name),
-            onFilter: (value, record) => record?.users?.partners?.name == value,
+            onFilter: (value, record) => record?.notifyTo?.partners?.name == value,
             filterSearch: true,
            
         },	

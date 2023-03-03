@@ -45,7 +45,7 @@ const ReferenceInterventionForm = ({ form, reference, records, beneficiary }: an
       form.setFieldsValue({ service: selectedIntervention?.services?.id + '' });
       form.setFieldsValue({ entryPoint: reference.referTo });
       form.setFieldsValue({ location: reference.us? reference.us?.id + '' : undefined });
-      form.setFieldsValue({ provider: reference.users?.username });
+      form.setFieldsValue({ provider: reference.notifyTo?.username });
       form.setFieldsValue({ outros: selectedIntervention?.description });
       onChangeUs(reference.us?.id);
       fetchSubServices(selectedIntervention?.service?.id).catch(error => console.log(error));
@@ -55,7 +55,7 @@ const ReferenceInterventionForm = ({ form, reference, records, beneficiary }: an
       form.setFieldsValue({ service: lastIntervention?.services?.id + '' });
       form.setFieldsValue({ entryPoint: reference.referTo });
       form.setFieldsValue({ location: reference.us? reference.us?.id + '' : undefined });
-      form.setFieldsValue({ provider: reference.users?.username });
+      form.setFieldsValue({ provider: reference.notifyTo?.username });
       form.setFieldsValue({ outros: lastIntervention?.description });
       onChangeUs(reference.us?.id);
       fetchSubServices(lastIntervention?.services?.id).catch(error => console.log(error));
@@ -81,7 +81,7 @@ const ReferenceInterventionForm = ({ form, reference, records, beneficiary }: an
     
     var payload = {
       typeId: e?.target?.value === undefined ? e : e?.target?.value,
-      localityId: reference.users?.localities[0].id
+      localityId: reference.notifyTo?.localities[0].id
     }
     const data = await allUsByType(payload);
     setUs(data);
