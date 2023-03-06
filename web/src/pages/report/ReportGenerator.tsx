@@ -11,7 +11,7 @@ export async function generateXlsReport(
 ) {
   const data = await agywPrevQuery(districts, startDate, endDate);
 
-    const ages_10_14 = "9-14";
+  const ages_10_14 = "9-14";
   const ages_15_19 = "15-19";
   const ages_20_24 = "20-24";
   const ages_25_29 = "25-29";
@@ -637,8 +637,6 @@ export async function generateXlsReport(
   cf7.alignment = { vertical: "middle", horizontal: "center" };
   cf7.value = "Subtotal";
 
-
-
   const findByMonthsRange = (byAge, monthsRange) => {
     if ((monthsRange = months_0_6)) {
       return "" + byAge[months_0_6];
@@ -656,36 +654,31 @@ export async function generateXlsReport(
 
   const completePrimaryServiceNoAditional = (
     monthsRange: any,
-    ageRange: any
+    param: any
   ) => {
     const objBeneficiaries = completedOnlyPrimaryPackage.totals.reportObject;
-
-    const arrBeneficiaries = Object.keys(objBeneficiaries).map((key) => ({
+    const arrTotals = Object.keys(objBeneficiaries).map((key) => ({
       key,
       value: objBeneficiaries[key],
     }));
-
-    let resultBneficiaries;
-
-    arrBeneficiaries.map((item) => {
-      if (ageRange == ages_10_14) {
+    let resultTotal;
+    arrTotals.map((item) => {
+      if (param == ages_10_14) {
         const benefByAges = item.value[ages_10_14];
-        resultBneficiaries = findByMonthsRange(benefByAges, monthsRange);
-      } else if (ageRange == ages_15_19) {
+        resultTotal = findByMonthsRange(benefByAges, monthsRange);
+      } else if (param == ages_15_19) {
         const benefByAges = item.value[ages_15_19];
-        resultBneficiaries = findByMonthsRange(benefByAges, monthsRange);
-      } else if (ageRange == ages_20_24) {
+        resultTotal = findByMonthsRange(benefByAges, monthsRange);
+      } else if (param == ages_20_24) {
         const benefByAges = item.value[ages_20_24];
-        resultBneficiaries = findByMonthsRange(benefByAges, monthsRange);
-      } else if (ageRange == ages_25_29) {
+        resultTotal = findByMonthsRange(benefByAges, monthsRange);
+      } else if (param == ages_25_29) {
         const benefByAges = item.value[ages_25_29];
-        resultBneficiaries = findByMonthsRange(benefByAges, monthsRange);
+        resultTotal = findByMonthsRange(benefByAges, monthsRange);
       }
     });
-
-    console.log(resultBneficiaries)
-
-    return resultBneficiaries;
+    console.log(resultTotal);
+    return resultTotal;
   };
 
   const completePrimaryAndAtleastOneSecondary = (
@@ -780,13 +773,25 @@ export async function generateXlsReport(
   values[cell] = completePrimaryAndAtleastOneSecondary(months_7_12, "totals");
 
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(months_13_24, ages_10_14);
+  values[cell] = completePrimaryAndAtleastOneSecondary(
+    months_13_24,
+    ages_10_14
+  );
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(months_13_24, ages_15_19);
+  values[cell] = completePrimaryAndAtleastOneSecondary(
+    months_13_24,
+    ages_15_19
+  );
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(months_13_24, ages_20_24);
+  values[cell] = completePrimaryAndAtleastOneSecondary(
+    months_13_24,
+    ages_20_24
+  );
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(months_13_24, ages_25_29);
+  values[cell] = completePrimaryAndAtleastOneSecondary(
+    months_13_24,
+    ages_25_29
+  );
   cell = cell + 1;
   values[cell] = completePrimaryAndAtleastOneSecondary(months_13_24, "totals");
 
@@ -803,37 +808,76 @@ export async function generateXlsReport(
 
   /* Beneficiaries that have completed at least one DREAMS service/intervention but not the full primary package */
   cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(months_0_6, ages_10_14);
+  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+    months_0_6,
+    ages_10_14
+  );
   cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(months_0_6, ages_15_19);
+  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+    months_0_6,
+    ages_15_19
+  );
   cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(months_0_6, ages_20_24);
+  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+    months_0_6,
+    ages_20_24
+  );
   cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(months_0_6, ages_25_29);
+  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+    months_0_6,
+    ages_25_29
+  );
   cell = cell + 1;
   values[cell] = completeAtLeastOnePrimaryServiceNotFull(months_0_6, "totals");
 
   cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(months_7_12, ages_10_14);
+  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+    months_7_12,
+    ages_10_14
+  );
   cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(months_7_12, ages_15_19);
+  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+    months_7_12,
+    ages_15_19
+  );
   cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(months_7_12, ages_20_24);
+  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+    months_7_12,
+    ages_20_24
+  );
   cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(months_7_12, ages_25_29);
+  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+    months_7_12,
+    ages_25_29
+  );
   cell = cell + 1;
   values[cell] = completeAtLeastOnePrimaryServiceNotFull(months_7_12, "totals");
 
   cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(months_13_24, ages_10_14);
+  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+    months_13_24,
+    ages_10_14
+  );
   cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(months_13_24, ages_15_19);
+  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+    months_13_24,
+    ages_15_19
+  );
   cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(months_13_24, ages_20_24);
+  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+    months_13_24,
+    ages_20_24
+  );
   cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(months_13_24, ages_25_29);
+  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+    months_13_24,
+    ages_25_29
+  );
   cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(months_13_24, "totals");
+  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+    months_13_24,
+    "totals"
+  );
 
   cell = cell + 1;
   values[cell] = completeAtLeastOnePrimaryServiceNotFull("25+", ages_10_14);
