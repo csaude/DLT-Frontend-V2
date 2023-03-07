@@ -18,10 +18,10 @@ export async function generateXlsReport(
   const ages_25_29 = "25-29";
   const subtotal = "Subtotal";
 
-  const months_0_6 = "0-6";
-  const months_7_12 = "7-12";
-  const months_13_24 = "13-24";
-  const months_25_plus = "25+";
+  const enrollmentTime_0_6 = "0-6";
+  const enrollmentTime_7_12 = "7-12";
+  const enrollmentTime_13_24 = "13-24";
+  const enrollmentTime_25_plus = "25+";
 
   const completedOnlyPrimaryPackage =
     data[7]["completed-only-primary-package"].totals;
@@ -141,17 +141,17 @@ export async function generateXlsReport(
   worksheet.mergeCells("E5:I6");
   const es5 = worksheet.getCell("E5");
   es5.alignment = { vertical: "middle", horizontal: "center" };
-  es5.value = months_0_6;
+  es5.value = enrollmentTime_0_6;
 
   worksheet.mergeCells("J5:N6");
   const j5 = worksheet.getCell("J5");
   j5.alignment = { vertical: "middle", horizontal: "center" };
-  j5.value = months_7_12;
+  j5.value = enrollmentTime_7_12;
 
   worksheet.mergeCells("O5:S6");
   const o5 = worksheet.getCell("O5");
   o5.alignment = { vertical: "middle", horizontal: "center" };
-  o5.value = months_13_24;
+  o5.value = enrollmentTime_13_24;
 
   worksheet.mergeCells("T5:X6");
   const t5 = worksheet.getCell("T5");
@@ -161,17 +161,17 @@ export async function generateXlsReport(
   worksheet.mergeCells("Y5:AC6");
   const y5 = worksheet.getCell("Y5");
   y5.alignment = { vertical: "middle", horizontal: "center" };
-  y5.value = months_0_6;
+  y5.value = enrollmentTime_0_6;
 
   worksheet.mergeCells("AD5:AH6");
   const ad5 = worksheet.getCell("AD5");
   ad5.alignment = { vertical: "middle", horizontal: "center" };
-  ad5.value = months_7_12;
+  ad5.value = enrollmentTime_7_12;
 
   worksheet.mergeCells("AI5:AM6");
   const ai5 = worksheet.getCell("AI5");
   ai5.alignment = { vertical: "middle", horizontal: "center" };
-  ai5.value = months_13_24;
+  ai5.value = enrollmentTime_13_24;
 
   worksheet.mergeCells("AN5:AR6");
   const an5 = worksheet.getCell("AN5");
@@ -181,18 +181,18 @@ export async function generateXlsReport(
   worksheet.mergeCells("AS5:AW6");
   const aw5 = worksheet.getCell("AS5");
   aw5.alignment = { vertical: "middle", horizontal: "center" };
-  aw5.value = months_0_6;
+  aw5.value = enrollmentTime_0_6;
 
   worksheet.mergeCells("AX5:BB6");
   const ax5 = worksheet.getCell("AX5");
   ax5.alignment = { vertical: "middle", horizontal: "center" };
-  aw5.value = months_0_6;
-  ax5.value = months_7_12;
+  aw5.value = enrollmentTime_0_6;
+  ax5.value = enrollmentTime_7_12;
 
   worksheet.mergeCells("BC5:BG6");
   const bc5 = worksheet.getCell("BC5");
   bc5.alignment = { vertical: "middle", horizontal: "center" };
-  bc5.value = months_13_24;
+  bc5.value = enrollmentTime_13_24;
 
   worksheet.mergeCells("BH5:BL6");
   const bh5 = worksheet.getCell("BH5");
@@ -202,17 +202,17 @@ export async function generateXlsReport(
   worksheet.mergeCells("BM5:BQ6");
   const bm5 = worksheet.getCell("BM5");
   bm5.alignment = { vertical: "middle", horizontal: "center" };
-  bm5.value = months_0_6;
+  bm5.value = enrollmentTime_0_6;
 
   worksheet.mergeCells("BR5:BV6");
   const br5 = worksheet.getCell("BR5");
   br5.alignment = { vertical: "middle", horizontal: "center" };
-  br5.value = months_7_12;
+  br5.value = enrollmentTime_7_12;
 
   worksheet.mergeCells("BW5:CA6");
   const bw5 = worksheet.getCell("BW5");
   bw5.alignment = { vertical: "middle", horizontal: "center" };
-  bw5.value = months_13_24;
+  bw5.value = enrollmentTime_13_24;
 
   worksheet.mergeCells("CB5:CF6");
   const cb5 = worksheet.getCell("CB5");
@@ -642,14 +642,14 @@ export async function generateXlsReport(
   cf7.value = "Subtotal";
 
   const findByEnrollmentTime = (byAge, enrollmentTime) => {
-    if ((enrollmentTime = months_0_6)) {
-      return "" + byAge.value[months_0_6];
-    } else if (enrollmentTime == months_7_12) {
-      return "" + byAge.value[months_7_12];
-    } else if (enrollmentTime == months_13_24) {
-      return "" + byAge.value[months_13_24];
-    } else if (enrollmentTime == months_25_plus) {
-      return "" + byAge.value[months_25_plus];
+    if ((enrollmentTime = enrollmentTime_0_6)) {
+      return "" + byAge.value[enrollmentTime_0_6];
+    } else if (enrollmentTime == enrollmentTime_7_12) {
+      return "" + byAge.value[enrollmentTime_7_12];
+    } else if (enrollmentTime == enrollmentTime_13_24) {
+      return "" + byAge.value[enrollmentTime_13_24];
+    } else if (enrollmentTime == enrollmentTime_25_plus) {
+      return "" + byAge.value[enrollmentTime_25_plus];
     }
   };
 
@@ -662,6 +662,8 @@ export async function generateXlsReport(
       value: completedOnlyPrimaryPackage[key],
     }));
     let resultTotal;
+
+    console.log('---------arrTotals--------',arrTotals)
 
     if (param == ages_10_14) {
       const benefByAges = arrTotals.filter((item) => item.key === ages_10_14);
@@ -789,264 +791,264 @@ export async function generateXlsReport(
 
   /** Beneficiaries that have fully completed the DREAMS primary package of services/interventions but no additional services/interventions */
   let cell = 5;
-  values[cell] = completePrimaryServiceNoAditional(months_0_6, ages_10_14);
+  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_0_6, ages_10_14);
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(months_0_6, ages_15_19);
+  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_0_6, ages_15_19);
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(months_0_6, ages_20_24);
+  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_0_6, ages_20_24);
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(months_0_6, ages_25_29);
+  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_0_6, ages_25_29);
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(months_0_6, subtotal);
+  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_0_6, subtotal);
 
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(months_7_12, ages_10_14);
+  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_7_12, ages_10_14);
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(months_7_12, ages_15_19);
+  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_7_12, ages_15_19);
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(months_7_12, ages_20_24);
+  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_7_12, ages_20_24);
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(months_7_12, ages_25_29);
+  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_7_12, ages_25_29);
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(months_7_12, subtotal);
+  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_7_12, subtotal);
 
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(months_13_24, ages_10_14);
+  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_13_24, ages_10_14);
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(months_13_24, ages_15_19);
+  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_13_24, ages_15_19);
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(months_13_24, ages_20_24);
+  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_13_24, ages_20_24);
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(months_13_24, ages_25_29);
+  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_13_24, ages_25_29);
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(months_13_24, subtotal);
+  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_13_24, subtotal);
 
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(months_25_plus, ages_10_14);
+  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_25_plus, ages_10_14);
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(months_25_plus, ages_15_19);
+  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_25_plus, ages_15_19);
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(months_25_plus, ages_20_24);
+  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_25_plus, ages_20_24);
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(months_25_plus, ages_25_29);
+  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_25_plus, ages_25_29);
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(months_25_plus, subtotal);
+  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_25_plus, subtotal);
 
   /* Beneficiaries that have fully completed the DREAMS primary package of services/interventions AND at least one secondary service/intervention */
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(months_0_6, ages_10_14);
+  values[cell] = completePrimaryAndAtleastOneSecondary(enrollmentTime_0_6, ages_10_14);
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(months_0_6, ages_15_19);
+  values[cell] = completePrimaryAndAtleastOneSecondary(enrollmentTime_0_6, ages_15_19);
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(months_0_6, ages_20_24);
+  values[cell] = completePrimaryAndAtleastOneSecondary(enrollmentTime_0_6, ages_20_24);
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(months_0_6, ages_25_29);
+  values[cell] = completePrimaryAndAtleastOneSecondary(enrollmentTime_0_6, ages_25_29);
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(months_0_6, subtotal);
+  values[cell] = completePrimaryAndAtleastOneSecondary(enrollmentTime_0_6, subtotal);
 
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(months_7_12, ages_10_14);
+  values[cell] = completePrimaryAndAtleastOneSecondary(enrollmentTime_7_12, ages_10_14);
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(months_7_12, ages_15_19);
+  values[cell] = completePrimaryAndAtleastOneSecondary(enrollmentTime_7_12, ages_15_19);
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(months_7_12, ages_20_24);
+  values[cell] = completePrimaryAndAtleastOneSecondary(enrollmentTime_7_12, ages_20_24);
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(months_7_12, ages_25_29);
+  values[cell] = completePrimaryAndAtleastOneSecondary(enrollmentTime_7_12, ages_25_29);
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(months_7_12, subtotal);
+  values[cell] = completePrimaryAndAtleastOneSecondary(enrollmentTime_7_12, subtotal);
 
   cell = cell + 1;
   values[cell] = completePrimaryAndAtleastOneSecondary(
-    months_13_24,
+    enrollmentTime_13_24,
     ages_10_14
   );
   cell = cell + 1;
   values[cell] = completePrimaryAndAtleastOneSecondary(
-    months_13_24,
+    enrollmentTime_13_24,
     ages_15_19
   );
   cell = cell + 1;
   values[cell] = completePrimaryAndAtleastOneSecondary(
-    months_13_24,
+    enrollmentTime_13_24,
     ages_20_24
   );
   cell = cell + 1;
   values[cell] = completePrimaryAndAtleastOneSecondary(
-    months_13_24,
+    enrollmentTime_13_24,
     ages_25_29
   );
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(months_13_24, subtotal);
+  values[cell] = completePrimaryAndAtleastOneSecondary(enrollmentTime_13_24, subtotal);
 
   cell = cell + 1;
   values[cell] = completePrimaryAndAtleastOneSecondary(
-    months_25_plus,
+    enrollmentTime_25_plus,
     ages_10_14
   );
   cell = cell + 1;
   values[cell] = completePrimaryAndAtleastOneSecondary(
-    months_25_plus,
+    enrollmentTime_25_plus,
     ages_15_19
   );
   cell = cell + 1;
   values[cell] = completePrimaryAndAtleastOneSecondary(
-    months_25_plus,
+    enrollmentTime_25_plus,
     ages_20_24
   );
   cell = cell + 1;
   values[cell] = completePrimaryAndAtleastOneSecondary(
-    months_25_plus,
+    enrollmentTime_25_plus,
     ages_25_29
   );
   cell = cell + 1;
   values[cell] = completePrimaryAndAtleastOneSecondary(
-    months_25_plus,
+    enrollmentTime_25_plus,
     subtotal
   );
 
   /* Beneficiaries that have completed at least one DREAMS service/intervention but not the full primary package */
   cell = cell + 1;
   values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    months_0_6,
+    enrollmentTime_0_6,
     ages_10_14
   );
   cell = cell + 1;
   values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    months_0_6,
+    enrollmentTime_0_6,
     ages_15_19
   );
   cell = cell + 1;
   values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    months_0_6,
+    enrollmentTime_0_6,
     ages_20_24
   );
   cell = cell + 1;
   values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    months_0_6,
+    enrollmentTime_0_6,
     ages_25_29
   );
   cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(months_0_6, subtotal);
+  values[cell] = completeAtLeastOnePrimaryServiceNotFull(enrollmentTime_0_6, subtotal);
 
   cell = cell + 1;
   values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    months_7_12,
+    enrollmentTime_7_12,
     ages_10_14
   );
   cell = cell + 1;
   values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    months_7_12,
+    enrollmentTime_7_12,
     ages_15_19
   );
   cell = cell + 1;
   values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    months_7_12,
+    enrollmentTime_7_12,
     ages_20_24
   );
   cell = cell + 1;
   values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    months_7_12,
+    enrollmentTime_7_12,
     ages_25_29
   );
   cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(months_7_12, subtotal);
+  values[cell] = completeAtLeastOnePrimaryServiceNotFull(enrollmentTime_7_12, subtotal);
 
   cell = cell + 1;
   values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    months_13_24,
+    enrollmentTime_13_24,
     ages_10_14
   );
   cell = cell + 1;
   values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    months_13_24,
+    enrollmentTime_13_24,
     ages_15_19
   );
   cell = cell + 1;
   values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    months_13_24,
+    enrollmentTime_13_24,
     ages_20_24
   );
   cell = cell + 1;
   values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    months_13_24,
+    enrollmentTime_13_24,
     ages_25_29
   );
   cell = cell + 1;
   values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    months_13_24,
+    enrollmentTime_13_24,
     subtotal
   );
 
   cell = cell + 1;
   values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    months_25_plus,
+    enrollmentTime_25_plus,
     ages_10_14
   );
   cell = cell + 1;
   values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    months_25_plus,
+    enrollmentTime_25_plus,
     ages_15_19
   );
   cell = cell + 1;
   values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    months_25_plus,
+    enrollmentTime_25_plus,
     ages_20_24
   );
   cell = cell + 1;
   values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    months_25_plus,
+    enrollmentTime_25_plus,
     ages_25_29
   );
   cell = cell + 1;
   values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    months_25_plus,
+    enrollmentTime_25_plus,
     subtotal
   );
 
   /* Beneficiaries that have started a DREAMS service/intervention but have not yet completed it */
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(months_0_6, ages_10_14);
+  values[cell] = startedServiceNotYetCompleted(enrollmentTime_0_6, ages_10_14);
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(months_0_6, ages_15_19);
+  values[cell] = startedServiceNotYetCompleted(enrollmentTime_0_6, ages_15_19);
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(months_0_6, ages_20_24);
+  values[cell] = startedServiceNotYetCompleted(enrollmentTime_0_6, ages_20_24);
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(months_0_6, ages_25_29);
+  values[cell] = startedServiceNotYetCompleted(enrollmentTime_0_6, ages_25_29);
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(months_0_6, subtotal);
+  values[cell] = startedServiceNotYetCompleted(enrollmentTime_0_6, subtotal);
 
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(months_7_12, ages_10_14);
+  values[cell] = startedServiceNotYetCompleted(enrollmentTime_7_12, ages_10_14);
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(months_7_12, ages_15_19);
+  values[cell] = startedServiceNotYetCompleted(enrollmentTime_7_12, ages_15_19);
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(months_7_12, ages_20_24);
+  values[cell] = startedServiceNotYetCompleted(enrollmentTime_7_12, ages_20_24);
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(months_7_12, ages_25_29);
+  values[cell] = startedServiceNotYetCompleted(enrollmentTime_7_12, ages_25_29);
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(months_7_12, subtotal);
+  values[cell] = startedServiceNotYetCompleted(enrollmentTime_7_12, subtotal);
 
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(months_13_24, ages_10_14);
+  values[cell] = startedServiceNotYetCompleted(enrollmentTime_13_24, ages_10_14);
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(months_13_24, ages_15_19);
+  values[cell] = startedServiceNotYetCompleted(enrollmentTime_13_24, ages_15_19);
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(months_13_24, ages_20_24);
+  values[cell] = startedServiceNotYetCompleted(enrollmentTime_13_24, ages_20_24);
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(months_13_24, ages_25_29);
+  values[cell] = startedServiceNotYetCompleted(enrollmentTime_13_24, ages_25_29);
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(months_13_24, subtotal);
+  values[cell] = startedServiceNotYetCompleted(enrollmentTime_13_24, subtotal);
 
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(months_25_plus, ages_10_14);
+  values[cell] = startedServiceNotYetCompleted(enrollmentTime_25_plus, ages_10_14);
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(months_25_plus, ages_15_19);
+  values[cell] = startedServiceNotYetCompleted(enrollmentTime_25_plus, ages_15_19);
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(months_25_plus, ages_20_24);
+  values[cell] = startedServiceNotYetCompleted(enrollmentTime_25_plus, ages_20_24);
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(months_25_plus, ages_25_29);
+  values[cell] = startedServiceNotYetCompleted(enrollmentTime_25_plus, ages_25_29);
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(months_25_plus, subtotal);
+  values[cell] = startedServiceNotYetCompleted(enrollmentTime_25_plus, subtotal);
 
   cell = cell + 1;
   values[cell] = violencePreventionServiceType();
