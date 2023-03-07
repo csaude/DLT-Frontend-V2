@@ -1,15 +1,16 @@
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
-import { months } from "moment";
+import moment, { months } from "moment";
 import { agywPrevQuery } from "../../utils/report";
 
 export async function generateXlsReport(
   currentUserName,
-  districts,
+  districtsIds,
   startDate,
-  endDate
+  endDate,
+  districts
 ) {
-  const data = await agywPrevQuery(districts, startDate, endDate);
+  const data = await agywPrevQuery(districtsIds, startDate, endDate);
 
   const ages_10_14 = "9-14";
   const ages_15_19 = "15-19";
@@ -28,12 +29,12 @@ export async function generateXlsReport(
     data[7]["completed-primary-package-and-secondary-service"].totals;
   const completeAtLeastOnePrimaryService =
     data[7]["completed-service-not-primary-package"].totals;
-  const completedSocialEconomicApproaches =
-    data[7]["completed-social-economic-approaches"].totals;
-  const completedViolenceService = data[7]["completed-violence-service"].totals;
-  const hadSchoolAllowance = data[7]["had-school-allowance"].totals;
   const startedServiceDidNotComplete =
     data[7]["started-service-did-not-complete"].totals;
+  const completedSocialEconomicApproaches =
+    data[7]["completed-social-economic-approaches"];
+  const completedViolenceService = data[7]["completed-violence-service"];
+  const hadSchoolAllowance = data[7]["had-school-allowance"];
 
   const workbook = new ExcelJS.Workbook();
 
@@ -643,23 +644,19 @@ export async function generateXlsReport(
   const findByEnrollmentTime = (byAge, enrollmentTime) => {
     if ((enrollmentTime = months_0_6)) {
       return "" + byAge.value[months_0_6];
-    }
-    if (enrollmentTime == months_7_12) {
+    } else if (enrollmentTime == months_7_12) {
       return "" + byAge.value[months_7_12];
-    }
-    if (enrollmentTime == months_13_24) {
+    } else if (enrollmentTime == months_13_24) {
       return "" + byAge.value[months_13_24];
-    }
-    if (enrollmentTime == months_25_plus) {
+    } else if (enrollmentTime == months_25_plus) {
       return "" + byAge.value[months_25_plus];
     }
-    // if (enrollmentTime == subtotal) {
-    //   console.log(byAge)
-    //   return "" + byAge.value[subtotal];
-    // }
   };
 
-  const completePrimaryServiceNoAditional = (enrollmentTime: any, param: any) => {
+  const completePrimaryServiceNoAditional = (
+    enrollmentTime: any,
+    param: any
+  ) => {
     const arrTotals = Object.keys(completedOnlyPrimaryPackage).map((key) => ({
       key,
       value: completedOnlyPrimaryPackage[key],
@@ -766,17 +763,29 @@ export async function generateXlsReport(
   };
 
   const violencePreventionServiceType = () => {
-    //console.log(completedViolenceService);
+    return completedViolenceService.total;
   };
   const educationSupportServiceType = () => {
-    //console.log(hadSchoolAllowance);
+    return hadSchoolAllowance.total;
   };
   const comprehensiveEconomicStrenghtening = () => {
-    //completedSocialEconomicApproaches;
+    return completedSocialEconomicApproaches.total;
+  };
+
+  const getDistrictNameById = (id) => {
+    const result = districts.filter((item) => item.id == id);
+    return result[0];
   };
   const dataCheck = () => {};
 
   const values: any = [];
+
+  values[1] =
+    moment(startDate).format("YYYY-MM-DD") +
+    " - " +
+    moment(endDate).format("YYYY-MM-DD");
+  values[2] = getDistrictNameById(7).province.name;
+  values[3] = getDistrictNameById(7).name;
 
   /** Beneficiaries that have fully completed the DREAMS primary package of services/interventions but no additional services/interventions */
   let cell = 5;
