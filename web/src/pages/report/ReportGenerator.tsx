@@ -642,7 +642,7 @@ export async function generateXlsReport(
   cf7.value = "Subtotal";
 
   const findByAge = (totals, age) => {
-    console.log("---------totals--------", totals);
+  
     if (age == ages_10_14) {
       return "" + totals.value[ages_10_14];
     } else if (age == ages_15_19) {
