@@ -200,7 +200,6 @@ const Login: React.FC = () => {
 
                         setToken(response.token);
                         setLoggedUser(response.account);
-                        console.log(response.account);
 
                         dispatch(loadUser(response.account));
 
