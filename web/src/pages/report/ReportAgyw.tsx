@@ -81,7 +81,7 @@ const ReportAgyw = () => {
   
 
   const handleGenerateXLSXReport = () =>{
-      const districtsIds = districts.map(dist=>{return dist.id})
+      const districtsIds = selectedDistricts.map(dist=>{return dist.id})
       const startDate = moment(initialDate).format("YYYYMMDD")
       const endDate = moment(finalDate).format("YYYYMMDD")
       generateXlsReport(currentUserName, districtsIds, startDate, endDate)

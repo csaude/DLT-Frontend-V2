@@ -21,16 +21,18 @@ export async function generateXlsReport(
   const months_13_24 = "13-24";
   const months_25_plus = "25+";
 
-  const completedOnlyPrimaryPackage = data["completed-only-primary-package"];
+  const completedOnlyPrimaryPackage =
+    data[7]["completed-only-primary-package"].totals;
   const completedPrimaryPackageAndSecondaryService =
-    data["completed-primary-package-and-secondary-service"];
-  const completedServiceNotPrimaryPackage =
-    data["completed-service-not-primary-package"];
+    data[7]["completed-primary-package-and-secondary-service"].totals;
+  const completeAtLeastOnePrimaryService =
+    data[7]["completed-service-not-primary-package"].totals;
   const completedSocialEconomicApproaches =
-    data["completed-social-economic-approaches"];
-  const completedViolenceService = data["completed-violence-service"];
-  const hadSchoolAllowance = data["had-school-allowance"];
-  const startedServiceDidNotComplete = data["started-service-did-not-complete"];
+    data[7]["completed-social-economic-approaches"].totals;
+  const completedViolenceService = data[7]["completed-violence-service"].totals;
+  const hadSchoolAllowance = data[7]["had-school-allowance"].totals;
+  const startedServiceDidNotComplete =
+    data[7]["started-service-did-not-complete"].totals;
 
   const workbook = new ExcelJS.Workbook();
 
@@ -639,65 +641,135 @@ export async function generateXlsReport(
 
   const findByMonthsRange = (byAge, monthsRange) => {
     if ((monthsRange = months_0_6)) {
-      return "" + byAge[months_0_6];
+      return "" + byAge.value[months_0_6];
     }
     if (monthsRange == months_7_12) {
-      return "" + byAge[months_7_12];
+      return "" + byAge.value[months_7_12];
     }
     if (monthsRange == months_13_24) {
-      return "" + byAge[months_13_24];
+      return "" + byAge.value[months_13_24];
     }
     if (monthsRange == months_25_plus) {
-      return "" + byAge[months_25_plus];
+      return "" + byAge.value[months_25_plus];
     }
   };
 
-  const completePrimaryServiceNoAditional = (
-    monthsRange: any,
-    param: any
-  ) => {
-    const objBeneficiaries = completedOnlyPrimaryPackage.totals.reportObject;
-    const arrTotals = Object.keys(objBeneficiaries).map((key) => ({
+  const completePrimaryServiceNoAditional = (monthsRange: any, param: any) => {
+    const arrTotals = Object.keys(completedOnlyPrimaryPackage).map((key) => ({
       key,
-      value: objBeneficiaries[key],
+      value: completedOnlyPrimaryPackage[key],
     }));
     let resultTotal;
     arrTotals.map((item) => {
       if (param == ages_10_14) {
-        const benefByAges = item.value[ages_10_14];
-        resultTotal = findByMonthsRange(benefByAges, monthsRange);
+        const benefByAges = arrTotals.filter((item) => item.key === ages_10_14);
+        resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
       } else if (param == ages_15_19) {
-        const benefByAges = item.value[ages_15_19];
-        resultTotal = findByMonthsRange(benefByAges, monthsRange);
+        const benefByAges = arrTotals.filter((item) => item.key === ages_15_19);
+        resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
       } else if (param == ages_20_24) {
-        const benefByAges = item.value[ages_20_24];
-        resultTotal = findByMonthsRange(benefByAges, monthsRange);
+        const benefByAges = arrTotals.filter((item) => item.key === ages_20_24);
+        resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
       } else if (param == ages_25_29) {
-        const benefByAges = item.value[ages_25_29];
-        resultTotal = findByMonthsRange(benefByAges, monthsRange);
+        const benefByAges = arrTotals.filter((item) => item.key === ages_25_29);
+        resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
       }
     });
-    console.log(resultTotal);
     return resultTotal;
   };
 
   const completePrimaryAndAtleastOneSecondary = (
     monthsRange: any,
-    value: any
+    param: any
   ) => {
-    return value.concat(monthsRange);
+    const arrTotals = Object.keys(
+      completedPrimaryPackageAndSecondaryService
+    ).map((key) => ({
+      key,
+      value: completedPrimaryPackageAndSecondaryService[key],
+    }));
+    let resultTotal;
+    arrTotals.map((item) => {
+      if (param == ages_10_14) {
+        const benefByAges = arrTotals.filter((item) => item.key === ages_10_14);
+        resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
+      } else if (param == ages_15_19) {
+        const benefByAges = arrTotals.filter((item) => item.key === ages_15_19);
+        resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
+      } else if (param == ages_20_24) {
+        const benefByAges = arrTotals.filter((item) => item.key === ages_20_24);
+        resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
+      } else if (param == ages_25_29) {
+        const benefByAges = arrTotals.filter((item) => item.key === ages_25_29);
+        resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
+      }
+    });
+    return resultTotal;
   };
 
   const completeAtLeastOnePrimaryServiceNotFull = (
     monthsRange: any,
-    value: any
+    param: any
   ) => {
-    return value.concat(monthsRange);
+    const arrTotals = Object.keys(completeAtLeastOnePrimaryService).map(
+      (key) => ({
+        key,
+        value: completeAtLeastOnePrimaryService[key],
+      })
+    );
+    let resultTotal;
+    arrTotals.map((item) => {
+      if (param == ages_10_14) {
+        const benefByAges = arrTotals.filter((item) => item.key === ages_10_14);
+        resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
+      } else if (param == ages_15_19) {
+        const benefByAges = arrTotals.filter((item) => item.key === ages_15_19);
+        resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
+      } else if (param == ages_20_24) {
+        const benefByAges = arrTotals.filter((item) => item.key === ages_20_24);
+        resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
+      } else if (param == ages_25_29) {
+        const benefByAges = arrTotals.filter((item) => item.key === ages_25_29);
+        resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
+      }
+    });
+    return resultTotal;
   };
 
-  const startedServiceNotYetCompleted = (monthsRange: any, value: any) => {
-    return value.concat(monthsRange);
+  const startedServiceNotYetCompleted = (monthsRange: any, param: any) => {
+    const arrTotals = Object.keys(startedServiceDidNotComplete).map((key) => ({
+      key,
+      value: startedServiceDidNotComplete[key],
+    }));
+    let resultTotal;
+    arrTotals.map((item) => {
+      if (param == ages_10_14) {
+        const benefByAges = arrTotals.filter((item) => item.key === ages_10_14);
+        resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
+      } else if (param == ages_15_19) {
+        const benefByAges = arrTotals.filter((item) => item.key === ages_15_19);
+        resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
+      } else if (param == ages_20_24) {
+        const benefByAges = arrTotals.filter((item) => item.key === ages_20_24);
+        resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
+      } else if (param == ages_25_29) {
+        const benefByAges = arrTotals.filter((item) => item.key === ages_25_29);
+        resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
+      }
+    });
+    return resultTotal;
   };
+
+  const violencePreventionServiceType = () => {
+    console.log(completedViolenceService);
+  };
+  const educationSupportServiceType = () => {
+    console.log(hadSchoolAllowance);
+  };
+  const comprehensiveEconomicStrenghtening = () => {
+    completedSocialEconomicApproaches;
+  };
+  const dataCheck = () => {};
 
   const values: any = [];
 
@@ -736,15 +808,15 @@ export async function generateXlsReport(
   values[cell] = completePrimaryServiceNoAditional(months_13_24, "totals");
 
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional("25+", ages_10_14);
+  values[cell] = completePrimaryServiceNoAditional(months_25_plus, ages_10_14);
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional("25+", ages_15_19);
+  values[cell] = completePrimaryServiceNoAditional(months_25_plus, ages_15_19);
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional("25+", ages_20_24);
+  values[cell] = completePrimaryServiceNoAditional(months_25_plus, ages_20_24);
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional("25+", ages_25_29);
+  values[cell] = completePrimaryServiceNoAditional(months_25_plus, ages_25_29);
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional("25+", "totals");
+  values[cell] = completePrimaryServiceNoAditional(months_25_plus, "totals");
 
   /* Beneficiaries that have fully completed the DREAMS primary package of services/interventions AND at least one secondary service/intervention */
   cell = cell + 1;
@@ -793,15 +865,30 @@ export async function generateXlsReport(
   values[cell] = completePrimaryAndAtleastOneSecondary(months_13_24, "totals");
 
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary("25+", ages_10_14);
+  values[cell] = completePrimaryAndAtleastOneSecondary(
+    months_25_plus,
+    ages_10_14
+  );
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary("25+", ages_15_19);
+  values[cell] = completePrimaryAndAtleastOneSecondary(
+    months_25_plus,
+    ages_15_19
+  );
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary("25+", ages_20_24);
+  values[cell] = completePrimaryAndAtleastOneSecondary(
+    months_25_plus,
+    ages_20_24
+  );
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary("25+", ages_25_29);
+  values[cell] = completePrimaryAndAtleastOneSecondary(
+    months_25_plus,
+    ages_25_29
+  );
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary("25+", "totals");
+  values[cell] = completePrimaryAndAtleastOneSecondary(
+    months_25_plus,
+    "totals"
+  );
 
   /* Beneficiaries that have completed at least one DREAMS service/intervention but not the full primary package */
   cell = cell + 1;
@@ -877,15 +964,30 @@ export async function generateXlsReport(
   );
 
   cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull("25+", ages_10_14);
+  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+    months_25_plus,
+    ages_10_14
+  );
   cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull("25+", ages_15_19);
+  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+    months_25_plus,
+    ages_15_19
+  );
   cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull("25+", ages_20_24);
+  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+    months_25_plus,
+    ages_20_24
+  );
   cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull("25+", ages_25_29);
+  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+    months_25_plus,
+    ages_25_29
+  );
   cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull("25+", "totals");
+  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+    months_25_plus,
+    "totals"
+  );
 
   /* Beneficiaries that have started a DREAMS service/intervention but have not yet completed it */
   cell = cell + 1;
@@ -922,15 +1024,24 @@ export async function generateXlsReport(
   values[cell] = startedServiceNotYetCompleted(months_13_24, "totals");
 
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted("25+", ages_10_14);
+  values[cell] = startedServiceNotYetCompleted(months_25_plus, ages_10_14);
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted("25+", ages_15_19);
+  values[cell] = startedServiceNotYetCompleted(months_25_plus, ages_15_19);
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted("25+", ages_20_24);
+  values[cell] = startedServiceNotYetCompleted(months_25_plus, ages_20_24);
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted("25+", ages_25_29);
+  values[cell] = startedServiceNotYetCompleted(months_25_plus, ages_25_29);
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted("25+", "totals");
+  values[cell] = startedServiceNotYetCompleted(months_25_plus, "totals");
+
+  cell = cell + 1;
+  values[cell] = violencePreventionServiceType();
+  cell = cell + 1;
+  values[cell] = educationSupportServiceType();
+  cell = cell + 1;
+  values[cell] = comprehensiveEconomicStrenghtening();
+  cell = cell + 1;
+  values[cell] = dataCheck();
 
   worksheet.addRow(values);
 
