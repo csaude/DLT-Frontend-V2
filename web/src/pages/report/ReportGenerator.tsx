@@ -783,7 +783,7 @@ export async function generateXlsReport(
   cell = cell + 1;
   values[cell] = completePrimaryServiceNoAditional(months_0_6, ages_25_29);
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(months_0_6, "totals");
+  values[cell] = completePrimaryServiceNoAditional(months_0_6, "subtotal");
 
   cell = cell + 1;
   values[cell] = completePrimaryServiceNoAditional(months_7_12, ages_10_14);
@@ -794,7 +794,7 @@ export async function generateXlsReport(
   cell = cell + 1;
   values[cell] = completePrimaryServiceNoAditional(months_7_12, ages_25_29);
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(months_7_12, "totals");
+  values[cell] = completePrimaryServiceNoAditional(months_7_12, "subtotal");
 
   cell = cell + 1;
   values[cell] = completePrimaryServiceNoAditional(months_13_24, ages_10_14);
@@ -805,7 +805,7 @@ export async function generateXlsReport(
   cell = cell + 1;
   values[cell] = completePrimaryServiceNoAditional(months_13_24, ages_25_29);
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(months_13_24, "totals");
+  values[cell] = completePrimaryServiceNoAditional(months_13_24, "subtotal");
 
   cell = cell + 1;
   values[cell] = completePrimaryServiceNoAditional(months_25_plus, ages_10_14);
@@ -816,7 +816,7 @@ export async function generateXlsReport(
   cell = cell + 1;
   values[cell] = completePrimaryServiceNoAditional(months_25_plus, ages_25_29);
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(months_25_plus, "totals");
+  values[cell] = completePrimaryServiceNoAditional(months_25_plus, "subtotal");
 
   /* Beneficiaries that have fully completed the DREAMS primary package of services/interventions AND at least one secondary service/intervention */
   cell = cell + 1;
@@ -828,7 +828,7 @@ export async function generateXlsReport(
   cell = cell + 1;
   values[cell] = completePrimaryAndAtleastOneSecondary(months_0_6, ages_25_29);
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(months_0_6, "totals");
+  values[cell] = completePrimaryAndAtleastOneSecondary(months_0_6, "subtotal");
 
   cell = cell + 1;
   values[cell] = completePrimaryAndAtleastOneSecondary(months_7_12, ages_10_14);
@@ -839,7 +839,7 @@ export async function generateXlsReport(
   cell = cell + 1;
   values[cell] = completePrimaryAndAtleastOneSecondary(months_7_12, ages_25_29);
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(months_7_12, "totals");
+  values[cell] = completePrimaryAndAtleastOneSecondary(months_7_12, "subtotal");
 
   cell = cell + 1;
   values[cell] = completePrimaryAndAtleastOneSecondary(
@@ -862,7 +862,10 @@ export async function generateXlsReport(
     ages_25_29
   );
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(months_13_24, "totals");
+  values[cell] = completePrimaryAndAtleastOneSecondary(
+    months_13_24,
+    "subtotal"
+  );
 
   cell = cell + 1;
   values[cell] = completePrimaryAndAtleastOneSecondary(
@@ -887,7 +890,7 @@ export async function generateXlsReport(
   cell = cell + 1;
   values[cell] = completePrimaryAndAtleastOneSecondary(
     months_25_plus,
-    "totals"
+    "subtotal"
   );
 
   /* Beneficiaries that have completed at least one DREAMS service/intervention but not the full primary package */
@@ -912,7 +915,10 @@ export async function generateXlsReport(
     ages_25_29
   );
   cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(months_0_6, "totals");
+  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+    months_0_6,
+    "subtotal"
+  );
 
   cell = cell + 1;
   values[cell] = completeAtLeastOnePrimaryServiceNotFull(
@@ -935,7 +941,10 @@ export async function generateXlsReport(
     ages_25_29
   );
   cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(months_7_12, "totals");
+  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+    months_7_12,
+    "subtotal"
+  );
 
   cell = cell + 1;
   values[cell] = completeAtLeastOnePrimaryServiceNotFull(
@@ -960,7 +969,7 @@ export async function generateXlsReport(
   cell = cell + 1;
   values[cell] = completeAtLeastOnePrimaryServiceNotFull(
     months_13_24,
-    "totals"
+    "subtotal"
   );
 
   cell = cell + 1;
@@ -986,7 +995,7 @@ export async function generateXlsReport(
   cell = cell + 1;
   values[cell] = completeAtLeastOnePrimaryServiceNotFull(
     months_25_plus,
-    "totals"
+    "subtotal"
   );
 
   /* Beneficiaries that have started a DREAMS service/intervention but have not yet completed it */
@@ -999,7 +1008,7 @@ export async function generateXlsReport(
   cell = cell + 1;
   values[cell] = startedServiceNotYetCompleted(months_0_6, ages_25_29);
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(months_0_6, "totals");
+  values[cell] = startedServiceNotYetCompleted(months_0_6, "subtotal");
 
   cell = cell + 1;
   values[cell] = startedServiceNotYetCompleted(months_7_12, ages_10_14);
@@ -1010,7 +1019,7 @@ export async function generateXlsReport(
   cell = cell + 1;
   values[cell] = startedServiceNotYetCompleted(months_7_12, ages_25_29);
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(months_7_12, "totals");
+  values[cell] = startedServiceNotYetCompleted(months_7_12, "subtotal");
 
   cell = cell + 1;
   values[cell] = startedServiceNotYetCompleted(months_13_24, ages_10_14);
@@ -1021,7 +1030,7 @@ export async function generateXlsReport(
   cell = cell + 1;
   values[cell] = startedServiceNotYetCompleted(months_13_24, ages_25_29);
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(months_13_24, "totals");
+  values[cell] = startedServiceNotYetCompleted(months_13_24, "subtotal");
 
   cell = cell + 1;
   values[cell] = startedServiceNotYetCompleted(months_25_plus, ages_10_14);
@@ -1032,7 +1041,7 @@ export async function generateXlsReport(
   cell = cell + 1;
   values[cell] = startedServiceNotYetCompleted(months_25_plus, ages_25_29);
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(months_25_plus, "totals");
+  values[cell] = startedServiceNotYetCompleted(months_25_plus, "subtotal");
 
   cell = cell + 1;
   values[cell] = violencePreventionServiceType();
