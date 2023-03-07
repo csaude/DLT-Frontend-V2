@@ -703,9 +703,6 @@ export async function generateXlsReport(
 
   /** Beneficiaries that have fully completed the DREAMS primary package of services/interventions but no additional services/interventions */
   let cell = 5;
-  const pri = completePrimaryServiceNoAditional(months_0_6, "10-14");
-  console.log("------pri-----", pri);
-
   values[cell] = completePrimaryServiceNoAditional(months_0_6, ages_10_14);
   cell = cell + 1;
   values[cell] = completePrimaryServiceNoAditional(months_0_6, ages_15_19);
