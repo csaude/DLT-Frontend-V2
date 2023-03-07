@@ -641,15 +641,18 @@ export async function generateXlsReport(
   cf7.alignment = { vertical: "middle", horizontal: "center" };
   cf7.value = "Subtotal";
 
-  const findByEnrollmentTime = (byAge, enrollmentTime) => {
-    if ((enrollmentTime = enrollmentTime_0_6)) {
-      return "" + byAge.value[enrollmentTime_0_6];
-    } else if (enrollmentTime == enrollmentTime_7_12) {
-      return "" + byAge.value[enrollmentTime_7_12];
-    } else if (enrollmentTime == enrollmentTime_13_24) {
-      return "" + byAge.value[enrollmentTime_13_24];
-    } else if (enrollmentTime == enrollmentTime_25_plus) {
-      return "" + byAge.value[enrollmentTime_25_plus];
+  const findByAge = (totals, age) => {
+    console.log("---------totals--------", totals);
+    if (age == ages_10_14) {
+      return "" + totals.value[ages_10_14];
+    } else if (age == ages_15_19) {
+      return "" + totals.value[ages_15_19];
+    } else if (age == ages_20_24) {
+      return "" + totals.value[ages_20_24];
+    } else if (age == ages_25_29) {
+      return "" + totals.value[ages_25_29];
+    } else if (age == subtotal) {
+      return "" + totals.value[subtotal];
     }
   };
 
@@ -661,22 +664,29 @@ export async function generateXlsReport(
       key,
       value: completedOnlyPrimaryPackage[key],
     }));
+
     let resultTotal;
 
-    console.log('---------arrTotals--------',arrTotals)
-
-    if (param == ages_10_14) {
-      const benefByAges = arrTotals.filter((item) => item.key === ages_10_14);
-      resultTotal = findByEnrollmentTime(benefByAges[0], enrollmentTime);
-    } else if (param == ages_15_19) {
-      const benefByAges = arrTotals.filter((item) => item.key === ages_15_19);
-      resultTotal = findByEnrollmentTime(benefByAges[0], enrollmentTime);
-    } else if (param == ages_20_24) {
-      const benefByAges = arrTotals.filter((item) => item.key === ages_20_24);
-      resultTotal = findByEnrollmentTime(benefByAges[0], enrollmentTime);
-    } else if (param == ages_25_29) {
-      const benefByAges = arrTotals.filter((item) => item.key === ages_25_29);
-      resultTotal = findByEnrollmentTime(benefByAges[0], enrollmentTime);
+    if ((enrollmentTime = enrollmentTime_0_6)) {
+      const totalsByEnroll = arrTotals.filter(
+        (item) => item.key == enrollmentTime_0_6
+      );
+      resultTotal = findByAge(totalsByEnroll[0], param);
+    } else if (enrollmentTime == enrollmentTime_7_12) {
+      const totalsByEnroll = arrTotals.filter(
+        (item) => item.key == enrollmentTime_7_12
+      );
+      resultTotal = findByAge(totalsByEnroll[0], param);
+    } else if (enrollmentTime == enrollmentTime_13_24) {
+      const totalsByEnroll = arrTotals.filter(
+        (item) => item.key == enrollmentTime_13_24
+      );
+      resultTotal = findByAge(totalsByEnroll[0], param);
+    } else if (enrollmentTime == enrollmentTime_25_plus) {
+      const totalsByEnroll = arrTotals.filter(
+        (item) => item.key == enrollmentTime_25_plus
+      );
+      resultTotal = findByAge(totalsByEnroll[0], param);
     }
 
     return resultTotal;
@@ -694,18 +704,26 @@ export async function generateXlsReport(
     }));
     let resultTotal;
 
-    if (param == ages_10_14) {
-      const benefByAges = arrTotals.filter((item) => item.key === ages_10_14);
-      resultTotal = findByEnrollmentTime(benefByAges[0], enrollmentTime);
-    } else if (param == ages_15_19) {
-      const benefByAges = arrTotals.filter((item) => item.key === ages_15_19);
-      resultTotal = findByEnrollmentTime(benefByAges[0], enrollmentTime);
-    } else if (param == ages_20_24) {
-      const benefByAges = arrTotals.filter((item) => item.key === ages_20_24);
-      resultTotal = findByEnrollmentTime(benefByAges[0], enrollmentTime);
-    } else if (param == ages_25_29) {
-      const benefByAges = arrTotals.filter((item) => item.key === ages_25_29);
-      resultTotal = findByEnrollmentTime(benefByAges[0], enrollmentTime);
+    if ((enrollmentTime = enrollmentTime_0_6)) {
+      const totalsByEnroll = arrTotals.filter(
+        (item) => item.key == enrollmentTime_0_6
+      );
+      resultTotal = findByAge(totalsByEnroll[0], param);
+    } else if (enrollmentTime == enrollmentTime_7_12) {
+      const totalsByEnroll = arrTotals.filter(
+        (item) => item.key == enrollmentTime_7_12
+      );
+      resultTotal = findByAge(totalsByEnroll[0], param);
+    } else if (enrollmentTime == enrollmentTime_13_24) {
+      const totalsByEnroll = arrTotals.filter(
+        (item) => item.key == enrollmentTime_13_24
+      );
+      resultTotal = findByAge(totalsByEnroll[0], param);
+    } else if (enrollmentTime == enrollmentTime_25_plus) {
+      const totalsByEnroll = arrTotals.filter(
+        (item) => item.key == enrollmentTime_25_plus
+      );
+      resultTotal = findByAge(totalsByEnroll[0], param);
     }
 
     return resultTotal;
@@ -723,18 +741,26 @@ export async function generateXlsReport(
     );
     let resultTotal;
 
-    if (param == ages_10_14) {
-      const benefByAges = arrTotals.filter((item) => item.key === ages_10_14);
-      resultTotal = findByEnrollmentTime(benefByAges[0], enrollmentTime);
-    } else if (param == ages_15_19) {
-      const benefByAges = arrTotals.filter((item) => item.key === ages_15_19);
-      resultTotal = findByEnrollmentTime(benefByAges[0], enrollmentTime);
-    } else if (param == ages_20_24) {
-      const benefByAges = arrTotals.filter((item) => item.key === ages_20_24);
-      resultTotal = findByEnrollmentTime(benefByAges[0], enrollmentTime);
-    } else if (param == ages_25_29) {
-      const benefByAges = arrTotals.filter((item) => item.key === ages_25_29);
-      resultTotal = findByEnrollmentTime(benefByAges[0], enrollmentTime);
+    if ((enrollmentTime = enrollmentTime_0_6)) {
+      const totalsByEnroll = arrTotals.filter(
+        (item) => item.key == enrollmentTime_0_6
+      );
+      resultTotal = findByAge(totalsByEnroll[0], param);
+    } else if (enrollmentTime == enrollmentTime_7_12) {
+      const totalsByEnroll = arrTotals.filter(
+        (item) => item.key == enrollmentTime_7_12
+      );
+      resultTotal = findByAge(totalsByEnroll[0], param);
+    } else if (enrollmentTime == enrollmentTime_13_24) {
+      const totalsByEnroll = arrTotals.filter(
+        (item) => item.key == enrollmentTime_13_24
+      );
+      resultTotal = findByAge(totalsByEnroll[0], param);
+    } else if (enrollmentTime == enrollmentTime_25_plus) {
+      const totalsByEnroll = arrTotals.filter(
+        (item) => item.key == enrollmentTime_25_plus
+      );
+      resultTotal = findByAge(totalsByEnroll[0], param);
     }
 
     return resultTotal;
@@ -747,18 +773,26 @@ export async function generateXlsReport(
     }));
     let resultTotal;
 
-    if (param == ages_10_14) {
-      const benefByAges = arrTotals.filter((item) => item.key === ages_10_14);
-      resultTotal = findByEnrollmentTime(benefByAges[0], enrollmentTime);
-    } else if (param == ages_15_19) {
-      const benefByAges = arrTotals.filter((item) => item.key === ages_15_19);
-      resultTotal = findByEnrollmentTime(benefByAges[0], enrollmentTime);
-    } else if (param == ages_20_24) {
-      const benefByAges = arrTotals.filter((item) => item.key === ages_20_24);
-      resultTotal = findByEnrollmentTime(benefByAges[0], enrollmentTime);
-    } else if (param == ages_25_29) {
-      const benefByAges = arrTotals.filter((item) => item.key === ages_25_29);
-      resultTotal = findByEnrollmentTime(benefByAges[0], enrollmentTime);
+    if ((enrollmentTime = enrollmentTime_0_6)) {
+      const totalsByEnroll = arrTotals.filter(
+        (item) => item.key == enrollmentTime_0_6
+      );
+      resultTotal = findByAge(totalsByEnroll[0], param);
+    } else if (enrollmentTime == enrollmentTime_7_12) {
+      const totalsByEnroll = arrTotals.filter(
+        (item) => item.key == enrollmentTime_7_12
+      );
+      resultTotal = findByAge(totalsByEnroll[0], param);
+    } else if (enrollmentTime == enrollmentTime_13_24) {
+      const totalsByEnroll = arrTotals.filter(
+        (item) => item.key == enrollmentTime_13_24
+      );
+      resultTotal = findByAge(totalsByEnroll[0], param);
+    } else if (enrollmentTime == enrollmentTime_25_plus) {
+      const totalsByEnroll = arrTotals.filter(
+        (item) => item.key == enrollmentTime_25_plus
+      );
+      resultTotal = findByAge(totalsByEnroll[0], param);
     }
 
     return resultTotal;
@@ -791,71 +825,161 @@ export async function generateXlsReport(
 
   /** Beneficiaries that have fully completed the DREAMS primary package of services/interventions but no additional services/interventions */
   let cell = 5;
-  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_0_6, ages_10_14);
+  values[cell] = completePrimaryServiceNoAditional(
+    enrollmentTime_0_6,
+    ages_10_14
+  );
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_0_6, ages_15_19);
+  values[cell] = completePrimaryServiceNoAditional(
+    enrollmentTime_0_6,
+    ages_15_19
+  );
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_0_6, ages_20_24);
+  values[cell] = completePrimaryServiceNoAditional(
+    enrollmentTime_0_6,
+    ages_20_24
+  );
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_0_6, ages_25_29);
+  values[cell] = completePrimaryServiceNoAditional(
+    enrollmentTime_0_6,
+    ages_25_29
+  );
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_0_6, subtotal);
+  values[cell] = completePrimaryServiceNoAditional(
+    enrollmentTime_0_6,
+    subtotal
+  );
 
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_7_12, ages_10_14);
+  values[cell] = completePrimaryServiceNoAditional(
+    enrollmentTime_7_12,
+    ages_10_14
+  );
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_7_12, ages_15_19);
+  values[cell] = completePrimaryServiceNoAditional(
+    enrollmentTime_7_12,
+    ages_15_19
+  );
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_7_12, ages_20_24);
+  values[cell] = completePrimaryServiceNoAditional(
+    enrollmentTime_7_12,
+    ages_20_24
+  );
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_7_12, ages_25_29);
+  values[cell] = completePrimaryServiceNoAditional(
+    enrollmentTime_7_12,
+    ages_25_29
+  );
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_7_12, subtotal);
+  values[cell] = completePrimaryServiceNoAditional(
+    enrollmentTime_7_12,
+    subtotal
+  );
 
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_13_24, ages_10_14);
+  values[cell] = completePrimaryServiceNoAditional(
+    enrollmentTime_13_24,
+    ages_10_14
+  );
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_13_24, ages_15_19);
+  values[cell] = completePrimaryServiceNoAditional(
+    enrollmentTime_13_24,
+    ages_15_19
+  );
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_13_24, ages_20_24);
+  values[cell] = completePrimaryServiceNoAditional(
+    enrollmentTime_13_24,
+    ages_20_24
+  );
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_13_24, ages_25_29);
+  values[cell] = completePrimaryServiceNoAditional(
+    enrollmentTime_13_24,
+    ages_25_29
+  );
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_13_24, subtotal);
+  values[cell] = completePrimaryServiceNoAditional(
+    enrollmentTime_13_24,
+    subtotal
+  );
 
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_25_plus, ages_10_14);
+  values[cell] = completePrimaryServiceNoAditional(
+    enrollmentTime_25_plus,
+    ages_10_14
+  );
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_25_plus, ages_15_19);
+  values[cell] = completePrimaryServiceNoAditional(
+    enrollmentTime_25_plus,
+    ages_15_19
+  );
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_25_plus, ages_20_24);
+  values[cell] = completePrimaryServiceNoAditional(
+    enrollmentTime_25_plus,
+    ages_20_24
+  );
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_25_plus, ages_25_29);
+  values[cell] = completePrimaryServiceNoAditional(
+    enrollmentTime_25_plus,
+    ages_25_29
+  );
   cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(enrollmentTime_25_plus, subtotal);
+  values[cell] = completePrimaryServiceNoAditional(
+    enrollmentTime_25_plus,
+    subtotal
+  );
 
   /* Beneficiaries that have fully completed the DREAMS primary package of services/interventions AND at least one secondary service/intervention */
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(enrollmentTime_0_6, ages_10_14);
+  values[cell] = completePrimaryAndAtleastOneSecondary(
+    enrollmentTime_0_6,
+    ages_10_14
+  );
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(enrollmentTime_0_6, ages_15_19);
+  values[cell] = completePrimaryAndAtleastOneSecondary(
+    enrollmentTime_0_6,
+    ages_15_19
+  );
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(enrollmentTime_0_6, ages_20_24);
+  values[cell] = completePrimaryAndAtleastOneSecondary(
+    enrollmentTime_0_6,
+    ages_20_24
+  );
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(enrollmentTime_0_6, ages_25_29);
+  values[cell] = completePrimaryAndAtleastOneSecondary(
+    enrollmentTime_0_6,
+    ages_25_29
+  );
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(enrollmentTime_0_6, subtotal);
+  values[cell] = completePrimaryAndAtleastOneSecondary(
+    enrollmentTime_0_6,
+    subtotal
+  );
 
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(enrollmentTime_7_12, ages_10_14);
+  values[cell] = completePrimaryAndAtleastOneSecondary(
+    enrollmentTime_7_12,
+    ages_10_14
+  );
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(enrollmentTime_7_12, ages_15_19);
+  values[cell] = completePrimaryAndAtleastOneSecondary(
+    enrollmentTime_7_12,
+    ages_15_19
+  );
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(enrollmentTime_7_12, ages_20_24);
+  values[cell] = completePrimaryAndAtleastOneSecondary(
+    enrollmentTime_7_12,
+    ages_20_24
+  );
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(enrollmentTime_7_12, ages_25_29);
+  values[cell] = completePrimaryAndAtleastOneSecondary(
+    enrollmentTime_7_12,
+    ages_25_29
+  );
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(enrollmentTime_7_12, subtotal);
+  values[cell] = completePrimaryAndAtleastOneSecondary(
+    enrollmentTime_7_12,
+    subtotal
+  );
 
   cell = cell + 1;
   values[cell] = completePrimaryAndAtleastOneSecondary(
@@ -878,7 +1002,10 @@ export async function generateXlsReport(
     ages_25_29
   );
   cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(enrollmentTime_13_24, subtotal);
+  values[cell] = completePrimaryAndAtleastOneSecondary(
+    enrollmentTime_13_24,
+    subtotal
+  );
 
   cell = cell + 1;
   values[cell] = completePrimaryAndAtleastOneSecondary(
@@ -928,7 +1055,10 @@ export async function generateXlsReport(
     ages_25_29
   );
   cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(enrollmentTime_0_6, subtotal);
+  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+    enrollmentTime_0_6,
+    subtotal
+  );
 
   cell = cell + 1;
   values[cell] = completeAtLeastOnePrimaryServiceNotFull(
@@ -951,7 +1081,10 @@ export async function generateXlsReport(
     ages_25_29
   );
   cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(enrollmentTime_7_12, subtotal);
+  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+    enrollmentTime_7_12,
+    subtotal
+  );
 
   cell = cell + 1;
   values[cell] = completeAtLeastOnePrimaryServiceNotFull(
@@ -1029,26 +1162,53 @@ export async function generateXlsReport(
   values[cell] = startedServiceNotYetCompleted(enrollmentTime_7_12, subtotal);
 
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(enrollmentTime_13_24, ages_10_14);
+  values[cell] = startedServiceNotYetCompleted(
+    enrollmentTime_13_24,
+    ages_10_14
+  );
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(enrollmentTime_13_24, ages_15_19);
+  values[cell] = startedServiceNotYetCompleted(
+    enrollmentTime_13_24,
+    ages_15_19
+  );
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(enrollmentTime_13_24, ages_20_24);
+  values[cell] = startedServiceNotYetCompleted(
+    enrollmentTime_13_24,
+    ages_20_24
+  );
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(enrollmentTime_13_24, ages_25_29);
+  values[cell] = startedServiceNotYetCompleted(
+    enrollmentTime_13_24,
+    ages_25_29
+  );
   cell = cell + 1;
   values[cell] = startedServiceNotYetCompleted(enrollmentTime_13_24, subtotal);
 
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(enrollmentTime_25_plus, ages_10_14);
+  values[cell] = startedServiceNotYetCompleted(
+    enrollmentTime_25_plus,
+    ages_10_14
+  );
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(enrollmentTime_25_plus, ages_15_19);
+  values[cell] = startedServiceNotYetCompleted(
+    enrollmentTime_25_plus,
+    ages_15_19
+  );
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(enrollmentTime_25_plus, ages_20_24);
+  values[cell] = startedServiceNotYetCompleted(
+    enrollmentTime_25_plus,
+    ages_20_24
+  );
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(enrollmentTime_25_plus, ages_25_29);
+  values[cell] = startedServiceNotYetCompleted(
+    enrollmentTime_25_plus,
+    ages_25_29
+  );
   cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(enrollmentTime_25_plus, subtotal);
+  values[cell] = startedServiceNotYetCompleted(
+    enrollmentTime_25_plus,
+    subtotal
+  );
 
   cell = cell + 1;
   values[cell] = violencePreventionServiceType();
