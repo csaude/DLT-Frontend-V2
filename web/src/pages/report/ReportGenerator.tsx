@@ -660,21 +660,21 @@ export async function generateXlsReport(
       value: completedOnlyPrimaryPackage[key],
     }));
     let resultTotal;
-    arrTotals.map((item) => {
-      if (param == ages_10_14) {
-        const benefByAges = arrTotals.filter((item) => item.key === ages_10_14);
-        resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
-      } else if (param == ages_15_19) {
-        const benefByAges = arrTotals.filter((item) => item.key === ages_15_19);
-        resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
-      } else if (param == ages_20_24) {
-        const benefByAges = arrTotals.filter((item) => item.key === ages_20_24);
-        resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
-      } else if (param == ages_25_29) {
-        const benefByAges = arrTotals.filter((item) => item.key === ages_25_29);
-        resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
-      }
-    });
+
+    if (param == ages_10_14) {
+      const benefByAges = arrTotals.filter((item) => item.key === ages_10_14);
+      resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
+    } else if (param == ages_15_19) {
+      const benefByAges = arrTotals.filter((item) => item.key === ages_15_19);
+      resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
+    } else if (param == ages_20_24) {
+      const benefByAges = arrTotals.filter((item) => item.key === ages_20_24);
+      resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
+    } else if (param == ages_25_29) {
+      const benefByAges = arrTotals.filter((item) => item.key === ages_25_29);
+      resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
+    }
+
     return resultTotal;
   };
 
@@ -689,21 +689,21 @@ export async function generateXlsReport(
       value: completedPrimaryPackageAndSecondaryService[key],
     }));
     let resultTotal;
-    arrTotals.map((item) => {
-      if (param == ages_10_14) {
-        const benefByAges = arrTotals.filter((item) => item.key === ages_10_14);
-        resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
-      } else if (param == ages_15_19) {
-        const benefByAges = arrTotals.filter((item) => item.key === ages_15_19);
-        resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
-      } else if (param == ages_20_24) {
-        const benefByAges = arrTotals.filter((item) => item.key === ages_20_24);
-        resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
-      } else if (param == ages_25_29) {
-        const benefByAges = arrTotals.filter((item) => item.key === ages_25_29);
-        resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
-      }
-    });
+
+    if (param == ages_10_14) {
+      const benefByAges = arrTotals.filter((item) => item.key === ages_10_14);
+      resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
+    } else if (param == ages_15_19) {
+      const benefByAges = arrTotals.filter((item) => item.key === ages_15_19);
+      resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
+    } else if (param == ages_20_24) {
+      const benefByAges = arrTotals.filter((item) => item.key === ages_20_24);
+      resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
+    } else if (param == ages_25_29) {
+      const benefByAges = arrTotals.filter((item) => item.key === ages_25_29);
+      resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
+    }
+
     return resultTotal;
   };
 
@@ -718,21 +718,21 @@ export async function generateXlsReport(
       })
     );
     let resultTotal;
-    arrTotals.map((item) => {
-      if (param == ages_10_14) {
-        const benefByAges = arrTotals.filter((item) => item.key === ages_10_14);
-        resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
-      } else if (param == ages_15_19) {
-        const benefByAges = arrTotals.filter((item) => item.key === ages_15_19);
-        resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
-      } else if (param == ages_20_24) {
-        const benefByAges = arrTotals.filter((item) => item.key === ages_20_24);
-        resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
-      } else if (param == ages_25_29) {
-        const benefByAges = arrTotals.filter((item) => item.key === ages_25_29);
-        resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
-      }
-    });
+
+    if (param == ages_10_14) {
+      const benefByAges = arrTotals.filter((item) => item.key === ages_10_14);
+      resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
+    } else if (param == ages_15_19) {
+      const benefByAges = arrTotals.filter((item) => item.key === ages_15_19);
+      resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
+    } else if (param == ages_20_24) {
+      const benefByAges = arrTotals.filter((item) => item.key === ages_20_24);
+      resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
+    } else if (param == ages_25_29) {
+      const benefByAges = arrTotals.filter((item) => item.key === ages_25_29);
+      resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
+    }
+
     return resultTotal;
   };
 
@@ -742,21 +742,21 @@ export async function generateXlsReport(
       value: startedServiceDidNotComplete[key],
     }));
     let resultTotal;
-    arrTotals.map((item) => {
-      if (param == ages_10_14) {
-        const benefByAges = arrTotals.filter((item) => item.key === ages_10_14);
-        resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
-      } else if (param == ages_15_19) {
-        const benefByAges = arrTotals.filter((item) => item.key === ages_15_19);
-        resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
-      } else if (param == ages_20_24) {
-        const benefByAges = arrTotals.filter((item) => item.key === ages_20_24);
-        resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
-      } else if (param == ages_25_29) {
-        const benefByAges = arrTotals.filter((item) => item.key === ages_25_29);
-        resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
-      }
-    });
+
+    if (param == ages_10_14) {
+      const benefByAges = arrTotals.filter((item) => item.key === ages_10_14);
+      resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
+    } else if (param == ages_15_19) {
+      const benefByAges = arrTotals.filter((item) => item.key === ages_15_19);
+      resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
+    } else if (param == ages_20_24) {
+      const benefByAges = arrTotals.filter((item) => item.key === ages_20_24);
+      resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
+    } else if (param == ages_25_29) {
+      const benefByAges = arrTotals.filter((item) => item.key === ages_25_29);
+      resultTotal = findByMonthsRange(benefByAges[0], monthsRange);
+    }
+
     return resultTotal;
   };
 
