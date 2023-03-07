@@ -200,6 +200,7 @@ const Login: React.FC = () => {
 
                         setToken(response.token);
                         setLoggedUser(response.account);
+                        console.log(response.account);
 
                         dispatch(loadUser(response.account));
 
@@ -215,11 +216,9 @@ const Login: React.FC = () => {
                     setLoading(false);
                 });
 
-
-
         } else {
             try {
-                var logguedUser: any = (await users.query(Q.where('username', values.username)).fetch())[0];
+                var logguedUser: any = (await users.query(Q.where('username', Q.like(`%${Q.sanitizeLikeString(values.username)}%`))).fetch())[0];
 
                 var authenticated = bcrypt.compareSync(values.password, logguedUser?._raw?.password);
 
