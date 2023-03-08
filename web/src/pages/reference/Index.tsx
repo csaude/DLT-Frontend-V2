@@ -319,9 +319,9 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             title: 'Distrito', 
             dataIndex: '', 
             key: 'type',
-            render: (text, record)  => record?.beneficiaries?.neighborhood?.locality?.district?.name,
+            render: (text, record)  => record?.beneficiaries?.district?.name,
             filters: filterItem(district)(i => i.name),
-            onFilter: (value, record) => record?.beneficiaries?.neighborhood?.locality?.district?.name == value,
+            onFilter: (value, record) => record?.beneficiaries?.district?.name == value,
             filterSearch: true,
         },
         { 

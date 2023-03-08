@@ -363,7 +363,7 @@ const BeneficiariesList: React.FC = () => {
         { title: 'Código do Beneficiário (NUI)', dataIndex: '', key: 'nui', ...getColumnSearchProps('nui'),
             render: (text, record)  => (
                 <Text type="danger" >   
-                    {record.neighborhood?.locality?.district?.code}/{record.nui}
+                    {record.district?.code}/{record.nui}
                 </Text>),
         },
         { title: 'Nome do Beneficiário', dataIndex: 'name', key: 'name', ...getColumnSearchProps('name'),
@@ -415,9 +415,9 @@ const BeneficiariesList: React.FC = () => {
             render: (text, record)  => getEntryPoint(record.entryPoint) 
         },
         { title: 'Distrito', dataIndex: '', key: 'district',
-            render: (text, record)  => record.neighborhood?.locality?.district.name,
+            render: (text, record)  => record.district.name,
             filters: filterItem(district)(i => i?.name),
-            onFilter: (value, record) => record?.neighborhood?.locality?.district?.name == value,
+            onFilter: (value, record) => record?.district?.name == value,
             filterSearch: true,
         },
         { title: 'Idade', dataIndex: 'age', key: 'age',
