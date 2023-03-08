@@ -10,7 +10,7 @@ export async function generateXlsReport(
   endDate: moment.MomentInput,
   districts: any[]
 ) {
-  const data = await agywPrevQuery(districtsIds, startDate, endDate);
+  const responseData = await agywPrevQuery(districtsIds, startDate, endDate);
 
   const ages_10_14 = "9-14";
   const ages_15_19 = "15-19";
@@ -645,22 +645,22 @@ export async function generateXlsReport(
 
   districtsIds.map((districtsId: string | number) => {
     const completedOnlyPrimaryPackage =
-      data[districtsId]["completed-only-primary-package"].totals;
+      responseData[districtsId]["completed-only-primary-package"].totals;
     const completedPrimaryPackageAndSecondaryService =
-      data[districtsId]["completed-primary-package-and-secondary-service"]
+      responseData[districtsId]["completed-primary-package-and-secondary-service"]
         .totals;
     const completeAtLeastOnePrimaryService =
-      data[districtsId]["completed-service-not-primary-package"].totals;
+      responseData[districtsId]["completed-service-not-primary-package"].totals;
     const startedServiceDidNotComplete =
-      data[districtsId]["started-service-did-not-complete"].totals;
+      responseData[districtsId]["started-service-did-not-complete"].totals;
 
     const completedSocialEconomicApproaches =
-      data[districtsId]["completed-social-economic-approaches"];
+      responseData[districtsId]["completed-social-economic-approaches"];
     const completedViolenceService =
-      data[districtsId]["completed-violence-service"];
-    const hadSchoolAllowance = data[districtsId]["had-school-allowance"];
+      responseData[districtsId]["completed-violence-service"];
+    const hadSchoolAllowance = responseData[districtsId]["had-school-allowance"];
     const allDisaggregationsTotal =
-      data[districtsId]["all-disaggregations-total"].total;
+      responseData[districtsId]["all-disaggregations-total"].total;
 
     const completePrimaryServiceNoAditional = (
       enrollmentTime: any,
