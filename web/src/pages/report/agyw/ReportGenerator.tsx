@@ -1,7 +1,7 @@
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import moment, { months } from "moment";
-import { agywPrevQuery } from "../../utils/report";
+import { agywPrevQuery } from "../../../utils/report";
 
 export async function generateXlsReport(
   currentUserName: string,

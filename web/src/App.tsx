@@ -31,8 +31,8 @@ import PublicRoute from './routes/PublicRoute';
 import PrivateRoute from './routes/PrivateRoute';
 import RenewPassword from './modules/new-password/RenewPassword';
 import OrganizationList from './pages/organization';
-import ReportAgyw from './pages/report/ReportAgyw';
-import PreviewAgyw from './pages/report/PreviewAgyw';
+import ReportAgyw from './pages/report/agyw/ReportAgyw';
+import PreviewAgyw from './pages/report/agyw/ReportPreview';
 
 
 const App = () => {
