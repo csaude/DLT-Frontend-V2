@@ -8,7 +8,7 @@ const PreviewAgyw = () => {
   const { state }: any = useLocation();
   const { provinces, districts, initialDate, finalDate } = state; // Read values passed on state
 
-  let currentProvinceId;
+  let currentProvinceId: any;
 
   const onChange = (key) => {
     console.log(key);

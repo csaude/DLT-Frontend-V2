@@ -1,11 +1,11 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { Alert, Button, Col, DatePicker, Form, Row, Select, Space } from "antd";
+import { Button, Col, DatePicker, Form, Row, Select, Space } from "antd";
 import { queryAll } from "@app/utils/province";
 import { queryDistrictsByProvinces } from "@app/utils/locality";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
-import ExcelJS from 'exceljs';
+
 import { generateXlsReport } from "./ReportGenerator";
 import { useSelector } from "react-redux";
 
@@ -21,8 +21,8 @@ const ReportAgyw = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const RequiredFieldMessage = "Obrigatório!";
-  const userSelector = useSelector((state: any) => state?.auth) 
-  const currentUserName = userSelector.currentUser.name
+  const userSelector = useSelector((state: any) => state?.auth);
+  const currentUserName = userSelector.currentUser.name;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -78,17 +78,24 @@ const ReportAgyw = () => {
       });
     }
   };
-  
 
-  const handleGenerateXLSXReport = () =>{
-      const districtsIds = selectedDistricts.map(dist=>{return dist.id})
-      const startDate = moment(initialDate).format("YYYYMMDD")
-      const endDate = moment(finalDate).format("YYYYMMDD")
-      generateXlsReport(currentUserName, districtsIds, startDate, endDate, selectedDistricts)
-  }
+  const handleGenerateXLSXReport = () => {
+    const districtsIds = selectedDistricts.map((dist) => {
+      return dist.id;
+    });
+    const startDate = moment(initialDate).format("YYYYMMDD");
+    const endDate = moment(finalDate).format("YYYYMMDD");
+    generateXlsReport(
+      currentUserName,
+      districtsIds,
+      startDate,
+      endDate,
+      selectedDistricts
+    );
+  };
 
-  return (    
-    <Fragment >
+  return (
+    <Fragment>
       <Form form={form} layout="vertical">
         <Row gutter={12}>
           <Col span={8}>

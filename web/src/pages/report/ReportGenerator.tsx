@@ -4,11 +4,11 @@ import moment, { months } from "moment";
 import { agywPrevQuery } from "../../utils/report";
 
 export async function generateXlsReport(
-  currentUserName,
-  districtsIds,
-  startDate,
-  endDate,
-  districts
+  currentUserName: string,
+  districtsIds: any[],
+  startDate: moment.MomentInput,
+  endDate: moment.MomentInput,
+  districts: any[]
 ) {
   const data = await agywPrevQuery(districtsIds, startDate, endDate);
 
@@ -623,7 +623,7 @@ export async function generateXlsReport(
   cf7.alignment = { vertical: "middle", horizontal: "center" };
   cf7.value = "Subtotal";
 
-  const findByAge = (totals, age) => {
+  const findByAge = (totals: { key?: string; value: any; }, age: string) => {
     if (age == ages_10_14) {
       return "" + totals.value[ages_10_14];
     } else if (age == ages_15_19) {
@@ -637,13 +637,13 @@ export async function generateXlsReport(
     }
   };
 
-  const getDistrictNameById = (id) => {
-    const result = districts.filter((item) => item.id == id);
+  const getDistrictNameById = (id: any) => {
+    const result = districts.filter((item: { id: any; }) => item.id == id);
     return result[0];
   };
   const dataCheck = () => {};
 
-  districtsIds.map((districtsId) => {
+  districtsIds.map((districtsId: string | number) => {
     const completedOnlyPrimaryPackage =
       data[districtsId]["completed-only-primary-package"].totals;
     const completedPrimaryPackageAndSecondaryService =
@@ -671,7 +671,7 @@ export async function generateXlsReport(
         value: completedOnlyPrimaryPackage[key],
       }));
 
-      let resultTotal;
+      let resultTotal: string | undefined;
 
       if ((enrollmentTime = enrollmentTime_0_6)) {
         const totalsByEnroll = arrTotals.filter(
@@ -708,7 +708,7 @@ export async function generateXlsReport(
         key,
         value: completedPrimaryPackageAndSecondaryService[key],
       }));
-      let resultTotal;
+      let resultTotal: string | undefined;
 
       if ((enrollmentTime = enrollmentTime_0_6)) {
         const totalsByEnroll = arrTotals.filter(
@@ -745,7 +745,7 @@ export async function generateXlsReport(
           value: completeAtLeastOnePrimaryService[key],
         })
       );
-      let resultTotal;
+      let resultTotal: string | undefined;
 
       if ((enrollmentTime = enrollmentTime_0_6)) {
         const totalsByEnroll = arrTotals.filter(
@@ -779,7 +779,7 @@ export async function generateXlsReport(
           value: startedServiceDidNotComplete[key],
         })
       );
-      let resultTotal;
+      let resultTotal: string | undefined;
 
       if ((enrollmentTime = enrollmentTime_0_6)) {
         const totalsByEnroll = arrTotals.filter(
