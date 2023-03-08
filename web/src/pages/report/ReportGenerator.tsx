@@ -23,19 +23,6 @@ export async function generateXlsReport(
   const enrollmentTime_13_24 = "13-24";
   const enrollmentTime_25_plus = "25+";
 
-  const completedOnlyPrimaryPackage =
-    data[7]["completed-only-primary-package"].totals;
-  const completedPrimaryPackageAndSecondaryService =
-    data[7]["completed-primary-package-and-secondary-service"].totals;
-  const completeAtLeastOnePrimaryService =
-    data[7]["completed-service-not-primary-package"].totals;
-  const startedServiceDidNotComplete =
-    data[7]["started-service-did-not-complete"].totals;
-  const completedSocialEconomicApproaches =
-    data[7]["completed-social-economic-approaches"];
-  const completedViolenceService = data[7]["completed-violence-service"];
-  const hadSchoolAllowance = data[7]["had-school-allowance"];
-
   const workbook = new ExcelJS.Workbook();
 
   workbook.creator = currentUserName;
@@ -43,9 +30,7 @@ export async function generateXlsReport(
   workbook.created = new Date();
   workbook.modified = new Date();
   workbook.lastPrinted = new Date();
-  // Set workbook dates to 1904 date system
   workbook.properties.date1904 = true;
-  // Force workbook calculation on load
   workbook.calcProperties.fullCalcOnLoad = true;
   workbook.views = [
     {
@@ -60,9 +45,6 @@ export async function generateXlsReport(
   ];
   const worksheet = workbook.addWorksheet("PEPFAR_MER_2.6_AGYW");
 
-  // Add column headers and define column keys and widths
-  // Note: these column structures are a workbook-building convenience only,
-  // apart from the column width, they will not be fully persisted.
   worksheet.mergeCells("A1:A8");
   const a1 = worksheet.getCell("A1");
   a1.alignment = { vertical: "middle", horizontal: "center" };
@@ -642,7 +624,6 @@ export async function generateXlsReport(
   cf7.value = "Subtotal";
 
   const findByAge = (totals, age) => {
-  
     if (age == ages_10_14) {
       return "" + totals.value[ages_10_14];
     } else if (age == ages_15_19) {
@@ -656,576 +637,612 @@ export async function generateXlsReport(
     }
   };
 
-  const completePrimaryServiceNoAditional = (
-    enrollmentTime: any,
-    param: any
-  ) => {
-    const arrTotals = Object.keys(completedOnlyPrimaryPackage).map((key) => ({
-      key,
-      value: completedOnlyPrimaryPackage[key],
-    }));
-
-    let resultTotal;
-
-    if ((enrollmentTime = enrollmentTime_0_6)) {
-      const totalsByEnroll = arrTotals.filter(
-        (item) => item.key == enrollmentTime_0_6
-      );
-      resultTotal = findByAge(totalsByEnroll[0], param);
-    } else if (enrollmentTime == enrollmentTime_7_12) {
-      const totalsByEnroll = arrTotals.filter(
-        (item) => item.key == enrollmentTime_7_12
-      );
-      resultTotal = findByAge(totalsByEnroll[0], param);
-    } else if (enrollmentTime == enrollmentTime_13_24) {
-      const totalsByEnroll = arrTotals.filter(
-        (item) => item.key == enrollmentTime_13_24
-      );
-      resultTotal = findByAge(totalsByEnroll[0], param);
-    } else if (enrollmentTime == enrollmentTime_25_plus) {
-      const totalsByEnroll = arrTotals.filter(
-        (item) => item.key == enrollmentTime_25_plus
-      );
-      resultTotal = findByAge(totalsByEnroll[0], param);
-    }
-
-    return resultTotal;
-  };
-
-  const completePrimaryAndAtleastOneSecondary = (
-    enrollmentTime: any,
-    param: any
-  ) => {
-    const arrTotals = Object.keys(
-      completedPrimaryPackageAndSecondaryService
-    ).map((key) => ({
-      key,
-      value: completedPrimaryPackageAndSecondaryService[key],
-    }));
-    let resultTotal;
-
-    if ((enrollmentTime = enrollmentTime_0_6)) {
-      const totalsByEnroll = arrTotals.filter(
-        (item) => item.key == enrollmentTime_0_6
-      );
-      resultTotal = findByAge(totalsByEnroll[0], param);
-    } else if (enrollmentTime == enrollmentTime_7_12) {
-      const totalsByEnroll = arrTotals.filter(
-        (item) => item.key == enrollmentTime_7_12
-      );
-      resultTotal = findByAge(totalsByEnroll[0], param);
-    } else if (enrollmentTime == enrollmentTime_13_24) {
-      const totalsByEnroll = arrTotals.filter(
-        (item) => item.key == enrollmentTime_13_24
-      );
-      resultTotal = findByAge(totalsByEnroll[0], param);
-    } else if (enrollmentTime == enrollmentTime_25_plus) {
-      const totalsByEnroll = arrTotals.filter(
-        (item) => item.key == enrollmentTime_25_plus
-      );
-      resultTotal = findByAge(totalsByEnroll[0], param);
-    }
-
-    return resultTotal;
-  };
-
-  const completeAtLeastOnePrimaryServiceNotFull = (
-    enrollmentTime: any,
-    param: any
-  ) => {
-    const arrTotals = Object.keys(completeAtLeastOnePrimaryService).map(
-      (key) => ({
-        key,
-        value: completeAtLeastOnePrimaryService[key],
-      })
-    );
-    let resultTotal;
-
-    if ((enrollmentTime = enrollmentTime_0_6)) {
-      const totalsByEnroll = arrTotals.filter(
-        (item) => item.key == enrollmentTime_0_6
-      );
-      resultTotal = findByAge(totalsByEnroll[0], param);
-    } else if (enrollmentTime == enrollmentTime_7_12) {
-      const totalsByEnroll = arrTotals.filter(
-        (item) => item.key == enrollmentTime_7_12
-      );
-      resultTotal = findByAge(totalsByEnroll[0], param);
-    } else if (enrollmentTime == enrollmentTime_13_24) {
-      const totalsByEnroll = arrTotals.filter(
-        (item) => item.key == enrollmentTime_13_24
-      );
-      resultTotal = findByAge(totalsByEnroll[0], param);
-    } else if (enrollmentTime == enrollmentTime_25_plus) {
-      const totalsByEnroll = arrTotals.filter(
-        (item) => item.key == enrollmentTime_25_plus
-      );
-      resultTotal = findByAge(totalsByEnroll[0], param);
-    }
-
-    return resultTotal;
-  };
-
-  const startedServiceNotYetCompleted = (enrollmentTime: any, param: any) => {
-    const arrTotals = Object.keys(startedServiceDidNotComplete).map((key) => ({
-      key,
-      value: startedServiceDidNotComplete[key],
-    }));
-    let resultTotal;
-
-    if ((enrollmentTime = enrollmentTime_0_6)) {
-      const totalsByEnroll = arrTotals.filter(
-        (item) => item.key == enrollmentTime_0_6
-      );
-      resultTotal = findByAge(totalsByEnroll[0], param);
-    } else if (enrollmentTime == enrollmentTime_7_12) {
-      const totalsByEnroll = arrTotals.filter(
-        (item) => item.key == enrollmentTime_7_12
-      );
-      resultTotal = findByAge(totalsByEnroll[0], param);
-    } else if (enrollmentTime == enrollmentTime_13_24) {
-      const totalsByEnroll = arrTotals.filter(
-        (item) => item.key == enrollmentTime_13_24
-      );
-      resultTotal = findByAge(totalsByEnroll[0], param);
-    } else if (enrollmentTime == enrollmentTime_25_plus) {
-      const totalsByEnroll = arrTotals.filter(
-        (item) => item.key == enrollmentTime_25_plus
-      );
-      resultTotal = findByAge(totalsByEnroll[0], param);
-    }
-
-    return resultTotal;
-  };
-
-  const violencePreventionServiceType = () => {
-    return completedViolenceService.total;
-  };
-  const educationSupportServiceType = () => {
-    return hadSchoolAllowance.total;
-  };
-  const comprehensiveEconomicStrenghtening = () => {
-    return completedSocialEconomicApproaches.total;
-  };
-
   const getDistrictNameById = (id) => {
     const result = districts.filter((item) => item.id == id);
     return result[0];
   };
   const dataCheck = () => {};
 
-  const values: any = [];
+  districtsIds.map((districtsId) => {
+    const completedOnlyPrimaryPackage =
+      data[districtsId]["completed-only-primary-package"].totals;
+    const completedPrimaryPackageAndSecondaryService =
+      data[districtsId]["completed-primary-package-and-secondary-service"]
+        .totals;
+    const completeAtLeastOnePrimaryService =
+      data[districtsId]["completed-service-not-primary-package"].totals;
+    const startedServiceDidNotComplete =
+      data[districtsId]["started-service-did-not-complete"].totals;
 
-  values[1] =
-    moment(startDate).format("YYYY-MM-DD") +
-    " - " +
-    moment(endDate).format("YYYY-MM-DD");
-  values[2] = getDistrictNameById(7).province.name;
-  values[3] = getDistrictNameById(7).name;
+    const completedSocialEconomicApproaches =
+      data[districtsId]["completed-social-economic-approaches"];
+    const completedViolenceService =
+      data[districtsId]["completed-violence-service"];
+    const hadSchoolAllowance = data[districtsId]["had-school-allowance"];
+    const allDisaggregationsTotal =
+      data[districtsId]["all-disaggregations-total"].total;
 
-  /** Beneficiaries that have fully completed the DREAMS primary package of services/interventions but no additional services/interventions */
-  let cell = 5;
-  values[cell] = completePrimaryServiceNoAditional(
-    enrollmentTime_0_6,
-    ages_10_14
-  );
-  cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(
-    enrollmentTime_0_6,
-    ages_15_19
-  );
-  cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(
-    enrollmentTime_0_6,
-    ages_20_24
-  );
-  cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(
-    enrollmentTime_0_6,
-    ages_25_29
-  );
-  cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(
-    enrollmentTime_0_6,
-    subtotal
-  );
+    const completePrimaryServiceNoAditional = (
+      enrollmentTime: any,
+      param: any
+    ) => {
+      const arrTotals = Object.keys(completedOnlyPrimaryPackage).map((key) => ({
+        key,
+        value: completedOnlyPrimaryPackage[key],
+      }));
 
-  cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(
-    enrollmentTime_7_12,
-    ages_10_14
-  );
-  cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(
-    enrollmentTime_7_12,
-    ages_15_19
-  );
-  cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(
-    enrollmentTime_7_12,
-    ages_20_24
-  );
-  cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(
-    enrollmentTime_7_12,
-    ages_25_29
-  );
-  cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(
-    enrollmentTime_7_12,
-    subtotal
-  );
+      let resultTotal;
 
-  cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(
-    enrollmentTime_13_24,
-    ages_10_14
-  );
-  cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(
-    enrollmentTime_13_24,
-    ages_15_19
-  );
-  cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(
-    enrollmentTime_13_24,
-    ages_20_24
-  );
-  cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(
-    enrollmentTime_13_24,
-    ages_25_29
-  );
-  cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(
-    enrollmentTime_13_24,
-    subtotal
-  );
+      if ((enrollmentTime = enrollmentTime_0_6)) {
+        const totalsByEnroll = arrTotals.filter(
+          (item) => item.key == enrollmentTime_0_6
+        );
+        resultTotal = findByAge(totalsByEnroll[0], param);
+      } else if (enrollmentTime == enrollmentTime_7_12) {
+        const totalsByEnroll = arrTotals.filter(
+          (item) => item.key == enrollmentTime_7_12
+        );
+        resultTotal = findByAge(totalsByEnroll[0], param);
+      } else if (enrollmentTime == enrollmentTime_13_24) {
+        const totalsByEnroll = arrTotals.filter(
+          (item) => item.key == enrollmentTime_13_24
+        );
+        resultTotal = findByAge(totalsByEnroll[0], param);
+      } else if (enrollmentTime == enrollmentTime_25_plus) {
+        const totalsByEnroll = arrTotals.filter(
+          (item) => item.key == enrollmentTime_25_plus
+        );
+        resultTotal = findByAge(totalsByEnroll[0], param);
+      }
 
-  cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(
-    enrollmentTime_25_plus,
-    ages_10_14
-  );
-  cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(
-    enrollmentTime_25_plus,
-    ages_15_19
-  );
-  cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(
-    enrollmentTime_25_plus,
-    ages_20_24
-  );
-  cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(
-    enrollmentTime_25_plus,
-    ages_25_29
-  );
-  cell = cell + 1;
-  values[cell] = completePrimaryServiceNoAditional(
-    enrollmentTime_25_plus,
-    subtotal
-  );
+      return resultTotal;
+    };
 
-  /* Beneficiaries that have fully completed the DREAMS primary package of services/interventions AND at least one secondary service/intervention */
-  cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(
-    enrollmentTime_0_6,
-    ages_10_14
-  );
-  cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(
-    enrollmentTime_0_6,
-    ages_15_19
-  );
-  cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(
-    enrollmentTime_0_6,
-    ages_20_24
-  );
-  cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(
-    enrollmentTime_0_6,
-    ages_25_29
-  );
-  cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(
-    enrollmentTime_0_6,
-    subtotal
-  );
+    const completePrimaryAndAtleastOneSecondary = (
+      enrollmentTime: any,
+      param: any
+    ) => {
+      const arrTotals = Object.keys(
+        completedPrimaryPackageAndSecondaryService
+      ).map((key) => ({
+        key,
+        value: completedPrimaryPackageAndSecondaryService[key],
+      }));
+      let resultTotal;
 
-  cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(
-    enrollmentTime_7_12,
-    ages_10_14
-  );
-  cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(
-    enrollmentTime_7_12,
-    ages_15_19
-  );
-  cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(
-    enrollmentTime_7_12,
-    ages_20_24
-  );
-  cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(
-    enrollmentTime_7_12,
-    ages_25_29
-  );
-  cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(
-    enrollmentTime_7_12,
-    subtotal
-  );
+      if ((enrollmentTime = enrollmentTime_0_6)) {
+        const totalsByEnroll = arrTotals.filter(
+          (item) => item.key == enrollmentTime_0_6
+        );
+        resultTotal = findByAge(totalsByEnroll[0], param);
+      } else if (enrollmentTime == enrollmentTime_7_12) {
+        const totalsByEnroll = arrTotals.filter(
+          (item) => item.key == enrollmentTime_7_12
+        );
+        resultTotal = findByAge(totalsByEnroll[0], param);
+      } else if (enrollmentTime == enrollmentTime_13_24) {
+        const totalsByEnroll = arrTotals.filter(
+          (item) => item.key == enrollmentTime_13_24
+        );
+        resultTotal = findByAge(totalsByEnroll[0], param);
+      } else if (enrollmentTime == enrollmentTime_25_plus) {
+        const totalsByEnroll = arrTotals.filter(
+          (item) => item.key == enrollmentTime_25_plus
+        );
+        resultTotal = findByAge(totalsByEnroll[0], param);
+      }
 
-  cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(
-    enrollmentTime_13_24,
-    ages_10_14
-  );
-  cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(
-    enrollmentTime_13_24,
-    ages_15_19
-  );
-  cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(
-    enrollmentTime_13_24,
-    ages_20_24
-  );
-  cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(
-    enrollmentTime_13_24,
-    ages_25_29
-  );
-  cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(
-    enrollmentTime_13_24,
-    subtotal
-  );
+      return resultTotal;
+    };
 
-  cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(
-    enrollmentTime_25_plus,
-    ages_10_14
-  );
-  cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(
-    enrollmentTime_25_plus,
-    ages_15_19
-  );
-  cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(
-    enrollmentTime_25_plus,
-    ages_20_24
-  );
-  cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(
-    enrollmentTime_25_plus,
-    ages_25_29
-  );
-  cell = cell + 1;
-  values[cell] = completePrimaryAndAtleastOneSecondary(
-    enrollmentTime_25_plus,
-    subtotal
-  );
+    const completeAtLeastOnePrimaryServiceNotFull = (
+      enrollmentTime: any,
+      param: any
+    ) => {
+      const arrTotals = Object.keys(completeAtLeastOnePrimaryService).map(
+        (key) => ({
+          key,
+          value: completeAtLeastOnePrimaryService[key],
+        })
+      );
+      let resultTotal;
 
-  /* Beneficiaries that have completed at least one DREAMS service/intervention but not the full primary package */
-  cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    enrollmentTime_0_6,
-    ages_10_14
-  );
-  cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    enrollmentTime_0_6,
-    ages_15_19
-  );
-  cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    enrollmentTime_0_6,
-    ages_20_24
-  );
-  cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    enrollmentTime_0_6,
-    ages_25_29
-  );
-  cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    enrollmentTime_0_6,
-    subtotal
-  );
+      if ((enrollmentTime = enrollmentTime_0_6)) {
+        const totalsByEnroll = arrTotals.filter(
+          (item) => item.key == enrollmentTime_0_6
+        );
+        resultTotal = findByAge(totalsByEnroll[0], param);
+      } else if (enrollmentTime == enrollmentTime_7_12) {
+        const totalsByEnroll = arrTotals.filter(
+          (item) => item.key == enrollmentTime_7_12
+        );
+        resultTotal = findByAge(totalsByEnroll[0], param);
+      } else if (enrollmentTime == enrollmentTime_13_24) {
+        const totalsByEnroll = arrTotals.filter(
+          (item) => item.key == enrollmentTime_13_24
+        );
+        resultTotal = findByAge(totalsByEnroll[0], param);
+      } else if (enrollmentTime == enrollmentTime_25_plus) {
+        const totalsByEnroll = arrTotals.filter(
+          (item) => item.key == enrollmentTime_25_plus
+        );
+        resultTotal = findByAge(totalsByEnroll[0], param);
+      }
 
-  cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    enrollmentTime_7_12,
-    ages_10_14
-  );
-  cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    enrollmentTime_7_12,
-    ages_15_19
-  );
-  cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    enrollmentTime_7_12,
-    ages_20_24
-  );
-  cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    enrollmentTime_7_12,
-    ages_25_29
-  );
-  cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    enrollmentTime_7_12,
-    subtotal
-  );
+      return resultTotal;
+    };
 
-  cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    enrollmentTime_13_24,
-    ages_10_14
-  );
-  cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    enrollmentTime_13_24,
-    ages_15_19
-  );
-  cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    enrollmentTime_13_24,
-    ages_20_24
-  );
-  cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    enrollmentTime_13_24,
-    ages_25_29
-  );
-  cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    enrollmentTime_13_24,
-    subtotal
-  );
+    const startedServiceNotYetCompleted = (enrollmentTime: any, param: any) => {
+      const arrTotals = Object.keys(startedServiceDidNotComplete).map(
+        (key) => ({
+          key,
+          value: startedServiceDidNotComplete[key],
+        })
+      );
+      let resultTotal;
 
-  cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    enrollmentTime_25_plus,
-    ages_10_14
-  );
-  cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    enrollmentTime_25_plus,
-    ages_15_19
-  );
-  cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    enrollmentTime_25_plus,
-    ages_20_24
-  );
-  cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    enrollmentTime_25_plus,
-    ages_25_29
-  );
-  cell = cell + 1;
-  values[cell] = completeAtLeastOnePrimaryServiceNotFull(
-    enrollmentTime_25_plus,
-    subtotal
-  );
+      if ((enrollmentTime = enrollmentTime_0_6)) {
+        const totalsByEnroll = arrTotals.filter(
+          (item) => item.key == enrollmentTime_0_6
+        );
+        resultTotal = findByAge(totalsByEnroll[0], param);
+      } else if (enrollmentTime == enrollmentTime_7_12) {
+        const totalsByEnroll = arrTotals.filter(
+          (item) => item.key == enrollmentTime_7_12
+        );
+        resultTotal = findByAge(totalsByEnroll[0], param);
+      } else if (enrollmentTime == enrollmentTime_13_24) {
+        const totalsByEnroll = arrTotals.filter(
+          (item) => item.key == enrollmentTime_13_24
+        );
+        resultTotal = findByAge(totalsByEnroll[0], param);
+      } else if (enrollmentTime == enrollmentTime_25_plus) {
+        const totalsByEnroll = arrTotals.filter(
+          (item) => item.key == enrollmentTime_25_plus
+        );
+        resultTotal = findByAge(totalsByEnroll[0], param);
+      }
 
-  /* Beneficiaries that have started a DREAMS service/intervention but have not yet completed it */
-  cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(enrollmentTime_0_6, ages_10_14);
-  cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(enrollmentTime_0_6, ages_15_19);
-  cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(enrollmentTime_0_6, ages_20_24);
-  cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(enrollmentTime_0_6, ages_25_29);
-  cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(enrollmentTime_0_6, subtotal);
+      return resultTotal;
+    };
 
-  cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(enrollmentTime_7_12, ages_10_14);
-  cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(enrollmentTime_7_12, ages_15_19);
-  cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(enrollmentTime_7_12, ages_20_24);
-  cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(enrollmentTime_7_12, ages_25_29);
-  cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(enrollmentTime_7_12, subtotal);
+    const values: any = [];
 
-  cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(
-    enrollmentTime_13_24,
-    ages_10_14
-  );
-  cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(
-    enrollmentTime_13_24,
-    ages_15_19
-  );
-  cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(
-    enrollmentTime_13_24,
-    ages_20_24
-  );
-  cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(
-    enrollmentTime_13_24,
-    ages_25_29
-  );
-  cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(enrollmentTime_13_24, subtotal);
+    values[1] =
+      moment(startDate).format("YYYY-MM-DD") +
+      " - " +
+      moment(endDate).format("YYYY-MM-DD");
+    values[2] = getDistrictNameById(districtsId).province.name;
+    values[3] = getDistrictNameById(districtsId).name;
+    values[4] = allDisaggregationsTotal;
 
-  cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(
-    enrollmentTime_25_plus,
-    ages_10_14
-  );
-  cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(
-    enrollmentTime_25_plus,
-    ages_15_19
-  );
-  cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(
-    enrollmentTime_25_plus,
-    ages_20_24
-  );
-  cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(
-    enrollmentTime_25_plus,
-    ages_25_29
-  );
-  cell = cell + 1;
-  values[cell] = startedServiceNotYetCompleted(
-    enrollmentTime_25_plus,
-    subtotal
-  );
+    /** Beneficiaries that have fully completed the DREAMS primary package of services/interventions but no additional services/interventions */
+    let cell = 5;
+    values[cell] = completePrimaryServiceNoAditional(
+      enrollmentTime_0_6,
+      ages_10_14
+    );
+    cell = cell + 1;
+    values[cell] = completePrimaryServiceNoAditional(
+      enrollmentTime_0_6,
+      ages_15_19
+    );
+    cell = cell + 1;
+    values[cell] = completePrimaryServiceNoAditional(
+      enrollmentTime_0_6,
+      ages_20_24
+    );
+    cell = cell + 1;
+    values[cell] = completePrimaryServiceNoAditional(
+      enrollmentTime_0_6,
+      ages_25_29
+    );
+    cell = cell + 1;
+    values[cell] = completePrimaryServiceNoAditional(
+      enrollmentTime_0_6,
+      subtotal
+    );
 
-  cell = cell + 1;
-  values[cell] = violencePreventionServiceType();
-  cell = cell + 1;
-  values[cell] = educationSupportServiceType();
-  cell = cell + 1;
-  values[cell] = comprehensiveEconomicStrenghtening();
-  cell = cell + 1;
-  values[cell] = dataCheck();
+    cell = cell + 1;
+    values[cell] = completePrimaryServiceNoAditional(
+      enrollmentTime_7_12,
+      ages_10_14
+    );
+    cell = cell + 1;
+    values[cell] = completePrimaryServiceNoAditional(
+      enrollmentTime_7_12,
+      ages_15_19
+    );
+    cell = cell + 1;
+    values[cell] = completePrimaryServiceNoAditional(
+      enrollmentTime_7_12,
+      ages_20_24
+    );
+    cell = cell + 1;
+    values[cell] = completePrimaryServiceNoAditional(
+      enrollmentTime_7_12,
+      ages_25_29
+    );
+    cell = cell + 1;
+    values[cell] = completePrimaryServiceNoAditional(
+      enrollmentTime_7_12,
+      subtotal
+    );
 
-  worksheet.addRow(values);
+    cell = cell + 1;
+    values[cell] = completePrimaryServiceNoAditional(
+      enrollmentTime_13_24,
+      ages_10_14
+    );
+    cell = cell + 1;
+    values[cell] = completePrimaryServiceNoAditional(
+      enrollmentTime_13_24,
+      ages_15_19
+    );
+    cell = cell + 1;
+    values[cell] = completePrimaryServiceNoAditional(
+      enrollmentTime_13_24,
+      ages_20_24
+    );
+    cell = cell + 1;
+    values[cell] = completePrimaryServiceNoAditional(
+      enrollmentTime_13_24,
+      ages_25_29
+    );
+    cell = cell + 1;
+    values[cell] = completePrimaryServiceNoAditional(
+      enrollmentTime_13_24,
+      subtotal
+    );
+
+    cell = cell + 1;
+    values[cell] = completePrimaryServiceNoAditional(
+      enrollmentTime_25_plus,
+      ages_10_14
+    );
+    cell = cell + 1;
+    values[cell] = completePrimaryServiceNoAditional(
+      enrollmentTime_25_plus,
+      ages_15_19
+    );
+    cell = cell + 1;
+    values[cell] = completePrimaryServiceNoAditional(
+      enrollmentTime_25_plus,
+      ages_20_24
+    );
+    cell = cell + 1;
+    values[cell] = completePrimaryServiceNoAditional(
+      enrollmentTime_25_plus,
+      ages_25_29
+    );
+    cell = cell + 1;
+    values[cell] = completePrimaryServiceNoAditional(
+      enrollmentTime_25_plus,
+      subtotal
+    );
+
+    /* Beneficiaries that have fully completed the DREAMS primary package of services/interventions AND at least one secondary service/intervention */
+    cell = cell + 1;
+    values[cell] = completePrimaryAndAtleastOneSecondary(
+      enrollmentTime_0_6,
+      ages_10_14
+    );
+    cell = cell + 1;
+    values[cell] = completePrimaryAndAtleastOneSecondary(
+      enrollmentTime_0_6,
+      ages_15_19
+    );
+    cell = cell + 1;
+    values[cell] = completePrimaryAndAtleastOneSecondary(
+      enrollmentTime_0_6,
+      ages_20_24
+    );
+    cell = cell + 1;
+    values[cell] = completePrimaryAndAtleastOneSecondary(
+      enrollmentTime_0_6,
+      ages_25_29
+    );
+    cell = cell + 1;
+    values[cell] = completePrimaryAndAtleastOneSecondary(
+      enrollmentTime_0_6,
+      subtotal
+    );
+
+    cell = cell + 1;
+    values[cell] = completePrimaryAndAtleastOneSecondary(
+      enrollmentTime_7_12,
+      ages_10_14
+    );
+    cell = cell + 1;
+    values[cell] = completePrimaryAndAtleastOneSecondary(
+      enrollmentTime_7_12,
+      ages_15_19
+    );
+    cell = cell + 1;
+    values[cell] = completePrimaryAndAtleastOneSecondary(
+      enrollmentTime_7_12,
+      ages_20_24
+    );
+    cell = cell + 1;
+    values[cell] = completePrimaryAndAtleastOneSecondary(
+      enrollmentTime_7_12,
+      ages_25_29
+    );
+    cell = cell + 1;
+    values[cell] = completePrimaryAndAtleastOneSecondary(
+      enrollmentTime_7_12,
+      subtotal
+    );
+
+    cell = cell + 1;
+    values[cell] = completePrimaryAndAtleastOneSecondary(
+      enrollmentTime_13_24,
+      ages_10_14
+    );
+    cell = cell + 1;
+    values[cell] = completePrimaryAndAtleastOneSecondary(
+      enrollmentTime_13_24,
+      ages_15_19
+    );
+    cell = cell + 1;
+    values[cell] = completePrimaryAndAtleastOneSecondary(
+      enrollmentTime_13_24,
+      ages_20_24
+    );
+    cell = cell + 1;
+    values[cell] = completePrimaryAndAtleastOneSecondary(
+      enrollmentTime_13_24,
+      ages_25_29
+    );
+    cell = cell + 1;
+    values[cell] = completePrimaryAndAtleastOneSecondary(
+      enrollmentTime_13_24,
+      subtotal
+    );
+
+    cell = cell + 1;
+    values[cell] = completePrimaryAndAtleastOneSecondary(
+      enrollmentTime_25_plus,
+      ages_10_14
+    );
+    cell = cell + 1;
+    values[cell] = completePrimaryAndAtleastOneSecondary(
+      enrollmentTime_25_plus,
+      ages_15_19
+    );
+    cell = cell + 1;
+    values[cell] = completePrimaryAndAtleastOneSecondary(
+      enrollmentTime_25_plus,
+      ages_20_24
+    );
+    cell = cell + 1;
+    values[cell] = completePrimaryAndAtleastOneSecondary(
+      enrollmentTime_25_plus,
+      ages_25_29
+    );
+    cell = cell + 1;
+    values[cell] = completePrimaryAndAtleastOneSecondary(
+      enrollmentTime_25_plus,
+      subtotal
+    );
+
+    /* Beneficiaries that have completed at least one DREAMS service/intervention but not the full primary package */
+    cell = cell + 1;
+    values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+      enrollmentTime_0_6,
+      ages_10_14
+    );
+    cell = cell + 1;
+    values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+      enrollmentTime_0_6,
+      ages_15_19
+    );
+    cell = cell + 1;
+    values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+      enrollmentTime_0_6,
+      ages_20_24
+    );
+    cell = cell + 1;
+    values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+      enrollmentTime_0_6,
+      ages_25_29
+    );
+    cell = cell + 1;
+    values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+      enrollmentTime_0_6,
+      subtotal
+    );
+
+    cell = cell + 1;
+    values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+      enrollmentTime_7_12,
+      ages_10_14
+    );
+    cell = cell + 1;
+    values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+      enrollmentTime_7_12,
+      ages_15_19
+    );
+    cell = cell + 1;
+    values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+      enrollmentTime_7_12,
+      ages_20_24
+    );
+    cell = cell + 1;
+    values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+      enrollmentTime_7_12,
+      ages_25_29
+    );
+    cell = cell + 1;
+    values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+      enrollmentTime_7_12,
+      subtotal
+    );
+
+    cell = cell + 1;
+    values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+      enrollmentTime_13_24,
+      ages_10_14
+    );
+    cell = cell + 1;
+    values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+      enrollmentTime_13_24,
+      ages_15_19
+    );
+    cell = cell + 1;
+    values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+      enrollmentTime_13_24,
+      ages_20_24
+    );
+    cell = cell + 1;
+    values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+      enrollmentTime_13_24,
+      ages_25_29
+    );
+    cell = cell + 1;
+    values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+      enrollmentTime_13_24,
+      subtotal
+    );
+
+    cell = cell + 1;
+    values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+      enrollmentTime_25_plus,
+      ages_10_14
+    );
+    cell = cell + 1;
+    values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+      enrollmentTime_25_plus,
+      ages_15_19
+    );
+    cell = cell + 1;
+    values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+      enrollmentTime_25_plus,
+      ages_20_24
+    );
+    cell = cell + 1;
+    values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+      enrollmentTime_25_plus,
+      ages_25_29
+    );
+    cell = cell + 1;
+    values[cell] = completeAtLeastOnePrimaryServiceNotFull(
+      enrollmentTime_25_plus,
+      subtotal
+    );
+
+    /* Beneficiaries that have started a DREAMS service/intervention but have not yet completed it */
+    cell = cell + 1;
+    values[cell] = startedServiceNotYetCompleted(
+      enrollmentTime_0_6,
+      ages_10_14
+    );
+    cell = cell + 1;
+    values[cell] = startedServiceNotYetCompleted(
+      enrollmentTime_0_6,
+      ages_15_19
+    );
+    cell = cell + 1;
+    values[cell] = startedServiceNotYetCompleted(
+      enrollmentTime_0_6,
+      ages_20_24
+    );
+    cell = cell + 1;
+    values[cell] = startedServiceNotYetCompleted(
+      enrollmentTime_0_6,
+      ages_25_29
+    );
+    cell = cell + 1;
+    values[cell] = startedServiceNotYetCompleted(enrollmentTime_0_6, subtotal);
+
+    cell = cell + 1;
+    values[cell] = startedServiceNotYetCompleted(
+      enrollmentTime_7_12,
+      ages_10_14
+    );
+    cell = cell + 1;
+    values[cell] = startedServiceNotYetCompleted(
+      enrollmentTime_7_12,
+      ages_15_19
+    );
+    cell = cell + 1;
+    values[cell] = startedServiceNotYetCompleted(
+      enrollmentTime_7_12,
+      ages_20_24
+    );
+    cell = cell + 1;
+    values[cell] = startedServiceNotYetCompleted(
+      enrollmentTime_7_12,
+      ages_25_29
+    );
+    cell = cell + 1;
+    values[cell] = startedServiceNotYetCompleted(enrollmentTime_7_12, subtotal);
+
+    cell = cell + 1;
+    values[cell] = startedServiceNotYetCompleted(
+      enrollmentTime_13_24,
+      ages_10_14
+    );
+    cell = cell + 1;
+    values[cell] = startedServiceNotYetCompleted(
+      enrollmentTime_13_24,
+      ages_15_19
+    );
+    cell = cell + 1;
+    values[cell] = startedServiceNotYetCompleted(
+      enrollmentTime_13_24,
+      ages_20_24
+    );
+    cell = cell + 1;
+    values[cell] = startedServiceNotYetCompleted(
+      enrollmentTime_13_24,
+      ages_25_29
+    );
+    cell = cell + 1;
+    values[cell] = startedServiceNotYetCompleted(
+      enrollmentTime_13_24,
+      subtotal
+    );
+
+    cell = cell + 1;
+    values[cell] = startedServiceNotYetCompleted(
+      enrollmentTime_25_plus,
+      ages_10_14
+    );
+    cell = cell + 1;
+    values[cell] = startedServiceNotYetCompleted(
+      enrollmentTime_25_plus,
+      ages_15_19
+    );
+    cell = cell + 1;
+    values[cell] = startedServiceNotYetCompleted(
+      enrollmentTime_25_plus,
+      ages_20_24
+    );
+    cell = cell + 1;
+    values[cell] = startedServiceNotYetCompleted(
+      enrollmentTime_25_plus,
+      ages_25_29
+    );
+    cell = cell + 1;
+    values[cell] = startedServiceNotYetCompleted(
+      enrollmentTime_25_plus,
+      subtotal
+    );
+
+    cell = cell + 1;
+    values[cell] = completedViolenceService.total;
+    cell = cell + 1;
+    values[cell] = hadSchoolAllowance.total
+    cell = cell + 1;
+    values[cell] = completedSocialEconomicApproaches.total;
+    cell = cell + 1;
+    values[cell] = dataCheck();
+
+    worksheet.addRow(values);
+  });
 
   workbook.xlsx.writeBuffer().then(function (buffer) {
-    // done
-    // console.log(workbook.xlsx);
-    // console.log(buffer);
-
     const blob = new Blob([buffer], { type: "applicationi/xlsx" });
     saveAs(blob, "PEPFAR_MER_2.6_AGYW_PREV.xlsx");
   });
