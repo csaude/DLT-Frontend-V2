@@ -527,12 +527,13 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
             setBirthDate(bDate);
             setAge(value);
 
-            formik.setFieldValue('date_of_birth', getFormatedDate(birthDate, 'yyyy-MM-DD'));
+            formik.setFieldValue('date_of_birth', getFormatedDate(bDate, 'yyyy-MM-DD'));
             formik.setFieldValue('age', value);
         }
 
         return (
             <Picker enabled={!isDateRequired} onValueChange={onchangeAge} selectedValue={age} placeholder="Seleccione a Idade" >
+                <Picker.Item label="-- Seleccione a Idade --" value="0" />
                 {idades.map(item => (
                     <Picker.Item key={item} value={item} label={item}></Picker.Item>
                 ))}
@@ -734,7 +735,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                                 <FormControl isRequired isInvalid={'entry_point' in formik.errors}>
                                     <FormControl.Label>Ponto de Entrada</FormControl.Label>
                                     <Picker
-                                        selectedValue={formik.values.entry_point}
+                                        selectedValue={formik.values.entry_point ? formik.values.entry_point : loggedUser.entry_point}
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
                                                 formik.setFieldValue('entry_point', itemValue);
