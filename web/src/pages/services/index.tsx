@@ -58,15 +58,30 @@ const ServicesList: React.FC = () => {
             if (selectedService === undefined) {
                 service.createdBy = localStorage.user;
                 service.status = 1;
-                const { data } = await add(service);
-                setServices(services => [...services, data]);
 
-                message.success({
-                    content: 'Registado com Sucesso!', className: 'custom-class',
-                    style: {
-                        marginTop: '10vh',
-                    }
-                });
+                const result = services.some(services => services.name === values.name);
+                if (result){
+
+                    message.error({
+                        content: ' Serviço repetido.', className: 'custom-class',
+                        style: {
+                            marginTop: '10vh',
+                        }
+                    })
+
+                }else{
+
+                    const { data } = await add(service);
+                    setServices(services => [...services, data]);
+    
+                    message.success({
+                        content: 'Registado com Sucesso!', className: 'custom-class',
+                        style: {
+                            marginTop: '10vh',
+                        }
+                    });
+                    handleServiceModalVisible(false);
+                }
             } else {
                 service.updatedBy = localStorage.user;
                 service.status = values.status;
@@ -83,8 +98,8 @@ const ServicesList: React.FC = () => {
                         marginTop: '10vh',
                     }
                 });
+                handleServiceModalVisible(false);
             }
-            handleServiceModalVisible(false);
         }).catch(error => {
             const errSt = JSON.stringify(error);
             const errObj = JSON.parse(errSt);

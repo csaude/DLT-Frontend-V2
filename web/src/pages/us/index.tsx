@@ -70,15 +70,30 @@ const UsList: React.FC = () => {
                 us.status = 1;
                 us.createdBy = localStorage.user;
 
-                const { data } = await add(us);
-                usSort(data);
+                const result = uss.some(uss => uss.name === values.name);
+                if (result){
 
-                message.success({
-                    content: 'Registado com Sucesso!', className: 'custom-class',
-                    style: {
-                        marginTop: '10vh',
-                    }
-                });
+                    message.error({
+                        content: ' Unidade Sanitária repetida.', className: 'custom-class',
+                        style: {
+                            marginTop: '10vh',
+                        }
+                    })
+
+                }else{
+
+                    const { data } = await add(us);
+                    usSort(data);
+    
+                    message.success({
+                        content: 'Registado com Sucesso!', className: 'custom-class',
+                        style: {
+                            marginTop: '10vh',
+                        }
+                    });
+                    handleUsModalVisible(false);
+                }
+
             } else {
                 us.updatedBy = localStorage.user;
                 
@@ -95,8 +110,8 @@ const UsList: React.FC = () => {
                         marginTop: '10vh',
                     }
                 });
+                handleUsModalVisible(false);
             }
-            handleUsModalVisible(false);
         }).catch(error => {
             const errSt = JSON.stringify(error);
             const errObj = JSON.parse(errSt);

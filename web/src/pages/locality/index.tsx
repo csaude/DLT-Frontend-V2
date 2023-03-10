@@ -49,17 +49,32 @@ const LocalityList: React.FC = () => {
             if (selectedLocality === undefined) {
                 localities.createdBy = localStorage.user;
                 localities.status = 1;
-                const { data } = await add(localities);
-                const local =[...locality, data];
-                const sortedLocalities = local.sort((l1, l2) => l2.id - l1.id);
-                setLocality(sortedLocalities);
-                
-                message.success({
-                    content: 'Registado com Sucesso!', className: 'custom-class',
-                    style: {
-                        marginTop: '10vh',
-                    }
-                });
+
+                const result = locality.some(locality => locality.name === values.name);
+                if (result){
+
+                    message.error({
+                        content: ' Posto administrativo repetido.', className: 'custom-class',
+                        style: {
+                            marginTop: '10vh',
+                        }
+                    })
+
+                }else{
+                    const { data } = await add(localities);
+                    const local =[...locality, data];
+                    const sortedLocalities = local.sort((l1, l2) => l2.id - l1.id);
+                    setLocality(sortedLocalities);
+                    
+                    message.success({
+                        content: 'Registado com Sucesso!', className: 'custom-class',
+                        style: {
+                            marginTop: '10vh',
+                        }
+                    });
+                    handleLocalityModalVisible(false);
+                }
+               
             } else {
                 localities.updatedBy = localStorage.user;
                 localities.status = values.status;
@@ -76,8 +91,8 @@ const LocalityList: React.FC = () => {
                         marginTop: '10vh',
                     }
                 });
+                handleLocalityModalVisible(false);
             }
-            handleLocalityModalVisible(false);
         }).catch(error => {
             const errSt = JSON.stringify(error);
             const errObj = JSON.parse(errSt);
