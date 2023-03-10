@@ -10,21 +10,13 @@ import StartedServiceDidNotComplete from "./container/StartedServiceDidNotComple
 import CompletedSocialEconomicApproaches from "./container/CompletedSocialEconomicApproaches";
 import CompletedViolenceService from "./container/CompletedViolenceService";
 import HadSchoolAllowance from "./container/HadSchoolAllowance";
+import { useSelector } from "react-redux";
 
 const ReportPreview = () => {
   const { state }: any = useLocation();
   const { provinces, districts, initialDate, finalDate } = state; // Read values passed on state
-  const [responseData, setResponseData] = useState<any>();
-  const fetchData = async () => {
-    const districtsIds = districts.map((item) => {
-      return item.id;
-    });
-    const response = await agywPrevQuery(districtsIds, initialDate, finalDate);
-    setResponseData(response);
-    return fetchData;
-  };
-  fetchData().catch((err) => console.log(err));
 
+  const responseData = useSelector((state: any) => state.report.agyw);
   let currentProvinceId: any;
 
   const onChange = (key) => {
