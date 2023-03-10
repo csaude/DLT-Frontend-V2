@@ -7,8 +7,9 @@ import { useNavigate } from "react-router-dom";
 import moment from "moment";
 
 import { generateXlsReport } from "./ReportGenerator";
-import { useSelector } from "react-redux";
-
+import { useSelector, useDispatch } from "react-redux";
+import { agywPrevQuery } from "@app/utils/report";
+import { loadAgywData } from "@app/store/reducers/report";
 const { Option } = Select;
 
 const ReportAgyw = () => {
@@ -23,6 +24,7 @@ const ReportAgyw = () => {
   const RequiredFieldMessage = "Obrigatório!";
   const userSelector = useSelector((state: any) => state?.auth);
   const currentUserName = userSelector.currentUser.name;
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,7 +61,7 @@ const ReportAgyw = () => {
     }
   };
 
-  const handleFetchData = () => {
+  const handleFetchData = async () => {
     if (
       selectedProvinces.length < 1 ||
       selectedDistricts.length < 1 ||
@@ -68,6 +70,15 @@ const ReportAgyw = () => {
     ) {
       toast.error("Por favor selecione os filtros para relatorio");
     } else {
+      const districtsIds = selectedDistricts.map((district) => {
+        return district.id;
+      });
+      const responseData = await agywPrevQuery(
+        districtsIds,
+        moment(initialDate).format("YYYY-MM-DD"),
+        moment(finalDate).format("YYYY-MM-DD")
+      );
+      dispatch(loadAgywData(responseData))
       navigate("/previewAgyw", {
         state: {
           provinces: selectedProvinces,
@@ -134,7 +145,7 @@ const ReportAgyw = () => {
             <Form.Item
               name="initialDate"
               label="Data Inicial"
-              rules={[{ required: true, message: RequiredFieldMessage }]}
+
             >
               <Space direction="vertical">
                 <DatePicker
@@ -148,7 +159,7 @@ const ReportAgyw = () => {
             <Form.Item
               name="finalDate"
               label="Data Final"
-              rules={[{ required: true, message: RequiredFieldMessage }]}
+
             >
               <Space direction="vertical">
                 <DatePicker

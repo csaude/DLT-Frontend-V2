@@ -7,6 +7,7 @@ import referenceReducer from './reducers/reference';
 import beneficiaryReducer from './reducers/beneficiary';
 import interventionReducer from './reducers/interventions';
 import userReducer from './reducers/user';
+import { reportSlice } from './reducers/report';
 
 const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ const store = configureStore({
     reference: referenceReducer,
     intervention: interventionReducer,
     user: userReducer,
+    report: reportSlice.reducer,
   },
   middleware: (getDefaultMiddleware) => [
     ...getDefaultMiddleware().concat(createLogger())
