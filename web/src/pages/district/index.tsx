@@ -65,7 +65,7 @@ const DistrictList: React.FC = () => {
                 district.status = 1;
                 district.createdBy = localStorage.user;
 
-                const result = districts.some(district => district.name === values.name);
+                const result = districts.some(district => district.name === values.name.trim());
                 if (result){
 
                     message.error({

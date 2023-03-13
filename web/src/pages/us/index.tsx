@@ -70,7 +70,7 @@ const UsList: React.FC = () => {
                 us.status = 1;
                 us.createdBy = localStorage.user;
 
-                const result = uss.some(uss => uss.name === values.name);
+                const result = uss.some(uss => uss.name === values.name.trim());
                 if (result){
 
                     message.error({
