@@ -6,9 +6,6 @@ import { useSelector } from "react-redux";
 const CompletedOnlyPrimaryPackage = ({ districtId }) => {
   const responseData = useSelector((state: any) => state.report.agyw);
   
-  // const allDisaggregationsTotal =
-  //   responseData[districtId]["all-disaggregations-total"];
-
   const ages_10_14 = "9-14";
   const ages_15_19 = "15-19";
   const ages_20_24 = "20-24";
@@ -108,7 +105,7 @@ const CompletedOnlyPrimaryPackage = ({ districtId }) => {
 
   const data: DataType[] = [
     {
-      key: "1",
+      key: "11",
       enrollmentTime: enrollmentTime_0_6,
       range_10_14: ages_10_14_time_1,
       range_15_19: ages_15_19_time_1,
@@ -117,7 +114,7 @@ const CompletedOnlyPrimaryPackage = ({ districtId }) => {
       subTotal: subTotal_time_1,
     },
     {
-      key: "2",
+      key: "12",
       enrollmentTime: enrollmentTime_7_12,
       range_10_14: ages_10_14_time_2,
       range_15_19: ages_15_19_time_2,
@@ -126,7 +123,7 @@ const CompletedOnlyPrimaryPackage = ({ districtId }) => {
       subTotal: subTotal_time_2,
     },
     {
-      key: "3",
+      key: "13",
       enrollmentTime: enrollmentTime_13_24,
       range_10_14: ages_10_14_time_3,
       range_15_19: ages_15_19_time_3,
@@ -135,7 +132,7 @@ const CompletedOnlyPrimaryPackage = ({ districtId }) => {
       subTotal: subTotal_time_3,
     },
     {
-      key: "4",
+      key: "14",
       enrollmentTime: enrollmentTime_25_plus,
       range_10_14: ages_10_14_time_4,
       range_15_19: ages_15_19_time_4,

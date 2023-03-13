@@ -39,7 +39,7 @@ const CompletedAtLeastOnePrimaryService = ({ districtId }) => {
   let ages_25_29_time_1 = totals1?.value[ages_25_29];
   let subTotal_time_1 = totals1?.value[subtotal];
 
-  const time_2 = arrTotals.filter((item) => item.key == enrollmentTime_0_6);
+  const time_2 = arrTotals.filter((item) => item.key == enrollmentTime_7_12);
   const totals2 = time_2[0];
 
   let ages_10_14_time_2 = totals2?.value[ages_10_14];
@@ -48,7 +48,7 @@ const CompletedAtLeastOnePrimaryService = ({ districtId }) => {
   let ages_25_29_time_2 = totals2?.value[ages_25_29];
   let subTotal_time_2 = totals2?.value[subtotal];
 
-  const time_3 = arrTotals.filter((item) => item.key == enrollmentTime_0_6);
+  const time_3 = arrTotals.filter((item) => item.key == enrollmentTime_13_24);
   const totals3 = time_3[0];
 
   let ages_10_14_time_3 = totals3?.value[ages_10_14];
@@ -57,7 +57,7 @@ const CompletedAtLeastOnePrimaryService = ({ districtId }) => {
   let ages_25_29_time_3 = totals3?.value[ages_25_29];
   let subTotal_time_3 = totals3?.value[subtotal];
 
-  const time_4 = arrTotals.filter((item) => item.key == enrollmentTime_0_6);
+  const time_4 = arrTotals.filter((item) => item.key == enrollmentTime_25_plus);
   const totals4 = time_4[0];
 
   let ages_10_14_time_4 = totals4?.value[ages_10_14];

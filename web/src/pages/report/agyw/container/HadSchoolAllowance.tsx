@@ -35,7 +35,7 @@ const hadSchoolAllowance = ({ districtId }) => {
   let ages_25_29_time_1 = totals1?.value[ages_25_29];
   let subTotal_time_1 = totals1?.value[subtotal];
 
-  const time_2 = arrTotals.filter((item) => item.key == enrollmentTime_0_6);
+  const time_2 = arrTotals.filter((item) => item.key == enrollmentTime_7_12);
   const totals2 = time_2[0];
 
   let ages_10_14_time_2 = totals2?.value[ages_10_14];
@@ -44,7 +44,7 @@ const hadSchoolAllowance = ({ districtId }) => {
   let ages_25_29_time_2 = totals2?.value[ages_25_29];
   let subTotal_time_2 = totals2?.value[subtotal];
 
-  const time_3 = arrTotals.filter((item) => item.key == enrollmentTime_0_6);
+  const time_3 = arrTotals.filter((item) => item.key == enrollmentTime_13_24);
   const totals3 = time_3[0];
 
   let ages_10_14_time_3 = totals3?.value[ages_10_14];
@@ -53,7 +53,7 @@ const hadSchoolAllowance = ({ districtId }) => {
   let ages_25_29_time_3 = totals3?.value[ages_25_29];
   let subTotal_time_3 = totals3?.value[subtotal];
 
-  const time_4 = arrTotals.filter((item) => item.key == enrollmentTime_0_6);
+  const time_4 = arrTotals.filter((item) => item.key == enrollmentTime_25_plus);
   const totals4 = time_4[0];
 
   let ages_10_14_time_4 = totals4?.value[ages_10_14];
@@ -103,7 +103,7 @@ const hadSchoolAllowance = ({ districtId }) => {
 
   const data: DataType[] = [
     {
-      key: "1",
+      key: "51",
       enrollmentTime: enrollmentTime_0_6,
       range_10_14: ages_10_14_time_1,
       range_15_19: ages_15_19_time_1,
@@ -112,7 +112,7 @@ const hadSchoolAllowance = ({ districtId }) => {
       subTotal: subTotal_time_1,
     },
     {
-      key: "2",
+      key: "52",
       enrollmentTime: enrollmentTime_7_12,
       range_10_14: ages_10_14_time_2,
       range_15_19: ages_15_19_time_2,
@@ -121,7 +121,7 @@ const hadSchoolAllowance = ({ districtId }) => {
       subTotal: subTotal_time_2,
     },
     {
-      key: "3",
+      key: "53",
       enrollmentTime: enrollmentTime_13_24,
       range_10_14: ages_10_14_time_3,
       range_15_19: ages_15_19_time_3,
@@ -130,7 +130,7 @@ const hadSchoolAllowance = ({ districtId }) => {
       subTotal: subTotal_time_3,
     },
     {
-      key: "4",
+      key: "54",
       enrollmentTime: enrollmentTime_25_plus,
       range_10_14: ages_10_14_time_4,
       range_15_19: ages_15_19_time_4,

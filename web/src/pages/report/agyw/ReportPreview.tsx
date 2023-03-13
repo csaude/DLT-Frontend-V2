@@ -38,25 +38,27 @@ const ReportPreview = () => {
                 <Collapse defaultActiveKey={province.id}>
                   {districts.map((district) => {
                     if (district.province.id === currentProvinceId) {
+                      const total =
+                      responseData[district.id]["all-disaggregations-total"].total;
                       return (
                         <Panel header={district.name} key={district.id}>
                           <p>Distrito: {district.name}</p>
                           <p>RESUMO DISTRITAL</p>
                           <p>
-                            Total de Adolescentes e Jovens Registados:
+                            Total de Adolescentes e Jovens Registados : 
                             under_contruction
                           </p>
                           <p>
-                            Total de Adolescentes e Jovens do Sexo Feminino:
+                            Total de Adolescentes e Jovens do Sexo Feminino : 
                             under_contruction
                           </p>
                           <p>
-                            Total de Adolescentes e Jovens do Sexo Masculino:
+                            Total de Adolescentes e Jovens do Sexo Masculino : 
                             under_contruction
                           </p>
                           <p>
-                            Total de Beneficiárias no Indicador AGYW_PREV:
-                            under_contruction
+                            Total de Beneficiárias no Indicador AGYW_PREV : 
+                            {total}
                           </p>
 
                           <p />
