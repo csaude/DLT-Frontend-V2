@@ -1242,8 +1242,10 @@ export async function generateXlsReport(
     worksheet.addRow(values);
   });
 
+  const created = moment(new Date()).format("YYYYMMDD_hhmmss")
+
   workbook.xlsx.writeBuffer().then(function (buffer) {
     const blob = new Blob([buffer], { type: "applicationi/xlsx" });
-    saveAs(blob, "PEPFAR_MER_2.6_AGYW_PREV.xlsx");
+    saveAs(blob, "PEPFAR_MER_2.6_AGYW_PREV_Semi-Annual_Indicator_"+created+".xls");
   });
 }
