@@ -150,6 +150,7 @@ const hadSchoolAllowance = ({ districtId }) => {
           title={() =>
             `Number of AGYW enrolled in DREAMS that received educational support to remain in, advance, and/or rematriculate in school within the reporting period: ${total}  `
           }
+          pagination={false}
         />
       )}
     </Fragment>

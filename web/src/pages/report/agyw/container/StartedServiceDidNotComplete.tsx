@@ -152,6 +152,7 @@ const StartedServiceDidNotComplete = ({ districtId }) => {
           title={() =>
             `Beneficiaries that have started a DREAMS service/intervention but have not yet completed it: ${total}  `
           }
+          pagination={false}
         />
       )}
     </Fragment>

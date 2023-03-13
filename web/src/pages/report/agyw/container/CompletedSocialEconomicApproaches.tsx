@@ -152,6 +152,7 @@ const CompletedSocialEconomicApproaches = ({ districtId }) => {
           title={() =>
             `Number of AGYW ages 15-24 years enrolled in DREAMS that completed a comprehensive economic strengthening intervention within the reporting period: ${total}  `
           }
+          pagination={false}
         />
       )}
     </Fragment>

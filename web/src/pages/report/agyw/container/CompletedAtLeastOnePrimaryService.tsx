@@ -154,6 +154,7 @@ const CompletedAtLeastOnePrimaryService = ({ districtId }) => {
           title={() =>
             `Beneficiaries that have completed at least one DREAMS service/intervention but not the full primary package: ${total}  `
           }
+          pagination={false}
         />
       )}
     </Fragment>

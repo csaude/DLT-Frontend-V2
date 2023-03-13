@@ -156,7 +156,7 @@ const CompletedViolenceService = ({ districtId }) => {
           bordered
           title={() =>
            `Number of AGYW enrolled in DREAMS that completed an evidence-based intervention focused on preventing violence within the reporting period: ${total}  `
-          }
+          }pagination={false}
         />
       )}
     </Fragment>

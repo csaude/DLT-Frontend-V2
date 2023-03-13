@@ -156,6 +156,7 @@ const CompletedPrimaryPackageAndSecondaryService = ({ districtId }) => {
           title={() =>
             `Beneficiaries that have fully completed the DREAMS primary package of services/interventions AND at least one secondary service/intervention: ${total} `
           }
+          pagination={false}
         />
       )}
     </Fragment>
