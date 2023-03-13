@@ -52,7 +52,7 @@ const SubServicesList: React.FC = () => {
                 subService.createdBy = localStorage.user;
                 subService.status = 1;
 
-                const result = subServices.some(subServices => subServices.name === values.name.trim());
+                const result = subServices.some(subServices => subServices.name.replace(/ /g, '').toLowerCase() === values.name.replace(/ /g, '').toLowerCase());
                 if (result){
 
                     message.error({

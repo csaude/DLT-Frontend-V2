@@ -68,7 +68,7 @@ const OrganizationList: React.FC = () => {
                 organization.status = 1;
                 organization.createdBy = localStorage.user;
 
-                const result = organizations.some(organizations => organizations.name === values.name.trim());
+                const result = organizations.some(organizations => organizations.name.replace(/ /g, '').toLowerCase() === values.name.replace(/ /g, '').toLowerCase());
                 if (result){
 
                     message.error({

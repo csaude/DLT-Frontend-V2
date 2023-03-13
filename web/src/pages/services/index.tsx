@@ -59,7 +59,7 @@ const ServicesList: React.FC = () => {
                 service.createdBy = localStorage.user;
                 service.status = 1;
 
-                const result = services.some(services => services.name === values.name.trim());
+                const result = services.some(services => services.name.replace(/ /g, '').toLowerCase() === values.namereplace(/ /g, '').toLowerCase());
                 if (result){
 
                     message.error({
