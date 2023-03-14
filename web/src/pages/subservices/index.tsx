@@ -94,7 +94,6 @@ const SubServicesList: React.FC = () => {
                 });
                 handleSubServiceModalVisible(false);
             }
-            handleSubServiceModalVisible(false);
         }).catch(error => {
             const errSt = JSON.stringify(error);
             const errObj = JSON.parse(errSt);
