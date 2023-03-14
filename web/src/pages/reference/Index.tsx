@@ -60,7 +60,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
 
             const existingUs = data.map(reference => reference.us).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
             const referrers = data.map(reference => reference.referredBy).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
-            const referreds = data.map(reference => reference.users).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
+            const referreds = data.map(reference => reference.notifyTo).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
             const referringPartners = referrers.map(referrer => referrer.partners).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
             const referredPartners = referreds.map(referred => referred?.partners).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
 

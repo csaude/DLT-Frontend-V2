@@ -27,6 +27,8 @@
     "@react-navigation/native-stack": "^6.5.2",
     "@reduxjs/toolkit": "^1.9.1",
     "bcryptjs": "^2.4.3",
+    "exceljs": "^4.3.0",
+    "file-saver": "^2.0.5",
     "formik": "^2.2.9",
     "moment": "^2.29.3",
     "native-base": "^3.4.1",
