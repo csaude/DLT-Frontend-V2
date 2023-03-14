@@ -50,7 +50,7 @@ const LocalityList: React.FC = () => {
                 localities.createdBy = localStorage.user;
                 localities.status = 1;
 
-                const result = locality.some(locality => locality.name.replace(/ /g, '').toLowerCase() === values.name.replace(/ /g, '').toLowerCase());
+                const result = locality.some(locality => locality.name.replace(/\s+/g, '').toLowerCase() === values.name.replace(/\s+/g, '').toLowerCase());
                 if (result){
 
                     message.error({

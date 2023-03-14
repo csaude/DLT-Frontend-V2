@@ -65,7 +65,7 @@ const DistrictList: React.FC = () => {
                 district.status = 1;
                 district.createdBy = localStorage.user;
 
-                const result = districts.some(district => district.name.replace(/ /g, '').toLowerCase() === values.name.replace(/ /g, '').toLowerCase());
+                const result = districts.some(district => district.name.replace(/\s+/g, '').toLowerCase() === values.name.replace(/\s+/g, '').toLowerCase());
                 if (result){
 
                     message.error({

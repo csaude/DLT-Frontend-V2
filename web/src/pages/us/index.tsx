@@ -70,7 +70,7 @@ const UsList: React.FC = () => {
                 us.status = 1;
                 us.createdBy = localStorage.user;
 
-                const result = uss.some(uss => uss.name.replace(/ /g, '').toLowerCase() === values.name.replace(/ /g, '').toLowerCase());
+                const result = uss.some(uss => uss.name.replace(/\s+/g, '').toLowerCase() === values.name.replace(/\s+/g, '').toLowerCase());
                 if (result){
 
                     message.error({
