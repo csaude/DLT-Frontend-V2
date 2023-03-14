@@ -12,6 +12,8 @@ export async function generateXlsReport(
 ) {
   const responseData = await agywPrevQuery(districtsIds, startDate, endDate);
 
+  console.log("----------responseData-----------", responseData);
+
   const ages_10_14 = "9-14";
   const ages_15_19 = "15-19";
   const ages_20_24 = "20-24";
@@ -623,22 +625,22 @@ export async function generateXlsReport(
   cf7.alignment = { vertical: "middle", horizontal: "center" };
   cf7.value = "Subtotal";
 
-  const findByAge = (totals: { key?: string; value: any; }, age: string) => {
+  const findByAge = (totals: { key?: string; value: any }, age: string) => {
     if (age == ages_10_14) {
-      return "" + totals.value[ages_10_14];
+      return totals.value[ages_10_14];
     } else if (age == ages_15_19) {
-      return "" + totals.value[ages_15_19];
+      return totals.value[ages_15_19];
     } else if (age == ages_20_24) {
-      return "" + totals.value[ages_20_24];
+      return totals.value[ages_20_24];
     } else if (age == ages_25_29) {
-      return "" + totals.value[ages_25_29];
+      return totals.value[ages_25_29];
     } else if (age == subtotal) {
-      return "" + totals.value[subtotal];
+      return totals.value[subtotal];
     }
   };
 
   const getDistrictNameById = (id: any) => {
-    const result = districts.filter((item: { id: any; }) => item.id == id);
+    const result = districts.filter((item: { id: any }) => item.id == id);
     return result[0];
   };
   const dataCheck = () => {};
@@ -647,8 +649,9 @@ export async function generateXlsReport(
     const completedOnlyPrimaryPackage =
       responseData[districtsId]["completed-only-primary-package"].totals;
     const completedPrimaryPackageAndSecondaryService =
-      responseData[districtsId]["completed-primary-package-and-secondary-service"]
-        .totals;
+      responseData[districtsId][
+        "completed-primary-package-and-secondary-service"
+      ].totals;
     const completeAtLeastOnePrimaryService =
       responseData[districtsId]["completed-service-not-primary-package"].totals;
     const startedServiceDidNotComplete =
@@ -658,7 +661,9 @@ export async function generateXlsReport(
       responseData[districtsId]["completed-social-economic-approaches"];
     const completedViolenceService =
       responseData[districtsId]["completed-violence-service"];
-    const hadSchoolAllowance = responseData[districtsId]["had-school-allowance"];
+    const hadSchoolAllowance =
+      responseData[districtsId]["had-school-allowance"];
+
     const allDisaggregationsTotal =
       responseData[districtsId]["all-disaggregations-total"].total;
 
@@ -673,7 +678,7 @@ export async function generateXlsReport(
 
       let resultTotal: string | undefined;
 
-      if ((enrollmentTime = enrollmentTime_0_6)) {
+      if (enrollmentTime == enrollmentTime_0_6) {
         const totalsByEnroll = arrTotals.filter(
           (item) => item.key == enrollmentTime_0_6
         );
@@ -710,7 +715,7 @@ export async function generateXlsReport(
       }));
       let resultTotal: string | undefined;
 
-      if ((enrollmentTime = enrollmentTime_0_6)) {
+      if (enrollmentTime == enrollmentTime_0_6) {
         const totalsByEnroll = arrTotals.filter(
           (item) => item.key == enrollmentTime_0_6
         );
@@ -747,7 +752,7 @@ export async function generateXlsReport(
       );
       let resultTotal: string | undefined;
 
-      if ((enrollmentTime = enrollmentTime_0_6)) {
+      if (enrollmentTime == enrollmentTime_0_6) {
         const totalsByEnroll = arrTotals.filter(
           (item) => item.key == enrollmentTime_0_6
         );
@@ -781,7 +786,7 @@ export async function generateXlsReport(
       );
       let resultTotal: string | undefined;
 
-      if ((enrollmentTime = enrollmentTime_0_6)) {
+      if (enrollmentTime == enrollmentTime_0_6) {
         const totalsByEnroll = arrTotals.filter(
           (item) => item.key == enrollmentTime_0_6
         );
@@ -1233,7 +1238,7 @@ export async function generateXlsReport(
     cell = cell + 1;
     values[cell] = completedViolenceService.total;
     cell = cell + 1;
-    values[cell] = hadSchoolAllowance.total
+    values[cell] = hadSchoolAllowance.total;
     cell = cell + 1;
     values[cell] = completedSocialEconomicApproaches.total;
     cell = cell + 1;
@@ -1242,10 +1247,13 @@ export async function generateXlsReport(
     worksheet.addRow(values);
   });
 
-  const created = moment(new Date()).format("YYYYMMDD_hhmmss")
+  const created = moment(new Date()).format("YYYYMMDD_hhmmss");
 
   workbook.xlsx.writeBuffer().then(function (buffer) {
     const blob = new Blob([buffer], { type: "applicationi/xlsx" });
-    saveAs(blob, "PEPFAR_MER_2.6_AGYW_PREV_Semi-Annual_Indicator_"+created+".xls");
+    saveAs(
+      blob,
+      "PEPFAR_MER_2.6_AGYW_PREV_Semi-Annual_Indicator_" + created + ".xls"
+    );
   });
 }
