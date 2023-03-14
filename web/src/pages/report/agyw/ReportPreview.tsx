@@ -3,13 +3,13 @@ import { Fragment, useState } from "react";
 import { useLocation } from "react-router-dom";
 const { Panel } = Collapse;
 import { agywPrevQuery } from "../../../utils/report";
-import CompletedOnlyPrimaryPackage from "./container/CompletedOnlyPrimaryPackage";
-import CompletedPrimaryPackageAndSecondaryService from "./container/CompletedPrimaryPackageAndSecondaryService";
-import CompletedAtLeastOnePrimaryService from "./container/CompletedAtLeastOnePrimaryService";
-import StartedServiceDidNotComplete from "./container/StartedServiceDidNotComplete";
-import CompletedSocialEconomicApproaches from "./container/CompletedSocialEconomicApproaches";
-import CompletedViolenceService from "./container/CompletedViolenceService";
-import HadSchoolAllowance from "./container/HadSchoolAllowance";
+import CompletedOnlyPrimaryPackage from "./containers/CompletedOnlyPrimaryPackage";
+import CompletedPrimaryPackageAndSecondaryService from "./containers/CompletedPrimaryPackageAndSecondaryService";
+import CompletedAtLeastOnePrimaryService from "./containers/CompletedAtLeastOnePrimaryService";
+import StartedServiceDidNotComplete from "./containers/StartedServiceDidNotComplete";
+import CompletedSocialEconomicApproaches from "./containers/CompletedSocialEconomicApproaches";
+import CompletedViolenceService from "./containers/CompletedViolenceService";
+import HadSchoolAllowance from "./containers/HadSchoolAllowance";
 import { useSelector } from "react-redux";
 
 const ReportPreview = () => {
