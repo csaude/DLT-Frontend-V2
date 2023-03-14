@@ -12,8 +12,6 @@ export async function generateXlsReport(
 ) {
   const responseData = await agywPrevQuery(districtsIds, startDate, endDate);
 
-  console.log("----------responseData-----------", responseData);
-
   const ages_10_14 = "9-14";
   const ages_15_19 = "15-19";
   const ages_20_24 = "20-24";
