@@ -256,7 +256,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
                                     <span>Serviços de Saúde Reprodutiva</span><br />
                                     <span>de Adolescente e Jovens</span><br />
                                     <span style={{ fontWeight: "bold", color: "#17a2b8" }}>
-                                        {`${beneficiary.neighborhood.locality.district.code}/${beneficiary?.nui}`}
+                                        {`${beneficiary.district.code}/${beneficiary?.nui}`}
                                     </span><br />
                                     <span style={{ fontWeight: "bold" /*, textTransform: "uppercase" */}}>
                                         { visibleName === false ? `${beneficiary?.name} ${beneficiary?.surname}` : 'DREAMS'+ `${beneficiary?.nui}`}</span><br /><br />
@@ -279,11 +279,11 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
                                 </Row>
                                 <Row gutter={8} >
                                     <Col className="gutter-row" style={{ fontWeight: "bold"}} span={12}>Província</Col>
-                                    <Col className="gutter-row" span={12}>{beneficiary?.neighborhood.locality.district.province.name}</Col>
+                                    <Col className="gutter-row" span={12}>{beneficiary?.district.province.name}</Col>
                                 </Row>
                                 <Row gutter={8}>
                                     <Col className="gutter-row" style={{ fontWeight: "bold", background: "#f3f4f5" }} span={12}>Distrito</Col>
-                                    <Col className="gutter-row" style={{ background: "#f3f4f5" }} span={12}>{beneficiary?.neighborhood.locality.district.name}</Col>
+                                    <Col className="gutter-row" style={{ background: "#f3f4f5" }} span={12}>{beneficiary?.district.name}</Col>
                                 </Row>
                                 <Row gutter={8} >
                                     <Col className="gutter-row" style={{ fontWeight: "bold"}} span={12}>Idade</Col>
@@ -309,7 +309,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
 
                             >
                                 <span>MZ</span><br />
-                                <span>{`${beneficiary?.neighborhood.locality.name}${beneficiary?.address==null? '' : ', ' + beneficiary?.address}`}</span><br />
+                                <span>{`${beneficiary?.neighborhood?.locality?.name}${beneficiary?.address==null? '' : ', ' + beneficiary?.address}`}</span><br />
                                 <span>{beneficiary?.phoneNumber}</span><br />
                                 <span>{beneficiary?.email}</span><br />
                             </Card>
