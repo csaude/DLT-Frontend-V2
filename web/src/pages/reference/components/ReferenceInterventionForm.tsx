@@ -5,6 +5,8 @@ import { allUs, allUsByType } from '@app/utils/uSanitaria'
 import { PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { query, userById, allUsesByUs } from '@app/utils/users';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateNextServiceIndex } from '@app/store/reducers/referenceIntervention';
 
 
 const { Option } = Select;
@@ -26,6 +28,9 @@ const ReferenceInterventionForm = ({ form, reference, records, beneficiary }: an
   const [users, setUsers] = React.useState<any>([]);
   const [name, setName] = useState('');
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [nextService, setNextService] = useState<any>()
+  const nextServiceIndex = useSelector((state:any)=>state.referenceIntervention.nextServiceIndex)
+  const dispatch = useDispatch()
 
   const RequiredFieldMessage = "Obrigatório!";
 
@@ -40,7 +45,16 @@ const ReferenceInterventionForm = ({ form, reference, records, beneficiary }: an
       setInterventions(data);
     }
 
-    if (selectedIntervention !== undefined) {
+    if((records.length-1)==nextServiceIndex){
+            setNextService(records[0])
+            dispatch(updateNextServiceIndex(index+1))
+        }
+        else{            
+            setNextService(records[index+1])
+            dispatch(updateNextServiceIndex(index+1))
+    }
+
+     if (selectedIntervention !== undefined) {
       form.setFieldsValue({ areaServicos: selectedIntervention?.services?.serviceType === '1' ? 'CLINIC' : 'COMMUNITY' });
       form.setFieldsValue({ service: selectedIntervention?.services?.id + '' });
       form.setFieldsValue({ entryPoint: reference.referTo });
@@ -52,7 +66,7 @@ const ReferenceInterventionForm = ({ form, reference, records, beneficiary }: an
     }else{
       const lastIntervention = records[records.length-1]
       form.setFieldsValue({ areaServicos: lastIntervention?.services?.serviceType === '1' ? 'CLINIC' : 'COMMUNITY' });
-      form.setFieldsValue({ service: lastIntervention?.services?.id + '' });
+      form.setFieldsValue({ service: nextService?.id + '' });
       form.setFieldsValue({ entryPoint: reference.referTo });
       form.setFieldsValue({ location: reference.us? reference.us?.id + '' : undefined });
       form.setFieldsValue({ provider: reference.notifyTo?.username });
