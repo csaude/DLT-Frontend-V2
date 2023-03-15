@@ -122,6 +122,43 @@ export const MENU: IMenuItem[] = [
     icon: 'fas fa-user',
     level: [0]
   },
+    {
+    name: 'menusidebar.label.reports',
+    path: '#',
+    icon: 'fas fa-file-alt',
+    level: [0,1,2,3,4,5,6,7,8,9],
+    roles: ['ADMIN','M&E','SUPERVISOR','DOADOR'],
+      children: [
+        // {
+        //   name: '>> GERAL',
+        //   path: '#',
+        // },
+        // {
+        //   name: '>> FILTROS DREAMS',
+        //   path: '#',
+        // },
+        // {
+        //   name: '>> FILTROS MENSAL',
+        //   path: '#',
+        // },
+        // {
+        //   name: '>> FILTROS UTILIZADORES',
+        //   path: '#',
+        // },
+        {
+          name: '>> Pepfar Mer 2.6 AGYW_PREV',
+          path: '/reportAgyw',
+        },
+        // {
+        //   name: '>> FY19',
+        //   path: '#',
+        // },
+        // {
+        //   name: '>> FY20',
+        //   path: '#',
+        // },
+      ]
+  },
 ];
 
 
