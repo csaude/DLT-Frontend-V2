@@ -48,23 +48,23 @@ const ReportPreview = () => {
                       responseData[district.id]["total-beneficiaries"].total;
                       return (
                         <Panel header={district.name} key={district.id}>
-                          <p>Distrito: {district.name}</p>
+                          <p>Distrito: {' '+district.name}</p>
                           <p>RESUMO DISTRITAL</p>
                           <p>
-                            Total de Adolescentes e Jovens Registados : 
-                            {beneficiariesTotal}
+                            Total de Adolescentes e Jovens Registados: 
+                            {' '+beneficiariesTotal}
                           </p>
                           <p>
-                            Total de Adolescentes e Jovens do Sexo Feminino : 
-                            {femaleTotal}
+                            Total de Adolescentes e Jovens do Sexo Feminino: 
+                            {' '+femaleTotal}
                           </p>
                           <p>
-                            Total de Adolescentes e Jovens do Sexo Masculino : 
-                            {maleTotal}
+                            Total de Adolescentes e Jovens do Sexo Masculino: 
+                            {' '+maleTotal}
                           </p>
                           <p>
-                            Total de Beneficiárias no Indicador AGYW_PREV : 
-                            {total}
+                            Total de Beneficiárias no Indicador AGYW_PREV: 
+                            {' '+total}
                           </p>
 
                           <p />
