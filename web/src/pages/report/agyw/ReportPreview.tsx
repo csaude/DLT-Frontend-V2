@@ -101,6 +101,53 @@ const ReportPreview = () => {
                               districtId={district.id}
                             />
                           </p>
+=======
+                      responseData[district.id]["all-disaggregations-total"].total;
+                      return (
+                        <Panel header={district.name} key={district.id}>
+                          <p>Distrito: {district.name}</p>
+                          <p>RESUMO DISTRITAL</p>
+                          <p>
+                            Total de Adolescentes e Jovens Registados : 
+                            under_contruction
+                          </p>
+                          <p>
+                            Total de Adolescentes e Jovens do Sexo Feminino : 
+                            under_contruction
+                          </p>
+                          <p>
+                            Total de Adolescentes e Jovens do Sexo Masculino : 
+                            under_contruction
+                          </p>
+                          <p>
+                            Total de Beneficiárias no Indicador AGYW_PREV : 
+                            {total}
+                          </p>
+
+                          <p />
+                          <CompletedOnlyPrimaryPackage
+                            districtId={district.id}
+                          />
+                          <p />
+                          <CompletedPrimaryPackageAndSecondaryService
+                            districtId={district.id}
+                          />
+                          <p />
+                          <CompletedAtLeastOnePrimaryService
+                            districtId={district.id}
+                          />
+                          <p />
+                          <StartedServiceDidNotComplete
+                            districtId={district.id}
+                          />
+                          <p />
+                          <CompletedViolenceService districtId={district.id} />
+                          <p />
+                          <HadSchoolAllowance districtId={district.id} />
+                          <p />
+                          <CompletedSocialEconomicApproaches
+                            districtId={district.id}
+                          />
                         </Panel>
                       );
                     }
