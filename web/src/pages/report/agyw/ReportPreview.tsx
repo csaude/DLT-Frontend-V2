@@ -101,6 +101,26 @@ const ReportPreview = () => {
                               districtId={district.id}
                             />
                           </p>
+                          <p />
+                          <CompletedPrimaryPackageAndSecondaryService
+                            districtId={district.id}
+                          />
+                          <p />
+                          <CompletedAtLeastOnePrimaryService
+                            districtId={district.id}
+                          />
+                          <p />
+                          <StartedServiceDidNotComplete
+                            districtId={district.id}
+                          />
+                          <p />
+                          <CompletedViolenceService districtId={district.id} />
+                          <p />
+                          <HadSchoolAllowance districtId={district.id} />
+                          <p />
+                          <CompletedSocialEconomicApproaches
+                            districtId={district.id}
+                          />
                         </Panel>
                       );
                     }
@@ -114,4 +134,5 @@ const ReportPreview = () => {
     </>
   );
 };
+
 export default ReportPreview;
