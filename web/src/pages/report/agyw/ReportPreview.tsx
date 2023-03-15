@@ -39,58 +39,68 @@ const ReportPreview = () => {
                   {districts.map((district) => {
                     if (district.province.id === currentProvinceId) {
                       const total =
-                      responseData[district.id]["all-disaggregations-total"].total;
+                        responseData[district.id]["all-disaggregations-total"]
+                          .total;
                       const maleTotal =
-                      responseData[district.id]["male-beneficiaries"].total;
+                        responseData[district.id]["male-beneficiaries"].total;
                       const femaleTotal =
-                      responseData[district.id]["female-beneficiaries"].total;
+                        responseData[district.id]["female-beneficiaries"].total;
                       const beneficiariesTotal =
-                      responseData[district.id]["total-beneficiaries"].total;
+                        responseData[district.id]["total-beneficiaries"].total;
                       return (
                         <Panel header={district.name} key={district.id}>
-                          <p>Distrito: {' '+district.name}</p>
+                          <p>Distrito: {" " + district.name}</p>
                           <p>RESUMO DISTRITAL</p>
                           <p>
-                            Total de Adolescentes e Jovens Registados: 
-                            {' '+beneficiariesTotal}
+                            Total de Adolescentes e Jovens Registados:
+                            {" " + beneficiariesTotal}
                           </p>
                           <p>
-                            Total de Adolescentes e Jovens do Sexo Feminino: 
-                            {' '+femaleTotal}
+                            Total de Adolescentes e Jovens do Sexo Feminino:
+                            {" " + femaleTotal}
                           </p>
                           <p>
-                            Total de Adolescentes e Jovens do Sexo Masculino: 
-                            {' '+maleTotal}
+                            Total de Adolescentes e Jovens do Sexo Masculino:
+                            {" " + maleTotal}
                           </p>
                           <p>
-                            Total de Beneficiárias no Indicador AGYW_PREV: 
-                            {' '+total}
+                            Total de Beneficiárias no Indicador AGYW_PREV:
+                            {" " + total}
                           </p>
 
-                          <p />
-                          <CompletedOnlyPrimaryPackage
-                            districtId={district.id}
-                          />
-                          <p />
-                          <CompletedPrimaryPackageAndSecondaryService
-                            districtId={district.id}
-                          />
-                          <p />
-                          <CompletedAtLeastOnePrimaryService
-                            districtId={district.id}
-                          />
-                          <p />
-                          <StartedServiceDidNotComplete
-                            districtId={district.id}
-                          />
-                          <p />
-                          <CompletedViolenceService districtId={district.id} />
-                          <p />
-                          <HadSchoolAllowance districtId={district.id} />
-                          <p />
-                          <CompletedSocialEconomicApproaches
-                            districtId={district.id}
-                          />
+                          <p>
+                            <CompletedOnlyPrimaryPackage
+                              districtId={district.id}
+                            />
+                          </p>
+                          <p>
+                            <CompletedPrimaryPackageAndSecondaryService
+                              districtId={district.id}
+                            />
+                          </p>
+                          <p>
+                            <CompletedAtLeastOnePrimaryService
+                              districtId={district.id}
+                            />
+                          </p>
+                          <p>
+                            <StartedServiceDidNotComplete
+                              districtId={district.id}
+                            />
+                          </p>
+                          <p>
+                            <CompletedViolenceService
+                              districtId={district.id}
+                            />
+                          </p>
+                          <p>
+                            <HadSchoolAllowance districtId={district.id} />
+                          </p>
+                          <p>
+                            <CompletedSocialEconomicApproaches
+                              districtId={district.id}
+                            />
+                          </p>
                         </Panel>
                       );
                     }
