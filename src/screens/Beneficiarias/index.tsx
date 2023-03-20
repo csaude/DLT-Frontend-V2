@@ -25,10 +25,9 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
     const [showAuthModal, setShowAuthModal] = useState(false);
     const [show, setShow] = React.useState(false);
     const [isInvalidCredentials, setIsInvalidCredentials] = useState(false);
-    const [serverBeneficiary, setServerBeneficiary] = useState<any>([])
+    const [serverBeneficiaries, setServerBeneficiaries] = useState<any>([])
     const [token, setToken] = useState('')
     const [beneficiariesResultLoaded, setBeneficiariesResultLoaded] = useState(false)
-    const [syncBeneficiaries, setSyncBeneficiaries] = useState<any>()
     const toast = useToast();
     const syncronize = () => {
         sync({ username: loggedUser.username })
@@ -342,7 +341,7 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
                         setShowAuthModal(true)
                     } else {   
                         setToken(response.token)
-                        getServerBeneficiary(searchField,response.token)
+                        getServerBeneficiaries(searchField,response.token)
                         setShowAuthModal(false)          
                     }
                 })
@@ -352,7 +351,7 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
                 });
     }
     
-    const getServerBeneficiary = async(nui, token)=> {
+    const getServerBeneficiaries = async(nui, token)=> {
         setShowAuthModal(true)
         await fetch(
                 `${BENEFICIARY_TO_SYNC_URL}?nui=${nui}&userId=${userId}`
@@ -399,27 +398,9 @@ useEffect(() => {
 }, [isInvalidCredentials]);
 
 useEffect(()=>{
-    setServerBeneficiaries([])
     setBeneficiariesResultLoaded(false)
 }, [searchField])
 
-const handleChangeSelection = (event,beneficiaryId) =>{
-
-    console.log('-----event-----',event)
-    console.log('-----ben id-----',beneficiaryId)
-
-    if(event==true){
-      if(!syncBeneficiaries.includes(beneficiaryId)){
-        setSyncBeneficiaries([...syncBeneficiaries,beneficiaryId])
-    }
-    }else{
-        setSyncBeneficiaries(syncBeneficiaries.filter((item: any)=>{return item !== beneficiaryId}))
-    }     
-}
-
-useEffect(()=>{
-    console.log('----Sync Ben-----',syncBeneficiaries)
-},[syncBeneficiaries])
 
 const renderServerItem = (data: any) => (
         <TouchableHighlight
@@ -491,7 +472,7 @@ const renderServerItem = (data: any) => (
         if(token ===''){
             setShowAuthModal(true)
         }else{
-             getServerBeneficiary(searchField,token)
+             getServerBeneficiaries(searchField,token)
         }
     }
 
