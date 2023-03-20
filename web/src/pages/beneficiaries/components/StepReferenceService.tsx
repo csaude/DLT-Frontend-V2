@@ -5,6 +5,7 @@ import moment from 'moment';
 import { DeleteFilled, PlusOutlined } from '@ant-design/icons';
 import { query as queryUser } from '@app/utils/users';
 import { query as queryBeneficiary } from "@app/utils/beneficiary";
+import { query as beneficiaryInterventionQuery } from '../../../utils/beneficiaryIntervention';
 import { queryByType } from '@app/utils/service'
 
 const { Option } = Select;
@@ -29,7 +30,6 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
     const [interventions, setInterventions] = useState<any>();
     const [selectedService, setSelectedService] = useState<any>();
     
-    const selectedIntervention = (reference !== undefined ? reference?.beneficiaries?.beneficiariesInterventionses : beneficiary?.beneficiariesInterventionses);
     beneficiary = (reference !== undefined ? reference?.beneficiaries : beneficiary);
 
     const showDrawer = (record: any) => {
@@ -46,7 +46,6 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
                 const getAllData = await queryByType(firstStepValues?.serviceType);
                 setServicesList(getAllData);
             }
-            setInterventions(data1.beneficiariesInterventionses);
 
 
             if( reference !== undefined){
@@ -57,6 +56,10 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
                 const data = await queryUser( localStorage.user);
                 setUser(data);
             }
+        }
+        const fetchBeneficiariesInterventionses = async () => { 
+             const benIntervs = await beneficiaryInterventionQuery(beneficiary?.id);
+             setInterventions(benIntervs);
         }
 
         if( reference !== undefined){
@@ -76,10 +79,10 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
             }
 
         }
-        if (selectedIntervention !== undefined) {
 
-            fetchData().catch(error => console.log(error));
-        }
+        fetchData().catch(error => console.log(error));
+
+        fetchBeneficiariesInterventionses().catch(err => console.log(err))
 
     }, [firstStepValues]);
 
