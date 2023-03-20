@@ -10,7 +10,7 @@ import { database } from '../../database';
 import { Context } from '../../routes/DrawerNavigator';
 import StepperButton from './components/StapperButton';
 import styles from './styles';
-import { sync } from '../../database/sync';
+import { sync, customSyncBeneficiary } from '../../database/sync';
 import { SuccessHandler, ErrorHandler } from "../../components/SyncIndicator";
 import { BENEFICIARY_TO_SYNC_URL } from '../../services/api';
 import { Formik } from 'formik';
@@ -476,6 +476,25 @@ const renderServerItem = (data: any) => (
         }
     }
 
+    const handleSyncCustomBeneficiary =()=>{
+        const userId = loggedUser.online_id !== undefined?  loggedUser.online_id : loggedUser.id
+        customSyncBeneficiary({ nui: searchField, userId })
+                .then(() => {
+                    // setServerBeneficiaries([])
+                    toast.show({
+                    placement: "top",
+                    render: () => {
+                        return (<SuccessHandler />);
+                    }
+                })})
+                .catch(() => toast.show({
+                    placement: "top",
+                    render: () => {
+                        return (<ErrorHandler />);
+                    }
+                }));
+        }
+
     return (
         <>
             <View style={styles.container}>
@@ -531,7 +550,7 @@ const renderServerItem = (data: any) => (
                                 onRowDidOpen={onRowDidOpen}
                             />
                             <Button  
-                            onPress={()=>{}} colorScheme="primary">
+                            onPress={()=>handleSyncCustomBeneficiary()} colorScheme="primary">
                                                                     Sincronizar Beneficiária(o)
                             </Button>    
                         </>
