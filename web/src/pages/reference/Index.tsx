@@ -132,7 +132,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                 referredBy: {
                     id: values.referredBy
                 },
-                users: {
+                notifyTo: {
                     id: values.notifyTo
                 },
                 us: {

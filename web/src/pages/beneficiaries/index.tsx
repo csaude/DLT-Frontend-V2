@@ -136,7 +136,7 @@ const BeneficiariesList: React.FC = () => {
                 referredBy: {
                     id: values.referredBy
                 },
-                users: {
+                notifyTo: {
                     id: values.notifyTo
                 },
                 us: {
@@ -170,7 +170,7 @@ const BeneficiariesList: React.FC = () => {
                 
             }else{
                 setAddStatus(true);
-                
+                console.log(payload);
                 const { data } = await addRef(payload);
 
                 message.success({
