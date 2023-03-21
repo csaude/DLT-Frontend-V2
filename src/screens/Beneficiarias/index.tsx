@@ -490,12 +490,10 @@ const renderServerItem = (data: any) => (
                         return (<SuccessHandler />);
                     }
                 })})
-                .catch(() => toast.show({
-                    placement: "top",
-                    render: () => {
-                        return (<ErrorHandler />);
-                    }
-                }));
+                .catch(error => {
+                    showToast('Falha de Conexão', 'Por favor contacte o suporte!');
+                    console.log(error);
+                });
         }
 
     return (

@@ -57,9 +57,7 @@ export async function customSyncBeneficiary({ nui, userId }) {
               throw new Error(await response.text());
             }         
             const {changes, timestamp} = await response.json();
-
-            // console.log('-----------sync changes------------',changes)
-       
+      
             return {changes, timestamp};
         },
         pushChanges: async () => { },
