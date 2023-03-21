@@ -524,7 +524,7 @@ const renderServerItem = (data: any) => (
                                             <HStack>
                                                 <InfoIcon mt="1"  />
                                                 <Text fontSize="sm" color="coolGray.800">
-                                                    Get from server ?
+                                                    Buscar do servidor ?
                                                 </Text>
                                             </HStack>
                                             <Button onPress={() => getAuth()}>
