@@ -92,6 +92,14 @@ const styles = StyleSheet.create({
       backgroundColor: 'red',
       right: 0,
   },
+
+  checkboxContainer: {
+    flexDirection: 'row',
+    marginBottom: 20,
+  },
+  checkbox: {
+    alignSelf: 'center',
+  },
   });
 
   export default styles;
