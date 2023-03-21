@@ -14,7 +14,7 @@ export interface Reference {
   referredBy: {
       id:string
   },
-  users: {
+  notifyTo: {
       id:string
   },
   us: {
