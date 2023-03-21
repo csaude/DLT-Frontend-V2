@@ -28,6 +28,7 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
     const [serverBeneficiaries, setServerBeneficiaries] = useState<any>([])
     const [token, setToken] = useState('')
     const [beneficiariesResultLoaded, setBeneficiariesResultLoaded] = useState(false)
+    const [refreshData, setRefreshData] = useState(false)
     const toast = useToast();
     const syncronize = () => {
         sync({ username: loggedUser.username })
@@ -286,6 +287,7 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
                 ).fetch()
                 setUserBeneficiaries(neiBeneficiaries)
             }
+            setRefreshData(false)
     }
 
     useEffect(()=>{
@@ -297,7 +299,7 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
            /** is first time the user logs, is using API* */  
             getUserBeneficiaries(loggedUser?.id) 
         }          
-    },[loggedUser])
+    },[loggedUser, refreshData])
 
     const filteredBeneficiaries = userBeneficiaries?.filter(beneficiarie => (beneficiarie._raw.nui).toLowerCase().includes(searchField.toLowerCase()))
     // const sortedBeneficiaries = filteredBeneficiaries.sort((benf1, benf2) => benf2._raw.nui.localeCompare(benf1._raw.nui));
@@ -480,7 +482,8 @@ const renderServerItem = (data: any) => (
         const userId = loggedUser.online_id !== undefined?  loggedUser.online_id : loggedUser.id
         customSyncBeneficiary({ nui: searchField, userId })
                 .then(() => {
-                    // setServerBeneficiaries([])
+                    setRefreshData(true)
+                    setServerBeneficiaries([])
                     toast.show({
                     placement: "top",
                     render: () => {
@@ -551,11 +554,11 @@ const renderServerItem = (data: any) => (
                             />
                             <Button  
                             onPress={()=>handleSyncCustomBeneficiary()} colorScheme="primary">
-                                                                    Sincronizar Beneficiária(o)
+                                Sincronizar Beneficiária(o)
                             </Button>    
                         </>
                         }
-                        {serverBeneficiaries.length < 1 && beneficiariesResultLoaded &&
+                        {serverBeneficiaries.length < 1 && beneficiariesResultLoaded && !refreshData &&
                             <View><Text>Nenhum(a) Beneficiária(o) foi encontrada com o NUI: {searchField}</Text></View>
                         }
                     </> 
