@@ -51,22 +51,15 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
     const [isDisEnable, setIsDisEnable] = useState(false);
     const [isProvEnable, setIsProvEnable] = useState(false);
     const [isDatePickerVisible2, setIsDatePickerVisible2] = useState(false);
-    const [datePickerValue2, setDatePickerValue2] = useState<any>(new Date());
     const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
-    const [datePickerValue, setDatePickerValue] = useState<any>(new Date());
     const [step, setStep] = useState(1);
     const [showModal, setShowModal] = useState(false);
     const [newNui, setNewNui] = useState();
-    const [province, setProvince] = useState<any>()
     const [district, setDistrict] = useState<any>()
     const [isDateRequired, setIsDateRequired] = useState<any>(true);
     const [age, setAge] = useState<any>(undefined);
-    const [birthDate, setBirthDate] = useState<any>(undefined);
     const [schoolInfoEnabled, setSchoolInfoEnabled] = useState<any>(true);
     const [deficiencyTypeEnabled, setDeficiencyTypeEnabled] = useState<any>(true);
-    const [childrenEnabled, setChildrenEnabled] = useState<any>(true);
-    const [gbvInfoEnabled, setGbvInfoEnabled] = useState<any>(true);
-    const [sexExploitationTimeEnabled, setSexExploitationTimeEnabled] = useState<any>(true);
     const userDetail = useSelector((state: RootState) => state.auth.userDetails);
 
     useEffect(() => {
@@ -210,7 +203,9 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
             phone_number: yup.number().nullable(true).positive('Apenas numeros!!!').integer('Apenas numeros!!!'),
         }),
         onSubmit: values => console.log(values),
-        validate: values => validate(values)
+        validate: values => validate(values),
+        validateOnBlur: false,
+        validateOnChange: false
     });
 
     const onNextStep = () => {
@@ -220,6 +215,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
 
         if (hasErrors) {
             setErrors(true);
+            formik.setErrors(errorsList);
         } else {
             setErrors(false);
             setStep(2);
@@ -232,6 +228,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
 
         if (hasErrors) {
             setErrors(true);
+            formik.setErrors(errorsList);
         } else {
 
             // save the Beneficiary locally
@@ -441,7 +438,6 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
     const onChangeDatePicker = (event, selectedDate) => {
 
         setIsDatePickerVisible(false);
-        setDatePickerValue(selectedDate);
         formik.setFieldValue('date_of_birth', selectedDate);
         setAge(calculateAge(selectedDate)+'');
         formik.setFieldValue('age', calculateAge(selectedDate)+'');
@@ -454,7 +450,6 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
     const onChangeDatePicker2 = (event, selectedDate) => {
 
         setIsDatePickerVisible2(false);
-        setDatePickerValue2(selectedDate);
 
         let tempDate = new Date(selectedDate);
         formik.setFieldValue('enrollment_date', moment(tempDate).format('YYYY-MM-DD'));
@@ -524,7 +519,6 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
             var today = new Date();
             var birthYear = today.getFullYear() - value;
             var bDate = new Date(birthYear + "-01-01");
-            setBirthDate(bDate);
             setAge(value);
 
             formik.setFieldValue('date_of_birth', getFormatedDate(bDate, 'yyyy-MM-DD'));
