@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { View, StyleSheet, TouchableOpacity, TouchableHighlight, ScrollView, Platform } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
-import { useToast, Alert, HStack, Text, Avatar, Pressable, Icon, Box, Select, Heading, VStack, FormControl, Input, Link, Button, CheckIcon, WarningOutlineIcon, Center, Flex, Badge, Modal, InfoIcon } from 'native-base';
+import { useToast, Alert, HStack, Text, Avatar, Pressable, Icon, Box, Select, Heading, VStack, FormControl, Input, Link, Button, CheckIcon, WarningOutlineIcon, Center, Flex, Badge, Modal, InfoIcon, IconButton, CloseIcon, Checkbox } from 'native-base';
 import { navigate } from '../../routes/NavigationRef';
 import withObservables from '@nozbe/with-observables';
 import { MaterialIcons, Ionicons } from "@native-base/icons";
@@ -10,8 +10,11 @@ import { database } from '../../database';
 import { Context } from '../../routes/DrawerNavigator';
 import StepperButton from './components/StapperButton';
 import styles from './styles';
-import { sync } from '../../database/sync';
+import { sync, customSyncBeneficiary } from '../../database/sync';
 import { SuccessHandler, ErrorHandler } from "../../components/SyncIndicator";
+import { BENEFICIARY_TO_SYNC_URL } from '../../services/api';
+import { Formik } from 'formik';
+import { LOGIN_API_URL } from '../../services/api';
 
 const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries_interventions }: any) => {    
     const [showModal, setShowModal] = useState(false);
@@ -19,6 +22,13 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
     const [userBeneficiaries, setUserBeneficiaries] = useState<any>([]);
     const [maskName,setMaskName,] = useState(false)
     const loggedUser: any = useContext(Context);
+    const [showAuthModal, setShowAuthModal] = useState(false);
+    const [show, setShow] = React.useState(false);
+    const [isInvalidCredentials, setIsInvalidCredentials] = useState(false);
+    const [serverBeneficiaries, setServerBeneficiaries] = useState<any>([])
+    const [token, setToken] = useState('')
+    const [beneficiariesResultLoaded, setBeneficiariesResultLoaded] = useState(false)
+    const [refreshData, setRefreshData] = useState(false)
     const toast = useToast();
     const syncronize = () => {
         sync({ username: loggedUser.username })
@@ -277,6 +287,7 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
                 ).fetch()
                 setUserBeneficiaries(neiBeneficiaries)
             }
+            setRefreshData(false)
     }
 
     useEffect(()=>{
@@ -288,12 +299,203 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
            /** is first time the user logs, is using API* */  
             getUserBeneficiaries(loggedUser?.id) 
         }          
-    },[loggedUser])
+    },[loggedUser, refreshData])
 
     const filteredBeneficiaries = userBeneficiaries?.filter(beneficiarie => (beneficiarie._raw.nui).toLowerCase().includes(searchField.toLowerCase()))
     // const sortedBeneficiaries = filteredBeneficiaries.sort((benf1, benf2) => benf2._raw.nui.localeCompare(benf1._raw.nui));
     const sortedBeneficiaries = filteredBeneficiaries.sort((ben1, ben2) => ben2._raw.online_id - ben1._raw.online_id);
-       
+
+    const userId = loggedUser?.online_id !== undefined?loggedUser?.online_id : loggedUser?.id
+    const toasty = useToast();
+
+   const showToast = (message, description) => {
+        return toasty.show({
+            placement: "top",
+            render: () => {
+                return (
+                    <Alert w="100%" status="error">
+                        <VStack space={2} flexShrink={1} w="100%">
+                            <HStack flexShrink={1} space={2} justifyContent="space-between">
+                                <HStack space={2} flexShrink={1}>
+                                    <Alert.Icon mt="1" />
+                                    <Text fontSize="md" color="coolGray.800">
+                                        {message}
+                                    </Text>
+                                </HStack>
+                                <IconButton variant="unstyled" _focus={{ borderWidth: 0 }} icon={<CloseIcon size="3" color="coolGray.600" />} />
+                            </HStack>
+                            <Box pl="6" _text={{ color: "coolGray.600" }}>
+                                {description}
+                            </Box>
+                        </VStack>
+                    </Alert>
+                );
+            }
+        });
+    }
+
+    const handleAuthorization = async(values)=>{
+        await fetch(`${LOGIN_API_URL}?username=${values.username}&password=${encodeURIComponent(values.password)}`)
+                .then(response => response.json())
+                .then(async (response) => {
+                    if (response.status && response.status !== 200) { // unauthorized
+                        setIsInvalidCredentials(true);
+                        setShowAuthModal(true)
+                    } else {   
+                        setToken(response.token)
+                        getServerBeneficiaries(searchField,response.token)
+                        setShowAuthModal(false)          
+                    }
+                })
+                .catch(error => {
+                    showToast('Falha de Conexão', 'Por favor contacte o suporte!');
+                    console.log(error);
+                });
+    }
+    
+    const getServerBeneficiaries = async(nui, token)=> {
+        setShowAuthModal(true)
+        await fetch(
+                `${BENEFICIARY_TO_SYNC_URL}?nui=${nui}&userId=${userId}`
+                , {
+                method: 'GET',
+                headers: {
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`
+                }
+            }
+                ).then((response) => response.json())
+                 .then((data) => {
+                    setServerBeneficiaries(data)
+                    setBeneficiariesResultLoaded(true)
+            });
+        }
+
+     const ErrorInvalidPasswordHandler: React.FC = () => {
+    return (
+        <>
+            <Alert w="100%" variant="left-accent" colorScheme="error" status="error">
+                <VStack space={2} flexShrink={1} w="100%">
+                    <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
+                        <HStack space={2} flexShrink={1} alignItems="center">
+                            <Alert.Icon />
+                            <Text color="coolGray.800">
+                                Invalid Password!
+                            </Text>
+                        </HStack>
+                    </HStack>
+                </VStack>
+            </Alert>
+
+        </>
+    );
+}
+
+useEffect(() => {
+  const timer = setTimeout(() => {
+      setIsInvalidCredentials(false)
+  }, 1000);
+  return () => clearTimeout(timer);
+}, [isInvalidCredentials]);
+
+useEffect(()=>{
+    setBeneficiariesResultLoaded(false)
+}, [searchField])
+
+
+const renderServerItem = (data: any) => (
+        <TouchableHighlight
+            onPress={() => console.log(data)}
+            style={styles.rowFront}
+            underlayColor={'#AAA'}
+            disabled
+        >
+            <HStack width="100%" px={4}
+                flex={1} space={5} alignItems="center">          
+              
+    
+                <Avatar color="white" bg={randomHexColor()} >
+                    {
+                        maskName ? 
+                        "D"  : 
+                        data.item.name.charAt(0).toUpperCase() + data.item.surname.charAt(0).toUpperCase()}
+                    
+                </Avatar>
+
+                <View style={{width:"50%"}}>
+                    <HStack>
+                        <Text color="warmGray.400" _dark={{ color: "warmGray.200" }}>
+                            NUI:
+                        </Text>
+                        <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
+                            {` ${data.item.district.code}/${data.item.nui}`}
+                        </Text>
+                    </HStack>
+                    <HStack style={{alignContent:'center'}}>
+                        <View style={{paddingTop:5}}><Ionicons name="person" size={11} color="#17a2b8"/></View>
+                        
+                        <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
+                           {maskName ? 'DREAMS'+data.item.nui  : ` ${data.item.name} ${data.item.surname}`}
+                        </Text>
+                    </HStack>
+                    <HStack>
+                        <View style={{paddingTop:5}}><Ionicons name="navigate" size={11} color="#17a2b8"/></View>
+                        <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
+                        {` ${data.item.locality.name}`}
+                        </Text>
+                    </HStack>
+                </View>
+                <View >
+                    <Text color="darkBlue.800"></Text>
+                    <HStack>
+                        <View style={{paddingTop:5}}><Ionicons name="calendar" size={11} color="#17a2b8"/></View>
+                        <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
+                        {` ${age(data.item.dateOfBirth)} Anos`}
+                        </Text>
+                    </HStack>
+                    <HStack>
+                        <Badge colorScheme="info">
+                            {   (data.item.entryPoint === "1") ?
+                                    "US" :
+                                (data.item.entryPoint === "2") ?
+                                    "CM" : 
+                                    "ES"
+                            }
+                        </Badge>
+                    </HStack>
+                    
+                </View>
+            </HStack>
+        </TouchableHighlight>
+    );
+
+    const getAuth = () =>{
+        if(token ===''){
+            setShowAuthModal(true)
+        }else{
+             getServerBeneficiaries(searchField,token)
+        }
+    }
+
+    const handleSyncCustomBeneficiary =()=>{
+        const userId = loggedUser.online_id !== undefined?  loggedUser.online_id : loggedUser.id
+        customSyncBeneficiary({ nui: searchField, userId })
+                .then(() => {
+                    setRefreshData(true)
+                    setServerBeneficiaries([])
+                    toast.show({
+                    placement: "top",
+                    render: () => {
+                        return (<SuccessHandler />);
+                    }
+                })})
+                .catch(error => {
+                    showToast('Falha de Conexão', 'Por favor contacte o suporte!');
+                    console.log(error);
+                });
+        }
+
     return (
         <>
             <View style={styles.container}>
@@ -305,6 +507,7 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
                     </Box>
 
                 </View>
+                {(searchField=='' || filteredBeneficiaries.length > 0) &&
                 <SwipeListView
                     data={sortedBeneficiaries}
                     renderItem={renderItem}
@@ -314,7 +517,105 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
                     previewOpenValue={-40}
                     previewOpenDelay={3000}
                     onRowDidOpen={onRowDidOpen}
-                />
+                /> }
+                {filteredBeneficiaries.length < 1 && searchField !=='' && serverBeneficiaries.length < 1 && !beneficiariesResultLoaded &&
+                 <Center flex={1} px="3" >
+                             <VStack space={2} flexShrink={1}>
+                                            <HStack>
+                                                <InfoIcon mt="1"  />
+                                                <Text fontSize="sm" color="coolGray.800">
+                                                    Buscar do servidor ?
+                                                </Text>
+                                            </HStack>
+                                            <Button onPress={() => getAuth()}>
+                                               Sim
+                                            </Button>
+                                            <Button onPress={()=>setSearchField('')}>
+                                                Não
+                                            </Button>
+                                        </VStack>
+               </Center>
+                }
+                {filteredBeneficiaries.length < 1 && 
+                    <>              
+                    {serverBeneficiaries.length > 0 &&
+                        <>
+                            <SwipeListView
+                                data={serverBeneficiaries}
+                                renderItem={renderServerItem}
+                                //renderHiddenItem={renderHiddenItem}
+                                rightOpenValue={-112}
+                                previewRowKey={'0'}
+                                previewOpenValue={-40}
+                                previewOpenDelay={3000}
+                                onRowDidOpen={onRowDidOpen}
+                            />
+                            <Button  
+                            onPress={()=>handleSyncCustomBeneficiary()} colorScheme="primary">
+                                Sincronizar Beneficiária(o)
+                            </Button>    
+                        </>
+                        }
+                        {serverBeneficiaries.length < 1 && beneficiariesResultLoaded && !refreshData &&
+                            <View><Text>Nenhum(a) Beneficiária(o) foi encontrada com o NUI: {searchField}</Text></View>
+                        }
+                    </> 
+                }
+
+                <Center>
+                    <Modal isOpen={showAuthModal && token ===''} onClose={() => setShowAuthModal(false)}>
+                        <Modal.Content maxWidth="400px">
+                            <Modal.CloseButton />
+                            <Modal.Header>Sincronizar Beneficiária(o)</Modal.Header>
+                            <Modal.Body>
+                                <ScrollView>
+                                    <Box alignItems='center'>
+                                        {/* <Ionicons name="md-checkmark-circle" size={100} color="#0d9488" /> */}
+                                        <Alert w="100%" status="success">
+                                            <VStack space={2} flexShrink={1}>
+                                                <HStack>
+                                                    <InfoIcon mt="1"  />
+                                                    <Text fontSize="sm" color="coolGray.800">
+                                                        Confirme as credenciais para sincronizar um(a) Beneficiario(a)!
+                                                    </Text>
+                                                </HStack>                                              
+                                                     <Formik
+                                                        initialValues={{ username: loggedUser.username, password :'' }}
+                                                        onSubmit={
+                                                            values => { handleAuthorization(values)  }
+                                                        }
+                                                    >
+                                                        {({ handleChange, handleBlur, handleSubmit, values }) => (
+                                                        <View>
+                                                            <FormControl isRequired>
+                                                                    <FormControl.Label>Password</FormControl.Label>
+                                                                    <Input type={show ? "text" : "password"} onBlur={handleBlur('password')}
+                                                                        InputRightElement={
+                                                                            <Pressable onPress={() => setShow(!show)}>
+                                                                                <Icon as={<MaterialIcons name={show ? "visibility" : "visibility-off"} />} size={5} mr="2" color="muted.400" />
+                                                                            </Pressable>}
+                                                                        placeholder="Insira a Password" onChangeText={handleChange('password')}
+                                                                        value={values.password} />
+                                                                   
+                                                                </FormControl>  
+                                                                {isInvalidCredentials && <ErrorInvalidPasswordHandler />}
+                                                                <Button  isLoadingText="Autenticando" onPress={handleSubmit} my="10" colorScheme="primary">
+                                                                    Autorizar
+                                                                </Button>    
+                                                        </View>
+                                                        )}
+                                                    </Formik>                                             
+                                            </VStack>
+                                        </Alert>
+                                        <Text >
+                                        </Text>
+                                    </Box>
+                                </ScrollView>
+                            </Modal.Body>
+                        </Modal.Content>
+                    </Modal>
+                </Center>
+
                 <Center flex={1} px="3" >
                     <StepperButton onAdd={() => setShowModal(true)}
                         onRefresh={syncronize}
