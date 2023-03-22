@@ -48,8 +48,12 @@ const UserDropdown = () => {
 
   useEffect(() => {
     const handleTabClose = event => {
-      event.preventDefault();
-      dispatch(logoutUser());
+      if (event.currentTarget?.performance.navigation.type === 1) {
+        return
+      }else{
+        event.preventDefault();
+        dispatch(logoutUser());
+      }
     };
     window.addEventListener('beforeunload', handleTabClose);
     return () => {
