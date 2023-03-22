@@ -73,8 +73,8 @@ const ReportAgyw = () => {
       const districtsIds = selectedDistricts.map((district) => {
         return district.id;
       });
-      const startDate = moment(initialDate).format("YYYYMMDD")
-      const endDate =  moment(finalDate).format("YYYYMMDD")
+      const startDate = moment(initialDate).format("YYYY-MM-DD")
+      const endDate =  moment(finalDate).format("YYYY-MM-DD")
            
       const responseData = await agywPrevQuery(
         districtsIds,
