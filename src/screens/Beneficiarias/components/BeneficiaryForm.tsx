@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { TouchableHighlight, TouchableOpacity } from 'react-native';
-import { View, HStack, Text, VStack, FormControl, Input, Stack, InputGroup, InputLeftAddon, TextArea, Center, Icon, Box, IconButton, Flex, Heading, Divider, Button, Radio, WarningOutlineIcon, Modal, ScrollView, Alert, Checkbox, useToast } from 'native-base';
+import { View, HStack, Text, VStack, FormControl, Input, Stack, InputGroup, InputLeftAddon, TextArea, Center, Icon, Box, IconButton, Flex, Heading, Divider, Button, Radio, WarningOutlineIcon, Modal, ScrollView, Alert, Checkbox, useToast, CheckCircleIcon } from 'native-base';
 import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
 import { MaterialIcons, Ionicons, MaterialCommunityIcons } from "@native-base/icons";
 import { useFormik } from 'formik';
@@ -67,6 +67,8 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
     const [gbvInfoEnabled, setGbvInfoEnabled] = useState<any>(true);
     const [sexExploitationTimeEnabled, setSexExploitationTimeEnabled] = useState<any>(true);
     const userDetail = useSelector((state: RootState) => state.auth.userDetails);
+    const [searchPartner, setSearchPartner] = useState('');
+    const [partnerExists,setPartnerExists] = useState(false)
 
     useEffect(() => {
         const fetchProvincesData = async () => {
@@ -145,24 +147,29 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             }
             const fetchPartners = async () => {
                 const partnersQ = await database.get('beneficiaries').query(
-                        Q.where('gender', '1'),
-                    ).fetch();
-                const partinersSerialized = partnersQ.map(item=>item._raw)
-                setPartners(partinersSerialized);
+                            Q.where('gender', '1'),
+                            Q.where('online_id', beneficiarie.partner_id)
+                        ).fetch();
+                const benefPartiner = partnersQ[0]?._raw;
+                setSearchPartner(benefPartiner?.nui);
             }
 
+            fetchPartners().catch(error => console.log(error))
             fetchDistricstData().catch(error => console.log(error));
             fetchLocalitiesData().catch(error => console.log(error));
             fetchUssData().catch(error => console.log(error));
             fetchNeighborhoodsData().catch(error => console.log(error));
-            fetchPartners().catch(error => console.log(error))
+            
 
             setValue(beneficiarie?.vblt_lives_with.split(','));
             setSchoolInfoEnabled(beneficiarie.vblt_is_student == 1);
             setDeficiencyTypeEnabled(beneficiarie.vblt_is_deficient == 1);
             setChildrenEnabled(beneficiarie.vblt_pregnant_before == 1);
             setGbvInfoEnabled(beneficiarie.vblt_vbg_victim == 1);
-            setSexExploitationTimeEnabled(beneficiarie.vblt_sexual_exploitation == 1);        
+            setSexExploitationTimeEnabled(beneficiarie.vblt_sexual_exploitation == 1);    
+            
+            const currentPartner = partners.filter(item=>{return item.online_id == beneficiarie.online_id})            
+            setSearchPartner(currentPartner[0]?.nui)
         }
     }, []);
     const toast = useToast();
@@ -677,6 +684,23 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
         );
     }
 
+    const handleSearchPartner = async(e: any) => {
+        setSearchPartner(e)
+        if(e.length == 7 ){      
+            const partnersQ = await database.get('beneficiaries').query(
+                            Q.where('gender', '1'),
+                            Q.where('nui',e)
+                        ).fetch();
+            const benefPartiner = partnersQ[0]?._raw;
+            if(benefPartiner){
+                setPartnerExists(true)
+            }else{
+                setPartnerExists(false)
+            }
+            formik.setFieldValue('partner_id', benefPartiner?.online_id);
+        }
+    };
+
     return (
         <>
             <View style={{ flex: 1, backgroundColor: "white" }}>
@@ -965,23 +989,13 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                     </FormControl.ErrorMessage>
                                 </FormControl>
                                 <FormControl >
-                                    <FormControl.Label>NUI do Parceiro</FormControl.Label>
-                                    <Picker
-                                        selectedValue={formik.values.partner_id}
-                                        onValueChange={(itemValue, itemIndex) => {
-                                            if (itemIndex !== 0) {
-                                                formik.setFieldValue('partner_id', itemValue);
-                                            }
-                                        }
-                                        }>
-
-                                        <Picker.Item label="-- Seleccione o NUI do Parceiro --" value="0" />
-                                        {
-                                            partners.map(item => (
-                                                <Picker.Item key={item.online_id} label={item.nui} value={item.online_id} />
-                                            ))
-                                        }
-                                    </Picker>
+                                    <FormControl.Label>NUI do Parceiro  {partnerExists && <CheckCircleIcon size="5" mt="0.5" color="emerald.500" />}</FormControl.Label>
+                                    <FormControl>
+                                        <Input onBlur={()=>{}} 
+                                            placeholder="Introduza o NUI..." 
+                                            onChangeText={handleSearchPartner} 
+                                            value={searchPartner} />
+                                    </FormControl>
                                 </FormControl>
 
                             </VStack>
