@@ -503,8 +503,6 @@ const BeneficiariesList: React.FC = () => {
     }
 
     const handleGlobalSearch = async () =>{
-        console.log('-----search NUI----', searchNui)
-        console.log('-------NUI-----', nui)
         if(searchNui !== undefined){
             setNui(searchNui)
         }
