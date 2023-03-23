@@ -439,7 +439,12 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                             </Alert>
 
                             <Formik initialValues={initialValues}
-                                onSubmit={onSubmit} validate={validate} enableReinitialize={true}>
+                                onSubmit={onSubmit} 
+                                validate={validate} 
+                                enableReinitialize={true}
+                                validateOnChange={false}
+                                validateOnBlur={false}
+                            >
                                 {({
                                     handleChange,
                                     handleBlur,
