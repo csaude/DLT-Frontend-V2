@@ -4,7 +4,7 @@ import { pagedQuery, query } from '../../utils/beneficiary';
 import { query as queryUser } from '../../utils/users';
 import classNames from "classnames";
 import {matchSorter} from "match-sorter";
-import { Badge, Button, message, Card, Input, Space, Table, Typography, Form, ConfigProvider } from 'antd';
+import { Badge, Button, message, Card, Input, Space, Table, Typography, Form, ConfigProvider, Row, Col } from 'antd';
 import ptPT  from 'antd/lib/locale-provider/pt_PT';
 import Highlighter from 'react-highlight-words';
 import 'antd/dist/antd.css';
@@ -55,7 +55,10 @@ const BeneficiariesList: React.FC = () => {
 
     const interventionSelector = useSelector((state: any) => state?.intervention);
     const userSelector = useSelector((state: any) => state?.user);
-
+    const [searchNui, setSearchNui] = useState<any>()
+    const [nui, setNui] = useState('')
+    let data
+    
     const getBeneficiaryIntervention = (beneficiaryId) =>{
         const currentInterventin = interventionSelector?.interventions?.map(item => {if(item[1]==beneficiaryId){
             return item[0]
@@ -82,7 +85,7 @@ const BeneficiariesList: React.FC = () => {
         const fetchData = async () => {
           
             const user = await queryUser(localStorage.user);
-            const data = await pagedQuery(getUserParams(user), currentPageIndex, pageSize);
+            data = await pagedQuery(getUserParams(user), currentPageIndex, pageSize,nui);
 
             const sortedBeneficiaries = data.sort((benf1, benf2) => moment(benf2.dateCreated).format('YYYY-MM-DD').localeCompare(moment(benf1.dateCreated).format('YYYY-MM-DD')));
 
@@ -112,7 +115,7 @@ const BeneficiariesList: React.FC = () => {
     
         fetchData().catch(error => console.log(error));
     
-    }, [modalVisible, currentPageIndex]);
+    }, [modalVisible, currentPageIndex, nui]);
 
     const handleAddRef = async (values:any) => {
     
@@ -498,6 +501,14 @@ const BeneficiariesList: React.FC = () => {
     const loadNextPage = () =>{
         setCurrentPageIndex(currentPageIndex+1)
     }
+
+    const handleGlobalSearch = async () =>{
+        console.log('-----search NUI----', searchNui)
+        console.log('-------NUI-----', nui)
+        if(searchNui !== undefined){
+            setNui(searchNui)
+        }
+    }
     
     return (
         
@@ -516,7 +527,27 @@ const BeneficiariesList: React.FC = () => {
                             </Button>
                             </Space>
                         }
-                >                
+                >   
+                
+                <Row gutter={16} >
+                    <Col className="gutter-row" span={4}>
+                        <Form.Item
+                            name="nui"
+                            label="Nui"
+                            initialValue={searchNui}
+                        >
+                            <Input placeholder="Pesquisar por NUI" 
+                                value={searchNui} 
+                                onChange={e => setSearchNui(e.target.value) }                                 
+                                />
+                        </Form.Item>
+                    </Col>
+                    <Col className="gutter-row" span={12}>
+                        <Button type="primary" onClick={handleGlobalSearch}>
+                            Search
+                        </Button>
+                    </Col>
+                </Row>              
                     <ConfigProvider locale={ptPT}>
                         <Table
                             rowKey="id"
