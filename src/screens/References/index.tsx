@@ -153,7 +153,7 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
                         <View style={{ paddingTop: 5 }}><Ionicons name="notifications" size={11} color="#17a2b8" /></View>
                         <View style={{ paddingTop: 5 }}><Ionicons name="person" size={11} color="#17a2b8" /></View>
                         <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
-                            {` ${getUser(data.item?._raw.notify_to).name + " " + getUser(data.item?._raw.notify_to).surname}`}
+                            {` ${getUser(data.item?._raw.notify_to)?.name + " " + getUser(data.item?._raw.notify_to)?.surname}`}
                         </Text>
                     </HStack>
                    
@@ -227,7 +227,7 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
     };
 
     const filteredReferences = userReferences?.filter(reference =>
-        (getUser(reference.notify_to).name + " " + getUser(reference.notify_to).surname).toLowerCase().includes(searchField.toLowerCase())
+        (getUser(reference.notify_to)?.name + " " + getUser(reference.notify_to)?.surname).toLowerCase().includes(searchField.toLowerCase())
     )
 
     const getUserReferences = async (currentUserId) =>{

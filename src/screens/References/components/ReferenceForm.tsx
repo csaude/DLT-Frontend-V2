@@ -68,7 +68,6 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                 onChangePE('1');
                 onChangeServiceType('1');
                 setEntryPointEnabled(false);
-                // console.log(beneficiary);
             } else {
                 setEntryPoints([{ "id": '1', "name": "US" }, { "id": '2', "name": "CM" }, { "id": '3', "name": "ES" }]);
             }
@@ -90,7 +89,9 @@ const ReferenceForm: React.FC = ({ route }: any) => {
             status: 1
         },
         onSubmit: values => console.log(values),
-        validate: values => validate(values)
+        validate: values => validate(values),
+        validateOnBlur: false,
+        validateOnChange: false
     });
 
     const onNextStep = () => {
@@ -99,6 +100,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
 
         if (hasErrors) {
             setErrors(true);
+            formik.setErrors(errorsList);
         } else {
             setErrors(false);
         }
@@ -120,6 +122,10 @@ const ReferenceForm: React.FC = ({ route }: any) => {
 
     const validate = (values: any) => {
         const errors: any = {};
+
+        if (!values.refer_to) {
+            errors.refer_to = 'Obrigatório';
+        }
 
         if (!values.book_number) {
             errors.book_number = 'Obrigatório';
