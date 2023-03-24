@@ -3,7 +3,7 @@ import { edit as editRef, Reference, pagedQueryByUser} from '@app/utils/referenc
 import {allDistrict} from '@app/utils/district';
 import { query  as query1} from '@app/utils/users';
 import { query as beneficiaryQuery } from '@app/utils/beneficiary';
-import { Card, Table, Button, Space, Badge, Input, Typography, Form, message, ConfigProvider } from 'antd';
+import { Card, Table, Button, Space, Badge, Input, Typography, Form, message, ConfigProvider, Row, Col } from 'antd';
 import ptPT  from 'antd/lib/locale-provider/pt_PT';
 import 'antd/dist/antd.css';
 import moment from 'moment';
@@ -41,6 +41,9 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
     const [ loggedUser, setLoggedUser ] = useState<any>(undefined);
     const [ currentPageIndex, setCurrentPageIndex] = useState(0);
     const pageSize = 500;
+    const [searchNui, setSearchNui] = useState<any>()
+    const [nui, setNui] = useState('')
+    let data
     
     const navigate = useNavigate();
 
@@ -54,7 +57,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
     useEffect(() => {
         
         const fetchData = async () => {
-            const data = await pagedQueryByUser(localStorage.user, currentPageIndex, pageSize);
+            data = await pagedQueryByUser(localStorage.user, currentPageIndex, pageSize, nui);
             const districts = await allDistrict();
             const loggedUser = await query1(localStorage.user);
 
@@ -78,7 +81,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
     
         fetchData().catch(error => console.log(error));
     
-    }, [modalVisible, currentPageIndex]);
+    }, [modalVisible, currentPageIndex, nui]);
 
     const handleModalRefVisible = (flag?: boolean) => {
         setReferenceModalVisible(!!flag);
@@ -488,11 +491,37 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
     const loadNextPage = () =>{
         setCurrentPageIndex(currentPageIndex+1)
     }
+
+    const handleGlobalSearch = async () =>{
+        if(searchNui !== undefined){
+            setNui(searchNui)
+        }
+    }
     
     return (
         <>
             <Title />
             <Card title="Lista de Referências e Contra-Referências" bordered={false} headStyle={{color:"#17a2b8"}}>
+
+                <Row gutter={16} >
+                    <Col className="gutter-row" span={4}>
+                        <Form.Item
+                            name="nui"
+                            label="NUI"
+                            initialValue={searchNui}
+                        >
+                            <Input placeholder="Pesquisar por NUI" 
+                                value={searchNui} 
+                                onChange={e => setSearchNui(e.target.value) }                                 
+                                />
+                        </Form.Item>
+                    </Col>
+                    <Col className="gutter-row" span={12}>
+                        <Button type="primary" onClick={handleGlobalSearch}>
+                            Pesquisar
+                        </Button>
+                    </Col>
+                </Row>  
                
                 <ConfigProvider locale={ptPT}>
                     <Table

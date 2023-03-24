@@ -531,7 +531,7 @@ const BeneficiariesList: React.FC = () => {
                     <Col className="gutter-row" span={4}>
                         <Form.Item
                             name="nui"
-                            label="Nui"
+                            label="NUI"
                             initialValue={searchNui}
                         >
                             <Input placeholder="Pesquisar por NUI" 
@@ -542,7 +542,7 @@ const BeneficiariesList: React.FC = () => {
                     </Col>
                     <Col className="gutter-row" span={12}>
                         <Button type="primary" onClick={handleGlobalSearch}>
-                            Search
+                            Pesquisar
                         </Button>
                     </Col>
                 </Row>              

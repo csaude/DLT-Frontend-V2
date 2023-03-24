@@ -68,8 +68,9 @@ export async function queryByUser(id: any) {
   return res;
 }
 
-export async function pagedQueryByUser(id?: any, pageIndex?: any, pageSize?: any) {
-    const res = await select('/api/references/byUser/'.concat(id).concat('?pageIndex='.concat(pageIndex).concat('&pageSize=').concat(pageSize)));
+export async function pagedQueryByUser(id?: any, pageIndex?: any, pageSize?: any, searchNui?: any) {
+    const res = await select('/api/references/byUser/'.concat(id).concat('?pageIndex='.concat(pageIndex).concat('&pageSize=').concat(pageSize)).concat('&searchNui=').concat(searchNui));
+
     return res;
 }
 
