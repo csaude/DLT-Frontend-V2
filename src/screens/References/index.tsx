@@ -12,6 +12,7 @@ import { sync } from '../../database/sync';
 import { SuccessHandler, ErrorHandler } from "../../components/SyncIndicator";
 
 import styles from './styles';
+import moment from 'moment';
 
 
 const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, services, subServices }: any) => {
@@ -227,8 +228,10 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
     };
 
     const filteredReferences = userReferences?.filter(reference =>
-        (getUser(reference.notify_to)?.name + " " + getUser(reference.notify_to)?.surname).toLowerCase().includes(searchField.toLowerCase())
+        reference.beneficiary_nui.includes(searchField.toLowerCase())
     )
+
+    const sortedReferences = filteredReferences.sort((ref1, ref2) => ref1._raw.status - ref2._raw.status || moment(ref2._raw.date_created).format('YYYY-MM-DD').localeCompare(moment(ref1._raw.date_created).format('YYYY-MM-DD')));
 
     const getUserReferences = async (currentUserId) =>{
         const userDetailsCollection = database.get('user_details')
@@ -270,7 +273,7 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
                 </Box>
             </View>
             <SwipeListView
-                data={filteredReferences}
+                data={sortedReferences}
                 renderItem={renderItem}
                 renderHiddenItem={renderHiddenItem}
                 rightOpenValue={-110}
