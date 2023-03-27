@@ -49,7 +49,6 @@ const BeneficiariesList: React.FC = () => {
     const [ district, setDistrict] = useState<any[]>([]);
     const [ partners, setPartners] = useState<any[]>([]);
     const [ visibleName, setVisibleName ] = useState<any>(true);
-    const [ loading, setLoading ] = useState(true);
     const [ currentPageIndex, setCurrentPageIndex ] = useState(0);
     const pageSize = 500;
 
@@ -58,6 +57,7 @@ const BeneficiariesList: React.FC = () => {
     const [searchNui, setSearchNui] = useState<any>()
     const [nui, setNui] = useState('')
     let data
+    const [dataLoading, setDataLoading] = useState(false)
     
     const getBeneficiaryIntervention = (beneficiaryId) =>{
         const currentInterventin = interventionSelector?.interventions?.map(item => {if(item[1]==beneficiaryId){
@@ -73,21 +73,16 @@ const BeneficiariesList: React.FC = () => {
         return currentNames
     }
 
-    useEffect(()=>{
-        if(beneficiaries.length>0){
-            setLoading(false);
-        }
-    },[beneficiaries])
-
     let searchInput ;
     useEffect(() => { 
 
         const fetchData = async () => {
-          
+            setDataLoading(true)
             const user = await queryUser(localStorage.user);
             data = await pagedQuery(getUserParams(user), currentPageIndex, pageSize,nui);
 
             const sortedBeneficiaries = data.sort((benf1, benf2) => moment(benf2.dateCreated).format('YYYY-MM-DD').localeCompare(moment(benf1.dateCreated).format('YYYY-MM-DD')));
+            setDataLoading(false)
 
             setUser(user);
             setBeneficiaries(sortedBeneficiaries);
@@ -567,7 +562,7 @@ const BeneficiariesList: React.FC = () => {
                             </Button>
                         </Space>
                     </ConfigProvider> 
-                    {<LoadingModal modalVisible={loading} />}
+                    {<LoadingModal modalVisible={dataLoading} />}
                 </Card>
             <ViewBeneficiary 
                 {...parentMethods}

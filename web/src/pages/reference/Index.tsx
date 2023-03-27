@@ -31,7 +31,6 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
     const [ beneficiary, setBeneficiary ] = useState<any>(undefined);
     const [ modalVisible, setModalVisible ] = useState<boolean>(false);
     const [ referenceModalVisible, setReferenceModalVisible ] = useState<boolean>(false);
-    const [ loading, setLoading ] = useState(true);
     const [ partners, setPartners] = useState<any[]>([]);
     const [ referredPartners, setReferredPartners] = useState<any[]>([]);
     const [ referrers, setReferrers] = useState<any[]>([]);
@@ -44,19 +43,15 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
     const [searchNui, setSearchNui] = useState<any>()
     const [nui, setNui] = useState('')
     let data
+    const [dataLoading, setDataLoading] = useState(false)
     
     const navigate = useNavigate();
-
-    useEffect(()=>{
-        if(references.length>0){
-            setLoading(false);
-        }
-    },[references])
 
     let searchInput;
     useEffect(() => {
         
         const fetchData = async () => {
+            setDataLoading(true)
             data = await pagedQueryByUser(localStorage.user, currentPageIndex, pageSize, nui);
             const districts = await allDistrict();
             const loggedUser = await query1(localStorage.user);
@@ -68,6 +63,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             const referredPartners = referreds.map(referred => referred?.partners).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
 
             const sortedReferences = data.sort((ref1, ref2) => (ref1.status - ref2.status) || moment(ref2.dateCreated).format('YYYY-MM-DD').localeCompare(moment(ref1.dateCreated).format('YYYY-MM-DD')));
+            setDataLoading(false)
 
             setReferences(sortedReferences);
             setPartners(referringPartners);
@@ -540,7 +536,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                             </Button>
                         </Space>
                 </ConfigProvider>
-                {<LoadingModal modalVisible={loading} />}
+                {<LoadingModal modalVisible={dataLoading} />}
             </Card>
             <ViewReferral
                 {...parentMethods}
