@@ -18,7 +18,6 @@ const options = [
   { label: 'CM', value: '2' },
   { label: 'ES', value: '3' },
 ];
-let index = 0;
 
 const ReferenceInterventionForm = ({ form, reference, records, beneficiary }: any) => {
   const [interventions, setInterventions] = React.useState<any>(undefined);
@@ -32,6 +31,7 @@ const ReferenceInterventionForm = ({ form, reference, records, beneficiary }: an
   const nextServiceIndex = useSelector((state:any)=>state.referenceIntervention.nextServiceIndex)
   const dispatch = useDispatch()
 
+  console.log('------------nextServiceIndex------------',nextServiceIndex)
   const RequiredFieldMessage = "Obrigatório!";
 
   useEffect(() => {
@@ -45,14 +45,17 @@ const ReferenceInterventionForm = ({ form, reference, records, beneficiary }: an
       setInterventions(data);
     }
 
-    if((records.length-1)==nextServiceIndex){
-            setNextService(records[0])
-            dispatch(updateNextServiceIndex(index+1))
-        }
-        else{            
-            setNextService(records[index+1])
-            dispatch(updateNextServiceIndex(index+1))
+    if((records.length-1)==0)
+    {
+        setNextService(records[0])
+        dispatch(updateNextServiceIndex(1))
     }
+    else{            
+        setNextService(records[nextServiceIndex])
+        dispatch(updateNextServiceIndex(nextServiceIndex+1))
+    }
+
+    console.log('---------nextService-----------',nextService)
 
      if (selectedIntervention !== undefined) {
       form.setFieldsValue({ areaServicos: selectedIntervention?.services?.serviceType === '1' ? 'CLINIC' : 'COMMUNITY' });
@@ -66,7 +69,7 @@ const ReferenceInterventionForm = ({ form, reference, records, beneficiary }: an
     }else{
       const lastIntervention = records[records.length-1]
       form.setFieldsValue({ areaServicos: lastIntervention?.services?.serviceType === '1' ? 'CLINIC' : 'COMMUNITY' });
-      form.setFieldsValue({ service: nextService?.id + '' });
+      form.setFieldsValue({ service: records.filter(item=>{return item.id == nextService?.id})[0]  });
       form.setFieldsValue({ entryPoint: reference.referTo });
       form.setFieldsValue({ location: reference.us? reference.us?.id + '' : undefined });
       form.setFieldsValue({ provider: reference.notifyTo?.username });
@@ -79,7 +82,7 @@ const ReferenceInterventionForm = ({ form, reference, records, beneficiary }: an
 
     setIsLoading(true);
 
-  }, []);
+  }, [nextService]);
 
   const onChangeServices = async (value: any) => {
     const data = await querySubServiceByService(value);
@@ -153,6 +156,7 @@ const ReferenceInterventionForm = ({ form, reference, records, beneficiary }: an
           name="service"
           label="Serviço"
           rules={[{ required: true, message: RequiredFieldMessage }]}
+          initialValue={nextService?.id}
         >
           <Select placeholder="Select Serviço" onChange={onChangeServices} >
             {records?.map((item) => (
