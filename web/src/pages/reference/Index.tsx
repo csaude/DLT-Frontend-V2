@@ -3,7 +3,7 @@ import { edit as editRef, Reference, pagedQueryByUser} from '@app/utils/referenc
 import {allDistrict} from '@app/utils/district';
 import { query  as query1} from '@app/utils/users';
 import { query as beneficiaryQuery } from '@app/utils/beneficiary';
-import { Card, Table, Button, Space, Badge, Input, Typography, Form, message, ConfigProvider } from 'antd';
+import { Card, Table, Button, Space, Badge, Input, Typography, Form, message, ConfigProvider, Row, Col } from 'antd';
 import ptPT  from 'antd/lib/locale-provider/pt_PT';
 import 'antd/dist/antd.css';
 import moment from 'moment';
@@ -31,7 +31,6 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
     const [ beneficiary, setBeneficiary ] = useState<any>(undefined);
     const [ modalVisible, setModalVisible ] = useState<boolean>(false);
     const [ referenceModalVisible, setReferenceModalVisible ] = useState<boolean>(false);
-    const [ loading, setLoading ] = useState(true);
     const [ partners, setPartners] = useState<any[]>([]);
     const [ referredPartners, setReferredPartners] = useState<any[]>([]);
     const [ referrers, setReferrers] = useState<any[]>([]);
@@ -41,20 +40,19 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
     const [ loggedUser, setLoggedUser ] = useState<any>(undefined);
     const [ currentPageIndex, setCurrentPageIndex] = useState(0);
     const pageSize = 500;
+    const [searchNui, setSearchNui] = useState<any>()
+    const [nui, setNui] = useState('')
+    let data
+    const [dataLoading, setDataLoading] = useState(false)
     
     const navigate = useNavigate();
-
-    useEffect(()=>{
-        if(references.length>0){
-            setLoading(false);
-        }
-    },[references])
 
     let searchInput;
     useEffect(() => {
         
         const fetchData = async () => {
-            const data = await pagedQueryByUser(localStorage.user, currentPageIndex, pageSize);
+            setDataLoading(true)
+            data = await pagedQueryByUser(localStorage.user, currentPageIndex, pageSize, nui);
             const districts = await allDistrict();
             const loggedUser = await query1(localStorage.user);
 
@@ -65,6 +63,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             const referredPartners = referreds.map(referred => referred?.partners).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
 
             const sortedReferences = data.sort((ref1, ref2) => (ref1.status - ref2.status) || moment(ref2.dateCreated).format('YYYY-MM-DD').localeCompare(moment(ref1.dateCreated).format('YYYY-MM-DD')));
+            setDataLoading(false)
 
             setReferences(sortedReferences);
             setPartners(referringPartners);
@@ -78,7 +77,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
     
         fetchData().catch(error => console.log(error));
     
-    }, [modalVisible, currentPageIndex]);
+    }, [modalVisible, currentPageIndex, nui]);
 
     const handleModalRefVisible = (flag?: boolean) => {
         setReferenceModalVisible(!!flag);
@@ -132,7 +131,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                 referredBy: {
                     id: values.referredBy
                 },
-                users: {
+                notifyTo: {
                     id: values.notifyTo
                 },
                 us: {
@@ -319,9 +318,9 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             title: 'Distrito', 
             dataIndex: '', 
             key: 'type',
-            render: (text, record)  => record?.beneficiaries?.neighborhood?.locality?.district?.name,
+            render: (text, record)  => record?.beneficiaries?.district?.name,
             filters: filterItem(district)(i => i.name),
-            onFilter: (value, record) => record?.beneficiaries?.neighborhood?.locality?.district?.name == value,
+            onFilter: (value, record) => record?.beneficiaries?.district?.name == value,
             filterSearch: true,
         },
         { 
@@ -488,11 +487,37 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
     const loadNextPage = () =>{
         setCurrentPageIndex(currentPageIndex+1)
     }
+
+    const handleGlobalSearch = async () =>{
+        if(searchNui !== undefined){
+            setNui(searchNui)
+        }
+    }
     
     return (
         <>
             <Title />
             <Card title="Lista de Referências e Contra-Referências" bordered={false} headStyle={{color:"#17a2b8"}}>
+
+                <Row gutter={16} >
+                    <Col className="gutter-row" span={4}>
+                        <Form.Item
+                            name="nui"
+                            label="NUI"
+                            initialValue={searchNui}
+                        >
+                            <Input placeholder="Pesquisar por NUI" 
+                                value={searchNui} 
+                                onChange={e => setSearchNui(e.target.value) }                                 
+                                />
+                        </Form.Item>
+                    </Col>
+                    <Col className="gutter-row" span={12}>
+                        <Button type="primary" onClick={handleGlobalSearch}>
+                            Pesquisar
+                        </Button>
+                    </Col>
+                </Row>  
                
                 <ConfigProvider locale={ptPT}>
                     <Table
@@ -511,7 +536,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                             </Button>
                         </Space>
                 </ConfigProvider>
-                {<LoadingModal modalVisible={loading} />}
+                {<LoadingModal modalVisible={dataLoading} />}
             </Card>
             <ViewReferral
                 {...parentMethods}

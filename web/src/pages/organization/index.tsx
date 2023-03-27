@@ -68,17 +68,29 @@ const OrganizationList: React.FC = () => {
                 organization.status = 1;
                 organization.createdBy = localStorage.user;
 
-                const { data } = await add(organization);
-                organizationSort(data);
+                const result = organizations.some(organizations => organizations.name.replace(/\s+/g, '').toLowerCase() === values.name.replace(/\s+/g, '').toLowerCase());
+                if (result){
 
-                message.success({
-                    content: 'Registado com Sucesso!', className: 'custom-class',
-                    style: {
-                        marginTop: '10vh',
-                    }
-                });
+                    message.error({
+                        content: ' Organização repetida.', className: 'custom-class',
+                        style: {
+                            marginTop: '10vh',
+                        }
+                    })
+
+                }else{
+                    const { data } = await add(organization);
+                    organizationSort(data);
+    
+                    message.success({
+                        content: 'Registado com Sucesso!', className: 'custom-class',
+                        style: {
+                            marginTop: '10vh',
+                        }
+                    });
+                    handleOrganizationModalVisible(false);
+                }
             } else {
-                console.log('-------organization-------',organization)
                 organization.updatedBy = localStorage.user;
                 
                 const { data } = await edit(organization);
@@ -94,8 +106,8 @@ const OrganizationList: React.FC = () => {
                         marginTop: '10vh',
                     }
                 });
+                handleOrganizationModalVisible(false);
             }
-            handleOrganizationModalVisible(false);
         }).catch(error => {
             const errSt = JSON.stringify(error);
             const errObj = JSON.parse(errSt);
@@ -139,17 +151,6 @@ const OrganizationList: React.FC = () => {
                     </Button>
                     <Button onClick={() => handleReset(clearFilters, selectedKeys, confirm, dataIndex)} size="small" style={{ width: 90 }}>
                         Limpar
-                    </Button>
-                    <Button
-                        type="link"
-                        size="small"
-                        onClick={() => {
-                            confirm({ closeDropdown: false });
-                            setSearchText(selectedKeys[0]);
-                            setSearchedColumn(dataIndex);
-                        }}
-                    >
-                        Filtrar
                     </Button>
                 </Space>
             </div>

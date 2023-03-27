@@ -299,7 +299,12 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                                 </HStack>
                             </Alert>
                             <Formik initialValues={initialValues}
-                                onSubmit={validateBeneficiaryIntervention} validate={validate} enableReinitialize={true}>
+                                onSubmit={validateBeneficiaryIntervention} 
+                                validate={validate} 
+                                enableReinitialize={true}
+                                validateOnChange={false}
+                                validateOnBlur={false}
+                            >
                                 {({
                                     handleChange,
                                     handleBlur,

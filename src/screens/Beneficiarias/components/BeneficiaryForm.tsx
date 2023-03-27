@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { TouchableHighlight, TouchableOpacity } from 'react-native';
-import { View, HStack, Text, VStack, FormControl, Input, Stack, InputGroup, InputLeftAddon, TextArea, Center, Icon, Box, IconButton, Flex, Heading, Divider, Button, Radio, WarningOutlineIcon, Modal, ScrollView, Alert, Checkbox, useToast } from 'native-base';
+import { View, HStack, Text, VStack, FormControl, Input, Stack, InputGroup, InputLeftAddon, TextArea, Center, Icon, Box, IconButton, Flex, Heading, Divider, Button, Radio, WarningOutlineIcon, Modal, ScrollView, Alert, Checkbox, useToast, CheckCircleIcon, WarningTwoIcon, WarningIcon } from 'native-base';
 import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
 import { MaterialIcons, Ionicons, MaterialCommunityIcons } from "@native-base/icons";
 import { useFormik } from 'formik';
@@ -54,23 +54,21 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
     const [isDisEnable, setIsDisEnable] = useState(false);
     const [isProvEnable, setIsProvEnable] = useState(false);
     const [isDatePickerVisible2, setIsDatePickerVisible2] = useState(false);
-    const [datePickerValue2, setDatePickerValue2] = useState<any>(new Date());
     const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
-    const [datePickerValue, setDatePickerValue] = useState<any>(new Date());
     const [step, setStep] = useState(1);
     const [showModal, setShowModal] = useState(false);
     const [newNui, setNewNui] = useState();
-    const [province, setProvince] = useState<any>()
     const [district, setDistrict] = useState<any>()
     const [isDateRequired, setIsDateRequired] = useState<any>(true);
     const [age, setAge] = useState<any>(undefined);
-    const [birthDate, setBirthDate] = useState<any>(undefined);
     const [schoolInfoEnabled, setSchoolInfoEnabled] = useState<any>(true);
     const [deficiencyTypeEnabled, setDeficiencyTypeEnabled] = useState<any>(true);
     const [childrenEnabled, setChildrenEnabled] = useState<any>(true);
     const [gbvInfoEnabled, setGbvInfoEnabled] = useState<any>(true);
     const [sexExploitationTimeEnabled, setSexExploitationTimeEnabled] = useState<any>(true);
     const userDetail = useSelector((state: RootState) => state.auth.userDetails);
+    const [searchPartner, setSearchPartner] = useState('');
+    const [partnerExists,setPartnerExists] = useState(false)
 
     useEffect(() => {
         const fetchProvincesData = async () => {
@@ -149,24 +147,30 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             }
             const fetchPartners = async () => {
                 const partnersQ = await database.get('beneficiaries').query(
-                        Q.where('gender', '1'),
-                    ).fetch();
-                const partinersSerialized = partnersQ.map(item=>item._raw)
-                setPartners(partinersSerialized);
+                            Q.where('gender', '1'),
+                            Q.where('online_id', beneficiarie.partner_id)
+                        ).fetch();
+                const benefPartiner = partnersQ[0]?._raw;
+     
+                handleSearchPartner(benefPartiner?.nui);
             }
 
+            fetchPartners().catch(error => console.log(error))
             fetchDistricstData().catch(error => console.log(error));
             fetchLocalitiesData().catch(error => console.log(error));
             fetchUssData().catch(error => console.log(error));
             fetchNeighborhoodsData().catch(error => console.log(error));
-            fetchPartners().catch(error => console.log(error))
+            
 
             setValue(beneficiarie?.vblt_lives_with.split(','));
             setSchoolInfoEnabled(beneficiarie.vblt_is_student == 1);
             setDeficiencyTypeEnabled(beneficiarie.vblt_is_deficient == 1);
             setChildrenEnabled(beneficiarie.vblt_pregnant_before == 1);
             setGbvInfoEnabled(beneficiarie.vblt_vbg_victim == 1);
-            setSexExploitationTimeEnabled(beneficiarie.vblt_sexual_exploitation == 1);        
+            setSexExploitationTimeEnabled(beneficiarie.vblt_sexual_exploitation == 1);    
+            
+            const currentPartner = partners.filter(item=>{return item.online_id == beneficiarie.online_id})            
+            setSearchPartner(currentPartner[0]?.nui)
         }
     }, []);
     const toast = useToast();
@@ -224,7 +228,9 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             phone_number: yup.number().nullable(true).positive('Apenas numeros!!!').integer('Apenas numeros!!!'),
         }),
         onSubmit: values => console.log(values),
-        validate: values => validate(values)
+        validate: values => validate(values),
+        validateOnBlur: false,
+        validateOnChange: false
     });
 
     const onNextStep = () => {
@@ -234,9 +240,14 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
 
         if (hasErrors) {
             setErrors(true);
+            formik.setErrors(errorsList);
         } else {
             setErrors(false);
             setStep(2);
+        }
+
+        if(!partnerExists){
+            setErrors(true)
         }
     };
 
@@ -246,6 +257,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
 
         if (hasErrors) {
             setErrors(true);
+            formik.setErrors(errorsList);
         } else {
 
             // save the Beneficiary locally
@@ -262,6 +274,10 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             setErrors(false);
             setStep(3);
   
+        }
+
+        if(!partnerExists){
+            setErrors(true)
         }
     };
 
@@ -545,6 +561,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
 
         if (hasErrors) {
             setErrors(true);
+            formik.setErrors(errorsList);
         } else {
 
             // save the Beneficiary locally
@@ -568,7 +585,6 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
     const onChangeDatePicker = (event, selectedDate) => {
 
         setIsDatePickerVisible(false);
-        setDatePickerValue(selectedDate);
         formik.setFieldValue('date_of_birth', selectedDate);
         setAge(calculateAge(selectedDate)+'');
         formik.setFieldValue('age', calculateAge(selectedDate)+'');
@@ -581,8 +597,6 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
     const onChangeDatePicker2 = (event, selectedDate) => {
 
         setIsDatePickerVisible2(false);
-        setDatePickerValue2(selectedDate);
-
         let tempDate = new Date(selectedDate);
         formik.setFieldValue('enrollment_date', moment(tempDate).format('YYYY-MM-DD'));
     }
@@ -663,21 +677,38 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             var today = new Date();
             var birthYear = today.getFullYear() - value;
             var bDate = new Date(birthYear + "-01-01");
-            setBirthDate(bDate);
             setAge(value);
 
-            formik.setFieldValue('date_of_birth', getFormatedDate(birthDate, 'yyyy-MM-DD'));
+            formik.setFieldValue('date_of_birth', getFormatedDate(bDate, 'yyyy-MM-DD'));
             formik.setFieldValue('age', value);
         }
 
         return (
             <Picker enabled={!isDateRequired} onValueChange={onchangeAge} selectedValue={age} placeholder="Seleccione a Idade" >
+                <Picker.Item label="-- Seleccione a Idade --" value="0" />
                 {idades.map(item => (
                     <Picker.Item key={item} value={item} label={item}></Picker.Item>
                 ))}
             </Picker>
         );
     }
+
+    const handleSearchPartner = async(e: any) => {
+        setSearchPartner(e)
+        if(e.length == 7 ){      
+            const partnersQ = await database.get('beneficiaries').query(
+                            Q.where('gender', '1'),
+                            Q.where('nui',e)
+                        ).fetch();
+            const benefPartiner = partnersQ[0]?._raw;
+            if(benefPartiner){
+                setPartnerExists(true)
+            }else{
+                setPartnerExists(false)
+            }
+            formik.setFieldValue('partner_id', benefPartiner?.online_id);
+        }
+    };
 
     return (
         <>
@@ -873,7 +904,8 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                 <FormControl isRequired isInvalid={'entry_point' in formik.errors}>
                                     <FormControl.Label>Ponto de Entrada</FormControl.Label>
                                     <Picker
-                                        selectedValue={formik.values.entry_point}
+                                        selectedValue={formik.values.entry_point ? formik.values.entry_point : loggedUser.entry_point}
+
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
                                                 formik.setFieldValue('entry_point', itemValue);
@@ -966,23 +998,16 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                     </FormControl.ErrorMessage>
                                 </FormControl>
                                 <FormControl >
-                                    <FormControl.Label>NUI do Parceiro</FormControl.Label>
-                                    <Picker
-                                        selectedValue={formik.values.partner_id}
-                                        onValueChange={(itemValue, itemIndex) => {
-                                            if (itemIndex !== 0) {
-                                                formik.setFieldValue('partner_id', itemValue);
-                                            }
-                                        }
-                                        }>
-
-                                        <Picker.Item label="-- Seleccione o NUI do Parceiro --" value="0" />
-                                        {
-                                            partners.map(item => (
-                                                <Picker.Item key={item.online_id} label={item.nui} value={item.online_id} />
-                                            ))
-                                        }
-                                    </Picker>
+                                    <FormControl.Label>NUI do Parceiro  
+                                        {partnerExists && <CheckCircleIcon size="5" mt="0.5" color="emerald.500" />}
+                                        {!partnerExists && <WarningTwoIcon  />}
+                                    </FormControl.Label>
+                                    <FormControl>
+                                        <Input onBlur={()=>{}} 
+                                            placeholder="Introduza o NUI..." 
+                                            onChangeText={handleSearchPartner} 
+                                            value={searchPartner} />
+                                    </FormControl>
                                 </FormControl>
 
                             </VStack>

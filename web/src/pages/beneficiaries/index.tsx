@@ -4,7 +4,7 @@ import { pagedQuery, query } from '../../utils/beneficiary';
 import { query as queryUser } from '../../utils/users';
 import classNames from "classnames";
 import {matchSorter} from "match-sorter";
-import { Badge, Button, message, Card, Input, Space, Table, Typography, Form, ConfigProvider } from 'antd';
+import { Badge, Button, message, Card, Input, Space, Table, Typography, Form, ConfigProvider, Row, Col } from 'antd';
 import ptPT  from 'antd/lib/locale-provider/pt_PT';
 import Highlighter from 'react-highlight-words';
 import 'antd/dist/antd.css';
@@ -49,13 +49,16 @@ const BeneficiariesList: React.FC = () => {
     const [ district, setDistrict] = useState<any[]>([]);
     const [ partners, setPartners] = useState<any[]>([]);
     const [ visibleName, setVisibleName ] = useState<any>(true);
-    const [ loading, setLoading ] = useState(true);
     const [ currentPageIndex, setCurrentPageIndex ] = useState(0);
     const pageSize = 500;
 
     const interventionSelector = useSelector((state: any) => state?.intervention);
     const userSelector = useSelector((state: any) => state?.user);
-
+    const [searchNui, setSearchNui] = useState<any>()
+    const [nui, setNui] = useState('')
+    let data
+    const [dataLoading, setDataLoading] = useState(false)
+    
     const getBeneficiaryIntervention = (beneficiaryId) =>{
         const currentInterventin = interventionSelector?.interventions?.map(item => {if(item[1]==beneficiaryId){
             return item[0]
@@ -70,21 +73,16 @@ const BeneficiariesList: React.FC = () => {
         return currentNames
     }
 
-    useEffect(()=>{
-        if(beneficiaries.length>0){
-            setLoading(false);
-        }
-    },[beneficiaries])
-
     let searchInput ;
     useEffect(() => { 
 
         const fetchData = async () => {
-          
+            setDataLoading(true)
             const user = await queryUser(localStorage.user);
-            const data = await pagedQuery(getUserParams(user), currentPageIndex, pageSize);
+            data = await pagedQuery(getUserParams(user), currentPageIndex, pageSize,nui);
 
             const sortedBeneficiaries = data.sort((benf1, benf2) => moment(benf2.dateCreated).format('YYYY-MM-DD').localeCompare(moment(benf1.dateCreated).format('YYYY-MM-DD')));
+            setDataLoading(false)
 
             setUser(user);
             setBeneficiaries(sortedBeneficiaries);
@@ -112,7 +110,7 @@ const BeneficiariesList: React.FC = () => {
     
         fetchData().catch(error => console.log(error));
     
-    }, [modalVisible, currentPageIndex]);
+    }, [modalVisible, currentPageIndex, nui]);
 
     const handleAddRef = async (values:any) => {
     
@@ -136,7 +134,7 @@ const BeneficiariesList: React.FC = () => {
                 referredBy: {
                     id: values.referredBy
                 },
-                users: {
+                notifyTo: {
                     id: values.notifyTo
                 },
                 us: {
@@ -170,7 +168,7 @@ const BeneficiariesList: React.FC = () => {
                 
             }else{
                 setAddStatus(true);
-                
+                console.log(payload);
                 const { data } = await addRef(payload);
 
                 message.success({
@@ -363,7 +361,7 @@ const BeneficiariesList: React.FC = () => {
         { title: 'Código do Beneficiário (NUI)', dataIndex: '', key: 'nui', ...getColumnSearchProps('nui'),
             render: (text, record)  => (
                 <Text type="danger" >   
-                    {record.neighborhood?.locality?.district?.code}/{record.nui}
+                    {record.district?.code}/{record.nui}
                 </Text>),
         },
         { title: 'Nome do Beneficiário', dataIndex: 'name', key: 'name', ...getColumnSearchProps('name'),
@@ -415,9 +413,9 @@ const BeneficiariesList: React.FC = () => {
             render: (text, record)  => getEntryPoint(record.entryPoint) 
         },
         { title: 'Distrito', dataIndex: '', key: 'district',
-            render: (text, record)  => record.neighborhood?.locality?.district.name,
+            render: (text, record)  => record.district.name,
             filters: filterItem(district)(i => i?.name),
-            onFilter: (value, record) => record?.neighborhood?.locality?.district?.name == value,
+            onFilter: (value, record) => record?.district?.name == value,
             filterSearch: true,
         },
         { title: 'Idade', dataIndex: 'age', key: 'age',
@@ -498,6 +496,12 @@ const BeneficiariesList: React.FC = () => {
     const loadNextPage = () =>{
         setCurrentPageIndex(currentPageIndex+1)
     }
+
+    const handleGlobalSearch = async () =>{
+        if(searchNui !== undefined){
+            setNui(searchNui)
+        }
+    }
     
     return (
         
@@ -516,7 +520,27 @@ const BeneficiariesList: React.FC = () => {
                             </Button>
                             </Space>
                         }
-                >                
+                >   
+                
+                <Row gutter={16} >
+                    <Col className="gutter-row" span={4}>
+                        <Form.Item
+                            name="nui"
+                            label="NUI"
+                            initialValue={searchNui}
+                        >
+                            <Input placeholder="Pesquisar por NUI" 
+                                value={searchNui} 
+                                onChange={e => setSearchNui(e.target.value) }                                 
+                                />
+                        </Form.Item>
+                    </Col>
+                    <Col className="gutter-row" span={12}>
+                        <Button type="primary" onClick={handleGlobalSearch}>
+                            Pesquisar
+                        </Button>
+                    </Col>
+                </Row>              
                     <ConfigProvider locale={ptPT}>
                         <Table
                             rowKey="id"
@@ -538,7 +562,7 @@ const BeneficiariesList: React.FC = () => {
                             </Button>
                         </Space>
                     </ConfigProvider> 
-                    {<LoadingModal modalVisible={loading} />}
+                    {<LoadingModal modalVisible={dataLoading} />}
                 </Card>
             <ViewBeneficiary 
                 {...parentMethods}

@@ -1,6 +1,6 @@
 import {synchronize} from '@nozbe/watermelondb/sync';
 import { database } from './index';
-import { SYNC_API_URL } from '../services/api'
+import { SYNC_API_URL, CUSTOM_SYNC_URL } from '../services/api'
 
 export async function sync({ username }) {
     await synchronize({
@@ -42,5 +42,24 @@ export async function sync({ username }) {
               throw new Error(await response.text());
             }
         },
+    });
+}
+
+export async function customSyncBeneficiary({ nui, userId }) {
+    await synchronize({
+        database,
+        pullChanges: async ({lastPulledAt}) => {
+            const response = await fetch(
+              `${CUSTOM_SYNC_URL}/beneficiaries?lastPulledAt=${lastPulledAt}&nui=${nui}&userId=${userId}`,
+            );
+            if (!response.ok) {
+                
+              throw new Error(await response.text());
+            }         
+            const {changes, timestamp} = await response.json();
+      
+            return {changes, timestamp};
+        },
+        pushChanges: async () => { },
     });
 }

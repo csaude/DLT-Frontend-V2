@@ -10,6 +10,9 @@ export interface AuthState {
 const initialState: AuthState = {
   isLoggedIn: !!localStorage.getItem('token'),
   token: localStorage.getItem('token'),
+  user: {
+    provinces : []
+  },
   currentUser: {
     email: 'mail@example.com',
     picture: null,
@@ -27,6 +30,7 @@ export const authSlice = createSlice({
       localStorage.setItem('token', payload?.token);
       console.log(payload);
       state.user = payload?.account;
+      state.user.provinces = payload?.account.provinces;
       state.isLoggedIn = true;
       state.token = payload?.token;
       localStorage.setItem('name', payload?.account.name);

@@ -51,17 +51,31 @@ const SubServicesList: React.FC = () => {
             if (selectedSubService === undefined) {
                 subService.createdBy = localStorage.user;
                 subService.status = 1;
-                const { data } = await add(subService);
-                const ss = [...subServices, data];
-                const sortedSubServices = ss.sort((s1, s2) => s2.id - s1.id);
-                setSubServices(sortedSubServices);
 
-                message.success({
-                    content: 'Registado com Sucesso!', className: 'custom-class',
-                    style: {
-                        marginTop: '10vh',
-                    }
-                });
+                const result = subServices.some(subServices => subServices.name.replace(/\s+/g, '').toLowerCase() === values.name.replace(/\s+/g, '').toLowerCase());
+                if (result){
+
+                    message.error({
+                        content: ' Sub-Serviço repetido.', className: 'custom-class',
+                        style: {
+                            marginTop: '10vh',
+                        }
+                    })
+
+                }else{
+                    const { data } = await add(subService);
+                    const ss = [...subServices, data];
+                    const sortedSubServices = ss.sort((s1, s2) => s2.id - s1.id);
+                    setSubServices(sortedSubServices);
+    
+                    message.success({
+                        content: 'Registado com Sucesso!', className: 'custom-class',
+                        style: {
+                            marginTop: '10vh',
+                        }
+                    });
+                    handleSubServiceModalVisible(false);
+                }
             } else {
                 subService.updatedBy = localStorage.user;
                 subService.status = values.status;
@@ -78,8 +92,8 @@ const SubServicesList: React.FC = () => {
                         marginTop: '10vh',
                     }
                 });
+                handleSubServiceModalVisible(false);
             }
-            handleSubServiceModalVisible(false);
         }).catch(error => {
             const errSt = JSON.stringify(error);
             const errObj = JSON.parse(errSt);

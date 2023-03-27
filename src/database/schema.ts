@@ -80,7 +80,7 @@ export default appSchema({
           {name: 'username', type: 'string'},
           {name: 'password', type: 'string'},
           {name: 'entry_point', type: 'string'},
-          {name: 'status', type: 'string'},
+          {name: 'status', type: 'number', isIndexed: true },
           {name: "locality_id", type: "number", isIndexed: true },
           {name: "partner_id", type: "number" },
           {name: "profile_id", type: "number", isIndexed: true },

@@ -36,7 +36,7 @@ export function getUserParams(user: any) {
 
     var params;
     var level;
-    if (user.provinces.length === 0) {
+    if (user.provinces.length === 0 && user.districts.length === 0) {
         level = "CENTRAL";
         params = [];
     } else if (user.districts.length === 0) {
@@ -51,7 +51,7 @@ export function getUserParams(user: any) {
     }
 
     return {
-        profile: user.profiles.id,
+        userId: user.id,
         level: level,
         params: params.join(',')
     }

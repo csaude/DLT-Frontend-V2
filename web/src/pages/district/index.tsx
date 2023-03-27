@@ -65,15 +65,31 @@ const DistrictList: React.FC = () => {
                 district.status = 1;
                 district.createdBy = localStorage.user;
 
-                const { data } = await add(district);
-                districtSort(data);
+                const result = districts.some(district => district.name.replace(/\s+/g, '').toLowerCase() === values.name.replace(/\s+/g, '').toLowerCase());
+                if (result){
 
-                message.success({
-                    content: 'Registado com Sucesso!', className: 'custom-class',
-                    style: {
-                        marginTop: '10vh',
-                    }
-                });
+                    message.error({
+                        content: ' Distrito repetido.', className: 'custom-class',
+                        style: {
+                            marginTop: '10vh',
+                        }
+                    })
+
+                }else{
+                    
+                    const { data } = await add(district);
+                    districtSort(data);
+
+                    message.success({
+                        content: 'Registado com Sucesso!', className: 'custom-class',
+                        style: {
+                            marginTop: '10vh',
+                        }
+                    });
+
+                    handleDistrictModalVisible(false);
+                }
+                
             } else {
                 district.updatedBy = localStorage.user;
                 
@@ -90,8 +106,8 @@ const DistrictList: React.FC = () => {
                         marginTop: '10vh',
                     }
                 });
+                handleDistrictModalVisible(false);
             }
-            handleDistrictModalVisible(false);
         }).catch(error => {
             const errSt = JSON.stringify(error);
             const errObj = JSON.parse(errSt);
