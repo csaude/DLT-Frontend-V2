@@ -694,9 +694,8 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
     }
 
     const handleSearchPartner = async(e: any) => {
-        
+
         setSearchPartner(e) 
-        console.log('----------e---------',e)
 
         if(e === undefined || e===''){
             setSearchPartner(undefined)
