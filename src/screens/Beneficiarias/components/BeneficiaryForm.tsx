@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, HStack, Text, VStack, FormControl, Input, Stack, InputGroup, InputLeftAddon, Center, Box, Divider, Button, Radio, Modal, ScrollView, Alert, Checkbox, useToast, CheckCircleIcon } from 'native-base';
+import { View, HStack, Text, VStack, FormControl, Input, Stack, InputGroup, InputLeftAddon, Center, Box, Divider, Button, Radio, Modal, ScrollView, Alert, Checkbox, useToast, CheckCircleIcon, WarningTwoIcon } from 'native-base';
 import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
 import { Ionicons } from "@native-base/icons";
 import { useFormik } from 'formik';
@@ -147,7 +147,8 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                             Q.where('online_id', beneficiarie.partner_id)
                         ).fetch();
                 const benefPartiner = partnersQ[0]?._raw;
-                setSearchPartner(benefPartiner?.nui);
+     
+                handleSearchPartner(benefPartiner?.nui);
             }
 
             fetchPartners().catch(error => console.log(error))
@@ -243,6 +244,10 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             setErrors(false);
             setStep(2);
         }
+
+        if(!partnerExists){
+            setErrors(true)
+        }
     };
 
     const onNextStep2 = async () => {     
@@ -268,6 +273,10 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             setErrors(false);
             setStep(3);
   
+        }
+
+        if(!partnerExists){
+            setErrors(true)
         }
     };
 
@@ -988,7 +997,10 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                     </FormControl.ErrorMessage>
                                 </FormControl>
                                 <FormControl >
-                                    <FormControl.Label>NUI do Parceiro  {partnerExists && <CheckCircleIcon size="5" mt="0.5" color="emerald.500" />}</FormControl.Label>
+                                    <FormControl.Label>NUI do Parceiro  
+                                        {partnerExists && <CheckCircleIcon size="5" mt="0.5" color="emerald.500" />}
+                                        {!partnerExists && <WarningTwoIcon  />}
+                                    </FormControl.Label>
                                     <FormControl>
                                         <Input onBlur={()=>{}} 
                                             placeholder="Introduza o NUI..." 
