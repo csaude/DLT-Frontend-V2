@@ -1,21 +1,17 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { TouchableHighlight, TouchableOpacity } from 'react-native';
-import { View, HStack, Text, VStack, FormControl, Input, Stack, InputGroup, InputLeftAddon, TextArea, Center, Icon, Box, IconButton, Flex, Heading, Divider, Button, Radio, WarningOutlineIcon, Modal, ScrollView, Alert, Checkbox, useToast, CheckCircleIcon } from 'native-base';
+import { View, HStack, Text, VStack, FormControl, Input, Stack, InputGroup, InputLeftAddon, Center, Box, Divider, Button, Radio, Modal, ScrollView, Alert, Checkbox, useToast, CheckCircleIcon } from 'native-base';
 import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
-import { MaterialIcons, Ionicons, MaterialCommunityIcons } from "@native-base/icons";
+import { Ionicons } from "@native-base/icons";
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { Picker, PickerProps } from '@react-native-picker/picker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Q } from "@nozbe/watermelondb";
-import ModalSelector from 'react-native-modal-selector-searchable';
-import StepperButton from '../../Beneficiarias/components/StapperButton';
 import { database } from '../../../database';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import Spinner from 'react-native-loading-spinner-overlay';
-import { navigate, navigationRef } from '../../../routes/NavigationRef';
+import { navigationRef } from '../../../routes/NavigationRef';
 import moment from 'moment';
-import DatePicker, { getToday, getFormatedDate } from 'react-native-modern-datepicker';
+import DatePicker, { getFormatedDate } from 'react-native-modern-datepicker';
 import { Context } from '../../../routes/DrawerNavigator';
 import { calculateAge, getMaxDate, getMinDate } from '../../../models/Utils';
 import styles from './styles';
@@ -170,6 +166,9 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             
             const currentPartner = partners.filter(item=>{return item.online_id == beneficiarie.online_id})            
             setSearchPartner(currentPartner[0]?.nui)
+        }
+        else {
+            onChangeEntryPoint(loggedUser.entry_point);
         }
     }, []);
     const toast = useToast();

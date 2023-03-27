@@ -1,21 +1,17 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { TouchableHighlight, TouchableOpacity } from 'react-native';
-import { View, HStack, Text, VStack, FormControl, Input, Stack, InputGroup, InputLeftAddon, TextArea, Center, Icon, Box, IconButton, Flex, Heading, Divider, Button, Radio, WarningOutlineIcon, Modal, ScrollView, Alert, Checkbox } from 'native-base';
+import { View, HStack, Text, VStack, FormControl, Input, Stack, InputGroup, InputLeftAddon, Center, Box, Button, Radio, Modal, ScrollView, Alert, Checkbox } from 'native-base';
 import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
-import { MaterialIcons, Ionicons, MaterialCommunityIcons } from "@native-base/icons";
+import { Ionicons } from "@native-base/icons";
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { Picker, PickerProps } from '@react-native-picker/picker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Q } from "@nozbe/watermelondb";
-import ModalSelector from 'react-native-modal-selector-searchable';
-import StepperButton from './StapperButton';
 import { database } from '../../../database';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import Spinner from 'react-native-loading-spinner-overlay';
-import { navigate, navigationRef } from '../../../routes/NavigationRef';
+import { navigationRef } from '../../../routes/NavigationRef';
 import moment from 'moment';
-import DatePicker, { getToday, getFormatedDate } from 'react-native-modern-datepicker';
+import DatePicker, { getFormatedDate } from 'react-native-modern-datepicker';
 import { Context } from '../../../routes/DrawerNavigator';
 import { calculateAge, getMaxDate, getMinDate } from '../../../models/Utils';
 import styles from './styles';
@@ -147,6 +143,9 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
             setValue(beneficiarie?.vblt_lives_with.split(','));
             setSchoolInfoEnabled(beneficiarie.vblt_is_student == 1);
             setDeficiencyTypeEnabled(beneficiarie.vblt_is_deficient == 1);
+        }
+        else {
+            onChangeEntryPoint(loggedUser.entry_point);
         }
     }, []);
 
