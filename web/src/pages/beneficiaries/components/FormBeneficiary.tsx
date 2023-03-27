@@ -67,6 +67,7 @@ const BeneficiaryForm = ({ form, beneficiary, beneficiaries, modalVisible, handl
             ben.entryPoint = values.entry_point;
             ben.neighborhood = { "id": values.neighbourhood_id };
             ben.locality = values.locality;
+            ben.district = values.district;
             ben.partnerNUI = values.partner_nui;
             ben.vbltChildren = vblts.vblt_children;
             ben.vbltDeficiencyType = vblts.vblt_deficiency_type;
@@ -87,8 +88,7 @@ const BeneficiaryForm = ({ form, beneficiary, beneficiaries, modalVisible, handl
             const us = values.us;
 
             ben.createdBy = localStorage.user;
-            ben.partner = { "id": localStorage.organization };
-            ben.organizationId = localStorage.organization;
+            ben.partners = { "id": localStorage.organization };
             ben.us = { "id": us === undefined ? localStorage.us : us };
 
             const { data } = await add(ben);
@@ -130,6 +130,7 @@ const BeneficiaryForm = ({ form, beneficiary, beneficiaries, modalVisible, handl
             beneficiary.entryPoint = firstStepValues.entry_point;
             beneficiary.neighborhood = { "id": firstStepValues.neighbourhood_id };
             beneficiary.locality = firstStepValues.locality;
+            beneficiary.district = firstStepValues.district;
             beneficiary.partnerNUI = firstStepValues.partner_nui;
             beneficiary.vbltChildren = secondStepValues.vblt_children;
             beneficiary.vbltDeficiencyType = secondStepValues.vblt_deficiency_type;
