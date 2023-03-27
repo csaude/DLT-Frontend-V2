@@ -67,8 +67,8 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
     const [gbvInfoEnabled, setGbvInfoEnabled] = useState<any>(true);
     const [sexExploitationTimeEnabled, setSexExploitationTimeEnabled] = useState<any>(true);
     const userDetail = useSelector((state: RootState) => state.auth.userDetails);
-    const [searchPartner, setSearchPartner] = useState('');
-    const [partnerExists,setPartnerExists] = useState(false)
+    const [searchPartner, setSearchPartner] = useState<any>(undefined);
+    const [partnerHasErrors,setPartnerHasErrors] = useState(false)
 
     useEffect(() => {
         const fetchProvincesData = async () => {
@@ -246,7 +246,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             setStep(2);
         }
 
-        if(!partnerExists){
+        if(partnerHasErrors){
             setErrors(true)
         }
     };
@@ -276,7 +276,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
   
         }
 
-        if(!partnerExists){
+        if(partnerHasErrors){
             setErrors(true)
         }
     };
@@ -694,17 +694,26 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
     }
 
     const handleSearchPartner = async(e: any) => {
-        setSearchPartner(e)
-        if(e.length == 7 ){      
+
+        setSearchPartner(e) 
+
+        if(e === undefined || e===''){
+            setSearchPartner(undefined)
+            setPartnerHasErrors(false)
+        }
+        else if(e.length !== 7 ){ 
+            setPartnerHasErrors(true)
+        }
+        else if(e.length === 7 ){  
             const partnersQ = await database.get('beneficiaries').query(
-                            Q.where('gender', '1'),
-                            Q.where('nui',e)
-                        ).fetch();
+                                Q.where('gender', '1'),
+                                Q.where('nui',e)
+                            ).fetch();
             const benefPartiner = partnersQ[0]?._raw;
             if(benefPartiner){
-                setPartnerExists(true)
+                setPartnerHasErrors(false)
             }else{
-                setPartnerExists(false)
+                setPartnerHasErrors(true)
             }
             formik.setFieldValue('partner_id', benefPartiner?.online_id);
         }
@@ -999,8 +1008,8 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                 </FormControl>
                                 <FormControl >
                                     <FormControl.Label>NUI do Parceiro  
-                                        {partnerExists && <CheckCircleIcon size="5" mt="0.5" color="emerald.500" />}
-                                        {!partnerExists && <WarningTwoIcon  />}
+                                        {!partnerHasErrors && <CheckCircleIcon size="5" mt="0.5" color="emerald.500" />}
+                                        {partnerHasErrors && <WarningTwoIcon  />}
                                     </FormControl.Label>
                                     <FormControl>
                                         <Input onBlur={()=>{}} 
