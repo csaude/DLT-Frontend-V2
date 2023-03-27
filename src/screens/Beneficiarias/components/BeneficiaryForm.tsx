@@ -169,7 +169,11 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             setSearchPartner(currentPartner[0]?.nui)
         }
         else {
-            const entryPoint = formik.values.entry_point ? formik.values.entry_point : loggedUser.entry_point;
+            const entryPoint = formik.values.entry_point !== undefined ? 
+                                formik.values.entry_point : 
+                                loggedUser.entryPoint !== undefined ? 
+                                loggedUser.entryPoint : 
+                                loggedUser.entry_point;
             onChangeEntryPoint(entryPoint);
         }
     }, []);
