@@ -32,7 +32,8 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
     useEffect(() => {
         const fetchData = async () => {
             if (beneficiary === undefined) {
-                form.setFieldsValue({ entry_point: userEntryPoint });
+                const fieldEntryPoint = form.getFieldValue('entry_point');
+                form.setFieldsValue({entry_point: fieldEntryPoint ? fieldEntryPoint : userEntryPoint});
             }
 
             const loggedUser = await query(localStorage.user);
@@ -140,7 +141,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
     }
 
     const onChangeEntryPoint = async (e: any) => {
-        let locality = user?.localities.length === 1 ? user.localities[0] : form.getFieldValue('locality');
+        let locality = user?.localities.length === 1? user.localities[0].id : form.getFieldValue('locality');
         if (locality !== '' && locality !== undefined) {
             var payload = {
                 typeId: e?.target?.value === undefined ? e : e?.target?.value,

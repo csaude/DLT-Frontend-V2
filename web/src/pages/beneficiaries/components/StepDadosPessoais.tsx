@@ -35,9 +35,10 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
         const fetchData = async () => {
             const partners = beneficiaries.filter(b => b.gender == '1');
             setPartners(partners);
-
+        
             if(beneficiary === undefined) {
-                form.setFieldsValue({entry_point: userEntryPoint});
+                const fieldEntryPoint = form.getFieldValue('entry_point');
+                form.setFieldsValue({entry_point: fieldEntryPoint ? fieldEntryPoint : userEntryPoint});
             }
 
             const loggedUser = await query(localStorage.user);

@@ -169,7 +169,8 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             setSearchPartner(currentPartner[0]?.nui)
         }
         else {
-            onChangeEntryPoint(loggedUser.entry_point);
+            const entryPoint = formik.values.entry_point ? formik.values.entry_point : loggedUser.entry_point;
+            onChangeEntryPoint(entryPoint);
         }
     }, []);
     const toast = useToast();
