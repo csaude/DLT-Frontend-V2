@@ -21,7 +21,7 @@ export async function query(payload?: any) {
 
 export async function pagedQuery(payload?: any, pageIndex?: any, pageSize?: any, searchNui?: any) {
     let url: string;
-    if (payload.profile){
+    if (payload.userId){
       url = `/api/beneficiaries?${stringify(payload)}&pageIndex=${pageIndex}&pageSize=${pageSize}&searchNui=${searchNui}`;
     }
     else {
