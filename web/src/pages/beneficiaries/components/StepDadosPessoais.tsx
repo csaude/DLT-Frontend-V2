@@ -1,6 +1,6 @@
-import React, { Fragment, useEffect, useState } from 'react';
-import { Badge, Button, Steps, Row, Col, Input, message, InputNumber, Form, DatePicker, Checkbox, Select, Radio, Divider, SelectProps } from 'antd';
-import { allProvinces, queryDistrictsByProvinces, queryLocalitiesByDistricts, queryNeighborhoodsByLocalities, queryUsByLocalities } from '@app/utils/locality';
+import React, { useEffect, useState } from 'react';
+import { Steps, Row, Col, Input, InputNumber, Form, DatePicker, Checkbox, Select, Radio, Divider, SelectProps } from 'antd';
+import { allProvinces, queryDistrictsByProvinces, queryLocalitiesByDistricts, queryNeighborhoodsByLocalities } from '@app/utils/locality';
 import './index.css';
 import moment from 'moment';
 import { query } from '@app/utils/users';
@@ -35,9 +35,10 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
         const fetchData = async () => {
             const partners = beneficiaries.filter(b => b.gender == '1');
             setPartners(partners);
-
+        
             if(beneficiary === undefined) {
-                form.setFieldsValue({entry_point: userEntryPoint});
+                const fieldEntryPoint = form.getFieldValue('entry_point');
+                form.setFieldsValue({entry_point: fieldEntryPoint ? fieldEntryPoint : userEntryPoint});
             }
 
             const loggedUser = await query(localStorage.user);
@@ -82,18 +83,10 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
                 if (dataLocalities.length === 1) {
                     const dataNeighborhood = await queryNeighborhoodsByLocalities({ localities: [dataLocalities[0].id] });
                     setNeighborhoods(dataNeighborhood);
-
-                    if (loggedUser.us.length > 0) {
-                        setUs(loggedUser.us);
-                    }
-                    else {
-                        const lIds = dataLocalities.map(item => {
-                            return item.id + ''
-                        });
-                        const dataUs = await queryUsByLocalities({ localities: lIds });
-                        setUs(dataUs);
-                    }
+                    
                     form.setFieldsValue({locality: loggedUser.localities[0].id.toString()});
+                    let entryPoint = form.getFieldValue('entry_point');
+                    onChangeEntryPoint(entryPoint);
                 }
             } else {
                 let district = form.getFieldValue('district');
@@ -109,7 +102,7 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
                 }
                 
                 if (entryPoint !== '' && entryPoint !== undefined) {            
-                  onChangeEntryPoint(locality);
+                  onChangeEntryPoint(entryPoint);
                 }
             }
         };
@@ -171,16 +164,14 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
     }
 
     const onChangeEntryPoint = async (e: any) => {
-        if (user?.us.length !== 1){
-            let locality = user?.localities.length === 1? user.localities[0].id : form.getFieldValue('locality');
-            if (locality !== '' && locality !== undefined) {
-                var payload = {
-                    typeId: e?.target?.value === undefined ? e : e?.target?.value,
-                    localityId: locality
-                }
-                const data = await allUsByType(payload);
-                setUs(data);
+        let locality = user?.localities.length === 1? user.localities[0].id : form.getFieldValue('locality');
+        if (locality !== '' && locality !== undefined) {
+            var payload = {
+                typeId: e?.target?.value === undefined ? e : e?.target?.value,
+                localityId: locality
             }
+            const data = await allUsByType(payload);
+            setUs(data);
         }
     }
 
@@ -363,7 +354,7 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
                         name="province"
                         label="Provincia"
                         rules={[{ required: localities.length !== 1, message: RequiredFieldMessage }]}
-                        initialValue={beneficiary?.neighborhood.locality?.district.province.id.toString()}
+                        initialValue={beneficiary?.district.province.id.toString()}
                     >
                         <Select placeholder="Seleccione a Provincia" onChange={onChangeProvinces}>
                             {provinces?.map(item => (
@@ -377,7 +368,7 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
                         name="district"
                         label="Distrito"
                         rules={[{ required: localities.length !== 1, message: RequiredFieldMessage }]}
-                        initialValue={beneficiary?.neighborhood.locality?.district.id.toString()}
+                        initialValue={beneficiary?.district.id.toString()}
                     >
                         <Select placeholder="Seleccione o Distrito" 
                                 disabled={districts.length == 0 && beneficiary == undefined}
@@ -423,7 +414,7 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
                         </Radio.Group>
                     </Form.Item>
                 </Col>
-                <Col span={8} hidden={user?.us.length === 1 }>
+                <Col span={8}>
                     <Form.Item
                         name="us"
                         label="Local de Registo"
