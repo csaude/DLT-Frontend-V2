@@ -148,7 +148,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                         ).fetch();
                 const benefPartiner = partnersQ[0]?._raw;
      
-                handleSearchPartner(benefPartiner?.nui);
+                handleSearchPartner(benefPartiner?.['nui']);
             }
 
             fetchPartners().catch(error => console.log(error))
@@ -578,7 +578,10 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
 
             setErrors(false);
 
-            navigationRef.goBack();
+            navigationRef.reset({
+                index: 0,
+                routes: [{ name: 'BeneficiariesList' }] 
+              });
         }
     }
 
@@ -719,7 +722,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             }else{
                 setPartnerHasErrors(true)
             }
-            formik.setFieldValue('partner_id', benefPartiner?.online_id);
+            formik.setFieldValue('partner_id', benefPartiner?.['online_id']);
         }
     };
 
@@ -1651,7 +1654,10 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                             <Button.Group space={2}>
                                 <Button variant="ghost" colorScheme="blueGray" onPress={() => {
                                     setShowModal(false);
-                                    navigationRef.goBack();
+                                    navigationRef.reset({
+                                        index: 0,
+                                        routes: [{ name: 'BeneficiariesList' }] 
+                                    })
                                 }}>
                                     Não
                                 </Button>

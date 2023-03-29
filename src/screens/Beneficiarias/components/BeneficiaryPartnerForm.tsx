@@ -247,7 +247,10 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
             }
 
             setErrors(false);
-            navigationRef.goBack();
+            navigationRef.reset({
+                index: 0,
+                routes: [{ name: 'BeneficiariesList' }] 
+              })
   
         }
     };
@@ -1058,7 +1061,10 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                             <Button.Group space={2}>
                                 <Button variant="ghost" colorScheme="blueGray" onPress={() => {
                                     setShowModal(false);
-                                    navigationRef.goBack();
+                                    navigationRef.reset({
+                                        index: 0,
+                                        routes: [{ name: 'BeneficiariesList' }] 
+                                      })
                                 }}>
                                     Concluir
                                 </Button>
