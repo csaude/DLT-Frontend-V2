@@ -15,7 +15,7 @@ import 'antd/dist/antd.css';
 
 import '../styles.css'
 import InterventionForm from './InterventionForm';
-import { ADMIN, MNE, SUPERVISOR } from '@app/utils/contants';
+import { ADMIN, MANAGER, MENTOR, MNE, SUPERVISOR } from '@app/utils/contants';
 
 const { confirm } = Modal;
 
@@ -208,7 +208,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
                 dataIndex: '',
                 key: 'intervention',
                 render: (text, record)  => 
-                    ((user.profiles.id == 4 || user.profiles.id == 3 && user.partners.partnerType == 2) && record.subServices.service.id == 9)? 
+                    ((user.profiles.id == MENTOR || user.profiles.id == MANAGER && user.partners.partnerType == 2) && record.subServices.service.id == 9)? 
                     '' : record.subServices.name,
             },
             {
