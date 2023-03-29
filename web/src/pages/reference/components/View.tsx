@@ -10,6 +10,7 @@ import ReferenceInterventionForm from "@app/pages/reference/components/Reference
 import { addSubService, SubServiceParams } from '@app/utils/service'
 import { Checkbox } from 'antd';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
+import { COUNSELOR, MANAGER, MENTOR, NURSE } from "@app/utils/contants";
 
 const { Text } = Typography;
 const { confirm } = Modal;
@@ -18,7 +19,9 @@ export function ViewReferencePanel({selectedReference, columns}) {
     const [visible, setVisible] = useState<boolean>(false);
     const [reference, setReference] = useState<any>();
     const [user, setUser] = useState<any>();
+    const [loggedUser, setLoggedUser] = useState<any>();
     const [interventions, setInterventions] = useState<any>();
+    const [services, setServices] = useState<any>();
     const [refServices, setRefServices] = useState<any>();
     const [canAddress, setCanAddress] = useState<boolean>(true);
     const [requiredServices, setRequiredServices] = useState<any>([]);
@@ -59,21 +62,28 @@ export function ViewReferencePanel({selectedReference, columns}) {
     };
     const [form] = Form.useForm();
 
-    // const refServices = reference.referencesServiceses;
-
     useEffect(() => {
         const fetchData = async () => {
-          const data = await queryUser(localStorage.user);
+          const loggedUser = await queryUser(localStorage.user);
           const data1 = await queryBeneficiary(selectedReference.beneficiaries.id);
           const refServices = await queryReferenceService(selectedReference.id)
           const beneficiaryInterventions = await queryBeneficiaryIntervention(selectedReference.beneficiaries.id)
    
           setUser(selectedReference.referredBy);
+          setLoggedUser(loggedUser);
 
           if(data1.beneficiariesInterventionses !== undefined){
                 setInterventions(data1.beneficiariesInterventionses);
+                const services = data1.beneficiariesInterventionses.map(s => s.subServices.service)
+                let uniqueServices: any = [...new Map(services.map((item) => [item["id"], item])).values()];
+                const sortedServices = uniqueServices.sort((ser1, ser2) => ser1.name.localeCompare(ser2.name));
+                setServices(sortedServices);
           }else{
                 setInterventions(beneficiaryInterventions);
+                const services = beneficiaryInterventions.map(s => s.subServices.service);
+                let uniqueServices: any = [...new Map(services.map((item) => [item["id"], item])).values()];
+                const sortedServices = uniqueServices.sort((ser1, ser2) => ser1.name.localeCompare(ser2.name));
+                setServices(sortedServices);
           }
 
           if(selectedReference.referencesServiceses !==undefined){
@@ -84,7 +94,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
 
           setReference(selectedReference);
 
-          if (data.partners.partnerType == selectedReference.referredBy.partners.partnerType) {
+          if (loggedUser.partners.partnerType == selectedReference.referredBy.partners.partnerType) {
             setCanAddress(false);
           }
         } 
@@ -170,6 +180,14 @@ export function ViewReferencePanel({selectedReference, columns}) {
         },
         });
     };
+    
+    const getFilteredIntervention = (serviceId) =>{
+        let filteredIntervention = interventions.filter(i => i.subServices.service.id == serviceId);
+        const sortedInterventions = filteredIntervention.sort((int1, int2) => moment(int2.id.date).format('YYYY-MM-DD').localeCompare(moment(int1.id.date).format('YYYY-MM-DD')));
+        return sortedInterventions;
+    }
+
+    
 
     const servicesColumns = [
         { title: '#', 
@@ -210,21 +228,25 @@ export function ViewReferencePanel({selectedReference, columns}) {
         }
     ];
 
+    const serviceColumns = [
+        { title: 'Serviços', 
+            dataIndex: '', 
+            key: 'service',
+            render: (text, record)  => record.name,
+        }
+    ];
+
     const interventionColumns = [
         { title: 'Data', 
             dataIndex: 'date', 
             key: 'date',
             render: (text, record) => <span>{moment(record.id.date).format('YYYY-MM-DD')}</span>,
         },
-        { title: 'Serviço', 
-            dataIndex: '', 
-            key: 'service',
-            render: (text, record)  => record.subServices.service.name,
-        },
         { title: 'Intervenções', 
             dataIndex: '', 
             key: 'intervention',
-            render: (text, record)  => (user?.profiles.id == 4 && record.subServices.service.id == 9)? '' : record.subServices.name,
+            render: (text, record)  => (
+                (loggedUser.profiles.id == MENTOR || loggedUser.profiles.id == MANAGER && loggedUser.partners.partnerType == 2) && record.subServices.service.id == 9)? '' : record.subServices.name,
         },
         { title: 'Atendido Por', 
             dataIndex: '', 
@@ -306,17 +328,29 @@ export function ViewReferencePanel({selectedReference, columns}) {
                         </Col>
                         <Col className="gutter-row" span={12}>
                             <Card 
-                                title={`Intervenções Recebidas`}
+                                title={`Intervenções Recebidas`} 
                                 bordered={true}
                                 headStyle={{ background: "#17a2b8"}}
                                 bodyStyle={{ paddingLeft: "10px", paddingRight: "10px" }}
                             >
                                 <Table
-                                    rowKey={(record?) => `${record.id.subServiceId}${record.id.date}`}
-                                    columns={interventionColumns}
-                                    dataSource={interventions}
-                                    bordered
+                                    rowKey={(record?) => `${record?.id}`}
+                                    columns={serviceColumns}
+                                    dataSource={services}
                                     pagination={false}
+                                    expandable={{
+                                        expandedRowRender: record => 
+                                            <div style={{border:"2px solid #d9edf7", backgroundColor:"white"}}>
+                                                <Table
+                                                    rowKey={(record?) => `${record.id.subServiceId}${record.id.date}`}
+                                                    columns={interventionColumns}
+                                                    dataSource={getFilteredIntervention(record.id)}
+                                                    bordered
+                                                    pagination={false}
+                                                />
+                                            </div>,
+                                        rowExpandable: record => record.name !== 'Not Expandable',
+                                    }}
                                 />
                             </Card>
                         </Col>
