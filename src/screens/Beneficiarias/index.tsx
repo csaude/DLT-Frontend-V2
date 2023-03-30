@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, StyleSheet, TouchableOpacity, TouchableHighlight, ScrollView, Platform } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, TouchableHighlight, ScrollView, Platform, RefreshControl } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { useToast, Alert, HStack, Text, Avatar, Pressable, Icon, Box, Select, Heading, VStack, FormControl, Input, Link, Button, CheckIcon, WarningOutlineIcon, Center, Flex, Badge, Modal, InfoIcon, IconButton, CloseIcon, Checkbox } from 'native-base';
 import { navigate } from '../../routes/NavigationRef';
@@ -29,7 +29,9 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
     const [token, setToken] = useState('')
     const [beneficiariesResultLoaded, setBeneficiariesResultLoaded] = useState(false)
     const [refreshData, setRefreshData] = useState(false)
+    const [refreshing, setRefreshing] = React.useState(false);
     const toast = useToast();
+
     const syncronize = () => {
         sync({ username: loggedUser.username })
             .then(() => toast.show({
@@ -290,6 +292,17 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
             setRefreshData(false)
     }
 
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        setTimeout(() => {
+            setRefreshData(false);
+            getUserBeneficiaries(loggedUser?.online_id);
+            console.log(userBeneficiaries);
+            setRefreshing(false);
+            setRefreshData(true);
+        }, );
+    }, []);
+
     useEffect(()=>{
         if(loggedUser?.online_id !== undefined){
               /** the user logged at least one time***/
@@ -517,6 +530,7 @@ const renderServerItem = (data: any) => (
                     previewOpenValue={-40}
                     previewOpenDelay={3000}
                     onRowDidOpen={onRowDidOpen}
+                    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
                 /> }
                 {filteredBeneficiaries.length < 1 && searchField !=='' && serverBeneficiaries.length < 1 && !beneficiariesResultLoaded &&
                  <Center flex={1} px="3" >
@@ -549,6 +563,7 @@ const renderServerItem = (data: any) => (
                                 previewOpenValue={-40}
                                 previewOpenDelay={3000}
                                 onRowDidOpen={onRowDidOpen}
+                                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
                             />
                             <Button  
                             onPress={()=>handleSyncCustomBeneficiary()} colorScheme="primary">
@@ -568,7 +583,23 @@ const renderServerItem = (data: any) => (
                             <Modal.CloseButton />
                             <Modal.Header>Sincronizar Beneficiária(o)</Modal.Header>
                             <Modal.Body>
-                                <ScrollView>
+                                <ScrollView
+                                    refreshControl={
+                                    <RefreshControl refreshing={true} onRefresh={() => {
+                                        <Alert w="100%" variant="left-accent" colorScheme="error" status="error">
+                                            <VStack space={2} flexShrink={1} w="100%">
+                                                <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
+                                                    <HStack space={2} flexShrink={1} alignItems="center">
+                                                        <Alert.Icon />
+                                                        <Text color="coolGray.800">
+                                                            refresh
+                                                        </Text>
+                                                    </HStack>
+                                                </HStack>
+                                            </VStack>
+                                        </Alert>
+                                    }}/>
+                            }>
                                     <Box alignItems='center'>
                                         {/* <Ionicons name="md-checkmark-circle" size={100} color="#0d9488" /> */}
                                         <Alert w="100%" status="success">

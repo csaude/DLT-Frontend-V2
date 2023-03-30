@@ -22,7 +22,7 @@ import { allDistrict } from '@app/utils/district';
 import { allPartners } from '@app/utils/partners';
 import FullPageLoader from '@app/components/full-page-loader/FullPageLoader';
 import { Title } from '@app/components';
-import { ADMIN, MNE, SUPERVISOR } from '@app/utils/contants';
+import { ADMIN, MANAGER, MENTOR, MNE, SUPERVISOR } from '@app/utils/contants';
 import { useSelector } from 'react-redux';
 import LoadingModal from '@app/components/modal/LoadingModal';
 
@@ -102,7 +102,7 @@ const BeneficiariesList: React.FC = () => {
             setUsers(creators);
             setUpdaters(updaters);
 
-            if(user.profiles.id === ADMIN || user.profiles.id === MNE || user.profiles.id === SUPERVISOR){
+            if([ADMIN, MNE, SUPERVISOR].includes(user.profiles.id)){
                 setVisibleName(false);
             }
 
@@ -334,7 +334,7 @@ const BeneficiariesList: React.FC = () => {
             dataIndex: '', 
             key: 'intervention',
             render: (text, record)  => 
-                ((user.profiles.id == 4 || user.profiles.id == 3 && user.partners.partnerType == 2) && record.subServices.service.id == 9)? 
+                ((user.profiles.id == MENTOR || user.profiles.id == MANAGER && user.partners.partnerType == 2) && record.subServices.service.id == 9)? 
                 '' : record.subServices.name,
         },
         { title: 'Ponto de Entrada', 
