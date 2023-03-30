@@ -16,6 +16,8 @@ import 'antd/dist/antd.css';
 import '../styles.css'
 import InterventionForm from './InterventionForm';
 import { ADMIN, MNE, SUPERVISOR } from '@app/utils/contants';
+import { useDispatch } from 'react-redux';
+import { getInterventionsCount } from '@app/store/actions/interventions';
 
 const { confirm } = Modal;
 
@@ -30,6 +32,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
     const [visibleName, setVisibleName] = useState<any>(true);
 
     const [form] = Form.useForm();
+    const dispatch = useDispatch()
 
     useEffect(() => { 
 
@@ -177,6 +180,8 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
             setVisible(false);
             setIsAdd(false);
             form.resetFields();
+
+            dispatch(getInterventionsCount())
         })
             .catch(error => {
                 message.error({
