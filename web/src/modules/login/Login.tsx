@@ -1,23 +1,20 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {useDispatch} from 'react-redux';
 import {Link, useNavigate} from 'react-router-dom';
 import {toast} from 'react-toastify';
 import {useFormik} from 'formik';
 import {useTranslation} from 'react-i18next';
 import {loginUser} from '@store/reducers/auth';
-import { getInterventionsCount } from '@app/store/actions/interventions'; 
-import {Checkbox, Button} from '@components';
-import {faEnvelope, faEye, faEyeSlash, faLock, faUser} from '@fortawesome/free-solid-svg-icons';
+import {Button} from '@components';
+import {faEye, faEyeSlash, faUser} from '@fortawesome/free-solid-svg-icons';
 import {setWindowClass} from '@app/utils/helpers';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import { Center, Box, Text, Heading, VStack, FormControl, Input, Image } from 'native-base';
 
 import * as Yup from 'yup';
 
 import {Form, InputGroup} from 'react-bootstrap';
 import * as AuthService from '../../services/auth';
 import {verifyUserByUsername} from '../../utils/login';
-import { getNames } from '@app/store/actions/users';
 
 const Login = () => {
   const [isAuthLoading, setAuthLoading] = useState(false);
@@ -52,9 +49,7 @@ const Login = () => {
       const data = await AuthService.loginByAuth(email, password);
       toast.success('Autenticação efectuada com sucesso!');
       setAuthLoading(false);
-      dispatch(loginUser(data));
-      dispatch(getInterventionsCount())
-      dispatch(getNames())
+      dispatch(loginUser(data)); 
       localStorage.setItem('dateCreated', user?.dateCreated);
       navigate('/');
     } catch ( error ) {
