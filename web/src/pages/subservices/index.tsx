@@ -52,7 +52,7 @@ const SubServicesList: React.FC = () => {
                 subService.createdBy = localStorage.user;
                 subService.status = 1;
 
-                const result = subServices.some(subServices => subServices.name.replace(/\s+/g, '').toLowerCase() === values.name.replace(/\s+/g, '').toLowerCase() && subServices.service.id === values.service);
+                const result = subServices.some(subServices => subServices.name.replace(/\s+/g, '').toLowerCase() === values.name.replace(/\s+/g, '').toLowerCase() && subServices.service.id == values.service);
                 if (result){
 
                     message.error({
