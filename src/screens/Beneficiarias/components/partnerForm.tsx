@@ -231,8 +231,6 @@ const partnerForm: React.FC = ({ route, localities, profiles, us, partners, serv
                     intervention._status = "updated"
                 })
 
-                toast.show({ placement: "bottom", title: "Intervention Updated Successfully: " + updatedIntervention._raw.id });
-
                 return updatedIntervention;
             } 
 
@@ -276,7 +274,7 @@ const partnerForm: React.FC = ({ route, localities, profiles, us, partners, serv
                                     <HStack space={2} flexShrink={1} alignItems="center">
                                         <Alert.Icon />
                                         <Text color="coolGray.800">
-                                            Synced Successfully!
+                                            Sincronização efectuada com sucesso!
                                         </Text>
                                     </HStack>
                                 </HStack>
