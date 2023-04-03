@@ -70,7 +70,7 @@ const SubServiceForm = ({ form, subService, modalVisible, handleModalVisible, ha
                             rules={[{ required: true, message: RequiredFieldMessage}]}
                             initialValue={subService ? subService?.service.id+'' : undefined}
                         >
-                            <Select placeholder="Seleccione o Tipo Serviço">
+                            <Select disabled={subService !== undefined} placeholder="Seleccione o Serviço">
                                 {services.map(item => (
                                     <Option key={item.id}>{item.name}</Option>
                                 ))}
@@ -84,7 +84,7 @@ const SubServiceForm = ({ form, subService, modalVisible, handleModalVisible, ha
                             rules={[{ required: true, message: RequiredFieldMessage }]}
                             initialValue={subService?.name}
                         >
-                            <Input placeholder="Insira o Serviço" />
+                            <Input placeholder="Insira o Sub-Serviço" />
                         </Form.Item>
                     </Col>
                 </Row>
