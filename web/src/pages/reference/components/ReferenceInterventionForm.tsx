@@ -28,15 +28,11 @@ const ReferenceInterventionForm = ({ form, reference, refServices }: any) => {
   const [name, setName] = useState('');
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [prevRefService, setPrevRefService] = useState<any>()
-  const [refService, setRefService] = useState<any>()
+  const [refService, setRefService] = useState<any>('')
   const index = useSelector((state:any)=>state.referenceIntervention.index)
 
   const RequiredFieldMessage = "Obrigatório!";
 
-  const fetchSubServices = async (serviceId) => {
-      const data = await querySubServiceByService(serviceId);
-      setInterventions(data);
-    }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -50,29 +46,25 @@ const ReferenceInterventionForm = ({ form, reference, refServices }: any) => {
     form.setFieldsValue({ outros: prevRefService?.description });
    
     onChangeUs(reference.us?.id);
-    fetchSubServices(prevRefService?.services?.id).catch(error => console.log(error));
+
     fetchData().catch(error => console.log(error));
 
     setIsLoading(true);
+
+    handleAttendServicesSequence();
     
   }, [refService, index]);
 
-  const handleAttendServicesSequence = async()=> {
-          console.log('------------init nextServiceIndex--------------', index)      
-          setRefService(refServices[index]) 
+  const handleAttendServicesSequence = async()=> {    
           form.setFieldsValue({subservice: ''});  
-          fetchSubServices(refServices[index]?.id).catch(error => console.log(error));
-         
+          setRefService(refServices[index]) 
+          onChangeServices(refServices[index]?.services?.id).catch(error => console.log(error));
           if(index === 0){
               setPrevRefService(refServices[0])
           }else{
               setPrevRefService(refServices[index-1])
           }
-  }
-
-  useEffect(()=>{      
-      handleAttendServicesSequence();
-  },[index])
+  }  
 
   const onChangeServices = async (value: any) => {
     const data = await querySubServiceByService(value);

@@ -14,10 +14,13 @@ export const referenceInterventionSlice = createSlice({
   reducers: {
     updateNextServiceIndex: (state) => {
       state.index = state.index+1;
+    },
+    resetNextServiceIndex: (state) => {
+      state.index = 0;
     }
   }
 });
 
-export const {updateNextServiceIndex} = referenceInterventionSlice.actions;
+export const {updateNextServiceIndex, resetNextServiceIndex} = referenceInterventionSlice.actions;
 
 export default referenceInterventionSlice.reducer;

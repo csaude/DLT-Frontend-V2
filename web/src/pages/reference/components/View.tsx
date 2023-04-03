@@ -12,7 +12,7 @@ import { Checkbox } from 'antd';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { COUNSELOR, MANAGER, MENTOR, NURSE } from "@app/utils/contants";
 import { useDispatch } from "react-redux";
-import { updateNextServiceIndex } from "@app/store/reducers/referenceIntervention";
+import { resetNextServiceIndex, updateNextServiceIndex } from "@app/store/reducers/referenceIntervention";
 
 const { Text } = Typography;
 const { confirm } = Modal;
@@ -31,6 +31,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
     const dispatch = useDispatch()
 
     const attendToRequiredServices = (reqRefServices) =>{
+        dispatch(resetNextServiceIndex())
         const selectReqServices = reqRefServices?.filter(item=>{return select.includes(item?.id?.serviceId)})
         setRequiredServices(selectReqServices)
         if(selectReqServices.length > 0){
@@ -103,7 +104,8 @@ export function ViewReferencePanel({selectedReference, columns}) {
         } 
         
         fetchData().catch(error => console.log(error));
-    
+        
+        dispatch(resetNextServiceIndex())    
     }, []);
 
     const handleAttendServicesSequence = ()=> {
