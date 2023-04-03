@@ -1,19 +1,19 @@
 import {createSlice} from '@reduxjs/toolkit';
 
 export interface ReferenceInterventionState {
-  nextServiceIndex?: any;
+  index?: any;
 }
 
 const initialState: ReferenceInterventionState = {
-  nextServiceIndex: '',
+  index: 0,
 };
 
 export const referenceInterventionSlice = createSlice({
   name: 'referenceIntervention',
   initialState,
   reducers: {
-    updateNextServiceIndex: (state, {payload}) => {
-      state.nextServiceIndex = payload;
+    updateNextServiceIndex: (state) => {
+      state.index = state.index+1;
     }
   }
 });

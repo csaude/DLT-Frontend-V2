@@ -1,10 +1,10 @@
-import React, { Fragment, useEffect, useState, useRef } from 'react'
-import { Drawer, Form, Button, Col, Row, Input, Select, DatePicker, Space, Radio, Divider, Modal } from 'antd';
-import { queryByType, querySubServiceByService } from '@app/utils/service'
-import { allUs, allUsByType } from '@app/utils/uSanitaria'
+import React, { useEffect, useState, useRef } from 'react'
+import { Form, Button, Col, Row, Input, Select, DatePicker, Space, Radio, Divider } from 'antd';
+import { querySubServiceByService } from '@app/utils/service'
+import { allUsByType } from '@app/utils/uSanitaria'
 import { PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import { query, userById, allUsesByUs } from '@app/utils/users';
+import { allUsesByUs } from '@app/utils/users';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateNextServiceIndex } from '@app/store/reducers/referenceIntervention';
 
@@ -19,7 +19,7 @@ const options = [
   { label: 'ES', value: '3' },
 ];
 
-const ReferenceInterventionForm = ({ form, reference, records, beneficiary }: any) => {
+const ReferenceInterventionForm = ({ form, reference, refServices }: any) => {
   const [interventions, setInterventions] = React.useState<any>(undefined);
   const [us, setUs] = React.useState<any>(undefined);
   const [selectedIntervention, setSelectedIntervention] = useState<any>(undefined);
@@ -27,62 +27,52 @@ const ReferenceInterventionForm = ({ form, reference, records, beneficiary }: an
   const [users, setUsers] = React.useState<any>([]);
   const [name, setName] = useState('');
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [nextService, setNextService] = useState<any>()
-  const nextServiceIndex = useSelector((state:any)=>state.referenceIntervention.nextServiceIndex)
-  const dispatch = useDispatch()
+  const [prevRefService, setPrevRefService] = useState<any>()
+  const [refService, setRefService] = useState<any>()
+  const index = useSelector((state:any)=>state.referenceIntervention.index)
 
-  console.log('------------nextServiceIndex------------',nextServiceIndex)
   const RequiredFieldMessage = "Obrigatório!";
 
-  useEffect(() => {
-
-    const fetchData = async () => {
-      onChangeEntryPoint(reference.referTo);
-    }
-
-    const fetchSubServices = async (serviceId) => {
+  const fetchSubServices = async (serviceId) => {
       const data = await querySubServiceByService(serviceId);
       setInterventions(data);
     }
 
-    if((records.length-1)==0)
-    {
-        setNextService(records[0])
-        dispatch(updateNextServiceIndex(1))
-    }
-    else{            
-        setNextService(records[nextServiceIndex])
-        dispatch(updateNextServiceIndex(nextServiceIndex+1))
-    }
-
-    console.log('---------nextService-----------',nextService)
-
-     if (selectedIntervention !== undefined) {
-      form.setFieldsValue({ areaServicos: selectedIntervention?.services?.serviceType === '1' ? 'CLINIC' : 'COMMUNITY' });
-      form.setFieldsValue({ service: selectedIntervention?.services?.id + '' });
-      form.setFieldsValue({ entryPoint: reference.referTo });
-      form.setFieldsValue({ location: reference.us? reference.us?.id + '' : undefined });
-      form.setFieldsValue({ provider: reference.notifyTo?.username });
-      form.setFieldsValue({ outros: selectedIntervention?.description });
-      onChangeUs(reference.us?.id);
-      fetchSubServices(selectedIntervention?.service?.id).catch(error => console.log(error));
-    }else{
-      const lastIntervention = records[records.length-1]
-      form.setFieldsValue({ areaServicos: lastIntervention?.services?.serviceType === '1' ? 'CLINIC' : 'COMMUNITY' });
-      form.setFieldsValue({ service: records.filter(item=>{return item.id == nextService?.id})[0]  });
-      form.setFieldsValue({ entryPoint: reference.referTo });
-      form.setFieldsValue({ location: reference.us? reference.us?.id + '' : undefined });
-      form.setFieldsValue({ provider: reference.notifyTo?.username });
-      form.setFieldsValue({ outros: lastIntervention?.description });
-      onChangeUs(reference.us?.id);
-      fetchSubServices(lastIntervention?.services?.id).catch(error => console.log(error));
-    }
-
+  useEffect(() => {
+    const fetchData = async () => {
+      onChangeEntryPoint(reference.referTo);
+    }   
+    form.setFieldsValue({ areaServicos: refService?.services?.serviceType === '1' ? 'CLINIC' : 'COMMUNITY' });
+    form.setFieldsValue({ service: refService?.services?.id + ''  });
+    form.setFieldsValue({ entryPoint: reference.referTo });
+    form.setFieldsValue({ location: reference.us? reference.us?.id + '' : undefined });
+    form.setFieldsValue({ provider: reference.notifyTo?.username });
+    form.setFieldsValue({ outros: prevRefService?.description });
+   
+    onChangeUs(reference.us?.id);
+    fetchSubServices(prevRefService?.services?.id).catch(error => console.log(error));
     fetchData().catch(error => console.log(error));
 
     setIsLoading(true);
+    
+  }, [refService, index]);
 
-  }, [nextService]);
+  const handleAttendServicesSequence = async()=> {
+          console.log('------------init nextServiceIndex--------------', index)      
+          setRefService(refServices[index]) 
+          form.setFieldsValue({subservice: ''});  
+          fetchSubServices(refServices[index]?.id).catch(error => console.log(error));
+         
+          if(index === 0){
+              setPrevRefService(refServices[0])
+          }else{
+              setPrevRefService(refServices[index-1])
+          }
+  }
+
+  useEffect(()=>{      
+      handleAttendServicesSequence();
+  },[index])
 
   const onChangeServices = async (value: any) => {
     const data = await querySubServiceByService(value);
@@ -156,10 +146,10 @@ const ReferenceInterventionForm = ({ form, reference, records, beneficiary }: an
           name="service"
           label="Serviço"
           rules={[{ required: true, message: RequiredFieldMessage }]}
-          initialValue={nextService?.id}
+          initialValue={refService}
         >
           <Select placeholder="Select Serviço" onChange={onChangeServices} >
-            {records?.map((item) => (
+            {refServices?.map((item) => (
               <Option key={item.services.id}>{item.services.name}</Option>
             ))}
           </Select>

@@ -11,6 +11,8 @@ import { addSubService, SubServiceParams } from '@app/utils/service'
 import { Checkbox } from 'antd';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { COUNSELOR, MANAGER, MENTOR, NURSE } from "@app/utils/contants";
+import { useDispatch } from "react-redux";
+import { updateNextServiceIndex } from "@app/store/reducers/referenceIntervention";
 
 const { Text } = Typography;
 const { confirm } = Modal;
@@ -26,11 +28,12 @@ export function ViewReferencePanel({selectedReference, columns}) {
     const [canAddress, setCanAddress] = useState<boolean>(true);
     const [requiredServices, setRequiredServices] = useState<any>([]);
     const [select, setSelect] = useState<any>([]);
+    const dispatch = useDispatch()
 
-    const attendToRequiredServices = (refServices) =>{
-        const selectServices = refServices?.filter(refServ=>{return select.includes(refServ?.id?.serviceId)})
-        setRequiredServices(selectServices)
-        if(selectServices.length > 0){
+    const attendToRequiredServices = (reqRefServices) =>{
+        const selectReqServices = reqRefServices?.filter(item=>{return select.includes(item?.id?.serviceId)})
+        setRequiredServices(selectReqServices)
+        if(selectReqServices.length > 0){
             setVisible(true);
         }else{
             showSelectServices()
@@ -103,6 +106,10 @@ export function ViewReferencePanel({selectedReference, columns}) {
     
     }, []);
 
+    const handleAttendServicesSequence = ()=> {
+        dispatch(updateNextServiceIndex())
+    }
+
     const onSubmit = async () => {
                
         form.validateFields().then(async (values) => {
@@ -150,6 +157,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
             setVisible(false);
 
             goToNextIntervention();
+            handleAttendServicesSequence();
         })
             .catch(error => {
                 message.error({
@@ -375,7 +383,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
                     }
                 >
                     <Form form={form} layout="vertical" onFinish={() => onSubmit()}> 
-                        <ReferenceInterventionForm form={form} reference={reference} records={requiredServices} beneficiary={reference?.beneficiaries} />
+                        <ReferenceInterventionForm form={form} reference={reference} refServices={requiredServices} beneficiary={reference?.beneficiaries} />
                     </Form> 
                 </Drawer>                
             </div>
