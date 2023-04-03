@@ -737,14 +737,20 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                     >
                         <View style={{ alignItems: 'center' }}>
                             <VStack space={3} w="90%" >
-                                <FormControl isRequired isInvalid={'surname' in formik.errors}>
+                                <FormControl style={{ display : beneficiarie === undefined ? "none" : "flex" }}>
+                                    <FormControl.Label>NUI</FormControl.Label>
+                                    <Text style={styles.formNUI}>
+                                        {beneficiarie === undefined ? "" : beneficiarie.nui}
+                                    </Text>
+                                </FormControl>
+                                <FormControl isRequired isInvalid={'surname' in formik.errors} style={{ display : beneficiarie === undefined ? "flex" : "none" }}>
                                     <FormControl.Label>Apelido</FormControl.Label>
                                     <Input onBlur={formik.handleBlur('surname')} placeholder="Insira o Apelido" onChangeText={formik.handleChange('surname')} value={formik.values.surname} />
                                     <FormControl.ErrorMessage>
                                         {formik.errors.surname}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl isRequired isInvalid={'name' in formik.errors}>
+                                <FormControl isRequired isInvalid={'name' in formik.errors} style={{ display : beneficiarie === undefined ? "flex" : "none" }}>
                                     <FormControl.Label>Nome</FormControl.Label>
                                     <Input onBlur={formik.handleBlur('name')} placeholder="Insira o Nome" onChangeText={formik.handleChange('name')} value={formik.values.name} />
                                     <FormControl.ErrorMessage>
@@ -959,7 +965,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         {formik.errors.us_id}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl >
+                                <FormControl  style={{ display : beneficiarie === undefined ? "flex" : "none" }}>
                                     <FormControl.Label>Alcunha</FormControl.Label>
                                     <Input onBlur={formik.handleBlur('nick_name')} placeholder="Insira a Alcunha" onChangeText={formik.handleChange('nick_name')} value={formik.values.nick_name} />
                                 </FormControl>
@@ -1039,6 +1045,12 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                     >
                         <View style={{ alignItems: 'center' }}>
                             <VStack space={3} w="90%" >
+                                <FormControl style={{ display : beneficiarie === undefined ? "none" : "flex" }}>
+                                    <FormControl.Label>NUI</FormControl.Label>
+                                    <Text style={styles.formNUI}>
+                                        {beneficiarie === undefined ? "" : beneficiarie.nui}
+                                    </Text>
+                                </FormControl>
                                 <FormControl isRequired isInvalid={'vblt_lives_with' in formik.errors}>
                                     <FormControl.Label>Com quem mora?</FormControl.Label>
                                     <DropDownPicker
@@ -1342,6 +1354,12 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                     >
                         <View style={{ alignItems: 'center' }}>
                             <VStack space={3} w="90%" >
+                                <FormControl style={{ display : beneficiarie === undefined ? "none" : "flex" }}>
+                                    <FormControl.Label>NUI</FormControl.Label>
+                                    <Text style={styles.formNUI}>
+                                        {beneficiarie === undefined ? "" : beneficiarie.nui}
+                                    </Text>
+                                </FormControl>
                                 <FormControl isRequired isInvalid={'vblt_sexually_active' in formik.errors}>
                                     <FormControl.Label>Sexualmente Activa?</FormControl.Label>
                                     <Radio.Group value={formik.values.vblt_sexually_active+''}
