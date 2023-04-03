@@ -1,9 +1,7 @@
-import React, { Fragment, useEffect, useState } from 'react';
-import {useNavigate, Link} from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { pagedQuery, query } from '../../utils/beneficiary';
 import { query as queryUser } from '../../utils/users';
-import classNames from "classnames";
-import {matchSorter} from "match-sorter";
 import { Badge, Button, message, Card, Input, Space, Table, Typography, Form, ConfigProvider, Row, Col } from 'antd';
 import ptPT  from 'antd/lib/locale-provider/pt_PT';
 import Highlighter from 'react-highlight-words';
@@ -15,12 +13,9 @@ import { getEntryPoint, UserModel } from '@app/models/User';
 import { calculateAge, getUserParams } from '@app/models/Utils';
 import FormBeneficiary from './components/FormBeneficiary';
 import FormBeneficiaryPartner from './components/FormBeneficiaryPartner';
-import { add, edit } from '../../utils/beneficiary';
 import { add as addRef, Reference } from '../../utils/reference';
 import FormReference from './components/FormReference';
 import { allDistrict } from '@app/utils/district';
-import { allPartners } from '@app/utils/partners';
-import FullPageLoader from '@app/components/full-page-loader/FullPageLoader';
 import { Title } from '@app/components';
 import { ADMIN, MANAGER, MENTOR, MNE, SUPERVISOR } from '@app/utils/contants';
 import { useSelector } from 'react-redux';
@@ -87,8 +82,8 @@ const BeneficiariesList: React.FC = () => {
             setUser(user);
             setBeneficiaries(sortedBeneficiaries);
 
-            const localities = data.map(beneficiary => beneficiary?.locality).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
-            const districts = localities.map(locality => locality?.district).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
+            const districts = await allDistrict();
+            const sortedDistricts = districts.sort((dist1, dist2) => dist1.name.localeCompare(dist2.name));
             const partners = data.map(beneficiary => beneficiary?.partner).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
             const creatorsIds = data.map(beneficiary => beneficiary?.createdBy).filter((value, index, self) => self.findIndex(v => v === value) === index);
             const updatersIds = data.map(beneficiary => beneficiary?.updatedBy).filter((value, index, self) => self.findIndex(v => v === value) === index);
@@ -97,7 +92,7 @@ const BeneficiariesList: React.FC = () => {
             const creators = users.filter(u => creatorsIds.includes(u.id));
             const updaters = users.filter(u => updatersIds.includes(u.id));
             
-            setDistrict(districts);
+            setDistrict(sortedDistricts);
             setPartners(partners);
             setUsers(creators);
             setUpdaters(updaters);

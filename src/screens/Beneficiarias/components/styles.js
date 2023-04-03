@@ -132,6 +132,11 @@ const styles = StyleSheet.create({
         marginBottom: '8%',
         color: '#008D4C',
     },
+    formNUI:{
+        fontSize: 15,
+        fontWeight: '800',
+        color: '#008D4C',
+    },
     subServices:{
         color: 'white',
         //marginTop: '2%',

@@ -542,6 +542,10 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
         );
     }
 
+    useEffect(() =>{
+       formik.setFieldValue('vblt_lives_with', value?.toString());
+    },[value])
+
     return (
         <>
             <View style={{ flex: 1, backgroundColor: "white" }}>
@@ -553,14 +557,20 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                     >
                         <View style={{ alignItems: 'center' }}>
                             <VStack space={3} w="90%" >
-                                <FormControl isRequired isInvalid={'surname' in formik.errors}>
+                                <FormControl style={{ display : beneficiarie === undefined ? "none" : "flex" }}>
+                                    <FormControl.Label>NUI</FormControl.Label>
+                                    <Text style={styles.formNUI}>
+                                        {beneficiarie === undefined ? "" : beneficiarie.nui}
+                                    </Text>
+                                </FormControl>
+                                <FormControl isRequired isInvalid={'surname' in formik.errors} style={{ display : beneficiarie === undefined ? "flex" : "none" }}>
                                     <FormControl.Label>Apelido</FormControl.Label>
                                     <Input onBlur={formik.handleBlur('surname')} placeholder="Insira o Apelido" onChangeText={formik.handleChange('surname')} value={formik.values.surname} />
                                     <FormControl.ErrorMessage>
                                         {formik.errors.surname}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl isRequired isInvalid={'name' in formik.errors}>
+                                <FormControl isRequired isInvalid={'name' in formik.errors} style={{ display : beneficiarie === undefined ? "flex" : "none" }}>
                                     <FormControl.Label>Nome</FormControl.Label>
                                     <Input onBlur={formik.handleBlur('name')} placeholder="Insira o Nome" onChangeText={formik.handleChange('name')} value={formik.values.name} />
                                     <FormControl.ErrorMessage>
@@ -774,7 +784,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                                         {formik.errors.us_id}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl >
+                                <FormControl style={{ display : beneficiarie === undefined ? "flex" : "none" }}>
                                     <FormControl.Label>Alcunha</FormControl.Label>
                                     <Input onBlur={formik.handleBlur('nick_name')} placeholder="Insira a Alcunha" onChangeText={formik.handleChange('nick_name')} value={formik.values.nick_name} />
                                 </FormControl>
@@ -850,26 +860,19 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                     >
                         <View style={{ alignItems: 'center' }}>
                             <VStack space={3} w="90%" >
+                                <FormControl style={{ display : beneficiarie === undefined ? "none" : "flex" }}>
+                                    <FormControl.Label>NUI</FormControl.Label>
+                                    <Text style={styles.formNUI}>
+                                        {beneficiarie === undefined ? "" : beneficiarie.nui}
+                                    </Text>
+                                </FormControl>
                                 <FormControl isRequired isInvalid={'vblt_lives_with' in formik.errors}>
                                     <FormControl.Label>Com quem mora?</FormControl.Label>
-                                    <DropDownPicker
-                                        listMode="SCROLLVIEW"
-                                        multiple={true}
-                                        min={0}
-                                        max={5}
-                                        open={open}
-                                        value={value}
-                                        items={items}
-                                        setOpen={setOpen}
-                                        setValue={setValue}
-                                        setItems={setItems}
-                                        mode="BADGE"
-                                        badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
-                                        placeholder="-- Seleccione --"
-                                        onChangeValue={(value) => {
-                                            formik.setFieldValue('vblt_lives_with', value?.toString());
-                                        }}
-                                    />
+                                    <Checkbox.Group onChange={setValue} value={value} accessibilityLabel="choose numbers">                                           
+                                            {items.map(item=>{
+                                                 return <Checkbox value={item.value} colorScheme="green" >{item.label}</Checkbox>
+                                            })}
+                                    </Checkbox.Group>
 
                                     <FormControl.ErrorMessage>
                                         {formik.errors.vblt_lives_with}
