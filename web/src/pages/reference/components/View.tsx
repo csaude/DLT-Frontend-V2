@@ -11,7 +11,7 @@ import { addSubService, SubServiceParams } from '@app/utils/service'
 import { Checkbox } from 'antd';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { COUNSELOR, MANAGER, MENTOR, NURSE } from "@app/utils/contants";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { resetNextServiceIndex, updateNextServiceIndex } from "@app/store/reducers/referenceIntervention";
 
 const { Text } = Typography;
@@ -29,6 +29,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
     const [requiredServices, setRequiredServices] = useState<any>([]);
     const [select, setSelect] = useState<any>([]);
     const dispatch = useDispatch()
+    const index = useSelector((state:any) => state.referenceIntervention.index)
 
     const attendToRequiredServices = (reqRefServices) =>{
         dispatch(resetNextServiceIndex())
@@ -104,12 +105,15 @@ export function ViewReferencePanel({selectedReference, columns}) {
         } 
         
         fetchData().catch(error => console.log(error));
-        
-        dispatch(resetNextServiceIndex())    
+          
     }, []);
 
     const handleAttendServicesSequence = ()=> {
-        dispatch(updateNextServiceIndex())
+        if(refServices[index+1] === undefined){
+            dispatch(resetNextServiceIndex())
+        }else{
+            dispatch(updateNextServiceIndex())
+        }
     }
 
     const onSubmit = async () => {

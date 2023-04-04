@@ -5,8 +5,7 @@ import { allUsByType } from '@app/utils/uSanitaria'
 import { PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { allUsesByUs } from '@app/utils/users';
-import { useDispatch, useSelector } from 'react-redux';
-import { updateNextServiceIndex } from '@app/store/reducers/referenceIntervention';
+import { useSelector } from 'react-redux';
 
 
 const { Option } = Select;
@@ -38,33 +37,26 @@ const ReferenceInterventionForm = ({ form, reference, refServices }: any) => {
     const fetchData = async () => {
       onChangeEntryPoint(reference.referTo);
     }   
-    form.setFieldsValue({ areaServicos: refService?.services?.serviceType === '1' ? 'CLINIC' : 'COMMUNITY' });
-    form.setFieldsValue({ service: refService?.services?.id + ''  });
     form.setFieldsValue({ entryPoint: reference.referTo });
     form.setFieldsValue({ location: reference.us? reference.us?.id + '' : undefined });
     form.setFieldsValue({ provider: reference.notifyTo?.username });
-    form.setFieldsValue({ outros: prevRefService?.description });
+    form.setFieldsValue({ outros: refServices[index-1]?.description });
    
     onChangeUs(reference.us?.id);
 
     fetchData().catch(error => console.log(error));
 
-    setIsLoading(true);
-
-    handleAttendServicesSequence();
+    setIsLoading(true); 
     
-  }, [refService, index]);
+  }, []);
 
-  const handleAttendServicesSequence = async()=> {    
-          form.setFieldsValue({subservice: ''});  
-          setRefService(refServices[index]) 
-          onChangeServices(refServices[index]?.services?.id).catch(error => console.log(error));
-          if(index === 0){
-              setPrevRefService(refServices[0])
-          }else{
-              setPrevRefService(refServices[index-1])
-          }
-  }  
+  useEffect(() => {     
+      onChangeServices(refServices[index]?.services?.id).catch(error => console.log(error));
+      form.setFieldsValue({ subservice: ''});  
+      form.setFieldsValue({ areaServicos: refServices[index]?.services?.serviceType === '1' ? 'CLINIC' : 'COMMUNITY' });
+      form.setFieldsValue({ service: refServices[index]?.services?.id + ''  });
+      form.setFieldsValue({ outros: refServices[index-1]?.description });
+  },[index])
 
   const onChangeServices = async (value: any) => {
     const data = await querySubServiceByService(value);
