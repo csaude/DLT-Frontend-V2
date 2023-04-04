@@ -316,7 +316,7 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
 
     const filteredBeneficiaries = userBeneficiaries?.filter(beneficiarie => (beneficiarie._raw.nui).toLowerCase().includes(searchField.toLowerCase()))
     // const sortedBeneficiaries = filteredBeneficiaries.sort((benf1, benf2) => benf2._raw.nui.localeCompare(benf1._raw.nui));
-    const sortedBeneficiaries = filteredBeneficiaries.sort((ben1, ben2) => ben2._raw.online_id - ben1._raw.online_id);
+    const sortedBeneficiaries = filteredBeneficiaries.sort((ben1, ben2) => ben2._raw.date_created.localeCompare(ben1._raw.date_created))
 
     const userId = loggedUser?.online_id !== undefined?loggedUser?.online_id : loggedUser?.id
     const toasty = useToast();

@@ -410,6 +410,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                 beneficiary.entry_point = formik.values.entry_point, 
                 beneficiary.us_id = formik.values.us_id,
                 beneficiary.neighborhood_id = formik.values.neighborhood_id, 
+                beneficiary.date_created = moment(new Date()).format('YYYY-MM-DD'),
                 beneficiary.status = 1, 
                 beneficiary.locality_id = formik.values.locality,
                 beneficiary.locality_name = locality.name, 
