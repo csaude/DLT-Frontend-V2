@@ -61,6 +61,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
     const [childrenEnabled, setChildrenEnabled] = useState<any>(true);
     const [gbvInfoEnabled, setGbvInfoEnabled] = useState<any>(true);
     const [sexExploitationTimeEnabled, setSexExploitationTimeEnabled] = useState<any>(true);
+    const [sexWorkerEnable, setsexWorkerEnabled] = useState(false);
     const userDetail = useSelector((state: RootState) => state.auth.userDetails);
     const [searchPartner, setSearchPartner] = useState<any>(undefined);
     const [partnerHasErrors,setPartnerHasErrors] = useState(false)
@@ -414,8 +415,10 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             if (values.vblt_sti_history == null) {
                 errors.vblt_sti_history = errorMessage;
             }
-            if (values.vblt_sex_worker == null) {
-                errors.vblt_sex_worker = errorMessage;
+            if (sexWorkerEnable) {
+                if (values.vblt_sex_worker == null) {
+                    errors.vblt_sex_worker = errorMessage;
+                }
             }
         }
 
@@ -594,8 +597,14 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
 
         setIsDatePickerVisible(false);
         formik.setFieldValue('date_of_birth', selectedDate);
-        setAge(calculateAge(selectedDate)+'');
-        formik.setFieldValue('age', calculateAge(selectedDate)+'');
+        let age = calculateAge(selectedDate);
+        setAge(age+'');
+        formik.setFieldValue('age', age+'');
+        if (age > 17) {
+            setsexWorkerEnabled(true);
+        } else {
+            setsexWorkerEnabled(false);
+        }
     }
 
     const showDatepicker2 = () => {
@@ -688,7 +697,13 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             setAge(value);
 
             formik.setFieldValue('date_of_birth', getFormatedDate(bDate, 'yyyy-MM-DD'));
-            formik.setFieldValue('age', value);
+            formik.setFieldValue('age', value); 
+
+            if (value > 17) {
+                setsexWorkerEnabled(true);
+            } else {
+                setsexWorkerEnabled(false);
+            }
         }
 
         return (
@@ -1589,7 +1604,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                     </FormControl.ErrorMessage>
                                 </FormControl>
 
-                                <FormControl isRequired isInvalid={'vblt_sex_worker' in formik.errors}>
+                                <FormControl isRequired= {sexWorkerEnable} isInvalid={'vblt_sex_worker' in formik.errors} style={{ display : sexWorkerEnable ? "flex" : "none" }} >
                                     <FormControl.Label>Trabalhadora do Sexo?</FormControl.Label>
                                     <Radio.Group value={formik.values.vblt_sex_worker+''} 
                                         onChange={(itemValue) => {
