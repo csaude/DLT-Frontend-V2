@@ -45,7 +45,7 @@ const UsersMain: React.FC = ({ users, localities, profiles, us, partners }:any) 
                                                     <HStack space={2} flexShrink={1} alignItems="center">
                                                         <Alert.Icon />
                                                         <Text color="coolGray.800">
-                                                            Synced Successfully!
+                                                            Sincronização efectuada com sucesso!
                                                         </Text>
                                                     </HStack>
                                                 </HStack>
@@ -64,7 +64,7 @@ const UsersMain: React.FC = ({ users, localities, profiles, us, partners }:any) 
                                                     <HStack space={2} flexShrink={1} alignItems="center">
                                                         <Alert.Icon />
                                                         <Text color="coolGray.800">
-                                                            Sync Failed!
+                                                            Falha na sincronização!
                                                         </Text>
                                                     </HStack>
                                                 </HStack>

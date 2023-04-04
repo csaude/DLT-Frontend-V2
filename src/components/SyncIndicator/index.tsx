@@ -13,7 +13,7 @@ export const SuccessHandler: React.FC = () => {
                         <HStack space={2} flexShrink={1} alignItems="center">
                             <Alert.Icon />
                             <Text color="coolGray.800">
-                                Synced Successfully!
+                                Sincronização efectuada com sucesso!
                             </Text>
                         </HStack>
                     </HStack>
@@ -32,7 +32,7 @@ export const ErrorHandler: React.FC = () => {
                         <HStack space={2} flexShrink={1} alignItems="center">
                             <Alert.Icon />
                             <Text color="coolGray.800">
-                                Sync Failed!
+                                Falha na sincronização!
                             </Text>
                         </HStack>
                     </HStack>
