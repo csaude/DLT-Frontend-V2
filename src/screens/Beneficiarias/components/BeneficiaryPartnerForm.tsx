@@ -160,7 +160,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
             name: beneficiarie?.name,
             date_of_birth: beneficiarie?.date_of_birth,
             age: calculateAge(beneficiarie?.date_of_birth),
-            nationality: beneficiarie?.nationality === undefined ? "1" : beneficiarie?.nationality+"",
+            nationality: "1",
             enrollment_date: beneficiarie?.enrollment_date,
             province: beneficiarie?.province_id === undefined ? userDetail?.provinces[0]?.id : beneficiarie?.province_id,
             district: beneficiarie?.district_id === undefined ? userDetail?.districts[0]?.id : beneficiarie?.district_id,
@@ -373,8 +373,9 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                     beneficiarie.locality_name = locality.name, 
                     beneficiarie.district_id = formik.values.district,  
                     beneficiarie.district_code = district.code,  
-                    beneficiarie.province_id = formik.values.province, 
-                    beneficiarie.nationality = formik.values.nationality,
+                    beneficiarie.province_id = formik.values.province,  
+                    beneficiarie.date_updated = moment(new Date()).format('YYYY-MM-DD'),
+                    beneficiarie.nationality = 1,
                     beneficiarie.enrollment_date = formik.values.enrollment_date
                     beneficiarie.vblt_lives_with = formik.values.vblt_lives_with, 
                     beneficiarie.vblt_house_sustainer = Number(formik.values.vblt_house_sustainer),
@@ -417,7 +418,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                 beneficiary.district_id = formik.values.district,  
                 beneficiary.district_code = district.code,  
                 beneficiary.province_id = formik.values.province, 
-                beneficiary.nationality = formik.values.nationality,
+                beneficiary.nationality = 1,
                 beneficiary.enrollment_date = formik.values.enrollment_date
                 beneficiary.vblt_lives_with = formik.values.vblt_lives_with, 
                 beneficiary.vblt_house_sustainer = Number(formik.values.vblt_house_sustainer),
@@ -747,7 +748,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                                 <FormControl isRequired isInvalid={'entry_point' in formik.errors}>
                                     <FormControl.Label>Ponto de Entrada</FormControl.Label>
                                     <Picker
-                                        selectedValue={formik.values.entry_point ? formik.values.entry_point : loggedUser.entry_point}
+                                        selectedValue={formik.values.entry_point ? formik.values.entry_point : loggedUser.entry_point !== undefined ? loggedUser.entry_point : loggedUser.entryPoint}
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
                                                 formik.setFieldValue('entry_point', itemValue);
