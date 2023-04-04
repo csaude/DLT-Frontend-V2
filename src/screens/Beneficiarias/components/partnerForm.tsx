@@ -293,7 +293,7 @@ const partnerForm: React.FC = ({ route, localities, profiles, us, partners, serv
                                     <HStack space={2} flexShrink={1} alignItems="center">
                                         <Alert.Icon />
                                         <Text color="coolGray.800">
-                                            Sync Failed!
+                                            Falha na sincronização!
                                         </Text>
                                     </HStack>
                                 </HStack>
