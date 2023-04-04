@@ -5,7 +5,8 @@ import { allUsByType } from '@app/utils/uSanitaria'
 import { PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { allUsesByUs } from '@app/utils/users';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { loadRemarks } from '@app/store/reducers/referenceIntervention';
 
 
 const { Option } = Select;
@@ -29,9 +30,9 @@ const ReferenceInterventionForm = ({ form, reference, refServices }: any) => {
   const [prevRefService, setPrevRefService] = useState<any>()
   const [refService, setRefService] = useState<any>('')
   const index = useSelector((state:any)=>state.referenceIntervention.index)
-
+  const remarks = useSelector((state:any)=>state.referenceIntervention.remarks)
   const RequiredFieldMessage = "Obrigatório!";
-
+  const dispatch = useDispatch()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,7 +41,7 @@ const ReferenceInterventionForm = ({ form, reference, refServices }: any) => {
     form.setFieldsValue({ entryPoint: reference.referTo });
     form.setFieldsValue({ location: reference.us? reference.us?.id + '' : undefined });
     form.setFieldsValue({ provider: reference.notifyTo?.username });
-    form.setFieldsValue({ outros: refServices[index-1]?.description });
+    dispatch(loadRemarks(''))
    
     onChangeUs(reference.us?.id);
 
@@ -55,7 +56,7 @@ const ReferenceInterventionForm = ({ form, reference, refServices }: any) => {
       form.setFieldsValue({ subservice: ''});  
       form.setFieldsValue({ areaServicos: refServices[index]?.services?.serviceType === '1' ? 'CLINIC' : 'COMMUNITY' });
       form.setFieldsValue({ service: refServices[index]?.services?.id + ''  });
-      form.setFieldsValue({ outros: refServices[index-1]?.description });
+      form.setFieldsValue({ outros: remarks });
   },[index])
 
   const onChangeServices = async (value: any) => {

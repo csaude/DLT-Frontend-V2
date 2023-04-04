@@ -12,7 +12,7 @@ import { Checkbox } from 'antd';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { COUNSELOR, MANAGER, MENTOR, NURSE } from "@app/utils/contants";
 import { useDispatch, useSelector } from "react-redux";
-import { resetNextServiceIndex, updateNextServiceIndex } from "@app/store/reducers/referenceIntervention";
+import { resetNextServiceIndex, updateNextServiceIndex, loadRemarks } from "@app/store/reducers/referenceIntervention";
 
 const { Text } = Typography;
 const { confirm } = Modal;
@@ -143,6 +143,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
                 createdBy: localStorage.user
             };
 
+            dispatch(loadRemarks(values.outros))
             const { data } = await addSubService(payload);
             
             setInterventions(interventions => [...interventions, data.intervention]);
@@ -177,7 +178,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
     };
 
     const onClose = () => {
-        setVisible(false);
+        setVisible(false);        
     };
 
     const showCloseConfirm = () => {
@@ -398,6 +399,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
 }
 
 const ViewReferral = ({reference, modalVisible, handleModalVisible}) => {
+    const dispatch = useDispatch()
 
     const okHandle = () => {
         handleModalVisible();
@@ -411,6 +413,7 @@ const ViewReferral = ({reference, modalVisible, handleModalVisible}) => {
         okType: 'danger',
         cancelText: 'Não',
         onOk() {
+            dispatch(loadRemarks(''))
             handleModalVisible();
         },
         onCancel() {

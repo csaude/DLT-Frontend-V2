@@ -2,10 +2,12 @@ import {createSlice} from '@reduxjs/toolkit';
 
 export interface ReferenceInterventionState {
   index?: any;
+  remarks?: any
 }
 
 const initialState: ReferenceInterventionState = {
   index: 0,
+  remarks:''
 };
 
 export const referenceInterventionSlice = createSlice({
@@ -17,10 +19,13 @@ export const referenceInterventionSlice = createSlice({
     },
     resetNextServiceIndex: (state) => {
       state.index = 0;
+    },
+    loadRemarks: (state, {payload})=>{
+      state.remarks = payload
     }
   }
 });
 
-export const {updateNextServiceIndex, resetNextServiceIndex} = referenceInterventionSlice.actions;
+export const {updateNextServiceIndex, resetNextServiceIndex, loadRemarks} = referenceInterventionSlice.actions;
 
 export default referenceInterventionSlice.reducer;
