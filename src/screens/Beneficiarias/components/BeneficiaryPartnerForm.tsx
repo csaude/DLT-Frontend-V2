@@ -247,11 +247,6 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
             }
 
             setErrors(false);
-            navigationRef.reset({
-                index: 0,
-                routes: [{ name: 'BeneficiariesList' }] 
-              })
-  
         }
     };
 
@@ -1034,7 +1029,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                 <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
                     <Modal.Content maxWidth="400px">
                         <Modal.CloseButton />
-                        <Modal.Header>Contact Us</Modal.Header>
+                        <Modal.Header>Confirmação Registo</Modal.Header>
                         <Modal.Body>
                             <ScrollView>
                                 <Box alignItems='center'>
