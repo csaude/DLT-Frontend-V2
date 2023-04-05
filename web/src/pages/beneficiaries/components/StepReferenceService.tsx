@@ -202,7 +202,7 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
             title: 'Intervenções',
             dataIndex: '',
             key: 'intervention',
-            render: (text, record) => ((user.profiles.id == MENTOR || user.profiles.id == MANAGER && user.partners.partnerType == 2) && record.subServices.service.id == 9)? '' : record.subServices.name,
+            render: (text, record) => ((user?.profiles.id == MENTOR || user?.profiles.id == MANAGER && user?.partners.partnerType == 2) && record.subServices.service.id == 9)? '' : record.subServices.name,
         },
         {
             title: 'Atendido Por',

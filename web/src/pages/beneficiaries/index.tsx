@@ -329,7 +329,7 @@ const BeneficiariesList: React.FC = () => {
             dataIndex: '', 
             key: 'intervention',
             render: (text, record)  => 
-                ((user.profiles.id == MENTOR || user.profiles.id == MANAGER && user.partners.partnerType == 2) && record.subServices.service.id == 9)? 
+                ((user?.profiles.id == MENTOR || user?.profiles.id == MANAGER && user?.partners.partnerType == 2) && record.subServices.service.id == 9)? 
                 '' : record.subServices.name,
         },
         { title: 'Ponto de Entrada', 
