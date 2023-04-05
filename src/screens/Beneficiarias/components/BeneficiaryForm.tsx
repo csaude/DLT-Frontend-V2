@@ -438,111 +438,120 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             const organization_id = loggedUser.partner_id == undefined ? loggedUser.partners?.id : loggedUser.partner_id;
 
             if (isEdit) {
+                console.log('-----------this is edit - beneficiarie------------',beneficiarie)
+
                 const beneficiaryToUpdate = await database.get('beneficiaries').find(beneficiarie?.id);
-                const updateBeneficiary = await beneficiaryToUpdate.update(() => {
-                    beneficiarie.surname = formik.values.surname, 
-                    beneficiarie.name = formik.values.name, 
-                    beneficiarie.nick_name = formik.values.nick_name, 
-                    beneficiarie.date_of_birth = formik.values.date_of_birth, 
-                    beneficiarie.gender = '2', 
-                    beneficiarie.address = formik.values.address, 
-                    beneficiarie.phone_number = formik.values.phone_number, 
-                    beneficiarie.e_mail = formik.values.e_mail,
-                    beneficiarie.partner_id = Number(formik.values?.partner_id),
-                    beneficiarie.entry_point = formik.values.entry_point, 
-                    beneficiarie.us_id = formik.values.us_id,
-                    beneficiarie.neighborhood_id = formik.values.neighborhood_id, 
-                    beneficiarie.status = 1, 
-                    beneficiarie.locality_id = formik.values.locality,
-                    beneficiarie.locality_name = locality.name, 
-                    beneficiarie.district_id = formik.values.district,  
-                    beneficiarie.district_code = district.code,  
-                    beneficiarie.province_id = formik.values.province, 
-                    beneficiarie.date_updated = moment(new Date()).format('YYYY-MM-DD'),
-                    beneficiarie.nationality = 1,
-                    beneficiarie.enrollment_date = formik.values.enrollment_date
-                    beneficiarie.vblt_lives_with = formik.values.vblt_lives_with, 
-                    beneficiarie.vblt_house_sustainer = Number(formik.values.vblt_house_sustainer),
-                    beneficiarie.vblt_is_orphan = Number(formik.values.vblt_is_orphan),
-                    beneficiarie.vblt_is_student = Number(formik.values.vblt_is_student),
-                    beneficiarie.vblt_school_grade = formik.values.vblt_school_grade,
-                    beneficiarie.vblt_school_name =formik.values.vblt_school_name,
-                    beneficiarie.vblt_is_deficient = Number(formik.values.vblt_is_deficient),
-                    beneficiarie.vblt_deficiency_type = formik.values.vblt_deficiency_type,
-                    beneficiarie.vblt_married_before = Number(formik.values.vblt_married_before),
-                    beneficiarie.vblt_pregnant_before = Number(formik.values.vblt_pregnant_before),
-                    beneficiarie.vblt_children = Number(formik.values.vblt_children),
-                    beneficiarie.vblt_pregnant_or_breastfeeding = Number(formik.values.vblt_pregnant_or_breastfeeding),
-                    beneficiarie.vblt_is_employed = formik.values.vblt_is_employed,
-                    beneficiarie.vblt_tested_hiv = formik.values.vblt_tested_hiv,
-                    beneficiarie.vblt_sexually_active = Number(formik.values.vblt_sexually_active),
-                    beneficiarie.vblt_multiple_partners = Number(formik.values.vblt_multiple_partners),
-                    beneficiarie.vblt_is_migrant = Number(formik.values.vblt_is_migrant),
-                    beneficiarie.vblt_trafficking_victim = Number(formik.values.vblt_trafficking_victim),
-                    beneficiarie.vblt_sexual_exploitation = Number(formik.values.vblt_sexual_exploitation),
-                    beneficiarie.vblt_sexploitation_time = formik.values.vblt_sexploitation_time,
-                    beneficiarie.vblt_vbg_victim = Number(formik.values.vblt_vbg_victim),
-                    beneficiarie.vblt_vbg_type = formik.values.vblt_vbg_type,
-                    beneficiarie.vblt_vbg_time = formik.values.vblt_vbg_time,
-                    beneficiarie.vblt_alcohol_drugs_use = Number(formik.values.vblt_alcohol_drugs_use),
-                    beneficiarie.vblt_sti_history = Number(formik.values.vblt_sti_history),
-                    beneficiarie.vblt_sex_worker = Number(formik.values.vblt_sex_worker)
-                    beneficiarie._status = "updated"
+                
+                console.log('---------beneficiaryToUpdate------------',beneficiaryToUpdate)
+                
+                const updateBeneficiary = await beneficiaryToUpdate.update((record:any) => {
+                    record.surname = formik.values.surname, 
+                    record.name = formik.values.name, 
+                    record.nick_name = formik.values.nick_name, 
+                    record.date_of_birth = formik.values.date_of_birth, 
+                    record.gender = '2', 
+                    record.address = formik.values.address, 
+                    record.phone_number = formik.values.phone_number, 
+                    record.e_mail = formik.values.e_mail,
+                    record.partner_id = Number(formik.values?.partner_id),
+                    record.entry_point = formik.values.entry_point, 
+                    record.us_id = formik.values.us_id,
+                    record.neighborhood_id = formik.values.neighborhood_id, 
+                    record.status = 1, 
+                    record.locality_id = formik.values.locality,
+                    record.locality_name = locality.name, 
+                    record.district_id = formik.values.district,  
+                    record.district_code = district.code,  
+                    record.province_id = formik.values.province, 
+                    record.date_updated = moment(new Date()).format('YYYY-MM-DD'),
+                    record.nationality = 1,
+                    record.enrollment_date = formik.values.enrollment_date,
+
+                    record.vblt_lives_with = formik.values.vblt_lives_with, 
+                    record.vblt_house_sustainer = Number(formik.values.vblt_house_sustainer),
+                    record.vblt_is_orphan = Number(formik.values.vblt_is_orphan),
+                    record.vblt_is_student = Number(formik.values.vblt_is_student),
+                    record.vblt_school_grade = formik.values.vblt_school_grade,
+                    record.vblt_school_name =formik.values.vblt_school_name,
+                    record.vblt_is_deficient = Number(formik.values.vblt_is_deficient),
+                    record.vblt_deficiency_type = formik.values.vblt_deficiency_type,
+                    record.vblt_married_before = Number(formik.values.vblt_married_before),
+                    record.vblt_pregnant_before = Number(formik.values.vblt_pregnant_before),
+                    record.vblt_children = Number(formik.values.vblt_children),
+                    record.vblt_pregnant_or_breastfeeding = Number(formik.values.vblt_pregnant_or_breastfeeding),
+                    record.vblt_is_employed = formik.values.vblt_is_employed,
+                    record.vblt_tested_hiv = formik.values.vblt_tested_hiv,
+
+                    record.vblt_sexually_active = Number(formik.values.vblt_sexually_active),
+                    record.vblt_multiple_partners = Number(formik.values.vblt_multiple_partners),
+                    record.vblt_is_migrant = Number(formik.values.vblt_is_migrant),
+                    record.vblt_trafficking_victim = Number(formik.values.vblt_trafficking_victim),
+                    record.vblt_sexual_exploitation = Number(formik.values.vblt_sexual_exploitation),
+                    record.vblt_sexploitation_time = formik.values.vblt_sexploitation_time,
+                    record.vblt_vbg_victim = Number(formik.values.vblt_vbg_victim),
+                    record.vblt_vbg_type = formik.values.vblt_vbg_type,
+                    record.vblt_vbg_time = formik.values.vblt_vbg_time,
+                    record.vblt_alcohol_drugs_use = Number(formik.values.vblt_alcohol_drugs_use),
+                    record.vblt_sti_history = Number(formik.values.vblt_sti_history),
+                    record.vblt_sex_worker = Number(formik.values.vblt_sex_worker)
+                    record._status = "updated"
                 })
                 return updateBeneficiary;
 
             }
-            
-            // get prefix and nui
-            const getPrefix:any = (await database.get('sequences').query().fetch())[0]?._raw;
-            const newNui = Number(getPrefix.last_nui)+1;
-            const fullNUI = `${getPrefix.prefix}${String(newNui).padStart(7, '0')}`
-            
-            const newBeneficiary = await database.collections.get('beneficiaries').create((beneficiary: any) => {
-                beneficiary.nui = fullNUI,
-                beneficiary.surname = formik.values.surname, 
-                beneficiary.name = formik.values.name, 
-                beneficiary.nick_name = formik.values.nick_name, 
-                beneficiary.date_of_birth = formik.values.date_of_birth, 
-                beneficiary.gender = '2', 
-                beneficiary.address = formik.values.address, 
-                beneficiary.phone_number = formik.values.phone_number, 
-                beneficiary.e_mail = formik.values.e_mail, 
-                beneficiary.organization_id = organization_id, 
-                beneficiary.partner_id = Number(formik.values?.partner_id),
-                beneficiary.entry_point = formik.values.entry_point, 
-                beneficiary.us_id = formik.values.us_id,
-                beneficiary.neighborhood_id = formik.values.neighborhood_id, 
-                beneficiary.date_created = moment(new Date()).format('YYYY-MM-DD'),
-                beneficiary.status = 1, 
-                beneficiary.locality_id = formik.values.locality,
-                beneficiary.locality_name = locality.name, 
-                beneficiary.district_id = formik.values.district,  
-                beneficiary.district_code = district.code,  
-                beneficiary.province_id = formik.values.province, 
-                beneficiary.nationality = 1,
-                beneficiary.enrollment_date = formik.values.enrollment_date
-                beneficiary.vblt_lives_with = formik.values.vblt_lives_with, 
-                beneficiary.vblt_house_sustainer = Number(formik.values.vblt_house_sustainer),
-                beneficiary.vblt_is_orphan = Number(formik.values.vblt_is_orphan),
-                beneficiary.vblt_is_student = Number(formik.values.vblt_is_student),
-                beneficiary.vblt_school_grade = formik.values.vblt_school_grade,
-                beneficiary.vblt_school_name =formik.values.vblt_school_name,
-                beneficiary.vblt_is_deficient = Number(formik.values.vblt_is_deficient),
-                beneficiary.vblt_deficiency_type = formik.values.vblt_deficiency_type,
-                beneficiary.vblt_married_before = Number(formik.values.vblt_married_before),
-                beneficiary.vblt_pregnant_before = Number(formik.values.vblt_pregnant_before),
-                beneficiary.vblt_children = Number(formik.values.vblt_children),
-                beneficiary.vblt_pregnant_or_breastfeeding = Number(formik.values.vblt_pregnant_or_breastfeeding),
-                beneficiary.vblt_is_employed = formik.values.vblt_is_employed,
-                beneficiary.vblt_tested_hiv = formik.values.vblt_tested_hiv;
-            });
+            else{               
+                    // get prefix and nui
+                    const getPrefix:any = (await database.get('sequences').query().fetch())[0]?._raw;
+                    const newNui = Number(getPrefix.last_nui)+1;
+                    const fullNUI = `${getPrefix.prefix}${String(newNui).padStart(7, '0')}`
+                    
+                    const newBeneficiary = await database.collections.get('beneficiaries').create((beneficiary: any) => {
+                        beneficiary.nui = fullNUI,
+                        beneficiary.surname = formik.values.surname, 
+                        beneficiary.name = formik.values.name, 
+                        beneficiary.nick_name = formik.values.nick_name, 
+                        beneficiary.date_of_birth = formik.values.date_of_birth, 
+                        beneficiary.gender = '2', 
+                        beneficiary.address = formik.values.address, 
+                        beneficiary.phone_number = formik.values.phone_number, 
+                        beneficiary.e_mail = formik.values.e_mail, 
+                        beneficiary.organization_id = organization_id, 
+                        beneficiary.partner_id = Number(formik.values?.partner_id),
+                        beneficiary.entry_point = formik.values.entry_point, 
+                        beneficiary.us_id = formik.values.us_id,
+                        beneficiary.neighborhood_id = formik.values.neighborhood_id, 
+                        beneficiary.date_created = moment(new Date()).format('YYYY-MM-DD'),
+                        beneficiary.status = 1, 
+                        beneficiary.locality_id = formik.values.locality,
+                        beneficiary.locality_name = locality.name, 
+                        beneficiary.district_id = formik.values.district,  
+                        beneficiary.district_code = district.code,  
+                        beneficiary.province_id = formik.values.province, 
+                        beneficiary.nationality = 1,
+                        beneficiary.enrollment_date = formik.values.enrollment_date
 
-            const sequenceToUpdate = await database.get('sequences').find(getPrefix.id);
-            await sequenceToUpdate.update((sequence:any) => {
-                sequence.last_nui = String(newNui)
-            });
-            return newBeneficiary;
+                        beneficiary.vblt_lives_with = formik.values.vblt_lives_with, 
+                        beneficiary.vblt_house_sustainer = Number(formik.values.vblt_house_sustainer),
+                        beneficiary.vblt_is_orphan = Number(formik.values.vblt_is_orphan),
+                        beneficiary.vblt_is_student = Number(formik.values.vblt_is_student),
+                        beneficiary.vblt_school_grade = formik.values.vblt_school_grade,
+                        beneficiary.vblt_school_name =formik.values.vblt_school_name,
+                        beneficiary.vblt_is_deficient = Number(formik.values.vblt_is_deficient),
+                        beneficiary.vblt_deficiency_type = formik.values.vblt_deficiency_type,
+                        beneficiary.vblt_married_before = Number(formik.values.vblt_married_before),
+                        beneficiary.vblt_pregnant_before = Number(formik.values.vblt_pregnant_before),
+                        beneficiary.vblt_children = Number(formik.values.vblt_children),
+                        beneficiary.vblt_pregnant_or_breastfeeding = Number(formik.values.vblt_pregnant_or_breastfeeding),
+                        beneficiary.vblt_is_employed = formik.values.vblt_is_employed,
+                        beneficiary.vblt_tested_hiv = formik.values.vblt_tested_hiv;
+                    });
+
+                    const sequenceToUpdate = await database.get('sequences').find(getPrefix.id);
+                    await sequenceToUpdate.update((sequence:any) => {
+                        sequence.last_nui = String(newNui)
+                    });
+                    return newBeneficiary;
+                }
         });
 
         sync({ username: loggedUser.username })
@@ -1071,18 +1080,18 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         {beneficiarie === undefined ? "" : beneficiarie.nui}
                                     </Text>
                                 </FormControl>
-                                <FormControl isRequired isInvalid={'vblt_lives_with' in formik.errors}>
+                                <FormControl key='vblt_lives_with' isRequired isInvalid={'vblt_lives_with' in formik.errors}>
                                     <FormControl.Label>Com quem mora?</FormControl.Label>                                  
                                         <Checkbox.Group onChange={setValue} value={value} accessibilityLabel="choose numbers">                                           
                                             {items.map(item=>{
-                                                 return <Checkbox value={item.value} colorScheme="green" >{item.label}</Checkbox>
+                                                 return <Checkbox key={item.value} value={item.value} colorScheme="green" >{item.label}</Checkbox>
                                             })}
                                         </Checkbox.Group>
                                     <FormControl.ErrorMessage>
                                         {formik.errors.vblt_lives_with}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl isRequired isInvalid={'vblt_house_sustainer' in formik.errors}>
+                                <FormControl key='vblt_house_sustainer' isRequired isInvalid={'vblt_house_sustainer' in formik.errors}>
                                     <FormControl.Label>Sustenta a Casa?</FormControl.Label>
                                     <Radio.Group value={formik.values.vblt_house_sustainer+''}
                                         onChange={(itemValue) => {
@@ -1104,7 +1113,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         {formik.errors.vblt_house_sustainer}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl isRequired isInvalid={'vblt_is_orphan' in formik.errors}>
+                                <FormControl key='vblt_is_orphan' isRequired isInvalid={'vblt_is_orphan' in formik.errors}>
                                     <FormControl.Label>É Orfã?</FormControl.Label>
                                     <Radio.Group value={formik.values.vblt_is_orphan+''}  
                                         onChange={(itemValue) => {
@@ -1126,7 +1135,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         {formik.errors.vblt_is_orphan}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl isRequired isInvalid={'vblt_is_student' in formik.errors}>
+                                <FormControl key='vblt_is_student' isRequired isInvalid={'vblt_is_student' in formik.errors}>
                                     <FormControl.Label>Vai a Escola?</FormControl.Label>
                                     <Radio.Group value={formik.values.vblt_is_student+''} 
                                         onChange={(itemValue) => {
@@ -1148,7 +1157,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         {formik.errors.vblt_is_student}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl isRequired={schoolInfoEnabled} isInvalid={'vblt_school_grade' in formik.errors}>
+                                <FormControl key='vblt_school_grade' isRequired={schoolInfoEnabled} isInvalid={'vblt_school_grade' in formik.errors}>
                                     <FormControl.Label>Classe</FormControl.Label>
                                     <Picker
                                         selectedValue={formik.values.vblt_school_grade}
@@ -1175,7 +1184,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         {formik.errors.vblt_school_name}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl isRequired isInvalid={'vblt_is_deficient' in formik.errors}>
+                                <FormControl key='vblt_is_deficient' isRequired isInvalid={'vblt_is_deficient' in formik.errors}>
                                     <FormControl.Label>Tem Deficiência?</FormControl.Label>
                                     <Radio.Group value={formik.values.vblt_is_deficient+''}
                                         onChange={(itemValue) => {
@@ -1197,7 +1206,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         {formik.errors.vblt_is_deficient}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl isRequired={deficiencyTypeEnabled} isInvalid={'vblt_deficiency_type' in formik.errors}>
+                                <FormControl key='vblt_deficiency_type' isRequired={deficiencyTypeEnabled} isInvalid={'vblt_deficiency_type' in formik.errors}>
                                     <FormControl.Label>Tipo de Deficiência</FormControl.Label>
                                     <Picker
                                         selectedValue={formik.values.vblt_deficiency_type}
@@ -1219,7 +1228,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         {formik.errors.vblt_deficiency_type}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl isRequired isInvalid={'vblt_married_before' in formik.errors}>
+                                <FormControl key='vblt_married_before' isRequired isInvalid={'vblt_married_before' in formik.errors}>
                                     <FormControl.Label>Já foi Casada?</FormControl.Label>
                                     <Radio.Group value={formik.values.vblt_married_before+''}
                                         onChange={(itemValue) => {
@@ -1241,7 +1250,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         {formik.errors.vblt_married_before}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl isRequired isInvalid={'vblt_pregnant_before' in formik.errors}>
+                                <FormControl key='vblt_pregnant_before' isRequired isInvalid={'vblt_pregnant_before' in formik.errors}>
                                     <FormControl.Label>Já esteve Gravida?</FormControl.Label>
                                     <Radio.Group value={formik.values.vblt_pregnant_before+''}
                                         onChange={(itemValue) => {
@@ -1263,7 +1272,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         {formik.errors.vblt_pregnant_before}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl isRequired={childrenEnabled} isInvalid={'vblt_children' in formik.errors}>
+                                <FormControl key='vblt_children' isRequired={childrenEnabled} isInvalid={'vblt_children' in formik.errors}>
                                     <FormControl.Label>Tem Filhos?</FormControl.Label>
                                     <Radio.Group value={formik.values.vblt_children+''}
                                         onChange={(itemValue) => {
@@ -1285,7 +1294,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         {formik.errors.vblt_children}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl isRequired isInvalid={'vblt_pregnant_or_breastfeeding' in formik.errors}>
+                                <FormControl key='vblt_pregnant_or_breastfeeding' isRequired isInvalid={'vblt_pregnant_or_breastfeeding' in formik.errors}>
                                     <FormControl.Label>Está Grávida ou a amamentar?</FormControl.Label>
                                     <Radio.Group value={formik.values.vblt_pregnant_or_breastfeeding+''}
                                         onChange={(itemValue) => {
@@ -1307,7 +1316,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         {formik.errors.vblt_pregnant_or_breastfeeding}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl isRequired isInvalid={'vblt_is_employed' in formik.errors}>
+                                <FormControl key='vblt_is_employed' isRequired isInvalid={'vblt_is_employed' in formik.errors}>
                                     <FormControl.Label>Trabalha?</FormControl.Label>
                                     <Picker
                                         selectedValue={formik.values.vblt_is_employed}
@@ -1327,7 +1336,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         {formik.errors.vblt_is_employed}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl isRequired isInvalid={'vblt_tested_hiv' in formik.errors}>
+                                <FormControl key='vblt_tested_hiv' isRequired isInvalid={'vblt_tested_hiv' in formik.errors}>
                                     <FormControl.Label>Já fez Teste de HIV?</FormControl.Label>
                                     <Picker
                                         selectedValue={formik.values.vblt_tested_hiv}
@@ -1368,7 +1377,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'vblt_sexually_active' in formik.errors}>
                                     <FormControl.Label>Sexualmente Activa?</FormControl.Label>
-                                    <Radio.Group value={formik.values.vblt_sexually_active+''}
+                                    <Radio.Group key='vblt_sexually_active' value={formik.values.vblt_sexually_active+''}
                                         onChange={(itemValue) => {
                                             formik.setFieldValue('vblt_sexually_active', itemValue);
                                         }} name="ex1" accessibilityLabel="pick a size">
@@ -1389,7 +1398,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'vblt_multiple_partners' in formik.errors}>
                                     <FormControl.Label>Relações Múltiplas e Concorrentes?</FormControl.Label>
-                                    <Radio.Group value={formik.values.vblt_multiple_partners+''}
+                                    <Radio.Group key='vblt_multiple_partners' value={formik.values.vblt_multiple_partners+''}
                                         onChange={(itemValue) => {
                                             formik.setFieldValue('vblt_multiple_partners', itemValue);
 
@@ -1411,7 +1420,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'vblt_is_migrant' in formik.errors}>
                                     <FormControl.Label>Migrante?</FormControl.Label>
-                                    <Radio.Group value={formik.values.vblt_is_migrant+''}
+                                    <Radio.Group key='vblt_is_migrant' value={formik.values.vblt_is_migrant+''}
                                         onChange={(itemValue) => {
                                             formik.setFieldValue('vblt_is_migrant', itemValue);
                                         }} name="ex3" accessibilityLabel="pick a size">
@@ -1432,7 +1441,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'vblt_trafficking_victim' in formik.errors}>
                                     <FormControl.Label>Vítima de Tráfico?</FormControl.Label>
-                                    <Radio.Group value={formik.values.vblt_trafficking_victim+''}
+                                    <Radio.Group key='vblt_trafficking_victim' value={formik.values.vblt_trafficking_victim+''}
                                         onChange={(itemValue) => {
                                             formik.setFieldValue('vblt_trafficking_victim', itemValue);
                                         }} name="ex4" accessibilityLabel="pick a size">
@@ -1453,7 +1462,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'vblt_sexual_exploitation' in formik.errors}>
                                     <FormControl.Label>Vítima de Exploração sexual?</FormControl.Label>
-                                    <Radio.Group value={formik.values.vblt_sexual_exploitation+''}
+                                    <Radio.Group key='vblt_sexual_exploitation' value={formik.values.vblt_sexual_exploitation+''}
                                         onChange={(itemValue) => {
                                             formik.setFieldValue('vblt_sexual_exploitation', itemValue);
                                             sexExploitationChange(itemValue);
@@ -1476,6 +1485,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                 <FormControl isRequired={sexExploitationTimeEnabled} isInvalid={'vblt_sexploitation_time' in formik.errors}>
                                     <FormControl.Label>Tempo</FormControl.Label>
                                     <Picker
+                                        key='vblt_sexploitation_time'
                                         selectedValue={formik.values.vblt_sexploitation_time}
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
@@ -1497,7 +1507,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'vblt_vbg_victim' in formik.errors}>
                                     <FormControl.Label>Vítima de Violéncia Baseada no Gênero?</FormControl.Label>
-                                    <Radio.Group value={formik.values.vblt_vbg_victim+''}
+                                    <Radio.Group key='vblt_vbg_victim' value={formik.values.vblt_vbg_victim+''}
                                         onChange={(itemValue) => {
                                             formik.setFieldValue('vblt_vbg_victim', itemValue);
                                             gbvVictimChange(itemValue);
@@ -1520,6 +1530,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                 <FormControl isRequired={gbvInfoEnabled} isInvalid={'vblt_vbg_type' in formik.errors}>
                                     <FormControl.Label>Tipo de Violéncia</FormControl.Label>
                                     <Picker
+                                        key='vblt_vbg_type'
                                         selectedValue={formik.values.vblt_vbg_type}
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
@@ -1542,6 +1553,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                 <FormControl isRequired={gbvInfoEnabled} isInvalid={'vblt_vbg_time' in formik.errors}>
                                     <FormControl.Label>Tempo</FormControl.Label>
                                     <Picker
+                                        key='vblt_vbg_time'
                                         selectedValue={formik.values.vblt_vbg_time}
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
@@ -1563,7 +1575,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'vblt_alcohol_drugs_use' in formik.errors}>
                                     <FormControl.Label>Uso de Álcool e Drogas?</FormControl.Label>
-                                    <Radio.Group value={formik.values.vblt_alcohol_drugs_use+''}
+                                    <Radio.Group key='vblt_alcohol_drugs_use' value={formik.values.vblt_alcohol_drugs_use+''}
                                         onChange={(itemValue) => {
                                             formik.setFieldValue('vblt_alcohol_drugs_use', itemValue);
                                         }} name="ex6" accessibilityLabel="pick a size">
@@ -1584,7 +1596,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'vblt_sti_history' in formik.errors}>
                                     <FormControl.Label>Histórico de ITS?</FormControl.Label>
-                                    <Radio.Group value={formik.values.vblt_sti_history+''}
+                                    <Radio.Group key='vblt_sti_history' value={formik.values.vblt_sti_history+''}
                                         onChange={(itemValue) => {
                                             formik.setFieldValue('vblt_sti_history', itemValue);
                                         }} name="ex7" accessibilityLabel="pick a size">
@@ -1606,7 +1618,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
 
                                 <FormControl isRequired= {sexWorkerEnable} isInvalid={'vblt_sex_worker' in formik.errors} style={{ display : sexWorkerEnable ? "flex" : "none" }} >
                                     <FormControl.Label>Trabalhadora do Sexo?</FormControl.Label>
-                                    <Radio.Group value={formik.values.vblt_sex_worker+''} 
+                                    <Radio.Group key='vblt_sex_worker' value={formik.values.vblt_sex_worker+''} 
                                         onChange={(itemValue) => {
                                             formik.setFieldValue('vblt_sex_worker', itemValue);
                                         }} name="ex8" accessibilityLabel="pick a size">
