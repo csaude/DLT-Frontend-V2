@@ -99,6 +99,7 @@ export default appSchema({
           {name: 'organization_id', type: 'number', isIndexed: true},
           {name: 'date_of_birth', type: 'string'},
           {name: 'date_created', type: 'string'},
+          {name: 'date_updated', type: 'string'},
           {name: 'gender', type: 'string'},
           {name: 'address', type: 'string'},
           {name: 'phone_number', type: 'string', isOptional: true},
