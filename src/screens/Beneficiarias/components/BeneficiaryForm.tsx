@@ -438,12 +438,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             const organization_id = loggedUser.partner_id == undefined ? loggedUser.partners?.id : loggedUser.partner_id;
 
             if (isEdit) {
-                console.log('-----------this is edit - beneficiarie------------',beneficiarie)
-
-                const beneficiaryToUpdate = await database.get('beneficiaries').find(beneficiarie?.id);
-                
-                console.log('---------beneficiaryToUpdate------------',beneficiaryToUpdate)
-                
+                const beneficiaryToUpdate = await database.get('beneficiaries').find(beneficiarie?.id);           
                 const updateBeneficiary = await beneficiaryToUpdate.update((record:any) => {
                     record.surname = formik.values.surname, 
                     record.name = formik.values.name, 
