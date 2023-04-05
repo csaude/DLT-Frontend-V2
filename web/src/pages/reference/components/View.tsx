@@ -11,6 +11,8 @@ import { addSubService, SubServiceParams } from '@app/utils/service'
 import { Checkbox } from 'antd';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { COUNSELOR, MANAGER, MENTOR, NURSE } from "@app/utils/contants";
+import { useDispatch, useSelector } from "react-redux";
+import { resetNextServiceIndex, updateNextServiceIndex, loadRemarks } from "@app/store/reducers/referenceIntervention";
 
 const { Text } = Typography;
 const { confirm } = Modal;
@@ -26,11 +28,14 @@ export function ViewReferencePanel({selectedReference, columns}) {
     const [canAddress, setCanAddress] = useState<boolean>(true);
     const [requiredServices, setRequiredServices] = useState<any>([]);
     const [select, setSelect] = useState<any>([]);
+    const dispatch = useDispatch()
+    const index = useSelector((state:any) => state.referenceIntervention.index)
 
-    const attendToRequiredServices = (refServices) =>{
-        const selectServices = refServices?.filter(refServ=>{return select.includes(refServ?.id?.serviceId)})
-        setRequiredServices(selectServices)
-        if(selectServices.length > 0){
+    const attendToRequiredServices = (reqRefServices) =>{
+        dispatch(resetNextServiceIndex())
+        const selectReqServices = reqRefServices?.filter(item=>{return select.includes(item?.id?.serviceId)})
+        setRequiredServices(selectReqServices)
+        if(selectReqServices.length > 0){
             setVisible(true);
         }else{
             showSelectServices()
@@ -100,11 +105,19 @@ export function ViewReferencePanel({selectedReference, columns}) {
         } 
         
         fetchData().catch(error => console.log(error));
-    
+          
     }, []);
 
+    const handleAttendServicesSequence = ()=> {
+        if(refServices[index+1] === undefined){
+            dispatch(resetNextServiceIndex())
+        }else{
+            dispatch(updateNextServiceIndex())
+        }
+    }
+
     const onSubmit = async () => {
-       
+               
         form.validateFields().then(async (values) => {
             
             let payload: SubServiceParams = {
@@ -130,6 +143,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
                 createdBy: localStorage.user
             };
 
+            dispatch(loadRemarks(values.outros))
             const { data } = await addSubService(payload);
             
             setInterventions(interventions => [...interventions, data.intervention]);
@@ -150,6 +164,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
             setVisible(false);
 
             goToNextIntervention();
+            handleAttendServicesSequence();
         })
             .catch(error => {
                 message.error({
@@ -163,7 +178,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
     };
 
     const onClose = () => {
-        setVisible(false);
+        setVisible(false);        
     };
 
     const showCloseConfirm = () => {
@@ -375,7 +390,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
                     }
                 >
                     <Form form={form} layout="vertical" onFinish={() => onSubmit()}> 
-                        <ReferenceInterventionForm form={form} reference={reference} records={requiredServices} beneficiary={reference?.beneficiaries} />
+                        <ReferenceInterventionForm form={form} reference={reference} refServices={requiredServices} beneficiary={reference?.beneficiaries} />
                     </Form> 
                 </Drawer>                
             </div>
@@ -384,6 +399,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
 }
 
 const ViewReferral = ({reference, modalVisible, handleModalVisible}) => {
+    const dispatch = useDispatch()
 
     const okHandle = () => {
         handleModalVisible();
@@ -397,6 +413,7 @@ const ViewReferral = ({reference, modalVisible, handleModalVisible}) => {
         okType: 'danger',
         cancelText: 'Não',
         onOk() {
+            dispatch(loadRemarks(''))
             handleModalVisible();
         },
         onCancel() {
