@@ -877,7 +877,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                                         {formik.errors.neighborhood_id}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl >
+                                {/* <FormControl >
                                     <FormControl.Label>NUI da Parceira 
                                         {!partnerHasErrors && <CheckCircleIcon size="5" mt="0.5" color="emerald.500" />}
                                         {partnerHasErrors && <WarningTwoIcon  />}
@@ -888,7 +888,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                                             onChangeText={handleSearchPartner} 
                                             value={searchPartner} />
                                     </FormControl>                          
-                                </FormControl>
+                                </FormControl> */}
 
                             </VStack>
                         </View>
