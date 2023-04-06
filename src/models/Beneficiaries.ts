@@ -25,6 +25,7 @@ export interface BeneficiariesModel {
     district_id?: any,
     district_code?: any,
     province_id: any,
+    nationality: any,
     us_id?: any,
     status?: any,
     online_id?:any,
@@ -83,6 +84,7 @@ export default class Beneficiarie extends Model {
     @field("district_id") district_id;
     @field("district_code") district_code;
     @field("province_id") province_id;
+    @field("nationality") nationality;
     @field("us_id") us_id;
     @field("status") status;
     @field("online_id") online_id;
