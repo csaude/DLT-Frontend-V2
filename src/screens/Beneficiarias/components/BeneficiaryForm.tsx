@@ -1644,7 +1644,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                 <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
                     <Modal.Content maxWidth="400px">
                         <Modal.CloseButton />
-                        <Modal.Header>Contact Us</Modal.Header>
+                        <Modal.Header>Confirmação Registo</Modal.Header>
                         <Modal.Body>
                             <ScrollView>
                                 <Box alignItems='center'>
