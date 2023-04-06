@@ -21,8 +21,6 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 
 const BeneficiaryForm: React.FC = ({ route }: any) => {
-    const [partners, setPartners] = useState<any>([])
-    
     const loggedUser: any = useContext(Context);
     
     const idades = ['9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24'];
@@ -164,9 +162,6 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             setChildrenEnabled(beneficiarie.vblt_pregnant_before == 1);
             setGbvInfoEnabled(beneficiarie.vblt_vbg_victim == 1);
             setSexExploitationTimeEnabled(beneficiarie.vblt_sexual_exploitation == 1);    
-            
-            const currentPartner = partners.filter(item=>{return item.online_id == beneficiarie.online_id})            
-            setSearchPartner(currentPartner[0]?.nui)
         }
         else {
             const entryPoint = formik.values.entry_point !== undefined ? 
@@ -728,10 +723,10 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             setSearchPartner(undefined)
             setPartnerHasErrors(false)
         }
-        else if(e.length !== 7 ){ 
+        else if(e.length !== 7 && e.length !== 10){ 
             setPartnerHasErrors(true)
         }
-        else if(e.length === 7 ){  
+        else if(e.length === 7 || e.length === 10){  
             const partnersQ = await database.get('beneficiaries').query(
                                 Q.where('gender', '1'),
                                 Q.where('nui',e)
