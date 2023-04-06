@@ -918,7 +918,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                                     <FormControl.Label>Com quem mora?</FormControl.Label>
                                     <Checkbox.Group onChange={setValue} value={value} accessibilityLabel="choose numbers">                                           
                                             {items.map(item=>{
-                                                 return <Checkbox value={item.value} colorScheme="green" >{item.label}</Checkbox>
+                                                 return <Checkbox key={item.value} value={item.value} colorScheme="green" >{item.label}</Checkbox>
                                             })}
                                     </Checkbox.Group>
 
