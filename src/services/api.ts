@@ -1,4 +1,4 @@
-const URL = "http://10.10.12.98:8083";
+const URL = "http://172.105.133.124:8080";
 export const LOGIN_API_URL = `${URL}/api/login`;
 export const SYNC_API_URL = `${URL}/sync`; 
 export const SYNC_API_URL_PREFIX = `${URL}/sync/prefix`;
