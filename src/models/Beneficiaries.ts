@@ -10,6 +10,7 @@ export interface BeneficiariesModel {
     organization_id?: any,
     date_of_birth?: string,
     date_created?: string,   
+    date_updated? : String,
     gender?: string,
     address?: string,
     phone_number?: any,
@@ -69,7 +70,8 @@ export default class Beneficiarie extends Model {
     @text("nick_name") nick_name;
     @field("organization_id") organization_id;
     @field("date_of_birth") date_of_birth;
-    @field("date_created") date_created;   
+    @field("date_created") date_created;  
+    @field("date_updated") date_updated; 
     @text("gender") gender;
     @text("address") address;
     @text("phone_number") phone_number;
