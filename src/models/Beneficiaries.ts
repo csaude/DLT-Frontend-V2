@@ -10,6 +10,7 @@ export interface BeneficiariesModel {
     organization_id?: any,
     date_of_birth?: string,
     date_created?: string,   
+    date_updated? : String,
     gender?: string,
     address?: string,
     phone_number?: any,
@@ -25,6 +26,7 @@ export interface BeneficiariesModel {
     district_id?: any,
     district_code?: any,
     province_id: any,
+    nationality: any,
     us_id?: any,
     status?: any,
     online_id?:any,
@@ -68,7 +70,8 @@ export default class Beneficiarie extends Model {
     @text("nick_name") nick_name;
     @field("organization_id") organization_id;
     @field("date_of_birth") date_of_birth;
-    @field("date_created") date_created;   
+    @field("date_created") date_created;  
+    @field("date_updated") date_updated; 
     @text("gender") gender;
     @text("address") address;
     @text("phone_number") phone_number;
@@ -83,6 +86,7 @@ export default class Beneficiarie extends Model {
     @field("district_id") district_id;
     @field("district_code") district_code;
     @field("province_id") province_id;
+    @field("nationality") nationality;
     @field("us_id") us_id;
     @field("status") status;
     @field("online_id") online_id;

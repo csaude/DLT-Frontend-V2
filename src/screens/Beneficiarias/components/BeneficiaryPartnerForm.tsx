@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, HStack, Text, VStack, FormControl, Input, Stack, InputGroup, InputLeftAddon, Center, Box, Button, Radio, Modal, ScrollView, Alert, Checkbox } from 'native-base';
+import { View, HStack, Text, VStack, FormControl, Input, Stack, InputGroup, InputLeftAddon, Center, Box, Button, Radio, Modal, ScrollView, Alert, Checkbox, CheckCircleIcon, WarningTwoIcon } from 'native-base';
 import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
 import { Ionicons } from "@native-base/icons";
 import { useFormik } from 'formik';
@@ -57,6 +57,8 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
     const [schoolInfoEnabled, setSchoolInfoEnabled] = useState<any>(true);
     const [deficiencyTypeEnabled, setDeficiencyTypeEnabled] = useState<any>(true);
     const userDetail = useSelector((state: RootState) => state.auth.userDetails);
+    const [searchPartner, setSearchPartner] = useState<any>(undefined);
+    const [partnerHasErrors,setPartnerHasErrors] = useState(false)
 
     useEffect(() => {
         const fetchProvincesData = async () => {
@@ -134,6 +136,17 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                 const neighborhoodsSerialized = neighborhoodsList.map(item => item._raw);
                 setNeighborhoods(neighborhoodsSerialized);
             }
+            const fetchPartners = async () => {
+                const partnersQ = await database.get('beneficiaries').query(
+                            Q.where('gender', '2'),
+                            Q.where('online_id', beneficiarie.partner_id)
+                        ).fetch();
+                const benefPartiner = partnersQ[0]?._raw;
+     
+                handleSearchPartner(benefPartiner?.['nui']);
+            }
+
+            fetchPartners().catch(error => console.log(error))   
 
             fetchDistricstData().catch(error => console.log(error));
             fetchLocalitiesData().catch(error => console.log(error));
@@ -154,6 +167,33 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
         }
     }, []);
 
+    const handleSearchPartner = async(e: any) => {
+
+        setSearchPartner(e) 
+
+        if(e === undefined || e===''){
+            setSearchPartner(undefined)
+            setPartnerHasErrors(false)
+        }
+        else if(e.length !== 7 && e.length !== 10 ){ 
+            setPartnerHasErrors(true)
+        }
+        else if(e.length === 7 || e.length === 10){  
+            const partnersQ = await database.get('beneficiaries').query(
+                                Q.where('gender', '2'),
+                                Q.where('nui',e)
+                            ).fetch();
+            const benefPartiner = partnersQ[0]?._raw;
+            if(benefPartiner){
+                setPartnerHasErrors(false)
+            }else{
+                setPartnerHasErrors(true)
+            }
+            formik.setFieldValue('partner_id', benefPartiner?.['online_id']);
+        }
+    };
+
+
     const formik = useFormik({
         initialValues: {
             surname: beneficiarie?.surname,
@@ -173,7 +213,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
             phone_number: beneficiarie?.phone_number,
             e_mail: beneficiarie?.e_mail,
             neighborhood_id: beneficiarie?.neighborhood_id,
-            partner_nui: beneficiarie?.partner_nui,
+            partner_id: beneficiarie?.partner_id,
             vblt_lives_with: beneficiarie?.vblt_lives_with,
             vblt_is_orphan: beneficiarie?.vblt_is_orphan,
             vblt_is_student: beneficiarie?.vblt_is_student,
@@ -224,6 +264,10 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
             setErrors(false);
             setStep(2);
         }
+
+        if(partnerHasErrors){
+            setErrors(true)
+        }
     };
 
     const onNextStep2 = async () => {
@@ -247,6 +291,10 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
             }
 
             setErrors(false);
+        }
+
+        if(partnerHasErrors){
+            setErrors(true)
         }
     };
 
@@ -330,23 +378,13 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
     const handleSaveBeneficiary = async () => {
         
         const district = districts.filter(d => d.online_id === formik.values.district)[0];
-        setDistrict(district);
-
-        const partner_nui = formik.values.partner_nui;
-        let partner;
-        
-        if(partner_nui && partner_nui !== ''){
-            partner = (await database.get('beneficiaries').query(
-                Q.where('nui', partner_nui)
-            ).fetch())[0]?._raw;
-        }
-        
+        setDistrict(district);                    
         const isEdit = beneficiarie && beneficiarie?.id;
 
         const newObject = await database.write(async () => {
 
             const locality = localities.filter(item => item.online_id === formik.values.locality)[0];
-            const partner_id = loggedUser.partner_id == undefined ? loggedUser.partners?.id : loggedUser.partner_id;
+            const organization_id = loggedUser.partner_id == undefined ? loggedUser.partners?.id : loggedUser.partner_id;
 
             if (isEdit) {
                 const beneficiaryToUpdate = await database.get('beneficiaries').find(beneficiarie?.id);
@@ -359,7 +397,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                     beneficiarie.address = formik.values.address, 
                     beneficiarie.phone_number = formik.values.phone_number, 
                     beneficiarie.e_mail = formik.values.e_mail,
-                    beneficiarie.partner_id = partner?.online_id,
+                    beneficiarie.partner_id = Number(formik.values?.partner_id),
                     beneficiarie.entry_point = formik.values.entry_point, 
                     beneficiarie.us_id = formik.values.us_id,
                     beneficiarie.neighborhood_id = formik.values.neighborhood_id, 
@@ -401,8 +439,8 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                 beneficiary.address = formik.values.address, 
                 beneficiary.phone_number = formik.values.phone_number, 
                 beneficiary.e_mail = formik.values.e_mail, 
-                beneficiary.organization_id = partner_id, 
-                beneficiary.partner_id = partner?.online_id,
+                beneficiary.organization_id = organization_id, 
+                beneficiary.partner_id = Number(formik.values?.partner_id),
                 beneficiary.entry_point = formik.values.entry_point, 
                 beneficiary.us_id = formik.values.us_id,
                 beneficiary.neighborhood_id = formik.values.neighborhood_id, 
@@ -839,10 +877,18 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                                         {formik.errors.neighborhood_id}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl >
-                                    <FormControl.Label>NUI do Parceiro</FormControl.Label>
-                                    <Input onBlur={formik.handleBlur('partner_nui')} placeholder="Insira o NUI do Parceiro" onChangeText={formik.handleChange('partner_nui')} value={formik.values.partner_nui} />
-                                </FormControl>
+                                {/* <FormControl >
+                                    <FormControl.Label>NUI da Parceira 
+                                        {!partnerHasErrors && <CheckCircleIcon size="5" mt="0.5" color="emerald.500" />}
+                                        {partnerHasErrors && <WarningTwoIcon  />}
+                                    </FormControl.Label>
+                                    <FormControl>
+                                        <Input onBlur={()=>{}} 
+                                            placeholder="Insira o NUI da Parceira" 
+                                            onChangeText={handleSearchPartner} 
+                                            value={searchPartner} />
+                                    </FormControl>                          
+                                </FormControl> */}
 
                             </VStack>
                         </View>
@@ -867,7 +913,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                                     <FormControl.Label>Com quem mora?</FormControl.Label>
                                     <Checkbox.Group onChange={setValue} value={value} accessibilityLabel="choose numbers">                                           
                                             {items.map(item=>{
-                                                 return <Checkbox value={item.value} colorScheme="green" >{item.label}</Checkbox>
+                                                 return <Checkbox key={item.value} value={item.value} colorScheme="green" >{item.label}</Checkbox>
                                             })}
                                     </Checkbox.Group>
 
