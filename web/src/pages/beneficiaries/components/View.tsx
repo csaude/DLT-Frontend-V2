@@ -21,14 +21,13 @@ import { getInterventionsCount } from '@app/store/actions/interventions';
 
 const { confirm } = Modal;
 
-export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, handleModalRefVisible, user}) {
+export function ViewBenefiaryPanel({ beneficiary, handleModalVisible, handleModalRefVisible, user}) {
     const [visible, setVisible] = useState<boolean>(false);
     const [isAdd, setIsAdd] = useState<boolean>(false);
     const [selectedBeneficiary, setSelectedBeneficiary] = useState();
     const [selectedIntervention, setSelectedIntervention] = useState<any>();
     const [interventions, setInterventions] = useState(beneficiary?.beneficiariesInterventionses);
     const [partner, setPartner] = useState<any>();
-    const [ logUser, setLogUser ] = React.useState<any>();
     const [visibleName, setVisibleName] = useState<any>(true);
 
     const [form] = Form.useForm();
@@ -36,14 +35,11 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
 
     useEffect(() => { 
 
-        const fetchUser = async () => {
-
-            const logUser = await queryUser(localStorage.user);
-            setLogUser(logUser);
+        const fetchData = async () => {
 
             if(beneficiary.partnerId){
-                const user = await query(beneficiary.partnerId);
-                setPartner(user);
+                const partner = await query(beneficiary.partnerId);
+                setPartner(partner);
             }
             
             if(user.profiles.id === ADMIN || user.profiles.id === MNE || user.profiles.id === SUPERVISOR){
@@ -56,7 +52,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
              setInterventions(benIntervs);
         }
     
-        fetchUser().catch(error => console.log("---: ",error));        
+        fetchData().catch(error => console.log("---: ",error));        
         fetchBeneficiariesInterventionses().catch(err => console.log(err))
     
     }, []);
@@ -81,6 +77,7 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
     };
 
     const onEditIntervention = (record: any) => {
+        form.resetFields();
         setVisible(true);
         setIsAdd(true);
         setSelectedIntervention(record);
@@ -194,48 +191,47 @@ export function ViewBenefiaryPanel({ beneficiary, columns , handleModalVisible, 
 
     };
 
-    const interventionColumns = columns === undefined ?
-        [
-            {
-                title: 'Data',
-                dataIndex: '',
-                key: 'date',
-                render: (text, record) => <span>{moment(record.id.date).format('YYYY-MM-DD')}</span>,
-            },
-            {
-                title: 'Serviço',
-                dataIndex: '',
-                key: 'service',
-                render: (text, record) => record.subServices.service.name,
-            },
-            {
-                title: 'Intervenções',
-                dataIndex: '',
-                key: 'intervention',
-                render: (text, record)  => 
-                    ((user.profiles.id == MENTOR || user.profiles.id == MANAGER && user.partners.partnerType == 2) && record.subServices.service.id == 9)? 
-                    '' : record.subServices.name,
-            },
-            {
-                title: 'Ponto de Entrada',
-                dataIndex: '',
-                key: 'entryPoint',
-                render: (text, record) => record.us.name,
-            },
-            {
-                title: 'Acção',
-                dataIndex: '',
-                key: 'x',
-                render: (text, record) => (
-                    <Space>
-                        <Button type="primary" icon={<EyeOutlined />} onClick={() => showDrawer(record)} >
-                        </Button>
-                        <Button type="primary" icon={<EditOutlined />} onClick={() => onEditIntervention(record)} >
-                        </Button>
-                    </Space>
-                ),
-            },
-        ] : columns;
+    const interventionColumns = [
+        {
+            title: 'Data',
+            dataIndex: '',
+            key: 'date',
+            render: (text, record) => <span>{moment(record.id.date).format('YYYY-MM-DD')}</span>,
+        },
+        {
+            title: 'Serviço',
+            dataIndex: '',
+            key: 'service',
+            render: (text, record) => record.subServices.service.name,
+        },
+        {
+            title: 'Intervenções',
+            dataIndex: '',
+            key: 'intervention',
+            render: (text, record)  => 
+                ((user.profiles.id == MENTOR || user.profiles.id == MANAGER && user.partners.partnerType == 2) && record.subServices.service.id == 9)? 
+                '' : record.subServices.name,
+        },
+        {
+            title: 'Ponto de Entrada',
+            dataIndex: '',
+            key: 'entryPoint',
+            render: (text, record) => record.us.name,
+        },
+        {
+            title: 'Acção',
+            dataIndex: '',
+            key: 'x',
+            render: (text, record) => (
+                <Space>
+                    <Button type="primary" icon={<EyeOutlined />} onClick={() => showDrawer(record)} >
+                    </Button>
+                    <Button type="primary" icon={<EditOutlined />} onClick={() => onEditIntervention(record)} >
+                    </Button>
+                </Space>
+            ),
+        },
+    ];
 
     return (
         <>
@@ -423,7 +419,7 @@ const ViewBeneficiary = ({ beneficiary, modalVisible, handleModalVisible , handl
             onCancel={() => showCloseConfirm()}
         >
             
-            <ViewBenefiaryPanel beneficiary={beneficiary} columns={undefined} handleModalVisible={handleModalVisible} handleModalRefVisible={handleModalRefVisible} user={user} />
+            <ViewBenefiaryPanel beneficiary={beneficiary} handleModalVisible={handleModalVisible} handleModalRefVisible={handleModalRefVisible} user={user} />
 
         </Modal>
 
