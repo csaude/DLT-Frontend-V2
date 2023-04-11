@@ -17,6 +17,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import styles from './style'
 import { loadUser } from "../../store/authSlice";
 import moment from 'moment';
+import { MANAGER, MENTOR, NURSE } from "../../utils/constants";
 
 interface LoginData {
     email?: string | undefined;
@@ -195,18 +196,28 @@ const Login: React.FC = () => {
                         setIsInvalidCredentials(true);
                     } else {
 
-                        await fetchPrefix(values.username);
+                        const account = response.account;
 
-                        setIsInvalidCredentials(false);
+                        if ([MENTOR, NURSE, MANAGER].includes(account?.profiles.id)) {
 
-                        setToken(response.token);
-                        setLoggedUser(response.account);
+                            await fetchPrefix(values.username);
+    
+                            setIsInvalidCredentials(false);
+    
+                            setToken(response.token);
+                            setLoggedUser(account);
+    
+                            dispatch(loadUser(account));
+    
+                            saveUserDatails(account)
+    
+                            isVeryOldPassword(account)
 
-                        dispatch(loadUser(response.account));
-
-                        saveUserDatails(response.account)
-
-                        isVeryOldPassword(response.account)
+                        }
+                        else {
+                            setLoading(false);
+                            return showToast('Restrição de Acesso', 'Apenas Enfermeiras e Mentoras Podem Aceder a Aplicativo Móvel!');
+                        }
                     }
                     setLoading(false);
                 })
