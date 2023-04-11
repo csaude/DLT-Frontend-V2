@@ -26,7 +26,7 @@ interface LoginData {
 }
 
 
-const Login: React.FC = () => {
+const Login: React.FC = ({ route }: any) => {
     const [loggedUser, setLoggedUser] = useState<any>(undefined);
     const [isInvalidCredentials, setIsInvalidCredentials] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -42,30 +42,6 @@ const Login: React.FC = () => {
     const userDetails = database.collections.get('user_details');
     const dispatch = useDispatch()
     const [passwordExpired, setPasswordExpired] = useState(false);
-
-    const fetchPrefix = async (username: string): Promise<any> => {
-        // fetch the prefix 
-        await fetch(`${SYNC_API_URL_PREFIX}?username=${username}`)
-            .then(response => response.json())
-            .then(async (response) => {
-                if (response.status && response.status !== 200) { // unauthorized
-
-                    setIsInvalidCredentials(true);
-                } else {
-
-                    await database.write(async () => {
-                        await sequences.create((sequence: any) => {
-                            sequence.prefix = response.sequence
-                            sequence.last_nui = '11111'
-                        });
-                    });
-                }
-            })
-            .catch(error => {
-                showToast('Falha de Conexão', 'Por favor contacte o suporte!');
-                return undefined;
-            });
-    }
 
     const showToast = (message, description) => {
         return toasty.show({
@@ -93,6 +69,34 @@ const Login: React.FC = () => {
         });
     }
 
+    const fetchPrefix = async (username: string): Promise<any> => {
+        // fetch the prefix 
+        await fetch(`${SYNC_API_URL_PREFIX}?username=${username}`)
+            .then(response => response.json())
+            .then(async (response) => {
+                if (response.status === 401) { // unauthorized
+
+                    showToast('Conta bloqueada', 'Contacte o seu supervisor ou vesite seu email!!!');
+
+                } else if(response.status && response.status !== 200) {
+                    setIsInvalidCredentials(true);
+
+                } else {
+
+                    await database.write(async () => {
+                        await sequences.create((sequence: any) => {
+                            sequence.prefix = response.sequence
+                            sequence.last_nui = '11111'
+                        });
+                    });
+                }
+            })
+            .catch(error => {
+                showToast('Falha de Conexão', 'Por favor contacte o suporte!');
+                return undefined;
+            });
+    }
+
     useEffect(() => {
         const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
             const offline = !(state.isConnected && state.isInternetReachable);
@@ -104,7 +108,7 @@ const Login: React.FC = () => {
     // watch changes to loggedUser, sync 
     useEffect(() => {
 
-        if (loggedUser) {
+        if (loggedUser ) {
 
             sync({ username: loggedUser.username })
                 .then(() => toasty.show({
@@ -148,8 +152,28 @@ const Login: React.FC = () => {
 
             if (loggedUser.newPassword == '1') {
                 navigate({ name: "ChangePassword", params: { loggedUser: loggedUser, token: token } });
-            } else {
+            } else if (loggedUser.isEnabled == '1'){
                 navigate({ name: "Main", params: { loggedUser: loggedUser, token: token, passwordExpired: true } });
+            } else{
+                toasty.show({
+                    placement: "top",
+                    render: () => {
+                        return (
+                            <Alert w="100%" variant="left-accent" colorScheme="success" status="success">
+                                <VStack space={2} flexShrink={1} w="100%">
+                                    <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
+                                        <HStack space={2} flexShrink={1} alignItems="center">
+                                            <Alert.Icon />
+                                            <Text color="coolGray.800">
+                                                Contacte o seu supervisor ou vesite seu email!!!
+                                            </Text>
+                                        </HStack>
+                                    </HStack>
+                                </VStack>
+                            </Alert>
+                        );
+                    }
+                });
             }
         }
 

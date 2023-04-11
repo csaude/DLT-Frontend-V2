@@ -140,7 +140,7 @@ const ResetPassword: React.FC = () => {
 								
 				navigationRef.reset({
 					index: 0,
-					routes: [{ name: 'Login',  params: { resetPassword: '1' }  }] 
+					routes: [{ name: 'Login' }] 
 				  })			
 			}						
 
