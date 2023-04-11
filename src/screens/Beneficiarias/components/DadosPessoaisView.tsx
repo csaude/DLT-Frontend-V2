@@ -4,6 +4,7 @@ import { Box, Heading, Divider, Avatar, Icon, Flex } from "native-base";
 import { Context } from '../../../routes/DrawerNavigator';
 import { Ionicons } from "@native-base/icons";
 import styles from './styles';
+import { ADMIN, MNE, SUPERVISOR } from "../../../utils/constants";
 
 const DadosPessoaisView: React.FC = ({ route }: any) => {
     const [maskName,setMaskName,] = useState(false)
@@ -28,8 +29,7 @@ const DadosPessoaisView: React.FC = ({ route }: any) => {
     };
 
     useEffect(()=>{
-        if( loggedUser?.profile_id === 1 || loggedUser?.profile_id === 2 || loggedUser?.profile_id === 3 ||
-                        loggedUser?.profiles?.id === 1 || loggedUser?.profiles?.id === 2 || loggedUser?.profiles?.id === 3)
+        if([ADMIN, MNE, SUPERVISOR].includes(loggedUser?.profile_id) || [ADMIN, MNE, SUPERVISOR].includes(loggedUser?.profiles?.id))
         {
             setMaskName(false)
         }
