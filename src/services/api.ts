@@ -1,4 +1,5 @@
 const URL = "http://172.105.133.124:8080/dlt-api-0.1"
+//const URL = "https://172.16.60.23:8443/dlt-api-0.1"
 export const LOGIN_API_URL = `${URL}/api/login`;
 export const SYNC_API_URL = `${URL}/sync`; 
 export const SYNC_API_URL_PREFIX = `${URL}/sync/prefix`;
