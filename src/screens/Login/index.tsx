@@ -42,6 +42,7 @@ const Login: React.FC = () => {
     const userDetails = database.collections.get('user_details');
     const dispatch = useDispatch()
     const [passwordExpired, setPasswordExpired] = useState(false);
+    const [isLoggedUserDifferentFromSyncedUser, setLoggedUserDifferentFromSyncedUser] = useState(false)
 
     const fetchPrefix = async (username: string): Promise<any> => {
         // fetch the prefix 
@@ -220,17 +221,22 @@ const Login: React.FC = () => {
                 var logguedUser: any = (await users.query(Q.where('username', Q.like(`%${Q.sanitizeLikeString(values.username)}%`))).fetch())[0];
 
                 var authenticated = bcrypt.compareSync(values.password, logguedUser?._raw?.password);
+                const userDetailsQ = await userDetails.query().fetch();
 
                 if (!authenticated) {
                     setIsInvalidCredentials(true);
 
-                } else {
+                } 
+                else if(logguedUser._raw.online_id !== userDetailsQ[0]._raw?.user_id){
+                    setLoggedUserDifferentFromSyncedUser(true)
+                }                
+                else {
                     setIsInvalidCredentials(false);
                     setLoggedUser(logguedUser._raw);
 
                     dispatch(loadUser(logguedUser._raw));
                     isVeryOldPassword(logguedUser._raw)
-
+                 
                     navigate({ name: "Main", params: { loggedUser: logguedUser._raw } });
                 }
                 setLoading(false);
@@ -246,12 +252,12 @@ const Login: React.FC = () => {
         let passwordLastChangeDate;
         const today = moment(new Date());
 
-        if (user.online_id !== undefined) {
+        if (user.online_id) {
             const userDetailss = await userDetails.query(Q.where('user_id', parseInt(user.online_id))).fetch();
             passwordLastChangeDate = userDetailss[0]['password_last_change_date']
         } else {
             passwordLastChangeDate = user.passwordLastChangeDate !== null ? user.passwordLastChangeDate : user.dateCreated
-        }
+    }
 
         const lastChangeDate = moment(passwordLastChangeDate);
         const diff = moment.duration(today.diff(lastChangeDate));
@@ -384,6 +390,33 @@ const Login: React.FC = () => {
                     </VStack>
 
                 </Box>
+
+                <Center>
+                    <Modal isOpen={isLoggedUserDifferentFromSyncedUser} onClose={()=>{setLoggedUserDifferentFromSyncedUser(false)}}>
+                        <Modal.Content maxWidth="400px">
+                            <Modal.CloseButton />
+                            <Modal.Header>Utilizador Logado Diferente do Sincronizado</Modal.Header>
+                            <Modal.Body>
+                              
+                                    <Box alignItems='center'>
+                                        {/* <Ionicons name="md-checkmark-circle" size={100} color="#0d9488" /> */}
+                                        <Alert w="100%" status="warning">
+                                            <VStack space={2} flexShrink={1}>
+                                                <HStack>
+                                                    <InfoIcon mt="1"  />
+                                                    <Text fontSize="sm" color="coolGray.800">
+                                                       O usuário logado não é o usuário sincronizado com este dispositivo. Caso queira usar outro usuário, por favor reinstale o aplicativo!     </Text>
+                                                </HStack>                                             
+                                                                                               
+                                            </VStack>
+                                        </Alert>
+                                        <Text >
+                                        </Text>
+                                    </Box>
+                            </Modal.Body>
+                        </Modal.Content>
+                    </Modal>
+                </Center>
 
             </ScrollView>
         </KeyboardAvoidingView>
