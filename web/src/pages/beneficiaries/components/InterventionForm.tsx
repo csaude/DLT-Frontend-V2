@@ -46,7 +46,7 @@ const InterventionForm = ({ record, beneficiary}: any) => {
         setUser(user);
         setUsers(listUser);
 
-        let entryPoint = user?.entryPoint;
+        let entryPoint = record? record.entryPoint : user?.entryPoint;
 
         if(entryPoint != undefined){
           const serviceType = entryPoint=== '1'? 'CLINIC' : 'COMMUNITY';
