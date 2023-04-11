@@ -235,8 +235,8 @@ const Login: React.FC = () => {
                     setLoggedUser(logguedUser._raw);
 
                     dispatch(loadUser(logguedUser._raw));
-                    isVeryOldPassword(logguedUser._raw)
-                                    
+                    isVeryOldPassword(logguedUser._raw);            
+
                     navigate({ name: "Main", params: { loggedUser: logguedUser._raw } });
                 }
                 setLoading(false);
@@ -253,7 +253,9 @@ const Login: React.FC = () => {
         const today = moment(new Date());
 
         if (user.online_id) {
+
             console.log('------synced------',user)
+
             const userDetailss = await userDetails.query(Q.where('user_id', parseInt(user.online_id))).fetch();
             passwordLastChangeDate = userDetailss[0]['password_last_change_date']
             console.log('----password_last_change_date----',passwordLastChangeDate)

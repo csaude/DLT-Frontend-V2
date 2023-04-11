@@ -314,44 +314,6 @@ const BeneficiariesList: React.FC = () => {
         handleModalVisible: handleModalVisible
     };
 
-    const interventionColumns = [
-        { title: 'Data', 
-            dataIndex: 'date', 
-            key: 'date',
-            render: (text, record) => <span>{moment(record.id.date).format('YYYY-MM-DD')}</span>,
-        },
-        { title: 'Serviço', 
-            dataIndex: '', 
-            key: 'service',
-            render: (text, record)  => record.subServices.service.name,
-        },
-        { title: 'Intervenções', 
-            dataIndex: '', 
-            key: 'intervention',
-            render: (text, record)  => 
-                ((user?.profiles.id == MENTOR || user?.profiles.id == MANAGER && user?.partners.partnerType == 2) && record.subServices.service.id == 9)? 
-                '' : record.subServices.name,
-        },
-        { title: 'Ponto de Entrada', 
-            dataIndex: '', 
-            key: 'entryPoint',
-            render: (text, record)  => record.us.name,
-        },
-        // {
-        //     title: 'Acção',
-        //     dataIndex: '',
-        //     key: 'x',
-        //     render: (text, record) => (
-        //         <Space>
-        //             <Button type="primary" icon={<EyeOutlined />} onClick={() => showDrawer(record)} >
-        //             </Button>
-        //             <Button type="primary" icon={<EditOutlined />} onClick={() => onEditIntervention(record)} >
-        //             </Button>
-        //         </Space>
-        //     ),
-        // },
-    ];
-
     const columns = [
         { title: 'Código do Beneficiário (NUI)', dataIndex: '', key: 'nui', ...getColumnSearchProps('nui'),
             render: (text, record)  => (
@@ -364,14 +326,14 @@ const BeneficiariesList: React.FC = () => {
         },
         { title: 'Sexo', dataIndex: 'gender', key: 'gender',
             filters: [
-            {
-                text: 'M',
-                value: '1',
-            },
-            {
-                text: 'F',
-                value: '2',
-            },
+                {
+                    text: 'M',
+                    value: '1',
+                },
+                {
+                    text: 'F',
+                    value: '2',
+                },
             ],
             onFilter: (value, record) => record.gender == value,
             filterSearch: true,
@@ -390,18 +352,18 @@ const BeneficiariesList: React.FC = () => {
         },
         { title: 'PE', dataIndex: '', key: 'entryPoint', 
             filters: [
-            {
-                text: 'US',
-                value: '1',
-            },
-            {
-                text: 'CM',
-                value: '2',
-            },
-            {
-                text: 'ES',
-                value: '3',
-            },
+                {
+                    text: 'US',
+                    value: '1',
+                },
+                {
+                    text: 'CM',
+                    value: '2',
+                },
+                {
+                    text: 'ES',
+                    value: '3',
+                },
             ],
             onFilter: (value, record) => record.entryPoint == value,
             filterSearch: true,
@@ -542,7 +504,7 @@ const BeneficiariesList: React.FC = () => {
                             sortDirections={["descend", "ascend"]}
                             columns={columns}
                             expandable={{
-                                expandedRowRender: record =>  <div style={{border:"2px solid #d9edf7", backgroundColor:"white"}}><ViewBenefiaryPanel beneficiary={record} columns={interventionColumns} handleModalVisible={handleModalVisible} handleModalRefVisible={handleModalRefVisible} user={user} /></div>,
+                                expandedRowRender: record =>  <div style={{border:"2px solid #d9edf7", backgroundColor:"white"}}><ViewBenefiaryPanel beneficiary={record} handleModalVisible={handleModalVisible} handleModalRefVisible={handleModalRefVisible} user={user} /></div>,
                                 rowExpandable: record => record.name !== 'Not Expandable',
                             }}
                             dataSource={beneficiaries}
