@@ -24,7 +24,6 @@ interface LoginData {
     rePassword?: string | undefined;
 }
 
-
 const Login: React.FC = ({ route }: any) => {
     const params:any = route?.params;
     const resetPassword:any = params?.resetPassword;
@@ -37,7 +36,6 @@ const Login: React.FC = ({ route }: any) => {
     const [token, setToken] = useState();
 
     const toasty = useToast();
-
 
     const users = database.collections.get('users');
     const sequences = database.collections.get('sequences');
@@ -77,11 +75,7 @@ const Login: React.FC = ({ route }: any) => {
         await fetch(`${SYNC_API_URL_PREFIX}?username=${username}`)
             .then(response => response.json())
             .then(async (response) => {
-                if (response.status === 401) { // unauthorized
-
-                    showToast('Conta bloqueada', 'Contacte o seu supervisor ou vesite seu email!!!');
-
-                } else if(response.status && response.status !== 200) {
+                if(response.status && response.status !== 200) { // unauthorized
                     setIsInvalidCredentials(true);
 
                 } else {
