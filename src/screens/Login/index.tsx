@@ -38,7 +38,6 @@ const Login: React.FC = ({ route }: any) => {
 
     const toasty = useToast();
 
-    console.log(resetPassword);
 
     const users = database.collections.get('users');
     const sequences = database.collections.get('sequences');
@@ -112,7 +111,7 @@ const Login: React.FC = ({ route }: any) => {
     // watch changes to loggedUser, sync 
     useEffect(() => {
 
-        if (loggedUser && resetPassword != '1') {
+        if (loggedUser) {
 
             sync({ username: loggedUser.username })
                 .then(() => toasty.show({
@@ -158,29 +157,7 @@ const Login: React.FC = ({ route }: any) => {
                 navigate({ name: "ChangePassword", params: { loggedUser: loggedUser, token: token } });
             } else if (loggedUser.isEnabled == '1'){
                 navigate({ name: "Main", params: { loggedUser: loggedUser, token: token, passwordExpired: true } });
-            } 
-            
-            // else{
-            //     toasty.show({
-            //         placement: "top",
-            //         render: () => {
-            //             return (
-            //                 <Alert w="100%" variant="left-accent" colorScheme="success" status="success">
-            //                     <VStack space={2} flexShrink={1} w="100%">
-            //                         <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
-            //                             <HStack space={2} flexShrink={1} alignItems="center">
-            //                                 <Alert.Icon />
-            //                                 <Text color="coolGray.800">
-            //                                     Contacte o seu supervisor ou vesite seu email!!!
-            //                                 </Text>
-            //                             </HStack>
-            //                         </HStack>
-            //                     </VStack>
-            //                 </Alert>
-            //             );
-            //         }
-            //     });
-            // }
+            }               
         }
 
     }, [loggedUser]);
@@ -208,7 +185,7 @@ const Login: React.FC = ({ route }: any) => {
         ).fetchCount();
 
         console.log(checkSynced);
-        if (checkSynced == 0) { // checkSynced=0 when db have not synced yet
+        if (checkSynced == 0 || resetPassword === '1') { // checkSynced=0 when db have not synced yet
 
             if (isOffline) {
                 setLoading(false);
@@ -230,7 +207,9 @@ const Login: React.FC = ({ route }: any) => {
             
                                 if (response.status && response.status !== 200) { // unauthorized
             
-                                    setIsInvalidCredentials(true);
+                                    setIsInvalidCredentials(true);             
+                                    resetPassword === '1'? showToast('Conta bloqueada', 'Contacte o seu supervisor ou vesite seu e-mail!!!') : '';                                        
+                                   
                                 } else {
             
                                     const account = response.account;
@@ -276,7 +255,7 @@ const Login: React.FC = ({ route }: any) => {
                 } 
                 else if(logguedUser._raw.online_id !== userDetailsQ[0]._raw?.['user_id']){
                     setLoggedUserDifferentFromSyncedUser(true)
-                }                
+                }   
                 else {
                     setIsInvalidCredentials(false);
                     setLoggedUser(logguedUser._raw);
