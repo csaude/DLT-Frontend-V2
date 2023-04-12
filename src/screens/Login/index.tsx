@@ -253,21 +253,14 @@ const Login: React.FC = () => {
         const today = moment(new Date());
 
         if (user.online_id) {
-
-            console.log('------synced------',user)
-
             const userDetailss = await userDetails.query(Q.where('user_id', parseInt(user.online_id))).fetch();
             passwordLastChangeDate = userDetailss[0]['password_last_change_date']
-            console.log('----password_last_change_date----',passwordLastChangeDate)
         } else {
-            console.log('--------new sync-------',user)
             passwordLastChangeDate = user.passwordLastChangeDate !== null ? user.passwordLastChangeDate : user.dateCreated
-            console.log(moment(user.passwordLastChangeDate), ': ',moment(user.dateCreated))
     }
 
         const lastChangeDate = moment(passwordLastChangeDate);
         const diff = moment.duration(today.diff(lastChangeDate));
-        console.log('-------diff days-------', diff.asDays())
         return diff.asDays() > 182 ? setPasswordExpired(true) : setPasswordExpired(false)
     }
 
