@@ -7,7 +7,7 @@ import * as Yup from 'yup';
 import { Q } from '@nozbe/watermelondb'
 import NetInfo from "@react-native-community/netinfo";
 import { database } from '../../database';
-import { LOGIN_API_URL, SYNC_API_URL_PREFIX, UPDATE_PASSWORD_URL } from '../../services/api';
+import { LOGIN_API_URL, SYNC_API_URL_PREFIX, UPDATE_PASSWORD_URL, VERIFY_USER_API_URL } from '../../services/api';
 import { MaterialIcons } from "@native-base/icons";
 import { sync } from "../../database/sync";
 import { toast } from 'react-toastify';
@@ -17,6 +17,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import styles from './style'
 import { loadUser, logoutUser } from "../../store/authSlice";
 import moment from 'moment';
+import { MANAGER, MENTOR, NURSE } from "../../utils/constants";
 
 interface LoginData {
     email?: string | undefined;
@@ -186,6 +187,16 @@ const Login: React.FC = () => {
                 return showToast('Sem Conexão a Internet', 'Conecte-se a Internet para o primeiro Login!');
             }
 
+            // restrict access to mobile app to mentors and nurses (manager is added for profiles on old platform)
+            await fetch(`${VERIFY_USER_API_URL}/${values.username}`)
+                .then(response => response.json())
+                .then(async (response) => {
+                    if (![MENTOR, NURSE, MANAGER].includes(response?.profiles.id)) {
+                        setLoading(false);
+                        return showToast('Restrição de Acesso', 'Apenas Enfermeiras e Mentoras Podem Aceder a Aplicativo Móvel!');
+                    } else {
+
+
             await fetch(`${LOGIN_API_URL}?username=${values.username}&password=${encodeURIComponent(values.password)}`)
                 .then(response => response.json())
                 .then(async (response) => {
@@ -214,7 +225,14 @@ const Login: React.FC = () => {
                     showToast('Falha de Conexão', 'Por favor contacte o suporte!');
                     console.log(error);
                     setLoading(false);
-                });
+                })
+                .catch(error => {
+                                showToast('Falha de Conexão', 'Por favor contacte o suporte!');
+                                console.log(error);
+                                setLoading(false);
+                            });
+                        }
+                })
 
         } else {
             try {
