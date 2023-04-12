@@ -274,7 +274,7 @@ const Login: React.FC = ({ route }: any) => {
                     setIsInvalidCredentials(true);
 
                 } 
-                else if(logguedUser._raw.online_id !== userDetailsQ[0]._raw?.user_id){
+                else if(logguedUser._raw.online_id !== userDetailsQ[0]._raw?.['user_id']){
                     setLoggedUserDifferentFromSyncedUser(true)
                 }                
                 else {
