@@ -161,7 +161,12 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             setDeficiencyTypeEnabled(beneficiarie.vblt_is_deficient == 1);
             setChildrenEnabled(beneficiarie.vblt_pregnant_before == 1);
             setGbvInfoEnabled(beneficiarie.vblt_vbg_victim == 1);
-            setSexExploitationTimeEnabled(beneficiarie.vblt_sexual_exploitation == 1);    
+            setSexExploitationTimeEnabled(beneficiarie.vblt_sexual_exploitation == 1);
+
+            let age = calculateAge(beneficiarie.date_of_birth);
+            setAge(age+'');
+            formik.setFieldValue('age', age+'');
+            setsexWorkerEnabled(age > 17);
         }
         else {
             const entryPoint = formik.values.entry_point !== undefined ? 
