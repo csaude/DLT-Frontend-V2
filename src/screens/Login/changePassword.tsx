@@ -111,8 +111,7 @@ const ChangePassword: React.FC = ({ route }: any) => {
         } catch (error) {
             console.log(error);
             showToast("error", "Erro!!!", "Erro a alterar a senha!");
-        }
-        
+        }        
     };
 
     return (

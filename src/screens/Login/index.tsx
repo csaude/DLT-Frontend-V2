@@ -27,6 +27,8 @@ interface LoginData {
 
 
 const Login: React.FC = ({ route }: any) => {
+    const params:any = route?.params;
+    const resetPassword:any = params?.resetPassword;
     const [loggedUser, setLoggedUser] = useState<any>(undefined);
     const [isInvalidCredentials, setIsInvalidCredentials] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -36,6 +38,8 @@ const Login: React.FC = ({ route }: any) => {
     const [token, setToken] = useState();
 
     const toasty = useToast();
+
+    console.log(resetPassword);
 
     const users = database.collections.get('users');
     const sequences = database.collections.get('sequences');
@@ -108,7 +112,7 @@ const Login: React.FC = ({ route }: any) => {
     // watch changes to loggedUser, sync 
     useEffect(() => {
 
-        if (loggedUser ) {
+        if (loggedUser && resetPassword != '1') {
 
             sync({ username: loggedUser.username })
                 .then(() => toasty.show({
@@ -154,27 +158,29 @@ const Login: React.FC = ({ route }: any) => {
                 navigate({ name: "ChangePassword", params: { loggedUser: loggedUser, token: token } });
             } else if (loggedUser.isEnabled == '1'){
                 navigate({ name: "Main", params: { loggedUser: loggedUser, token: token, passwordExpired: true } });
-            } else{
-                toasty.show({
-                    placement: "top",
-                    render: () => {
-                        return (
-                            <Alert w="100%" variant="left-accent" colorScheme="success" status="success">
-                                <VStack space={2} flexShrink={1} w="100%">
-                                    <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
-                                        <HStack space={2} flexShrink={1} alignItems="center">
-                                            <Alert.Icon />
-                                            <Text color="coolGray.800">
-                                                Contacte o seu supervisor ou vesite seu email!!!
-                                            </Text>
-                                        </HStack>
-                                    </HStack>
-                                </VStack>
-                            </Alert>
-                        );
-                    }
-                });
-            }
+            } 
+            
+            // else{
+            //     toasty.show({
+            //         placement: "top",
+            //         render: () => {
+            //             return (
+            //                 <Alert w="100%" variant="left-accent" colorScheme="success" status="success">
+            //                     <VStack space={2} flexShrink={1} w="100%">
+            //                         <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
+            //                             <HStack space={2} flexShrink={1} alignItems="center">
+            //                                 <Alert.Icon />
+            //                                 <Text color="coolGray.800">
+            //                                     Contacte o seu supervisor ou vesite seu email!!!
+            //                                 </Text>
+            //                             </HStack>
+            //                         </HStack>
+            //                     </VStack>
+            //                 </Alert>
+            //             );
+            //         }
+            //     });
+            // }
         }
 
     }, [loggedUser]);
