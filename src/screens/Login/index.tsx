@@ -192,39 +192,40 @@ const Login: React.FC = () => {
                     if (![MENTOR, NURSE, MANAGER].includes(response?.profiles.id)) {
                         setLoading(false);
                         return showToast('Restrição de Acesso', 'Apenas Enfermeiras e Mentoras Podem Aceder a Aplicativo Móvel!');
-                    }
-                })
-                .catch(error => {
-                    showToast('Falha de Conexão', 'Por favor contacte o suporte!');
-                    console.log(error);
-                    setLoading(false);
-                });
-
-            await fetch(`${LOGIN_API_URL}?username=${values.username}&password=${encodeURIComponent(values.password)}`)
-                .then(response => response.json())
-                .then(async (response) => {
-
-                    if (response.status && response.status !== 200) { // unauthorized
-
-                        setIsInvalidCredentials(true);
                     } else {
 
-                        const account = response.account;
-
-                        await fetchPrefix(values.username);
-
-                        setIsInvalidCredentials(false);
-
-                        setToken(response.token);
-                        setLoggedUser(account);
-
-                        dispatch(loadUser(account));
-
-                        saveUserDatails(account)
-
-                        isVeryOldPassword(account);
-                    }
-                    setLoading(false);
+                        await fetch(`${LOGIN_API_URL}?username=${values.username}&password=${encodeURIComponent(values.password)}`)
+                            .then(response => response.json())
+                            .then(async (response) => {
+            
+                                if (response.status && response.status !== 200) { // unauthorized
+            
+                                    setIsInvalidCredentials(true);
+                                } else {
+            
+                                    const account = response.account;
+            
+                                    await fetchPrefix(values.username);
+            
+                                    setIsInvalidCredentials(false);
+            
+                                    setToken(response.token);
+                                    setLoggedUser(account);
+            
+                                    dispatch(loadUser(account));
+            
+                                    saveUserDatails(account)
+            
+                                    isVeryOldPassword(account);
+                                }
+                                setLoading(false);
+                            })
+                            .catch(error => {
+                                showToast('Falha de Conexão', 'Por favor contacte o suporte!');
+                                console.log(error);
+                                setLoading(false);
+                            });
+                        }
                 })
                 .catch(error => {
                     showToast('Falha de Conexão', 'Por favor contacte o suporte!');
