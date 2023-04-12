@@ -15,6 +15,7 @@ import { SuccessHandler, ErrorHandler } from "../../components/SyncIndicator";
 import { BENEFICIARY_TO_SYNC_URL } from '../../services/api';
 import { Formik } from 'formik';
 import { LOGIN_API_URL } from '../../services/api';
+import { ADMIN, MNE, SUPERVISOR } from '../../utils/constants';
 
 const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries_interventions }: any) => {    
     const [showModal, setShowModal] = useState(false);
@@ -123,8 +124,7 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
     };
 
     useEffect(()=>{
-        if( loggedUser?.profile_id === 1 || loggedUser?.profile_id === 2 || loggedUser?.profile_id === 3 ||
-                        loggedUser?.profiles?.id === 1 || loggedUser?.profiles?.id === 2 || loggedUser?.profiles?.id === 3)
+        if([ADMIN, MNE, SUPERVISOR].includes(loggedUser?.profile_id) || [ADMIN, MNE, SUPERVISOR].includes(loggedUser?.profiles?.id))
         {
             setMaskName(false)
         }
