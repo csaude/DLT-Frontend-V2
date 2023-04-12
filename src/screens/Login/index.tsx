@@ -6,7 +6,7 @@ import { Formik } from 'formik';
 import { Q } from '@nozbe/watermelondb'
 import NetInfo from "@react-native-community/netinfo";
 import { database } from '../../database';
-import { LOGIN_API_URL, SYNC_API_URL_PREFIX, VERIFY_API_URL } from '../../services/api';
+import { LOGIN_API_URL, SYNC_API_URL_PREFIX, VERIFY_USER_API_URL } from '../../services/api';
 import { MaterialIcons } from "@native-base/icons";
 import { sync } from "../../database/sync";
 import { useDispatch } from 'react-redux';
@@ -186,7 +186,7 @@ const Login: React.FC = () => {
             }
 
             // restrict access to mobile app to mentors and nurses (manager is added for profiles on old platform)
-            await fetch(`${VERIFY_API_URL}/${values.username}`)
+            await fetch(`${VERIFY_USER_API_URL}/${values.username}`)
                 .then(response => response.json())
                 .then(async (response) => {
                     if (![MENTOR, NURSE, MANAGER].includes(response?.profiles.id)) {
