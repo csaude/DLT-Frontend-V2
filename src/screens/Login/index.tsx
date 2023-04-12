@@ -1,22 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { Platform, View, KeyboardAvoidingView, ScrollView } from 'react-native';
-import { Center, Box, Text, Heading, VStack, FormControl, Input, HStack, InfoIcon, Alert, Button, Image, useToast, IconButton, CloseIcon, Link, Modal, InputGroup, Pressable, Icon } from 'native-base';
+import { KeyboardAvoidingView, ScrollView } from 'react-native';
+import { Center, Box, Text, Heading, VStack, FormControl, Input, HStack, InfoIcon, Alert, Button, Image, useToast, IconButton, CloseIcon, Link, Modal, Pressable, Icon } from 'native-base';
 import { navigate } from '../../routes/NavigationRef';
-import { Formik, useFormik } from 'formik';
-import * as Yup from 'yup';
+import { Formik } from 'formik';
 import { Q } from '@nozbe/watermelondb'
 import NetInfo from "@react-native-community/netinfo";
 import { database } from '../../database';
-import { LOGIN_API_URL, SYNC_API_URL_PREFIX, UPDATE_PASSWORD_URL } from '../../services/api';
+import { LOGIN_API_URL, SYNC_API_URL_PREFIX, VERIFY_USER_API_URL } from '../../services/api';
 import { MaterialIcons } from "@native-base/icons";
 import { sync } from "../../database/sync";
-import { toast } from 'react-toastify';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import bcrypt from 'bcryptjs';
 import Spinner from 'react-native-loading-spinner-overlay';
 import styles from './style'
 import { loadUser } from "../../store/authSlice";
 import moment from 'moment';
+import { MANAGER, MENTOR, NURSE } from "../../utils/constants";
 
 interface LoginData {
     email?: string | undefined;
@@ -216,29 +215,47 @@ const Login: React.FC = ({ route }: any) => {
                 return showToast('Sem Conexão a Internet', 'Conecte-se a Internet para o primeiro Login!');
             }
 
-            await fetch(`${LOGIN_API_URL}?username=${values.username}&password=${encodeURIComponent(values.password)}`)
+            // restrict access to mobile app to mentors and nurses (manager is added for profiles on old platform)
+            await fetch(`${VERIFY_USER_API_URL}/${values.username}`)
                 .then(response => response.json())
                 .then(async (response) => {
-
-                    if (response.status && response.status !== 200) { // unauthorized
-
-                        setIsInvalidCredentials(true);
+                    if (![MENTOR, NURSE, MANAGER].includes(response?.profiles.id)) {
+                        setLoading(false);
+                        return showToast('Restrição de Acesso', 'Apenas Enfermeiras e Mentoras Podem Aceder a Aplicativo Móvel!');
                     } else {
 
-                        await fetchPrefix(values.username);
-
-                        setIsInvalidCredentials(false);
-
-                        setToken(response.token);
-                        setLoggedUser(response.account);
-
-                        dispatch(loadUser(response.account));
-
-                        saveUserDatails(response.account)
-
-                        isVeryOldPassword(response.account)
-                    }
-                    setLoading(false);
+                        await fetch(`${LOGIN_API_URL}?username=${values.username}&password=${encodeURIComponent(values.password)}`)
+                            .then(response => response.json())
+                            .then(async (response) => {
+            
+                                if (response.status && response.status !== 200) { // unauthorized
+            
+                                    setIsInvalidCredentials(true);
+                                } else {
+            
+                                    const account = response.account;
+            
+                                    await fetchPrefix(values.username);
+            
+                                    setIsInvalidCredentials(false);
+            
+                                    setToken(response.token);
+                                    setLoggedUser(account);
+            
+                                    dispatch(loadUser(account));
+            
+                                    saveUserDatails(account)
+            
+                                    isVeryOldPassword(account);
+                                }
+                                setLoading(false);
+                            })
+                            .catch(error => {
+                                showToast('Falha de Conexão', 'Por favor contacte o suporte!');
+                                console.log(error);
+                                setLoading(false);
+                            });
+                        }
                 })
                 .catch(error => {
                     showToast('Falha de Conexão', 'Por favor contacte o suporte!');
