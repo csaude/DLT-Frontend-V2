@@ -13,6 +13,7 @@ import { SuccessHandler, ErrorHandler } from "../../components/SyncIndicator";
 
 import styles from './styles';
 import moment from 'moment';
+import { ADMIN } from '../../utils/constants';
 
 
 const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, services, subServices }: any) => {
@@ -237,7 +238,7 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
         const userDetailsCollection = database.get('user_details')
         const referencesCollection = database.get("references")
 
-        if(loggedUser?.profile_id == 1 || loggedUser?.profiles ==1 ){
+        if(loggedUser?.profile_id == ADMIN || loggedUser?.profiles == ADMIN){
                 setUserReferences(references)    
         }else{
                 const beneficiariesByUserId = await referencesCollection.query(
