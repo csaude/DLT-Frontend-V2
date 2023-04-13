@@ -764,7 +764,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'surname' in formik.errors} style={{ display : beneficiarie === undefined ? "flex" : "none" }}>
                                     <FormControl.Label>Apelido</FormControl.Label>
-                                    <Input onBlur={formik.handleBlur('surname')} placeholder="Insira o Apelido" onChangeText={formik.handleChange('surname')} value={formik.values.surname} />
+                                    <Input  autoFocus={true} onBlur={formik.handleBlur('surname')} placeholder="Insira o Apelido" onChangeText={formik.handleChange('surname')} value={formik.values.surname} />
                                     <FormControl.ErrorMessage>
                                         {formik.errors.surname}
                                     </FormControl.ErrorMessage>
