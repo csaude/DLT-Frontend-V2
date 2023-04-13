@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { KeyboardAvoidingView, ScrollView } from 'react-native';
-import { Center, Box, Text, Heading, VStack, FormControl, Input, HStack, InfoIcon, Alert, Button, Image, useToast, IconButton, CloseIcon, Link, Modal, Pressable, Icon } from 'native-base';
+import { Platform, View, KeyboardAvoidingView, ScrollView } from 'react-native';
+import { Center, Box, Text, Heading, VStack, FormControl, Input, HStack, InfoIcon, Alert, Button, Image, useToast, IconButton, CloseIcon, Link, Modal, InputGroup, Pressable, Icon } from 'native-base';
 import { navigate } from '../../routes/NavigationRef';
-import { Formik } from 'formik';
+import { Formik, useFormik } from 'formik';
+import * as Yup from 'yup';
 import { Q } from '@nozbe/watermelondb'
 import NetInfo from "@react-native-community/netinfo";
 import { database } from '../../database';
-import { LOGIN_API_URL, SYNC_API_URL_PREFIX, VERIFY_USER_API_URL } from '../../services/api';
+import { LOGIN_API_URL, SYNC_API_URL_PREFIX, UPDATE_PASSWORD_URL, VERIFY_USER_API_URL } from '../../services/api';
 import { MaterialIcons } from "@native-base/icons";
 import { sync } from "../../database/sync";
-import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
 import bcrypt from 'bcryptjs';
 import Spinner from 'react-native-loading-spinner-overlay';
 import styles from './style'
-import { loadUser } from "../../store/authSlice";
+import { loadUser, logoutUser } from "../../store/authSlice";
 import moment from 'moment';
 import { MANAGER, MENTOR, NURSE } from "../../utils/constants";
 
@@ -24,8 +26,9 @@ interface LoginData {
     rePassword?: string | undefined;
 }
 
-
-const Login: React.FC = () => {
+const Login: React.FC = ({ route }: any) => {
+    const params:any = route?.params;
+    const resetPassword:any = params?.resetPassword;
     const [loggedUser, setLoggedUser] = useState<any>(undefined);
     const [isInvalidCredentials, setIsInvalidCredentials] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -42,30 +45,6 @@ const Login: React.FC = () => {
     const dispatch = useDispatch()
     const [passwordExpired, setPasswordExpired] = useState(false);
     const [isLoggedUserDifferentFromSyncedUser, setLoggedUserDifferentFromSyncedUser] = useState(false)
-
-    const fetchPrefix = async (username: string): Promise<any> => {
-        // fetch the prefix 
-        await fetch(`${SYNC_API_URL_PREFIX}?username=${username}`)
-            .then(response => response.json())
-            .then(async (response) => {
-                if (response.status && response.status !== 200) { // unauthorized
-
-                    setIsInvalidCredentials(true);
-                } else {
-
-                    await database.write(async () => {
-                        await sequences.create((sequence: any) => {
-                            sequence.prefix = response.sequence
-                            sequence.last_nui = '11111'
-                        });
-                    });
-                }
-            })
-            .catch(error => {
-                showToast('Falha de Conexão', 'Por favor contacte o suporte!');
-                return undefined;
-            });
-    }
 
     const showToast = (message, description) => {
         return toasty.show({
@@ -91,6 +70,30 @@ const Login: React.FC = () => {
                 );
             }
         });
+    }
+
+    const fetchPrefix = async (username: string): Promise<any> => {
+        // fetch the prefix 
+        await fetch(`${SYNC_API_URL_PREFIX}?username=${username}`)
+            .then(response => response.json())
+            .then(async (response) => {
+                if(response.status && response.status !== 200) { // unauthorized
+                    setIsInvalidCredentials(true);
+
+                } else {
+
+                    await database.write(async () => {
+                        await sequences.create((sequence: any) => {
+                            sequence.prefix = response.sequence
+                            sequence.last_nui = '11111'
+                        });
+                    });
+                }
+            })
+            .catch(error => {
+                showToast('Falha de Conexão', 'Por favor contacte o suporte!');
+                return undefined;
+            });
     }
 
     useEffect(() => {
@@ -148,9 +151,9 @@ const Login: React.FC = () => {
 
             if (loggedUser.newPassword == '1') {
                 navigate({ name: "ChangePassword", params: { loggedUser: loggedUser, token: token } });
-            } else {
+            } else if (loggedUser.isEnabled == '1'){
                 navigate({ name: "Main", params: { loggedUser: loggedUser, token: token, passwordExpired: true } });
-            }
+            }               
         }
 
     }, [loggedUser]);
@@ -178,7 +181,7 @@ const Login: React.FC = () => {
         ).fetchCount();
 
         console.log(checkSynced);
-        if (checkSynced == 0) { // checkSynced=0 when db have not synced yet
+        if (checkSynced == 0 || resetPassword === '1') { // checkSynced=0 when db have not synced yet
 
             if (isOffline) {
                 setLoading(false);
@@ -200,7 +203,9 @@ const Login: React.FC = () => {
             
                                 if (response.status && response.status !== 200) { // unauthorized
             
-                                    setIsInvalidCredentials(true);
+                                    setIsInvalidCredentials(true);             
+                                    resetPassword === '1'? showToast('Conta bloqueada', 'Contacte o seu supervisor ou vesite seu e-mail!!!') : '';                                        
+                                   
                                 } else {
             
                                     const account = response.account;
@@ -221,17 +226,13 @@ const Login: React.FC = () => {
                                 setLoading(false);
                             })
                             .catch(error => {
+
                                 showToast('Falha de Conexão', 'Por favor contacte o suporte!');
                                 console.log(error);
                                 setLoading(false);
                             });
                         }
                 })
-                .catch(error => {
-                    showToast('Falha de Conexão', 'Por favor contacte o suporte!');
-                    console.log(error);
-                    setLoading(false);
-                });
 
         } else {
             try {
@@ -244,16 +245,16 @@ const Login: React.FC = () => {
                     setIsInvalidCredentials(true);
 
                 } 
-                else if(logguedUser._raw.online_id !== userDetailsQ[0]._raw?.user_id){
+                else if(logguedUser._raw.online_id !== userDetailsQ[0]._raw?.['user_id']){
                     setLoggedUserDifferentFromSyncedUser(true)
-                }                
+                }   
                 else {
                     setIsInvalidCredentials(false);
                     setLoggedUser(logguedUser._raw);
 
                     dispatch(loadUser(logguedUser._raw));
-                    isVeryOldPassword(logguedUser._raw)
-                 
+                    isVeryOldPassword(logguedUser._raw);            
+
                     navigate({ name: "Main", params: { loggedUser: logguedUser._raw } });
                 }
                 setLoading(false);

@@ -16,6 +16,7 @@ export interface UsersModel {
     profile_id?: any,
     us_ids?: any,
     organization_name: any,
+    password_last_change_date: any
 }
 
 export default class User extends Model {
@@ -34,6 +35,7 @@ export default class User extends Model {
     @field("profile_id") profile_id;   
     @field("us_ids") us_ids;   
     @field("online_id") online_id;   
-    @field("organization_name") organization_name; 
+    @field("organization_name") organization_name;
+    @field("password_last_change_date") password_last_change_date; 
 }
 

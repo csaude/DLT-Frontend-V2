@@ -108,6 +108,17 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
     });
   };
 
+   useEffect(() => {
+    const timer = setTimeout(() => {   
+        navigate({
+          name: "Login"
+        });
+    },  
+     1800000
+    );
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <Context.Provider value={loggedUser}>
       <Drawer.Navigator 
