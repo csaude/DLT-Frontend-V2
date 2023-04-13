@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import { KeyboardAvoidingView, ScrollView } from 'react-native';
-import { Center, Box, Text, Heading, VStack, FormControl, Input, Button, Image, useToast, Pressable, Icon } from 'native-base';
+import { Center, Box, Text, Heading, VStack, FormControl, Input, Button, Image, useToast, Pressable, Icon, Alert, HStack, IconButton, CloseIcon } from 'native-base';
 import { navigate } from '../../routes/NavigationRef';
-import { Formik, useFormik } from 'formik';
+import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { CHANGE_PASSWORD_URL } from '../../services/api';
-import UserDetails from "../../models/UserDetails";
 import { Q } from "@nozbe/watermelondb";
 import { database } from "../../database";
 import { useSelector } from 'react-redux'
@@ -24,8 +23,6 @@ const ChangePassword: React.FC = ({ route }: any) => {
 	const [show, setShow] = React.useState(false);
 	const [showPass, setShowPass] = React.useState(false);
 
-    const [username, setUsername] = useState(loggedUser.username);
-
     const toast = useToast();
 
     const userDetails = database.collections.get('user_details');
@@ -33,6 +30,37 @@ const ChangePassword: React.FC = ({ route }: any) => {
     const errorMessage = params.passwordExpired ? 'Alteração da senha é obrigatório a cada 6 meses ' : 'Alteração da senha é obrigatório no primeiro login '
     
     const userDetail = useSelector((state: RootState) => state.auth.userDetails);
+    const toasty = useToast();
+
+    const showToast = (status, message, description) => {
+		return toasty.show({
+			placement: "top",
+			render: () => {
+				return (
+					<Alert w="100%" status={status}>
+						<VStack space={2} flexShrink={1} w="100%">
+							<HStack flexShrink={1} space={2} justifyContent="space-between">
+								<HStack space={2} flexShrink={1}>
+									<Alert.Icon mt="1" />
+									<Text fontSize="md" color="coolGray.800">
+										{message}
+									</Text>
+								</HStack>
+								<IconButton
+									variant="unstyled"
+									_focus={{ borderWidth: 0 }}
+									icon={<CloseIcon size="3" color="coolGray.600" />}
+								/>
+							</HStack>
+							<Box pl="6" _text={{ color: "coolGray.600" }}>
+								{description}
+							</Box>
+						</VStack>
+					</Alert>
+				);
+			},
+		});
+	};
 
     const validate = (values: any) => {
         const errors: LoginData = {};        
@@ -49,9 +77,6 @@ const ChangePassword: React.FC = ({ route }: any) => {
     };    
 
     const onSubmit = async (values: any) => {
-
-        console.log("Username:");
-        console.log(values.username);    
     
         try {
             const data = await fetch(`${CHANGE_PASSWORD_URL}`, {
@@ -68,7 +93,7 @@ const ChangePassword: React.FC = ({ route }: any) => {
                 })
             });
 
-            console.log("Alterado com sucesso");
+            showToast("success", "Alterado!!!", "Alterado com sucesso!");	
 
             const userDetailsQ = await userDetails.query(Q.where('user_id', parseInt(userDetail.user_id))).fetch();
             const date = new Date();
@@ -85,9 +110,8 @@ const ChangePassword: React.FC = ({ route }: any) => {
 
         } catch (error) {
             console.log(error);
-            console.log("Erro a alterar a senha.");
-        }
-        
+            showToast("error", "Erro!!!", "Erro a alterar a senha!");
+        }        
     };
 
     return (
