@@ -22,7 +22,7 @@ import {
 	Pressable,
 	Icon,
 } from "native-base";
-import { navigate } from "../../routes/NavigationRef";
+import { navigate, navigationRef } from "../../routes/NavigationRef";
 import { Formik, useFormik } from "formik";
 import * as Yup from "yup";
 import { Q } from "@nozbe/watermelondb";
@@ -59,35 +59,6 @@ const ResetPassword: React.FC = () => {
 
 	const users = database.collections.get("users");
 	const sequences = database.collections.get("sequences");
-
-	// Inicio Do Reset
-
-	const updatePassword = async (username: string, password: string) => {
-
-		console.log(isOffline);
-		console.log(loading);
-		// try {
-		// 	const data = await fetch(`${UPDATE_PASSWORD_URL}`, {
-		// 		method: "PUT",
-		// 		headers: {
-		// 			Accept: "application/json",
-		// 			"Content-Type": "application/json",
-		// 		},
-		// 		body: JSON.stringify({
-		// 			username: username,
-		// 			recoverPassword: password,
-		// 		}),
-		// 	});
-
-		// 	showToast("success", "Solicitado com sucesso!!!", "Redefinição de senha submetida com sucesso!");			
-		// 	navigate({ name: 'Login' });
-		// } catch (error) {
-
-		// 	showToast("error","Falha!!!", "Erro ao redefinir a senha!");
-
-			
-		// }
-	};
 
 	const showToast = (status, message, description) => {
 		return toasty.show({
@@ -166,8 +137,11 @@ const ResetPassword: React.FC = () => {
 				});
 				setLoading(false);
 				showToast("success", "E-mail enviado!!!", "Redefinição de senha submetida com sucesso!");	
-				
-				navigate({ name: 'Login',  params: { loggedUser: undefined } });			
+								
+				navigationRef.reset({
+					index: 0,
+					routes: [{ name: 'Login',  params: { resetPassword: '1' }  }] 
+				  })			
 			}						
 
 		} catch (error) {
