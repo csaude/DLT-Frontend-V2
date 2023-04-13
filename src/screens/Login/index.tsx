@@ -197,39 +197,6 @@ const Login: React.FC = ({ route }: any) => {
                         return showToast('Restrição de Acesso', 'Apenas Enfermeiras e Mentoras Podem Aceder a Aplicativo Móvel!');
                     } else {
 
-
-
-            await fetch(`${LOGIN_API_URL}?username=${values.username}&password=${encodeURIComponent(values.password)}`)
-                .then(response => response.json())
-                .then(async (response) => {
-
-                    if (response.status && response.status !== 200) { // unauthorized
-
-                        setIsInvalidCredentials(true);
-                    } else {
-                        
-                        await fetchPrefix(values.username);
-
-                        setIsInvalidCredentials(false);
-
-                        setToken(response.token);
-                        setLoggedUser(response.account);
-
-                        dispatch(loadUser(response.account));
-
-                        isVeryOldPassword(response.account)
-
-                        saveUserDatails(response.account)
-                    }
-                    setLoading(false);
-                })
-                .catch(error => {
-                    showToast('Falha de Conexão', 'Por favor contacte o suporte!');
-                    console.log(error);
-                    setLoading(false);
-                })
-                .catch(error => {
-
                         await fetch(`${LOGIN_API_URL}?username=${values.username}&password=${encodeURIComponent(values.password)}`)
                             .then(response => response.json())
                             .then(async (response) => {
