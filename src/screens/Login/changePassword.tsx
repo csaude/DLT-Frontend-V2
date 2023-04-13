@@ -27,6 +27,8 @@ const ChangePassword: React.FC = ({ route }: any) => {
 
     const userDetails = database.collections.get('user_details');
 
+     const users = database.collections.get('users');
+
     const errorMessage = params.passwordExpired ? 'Alteração da senha é obrigatório a cada 6 meses ' : 'Alteração da senha é obrigatório no primeiro login '
     
     const userDetail = useSelector((state: RootState) => state.auth.userDetails);
@@ -96,6 +98,8 @@ const ChangePassword: React.FC = ({ route }: any) => {
             showToast("success", "Alterado!!!", "Alterado com sucesso!");	
 
             const userDetailsQ = await userDetails.query(Q.where('user_id', parseInt(userDetail.user_id))).fetch();
+            const usersQ = await users.query(Q.where('online_id', parseInt(userDetail.user_id))).fetch();
+
             const date = new Date();
             const formattedDate = date.toISOString().slice(0, 10);
 
@@ -103,6 +107,13 @@ const ChangePassword: React.FC = ({ route }: any) => {
                 const uDetail = await database.get('user_details').find(userDetailsQ[0]._raw.id)
                 await uDetail.update(() => {
                     uDetail['password_last_change_date'] = formattedDate
+                })
+            })
+            
+            await database.write(async () => {
+                const users = await database.get('users').find(usersQ[0]._raw.id)
+                await users.update(() => {
+                    users['password_last_change_date'] = formattedDate
                 })
             })
 
