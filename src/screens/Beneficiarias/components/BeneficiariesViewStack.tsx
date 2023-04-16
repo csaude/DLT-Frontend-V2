@@ -46,8 +46,9 @@ export default function BeneficiariesViewStack({ route }) {
           beneficiary: route.params?.beneficiary,
           interventions: route.params?.interventions
         }} />
-      <Tab.Screen name="Vulnerabilidades" component={VulnerabilitiesScreen} options={{ headerShown: false }}
-        initialParams={{ beneficiary: route.params?.beneficiary }} />
+      
+      {/* <Tab.Screen name="Vulnerabilidades" component={VulnerabilitiesScreen} options={{ headerShown: false }}
+        initialParams={{ beneficiary: route.params?.beneficiary }} /> */}
       <Tab.Screen name="Serviços" component={InterventionsView} options={{ headerShown: false }}
         initialParams={{
           beneficiary: route.params?.beneficiary,
