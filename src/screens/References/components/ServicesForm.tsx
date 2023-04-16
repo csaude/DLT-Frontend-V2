@@ -53,11 +53,11 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
             beneficiary_id: beneficiarie?.online_id,
             sub_service_id: '',
             result: '',
-            date: moment(date).format('YYYY-MM-DD'),
+            date: '',
             us_id: reference.us_id,
             activist_id: loggedUser?.online_id,
             entry_point: reference?.refer_to,
-            provider: reference.notify_to ,
+            provider: notifyTo?.name + '' + notifyTo?.surname,
             remarks: '',
             status: 1
         }
@@ -249,8 +249,6 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
             setClinicalOrCommunityPartner(true)
             onChangeEntryPoint(reference?.refer_to);
         }
-
-        setText(moment(date).format('YYYY-MM-DD'));
 
     },[reference, intervention, organization])
 
@@ -483,7 +481,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                                             initValue="Select something yummy!"
                                             accessible={true}
                                             cancelButtonAccessibilityLabel={'Cancel Button'}
-                                            onChange={(option) => { setSelectedUser(`${option.name} ${option.surname}`); setFieldValue('provider', option.online_id); }}>
+                                            onChange={(option) => { setSelectedUser(`${option.name} ${option.surname}`); setFieldValue('provider', `${option.name} ${option.surname}`); }}>
                                             <Input type='text' onBlur={handleBlur('provider')} placeholder={currentInformedProvider} onChangeText={handleChange('provider')} value={selectedUser} />
                                         </ModalSelector> :
                                         <Input onBlur={handleBlur('provider')} placeholder="Insira o Nome do Provedor" onChangeText={handleChange('provider')} value={values.provider} />
