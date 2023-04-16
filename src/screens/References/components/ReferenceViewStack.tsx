@@ -1,6 +1,4 @@
 import React from "react";
-import { View } from 'react-native';
-import {  Text } from "native-base";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import DadosReferenciaView from './DadosReferenciaView';
 import InterventionsView from './InterventionsView';
@@ -41,6 +39,7 @@ export default function ReferenceViewStack({ route }) {
         }} />
       <Tab.Screen name="Serviços Solicitados" component={ServiceView} options={{ headerShown: false }}
         initialParams={{
+          reference: route.params?.reference,
           beneficiary: route.params?.beneficiary,
           services: route.params?.services
         }} />

@@ -3,9 +3,9 @@ import {
     View, KeyboardAvoidingView, ScrollView
 } from 'react-native';
 import {
-    Center, Box, Select, Text, Heading, VStack, FormControl,
-    Input, Link, Button, CheckIcon, WarningOutlineIcon, HStack,
-    Alert, Flex, useToast, Stack, InputGroup, InputLeftAddon, InputRightAddon, Radio, Checkbox
+    Center, Box, Text, VStack, FormControl,
+    Input, Button, HStack,
+    Alert, useToast, InputGroup, InputLeftAddon, Checkbox
 } from 'native-base';
 import DatePicker, { getToday, getFormatedDate } from 'react-native-modern-datepicker';
 import { Picker } from '@react-native-picker/picker';
@@ -16,15 +16,14 @@ import ModalSelector from 'react-native-modal-selector-searchable';
 import { Q } from "@nozbe/watermelondb";
 import { Formik } from 'formik';
 import { Context } from '../../../routes/DrawerNavigator';
-import Beneficiaries_interventions, { BeneficiariesInterventionsModel } from '../../../models/Beneficiaries_interventions';
 
 import styles from './styles';
 import { sync } from '../../../database/sync';
 import { ErrorHandler, SuccessHandler } from '../../../components/SyncIndicator';
+import moment from 'moment';
 
 const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
-    const { beneficiarie, intervention } = route.params;
-    //console.log(intervention);
+    const { reference, beneficiarie, intervention } = route.params;
 
     const loggedUser: any = useContext(Context);
     const toast = useToast();
@@ -35,6 +34,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     const [text, setText] = useState('');
     const [date, setDate] = useState(new Date());
     const [users, setUsers] = useState<any>([]);
+    const [notifyTo, setNotifyTo] = useState<any>(undefined);
     const [us, setUs] = useState<any>([]);
     const [checked, setChecked] = useState(false);
     const [selectedUser, setSelectedUser] = useState<any>("");
@@ -54,10 +54,10 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
             sub_service_id: '',
             result: '',
             date: '',
-            us_id: '',
+            us_id: reference.us_id,
             activist_id: loggedUser?.online_id,
-            entry_point: loggedUser?.entry_point,
-            provider: loggedUser?.online_id ,
+            entry_point: reference?.refer_to,
+            provider: notifyTo?.name + '' + notifyTo?.surname,
             remarks: '',
             status: 1
         }
@@ -66,9 +66,6 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
         const currentDate = selectedDate || date;
         setShow(false);
         setDate(currentDate);
-
-        // let tempDate = new Date(currentDate);
-        // setText(moment(tempDate).format('YYYY-MM-DD'));
         setText(selectedDate);
     }
 
@@ -77,10 +74,9 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     }
 
     const onChangeEntryPoint = async (value: any) => {
-
         const uss = await database.get('us').query(
             Q.where('entry_point', parseInt(value)),
-            Q.where('locality_id', parseInt(beneficiarie?.locality_id))
+            Q.where('locality_id', parseInt(notifyTo?.localities_ids))
         ).fetch();
         const ussSerialied = uss.map(item => item._raw);
         setUs(ussSerialied);
@@ -191,8 +187,6 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                 const refService = referenceSToUpdate[0];
                 const ref = referenceToUpdate[0];
 
-                //console.log(referenceToUpdate);
-                //console.log(referenceToUpdate[0]);
                 const updatedreferenceS = await refService.update((interventionS: any) => {
                     interventionS._raw.is_awaiting_sync = parseInt("1")
                     interventionS._raw._status = "updated"
@@ -202,20 +196,11 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                     reference._raw.is_awaiting_sync = parseInt("1")
                     reference._raw._status = "updated"
                 });
-                //console.log("T: ",updatedreference);
               
         });
         toast.show({ placement: "bottom", title: "Service Provided Successfully! " });
 
         navigate({ name: "ReferencesList", params: { } });
-        /*navigate({    
-            name: 'Serviços',
-            params: {
-                beneficiary: beneficiarie,
-                interventions: newIntervMap
-            },
-            merge: true,
-        });*/
 
         syncronize();
     }
@@ -245,18 +230,27 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
         setOrganization(partnerSerialied);
     }
 
-    useEffect(()=>{    
+    const getUserToNotify = async() => {
+        const userToNotify = await database.get('users').query(
+            Q.where('online_id', parseInt(reference.notify_to))
+        ).fetch();
+        const userSerialied = userToNotify.map(item => item._raw)[0];
+        setNotifyTo(userSerialied);
+    }
+
+    useEffect(()=>{
+        getUserToNotify();
         setInitialValues(initialVal);
 
         getPartner();
 
-        if(loggedUser?.entry_point !== undefined && (organization?.partner_type==1 || organization?.partner_type==2)){
-            setCurrentInformedProvider(loggedUser?.name+' '+loggedUser?.surname)
+        if(reference?.refer_to !== undefined && (organization?.partner_type==1 || organization?.partner_type==2) && notifyTo !== undefined){
+            setCurrentInformedProvider(notifyTo?.name+' '+notifyTo?.surname)
             setClinicalOrCommunityPartner(true)
-            onChangeEntryPoint(loggedUser?.entry_point);
+            onChangeEntryPoint(reference?.refer_to);
         }
 
-    },[loggedUser,intervention, organization])
+    },[reference, intervention, organization])
 
     useEffect(()=>{        
         if( intervention?.provider==='') {
@@ -487,7 +481,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                                             initValue="Select something yummy!"
                                             accessible={true}
                                             cancelButtonAccessibilityLabel={'Cancel Button'}
-                                            onChange={(option) => { setSelectedUser(`${option.name} ${option.surname}`); setFieldValue('provider', option.online_id); }}>
+                                            onChange={(option) => { setSelectedUser(`${option.name} ${option.surname}`); setFieldValue('provider', `${option.name} ${option.surname}`); }}>
                                             <Input type='text' onBlur={handleBlur('provider')} placeholder={currentInformedProvider} onChangeText={handleChange('provider')} value={selectedUser} />
                                         </ModalSelector> :
                                         <Input onBlur={handleBlur('provider')} placeholder="Insira o Nome do Provedor" onChangeText={handleChange('provider')} value={values.provider} />
