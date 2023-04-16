@@ -186,7 +186,7 @@ const ReferenceInterventionForm = ({ form, reference, refServices }: any) => {
             name="dataBeneficio"
             label="Data Benefício"
             rules={[{ required: true, message: RequiredFieldMessage }]}
-            initialValue={moment(new Date(),'YYYY-MM-DD')}
+            // initialValue={moment(new Date(),'YYYY-MM-DD')}
           >
             <DatePicker style={{ width: '100%' }} defaultPickerValue={moment(new Date(),'YYYY-MM-DD')} disabledDate={d => !d || d.isAfter(moment(new Date()))} />
 
