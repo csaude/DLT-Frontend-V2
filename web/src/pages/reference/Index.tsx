@@ -62,7 +62,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             const referringPartners = referrers.map(referrer => referrer.partners).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
             const referredPartners = referreds.map(referred => referred?.partners).filter((value, index, self) => self.findIndex(v => v?.id === value?.id) === index);
 
-            const sortedReferences = data.sort((ref1, ref2) => (ref1.status - ref2.status) || moment(ref2.dateCreated).format('YYYY-MM-DD').localeCompare(moment(ref1.dateCreated).format('YYYY-MM-DD')));
+            const sortedReferences = data.sort((ref1, ref2) => (ref1.status - ref2.status) || moment(ref2.dateCreated).format('YYYY-MM-DD HH:mm:ss').localeCompare(moment(ref1.dateCreated).format('YYYY-MM-DD HH:mm:ss')));
             setDataLoading(false)
 
             setReferences(sortedReferences);
@@ -167,7 +167,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             }else{
                 const { data } = await editRef(payload);
                 const allReferences: any = await pagedQueryByUser(localStorage.user, currentPageIndex, pageSize);
-                const sortedReferences = allReferences.sort((ref1, ref2) =>  (ref1.status - ref2.status) || moment(ref2.dateCreated).format('YYYY-MM-DD').localeCompare(moment(ref1.dateCreated).format('YYYY-MM-DD')));
+                const sortedReferences = allReferences.sort((ref1, ref2) =>  (ref1.status - ref2.status) || moment(ref2.dateCreated).format('YYYY-MM-DD HH:mm:ss').localeCompare(moment(ref1.dateCreated).format('YYYY-MM-DD HH:mm:ss')));
                 setReferences(sortedReferences);
     
                 message.success({
