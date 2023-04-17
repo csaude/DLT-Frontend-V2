@@ -245,7 +245,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                 ref.status = 0
                 ref.us_id = formik.values.us_id
                 ref.user_created = ""+userId,
-                ref.date_created = moment(new Date()).format('YYYY-MM-DD')
+                ref.date_created = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
             });
 
             return newReference;
