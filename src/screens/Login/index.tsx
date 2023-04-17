@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { KeyboardAvoidingView, ScrollView } from 'react-native';
-import { Center, Box, Text, Heading, VStack, FormControl, Input, HStack, InfoIcon, Alert, Button, Image, useToast, IconButton, CloseIcon, Link, Modal, Pressable, Icon } from 'native-base';
+import { Platform, View, KeyboardAvoidingView, ScrollView } from 'react-native';
+import { Center, Box, Text, Heading, VStack, FormControl, Input, HStack, InfoIcon, Alert, Button, Image, useToast, IconButton, CloseIcon, Link, Modal, InputGroup, Pressable, Icon } from 'native-base';
 import { navigate } from '../../routes/NavigationRef';
-import { Formik } from 'formik';
+import { Formik, useFormik } from 'formik';
+import * as Yup from 'yup';
 import { Q } from '@nozbe/watermelondb'
 import NetInfo from "@react-native-community/netinfo";
 import { database } from '../../database';
-import { LOGIN_API_URL, SYNC_API_URL_PREFIX, VERIFY_USER_API_URL } from '../../services/api';
+import { LOGIN_API_URL, SYNC_API_URL_PREFIX, UPDATE_PASSWORD_URL, VERIFY_USER_API_URL } from '../../services/api';
 import { MaterialIcons } from "@native-base/icons";
 import { sync } from "../../database/sync";
-import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
 import bcrypt from 'bcryptjs';
 import Spinner from 'react-native-loading-spinner-overlay';
 import styles from './style'
-import { loadUser } from "../../store/authSlice";
+import { loadUser, logoutUser } from "../../store/authSlice";
 import moment from 'moment';
 import { MANAGER, MENTOR, NURSE } from "../../utils/constants";
 
@@ -224,17 +226,13 @@ const Login: React.FC = ({ route }: any) => {
                                 setLoading(false);
                             })
                             .catch(error => {
+
                                 showToast('Falha de Conexão', 'Por favor contacte o suporte!');
                                 console.log(error);
                                 setLoading(false);
                             });
                         }
                 })
-                .catch(error => {
-                    showToast('Falha de Conexão', 'Por favor contacte o suporte!');
-                    console.log(error);
-                    setLoading(false);
-                });
 
         } else {
             try {
@@ -255,8 +253,8 @@ const Login: React.FC = ({ route }: any) => {
                     setLoggedUser(logguedUser._raw);
 
                     dispatch(loadUser(logguedUser._raw));
-                    isVeryOldPassword(logguedUser._raw)
-                 
+                    isVeryOldPassword(logguedUser._raw);            
+
                     navigate({ name: "Main", params: { loggedUser: logguedUser._raw } });
                 }
                 setLoading(false);

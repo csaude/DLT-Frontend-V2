@@ -161,7 +161,12 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             setDeficiencyTypeEnabled(beneficiarie.vblt_is_deficient == 1);
             setChildrenEnabled(beneficiarie.vblt_pregnant_before == 1);
             setGbvInfoEnabled(beneficiarie.vblt_vbg_victim == 1);
-            setSexExploitationTimeEnabled(beneficiarie.vblt_sexual_exploitation == 1);    
+            setSexExploitationTimeEnabled(beneficiarie.vblt_sexual_exploitation == 1);
+
+            let age = calculateAge(beneficiarie.date_of_birth);
+            setAge(age+'');
+            formik.setFieldValue('age', age+'');
+            setsexWorkerEnabled(age > 17);
         }
         else {
             const entryPoint = formik.values.entry_point !== undefined ? 
@@ -764,7 +769,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'surname' in formik.errors} style={{ display : beneficiarie === undefined ? "flex" : "none" }}>
                                     <FormControl.Label>Apelido</FormControl.Label>
-                                    <Input onBlur={formik.handleBlur('surname')} placeholder="Insira o Apelido" onChangeText={formik.handleChange('surname')} value={formik.values.surname} />
+                                    <Input  autoFocus={true} onBlur={formik.handleBlur('surname')} placeholder="Insira o Apelido" onChangeText={formik.handleChange('surname')} value={formik.values.surname} />
                                     <FormControl.ErrorMessage>
                                         {formik.errors.surname}
                                     </FormControl.ErrorMessage>
@@ -1072,7 +1077,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                 </FormControl>
                                 <FormControl key='vblt_lives_with' isRequired isInvalid={'vblt_lives_with' in formik.errors}>
                                     <FormControl.Label>Com quem mora?</FormControl.Label>                                  
-                                        <Checkbox.Group onChange={setValue} value={value} accessibilityLabel="choose numbers">                                           
+                                        <Checkbox.Group focusable={true}  onChange={setValue} value={value} accessibilityLabel="choose numbers">                                           
                                             {items.map(item=>{
                                                  return <Checkbox key={item.value} value={item.value} colorScheme="green" >{item.label}</Checkbox>
                                             })}
@@ -1367,7 +1372,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'vblt_sexually_active' in formik.errors}>
                                     <FormControl.Label>Sexualmente Activa?</FormControl.Label>
-                                    <Radio.Group key='vblt_sexually_active' value={formik.values.vblt_sexually_active+''}
+                                    <Radio.Group  focusable={true} key='vblt_sexually_active' value={formik.values.vblt_sexually_active+''}
                                         onChange={(itemValue) => {
                                             formik.setFieldValue('vblt_sexually_active', itemValue);
                                         }} name="ex1" accessibilityLabel="pick a size">

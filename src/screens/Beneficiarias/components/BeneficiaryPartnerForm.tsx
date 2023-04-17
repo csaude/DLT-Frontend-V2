@@ -156,6 +156,10 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
             setValue(beneficiarie?.vblt_lives_with.split(','));
             setSchoolInfoEnabled(beneficiarie.vblt_is_student == 1);
             setDeficiencyTypeEnabled(beneficiarie.vblt_is_deficient == 1);
+
+            let age = calculateAge(beneficiarie.date_of_birth);
+            setAge(age+'');
+            formik.setFieldValue('age', age+'');
         }
         else {
             const entryPoint = formik.values.entry_point !== undefined ? 

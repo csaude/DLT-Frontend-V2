@@ -115,10 +115,11 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
   }
 
   const onChangeEntryPoint = async (e: any) => {
+    console.log(reference);
     var payload = {
       typeId: e?.target?.value === undefined ? e : e?.target?.value,
       localityId: reference !== undefined ? 
-                                reference.notifyTo?.localities[0].id :
+                                reference.notifyTo?.localities[0]?.id :
                                 beneficiary?.neighborhood?.locality?.id
     }
     const data = await allUsByType(payload);
