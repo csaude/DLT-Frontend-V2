@@ -458,7 +458,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                     record.district_id = formik.values.district,  
                     record.district_code = district.code,  
                     record.province_id = formik.values.province, 
-                    record.date_updated = moment(new Date()).format('YYYY-MM-DD'),
+                    record.date_updated = moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
                     record.nationality = Number(formik.values.nationality),
                     record.enrollment_date = formik.values.enrollment_date,
 
@@ -515,7 +515,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                         beneficiary.entry_point = formik.values.entry_point, 
                         beneficiary.us_id = formik.values.us_id,
                         beneficiary.neighborhood_id = formik.values.neighborhood_id, 
-                        beneficiary.date_created = moment(new Date()).format('YYYY-MM-DD'),
+                        beneficiary.date_created = moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
                         beneficiary.status = 1, 
                         beneficiary.locality_id = formik.values.locality,
                         beneficiary.locality_name = locality.name, 

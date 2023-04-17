@@ -198,7 +198,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
     
     const getFilteredIntervention = (serviceId) =>{
         let filteredIntervention = interventions.filter(i => i.subServices.service.id == serviceId);
-        const sortedInterventions = filteredIntervention.sort((int1, int2) => moment(int2.id.date).format('YYYY-MM-DD').localeCompare(moment(int1.id.date).format('YYYY-MM-DD')));
+        const sortedInterventions = filteredIntervention.sort((int1, int2) => moment(int2.id.date).format('YYYY-MM-DD HH:mm:ss').localeCompare(moment(int1.id.date).format('YYYY-MM-DD HH:mm:ss')));
         return sortedInterventions;
     }
 

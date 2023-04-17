@@ -90,6 +90,7 @@ const BeneficiaryForm = ({ form, beneficiary, beneficiaries, modalVisible, handl
             ben.createdBy = localStorage.user;
             ben.partners = { "id": localStorage.organization };
             ben.us = { "id": us === undefined ? localStorage.us : us };
+            ben.dateCreated = new Date();
 
             const { data } = await add(ben);
             handleAddBeneficiary(data);
@@ -159,6 +160,7 @@ const BeneficiaryForm = ({ form, beneficiary, beneficiaries, modalVisible, handl
             beneficiary.vbltStiHistory = values.vblt_sti_history;
             beneficiary.vbltSexWorker = values.vblt_sex_worker;
             beneficiary.updatedBy = localStorage.user;
+            beneficiary.dateUpdated = new Date();
 
             const us = firstStepValues.us;
             if (us !== undefined) {

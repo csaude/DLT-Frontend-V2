@@ -90,6 +90,7 @@ const BeneficiaryPartnerForm = ({ form, beneficiary, modalVisible, handleAddBene
             ben.createdBy = localStorage.user;
             ben.partners = { "id": localStorage.organization };
             ben.us = { "id": us === undefined? localStorage.us : us };
+            ben.dateCreated = new Date();
 
             const { data } = await add(ben);
             handleAddBeneficiary(data);
@@ -136,6 +137,7 @@ const BeneficiaryPartnerForm = ({ form, beneficiary, modalVisible, handleAddBene
             beneficiary.vbltSchoolGrade = values.vblt_school_grade;
             beneficiary.vbltSchoolName = values.vblt_school_name;
             beneficiary.updatedBy = localStorage.user;
+            beneficiary.dateUpdated = new Date();
 
             const us = firstStepValues.us;
             if (us !== undefined) {
