@@ -43,10 +43,8 @@ const DadosReferenciaView: React.FC = ({ route }: any) => {
                                 }
                             </Avatar>
                             <Box style={styles.userText}>
-                                {/* <Text>{reference.username}</Text> */}
-                                {/* <Heading style={styles.username}>{beneficiary?.name} {beneficiary?.surname}</Heading> */}
                                 <Text style={styles.nui}>
-                                    {reference.reference_note} | {beneficiary?.nui}
+                                    {reference.reference_note} |Box {beneficiary?.nui}
                                 </Text>
                             </Box>
                         </Box>
