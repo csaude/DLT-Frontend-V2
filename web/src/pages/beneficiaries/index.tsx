@@ -76,7 +76,7 @@ const BeneficiariesList: React.FC = () => {
             const user = await queryUser(localStorage.user);
             data = await pagedQuery(getUserParams(user), currentPageIndex, pageSize,nui);
 
-            const sortedBeneficiaries = data.sort((benf1, benf2) => moment(benf2.dateCreated).format('YYYY-MM-DD').localeCompare(moment(benf1.dateCreated).format('YYYY-MM-DD')));
+            const sortedBeneficiaries = data.sort((benf1, benf2) => moment(benf2.dateCreated).format('YYYY-MM-DD HH:mm:ss').localeCompare(moment(benf1.dateCreated).format('YYYY-MM-DD HH:mm:ss')));
             setDataLoading(false)
 
             setUser(user);
@@ -182,7 +182,7 @@ const BeneficiariesList: React.FC = () => {
 
     const handleAddBeneficiary = (data: any) => {
         const bens = [...beneficiaries, data];
-        const sortedBeneficiaries = bens.sort((benf1, benf2) => moment(benf2.dateCreated).format('YYYY-MM-DD').localeCompare(moment(benf1.dateCreated).format('YYYY-MM-DD')));
+        const sortedBeneficiaries = bens.sort((benf1, benf2) => moment(benf2.dateCreated).format('YYYY-MM-DD HH:mm:ss').localeCompare(moment(benf1.dateCreated).format('YYYY-MM-DD HH:mm:ss')));
         setBeneficiaries(sortedBeneficiaries);
         setBeneficiary(data);
     }
@@ -404,7 +404,7 @@ const BeneficiariesList: React.FC = () => {
         },
         { title: 'Criado Em', dataIndex: 'dateCreated', key: 'dateCreated', ...getColumnSearchProps('data criação'),
             render: (val: string) => <span>{moment(val).format('YYYY-MM-DD')}</span>,
-            sorter: (benf1, benf2) => moment(benf2.dateCreated).format('YYYY-MM-DD').localeCompare(moment(benf1.dateCreated).format('YYYY-MM-DD')),
+            sorter: (benf1, benf2) => moment(benf2.dateCreated).format('YYYY-MM-DD HH:mm:ss').localeCompare(moment(benf1.dateCreated).format('YYYY-MM-DD HH:mm:ss')),
         },
         { title: 'Atualizado Por', dataIndex: '', key: 'updatedBy',
             render: (text, record)  => getNames(record.updatedBy),
@@ -414,7 +414,7 @@ const BeneficiariesList: React.FC = () => {
         },
         { title: 'Atualizado Em', dataIndex: 'dateUpdated', key: 'dateUpdated', ...getColumnSearchProps('data actualização'),
             render: (val: string) =>val != undefined ? <span>{moment(val).format('YYYY-MM-DD')} </span>: '',
-            sorter: (benf1, benf2) => moment(benf2.dateCreated).format('YYYY-MM-DD').localeCompare(moment(benf1.dateCreated).format('YYYY-MM-DD')),
+            sorter: (benf1, benf2) => moment(benf2.dateUpdated).format('YYYY-MM-DD HH:mm:ss').localeCompare(moment(benf1.dateUpdated).format('YYYY-MM-DD HH:mm:ss')),
         },
         {
           title: 'Acção',
