@@ -174,6 +174,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                 loggedUser.entryPoint !== undefined ? 
                                 loggedUser.entryPoint : 
                                 loggedUser.entry_point;
+            formik.setFieldValue('entry_point', entryPoint);
             onChangeEntryPoint(entryPoint);
         }
     }, []);
