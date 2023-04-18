@@ -54,7 +54,6 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
     }
 
     const viewReference = async (data: any) => {
-        console.log(data.item?._raw);
         const reference = data.item?._raw;
         const beneficiary = getBeneficiary(reference.beneficiary_id)?._raw;
         //const referer = getUser(reference.createdby)?._raw;
