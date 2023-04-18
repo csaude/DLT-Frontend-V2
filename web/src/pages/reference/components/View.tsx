@@ -431,6 +431,12 @@ const ViewReferral = ({reference, modalVisible, handleModalVisible}) => {
             maskClosable={false}
             onOk={okHandle}
             onCancel={() => showCloseConfirm()}
+
+            footer={
+                <Button key="Cancel" onClick={() => showCloseConfirm()} >
+                    Sair
+                </Button>
+            }
         >
             <ViewReferencePanel selectedReference={reference} columns={undefined} />
         </Modal>
