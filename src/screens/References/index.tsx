@@ -54,12 +54,12 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
     }
 
     const viewReference = async (data: any) => {
-        //console.log(data.item?._raw);
+        console.log(data.item?._raw);
         const reference = data.item?._raw;
         const beneficiary = getBeneficiary(reference.beneficiary_id)?._raw;
         //const referer = getUser(reference.createdby)?._raw;
         const notifyTo = `${getUser(data.item?._raw.notify_to)?.name + " " + getUser(data.item?._raw.notify_to)?.surname}`
-        const organization = 'FGH'//getOrganization(referer.partner_id)._raw.name
+        const organization = getUser(data.item?._raw.notify_to)?.organization_name;
 
 
         const beneficiaryId = beneficiary?.online_id ? beneficiary?.online_id : beneficiary?.id;
@@ -164,7 +164,7 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
                             <View style={{ paddingTop: 5 }}><Ionicons name="md-home" size={11} color="#17a2b8" /></View>
                             {getUser(data.item?._raw.user_created) &&
                                 <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
-                                    {` ${getUser(data.item?._raw.user_created)?.organization_name}`}
+                                    {` ${getUser(data.item?._raw.notify_to)?.organization_name}`}
                                 </Text>
                             }
                         </HStack>
