@@ -599,6 +599,14 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                         nextBtnText='Proximo >>'
                     >
                         <View style={{ alignItems: 'center' }}>
+                            {loadingData ?
+                                <Spinner
+                                    visible={true}
+                                    textContent={ 'Carregando dados...' }
+                                    textStyle={styles.spinnerTextStyle}
+                                /> : undefined
+
+                            }
                             <VStack space={3} w="90%" >
                                 <FormControl style={{ display : beneficiarie === undefined ? "none" : "flex" }}>
                                     <FormControl.Label>NUI</FormControl.Label>
