@@ -72,7 +72,7 @@ const ReferenceView: React.FC = ({ route }: any) => {
                             Referir para:
                         </Text>
                         <Text color="darkBlue.300" _dark={{ color: "warmGray.200" }}>
-                            {` ${data.item.refer_to === '1'?'US': data.item.refer_to === '2'? 'ES':'CM'}`}
+                            {` ${data.item.refer_to === '1'?'US': data.item.refer_to === '2'? 'CM':'ES'}`}
                         </Text>
                     </HStack>
                     <HStack>
