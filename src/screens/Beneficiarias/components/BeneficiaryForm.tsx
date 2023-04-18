@@ -36,6 +36,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
         {label:"Outros familiares", value:"Outros familiares"}
     ]);
     const [loading, setLoading] = useState(false);
+    const [loadingData, setLoadingData] = useState(true);
     const [errors, setErrors] = useState(false);
     const [beneficiarie, setBeneficairie] = useState(beneficiary);
     const [provinces, setProvinces] = useState<any>([]);
@@ -670,6 +671,8 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             const usSerialized = getUsList.map(item => item._raw);
             setUss(usSerialized);
         }
+
+        setLoadingData(false);
     }
 
     const isStudentChange = async (value: any) => {
@@ -754,6 +757,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
     return (
         <>
             <View style={{ flex: 1, backgroundColor: "white" }}>
+               
                 <ProgressSteps >
                     <ProgressStep label="Dados Pessoais" onNext={onNextStep} errors={errors}
                         nextBtnStyle={styles.buttonStyle}
@@ -761,6 +765,14 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                         nextBtnText='Proximo >>'
                     >
                         <View style={{ alignItems: 'center' }}>
+                            {loadingData ?
+                                <Spinner
+                                    visible={true}
+                                    textContent={ 'Carregando dados...' }
+                                    textStyle={styles.spinnerTextStyle}
+                                /> : undefined
+
+                            }
                             <VStack space={3} w="90%" >
                                 <FormControl style={{ display : beneficiarie === undefined ? "none" : "flex" }}>
                                     <FormControl.Label>NUI</FormControl.Label>

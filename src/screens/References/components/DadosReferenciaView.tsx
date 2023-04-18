@@ -23,7 +23,7 @@ const DadosReferenciaView: React.FC = ({ route }: any) => {
 
     const getUserById = async (userId) => {
         const userQ = await userCollection.query(Q.where('online_id', userId)).fetch()
-        const fullname = userQ[0]?._raw.name +' '+userQ[0]?._raw.surname
+        const fullname = userQ[0]?._raw['name'] +' '+userQ[0]?._raw['surname']
       
         setReferred_by(fullname)
     }
@@ -43,10 +43,8 @@ const DadosReferenciaView: React.FC = ({ route }: any) => {
                                 }
                             </Avatar>
                             <Box style={styles.userText}>
-                                {/* <Text>{reference.username}</Text> */}
-                                {/* <Heading style={styles.username}>{beneficiary?.name} {beneficiary?.surname}</Heading> */}
                                 <Text style={styles.nui}>
-                                    {reference.reference_note} | {beneficiary?.nui}
+                                    {reference.reference_note} |Box {beneficiary?.nui}
                                 </Text>
                             </Box>
                         </Box>
