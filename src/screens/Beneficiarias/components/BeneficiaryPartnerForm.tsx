@@ -36,6 +36,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
         {label:"Outros familiares", value:"Outros familiares"}
     ]);
     const [loading, setLoading] = useState(false);
+    const [loadingData, setLoadingData] = useState(true);
     const [errors, setErrors] = useState(false);
     const [beneficiarie, setBeneficairie] = useState(beneficiary);
     const [provinces, setProvinces] = useState<any>([]);
@@ -167,6 +168,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                                 loggedUser.entryPoint !== undefined ? 
                                 loggedUser.entryPoint : 
                                 loggedUser.entry_point;
+            formik.setFieldValue('entry_point', entryPoint);
             onChangeEntryPoint(entryPoint);
         }
     }, []);
@@ -548,6 +550,8 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
             const usSerialized = getUsList.map(item => item._raw);
             setUss(usSerialized);
         }
+
+        setLoadingData(false);
     }
 
     const isStudentChange = async (value: any) => {
