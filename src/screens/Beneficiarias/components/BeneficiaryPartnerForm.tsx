@@ -197,6 +197,8 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
             }
             formik.setFieldValue('partner_id', benefPartiner?.['online_id']);
         }
+        
+        setLoadingData(false);
     };
 
 
