@@ -561,7 +561,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                                     <Text style={styles.txtLabelInfo}>
                                         <Text style={styles.txtLabel}> Referência para: </Text>
                                         {
-                                            formik.values.refer_to === '1' ? 'Unidade Sanitaria' : formik.values.refer_to === '2' ? 'Escola' : 'Comunidade'
+                                            formik.values.refer_to === '1' ? 'Unidade Sanitaria' : formik.values.refer_to === '2' ? 'Comunidade' : 'Escola'
                                         }
                                     </Text>
                                     <Text style={styles.txtLabelInfo}>

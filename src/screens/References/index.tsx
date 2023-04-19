@@ -15,7 +15,6 @@ import styles from './styles';
 import moment from 'moment';
 import { ADMIN } from '../../utils/constants';
 
-
 const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, services, subServices }: any) => {
     const [searchField, setSearchField] = useState('');
     const [userReferences, setUserReferences] = useState<any>([]);
@@ -34,12 +33,6 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
         })[0];
     }
 
-    const getOrganization = (partner_id: any) => {
-        return partners.filter((e) => {
-            return e?._raw.online_id == partner_id
-        })[0];
-    }
-
     const getStatus = (status: any) => {
 
         if (status === 0) {
@@ -54,13 +47,10 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
     }
 
     const viewReference = async (data: any) => {
-        //console.log(data.item?._raw);
         const reference = data.item?._raw;
         const beneficiary = getBeneficiary(reference.beneficiary_id)?._raw;
-        //const referer = getUser(reference.createdby)?._raw;
         const notifyTo = `${getUser(data.item?._raw.notify_to)?.name + " " + getUser(data.item?._raw.notify_to)?.surname}`
-        const organization = 'FGH'//getOrganization(referer.partner_id)._raw.name
-
+        const organization = getUser(data.item?._raw.notify_to)?.organization_name;
 
         const beneficiaryId = beneficiary?.online_id ? beneficiary?.online_id : beneficiary?.id;
 
@@ -92,7 +82,6 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
             name: "ReferenceView", params: {
                 reference: reference,
                 beneficiary: beneficiary,
-                //referer: referer,
                 notify: notifyTo,
                 organization: organization,
                 services: servicesObjects,
@@ -116,19 +105,6 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
                 }
             }))
     }
-
-    const randomHexColor = () => {
-        return '#000000'.replace(/0/g, () => {
-            return (~~(Math.random() * 16)).toString(16);
-        });
-    };
-
-    const viewRow = (rowMap: any, rowKey: any) => {
-        console.log(typeof (rowMap[0]), "on View Row");
-        if (rowMap[rowKey]) {
-            rowMap[rowKey].closeRow();
-        }
-    };
 
     const onRowDidOpen = (rowKey: any) => {
     };
@@ -164,7 +140,7 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
                             <View style={{ paddingTop: 5 }}><Ionicons name="md-home" size={11} color="#17a2b8" /></View>
                             {getUser(data.item?._raw.user_created) &&
                                 <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
-                                    {` ${getUser(data.item?._raw.user_created)?.organization_name}`}
+                                    {` ${getUser(data.item?._raw.notify_to)?.organization_name}`}
                                 </Text>
                             }
                         </HStack>
@@ -214,13 +190,6 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
             >
                 <Icon as={MaterialIcons} name="remove-red-eye" size={6} color="gray.200" />
             </Pressable>
-            {/* <Pressable px={4} bg="lightBlue.800" justifyContent="center"
-                onPress={() => navigate({ name: "ReferenceForm", params: { reference: data.item } })}
-                _pressed={{ opacity: 0.5 }}
-            >
-            "_status": "synced"
-                <Icon as={MaterialIcons} name="mode-edit" size={6} color="gray.200" />
-    </Pressable>*/}
         </HStack>
     );
 
@@ -235,7 +204,6 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
     const sortedReferences = filteredReferences.sort((ref1, ref2) => ref1._raw.status - ref2._raw.status || moment(ref2._raw.date_created).format('YYYY-MM-DD').localeCompare(moment(ref1._raw.date_created).format('YYYY-MM-DD')));
 
     const getUserReferences = async (currentUserId) =>{
-        const userDetailsCollection = database.get('user_details')
         const referencesCollection = database.get("references")
 
         if(loggedUser?.profile_id == ADMIN || loggedUser?.profiles == ADMIN){

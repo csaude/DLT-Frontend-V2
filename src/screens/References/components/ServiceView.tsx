@@ -41,6 +41,7 @@ const ServicesView: React.FC = ({ route }: any) => {
     const renderItem = (data: any) => {
         return  (
         <TouchableHighlight
+            onPress={() =>  navigate({ name: "ServicesForm", params: { reference: reference, beneficiarie: beneficiary, intervention: data.item } })}
             style={styles.rowFront}
             underlayColor={'#AAA'}
         >
