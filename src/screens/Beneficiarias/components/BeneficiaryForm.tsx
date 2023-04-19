@@ -148,6 +148,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                 const benefPartiner = partnersQ[0]?._raw;
      
                 handleSearchPartner(benefPartiner?.['nui']);
+                
             }
 
             fetchPartners().catch(error => console.log(error))
@@ -748,6 +749,8 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             }
             formik.setFieldValue('partner_id', benefPartiner?.['online_id']);
         }
+
+        setLoadingData(false);
     };
 
     useEffect(() =>{
