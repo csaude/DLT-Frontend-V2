@@ -256,19 +256,20 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
         if( intervention?.provider==='') {
             setCurrentInformedProvider("Selecione o Provedor" )
         }
-        else if (isNumber(intervention?.provider)){
+        else {
             const user = users.filter(user=>{
                 return user.online_id == intervention?.provider
             })[0]
-            setCurrentInformedProvider(user?.name+' '+user?.surname)
-        }
-        else{
-            setCurrentInformedProvider(intervention?.provider+'')
+            if(user)
+            {
+                setCurrentInformedProvider(user?.name+' '+user?.surname)
+            }
+            else
+            {
+                setCurrentInformedProvider(intervention?.provider+'')
+            }
         }
         
-        function isNumber(str) {
-            return !isNaN(str);
-        }
     },[users, intervention]) 
 
     useEffect(()=>{
