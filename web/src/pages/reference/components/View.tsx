@@ -382,9 +382,9 @@ export function ViewReferencePanel({selectedReference, columns}) {
                     style={{ position: 'absolute' }}
                     extra={
                         <Space>
-                            <Button onClick={showCloseConfirm}>Cancel</Button>
+                            <Button onClick={showCloseConfirm}>Cancelar</Button>
                             <Button htmlType="submit" onClick={() => onSubmit()} type="primary">
-                                Submit
+                                Atender
                             </Button>
                         </Space>
                     }
@@ -433,7 +433,7 @@ const ViewReferral = ({reference, modalVisible, handleModalVisible}) => {
             onCancel={() => showCloseConfirm()}
 
             footer={
-                <Button key="Cancel" onClick={() => showCloseConfirm()} >
+                <Button type="primary" key="Cancel" onClick={() => showCloseConfirm()} >
                     Sair
                 </Button>
             }
