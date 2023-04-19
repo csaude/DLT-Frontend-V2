@@ -4,7 +4,6 @@ import { SearchOutlined, ArrowUpOutlined, EyeOutlined, EditOutlined, PlusOutline
 import emblema from '../../../assets/emblema.png';
 import moment from 'moment';
 import { getEntryPoint } from '@app/models/User'
-import { query as queryUser } from '../../../utils/users';
 import { query } from '../../../utils/beneficiary';
 import { query as beneficiaryInterventionQuery } from '../../../utils/beneficiaryIntervention';
 import ViewIntervention from './ViewIntervention';

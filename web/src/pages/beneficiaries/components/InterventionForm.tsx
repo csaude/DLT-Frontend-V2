@@ -5,6 +5,7 @@ import { allUs, allUsByUser } from '@app/utils/uSanitaria'
 import moment from 'moment';
 import { query } from '@app/utils/users';
 import { PlusOutlined } from '@ant-design/icons';
+import { useSelector } from 'react-redux';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -33,13 +34,14 @@ const InterventionForm = ({ record, beneficiary}: any) => {
 
     const RequiredFieldMessage = "Obrigatório!";
 
+    const userSelector = useSelector((state: any)=> state.user.users);
+
     useEffect(() => {
 
       const fetchData = async () => {
         const user = await query(localStorage.user);
-        const data1 = await query();
 
-        const listUser = data1?.map(item => (
+        const listUser = userSelector?.map(item => (
             { username: item.name+' '+item.surname }
         ))
 

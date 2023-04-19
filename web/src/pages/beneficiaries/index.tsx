@@ -105,7 +105,7 @@ const BeneficiariesList: React.FC = () => {
     
         fetchData().catch(error => console.log(error));
     
-    }, [modalVisible, currentPageIndex, nui]);
+    }, [currentPageIndex, nui]);
 
     const handleAddRef = async (values:any) => {
     
