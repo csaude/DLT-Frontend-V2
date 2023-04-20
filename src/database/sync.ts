@@ -50,7 +50,7 @@ export async function customSyncBeneficiary({ nui, userId }) {
         database,
         pullChanges: async ({lastPulledAt}) => {
             const response = await fetch(
-              `${CUSTOM_SYNC_URL}/beneficiaries?lastPulledAt=${lastPulledAt}&nui=${nui}&userId=${userId}`,
+              `${CUSTOM_SYNC_URL}/beneficiaries?nui=${nui}&userId=${userId}`,
             );
             if (!response.ok) {
                 

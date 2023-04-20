@@ -61,7 +61,7 @@ const BeneficiariesList: React.FC = () => {
         return currentInterventin
     }
 
-    const getNames = (userId) =>{
+    const getUsernames = (userId) =>{
         const currentNames = userSelector?.users?.map(item => {if(item[0]==userId){
             return item[1] 
         }})
@@ -105,7 +105,7 @@ const BeneficiariesList: React.FC = () => {
     
         fetchData().catch(error => console.log(error));
     
-    }, [modalVisible, currentPageIndex, nui]);
+    }, [currentPageIndex, nui]);
 
     const handleAddRef = async (values:any) => {
     
@@ -397,7 +397,7 @@ const BeneficiariesList: React.FC = () => {
             filterSearch: true,
         },
         { title: 'Criado Por', dataIndex: '', key: 'createdBy',
-            render: (text, record)  => getNames(record.createdBy),
+            render: (text, record)  => getUsernames(record.createdBy),
             filters: filterItem(users)(i => i.username),
             onFilter: (value, record) => (users.filter(user => record.createdBy == user.id).map(filteredUser => `${filteredUser.username}`)[0] == value),
             filterSearch: true,
@@ -407,7 +407,7 @@ const BeneficiariesList: React.FC = () => {
             sorter: (benf1, benf2) => moment(benf2.dateCreated).format('YYYY-MM-DD HH:mm:ss').localeCompare(moment(benf1.dateCreated).format('YYYY-MM-DD HH:mm:ss')),
         },
         { title: 'Atualizado Por', dataIndex: '', key: 'updatedBy',
-            render: (text, record)  => getNames(record.updatedBy),
+            render: (text, record)  => getUsernames(record.updatedBy),
             filters: filterItem(updaters)(i => i.username),
             onFilter: (value, record) => (updaters.filter(user => record.updatedBy == user.id).map(filteredUser => `${filteredUser.username}`)[0] == value),
             filterSearch: true,
