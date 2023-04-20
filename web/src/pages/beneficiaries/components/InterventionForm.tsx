@@ -3,8 +3,10 @@ import { Form, Button, Col, Row, Input, Select, DatePicker, Space, Radio, Divide
 import { queryByTypeAndBeneficiary, querySubServiceByService } from '@app/utils/service'
 import { allUs, allUsByUser } from '@app/utils/uSanitaria'
 import moment from 'moment';
-import { query } from '@app/utils/users';
+import { allUsersByProfilesAndUser, query } from '@app/utils/users';
 import { PlusOutlined } from '@ant-design/icons';
+import { useSelector } from 'react-redux';
+import { COUNSELOR, MANAGER, MENTOR, NURSE, SUPERVISOR } from '@app/utils/contants';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -33,11 +35,18 @@ const InterventionForm = ({ record, beneficiary}: any) => {
 
     const RequiredFieldMessage = "Obrigatório!";
 
+
     useEffect(() => {
 
       const fetchData = async () => {
         const user = await query(localStorage.user);
-        const data1 = await query();
+
+      var payload = {
+          profiles: [MANAGER, SUPERVISOR, MENTOR, NURSE, COUNSELOR].toString(),
+          userId: Number(user.id)
+      }
+
+      const data1 = await allUsersByProfilesAndUser(payload);
 
         const listUser = data1?.map(item => (
             { username: item.name+' '+item.surname }

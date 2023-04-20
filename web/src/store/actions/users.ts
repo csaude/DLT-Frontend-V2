@@ -1,12 +1,12 @@
-import { GET_NAMES } from "./types";
-import { getNamesQuery  } from "@app/utils/users";
+import { GET_USERNAMES } from "./types";
+import { getUsernamesQuery  } from "@app/utils/users";
 
-export const getNames = () => async (dispatch) => {
+export const getUsernames = () => async (dispatch) => {
 
-    const names = await getNamesQuery()
+    const names = await getUsernamesQuery()
     
     dispatch({
-      type: GET_NAMES,
+      type: GET_USERNAMES,
       payload: names,
     })
 };

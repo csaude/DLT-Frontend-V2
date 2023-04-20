@@ -392,22 +392,23 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     },[ users, organization, loggedUser] )
 
     useEffect(()=>{        
-        if(isNewIntervention || intervention?.provider==='') {
+        if(isNewIntervention || intervention?.provider===''|| intervention?.provider===undefined || intervention?.provider===null) {
             setCurrentInformedProvider("Selecione o Provedor" )
         }
-        else if (isNumber(intervention?.provider)){
+        else {
             const user = users.filter(user=>{
                 return user.online_id == intervention?.provider
             })[0]
-            setCurrentInformedProvider(user?.name+' '+user?.surname)
-        }
-        else{
-            setCurrentInformedProvider(intervention?.provider+'')
-        }
+            if(user)
+            {
+                setCurrentInformedProvider(user?.name+' '+user?.surname)
+            }
+            else
+            {
+                setCurrentInformedProvider(intervention?.provider+'')
+            }
+        }        
         
-        function isNumber(str) {
-            return !isNaN(str);
-        }
     },[users, intervention]) 
 
     useEffect(()=>{
