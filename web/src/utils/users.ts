@@ -62,10 +62,11 @@ export async function userById(payload?: any){
     return res;
 }
 
-export async function getNamesQuery() {
+export async function getUsernamesQuery() {
     let url: string;
-    url = '/api/users/get-names';
+    url = '/api/users/get-usernames';
 
     const res = await select(url);
     return res;
 }
+
