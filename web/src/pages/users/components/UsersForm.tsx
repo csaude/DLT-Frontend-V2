@@ -7,6 +7,7 @@ import { allUs } from '@app/utils/uSanitaria';
 import { allProvinces, queryDistrictsByProvinces, queryLocalitiesByDistricts, queryUsByLocalities } from '@app/utils/locality';
 import { ok } from 'assert';
 import { ADMIN, COUNSELOR, DONOR, MANAGER, MENTOR, MNE, NURSE, SUPERVISOR } from '@app/utils/contants';
+import { useSelector } from 'react-redux';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -220,13 +221,16 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
 
     }, [dataSelection])
 
+    const role = useSelector((state: any) => state.auth?.currentUser.role);
+    const isUsVisible = role !== "MENTORA" ? true : false;
+
     return (
         <Modal
             width={1200}
             centered
             destroyOnClose
             title='Dados de Registo do Utilizador'
-            visible={modalVisible}
+            open={modalVisible}
             onCancel={() => showCloseConfirm()}
             maskClosable={false}
             footer={[
@@ -382,7 +386,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                             initialValue={user?.entryPoint}
                         >
                             <Select placeholder="Seleccione o Ponto de Entrada" onChange={(value) => { onChangeDataSelection("entryPoint", value) }} >
-                                <Option key="1">{"Unidade Sanitária"}</Option>
+                                {isUsVisible && <Option key="1">{"Unidade Sanitária"}</Option>}
                                 <Option key="2">{"Comunidade"}</Option>
                                 <Option key="3">{"Escola"}</Option>
                             </Select>

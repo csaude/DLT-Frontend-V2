@@ -45,9 +45,9 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
       setStatus([{ value: '0', label: "Activo" }, { value: '3', label: "Cancelado" }]);
       if (reference === undefined) {
         form.setFieldsValue({ referenceNote: 
-                              ('REFDR' + String(userId).padStart(3, '0') + String(beneficiary.locality.district.province.id) + String(((await queryByCreated(localStorage.user))?.length)+ 1).padStart(3, '0'))
+                              ('REFDR' + String(userId).padStart(3, '0') + String(beneficiary.locality.district.province.id) + String(((await queryByCreated(userId))?.length)+ 1).padStart(3, '0'))
                             });
-        form.setFieldsValue({ referredBy: [MANAGER, SUPERVISOR, MENTOR, NURSE, COUNSELOR].includes(loggedUser.profiles.id)? localStorage.user : '' });
+        form.setFieldsValue({ referredBy: [MANAGER, SUPERVISOR, MENTOR, NURSE, COUNSELOR].includes(loggedUser.profiles.id)? userId : '' });
       } else {
         const regUser = await query(reference?.createdBy);
         form.setFieldsValue({ createdBy: regUser?.name + ' ' + regUser?.surname });

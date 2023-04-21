@@ -7,6 +7,7 @@ import { query } from '@app/utils/users';
 import { calculateAge, getMaxDate, getMinDate } from '@app/models/Utils';
 import { allUsByType } from '@app/utils/uSanitaria';
 import { ADMIN, MNE, SUPERVISOR } from '@app/utils/contants';
+import { useSelector } from 'react-redux';
 
 const { Option } = Select;
 const { Step } = Steps;
@@ -214,6 +215,9 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
         );
     }
 
+    const role = useSelector((state: any) => state.auth?.currentUser.role);
+    const isUsVisible = role !== "MENTORA" ? true : false;
+
     return (
         <>
             <Row gutter={24} hidden={beneficiary === undefined}>
@@ -378,7 +382,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                         initialValue={beneficiary?.entryPoint}
                     >
                         <Radio.Group buttonStyle="solid" onChange={onChangeEntryPoint} >
-                            <Radio.Button value="1">US</Radio.Button>
+                            {isUsVisible && <Radio.Button value="1">US</Radio.Button>}
                             <Radio.Button value="2">CM</Radio.Button>
                             <Radio.Button value="3">ES</Radio.Button>
                         </Radio.Group>
