@@ -376,7 +376,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
                     placement="top"
                     closable={false}
                     onClose={showCloseConfirm}
-                    visible={visible}
+                    open={visible}
                     maskClosable={false}
                     getContainer={false}
                     style={{ position: 'absolute' }}
@@ -427,7 +427,7 @@ const ViewReferral = ({reference, modalVisible, handleModalVisible}) => {
             centered
             destroyOnClose
             title={`Dados Referência `}
-            visible={modalVisible}
+            open={modalVisible}
             maskClosable={false}
             onOk={okHandle}
             onCancel={() => showCloseConfirm()}

@@ -49,7 +49,7 @@ const SubServiceForm = ({ form, subService, modalVisible, handleModalVisible, ha
             centered
             destroyOnClose
             title='Dados de Registo do Sub-Serviço'
-            visible={modalVisible}
+            open={modalVisible}
             onCancel={() => showCloseConfirm()}
             maskClosable={false}
             footer={[

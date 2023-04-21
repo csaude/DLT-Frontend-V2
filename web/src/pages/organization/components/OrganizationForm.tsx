@@ -74,7 +74,7 @@ const OrganizationForm = ({ form, organization, modalVisible, handleModalVisible
             centered
             destroyOnClose
             title='Dados de Registo do Distrito'
-            visible={modalVisible}
+            open={modalVisible}
             onCancel={() => showCloseConfirm()}
             maskClosable={false}
             footer={[
