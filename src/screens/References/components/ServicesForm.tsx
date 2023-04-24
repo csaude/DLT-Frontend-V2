@@ -28,6 +28,8 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     const loggedUser: any = useContext(Context);
     const toast = useToast();
 
+    const userDetailsCollection = database.get('user_details')
+
     const [initialValues, setInitialValues] = useState<any>({});
     const [loading, setLoading] = useState(false);
     const [show, setShow] = useState(false);
@@ -44,7 +46,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     const service = services.filter(item => item._raw.online_id === intervention?.service.service_id)[0]?._raw;
 
     const areaServicos = [{ "id": '1', "name": "Serviços Clinicos" }, { "id": '2', "name": "Serviços Comunitarios" }];
-    const entry_points = [{ "id": '1', "name": "US" }, { "id": '2', "name": "CM" }, { "id": '3', "name": "ES" }];
+    const [entryPoints, setEntryPoints]  = useState([{ "id": '1', "name": "US" }, { "id": '2', "name": "CM" }, { "id": '3', "name": "ES" }]);
     const message = "Este campo é Obrigatório";
 
     let initialVal = {
@@ -278,6 +280,21 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
         }
     },[onChangeUs,beneficiarie])
 
+    useEffect(()=>{
+        const validateLoggedUser =async ()=>{
+            const userDetailsQ = await userDetailsCollection.query(
+                                Q.where('user_id', loggedUser.online_id)
+                            ).fetch();
+            const userDetailRaw = userDetailsQ[0]?._raw            
+            const isMentora = userDetailRaw?.profile_id == 21 ? true : false;
+            
+            if(isMentora){
+                setEntryPoints([{ "id": '2', "name": "CM" }, { "id": '3', "name": "ES" }]);
+            }
+        }
+        validateLoggedUser().catch(err=>console.error(err))
+    },[])
+
     return (
         <KeyboardAvoidingView>
             <ScrollView>
@@ -403,7 +420,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
 
                                         <Picker.Item label="-- Seleccione o ponto de Entrada --" value="" />
                                         {
-                                            entry_points.map(item => (
+                                            entryPoints.map(item => (
                                                 <Picker.Item key={item.id} label={item.name} value={item.id} />
                                             ))
                                         }

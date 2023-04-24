@@ -247,7 +247,10 @@ export default appSchema({
           {name: 'localities', type: 'string'},
           {name: 'uss', type: 'string'},
           {name: 'user_id', type: 'number', isIndexed: true},
-          {name: 'password_last_change_date',  type: "string"} 
+          {name: 'password_last_change_date',  type: "string"},
+          {name: 'profile_id',  type: "number"}, 
+          {name: 'entry_point',  type: "string"},  
+          {name: 'partner_id',  type: "number"},   
         ],
       }),
     ], 
