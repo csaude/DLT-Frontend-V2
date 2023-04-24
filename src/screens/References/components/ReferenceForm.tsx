@@ -232,6 +232,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
 
             const newReference = await database.get('references').create((ref: any) => {
                 ref.beneficiary_id = beneficiary.online_id
+                ref.beneficiary_nui = beneficiary.nui
                 ref.beneficiary_offline_id = beneficiary.id
                 ref.refer_to = formik.values.refer_to
                 ref.referred_by = userId,
