@@ -90,7 +90,7 @@ const FormReference = ({ form, beneficiary, reference, modalVisible, handleAdd, 
     const steps = [
         {
             title: 'Referir Beneficiario',
-            content: <StepReference form={form} beneficiary={beneficiary} reference={reference} />,
+            content: <StepReference form={form} beneficiary={beneficiary} reference={reference} firstStepValues={firstStepValues} />,
         },
         {
             title: ' Solicitar Intervenções ',

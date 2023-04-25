@@ -6,7 +6,7 @@ import { DeleteFilled, PlusOutlined } from '@ant-design/icons';
 import { query as queryUser } from '@app/utils/users';
 import { query as queryBeneficiary } from "@app/utils/beneficiary";
 import { query as beneficiaryInterventionQuery } from '../../../utils/beneficiaryIntervention';
-import { queryByType } from '@app/utils/service'
+import { queryByType, queryByTypeAndBeneficiary } from '@app/utils/service'
 import { MANAGER, MENTOR } from '@app/utils/contants';
 
 const { Option } = Select;
@@ -27,6 +27,7 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
 
     const [visible, setVisible] = useState<boolean>(false);
     const [services, setServices] = useState<any>([]);
+    const [interventionsServices, setInterventionsServices] = useState<any>();
     const [servicesList, setServicesList] = useState<any>();
     const [interventions, setInterventions] = useState<any>();
     const [selectedService, setSelectedService] = useState<any>();
@@ -44,8 +45,13 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
             const data1 = await queryBeneficiary(beneficiary.id);
 
             if (firstStepValues !== undefined ) {
-                const getAllData = await queryByType(firstStepValues?.serviceType);
-                setServicesList(getAllData);
+                var payload = {
+                  serviceType: firstStepValues?.serviceType,
+                  beneficiaryId: beneficiary.id
+                }
+                const data = await queryByTypeAndBeneficiary(payload);
+                const sortedData = data.sort((dist1, dist2) => dist1.name.localeCompare(dist2.name));
+                setServicesList(sortedData);
             }
 
 
@@ -61,6 +67,11 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
         const fetchBeneficiariesInterventionses = async () => { 
              const benIntervs = await beneficiaryInterventionQuery(beneficiary?.id);
              setInterventions(benIntervs);
+            
+            const services = benIntervs.map(s => s.subServices.service);
+            let uniqueServices: any = [...new Map(services.map((item) => [item["id"], item])).values()];
+            const sortedServices = uniqueServices.sort((ser1, ser2) => ser1.name.localeCompare(ser2.name));
+            setInterventionsServices(sortedServices);
         }
 
         if( reference !== undefined){
@@ -90,7 +101,6 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
     const onRemoveServico = (value: any) => {
 
         var serv = (services.filter((v, i) => i !== services.indexOf(value)));
-        console.log(serv);
         handleRefServicesList(serv);
         setServices(serv);
 
@@ -158,6 +168,12 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
         form.setFieldValue('service', '');
         form.setFieldValue('outros', '');
     };
+    
+    const getFilteredIntervention = (serviceId) =>{
+        let filteredIntervention = interventions.filter(i => i.subServices.service.id == serviceId);
+        const sortedInterventions = filteredIntervention.sort((int1, int2) => moment(int2.id.date).format('YYYY-MM-DD HH:mm:ss').localeCompare(moment(int1.id.date).format('YYYY-MM-DD HH:mm:ss')));
+        return sortedInterventions;
+    }
 
     const servicesColumns = [
         {
@@ -185,18 +201,20 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
         },
     ];
 
+    const serviceColumns = [
+        { title: 'Serviços', 
+            dataIndex: '', 
+            key: 'service',
+            render: (text, record)  => record.name,
+        }
+    ];
+
     const interventionColumns = [
         {
             title: 'Data',
             dataIndex: 'date',
             key: 'date',
             render: (text, record) => <span>{moment(record.id.date).format('YYYY-MM-DD')}</span>,
-        },
-        {
-            title: 'Serviço',
-            dataIndex: '',
-            key: 'service',
-            render: (text, record) => record.subServices.service.name,
         },
         {
             title: 'Intervenções',
@@ -279,18 +297,30 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
                             </Card>
                         </Col>
                         <Col className="gutter-row" span={12}>
-                            <Card
-                                title={`Intervenções Recebidas`}
+                            <Card 
+                                title={`Intervenções Recebidas`} 
                                 bordered={true}
-                                headStyle={{ background: "#17a2b8" }}
+                                headStyle={{ background: "#17a2b8"}}
                                 bodyStyle={{ paddingLeft: "10px", paddingRight: "10px" }}
                             >
                                 <Table
-                                    rowKey={(record?) => `${record.id.subServiceId}${record.id.date}`}
-                                    columns={interventionColumns}
-                                    dataSource={interventions}
-                                    bordered
+                                    rowKey={(record?) => `${record?.id}`}
+                                    columns={serviceColumns}
+                                    dataSource={interventionsServices}
                                     pagination={false}
+                                    expandable={{
+                                        expandedRowRender: record => 
+                                            <div style={{border:"2px solid #d9edf7", backgroundColor:"white"}}>
+                                                <Table
+                                                    rowKey={(record?) => `${record.id.subServiceId}${record.id.date}`}
+                                                    columns={interventionColumns}
+                                                    dataSource={getFilteredIntervention(record.id)}
+                                                    bordered
+                                                    pagination={false}
+                                                />
+                                            </div>,
+                                        rowExpandable: record => record.name !== 'Not Expandable',
+                                    }}
                                 />
                             </Card>
                         </Col>
