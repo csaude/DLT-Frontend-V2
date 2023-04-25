@@ -2,10 +2,11 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { Badge, Button, Steps, Row, Col, Input, message, InputNumber, Form, DatePicker, Checkbox, Select, Radio, Divider, SelectProps } from 'antd';
 import './index.css';
 import { allPartnersByType, allPartnersByTypeDistrict } from '@app/utils/partners';
-import { query, userById, allUsesByUs, allUsersByProfilesAndUser } from '@app/utils/users';
+import { query, allUsesByUs, allUsersByProfilesAndUser, queryByUserId } from '@app/utils/users';
 import { allUs, allUsByType } from '@app/utils/uSanitaria';
 import {queryByCreated} from '@app/utils/reference';
 import { COUNSELOR, MANAGER, MENTOR, NURSE, SUPERVISOR } from '@app/utils/contants';
+import { useSelector } from 'react-redux';
 
 const { Option } = Select;
 const { Step } = Steps;
@@ -15,7 +16,6 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
 
   const [partners, setPartners] = React.useState<any>();
   const [users, setUsers] = React.useState<any>();
-  const [referers, setReferers] = React.useState<any>(undefined);
   const [us, setUs] = React.useState<any>();
   const [entryPoints, setEntryPoints] = useState<any>([]);
   const [entryPointEnabled, setEntryPointEnabled] = useState(true);
@@ -29,18 +29,12 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
   const selectedReference = beneficiary;
   let userId = localStorage.getItem('user');
 
+  const referers = useSelector((state:any)=> state.user.referers)
+
   useEffect(() => {
 
     const fetchData = async () => {
-      const loggedUser = await query(localStorage.user);
-
-      var payload = {
-        profiles: [MANAGER, SUPERVISOR, MENTOR, NURSE, COUNSELOR].toString(),
-        userId: Number(userId)
-      }
-
-      const referers = await allUsersByProfilesAndUser(payload);
-      setReferers(referers);
+      const loggedUser = await queryByUserId(localStorage.user);
 
       setStatus([{ value: '0', label: "Activo" }, { value: '3', label: "Cancelado" }]);
       if (reference === undefined) {
@@ -49,7 +43,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
                             });
         form.setFieldsValue({ referredBy: [MANAGER, SUPERVISOR, MENTOR, NURSE, COUNSELOR].includes(loggedUser.profiles.id)? userId : '' });
       } else {
-        const regUser = await query(reference?.createdBy);
+        const regUser = await queryByUserId(reference?.createdBy);
         form.setFieldsValue({ createdBy: regUser?.name + ' ' + regUser?.surname });
         form.setFieldsValue({ referenceNote: reference.referenceNote});
 
