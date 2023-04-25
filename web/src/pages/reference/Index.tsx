@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { edit as editRef, Reference, pagedQueryByUser} from '@app/utils/reference';
 import {allDistrict} from '@app/utils/district';
-import { query  as query1} from '@app/utils/users';
+import { allUsersByProfilesAndUser, query  as query1} from '@app/utils/users';
 import { query as beneficiaryQuery } from '@app/utils/beneficiary';
 import { Card, Table, Button, Space, Badge, Input, Typography, Form, message, ConfigProvider, Row, Col } from 'antd';
 import ptPT  from 'antd/lib/locale-provider/pt_PT';
@@ -15,8 +15,10 @@ import ViewReferral from './components/View';
 import FormReference from '../beneficiaries/components/FormReference';
 import FullPageLoader from '@app/components/full-page-loader/FullPageLoader';
 import { Title } from '@app/components';
-import { ADMIN } from '@app/utils/contants';
+import { ADMIN, COUNSELOR, MANAGER, MENTOR, NURSE, SUPERVISOR } from '@app/utils/contants';
 import LoadingModal from '@app/components/modal/LoadingModal';
+import { useDispatch } from 'react-redux';
+import { loadReferers } from '@app/store/actions/users';
 
 const { Text } = Typography;
 
@@ -47,6 +49,9 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
     
     const navigate = useNavigate();
 
+    let userId = localStorage.getItem('user');
+    const dispatch = useDispatch()
+
     let searchInput;
     useEffect(() => {
         
@@ -76,6 +81,18 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
         } 
     
         fetchData().catch(error => console.log(error));
+
+        const fetchReferersUsers = async () =>{
+            var payload = {
+                profiles: [MANAGER, SUPERVISOR, MENTOR, NURSE, COUNSELOR].toString(),
+                userId: Number(userId)
+            }
+        
+            const referers = await allUsersByProfilesAndUser(payload);
+            dispatch(loadReferers(referers));
+        }
+
+        fetchReferersUsers().catch(error => console.log(error));
     
     }, [modalVisible, currentPageIndex, nui]);
 
