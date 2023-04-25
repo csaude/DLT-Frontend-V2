@@ -183,7 +183,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
 
             }else{
                 const { data } = await editRef(payload);
-                const allReferences: any = await pagedQueryByUser(localStorage.user, currentPageIndex, pageSize);
+                const allReferences: any = await pagedQueryByUser(localStorage.user, currentPageIndex, pageSize, nui);
                 const sortedReferences = allReferences.sort((ref1, ref2) =>  (ref1.status - ref2.status) || moment(ref2.dateCreated).format('YYYY-MM-DD HH:mm:ss').localeCompare(moment(ref1.dateCreated).format('YYYY-MM-DD HH:mm:ss')));
                 setReferences(sortedReferences);
     

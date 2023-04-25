@@ -69,7 +69,7 @@ export async function queryByUser(id: any) {
 }
 
 export async function pagedQueryByUser(id?: any, pageIndex?: any, pageSize?: any, searchNui?: any) {
-    const res = await select('/api/references/byUser/'.concat(id).concat('?pageIndex='.concat(pageIndex).concat('&pageSize=').concat(pageSize)).concat('&searchNui=').concat(searchNui));
+    const res = await select(`/api/references/byUser/${id}?pageIndex=${pageIndex}&pageSize=${pageSize}&searchNui=${searchNui}`);
 
     return res;
 }
