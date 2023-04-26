@@ -14,10 +14,12 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
     }
 
     const onIsDeficientChange = async (values: any) => {
+        form.setFieldsValue({vblt_deficiency_type: null});
         setDeficiencyTypeEnabled(values.target.value != 1);
     }
 
     const onPregnantBeforeChane = async (values: any) => {
+        form.setFieldsValue({vblt_children: null});
         setChildrenEnabled(values.target.value != 1);
     }
 
