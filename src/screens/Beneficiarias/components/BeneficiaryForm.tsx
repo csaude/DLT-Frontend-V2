@@ -8,8 +8,9 @@ import { Picker, PickerProps } from '@react-native-picker/picker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Q } from "@nozbe/watermelondb";
 import { database } from '../../../database';
+import withObservables from '@nozbe/with-observables';
 import Spinner from 'react-native-loading-spinner-overlay';
-import { navigationRef } from '../../../routes/NavigationRef';
+import { navigate, navigationRef } from '../../../routes/NavigationRef';
 import moment from 'moment';
 import DatePicker, { getFormatedDate } from 'react-native-modern-datepicker';
 import { Context } from '../../../routes/DrawerNavigator';
@@ -20,7 +21,7 @@ import { sync } from "../../../database/sync";
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 
-const BeneficiaryForm: React.FC = ({ route }: any) => {
+const BeneficiaryForm: React.FC = ({ route , subServices, beneficiaries_interventions }: any) => {
     const loggedUser: any = useContext(Context);
 
     const idades = ['9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24'];
@@ -52,6 +53,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
     const [step, setStep] = useState(1);
     const [showModal, setShowModal] = useState(false);
     const [newNui, setNewNui] = useState();
+    const [name, setName] = useState('');
     const [district, setDistrict] = useState<any>()
     const [isDateRequired, setIsDateRequired] = useState<any>(true);
     const [age, setAge] = useState<any>(undefined);
@@ -275,7 +277,27 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                 setBeneficairie(ben?._raw);
                 setNewNui(ben?._raw.nui);
                 setLoading(false);
-                setShowModal(true);
+
+                toast.show({
+                    placement: "top",
+                    render: () => {
+                        return (
+                            <Alert w="100%" variant="left-accent" colorScheme="success" status="success">
+                                <VStack space={2} flexShrink={1} w="100%">
+                                    <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
+                                        <HStack space={2} flexShrink={1} alignItems="center">
+                                            <Alert.Icon />
+                                            <Text color="coolGray.800">
+                                                Beneficiária Registada com Sucesso!
+                                            </Text>
+                                        </HStack>
+                                    </HStack>
+                                </VStack>
+                            </Alert>
+                        );
+                    }
+                })
+                                
             }
 
             setErrors(false);
@@ -569,6 +591,42 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
         return newObject;
     }
 
+    const handleOk = async ( beneficiarie?: any ) => {
+
+
+        const interventions = beneficiaries_interventions.filter((e) => {
+            return e._raw.beneficiary_id == beneficiarie.online_id
+        }
+        );
+
+        const interventionObjects = interventions.map((e) => {
+            let subservice = subServices.filter((item) => {
+                return item._raw.online_id == e._raw.sub_service_id
+            })[0];
+            return { id: subservice._raw.online_id, name: subservice._raw.name, intervention: e._raw }
+        });
+
+        const beneficiaryId = beneficiarie.online_id ? beneficiarie.online_id : beneficiarie.id;
+        const references = await database.get('references').query(
+            Q.where('beneficiary_id', beneficiaryId),
+        ).fetch();
+
+        const beneficiaryReferencesSerializable = references.map((e) => {
+            return e._raw;
+        });
+
+        navigate({
+            name: "BeneficiariesView", params: {
+                beneficiary: beneficiarie,
+                interventions: interventionObjects,
+                references: beneficiaryReferencesSerializable
+            }
+        });
+
+        setShowModal(false);
+
+    };
+
     const handleSubmit = async (values?: any) => {
 
         const errorsList = validate(formik.values);
@@ -588,11 +646,6 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             setShowModal(true);
 
             setErrors(false);
-
-            navigationRef.reset({
-                index: 0,
-                routes: [{ name: 'BeneficiariesList' }]
-            });
         }
     }
 
@@ -1667,7 +1720,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
 
             }
             <Center>
-                <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+                <Modal isOpen={showModal} onClose={() => handleOk(beneficiarie)}>
                     <Modal.Content maxWidth="400px">
                         <Modal.CloseButton />
                         <Modal.Header>Confirmação Registo</Modal.Header>
@@ -1690,33 +1743,26 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                         NUI da Beneficiária:
                                         <Text fontWeight='bold' color='#008D4C' >
                                             {
-                                                ` ${district?.code}/${newNui}`
+
+                                                ` ${district?.code}/` + (beneficiarie === undefined ? `${newNui}` : beneficiarie.nui)
+                                                
                                             }
                                         </Text>
                                     </Text>
                                     <Divider />
-                                    <Text >
+                                    {/* <Text >
                                         Pretende Registar os Critérios de Eligibilidade Específicos agora?
-                                    </Text>
+                                    </Text> */}
                                 </Box>
 
                             </ScrollView>
                         </Modal.Body>
                         <Modal.Footer>
                             <Button.Group space={2}>
-                                <Button variant="ghost" colorScheme="blueGray" onPress={() => {
-                                    setShowModal(false);
-                                    navigationRef.reset({
-                                        index: 0,
-                                        routes: [{ name: 'BeneficiariesList' }]
-                                    })
-                                }}>
-                                    Não
-                                </Button>
                                 <Button onPress={() => {
-                                    setShowModal(false);
+                                    handleOk(beneficiarie);
                                 }}>
-                                    Sim
+                                    Concluir
                                 </Button>
                             </Button.Group>
                         </Modal.Footer>
@@ -1726,4 +1772,13 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
         </>
     );
 }
-export default BeneficiaryForm;
+
+const enhance = withObservables([], () => ({
+    beneficiaries_interventions: database.collections
+        .get("beneficiaries_interventions")
+        .query().observe(),
+    subServices: database.collections
+        .get("sub_services")
+        .query().observe(),
+}));
+export default enhance(BeneficiaryForm);
