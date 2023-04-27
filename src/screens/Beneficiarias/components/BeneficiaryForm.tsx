@@ -53,7 +53,6 @@ const BeneficiaryForm: React.FC = ({ route , subServices, beneficiaries_interven
     const [step, setStep] = useState(1);
     const [showModal, setShowModal] = useState(false);
     const [newNui, setNewNui] = useState();
-    const [name, setName] = useState('');
     const [district, setDistrict] = useState<any>()
     const [isDateRequired, setIsDateRequired] = useState<any>(true);
     const [age, setAge] = useState<any>(undefined);
