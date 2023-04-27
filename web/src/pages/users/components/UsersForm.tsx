@@ -190,7 +190,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
             setLocalityMode("");
             setRequired(true);
         }
-        // form.setFieldsValue({ entryPoint: undefined });
+        
         setUsVisible(values != MENTOR);
         setNeighborhoodVisible(values != NURSE && values != COUNSELOR);
         onChangeDataSelection("profile", values);
@@ -207,6 +207,12 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
             }
             const us = dataUs?.filter(item => entryPoints.includes(item.usType.entryPoint));
             setUs(us);
+        }
+
+        let districts = form.getFieldValue('districts');
+        if (districts && districts.length > 0) {
+            const partners = await allPartnersByDistricts({ districts: districts })
+            setPartners(partners);
         }
     }
 
@@ -326,7 +332,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                         >
                             <Select onChange={onChangeProfile} placeholder="Seleccione o Perfil">
                                 {profiles?.map(item => (
-                                    <Option key={item.id}>{item.name}</Option>
+                                    <Option key={item.id}>{item.description}</Option>
                                 ))}
                             </Select>
                         </Form.Item>
