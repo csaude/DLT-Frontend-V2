@@ -55,7 +55,7 @@ export default function ViewBenefiaryPanel({record, beneficiary}){
                                 </Row>
                                 <Row gutter={8} >
                                     <Col className="gutter-row" span={12} style={{background:"#f3f4f5", fontWeight:"bold"}}>Actualizado por</Col>
-                                    <Col className="gutter-row" style={{background:"#f3f4f5"}} span={12}>{record?.updatedBy !== null ? getUsernames(record?.updatedBy) : 'N/A'}</Col>
+                                    <Col className="gutter-row" style={{background:"#f3f4f5"}} span={12}>{record?.updatedBy !== null ? getUsernames(record?.updatedBy) : ''}</Col>
                                 </Row>
                                 <Row gutter={8} >
                                     <Col className="gutter-row" span={12} style={{fontWeight:"bold"}} >Data Criação</Col>
@@ -63,7 +63,7 @@ export default function ViewBenefiaryPanel({record, beneficiary}){
                                 </Row>
                                 <Row gutter={8} >
                                     <Col className="gutter-row" span={12} style={{background:"#f3f4f5", fontWeight:"bold"}}>Data Actualização</Col>
-                                    <Col className="gutter-row" style={{background:"#f3f4f5"}} span={12}>{record?.dateUpdated !==null ? moment(record?.dateUpdated).format('YYYY-MM-DD') : 'N/Aget'}</Col>
+                                    <Col className="gutter-row" style={{background:"#f3f4f5"}} span={12}>{record?.dateUpdated !==null ? moment(record?.dateUpdated).format('YYYY-MM-DD') : ''}</Col>
                                 </Row>
                                 
                             </Card>
