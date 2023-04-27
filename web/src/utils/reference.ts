@@ -26,14 +26,15 @@ export interface Reference {
 	bookNumber: string;
 	referenceCode: string; 
 	serviceType: string;
+  date: string;
 	remarks: string;
 	status: string;
 	cancelReason: string; 
 	otherReason: string;
 	userCreated: string;
-	dateCreated: string;
+	dateCreated: any;
   updatedBy?: string;
-  dateUpdated?: string;
+  dateUpdated?: any;
 	referencesServiceses:[];
 }
 

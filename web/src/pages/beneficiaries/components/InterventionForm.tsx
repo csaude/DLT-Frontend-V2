@@ -85,7 +85,8 @@ const InterventionForm = ({ record, beneficiary}: any) => {
           beneficiaryId: beneficiary.id
         }
         const data = await queryByTypeAndBeneficiary(payload);
-        setServices(data);
+        const sortedData = data.sort((dist1, dist2) => dist1.name.localeCompare(dist2.name));
+        setServices(sortedData);
       }
 
       const fetchSubServices = async () => {
@@ -109,7 +110,8 @@ const InterventionForm = ({ record, beneficiary}: any) => {
           beneficiaryId: beneficiary.id
         }
         const data = await queryByTypeAndBeneficiary(payload);
-        setServices(data);
+        const sortedData = data.sort((dist1, dist2) => dist1.name.localeCompare(dist2.name));
+        setServices(sortedData);
     }
 
     const onChangeServices = async (value: any) => {
@@ -229,7 +231,6 @@ const InterventionForm = ({ record, beneficiary}: any) => {
                   initialValue={selectedIntervention === undefined? undefined : moment(selectedIntervention?.id.date,'YYYY-MM-DD')}
                 >
                   <DatePicker style={{width: '100%'}}  disabledDate={d => !d || d.isAfter(moment(new Date()))} />
-                  
                 </Form.Item>
               </Col>
             </Row>

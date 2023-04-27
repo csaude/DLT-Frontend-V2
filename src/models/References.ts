@@ -13,6 +13,7 @@ export interface ReferencesModel {
     book_number?: string,
     reference_code?: string,
     service_type?: string,
+    date?: string,
     remarks?: string,
     status?: any,
     us_id?: any,
@@ -38,6 +39,7 @@ export default class References extends Model {
     @text("book_number") book_number;
     @text("reference_code") reference_code;
     @text("service_type") service_type;
+    @text("date") date;
     @text("remarks") remarks;
     @field("status") status;
     @field("us_id") us_id;

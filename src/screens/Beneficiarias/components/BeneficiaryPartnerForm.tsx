@@ -505,6 +505,11 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
         formik.setFieldValue('age', calculateAge(selectedDate)+'');
     }
 
+    const onChangeName = (name) => {
+        const result = name.replace(/[^a-zA-Z_-àáâãèéêìíòóõúçÀÁÂÃÈÉÊÌÍÒÓÕÚÇ]/gi, '');
+        formik.setFieldValue('name', result);
+    }
+
     const showDatepicker2 = () => {
         setIsDatePickerVisible2(true);
     };
@@ -637,7 +642,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'name' in formik.errors} style={{ display : beneficiarie === undefined ? "flex" : "none" }}>
                                     <FormControl.Label>Nome</FormControl.Label>
-                                    <Input onBlur={formik.handleBlur('name')} placeholder="Insira o Nome" onChangeText={formik.handleChange('name')} value={formik.values.name} />
+                                    <Input onBlur={formik.handleBlur('name')} placeholder="Insira o Nome" onChangeText={name => onChangeName(name)} value={formik.values.name} />
                                     <FormControl.ErrorMessage>
                                         {formik.errors.name}
                                     </FormControl.ErrorMessage>

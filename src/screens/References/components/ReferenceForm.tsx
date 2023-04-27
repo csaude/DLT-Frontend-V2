@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { TouchableHighlight, TouchableOpacity } from 'react-native';
 import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
-import { View, HStack, Text, VStack, FormControl, Input, TextArea, Center, Icon, Box, IconButton, Flex, Heading, Divider, useToast, Alert } from 'native-base';
+import { View, HStack, Text, VStack, FormControl, Input, TextArea, Center, Icon, Box, IconButton, Flex, Heading, Divider, useToast, Alert, InputGroup, InputLeftAddon, Button } from 'native-base';
 import { MaterialIcons, Ionicons, MaterialCommunityIcons } from "@native-base/icons";
 import { useFormik } from 'formik';
 import { database } from '../../../database';
@@ -13,6 +13,7 @@ import ModalSelector from 'react-native-modal-selector-searchable';
 import StepperButton from '../../Beneficiarias/components/StapperButton';
 import styles from './styles1';
 import moment from 'moment';
+import DatePicker, { getFormatedDate } from 'react-native-modern-datepicker';
 import { sync } from "../../../database/sync";
 import User from '../../../models/User';
 import { SuccessHandler } from '../../../components/SyncIndicator';
@@ -39,9 +40,8 @@ const ReferenceForm: React.FC = ({ route }: any) => {
     const [entryPoints, setEntryPoints] = useState<any>([]);
     const [entryPointEnabled, setEntryPointEnabled] = useState(true);
     const [serviceTypes, setServiceTypes] = useState<any>([]);
+    const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
     const loggedUser: any = useContext(Context);
-
-    const areaServicos = [{ "id": '1', "name": "Clínico" }, { "id": '2', "name": "Comunitário" }];
 
     useEffect(() => {
 
@@ -58,16 +58,14 @@ const ReferenceForm: React.FC = ({ route }: any) => {
 
             const partnerType = (partnerSerialized[0] as any).partner_type;
 
+            var currmonth = new Date().getMonth() + 1;
+
             if ((userSerialized[0] as any).entry_point === "3") {
                 setEntryPoints([{ "id": '1', "name": "US" }, { "id": '2', "name": "CM" }, { "id": '3', "name": "ES" }]);
             } else if (partnerType === "1") {
                 setEntryPoints([{ "id": '2', "name": "CM" }, { "id": '3', "name": "ES" }]);
             } else if (partnerType === "2") {
-                setEntryPoints([{ "id": '1', "name": "US" }]);
-                formik.setFieldValue('refer_to', '1');
-                onChangePE('1');
-                onChangeServiceType('1');
-                setEntryPointEnabled(false);
+                setEntryPoints([{ "id": '1', "name": "US" }, { "id": '3', "name": "ES" }]);
             } else {
                 setEntryPoints([{ "id": '1', "name": "US" }, { "id": '2', "name": "CM" }, { "id": '3', "name": "ES" }]);
             }
@@ -85,6 +83,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
             partner_id: '',
             us_id: '',
             notify_to: '',
+            date: '',
             description: '',
             status: 1
         },
@@ -156,19 +155,15 @@ const ReferenceForm: React.FC = ({ route }: any) => {
 
     const onChangePE = (value: any) => {
 
-        var currmonth = new Date().getMonth() + 1;
         if (value === '1') {
-            formik.setFieldValue('reference_code', 'US-' + currmonth + '-');
             setServiceTypes([{ "id": '1', "name": "Clínico" }]);
             formik.setFieldValue('service_type', '1');
             onChangeServiceType('1')
         } else if (value === '2') {
-            formik.setFieldValue('reference_code', 'CM-' + currmonth + '-');
             setServiceTypes([{ "id": '2', "name": "Comunitário" }]);
             formik.setFieldValue('service_type', '2');
             onChangeServiceType('2');
         } else {
-            formik.setFieldValue('reference_code', 'ES-' + currmonth + '-');
             setServiceTypes([{ "id": '1', "name": "Clínico" }, { "id": '2', "name": "Comunitário" }]);
             formik.setFieldValue('service_type', '0');
             onChangeServiceType('0');
@@ -242,6 +237,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                 ref.book_number = formik.values.book_number
                 ref.reference_code = formik.values.reference_code
                 ref.service_type = formik.values.service_type
+                ref.date = formik.values.date
                 ref.remarks = formik.values.description
                 ref.status = 0
                 ref.us_id = formik.values.us_id
@@ -265,7 +261,6 @@ const ReferenceForm: React.FC = ({ route }: any) => {
 
         const newReferencesMap = [savedR._raw, ...references];
 
-        //navigationRef.goBack();
         navigate({
             name: 'Referencias',
             params: {
@@ -289,6 +284,18 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                 }
             }));
     }
+
+    const showDatepicker = () => {
+        setIsDatePickerVisible(true);
+    };
+
+    const onChangeDatePicker = (event, selectedDate) => {
+
+        setIsDatePickerVisible(false);
+        let tempDate = new Date(selectedDate);
+        formik.setFieldValue('date', moment(tempDate).format('YYYY-MM-DD'));
+    }
+
 
     const onRemoveService = (value: any) => {
 
@@ -381,7 +388,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'reference_code' in formik.errors}>
                                     <FormControl.Label>Códido de Referência no livro</FormControl.Label>
-                                    <Input onBlur={formik.handleBlur('reference_code')} placeholder="Insira o Cód Ref. no livro" onChangeText={formik.handleChange('reference_code')} value={formik.values.reference_code} />
+                                    <Input onBlur={formik.handleBlur('reference_code')} placeholder="Ex: PE-NºPag-Mês-AA" onChangeText={formik.handleChange('reference_code')} value={formik.values.reference_code} />
                                     <FormControl.ErrorMessage>
                                         {formik.errors.reference_code}
                                     </FormControl.ErrorMessage>
@@ -468,11 +475,41 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                                         accessible={true}
                                         cancelButtonAccessibilityLabel={'Cancel Button'}
                                         onChange={(option) => { setSelectedUser(`${option.name} ${option.surname}`); formik.setFieldValue('notify_to', option.online_id); }}>
-                                        <Input type='text' onBlur={formik.handleBlur('notify_to')} placeholder="Insira as Observações" onChangeText={formik.handleChange('notify_to')} value={selectedUser} />
+                                        <Input type='text' onBlur={formik.handleBlur('notify_to')} placeholder="Seleccione o provedor a notificar" onChangeText={formik.handleChange('notify_to')} value={selectedUser} />
                                     </ModalSelector>
 
                                     <FormControl.ErrorMessage>
                                         {formik.errors.notify_to}
+                                    </FormControl.ErrorMessage>
+                                </FormControl>
+                                <FormControl isRequired isInvalid={'date' in formik.errors}>
+                                    <FormControl.Label>Data Emissão</FormControl.Label>
+                                    {isDatePickerVisible && (
+                                        <DatePicker
+                                            mode="calendar"
+                                            current={getFormatedDate(new Date(),'YYYY-MM-DD')}
+                                            minimumDate={'2017-01-01'}
+                                            maximumDate={getFormatedDate(new Date(),'YYYY-MM-DD')}
+                                            onDateChange={date => onChangeDatePicker(null, date.replaceAll('/', '-'))}
+                                        />
+                                    )}
+                                    <HStack w="100%" flex={1} space={5} alignItems="center"  >
+                                        <InputGroup w={{ base: "70%", md: "285" }}>
+                                            <InputLeftAddon>
+                                                <Button style={{ width: 10 }} onPress={() => showDatepicker()}> </Button>
+                                            </InputLeftAddon>
+                                            <Input isDisabled w={{ base: "70%", md: "100%" }}
+                                                onPressIn={() => showDatepicker()}
+                                                onBlur={formik.handleBlur('name')}
+                                                value={formik.values.date}
+                                                onChangeText={formik.handleChange('date')}
+                                                //value={moment(new Date(datePickerValue)).format('YYYY-MM-DD')}
+                                                placeholder="yyyy-MM-dd" />
+                                        </InputGroup>
+                                    </HStack>
+
+                                    <FormControl.ErrorMessage>
+                                        {formik.errors.date}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
                                 <FormControl>

@@ -32,10 +32,12 @@ const StepVulnerabilidadesEspecificas = ({ form, beneficiary, firstStepValues }:
     }
 
     const sexExploitationChange = async (values: any) => {
+        form.setFieldsValue({vblt_sexploitation_time: null});
         setSexExploitationTimeEnabled(values.target.value != 1);
     }
 
     const gbvVictimChange = async (values: any) => {
+        form.setFieldsValue({vblt_vbg_type: null});
         setGbvTypeEnabled(values.target.value != 1);
         if (values.target.value != 1) {
             setGbvTimeEnabled(true);
@@ -43,6 +45,7 @@ const StepVulnerabilidadesEspecificas = ({ form, beneficiary, firstStepValues }:
     }
 
     const gbvTypeChange = async (values: any) => {
+        form.setFieldsValue({vblt_vbg_time: null});
         setGbvTimeEnabled(values == undefined);
     }
 

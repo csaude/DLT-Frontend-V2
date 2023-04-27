@@ -202,8 +202,6 @@ export function ViewReferencePanel({selectedReference, columns}) {
         return sortedInterventions;
     }
 
-    
-
     const servicesColumns = [
         { title: '#', 
             dataIndex: '', 
