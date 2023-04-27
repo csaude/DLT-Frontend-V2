@@ -17,6 +17,7 @@ import { calculateAge, getMaxDate, getMinDate } from '../../../models/Utils';
 import styles from './styles';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
+import { MENTOR } from '../../../utils/constants';
 
 const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
     
@@ -179,7 +180,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                                 Q.where('user_id', loggedUser.online_id)
                             ).fetch();
             const userDetailRaw = userDetailsQ[0]?._raw            
-            const isUserAllowed = userDetailRaw?.profile_id != 21 ? true : false;
+            const isUserAllowed = userDetailRaw?.profile_id != MENTOR ? true : false;
             setUsVisible(isUserAllowed)
         }
         validateLoggedUser().catch(err=>console.error(err))
