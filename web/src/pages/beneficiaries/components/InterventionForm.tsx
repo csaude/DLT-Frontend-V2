@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, memo, useCallback, useMemo } from 'react'
 import { Form, Button, Col, Row, Input, Select, DatePicker, Space, Radio, Divider } from 'antd';
 import { queryByTypeAndBeneficiary, querySubServiceByService } from '@app/utils/service'
 import { allUs, allUsByUser } from '@app/utils/uSanitaria'
@@ -12,8 +12,13 @@ const { Option } = Select;
 const { TextArea } = Input;
 
 const areaServicos = [{ "id": 'CLINIC', "name": "Serviços Clinicos" }, { "id": 'COMMUNITY', "name": "Serviços Comunitarios" }];
-const options = [
+const options3 = [
   { label: 'US', value: '1' },
+  { label: 'CM', value: '2' },
+  { label: 'ES', value: '3' },
+];
+
+const options2 = [
   { label: 'CM', value: '2' },
   { label: 'ES', value: '3' },
 ];
@@ -30,6 +35,11 @@ const InterventionForm = ({ record, beneficiary}: any) => {
     const [users, setUsers] = React.useState<any>([]);
     const [name, setName] = useState('');
     const [ user, setUser ] = React.useState<any>();
+
+    const role = useSelector((state: any) => state.auth?.currentUser.role);
+    const isUsVisible = role !== "MENTORA" ? true : false;
+
+    const options = isUsVisible? options3 : options2
 
     const selectedOption = options?.filter(o => o.value === selectedIntervention?.entryPoint+'').map(filteredOption => (filteredOption.value))[0];
 
@@ -56,6 +66,7 @@ const InterventionForm = ({ record, beneficiary}: any) => {
         setUsers(listUser);
 
         let entryPoint = record? record.entryPoint : user?.entryPoint;
+        let  provider = record? record.provider : user.name+' '+user.surname
 
         if(entryPoint != undefined){
           const serviceType = entryPoint=== '1'? 'CLINIC' : 'COMMUNITY';
@@ -65,7 +76,7 @@ const InterventionForm = ({ record, beneficiary}: any) => {
           onChangeEntryPoint(entryPoint);
         }
 
-        form.setFieldValue('provider', user.name+' '+user.surname);
+        form.setFieldValue('provider', provider);
       } 
 
       const fetchServices = async () => {

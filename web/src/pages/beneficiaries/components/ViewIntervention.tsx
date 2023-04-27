@@ -2,8 +2,17 @@ import { Card, Col, Row } from 'antd';
 import moment from 'moment';
 import React, { useState } from 'react'
 import { Button } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
 
 export default function ViewBenefiaryPanel({record, beneficiary}){
+    const userSelector = useSelector((state: any) => state?.user);
+
+    const getUsernames = (userId) =>{
+        const currentNames = userSelector?.users?.map(item => {if(item[0]==userId){
+            return item[1] 
+        }})
+        return currentNames
+    }
     
     return (
         <Card
@@ -39,6 +48,22 @@ export default function ViewBenefiaryPanel({record, beneficiary}){
                                 <Row gutter={8} >
                                     <Col className="gutter-row" span={12} style={{background:"#f3f4f5", fontWeight:"bold"}}>Data Benefício</Col>
                                     <Col className="gutter-row" style={{background:"#f3f4f5"}} span={12}>{moment(record?.id.date).format('YYYY-MM-DD')}</Col>
+                                </Row>
+                                <Row gutter={8} >
+                                    <Col className="gutter-row" span={12} style={{fontWeight:"bold"}} >Criado por</Col>
+                                    <Col className="gutter-row" span={12}>{getUsernames(record?.createdBy)}</Col>
+                                </Row>
+                                <Row gutter={8} >
+                                    <Col className="gutter-row" span={12} style={{background:"#f3f4f5", fontWeight:"bold"}}>Actualizado por</Col>
+                                    <Col className="gutter-row" style={{background:"#f3f4f5"}} span={12}>{record?.updatedBy !== null ? getUsernames(record?.updatedBy) : ''}</Col>
+                                </Row>
+                                <Row gutter={8} >
+                                    <Col className="gutter-row" span={12} style={{fontWeight:"bold"}} >Data Criação</Col>
+                                    <Col className="gutter-row" span={12}>{moment(record?.dateCreated).format('YYYY-MM-DD')}</Col>
+                                </Row>
+                                <Row gutter={8} >
+                                    <Col className="gutter-row" span={12} style={{background:"#f3f4f5", fontWeight:"bold"}}>Data Actualização</Col>
+                                    <Col className="gutter-row" style={{background:"#f3f4f5"}} span={12}>{record?.dateUpdated !==null ? moment(record?.dateUpdated).format('YYYY-MM-DD') : ''}</Col>
                                 </Row>
                                 
                             </Card>

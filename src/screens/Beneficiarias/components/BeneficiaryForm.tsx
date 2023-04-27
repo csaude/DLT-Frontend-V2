@@ -19,6 +19,7 @@ import { SuccessHandler, ErrorHandler } from "../../../components/SyncIndicator"
 import { sync } from "../../../database/sync";
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
+import { MENTOR } from '../../../utils/constants';
 
 const BeneficiaryForm: React.FC = ({ route }: any) => {
     const loggedUser: any = useContext(Context);
@@ -26,6 +27,8 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
     const idades = ['9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24'];
 
     const { beneficiary } = route.params;
+
+    const userDetailsCollection = database.get('user_details')
 
     const [value, setValue] = useState([]);
     const [items, setItems] = useState([
@@ -64,6 +67,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
     const userDetail = useSelector((state: RootState) => state.auth.userDetails);
     const [searchPartner, setSearchPartner] = useState<any>(undefined);
     const [partnerHasErrors, setPartnerHasErrors] = useState(false)
+    const [isUsVisible, setUsVisible] = useState(false);
 
     useEffect(() => {
         const fetchProvincesData = async () => {
@@ -179,6 +183,17 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
             formik.setFieldValue('entry_point', entryPoint);
             onChangeEntryPoint(entryPoint);
         }
+
+        const validateLoggedUser =async ()=>{
+            const userDetailsQ = await userDetailsCollection.query(
+                                Q.where('user_id', loggedUser.online_id)
+                            ).fetch();
+            const userDetailRaw = userDetailsQ[0]?._raw            
+            const isUserAllowed = userDetailRaw?.profile_id != MENTOR ? true : false;
+            setUsVisible(isUserAllowed)
+        }
+        validateLoggedUser().catch(err=>console.error(err))
+
     }, []);
     const toast = useToast();
 
@@ -980,7 +995,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                             }
                                         }}>
                                         <Picker.Item label="-- Seleccione o PE --" value="0" />
-                                        <Picker.Item key="1" label="US" value="1" />
+                                        {isUsVisible && <Picker.Item key="1" label="US" value="1" />}
                                         <Picker.Item key="2" label="CM" value="2" />
                                         <Picker.Item key="3" label="ES" value="3" />
                                     </Picker>
