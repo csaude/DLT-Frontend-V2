@@ -7,6 +7,8 @@ import { allUs } from '@app/utils/uSanitaria';
 import { allProvinces, queryDistrictsByProvinces, queryLocalitiesByDistricts, queryUsByLocalities } from '@app/utils/locality';
 import { ok } from 'assert';
 import { ADMIN, COUNSELOR, DONOR, MANAGER, MENTOR, MNE, NURSE, SUPERVISOR } from '@app/utils/contants';
+import { profile } from 'console';
+import { validate } from 'uuid';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -26,7 +28,9 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
     const [isRequired, setRequired] = useState<any>(false);
     const [dataSelection, setDataSelection] = useState<any>({ entryPoint: undefined, profile: undefined, locality: undefined });
     const [usByLocality, setUsByLocality] = useState<any>(undefined);
-    const [isEntryPointRequired,setEntryPointRequired] =useState(false)
+    const [isEntryPointRequired,setEntryPointRequired] =useState(false);
+    const [isUsVisible, setUsVisible] = useState(true);
+    const [isNeighborhoodVisible, setNeighborhoodVisible] = useState(true);
 
     const RequiredFieldMessage = "Obrigatório!";
 
@@ -97,7 +101,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
         fetchLocalities().catch(error => console.log(error));
         fetchUs().catch(error => console.log(error));
 
-        fetchData().catch(error => console.log(error));
+        // fetchData().catch(error => console.log(error));
 
     }, [user,modalVisible]);
 
@@ -151,6 +155,25 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
         onChangeDataSelection("locality", values)
     }
 
+    const onChangePartner = async (values: any) => {
+        let locality = form.getFieldValue('localities')
+        if (dataSelection.profile == SUPERVISOR && locality) {
+            const partner = partners.filter(p => p.id == values)[0];
+            let entryPoints = ["1", "2", "3"];
+            if (partner.partnerType == "1"){
+                entryPoints = ["1", "3"];
+            } else {
+                entryPoints = ["2", "3"];
+            }
+            setNeighborhoodVisible(partner.partnerType != "1");
+            setUsVisible(partner.partnerType != "2");
+            const us = usByLocality?.filter(item => entryPoints.includes(item.usType.entryPoint));
+            setUs(us);
+        }
+        form.setFieldsValue({ entryPoint: undefined });
+        form.setFieldsValue({ us: undefined });
+    }
+
     const onChangeProfile = async (values: any) => {
         if (values == MNE || values == DONOR || values == ADMIN) { 
             setSelectMode("multiple");
@@ -166,8 +189,24 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
             setLocalityMode("");
             setRequired(true);
         }
+        // form.setFieldsValue({ entryPoint: undefined });
+        setUsVisible(values != MENTOR);
+        setNeighborhoodVisible(values != NURSE && values != COUNSELOR);
+        onChangeDataSelection("profile", values);
 
-        onChangeDataSelection("profile", values)
+        let localities = form.getFieldValue('localities');
+        if (localities && localities.length > 0) {
+            const dataUs = usByLocality? usByLocality : await queryUsByLocalities({ localities: localities });
+            let entryPoints = ["1", "2", "3"];
+
+            if (values == MENTOR) { 
+                entryPoints = ["2", "3"];
+            } else if (values == NURSE || values == COUNSELOR) {
+                entryPoints = ["1", "3"];
+            }
+            const us = dataUs?.filter(item => entryPoints.includes(item.usType.entryPoint));
+            setUs(us);
+        }
     }
 
     const onChangeDataSelection = (name: string, value: any) => {
@@ -194,22 +233,15 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
             && dataSelection.locality !== undefined) {
 
             form.setFieldsValue({ us: [] });
+            let entryPoints = ["1", "2", "3"];
 
-            if ((dataSelection.profile == MENTOR || dataSelection.profile == MANAGER) && dataSelection.entryPoint !== undefined) { 
-                if (dataSelection.entryPoint == 2) {
-                    let neighborhoods = usByLocality?.filter(item => item.usType.entryPoint == 2)
-                    setUs(neighborhoods)
-                }
-                else if (dataSelection.entryPoint == 3) {
-                    let schools = usByLocality?.filter(item => item.usType.entryPoint == 3)
-                    setUs(schools)
-                }
+            if (dataSelection.profile == MENTOR) { 
+                entryPoints = ["2", "3"];
+            } else if (dataSelection.profile == NURSE || dataSelection.profile == COUNSELOR) {
+                entryPoints = ["1", "3"];
             }
-            else if (dataSelection.profile == NURSE || dataSelection.profile == MANAGER || dataSelection.profile == COUNSELOR) {
-                const entryPoints = [1, 3];
-                const usAndSchools = usByLocality?.filter(item => entryPoints.includes(item.usType.entryPoint))
-                setUs(usAndSchools)
-            }
+            const us = usByLocality?.filter(item => entryPoints.includes(item.usType.entryPoint));
+            setUs(us);
         }
 
         if (dataSelection?.profile == MENTOR || dataSelection?.profile == NURSE || dataSelection.profile == MANAGER) {
@@ -376,29 +408,29 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                 <Row gutter={8}>
                     <Col span={8}>
                         <Form.Item
+                            name="partners"
+                            label="Organização"
+                            rules={[{ required: true, message: RequiredFieldMessage }]}
+                            initialValue={user?.partners?.id?.toString()}
+                        >
+                            <Select placeholder="Seleccione a Organização" onChange={onChangePartner}>
+                                {partners?.map(item => (
+                                    <Option key={item.id}>{item.name}</Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col span={8}>
+                        <Form.Item
                             name="entryPoint"
                             label="Ponto de Entrada"
                             rules={[{ required: isEntryPointRequired, message: RequiredFieldMessage }]}
                             initialValue={user?.entryPoint}
                         >
                             <Select placeholder="Seleccione o Ponto de Entrada" onChange={(value) => { onChangeDataSelection("entryPoint", value) }} >
-                                <Option key="1">{"Unidade Sanitária"}</Option>
-                                <Option key="2">{"Comunidade"}</Option>
+                                {isUsVisible && <Option key="1">{"Unidade Sanitária"}</Option>}
+                                {isNeighborhoodVisible && <Option key="2">{"Comunidade"}</Option>}
                                 <Option key="3">{"Escola"}</Option>
-                            </Select>
-                        </Form.Item>
-                    </Col>
-                    <Col span={8}>
-                        <Form.Item
-                            name="partners"
-                            label="Organização"
-                            rules={[{ required: true, message: RequiredFieldMessage }]}
-                            initialValue={user?.partners?.id?.toString()}
-                        >
-                            <Select placeholder="Seleccione a Organização">
-                                {partners?.map(item => (
-                                    <Option key={item.id}>{item.name}</Option>
-                                ))}
                             </Select>
                         </Form.Item>
                     </Col>
