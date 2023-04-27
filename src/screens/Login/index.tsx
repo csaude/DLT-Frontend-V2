@@ -304,7 +304,10 @@ const Login: React.FC = ({ route }: any) => {
                 userDetail.districts = district_ids.toString();
                 userDetail.localities = localities_ids.toString();
                 userDetail.uss = uss_ids.toString();
-                userDetail.password_last_change_date = formattedDate
+                userDetail.password_last_change_date = formattedDate;
+                userDetail.profile_id = user.profiles.id;
+                userDetail.entry_point = user.entryPoint;
+                userDetail.partner_id = user.partners.id;
             });
         })
     }

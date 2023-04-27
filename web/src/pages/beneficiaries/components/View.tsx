@@ -360,7 +360,7 @@ export function ViewBenefiaryPanel({ beneficiary, handleModalVisible, handleModa
                     placement="top"
                     closable={false}
                     onClose={showCloseConfirm}
-                    visible={visible}
+                    open={visible}
                     maskClosable={false}
                     getContainer={false}
                     style={{ position: 'absolute' }}
@@ -412,7 +412,7 @@ const ViewBeneficiary = ({ beneficiary, modalVisible, handleModalVisible , handl
             centered
             destroyOnClose
             title={` Dados de Registo do Beneficiário`}
-            visible={modalVisible}
+            open={modalVisible}
             maskClosable={false}
             onOk={okHandle}
             onCancel={() => showCloseConfirm()}

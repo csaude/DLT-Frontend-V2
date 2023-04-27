@@ -29,12 +29,15 @@ import { sync } from "../../../database/sync";
 import { Context } from '../../../routes/DrawerNavigator';
 
 import styles from './styles';
+import { MENTOR } from '../../../utils/constants';
 
 const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }: any) => {
     const { beneficiarie, intervs, intervention, isNewIntervention } = route.params;
 
     const areaServicos = [{ "id": '1', "name": "Serviços Clinicos" }, { "id": '2', "name": "Serviços Comunitarios" }];
-    const entry_points = [{ "id": '1', "name": "US" }, { "id": '2', "name": "CM" }, { "id": '3', "name": "ES" }];
+    const [entryPoints, setEntryPoints]  = useState([{ "id": '1', "name": "US" }, { "id": '2', "name": "CM" }, { "id": '3', "name": "ES" }]);
+
+    const userDetailsCollection = database.get('user_details')
 
     const [date, setDate] = useState(new Date());
     const [users, setUsers] = useState<any>([]);
@@ -417,6 +420,21 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
         }
     },[onChangeUs,beneficiarie])
 
+    useEffect(()=>{
+        const validateLoggedUser =async ()=>{
+            const userDetailsQ = await userDetailsCollection.query(
+                                Q.where('user_id', loggedUser.online_id)
+                            ).fetch();
+            const userDetailRaw = userDetailsQ[0]?._raw            
+            const isMentora = userDetailRaw?.profile_id == MENTOR ? true : false;
+            
+            if(isMentora){
+                setEntryPoints([{ "id": '2', "name": "CM" }, { "id": '3', "name": "ES" }]);
+            }
+        }
+        validateLoggedUser().catch(err=>console.error(err))
+    },[])
+
     return (
         <KeyboardAvoidingView>
             <ScrollView>
@@ -548,7 +566,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
 
                                                 <Picker.Item label="-- Seleccione o ponto de Entrada --" value="" />
                                                 {
-                                                    entry_points.map(item => (
+                                                    entryPoints.map(item => (
                                                         <Picker.Item key={item.id} label={item.name} value={item.id} />
                                                     ))
                                                 }

@@ -1,4 +1,4 @@
-import { GET_USERNAMES } from "../actions/types";
+import { GET_USERNAMES, LOAD_REFERERS } from "../actions/types";
 
 const initialState = {
   interventions: [],
@@ -13,6 +13,11 @@ function userReducer(state = initialState, action) {
         ...state,
         users: payload,
       };
+    case LOAD_REFERERS:
+      return {
+        ...state,
+        referers: payload
+      }
     default:
       return state;
   }

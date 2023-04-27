@@ -17,6 +17,7 @@ import { allUs } from '@app/utils/uSanitaria';
 import { add, edit } from '@app/utils/users';
 
 import styles from './styles';
+import { useSelector } from 'react-redux';
 
 interface Us {
     id: string,
@@ -193,6 +194,9 @@ const UserForm: React.FC = ({ user }: any) => {
 
     }
 
+    const role = useSelector((state: any) => state.auth?.currentUser.role);
+    const isUsVisible = role !== "MENTORA" ? true : false;
+
     return (
         <NativeBaseProvider>
             <View style={styles.webStyle}>
@@ -292,7 +296,7 @@ const UserForm: React.FC = ({ user }: any) => {
                                                 endIcon: <CheckIcon size={5} />
                                             }} mt="1">
                                             <Select.Item label="-- Seleccione o Ponto de Entrada --" value="0" />
-                                            <Select.Item label="Unidade Sanitaria" value="1" />
+                                             {isUsVisible && <Select.Item label="Unidade Sanitaria" value="1" />}
                                             <Select.Item label="Escola" value="2" />
                                             <Select.Item label="Comunidade" value="3" />
                                         </Select>

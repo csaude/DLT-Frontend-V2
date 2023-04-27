@@ -39,7 +39,7 @@ const ProvinceForm = ({ form, province, modalVisible, handleModalVisible, handle
             centered
             destroyOnClose
             title='Dados de Registo da Província'
-            visible={modalVisible}
+            open={modalVisible}
             onCancel={() => showCloseConfirm()}
             maskClosable={false}
             footer={[

@@ -9,6 +9,7 @@ import { ok } from 'assert';
 import { ADMIN, COUNSELOR, DONOR, MANAGER, MENTOR, MNE, NURSE, SUPERVISOR } from '@app/utils/contants';
 import { profile } from 'console';
 import { validate } from 'uuid';
+import { useSelector } from 'react-redux';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -252,13 +253,15 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
 
     }, [dataSelection])
 
+    // const role = useSelector((state: any) => state.auth?.currentUser.role);
+
     return (
         <Modal
             width={1200}
             centered
             destroyOnClose
             title='Dados de Registo do Utilizador'
-            visible={modalVisible}
+            open={modalVisible}
             onCancel={() => showCloseConfirm()}
             maskClosable={false}
             footer={[

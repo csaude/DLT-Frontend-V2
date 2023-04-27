@@ -100,11 +100,7 @@ const ReferenceInterventionForm = ({ form, reference, refServices }: any) => {
   }
   const addItem = (e) => {
     e.preventDefault();
-    if (name !== undefined || name !== '') {
-      const newItem = { username: name };
-      setUsers([...users, newItem]);
-
-    }
+    form.setFieldsValue({ provider: name });
     setName('');
     setTimeout(() => {
       inputRef.current?.focus();

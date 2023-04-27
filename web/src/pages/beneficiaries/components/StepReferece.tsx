@@ -2,10 +2,11 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { Badge, Button, Steps, Row, Col, Input, message, InputNumber, Form, DatePicker, Checkbox, Select, Radio, Divider, SelectProps } from 'antd';
 import './index.css';
 import { allPartnersByType, allPartnersByTypeDistrict } from '@app/utils/partners';
-import { query, userById, allUsesByUs, allUsersByProfilesAndUser } from '@app/utils/users';
+import { query, allUsesByUs, allUsersByProfilesAndUser, queryByUserId } from '@app/utils/users';
 import { allUs, allUsByType } from '@app/utils/uSanitaria';
 import {queryByCreated} from '@app/utils/reference';
 import { COUNSELOR, MANAGER, MENTOR, NURSE, SUPERVISOR } from '@app/utils/contants';
+import { useSelector } from 'react-redux';
 import moment from 'moment';
 
 const { Option } = Select;
@@ -16,7 +17,6 @@ const StepReference = ({ form, beneficiary, reference, firstStepValues }: any) =
 
   const [partners, setPartners] = React.useState<any>();
   const [users, setUsers] = React.useState<any>([]);
-  const [referers, setReferers] = React.useState<any>(undefined);
   const [us, setUs] = React.useState<any>();
   const [entryPoints, setEntryPoints] = useState<any>([]);
   const [serviceTypes, setServiceTypes] = useState<any>([]);
@@ -30,27 +30,21 @@ const StepReference = ({ form, beneficiary, reference, firstStepValues }: any) =
   const selectedReference = beneficiary;
   let userId = localStorage.getItem('user');
 
+  const referers = useSelector((state:any)=> state.user.referers)
+
   useEffect(() => {
 
     const fetchData = async () => {
-      const loggedUser = await query(localStorage.user);
-
-      var payload = {
-        profiles: [MANAGER, SUPERVISOR, MENTOR, NURSE, COUNSELOR].toString(),
-        userId: Number(userId)
-      }
-
-      const referers = await allUsersByProfilesAndUser(payload);
-      setReferers(referers);
+      const loggedUser = await queryByUserId(localStorage.user);
 
       setStatus([{ value: '0', label: "Activo" }, { value: '3', label: "Cancelado" }]);
       if (reference === undefined) {
         form.setFieldsValue({ referenceNote: 
-                              ('REFDR' + String(userId).padStart(3, '0') + String(beneficiary.locality.district.province.id) + String(((await queryByCreated(localStorage.user))?.length)+ 1).padStart(3, '0'))
+                              ('REFDR' + String(userId).padStart(3, '0') + String(beneficiary.locality.district.province.id) + String(((await queryByCreated(userId))?.length)+ 1).padStart(3, '0'))
                             });
-        form.setFieldsValue({ referredBy: [MANAGER, SUPERVISOR, MENTOR, NURSE, COUNSELOR].includes(loggedUser.profiles.id)? localStorage.user : '' });
+        form.setFieldsValue({ referredBy: [MANAGER, SUPERVISOR, MENTOR, NURSE, COUNSELOR].includes(loggedUser.profiles.id)? userId : '' });
       } else {
-        const regUser = await query(reference?.createdBy);
+        const regUser = await queryByUserId(reference?.createdBy);
         form.setFieldsValue({ createdBy: regUser?.name + ' ' + regUser?.surname });
         form.setFieldsValue({ referenceNote: reference.referenceNote});
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { pagedQuery, query } from '../../utils/beneficiary';
-import { query as queryUser } from '../../utils/users';
+import { allUsersByProfilesAndUser, query as queryUser } from '../../utils/users';
 import { Badge, Button, message, Card, Input, Space, Table, Typography, Form, ConfigProvider, Row, Col } from 'antd';
 import ptPT  from 'antd/lib/locale-provider/pt_PT';
 import Highlighter from 'react-highlight-words';
@@ -17,9 +17,10 @@ import { add as addRef, Reference } from '../../utils/reference';
 import FormReference from './components/FormReference';
 import { allDistrict } from '@app/utils/district';
 import { Title } from '@app/components';
-import { ADMIN, MANAGER, MENTOR, MNE, SUPERVISOR } from '@app/utils/contants';
-import { useSelector } from 'react-redux';
+import { ADMIN, COUNSELOR, MANAGER, MENTOR, MNE, NURSE, SUPERVISOR } from '@app/utils/contants';
+import { useDispatch, useSelector } from 'react-redux';
 import LoadingModal from '@app/components/modal/LoadingModal';
+import { loadReferers } from '@app/store/actions/users';
 
 const { Text } = Typography;
 
@@ -53,6 +54,9 @@ const BeneficiariesList: React.FC = () => {
     const [nui, setNui] = useState('')
     let data
     const [dataLoading, setDataLoading] = useState(false)
+
+    let userId = localStorage.getItem('user');
+    const dispatch = useDispatch()
     
     const getBeneficiaryIntervention = (beneficiaryId) =>{
         const currentInterventin = interventionSelector?.interventions?.map(item => {if(item[1]==beneficiaryId){
@@ -104,6 +108,20 @@ const BeneficiariesList: React.FC = () => {
         }
     
         fetchData().catch(error => console.log(error));
+
+
+        const fetchReferersUsers = async () =>{
+            var payload = {
+                profiles: [MANAGER, SUPERVISOR, MENTOR, NURSE, COUNSELOR].toString(),
+                userId: Number(userId)
+            }
+        
+            const referers = await allUsersByProfilesAndUser(payload);
+            dispatch(loadReferers(referers));
+        }
+
+        fetchReferersUsers().catch(error => console.log(error));
+    
     
     }, [currentPageIndex, nui]);
 

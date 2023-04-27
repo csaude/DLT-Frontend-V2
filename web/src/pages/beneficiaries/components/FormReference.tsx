@@ -108,7 +108,7 @@ const FormReference = ({ form, beneficiary, reference, modalVisible, handleAdd, 
                 centered
                 destroyOnClose
                 title={` Referências Dreams`}
-                visible={modalVisible}
+                open={modalVisible}
                 maskClosable={false}
                 onCancel={() => showCloseConfirm()}
                 footer={<div className="steps-action">
