@@ -215,6 +215,7 @@ export default appSchema({
           {name: 'book_number', type: 'string'},
           {name: 'reference_code', type: 'string'},
           {name: 'service_type', type: 'string'},
+          {name: 'date', type: 'string'},
           {name: 'remarks', type: 'string', isOptional: true},
           {name: 'status', type: 'number'},
           {name: 'us_id', type: 'number', isIndexed: true},

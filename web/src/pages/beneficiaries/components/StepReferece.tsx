@@ -6,19 +6,19 @@ import { query, userById, allUsesByUs, allUsersByProfilesAndUser } from '@app/ut
 import { allUs, allUsByType } from '@app/utils/uSanitaria';
 import {queryByCreated} from '@app/utils/reference';
 import { COUNSELOR, MANAGER, MENTOR, NURSE, SUPERVISOR } from '@app/utils/contants';
+import moment from 'moment';
 
 const { Option } = Select;
 const { Step } = Steps;
 const { TextArea } = Input;
 
-const StepReference = ({ form, beneficiary, reference }: any) => {
+const StepReference = ({ form, beneficiary, reference, firstStepValues }: any) => {
 
   const [partners, setPartners] = React.useState<any>();
-  const [users, setUsers] = React.useState<any>();
+  const [users, setUsers] = React.useState<any>([]);
   const [referers, setReferers] = React.useState<any>(undefined);
   const [us, setUs] = React.useState<any>();
   const [entryPoints, setEntryPoints] = useState<any>([]);
-  const [entryPointEnabled, setEntryPointEnabled] = useState(true);
   const [serviceTypes, setServiceTypes] = useState<any>([]);
   const [serviceTypeEnabled, setServiceTypeEnabled] = useState(false);
   const [status, setStatus] = useState<any>([]);
@@ -26,6 +26,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
   const [statusEnabled, setStatusEnabled] = useState(false);
   const [cancelReasonEnabled, setCancelReasonEnabled] = useState(false);
   const [otherReasonEnabled, setOtherReasonEnabled] = useState(false);
+  const [stepValues, setStepValues] = useState(reference ? reference: firstStepValues);
   const selectedReference = beneficiary;
   let userId = localStorage.getItem('user');
 
@@ -58,16 +59,10 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
 
       const partnerType = loggedUser.partners.partnerType;
 
-      if (loggedUser.entryPoint === "3") {
-          setEntryPoints([{ value: '1', label: "US" }, { value: '2', label: "CM" }, { value: '3', label: "ES" }]);
-      } else if (partnerType === "1") {
+      if (partnerType === "1") {
           setEntryPoints([{ value: '2', label: "CM" }, { value: '3', label: "ES" }]);
       } else if (partnerType === "2") {
-          setEntryPoints([{ value: '1', label: "US" }]);
-          form.setFieldsValue({ referTo: '1' });
-          onChangeEntryPoint('1');
-          onChangeTipoServico('CLINIC');
-          setEntryPointEnabled(false);
+          setEntryPoints([{ value: '1', label: "US" }, { value: '3', label: "ES" }]);
       } else {
           setEntryPoints([{ value: '1', label: "US" }, { value: '2', label: "CM" }, { value: '3', label: "ES" }]);
       }
@@ -107,31 +102,33 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
     var payload = {
       type: value,
       districtId: reference !== undefined ? 
-                                reference?.beneficiaries?.neighborhood?.locality?.district?.id :
-                                beneficiary?.neighborhood?.locality?.district?.id
+                                reference?.beneficiaries?.locality?.district?.id :
+                                beneficiary?.locality?.district?.id
     }
     const data = await allPartnersByTypeDistrict(payload);
     setPartners(data);
   }
 
   const onChangeEntryPoint = async (e: any) => {
-    console.log(reference);
     var payload = {
       typeId: e?.target?.value === undefined ? e : e?.target?.value,
       localityId: reference !== undefined ? 
                                 reference.notifyTo?.localities[0]?.id :
-                                beneficiary?.neighborhood?.locality?.id
+                                beneficiary?.locality?.id
     }
     const data = await allUsByType(payload);
     setUs(data);
 
-    // FIXME: Rever a limpeza dos campos ao alterar o ponto de entrada
-    // if (reference === undefined) {
-    //   form.setFieldsValue({ local: '' });
-    //   form.setFieldsValue({ partner_id: '' });
-    //   form.setFieldsValue({ notifyTo: '' });
-    //   setUsers(undefined);
-    // }
+    // Limpeza dos campos ao alterar o ponto de entrada
+    if (stepValues === undefined) {
+      form.setFieldsValue({ local: '' });
+      form.setFieldsValue({ partner_id: '' });
+      form.setFieldsValue({ notifyTo: '' });
+      form.setFieldsValue({ serviceType: undefined });
+      setUsers([]);
+    }
+
+    setStepValues(undefined);
 
     const value = e.target?.value;
 
@@ -147,9 +144,6 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
         setServiceTypeEnabled(false);
     } else {
         setServiceTypes([{ "id": 'CLINIC', "name": "Clínico" }, { "id": 'COMMUNITY', "name": "Comunitário" }]);
-        // form.setFieldsValue({ serviceType: '' });
-        // setPartners(undefined);
-        setServiceTypeEnabled(true);
     }
   }
 
@@ -165,17 +159,16 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
       form.setFieldsValue({ cancelReason: undefined });
     } else {
       setCancelReasons([{ "id": '1', "name": "Serviço nã provido nos últimos 6 meses" }, 
-                       { "id": '2', "name": "Beneficiária não encontrada" }, 
-                       { "id": '3', "name": "Abandono" },
-                       { "id": '4', "name": "Beneficiária recusou o serviço" },
-                       { "id": '5', "name": "Outro Motivo" }
+                        { "id": '2', "name": "Beneficiária não encontrada" }, 
+                        { "id": '3', "name": "Abandono" },
+                        { "id": '4', "name": "Beneficiária recusou o serviço" },
+                        { "id": '5', "name": "Outro Motivo" }
                       ]);
       setCancelReasonEnabled(true);
     }
   }
 
   const onChangeCancelReason =async (e:any) => {
-    console.log(e);
     if (e === '5') {
       setOtherReasonEnabled(true);
     } else {
@@ -233,7 +226,6 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
           >
             <Radio.Group onChange={onChangeEntryPoint}
               options={entryPoints}
-              disabled={!entryPointEnabled}
               optionType="button"
             />
           </Form.Item>
@@ -255,7 +247,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
             rules={[{ required: true, message: 'Obrigatório' }]}
             initialValue={reference === undefined ? "" : reference?.referenceCode}
           >
-            <Input placeholder='Ex: CM-08-001' />
+            <Input placeholder='Ex: PE-NºPag-Mês-AA' />
           </Form.Item>
         </Col>
       </Row>
@@ -304,6 +296,17 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
         </Col>
       </Row>
       <Row gutter={8}>
+
+        <Col span={8}>
+          <Form.Item
+            name="date"
+            label="Data Emissão"
+            rules={[{ required: true, message: 'Obrigatório' }]}
+            initialValue={reference === undefined ? undefined : moment(reference.date,'YYYY-MM-DD')}
+          >
+            <DatePicker style={{ width: '100%' }} disabledDate={d => !d || d.isAfter(moment(new Date()))} />
+          </Form.Item>
+        </Col>
         <Col span={8}>
           <Form.Item
             name="notifyTo"
@@ -318,7 +321,7 @@ const StepReference = ({ form, beneficiary, reference }: any) => {
             </Select>
           </Form.Item>
         </Col>
-        <Col span={16}>
+        <Col span={8}>
           <Form.Item
             name="remarks"
             label="Observações"

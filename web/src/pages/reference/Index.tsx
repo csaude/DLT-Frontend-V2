@@ -143,6 +143,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                 bookNumber: values.bookNumber,
                 referenceCode: values.referenceCode,
                 serviceType: values.serviceType === "CLINIC" ? "1" : "2",
+                date: moment(values.date).format('YYYY-MM-DD'),
                 remarks: values.remarks,
                 status: values.status,
                 cancelReason: values.cancelReason,
@@ -150,6 +151,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                 userCreated: ref?.userCreated, 
                 dateCreated: ref?.dateCreated,
                 updatedBy: localStorage.user,
+                dateUpdated: new Date(),
                 referencesServiceses: servicesObjects,
                 
             };
