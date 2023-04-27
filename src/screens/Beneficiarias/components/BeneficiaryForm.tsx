@@ -1750,9 +1750,6 @@ const BeneficiaryForm: React.FC = ({ route , subServices, beneficiaries_interven
                                         </Text>
                                     </Text>
                                     <Divider />
-                                    {/* <Text >
-                                        Pretende Registar os Critérios de Eligibilidade Específicos agora?
-                                    </Text> */}
                                 </Box>
 
                             </ScrollView>
