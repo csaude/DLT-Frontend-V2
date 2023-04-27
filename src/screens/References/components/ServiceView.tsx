@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View, TouchableHighlight } from 'react-native';
 import { useToast, HStack, Text, Icon, VStack, Pressable } from "native-base";
 import { Ionicons } from "@native-base/icons";
@@ -15,6 +15,7 @@ const ServicesView: React.FC = ({ route }: any) => {
         reference,
         beneficiary,
         services,
+        attendDisabled
     } = route.params;
 
     //const [references, setReferences] = useState<any>([]);
@@ -44,6 +45,7 @@ const ServicesView: React.FC = ({ route }: any) => {
             onPress={() =>  navigate({ name: "ServicesForm", params: { reference: reference, beneficiarie: beneficiary, intervention: data.item } })}
             style={styles.rowFront}
             underlayColor={'#AAA'}
+            disabled={attendDisabled}
         >
             <HStack width="100%" px={4} flex={1} space={5} alignItems="center">
                 <Ionicons name="medkit" size={50} color="#0d9488" />
@@ -73,7 +75,7 @@ const ServicesView: React.FC = ({ route }: any) => {
     const renderHiddenItem = (data: any, rowMap: any) => (
 
         <HStack flex={1} pl={2}>
-            <Pressable px={4} ml="auto" bg="lightBlue.700" justifyContent="center"
+            <Pressable px={4} ml="auto" bg="lightBlue.700" justifyContent="center" disabled={attendDisabled}
                 onPress={() => navigate({ name: "ServicesForm", params: { reference: reference, beneficiarie: beneficiary, intervention: data.item } })}
                 _pressed={{ opacity: 0.5 }}
             >
@@ -91,7 +93,7 @@ const ServicesView: React.FC = ({ route }: any) => {
                         data={services}
                         renderItem={renderItem}
                         renderHiddenItem={renderHiddenItem}
-                        rightOpenValue={-80}
+                        rightOpenValue={-56}
                         previewRowKey={'0'}
                         previewOpenValue={-40}
                         previewOpenDelay={3000}

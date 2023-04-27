@@ -41,7 +41,8 @@ export default function ReferenceViewStack({ route }) {
         initialParams={{
           reference: route.params?.reference,
           beneficiary: route.params?.beneficiary,
-          services: route.params?.services
+          services: route.params?.services,
+          attendDisabled: route.params?.attendDisabled
         }} />
       <Tab.Screen name="Intervenções Recebidas" component={InterventionsView} options={{ headerShown: false }}
         initialParams={{

@@ -141,12 +141,13 @@ const BeneficiariesList: React.FC = () => {
                 bookNumber: values.bookNumber,
                 referenceCode: values.referenceCode,
                 serviceType: values.serviceType === "CLINIC" ? "1" : "2",
+                date: moment(values.date).format('YYYY-MM-DD'),
                 remarks: values.remarks,
                 status: '0',
                 cancelReason: '0',
                 otherReason: '',
                 userCreated: localStorage.user,
-                dateCreated: '',
+                dateCreated: new Date(),
                 referencesServiceses: servicesObjects,
                 
             };
@@ -163,7 +164,6 @@ const BeneficiariesList: React.FC = () => {
                 
             }else{
                 setAddStatus(true);
-                console.log(payload);
                 const { data } = await addRef(payload);
 
                 message.success({

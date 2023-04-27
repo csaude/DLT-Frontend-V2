@@ -19,6 +19,7 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
     const [searchField, setSearchField] = useState('');
     const [userReferences, setUserReferences] = useState<any>([]);
     const loggedUser: any = useContext(Context);
+    const loggedUserPartner = loggedUser?.partners ? loggedUser?.partners.id : loggedUser?.partner_id;
     const toast = useToast();
 
     const getBeneficiary = (beneficiary_id: any) => {
@@ -51,6 +52,7 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
         const beneficiary = getBeneficiary(reference.beneficiary_id)?._raw;
         const notifyTo = `${getUser(data.item?._raw.notify_to)?.name + " " + getUser(data.item?._raw.notify_to)?.surname}`
         const organization = getUser(data.item?._raw.notify_to)?.organization_name;
+        const attendDisabled = loggedUserPartner === getUser(data.item?._raw.referred_by)?.partner_id;
 
         const beneficiaryId = beneficiary?.online_id ? beneficiary?.online_id : beneficiary?.id;
 
@@ -85,7 +87,8 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
                 notify: notifyTo,
                 organization: organization,
                 services: servicesObjects,
-                interventions: interventionObjects
+                interventions: interventionObjects,
+                attendDisabled: attendDisabled
             }
         });
     }
@@ -117,7 +120,11 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
         >
             <HStack width="100%" px={4}
                 flex={1} space={5} alignItems="center">
-                <Ionicons name="exit" size={40} color="#0d9488" />
+                {loggedUserPartner === getUser(data.item?._raw.referred_by)?.partner_id?
+                    <Ionicons name="exit" size={40} color="#0d9488" />
+                    :
+                    <Ionicons name="enter" size={40} color="#0d9488" />
+                }
                 <VStack width='200px' >
                     <HStack>
                         <Text color="warmGray.400" _dark={{ color: "warmGray.200" }}>
@@ -198,7 +205,7 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
     };
 
     const filteredReferences = userReferences?.filter(reference =>
-        reference.beneficiary_nui.includes(searchField.toLowerCase())
+        reference.beneficiary_nui.toLowerCase().includes(searchField.toLowerCase())
     )
 
     const sortedReferences = filteredReferences.sort((ref1, ref2) => ref1._raw.status - ref2._raw.status || moment(ref2._raw.date_created).format('YYYY-MM-DD').localeCompare(moment(ref1._raw.date_created).format('YYYY-MM-DD')));
@@ -245,7 +252,7 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
                 data={sortedReferences}
                 renderItem={renderItem}
                 renderHiddenItem={renderHiddenItem}
-                rightOpenValue={-110}
+                rightOpenValue={-56}
                 previewRowKey={'0'}
                 previewOpenValue={-40}
                 previewOpenDelay={3000}
