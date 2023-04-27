@@ -66,6 +66,7 @@ const InterventionForm = ({ record, beneficiary}: any) => {
         setUsers(listUser);
 
         let entryPoint = record? record.entryPoint : user?.entryPoint;
+        let  provider = record? record.provider : user.name+' '+user.surname
 
         if(entryPoint != undefined){
           const serviceType = entryPoint=== '1'? 'CLINIC' : 'COMMUNITY';
@@ -75,7 +76,7 @@ const InterventionForm = ({ record, beneficiary}: any) => {
           onChangeEntryPoint(entryPoint);
         }
 
-        form.setFieldValue('provider', user.name+' '+user.surname);
+        form.setFieldValue('provider', provider);
       } 
 
       const fetchServices = async () => {
