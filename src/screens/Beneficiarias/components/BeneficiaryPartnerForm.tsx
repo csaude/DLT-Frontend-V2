@@ -549,12 +549,15 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
             return e._raw;
         });
 
-        navigate({
-            name: "BeneficiariesView", params: {
-                beneficiary: beneficiarie,
-                interventions: interventionObjects,
-                references: beneficiaryReferencesSerializable
-            }
+        navigationRef.reset({
+            index: 0,
+            routes: [{ name: 'BeneficiariesView', 
+                        params: {
+                            beneficiary: beneficiarie,
+                            interventions: interventionObjects,
+                            references: beneficiaryReferencesSerializable
+                        } 
+                    }]
         });
 
         setShowModal(false);
