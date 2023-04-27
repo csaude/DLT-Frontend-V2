@@ -99,13 +99,6 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
         });
     };
 
-    const viewRow = (rowMap: any, rowKey: any) => {
-        console.log(typeof (rowMap[0]), "on View Row");
-        if (rowMap[rowKey]) {
-            rowMap[rowKey].closeRow();
-        }
-    };
-
     const onRowDidOpen = (rowKey: any) => {
         console.log('This row opened', rowKey);
     };
