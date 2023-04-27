@@ -51,7 +51,7 @@ const DistrictForm = ({ form, district, modalVisible, handleModalVisible, handle
             centered
             destroyOnClose
             title='Dados de Registo do Distrito'
-            visible={modalVisible}
+            open={modalVisible}
             onCancel={() => showCloseConfirm()}
             maskClosable={false}
             footer={[

@@ -1,4 +1,4 @@
-import { GET_USERNAMES } from "./types";
+import { GET_USERNAMES, LOAD_REFERERS } from "./types";
 import { getUsernamesQuery  } from "@app/utils/users";
 
 export const getUsernames = () => async (dispatch) => {
@@ -10,3 +10,10 @@ export const getUsernames = () => async (dispatch) => {
       payload: names,
     })
 };
+
+export const loadReferers = (referers) => async (dispatch) => {
+    dispatch({
+      type: LOAD_REFERERS,
+      payload: referers
+    })
+}

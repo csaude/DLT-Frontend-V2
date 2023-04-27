@@ -16,6 +16,15 @@ export async function query(payload?: UsersFilter) {
     return res;
 }
 
+export async function queryByUserId(payload?: UsersFilter) {
+    let res: any;
+    if (payload) {
+      const url = '/api/users/' + payload;
+      res = await select(url);
+    } 
+    return res;
+}
+
 interface UserParams {
     username: string;
     recoverPassword: string;
