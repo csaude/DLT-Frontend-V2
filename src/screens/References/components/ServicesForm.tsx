@@ -21,6 +21,7 @@ import styles from './styles';
 import { sync } from '../../../database/sync';
 import { ErrorHandler, SuccessHandler } from '../../../components/SyncIndicator';
 import moment from 'moment';
+import { MENTOR } from '../../../utils/constants';
 
 const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     const { reference, beneficiarie, intervention } = route.params;
@@ -286,7 +287,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                                 Q.where('user_id', loggedUser.online_id)
                             ).fetch();
             const userDetailRaw = userDetailsQ[0]?._raw            
-            const isMentora = userDetailRaw?.profile_id == 21 ? true : false;
+            const isMentora = userDetailRaw?.profile_id == MENTOR ? true : false;
             
             if(isMentora){
                 setEntryPoints([{ "id": '2', "name": "CM" }, { "id": '3', "name": "ES" }]);
