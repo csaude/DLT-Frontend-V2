@@ -10,6 +10,10 @@ const MyDatePicker = ({ onDateSelection }) => {
   const [mode, setMode] = useState<any>("date");
   const [show, setShow] = useState(false);
 
+  const currentDate = new Date();
+  const minDate = new Date();
+  minDate.setFullYear(currentDate.getFullYear() - 24);
+
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate;
     const formatedDate = moment(currentDate).format('YYYY-MM-DD')
@@ -41,7 +45,8 @@ const MyDatePicker = ({ onDateSelection }) => {
           value={date}
           mode={mode}
           is24Hour={true}
-          maximumDate={new Date()}
+          minimumDate={minDate}
+          maximumDate={currentDate}
           onChange={onChange}
         />
       )}
