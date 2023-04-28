@@ -18,6 +18,7 @@ import styles from './styles';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import { MENTOR } from '../../../utils/constants';
+import MyDatePicker from '../../../components/DatePicker';
 
 const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
     
@@ -609,6 +610,11 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
        formik.setFieldValue('vblt_lives_with', value?.toString());
     },[value])
 
+    const handleDataFromDatePickerComponent=(selectedDate, fieldName) =>{
+        let tempDate = new Date(selectedDate);
+        formik.setFieldValue(fieldName, moment(tempDate).format('YYYY-MM-DD'));
+    }
+
     return (
         <>
             <View style={{ flex: 1, backgroundColor: "white" }}>
@@ -650,21 +656,12 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                                 </FormControl>
                                 <FormControl isRequired={isDateRequired} isInvalid={'date_of_birth' in formik.errors}>
                                     <FormControl.Label>Data Nascimento</FormControl.Label>
-                                    {isDatePickerVisible && (
-                                        <DatePicker
-                                            mode="calendar"
-                                            disabled={!isDateRequired}
-                                            current={beneficiarie === undefined? getFormatedDate(getMaxDate(),'YYYY-MM-DD') : getFormatedDate(beneficiarie.date_of_birth,'YYYY-MM-DD')}
-                                            minimumDate={getFormatedDate(getMinDate(),'YYYY-MM-DD')}
-                                            maximumDate={getFormatedDate(getMaxDate(),'YYYY-MM-DD')}
-                                            onDateChange={date => onChangeDatePicker(null, date.replaceAll('/', '-'))}
-                                        />
-                                    )}
+                                   
                                     <HStack w="100%" flex={1} space={5} alignItems="center"  >
                                         <InputGroup w={{ base: "70%", md: "285" }}>
                                             <InputLeftAddon>
-                                                <Button disabled={!isDateRequired} style={{ width: 10 }} onPress={() => showDatepicker()}> </Button>
-                                            </InputLeftAddon>
+                                                <MyDatePicker onDateSelection={e=>handleDataFromDatePickerComponent(e,'date_of_birth')} />
+                                            </InputLeftAddon> 
                                             <Input isDisabled w={{ base: "70%", md: "100%" }}
                                                 onPressIn={() => showDatepicker()}
                                                 onBlur={formik.handleBlur('name')}
@@ -711,21 +708,11 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'enrollment_date' in formik.errors}>
                                     <FormControl.Label>Data Inscrição</FormControl.Label>
-                                    {isDatePickerVisible2 && (
-                                        <DatePicker
-                                            mode="calendar"
-                                            disabled={!isDateRequired}
-                                            current={getFormatedDate(new Date(),'YYYY-MM-DD')}
-                                            minimumDate={'2017-01-01'}
-                                            maximumDate={getFormatedDate(new Date(),'YYYY-MM-DD')}
-                                            onDateChange={date => onChangeDatePicker2(null, date.replaceAll('/', '-'))}
-                                        />
-                                    )}
                                     <HStack w="100%" flex={1} space={5} alignItems="center"  >
                                         <InputGroup w={{ base: "70%", md: "285" }}>
                                             <InputLeftAddon>
-                                                <Button style={{ width: 10 }} onPress={() => showDatepicker2()}> </Button>
-                                            </InputLeftAddon>
+                                                <MyDatePicker onDateSelection={e=>handleDataFromDatePickerComponent(e,'enrollment_date')} />
+                                            </InputLeftAddon> 
                                             <Input isDisabled w={{ base: "70%", md: "100%" }}
                                                 onPressIn={() => showDatepicker2()}
                                                 onBlur={formik.handleBlur('name')}

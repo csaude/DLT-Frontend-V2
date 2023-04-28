@@ -18,6 +18,7 @@ import { sync } from "../../../database/sync";
 import User from '../../../models/User';
 import { SuccessHandler } from '../../../components/SyncIndicator';
 import { Context } from '../../../routes/DrawerNavigator';
+import MyDatePicker from '../../../components/DatePicker';
 
 const ReferenceForm: React.FC = ({ route }: any) => {
 
@@ -296,6 +297,11 @@ const ReferenceForm: React.FC = ({ route }: any) => {
         formik.setFieldValue('date', moment(tempDate).format('YYYY-MM-DD'));
     }
 
+    const handleDataFromDatePickerComponent=(selectedDate) =>{
+        let tempDate = new Date(selectedDate);
+        formik.setFieldValue('date', moment(tempDate).format('YYYY-MM-DD'));
+    }
+
 
     const onRemoveService = (value: any) => {
 
@@ -484,19 +490,10 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'date' in formik.errors}>
                                     <FormControl.Label>Data Emissão</FormControl.Label>
-                                    {isDatePickerVisible && (
-                                        <DatePicker
-                                            mode="calendar"
-                                            current={getFormatedDate(new Date(),'YYYY-MM-DD')}
-                                            minimumDate={'2017-01-01'}
-                                            maximumDate={getFormatedDate(new Date(),'YYYY-MM-DD')}
-                                            onDateChange={date => onChangeDatePicker(null, date.replaceAll('/', '-'))}
-                                        />
-                                    )}
                                     <HStack w="100%" flex={1} space={5} alignItems="center"  >
                                         <InputGroup w={{ base: "70%", md: "285" }}>
                                             <InputLeftAddon>
-                                                <Button style={{ width: 10 }} onPress={() => showDatepicker()}> </Button>
+                                                <MyDatePicker onDateSelection={e=>handleDataFromDatePickerComponent(e)} />
                                             </InputLeftAddon>
                                             <Input isDisabled w={{ base: "70%", md: "100%" }}
                                                 onPressIn={() => showDatepicker()}
