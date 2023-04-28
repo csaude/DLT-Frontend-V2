@@ -21,7 +21,6 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import { MENTOR } from '../../../utils/constants';
 import MyDatePicker from '../../../components/DatePicker';
-import { MENTOR } from '../../../utils/constants';
 
 const BeneficiaryForm: React.FC = ({ route }: any) => {
     const loggedUser: any = useContext(Context);

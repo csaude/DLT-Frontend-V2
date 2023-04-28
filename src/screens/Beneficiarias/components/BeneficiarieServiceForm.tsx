@@ -31,7 +31,6 @@ import { Context } from '../../../routes/DrawerNavigator';
 import styles from './styles';
 import { MENTOR } from '../../../utils/constants';
 import MyDatePicker from '../../../components/DatePicker';
-import { MENTOR } from '../../../utils/constants';
 
 const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }: any) => {
     const { beneficiarie, intervs, intervention, isNewIntervention } = route.params;

@@ -19,7 +19,6 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import { MENTOR } from '../../../utils/constants';
 import MyDatePicker from '../../../components/DatePicker';
-import { MENTOR } from '../../../utils/constants';
 
 const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
     
