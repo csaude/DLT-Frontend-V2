@@ -65,6 +65,10 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
     const [partnerHasErrors,setPartnerHasErrors] = useState(false)
     const [isUsVisible, setUsVisible] = useState(false);
 
+    const currentDate = new Date();
+    const maxDate = new Date();
+    maxDate.setFullYear(currentDate.getFullYear() - 6);
+
     useEffect(() => {
         const fetchProvincesData = async () => {
             const getProvsList = await database.get('provinces').query().fetch();
@@ -664,7 +668,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                                     <HStack w="100%" flex={1} space={5} alignItems="center"  >
                                         <InputGroup w={{ base: "70%", md: "285" }}>
                                             <InputLeftAddon>
-                                                <MyDatePicker onDateSelection={e=>handleDataFromDatePickerComponent(e,'date_of_birth')} />
+                                                <MyDatePicker onDateSelection={e=>handleDataFromDatePickerComponent(e,'date_of_birth')}  maximumDate={maxDate}/>
                                             </InputLeftAddon> 
                                             <Input isDisabled w={{ base: "70%", md: "100%" }}
                                                 onPressIn={() => showDatepicker()}

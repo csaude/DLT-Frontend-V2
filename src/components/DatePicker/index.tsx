@@ -3,15 +3,17 @@ import { Platform } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Icon } from "native-base";
 import { MaterialIcons } from "@native-base/icons";
-import moment from "moment";
+import moment, { max } from "moment";
 
-const MyDatePicker = ({ onDateSelection }) => {
+const MyDatePicker = ({ onDateSelection, maximumDate }) => {
   const [date, setDate] = useState(new Date(1598051730000));
   const [mode, setMode] = useState<any>("date");
   const [show, setShow] = useState(false);
 
   const currentDate = new Date();
   const minDate = new Date();
+
+  const maxDate = maximumDate!== undefined? maximumDate: currentDate
   minDate.setFullYear(currentDate.getFullYear() - 24);
 
   const onChange = (event, selectedDate) => {
@@ -46,7 +48,7 @@ const MyDatePicker = ({ onDateSelection }) => {
           mode={mode}
           is24Hour={true}
           minimumDate={minDate}
-          maximumDate={currentDate}
+          maximumDate={maxDate}
           onChange={onChange}
         />
       )}
