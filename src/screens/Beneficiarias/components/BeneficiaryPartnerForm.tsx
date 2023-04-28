@@ -613,6 +613,10 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
     const handleDataFromDatePickerComponent=(selectedDate, fieldName) =>{
         let tempDate = new Date(selectedDate);
         formik.setFieldValue(fieldName, moment(tempDate).format('YYYY-MM-DD'));
+
+        setIsDatePickerVisible(false);
+        setAge(calculateAge(selectedDate)+'');
+        formik.setFieldValue('age', calculateAge(selectedDate)+'');
     }
 
     return (
