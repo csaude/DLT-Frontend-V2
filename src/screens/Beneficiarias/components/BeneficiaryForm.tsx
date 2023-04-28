@@ -843,7 +843,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                          
                                         <InputGroup w={{ base: "70%", md: "285" }}>
                                              <InputLeftAddon>
-                                                <MyDatePicker onDateSelection={e=>handleDataFromDatePickerComponent(e,'date_of_birth')} maximumDate={maxDate}/>
+                                                <MyDatePicker onDateSelection={e=>handleDataFromDatePickerComponent(e,'date_of_birth')} maxDate={maxDate}/>
                                             </InputLeftAddon>
                                             <Input isDisabled w={{ base: "70%", md: "100%" }}
                                                 onPressIn={() => showDatepicker()}

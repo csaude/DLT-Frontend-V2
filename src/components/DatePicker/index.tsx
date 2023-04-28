@@ -5,7 +5,7 @@ import { Icon } from "native-base";
 import { MaterialIcons } from "@native-base/icons";
 import moment, { max } from "moment";
 
-const MyDatePicker = ({ onDateSelection, maximumDate }) => {
+const MyDatePicker = ({ onDateSelection, maxDate= new Date() }) => {
   const [date, setDate] = useState(new Date(1598051730000));
   const [mode, setMode] = useState<any>("date");
   const [show, setShow] = useState(false);
@@ -13,7 +13,6 @@ const MyDatePicker = ({ onDateSelection, maximumDate }) => {
   const currentDate = new Date();
   const minDate = new Date();
 
-  const maxDate = maximumDate!== undefined? maximumDate: currentDate
   minDate.setFullYear(currentDate.getFullYear() - 24);
 
   const onChange = (event, selectedDate) => {
