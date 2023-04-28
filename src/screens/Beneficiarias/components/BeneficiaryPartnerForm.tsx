@@ -181,7 +181,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
                                 Q.where('user_id', loggedUser.online_id)
                             ).fetch();
             const userDetailRaw = userDetailsQ[0]?._raw            
-            const isUserAllowed = userDetailRaw?.profile_id != MENTOR ? true : false;
+            const isUserAllowed = userDetailRaw?.['profile_id'] != MENTOR ? true : false;
             setUsVisible(isUserAllowed)
         }
         validateLoggedUser().catch(err=>console.error(err))
@@ -303,14 +303,14 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
         } else {
 
             // // save the Beneficiary locally
-            if (beneficiarie == undefined) {
-                // setLoading(true);
-                // const ben:any = await handleSaveBeneficiary();
+                setLoading(true);
+                const ben:any = await handleSaveBeneficiary();
        
-                // setBeneficairie(ben?._raw);
-                // setNewNui(ben?._raw.nui);
-                // setLoading(false);
+                setBeneficairie(ben?._raw);
+                setNewNui(ben?._raw.nui);
+                setLoading(false);
                 setShowModal(true);
+                // setDistrict(ben?._raw.district_code);
                 console.log(district)
 
                 toast.show({
@@ -332,28 +332,6 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
                         );
                     }
                 })
-            }else{
-                toast.show({
-                    placement: "top",
-                    render: () => {
-                        return (
-                            <Alert w="100%" variant="left-accent" colorScheme="success" status="success">
-                                <VStack space={2} flexShrink={1} w="100%">
-                                    <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
-                                        <HStack space={2} flexShrink={1} alignItems="center">
-                                            <Alert.Icon />
-                                            <Text color="coolGray.800">
-                                                Vazio!!!
-                                            </Text>
-                                        </HStack>
-                                    </HStack>
-                                </VStack>
-                            </Alert>
-                        );
-                    }
-                });
-                console.log(beneficiarie);
-            }
 
             setErrors(false);
         }
@@ -1214,7 +1192,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
                                         <Text fontWeight='bold' color='#008D4C' >  
                                             {
 
-                                                ` ${district?.code}/` + (beneficiarie === undefined ? `${newNui}` : beneficiarie.nui)
+                                                ` ${district?.code}/` + (beneficiarie === undefined ? `${newNui}` : beneficiarie?.nui)
                                                 
                                             }
                                         </Text>
