@@ -310,8 +310,6 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
                 setNewNui(ben?._raw.nui);
                 setLoading(false);
                 setShowModal(true);
-                // setDistrict(ben?._raw.district_code);
-                console.log(district)
 
                 toast.show({
                     placement: "top",
@@ -1190,11 +1188,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
                                     <Text marginTop={3} marginBottom={3}>
                                         NUI do Beneficiário:
                                         <Text fontWeight='bold' color='#008D4C' >  
-                                            {
-
-                                                ` ${district?.code}/` + (beneficiarie === undefined ? `${newNui}` : beneficiarie?.nui)
-                                                
-                                            }
+                                            {` ${district?.code}/` + `${newNui}` }
                                         </Text>
                                     </Text>            
                                 </Box>

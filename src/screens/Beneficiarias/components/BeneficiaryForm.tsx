@@ -190,7 +190,7 @@ const BeneficiaryForm: React.FC = ({ route , subServices, beneficiaries_interven
                                 Q.where('user_id', loggedUser.online_id)
                             ).fetch();
             const userDetailRaw = userDetailsQ[0]?._raw            
-            const isUserAllowed = userDetailRaw?.profile_id != MENTOR ? true : false;
+            const isUserAllowed = userDetailRaw?.['profile_id'] != MENTOR ? true : false;
             setUsVisible(isUserAllowed)
         }
         validateLoggedUser().catch(err=>console.error(err))
