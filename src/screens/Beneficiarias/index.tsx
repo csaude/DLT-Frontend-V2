@@ -169,6 +169,11 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
                 <View >
                     <Text color="darkBlue.800"></Text>
                     <HStack>
+                        <Text color="darkBlue.800">
+                            { data.item.date_created }
+                        </Text>
+                    </HStack>
+                    <HStack>
                         <View style={{paddingTop:5}}><Ionicons name="calendar" size={11} color="#17a2b8"/></View>
                         <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
                         {` ${age(data.item.date_of_birth)} Anos`}
@@ -455,7 +460,12 @@ const renderServerItem = (data: any) => (
                     </HStack>
                 </View>
                 <View >
-                    <Text color="darkBlue.800"></Text>
+                    <Text color="darkBlue.800">{data.item.entryPoint}</Text>
+                    <HStack>
+                        <Text color="darkBlue.800">
+                            { data.item.date_created }
+                        </Text>
+                    </HStack>
                     <HStack>
                         <View style={{paddingTop:5}}><Ionicons name="calendar" size={11} color="#17a2b8"/></View>
                         <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
