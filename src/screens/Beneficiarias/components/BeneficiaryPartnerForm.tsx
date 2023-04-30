@@ -639,6 +639,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
 
     const onIsDeficientChange = async (value: any) => {
         setDeficiencyTypeEnabled(value == 1);
+        formik.setFieldValue('vblt_deficiency_type', null);
     }
 
     const IdadePicker: React.FC<PickerProps> = ({ selectedValue, onValueChange }: PickerProps) => {

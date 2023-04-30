@@ -757,18 +757,23 @@ const BeneficiaryForm: React.FC = ({ route , subServices, beneficiaries_interven
 
     const onIsDeficientChange = async (value: any) => {
         setDeficiencyTypeEnabled(value == 1);
+        formik.setFieldValue('vblt_deficiency_type', null);
     }
 
     const onPregnantBeforeChane = async (value: any) => {
         setChildrenEnabled(value == 1);
+        formik.setFieldValue('vblt_children', null);
     }
 
     const sexExploitationChange = async (value: any) => {
         setSexExploitationTimeEnabled(value == 1);
+        formik.setFieldValue('vblt_sexploitation_time', null);
     }
 
     const gbvVictimChange = async (value: any) => {
         setGbvInfoEnabled(value == 1);
+        formik.setFieldValue('vblt_vbg_type', null);
+        formik.setFieldValue('vblt_vbg_time', null);        
     }
 
     const IdadePicker: React.FC<PickerProps> = ({ selectedValue, onValueChange }: PickerProps) => {
