@@ -16,6 +16,7 @@ import { BENEFICIARY_TO_SYNC_URL } from '../../services/api';
 import { Formik } from 'formik';
 import { LOGIN_API_URL } from '../../services/api';
 import { ADMIN, MNE, SUPERVISOR } from '../../utils/constants';
+import moment from 'moment';
 
 const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries_interventions }: any) => {    
     const [showModal, setShowModal] = useState(false);
@@ -99,13 +100,6 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
         });
     };
 
-    const viewRow = (rowMap: any, rowKey: any) => {
-        console.log(typeof (rowMap[0]), "on View Row");
-        if (rowMap[rowKey]) {
-            rowMap[rowKey].closeRow();
-        }
-    };
-
     const onRowDidOpen = (rowKey: any) => {
         console.log('This row opened', rowKey);
     };
@@ -179,6 +173,11 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
                         <View style={{paddingTop:5}}><Ionicons name="calendar" size={11} color="#17a2b8"/></View>
                         <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
                         {` ${age(data.item.date_of_birth)} Anos`}
+                        </Text>
+                    </HStack>
+                    <HStack>
+                        <Text color="darkBlue.800">
+                            { moment(new Date(data.item.date_created)).format('DD-MM-YYYY') }
                         </Text>
                     </HStack>
                     <HStack>
@@ -462,11 +461,16 @@ const renderServerItem = (data: any) => (
                     </HStack>
                 </View>
                 <View >
-                    <Text color="darkBlue.800"></Text>
+                    <Text color="darkBlue.800">{data.item.entryPoint}</Text>
                     <HStack>
                         <View style={{paddingTop:5}}><Ionicons name="calendar" size={11} color="#17a2b8"/></View>
                         <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
                         {` ${age(data.item.dateOfBirth)} Anos`}
+                        </Text>
+                    </HStack>
+                    <HStack>
+                        <Text color="darkBlue.800">
+                            { moment(new Date(data.item.date_created)).format('DD-MM-YYYY') }
                         </Text>
                     </HStack>
                     <HStack>
