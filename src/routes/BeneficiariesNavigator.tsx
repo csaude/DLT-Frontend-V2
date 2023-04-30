@@ -27,7 +27,8 @@ const BeneficiariesNavigator: React.FC = () => {
                         })}><Ionicons name="arrow-back-outline" size={25}style={{ color: 'black' }}/></Button>
 
                     ),
-                    headerShown:true
+                    headerShown:true,
+                    headerBackVisible: false
                 }}></BeneficiaryStack.Screen>
         <BeneficiaryStack.Screen name="BeneficiarieServiceForm" component={BeneficiarieServiceForm} options={{
                     headerTitle: (props) => (
