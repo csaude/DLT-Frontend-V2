@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, HStack, Text, VStack, FormControl, Input, Stack, InputGroup, InputLeftAddon, Center, Box, Button, Radio, Modal, ScrollView, Alert, Checkbox, CheckCircleIcon, WarningTwoIcon } from 'native-base';
+import { View, HStack, Text, VStack, FormControl, Input, Stack, InputGroup, InputLeftAddon, Center, Box, Button, Radio, Modal, ScrollView, Alert, Checkbox, useToast, CheckCircleIcon, WarningTwoIcon } from 'native-base';
 import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
 import { Ionicons } from "@native-base/icons";
 import { useFormik } from 'formik';
@@ -8,8 +8,9 @@ import { Picker, PickerProps } from '@react-native-picker/picker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Q } from "@nozbe/watermelondb";
 import { database } from '../../../database';
+import withObservables from '@nozbe/with-observables';
 import Spinner from 'react-native-loading-spinner-overlay';
-import { navigationRef } from '../../../routes/NavigationRef';
+import { navigate, navigationRef } from '../../../routes/NavigationRef';
 import moment from 'moment';
 import DatePicker, { getFormatedDate } from 'react-native-modern-datepicker';
 import { Context } from '../../../routes/DrawerNavigator';
@@ -19,7 +20,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import { MENTOR } from '../../../utils/constants';
 
-const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
+const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_interventions }: any) => {
     
     const loggedUser: any = useContext(Context);
 
@@ -180,7 +181,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                                 Q.where('user_id', loggedUser.online_id)
                             ).fetch();
             const userDetailRaw = userDetailsQ[0]?._raw            
-            const isUserAllowed = userDetailRaw?.profile_id != MENTOR ? true : false;
+            const isUserAllowed = userDetailRaw?.['profile_id'] != MENTOR ? true : false;
             setUsVisible(isUserAllowed)
         }
         validateLoggedUser().catch(err=>console.error(err))
@@ -214,6 +215,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
         setLoadingData(false);
     };
 
+    const toast = useToast();
 
     const formik = useFormik({
         initialValues: {
@@ -300,8 +302,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
             formik.setErrors(errorsList);
         } else {
 
-            // save the Beneficiary locally
-            if (beneficiarie == undefined) {
+            // // save the Beneficiary locally
                 setLoading(true);
                 const ben:any = await handleSaveBeneficiary();
        
@@ -309,7 +310,26 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                 setNewNui(ben?._raw.nui);
                 setLoading(false);
                 setShowModal(true);
-            }
+
+                toast.show({
+                    placement: "top",
+                    render: () => {
+                        return (
+                            <Alert w="100%" variant="left-accent" colorScheme="success" status="success">
+                                <VStack space={2} flexShrink={1} w="100%">
+                                    <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
+                                        <HStack space={2} flexShrink={1} alignItems="center">
+                                            <Alert.Icon />
+                                            <Text color="coolGray.800">
+                                                Beneficiário Registado com Sucesso!
+                                            </Text>
+                                        </HStack>
+                                    </HStack>
+                                </VStack>
+                            </Alert>
+                        );
+                    }
+                })
 
             setErrors(false);
         }
@@ -494,6 +514,45 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
         return newObject;
     }
 
+    const handleOk = async ( beneficiarie?: any ) => {
+
+
+        const interventions = beneficiaries_interventions.filter((e) => {
+            return e._raw.beneficiary_id == beneficiarie.online_id
+        }
+        );
+
+        const interventionObjects = interventions.map((e) => {
+            let subservice = subServices.filter((item) => {
+                return item._raw.online_id == e._raw.sub_service_id
+            })[0];
+            return { id: subservice._raw.online_id, name: subservice._raw.name, intervention: e._raw }
+        });
+
+        const beneficiaryId = beneficiarie.online_id ? beneficiarie.online_id : beneficiarie.id;
+        const references = await database.get('references').query(
+            Q.where('beneficiary_id', beneficiaryId),
+        ).fetch();
+
+        const beneficiaryReferencesSerializable = references.map((e) => {
+            return e._raw;
+        });
+
+        navigationRef.reset({
+            index: 0,
+            routes: [{ name: 'BeneficiariesView', 
+                        params: {
+                            beneficiary: beneficiarie,
+                            interventions: interventionObjects,
+                            references: beneficiaryReferencesSerializable
+                        } 
+                    }]
+        });
+
+        setShowModal(false);
+
+    };
+
     const showDatepicker = () => {
         setIsDatePickerVisible(true);
     };
@@ -580,6 +639,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
 
     const onIsDeficientChange = async (value: any) => {
         setDeficiencyTypeEnabled(value == 1);
+        formik.setFieldValue('vblt_deficiency_type', null);
     }
 
     const IdadePicker: React.FC<PickerProps> = ({ selectedValue, onValueChange }: PickerProps) => {
@@ -789,7 +849,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                                         {formik.errors.district}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl isRequired isInvalid={'locality' in formik.errors} style={{ display : isEnable ? "flex" : "none" }} >
+                                <FormControl isRequired isInvalid={'locality' in formik.errors} style={{ display : isEnable ? "flex" : "flex" }} >
                                     <FormControl.Label>Posto Administrativo</FormControl.Label>
                                     <Picker
                                         enabled={isEnable}
@@ -1102,13 +1162,13 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
             {loading ?
                 <Spinner
                     visible={true}
-                    textContent={beneficiarie? 'Actualizando Beneficiário...' : 'Registando Beneficiário...'}
+                    textContent={beneficiarie ? 'Actualizando Beneficiário...' : 'Registando Beneficiário...'}
                     textStyle={styles.spinnerTextStyle}
                 /> : undefined
 
             }
             <Center>
-                <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+                <Modal isOpen={showModal} onClose={() => handleOk(beneficiarie)}>
                     <Modal.Content maxWidth="400px">
                         <Modal.CloseButton />
                         <Modal.Header>Confirmação Registo</Modal.Header>
@@ -1116,23 +1176,20 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                             <ScrollView>
                                 <Box alignItems='center'>
 
-                                <Ionicons name="md-checkmark-circle" size={100} color="#0d9488" />
-                                <Alert w="100%" status="success">
-                                <HStack space={2} flexShrink={1}>
-                                    <Alert.Icon mt="1"  />
-                                    <Text fontSize="sm" color="coolGray.800">
-                                        Beneficiário Registado com Sucesso!
-                                    </Text>
-                                </HStack>
-                                </Alert>
-                               
+                                    <Ionicons name="md-checkmark-circle" size={100} color="#0d9488" />
+                                    <Alert w="100%" status="success">
+                                        <HStack space={2} flexShrink={1}>
+                                            <Alert.Icon mt="1"  />
+                                            <Text fontSize="sm" color="coolGray.800">
+                                                Beneficiário Registado com Sucesso!
+                                            </Text>
+                                        </HStack>
+                                    </Alert>                               
                                     
                                     <Text marginTop={3} marginBottom={3}>
                                         NUI do Beneficiário:
                                         <Text fontWeight='bold' color='#008D4C' >  
-                                        {
-                                            ` ${district?.code}/${newNui}`
-                                        }
+                                            {` ${district?.code}/` + `${newNui}` }
                                         </Text>
                                     </Text>            
                                 </Box>
@@ -1142,11 +1199,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
                         <Modal.Footer>
                             <Button.Group space={2}>
                                 <Button variant="ghost" colorScheme="blueGray" onPress={() => {
-                                    setShowModal(false);
-                                    navigationRef.reset({
-                                        index: 0,
-                                        routes: [{ name: 'BeneficiariesList' }] 
-                                      })
+                                    handleOk(beneficiarie);
                                 }}>
                                     Concluir
                                 </Button>
@@ -1158,4 +1211,12 @@ const BeneficiaryPartnerForm: React.FC = ({ route }: any) => {
         </>
     );
 }
-export default BeneficiaryPartnerForm;
+const enhance = withObservables([], () => ({
+    beneficiaries_interventions: database.collections
+        .get("beneficiaries_interventions")
+        .query().observe(),
+    subServices: database.collections
+        .get("sub_services")
+        .query().observe(),
+}));
+export default enhance(BeneficiaryPartnerForm);

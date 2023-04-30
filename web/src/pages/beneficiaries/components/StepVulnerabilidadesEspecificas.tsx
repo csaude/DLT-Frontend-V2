@@ -38,6 +38,7 @@ const StepVulnerabilidadesEspecificas = ({ form, beneficiary, firstStepValues }:
 
     const gbvVictimChange = async (values: any) => {
         form.setFieldsValue({vblt_vbg_type: null});
+        form.setFieldsValue({vblt_vbg_time: null});
         setGbvTypeEnabled(values.target.value != 1);
         if (values.target.value != 1) {
             setGbvTimeEnabled(true);

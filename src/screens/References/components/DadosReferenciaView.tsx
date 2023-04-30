@@ -44,7 +44,7 @@ const DadosReferenciaView: React.FC = ({ route }: any) => {
                             </Avatar>
                             <Box style={styles.userText}>
                                 <Text style={styles.nui}>
-                                    {reference.reference_note} |Box {beneficiary?.nui}
+                                    {reference.reference_note} | {beneficiary?.nui}
                                 </Text>
                             </Box>
                         </Box>
