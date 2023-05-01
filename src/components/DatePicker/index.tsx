@@ -5,21 +5,15 @@ import { Icon } from "native-base";
 import { MaterialIcons } from "@native-base/icons";
 import moment, { max } from "moment";
 
-const MyDatePicker = ({ onDateSelection, maxDate= new Date() }) => {
+const MyDatePicker = ({ onDateSelection, minDate, maxDate }) => {
   const [date, setDate] = useState(new Date(1598051730000));
   const [mode, setMode] = useState<any>("date");
   const [show, setShow] = useState(false);
 
-  const currentDate = new Date();
-  const minDate = new Date();
-
-  minDate.setFullYear(currentDate.getFullYear() - 24);
-
   const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate;
-    const formatedDate = moment(currentDate).format('YYYY-MM-DD')
+    const formatedDate = moment(selectedDate).format('YYYY-MM-DD')
     setShow(false);
-    setDate(currentDate);
+    setDate(selectedDate);
     onDateSelection(formatedDate);
   };
 
