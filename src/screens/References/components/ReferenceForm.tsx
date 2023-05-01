@@ -493,7 +493,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                                     <HStack w="100%" flex={1} space={5} alignItems="center"  >
                                         <InputGroup w={{ base: "70%", md: "285" }}>
                                             <InputLeftAddon>
-                                                <MyDatePicker onDateSelection={e=>handleDataFromDatePickerComponent(e)} />
+                                                <MyDatePicker onDateSelection={e=>handleDataFromDatePickerComponent(e)} minDate={new Date('2017-01-01')} maxDate={new Date()} />
                                             </InputLeftAddon>
                                             <Input isDisabled w={{ base: "70%", md: "100%" }}
                                                 onPressIn={() => showDatepicker()}

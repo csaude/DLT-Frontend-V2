@@ -6,7 +6,7 @@ import { MaterialIcons } from "@native-base/icons";
 import moment, { max } from "moment";
 
 const MyDatePicker = ({ onDateSelection, minDate, maxDate }) => {
-  const [date, setDate] = useState(new Date(1598051730000));
+  const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState<any>("date");
   const [show, setShow] = useState(false);
 
