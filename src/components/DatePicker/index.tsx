@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Platform } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Icon } from "native-base";
 import { MaterialIcons } from "@native-base/icons";
 import moment, { max } from "moment";
 
-const MyDatePicker = ({ onDateSelection, minDate, maxDate }) => {
-  const [date, setDate] = useState(new Date());
+const MyDatePicker = ({ onDateSelection, minDate, maxDate, currentDate }) => {
+ 
+  const [date, setDate] = useState(new Date(currentDate));
   const [mode, setMode] = useState<any>("date");
   const [show, setShow] = useState(false);
 
