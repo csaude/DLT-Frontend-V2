@@ -7,6 +7,9 @@ import BeneficiarieServiceForm from '../screens/Beneficiarias/components/Benefic
 import ReferenceForm from '../screens/References/components/ReferenceForm';
 import BeneficiaryForm from '../screens/Beneficiarias/components/BeneficiaryForm';
 import BeneficiaryPartnerForm from '../screens/Beneficiarias/components/BeneficiaryPartnerForm';
+import { Button } from 'native-base';
+import { MaterialIcons, Ionicons } from "@native-base/icons";
+import { navigate, navigationRef } from './NavigationRef';
 
 const BeneficiaryStack = createNativeStackNavigator();
 
@@ -17,12 +20,16 @@ const BeneficiariesNavigator: React.FC = () => {
         <BeneficiaryStack.Screen name="BeneficiariesList" component={BeneficiariesListScreen} />
         <BeneficiaryStack.Screen name="BeneficiariesView" component={BeneficiariesViewStack} options={{
                     headerTitle: (props) => (
-                      <Text {...props} style={{ color: 'black', fontWeight: 'bold' }}>
-                        back
-                      </Text>
+                      <Button colorScheme="unstyled" onPress={() => navigationRef.reset({
+                        index: 0,
+                        routes: [{ name: 'BeneficiariesList',
+                                }]
+                        })}><Ionicons name="arrow-back-outline" size={25}style={{ color: 'black' }}/></Button>
+
                     ),
-                    headerShown:true
-                }}/>
+                    headerShown:true,
+                    headerBackVisible: false
+                }}></BeneficiaryStack.Screen>
         <BeneficiaryStack.Screen name="BeneficiarieServiceForm" component={BeneficiarieServiceForm} options={{
                     headerTitle: (props) => (
                       <Text {...props} style={{ color: 'black', fontWeight: 'bold' }}>                        
