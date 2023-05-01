@@ -619,7 +619,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                                                     md: "285",
                                                 }}>
                                                     <InputLeftAddon>
-                                                        <MyDatePicker onDateSelection={e=>handleDataFromDatePickerComponent(e)} minDate={new Date('2017-01-01')} maxDate={new Date()}/>
+                                                        <MyDatePicker onDateSelection={e=>handleDataFromDatePickerComponent(e)} minDate={new Date('2017-01-01')} maxDate={new Date()} currentDate={intervention?.date}/>
                                                     </InputLeftAddon> 
                                                     <Input isDisabled
                                                         w={{
