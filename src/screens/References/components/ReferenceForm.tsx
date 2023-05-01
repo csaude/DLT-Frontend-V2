@@ -6,16 +6,13 @@ import { MaterialIcons, Ionicons, MaterialCommunityIcons } from "@native-base/ic
 import { useFormik } from 'formik';
 import { database } from '../../../database';
 import { Q } from "@nozbe/watermelondb";
-import { navigate, navigationRef } from '../../../routes/NavigationRef';
+import { navigate } from '../../../routes/NavigationRef';
 import { Picker } from '@react-native-picker/picker';
-import { SwipeListView } from 'react-native-swipe-list-view';
 import ModalSelector from 'react-native-modal-selector-searchable';
-import StepperButton from '../../Beneficiarias/components/StapperButton';
 import styles from './styles1';
 import moment from 'moment';
 import DatePicker, { getFormatedDate } from 'react-native-modern-datepicker';
 import { sync } from "../../../database/sync";
-import User from '../../../models/User';
 import { SuccessHandler } from '../../../components/SyncIndicator';
 import { Context } from '../../../routes/DrawerNavigator';
 
@@ -37,6 +34,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
     const [selectedUser, setSelectedUser] = useState<any>("");
     const [services, setServices] = useState<any>([]);
     const [referServices, setReferServices] = useState<any>([]);
+    const [entryPoint, setEntryPoint] = useState<any>(undefined);
     const [entryPoints, setEntryPoints] = useState<any>([]);
     const [entryPointEnabled, setEntryPointEnabled] = useState(true);
     const [serviceTypes, setServiceTypes] = useState<any>([]);
@@ -58,8 +56,6 @@ const ReferenceForm: React.FC = ({ route }: any) => {
 
             const partnerType = (partnerSerialized[0] as any).partner_type;
 
-            var currmonth = new Date().getMonth() + 1;
-
             if ((userSerialized[0] as any).entry_point === "3") {
                 setEntryPoints([{ "id": '1', "name": "US" }, { "id": '2', "name": "CM" }, { "id": '3', "name": "ES" }]);
             } else if (partnerType === "1") {
@@ -69,6 +65,8 @@ const ReferenceForm: React.FC = ({ route }: any) => {
             } else {
                 setEntryPoints([{ "id": '1', "name": "US" }, { "id": '2', "name": "CM" }, { "id": '3', "name": "ES" }]);
             }
+
+            setEntryPoint((userSerialized[0] as any).entry_point == "1" ? "US" : (userSerialized[0] as any).entry_point == "2" ? "CM" : "ES")
         }
 
         fetchEntryPoints().catch(error => console.log(error));
@@ -387,8 +385,8 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                                     </FormControl.ErrorMessage>
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'reference_code' in formik.errors}>
-                                    <FormControl.Label>Códido de Referência no livro</FormControl.Label>
-                                    <Input onBlur={formik.handleBlur('reference_code')} placeholder="Ex: PE-NºPag-Mês-AA" onChangeText={formik.handleChange('reference_code')} value={formik.values.reference_code} />
+                                    <FormControl.Label>{"Cód. Ref. no Livro (PE: " + entryPoint + "; Mês: 1-12, Ano: 23-99)"}</FormControl.Label>
+                                    <Input onBlur={formik.handleBlur('reference_code')} placeholder="Ex: PE-NºPag-Mês-Ano" onChangeText={formik.handleChange('reference_code')} value={formik.values.reference_code} />
                                     <FormControl.ErrorMessage>
                                         {formik.errors.reference_code}
                                     </FormControl.ErrorMessage>
