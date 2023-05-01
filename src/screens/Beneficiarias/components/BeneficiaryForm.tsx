@@ -70,9 +70,12 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
     const [partnerHasErrors, setPartnerHasErrors] = useState(false)
     const [isUsVisible, setUsVisible] = useState(false);
 
-    const currentDate = new Date();
-    const maxDate = new Date();
-    maxDate.setFullYear(currentDate.getFullYear() - 6);
+
+    const minBirthYear = new Date();
+    minBirthYear.setFullYear(new Date().getFullYear() - 24);
+
+    const maxBirthYear = new Date();
+    maxBirthYear.setFullYear(new Date().getFullYear() - 9);
 
     useEffect(() => {
         const fetchProvincesData = async () => {
@@ -843,7 +846,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                          
                                         <InputGroup w={{ base: "70%", md: "285" }}>
                                              <InputLeftAddon>
-                                                <MyDatePicker onDateSelection={e=>handleDataFromDatePickerComponent(e,'date_of_birth')} maxDate={maxDate}/>
+                                                <MyDatePicker onDateSelection={e=>handleDataFromDatePickerComponent(e,'date_of_birth')} minDate={minBirthYear} maxDate={maxBirthYear}/>
                                             </InputLeftAddon>
                                             <Input isDisabled w={{ base: "70%", md: "100%" }}
                                                 onPressIn={() => showDatepicker()}
@@ -894,7 +897,7 @@ const BeneficiaryForm: React.FC = ({ route }: any) => {
                                     <HStack w="100%" flex={1} space={5} alignItems="center"  >
                                         <InputGroup w={{ base: "70%", md: "285" }}>
                                             <InputLeftAddon>
-                                                <MyDatePicker onDateSelection={e=>handleDataFromDatePickerComponent(e,'enrollment_date')} />
+                                                <MyDatePicker onDateSelection={e=>handleDataFromDatePickerComponent(e,'enrollment_date')}  minDate={new Date('2017-01-01')} maxDate={new Date()} />
                                             </InputLeftAddon>                                        
                                             <Input isDisabled w={{ base: "70%", md: "100%" }} 
                                                 onPressIn={() => showDatepicker2()}
