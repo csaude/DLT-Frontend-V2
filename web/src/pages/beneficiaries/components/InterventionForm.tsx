@@ -1,12 +1,11 @@
-import React, { useEffect, useState, useRef, memo, useCallback, useMemo } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Form, Button, Col, Row, Input, Select, DatePicker, Space, Radio, Divider } from 'antd';
 import { queryByTypeAndBeneficiary, querySubServiceByService } from '@app/utils/service'
-import { allUs, allUsByUser } from '@app/utils/uSanitaria'
+import { allUsByUser } from '@app/utils/uSanitaria'
 import moment from 'moment';
-import { allUsersByProfilesAndUser, query } from '@app/utils/users';
+import { query } from '@app/utils/users';
 import { PlusOutlined } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
-import { COUNSELOR, MANAGER, MENTOR, NURSE, SUPERVISOR } from '@app/utils/contants';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -45,22 +44,16 @@ const InterventionForm = ({ record, beneficiary}: any) => {
 
     const RequiredFieldMessage = "Obrigatório!";
 
+    const referers = useSelector((state:any)=> state.user.referers)
 
     useEffect(() => {
 
       const fetchData = async () => {
         const user = await query(localStorage.user);
 
-      var payload = {
-          profiles: [MANAGER, SUPERVISOR, MENTOR, NURSE, COUNSELOR].toString(),
-          userId: Number(user.id)
-      }
-
-      const data1 = await allUsersByProfilesAndUser(payload);
-
-        const listUser = data1?.map(item => (
-            { username: item.name+' '+item.surname }
-        ))
+        const listUser = referers?.map(item => (
+              { username: item.name+' '+item.surname }
+          ))
 
         setUser(user);
         setUsers(listUser);
@@ -159,7 +152,7 @@ const InterventionForm = ({ record, beneficiary}: any) => {
                   initialValue={service?.serviceType===undefined? undefined : service?.serviceType === '1'? 'CLINIC' : 'COMMUNITY'}
                 >
                     <Select placeholder="Select Area Serviço" onChange={onChangeAreaServiço} disabled={user?.profiles?.name != 'ADMIN'}>
-                        {areaServicos.map(item => (
+                        {areaServicos?.map(item => (
                             <Option key={item.id}>{item.name}</Option>
                         ))}
                     </Select>
@@ -280,7 +273,7 @@ const InterventionForm = ({ record, beneficiary}: any) => {
                     </>
                   )}
                 >
-                  {users.map((item) => (
+                  {users?.map((item) => (
                     <Option key={item.username}>{item.username}</Option>
                   ))}
                 </Select>
