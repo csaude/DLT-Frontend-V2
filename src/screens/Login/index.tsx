@@ -7,7 +7,7 @@ import * as Yup from 'yup';
 import { Q } from '@nozbe/watermelondb'
 import NetInfo from "@react-native-community/netinfo";
 import { database } from '../../database';
-import { LOGIN_API_URL, SYNC_API_URL_PREFIX, UPDATE_PASSWORD_URL, VERIFY_USER_API_URL } from '../../services/api';
+import { LOGIN_API_URL, PING_URL, SYNC_API_URL_PREFIX, UPDATE_PASSWORD_URL, VERIFY_USER_API_URL } from '../../services/api';
 import { MaterialIcons } from "@native-base/icons";
 import { sync } from "../../database/sync";
 import { toast } from 'react-toastify';
@@ -188,52 +188,47 @@ const Login: React.FC = ({ route }: any) => {
                 return showToast('Sem Conexão a Internet', 'Conecte-se a Internet para o primeiro Login!');
             }
 
-            // restrict access to mobile app to mentors and nurses (manager is added for profiles on old platform)
-            await fetch(`${VERIFY_USER_API_URL}/${values.username}`)
-                .then(response => response.json())
-                .then(async (response) => {
-                    if (![MENTOR, NURSE, MANAGER].includes(response?.profiles.id)) {
-                        setLoading(false);
-                        return showToast('Restrição de Acesso', 'Apenas Enfermeiras e Mentoras Podem Aceder a Aplicativo Móvel!');
-                    } else {
+        try {
+            await fetch(`${PING_URL}`);
+        } catch (error) {
+            setLoading(false);
+            return showToast('Sistema em Manutenção', 'Do momento o sistema encontra-se em manutenção, por favor aguarde a disponibilidade do sistema e tente novamente!');
+        }
 
-                        await fetch(`${LOGIN_API_URL}?username=${values.username}&password=${encodeURIComponent(values.password)}`)
-                            .then(response => response.json())
-                            .then(async (response) => {
-            
-                                if (response.status && response.status !== 200) { // unauthorized
-            
-                                    setIsInvalidCredentials(true);             
-                                    resetPassword === '1'? showToast('Conta bloqueada', 'Contacte o seu supervisor ou vesite seu e-mail!!!') : '';                                        
-                                   
-                                } else {
-            
-                                    const account = response.account;
-            
-                                    await fetchPrefix(values.username);
-            
-                                    setIsInvalidCredentials(false);
-            
-                                    setToken(response.token);
-                                    setLoggedUser(account);
-            
-                                    dispatch(loadUser(account));
-            
-                                    saveUserDatails(account)
-            
-                                    isVeryOldPassword(account);
-                                }
-                                setLoading(false);
-                            })
-                            .catch(error => {
+        try {
+            const verifyUserResponse = await fetch(`${VERIFY_USER_API_URL}/${values.username}`);
+            const verifyUserJson = await verifyUserResponse.json();
+            const profileId = verifyUserJson?.profiles.id;
 
-                                showToast('Falha de Conexão', 'Por favor contacte o suporte!');
-                                console.log(error);
-                                setLoading(false);
-                            });
-                        }
-                })
+            if (![MENTOR, NURSE, MANAGER].includes(profileId)) {
+            setLoading(false);
+            return showToast('Restrição de Acesso', 'Apenas Enfermeiras e Mentoras Podem Aceder a Aplicativo Móvel!');
+            }
 
+            const loginResponse = await fetch(`${LOGIN_API_URL}?username=${values.username}&password=${encodeURIComponent(values.password)}`);
+            const loginJson = await loginResponse.json();
+            const status = loginJson.status;
+            const account = loginJson.account;
+
+            if (status && status !== 200) {
+                setIsInvalidCredentials(true);
+                if (resetPassword === '1') {
+                    showToast('Conta bloqueada', 'Contacte o seu supervisor ou vesite seu e-mail!!!');
+                }
+            } else {
+                await fetchPrefix(values.username);
+
+                setIsInvalidCredentials(false);
+                setToken(loginJson.token);
+                setLoggedUser(account);
+                dispatch(loadUser(account));
+                saveUserDatails(account);
+                isVeryOldPassword(account);
+            }
+        } catch (error) {
+            showToast('Falha de Conexão', 'Por favor contacte o suporte!');
+        }
+        setLoading(false);
         } else {
             try {
                 var logguedUser: any = (await users.query(Q.where('username', Q.like(`%${Q.sanitizeLikeString(values.username)}%`))).fetch())[0];
@@ -256,12 +251,11 @@ const Login: React.FC = ({ route }: any) => {
                     isVeryOldPassword(logguedUser._raw);            
 
                     navigate({ name: "Main", params: { loggedUser: logguedUser._raw } });
-                }
-                setLoading(false);
+                }      
             } catch (error) {
                 setIsInvalidCredentials(true);
-                setLoading(false);
             }
+            setLoading(false);
         }
 
     };
