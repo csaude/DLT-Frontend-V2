@@ -70,7 +70,7 @@ const UsList: React.FC = () => {
                 us.status = 1;
                 us.createdBy = localStorage.user;
 
-                const result = uss.some(uss => uss.name.replace(/\s+/g, '').toLowerCase() === values.name.replace(/\s+/g, '').toLowerCase());
+                const result = uss.some(uss => uss.name.replace(/\s+/g, '').toLowerCase() === values.name.replace(/\s+/g, '').toLowerCase() && uss.locality.district.id == values.locality);
                 if (result){
 
                     message.error({
@@ -232,7 +232,7 @@ const UsList: React.FC = () => {
             title: "Nome do Distrito",
             dataIndex: 'district',
             key: 'district',
-            render: (text, record) => record?.locality?.district?.name,
+            render: (text, record) => record?.locality?.district?.id,
         },
         {
             title: "Posto Administrativo",
