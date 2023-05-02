@@ -8,6 +8,7 @@ import {queryByCreated} from '@app/utils/reference';
 import { COUNSELOR, MANAGER, MENTOR, NURSE, SUPERVISOR } from '@app/utils/contants';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
+import { getEntryPoint } from '@app/models/User';
 
 const { Option } = Select;
 const { Step } = Steps;
@@ -18,6 +19,7 @@ const StepReference = ({ form, beneficiary, reference, firstStepValues }: any) =
   const [partners, setPartners] = React.useState<any>();
   const [users, setUsers] = React.useState<any>([]);
   const [us, setUs] = React.useState<any>();
+  const [entryPoint, setEntryPoint] = useState<any>([]);
   const [entryPoints, setEntryPoints] = useState<any>([]);
   const [serviceTypes, setServiceTypes] = useState<any>([]);
   const [serviceTypeEnabled, setServiceTypeEnabled] = useState(false);
@@ -60,6 +62,8 @@ const StepReference = ({ form, beneficiary, reference, firstStepValues }: any) =
       } else {
           setEntryPoints([{ value: '1', label: "US" }, { value: '2', label: "CM" }, { value: '3', label: "ES" }]);
       }
+
+      setEntryPoint(getEntryPoint(loggedUser.entryPoint));
     }
 
     fetchData().catch(error => console.log(error));
@@ -237,11 +241,11 @@ const StepReference = ({ form, beneficiary, reference, firstStepValues }: any) =
         <Col span={8}>
           <Form.Item
             name="referenceCode"
-            label="Código de Referência no livro"
+            label={"Cód. Ref. no Livro (PE: " + entryPoint + "; Mês: 1-12, Ano: 23-99)"}
             rules={[{ required: true, message: 'Obrigatório' }]}
             initialValue={reference === undefined ? "" : reference?.referenceCode}
           >
-            <Input placeholder='Ex: PE-NºPag-Mês-AA' />
+            <Input placeholder='Ex: PE-NºPag-Mês-Ano' />
           </Form.Item>
         </Col>
       </Row>

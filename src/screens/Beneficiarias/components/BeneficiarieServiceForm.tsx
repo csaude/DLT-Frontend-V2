@@ -30,6 +30,7 @@ import { Context } from '../../../routes/DrawerNavigator';
 
 import styles from './styles';
 import { MENTOR } from '../../../utils/constants';
+import MyDatePicker from '../../../components/DatePicker';
 
 const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }: any) => {
     const { beneficiarie, intervs, intervention, isNewIntervention } = route.params;
@@ -54,6 +55,16 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
 
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
+        setShow(false);
+        setDate(currentDate);
+
+        setText(selectedDate);
+    }
+
+    const handleDataFromDatePickerComponent=(selectedDate) =>{
+
+        selectedDate.replaceAll('/', '-')
+          const currentDate = selectedDate || date;
         setShow(false);
         setDate(currentDate);
 
@@ -602,24 +613,14 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
 
                                         <FormControl isRequired>
                                             <FormControl.Label>Data Benefício</FormControl.Label>
-
-                                            {show && (
-                                                <DatePicker
-                                                    mode="calendar"
-                                                    maximumDate={getToday()}
-                                                    onSelectedChange={date => onChange(null, date.replaceAll('/', '-'))}
-                                                />
-                                            )}
-
                                             <HStack alignItems="center">
                                                 <InputGroup w={{
                                                     base: "70%",
                                                     md: "285",
                                                 }}>
                                                     <InputLeftAddon>
-                                                        <Button style={{ width: 10 }} onPress={() => showDatepicker()}>
-                                                        </Button>
-                                                    </InputLeftAddon>
+                                                        <MyDatePicker onDateSelection={e=>handleDataFromDatePickerComponent(e)} minDate={new Date('2017-01-01')} maxDate={new Date()} currentDate={intervention?.date}/>
+                                                    </InputLeftAddon> 
                                                     <Input isDisabled
                                                         w={{
                                                             base: "70%",
