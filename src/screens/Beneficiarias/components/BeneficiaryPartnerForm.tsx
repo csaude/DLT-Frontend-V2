@@ -846,7 +846,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
                                         {formik.errors.district}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl isRequired isInvalid={'locality' in formik.errors} style={{ display : isEnable ? "flex" : "flex" }} >
+                                <FormControl isRequired isInvalid={'locality' in formik.errors} style={{ display : isEnable ? "flex" : "none" }} >
                                     <FormControl.Label>Posto Administrativo</FormControl.Label>
                                     <Picker
                                         enabled={isEnable}
