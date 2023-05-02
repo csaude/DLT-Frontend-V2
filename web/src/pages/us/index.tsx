@@ -232,7 +232,7 @@ const UsList: React.FC = () => {
             title: "Nome do Distrito",
             dataIndex: 'district',
             key: 'district',
-            render: (text, record) => record?.locality?.district?.id,
+            render: (text, record) => record?.locality?.district?.name,
         },
         {
             title: "Posto Administrativo",
