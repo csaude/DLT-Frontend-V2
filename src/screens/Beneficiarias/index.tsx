@@ -298,7 +298,6 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
         setTimeout(() => {
             setRefreshData(false);
             getUserBeneficiaries(loggedUser?.online_id);
-            console.log(userBeneficiaries);
             setRefreshing(false);
             setRefreshData(true);
         }, );
@@ -605,7 +604,7 @@ const renderServerItem = (data: any) => (
                                             </VStack>
                                         </Alert>
                                     }}/>
-                            }>
+                                    }>
                                     <Box alignItems='center'>
                                         {/* <Ionicons name="md-checkmark-circle" size={100} color="#0d9488" /> */}
                                         <Alert w="100%" status="success">
