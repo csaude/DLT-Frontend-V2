@@ -108,8 +108,9 @@ const StepReference = ({ form, beneficiary, reference, firstStepValues }: any) =
   }
 
   const onChangeEntryPoint = async (e: any) => {
+    const type = e?.target?.value === undefined ? e : e?.target?.value;
     var payload = {
-      typeId: e?.target?.value === undefined ? e : e?.target?.value,
+      typeId: type,
       localityId: reference !== undefined ? 
                                 reference.notifyTo?.localities[0]?.id :
                                 beneficiary?.locality?.id
@@ -142,6 +143,8 @@ const StepReference = ({ form, beneficiary, reference, firstStepValues }: any) =
         setServiceTypeEnabled(false);
     } else {
         setServiceTypes([{ "id": 'CLINIC', "name": "Clínico" }, { "id": 'COMMUNITY', "name": "Comunitário" }]);
+        onChangeTipoServico(type === '1' ? 'CLINIC' :'COMMUNITY');
+        setServiceTypeEnabled(true);
     }
   }
 
