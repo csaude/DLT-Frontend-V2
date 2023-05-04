@@ -205,28 +205,23 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                 // Retirar Guião de facilitação
                 servicesSerialized = servicesSerialized.filter(s => ![46,49,52].includes(s.online_id));
             }
-
-            if (beneficiary.vblt_sexually_active && beneficiary.vblt_sexually_active == 0
-                    && value == 1) {
-                // Retirar Promoção e Provisão de Preservativos e Aconselhamento e testagem em
-                // saúde
+            if (beneficiary.vblt_sexually_active != null && beneficiary.vblt_sexually_active == 0 && value == 1) {
+                // Retirar Promoção e Provisão de Preservativos e Aconselhamento e testagem em saúde
                 servicesSerialized = servicesSerialized.filter(s => ![1,9].includes(s.online_id));
             }
-
-            if (beneficiary.vblt_is_student() == 0) {
-
-                if (value == 'COMMUNITY') {
+            if (beneficiary.vblt_is_student == 0) {
+                if (value == 2) {
                     // Retirar AVANTE ESTUDANTE
                     servicesSerialized = servicesSerialized.filter(s => ![45,48,51].includes(s.online_id));
                 }
             } else {
-
-                if (value == 'COMMUNITY') {
+                if (value == 2) {
                     // Retirar AVANTE RAPARIGA
                     servicesSerialized = servicesSerialized.filter(s => ![44,47,50].includes(s.online_id));
+                    
                 }
             }
-        } else if (value == 'COMMUNITY') {
+        } else if (value == 2) {
             // Retirar AVANTE RAPARIGA e AVANTE ESTUDANTE
             servicesSerialized = servicesSerialized.filter(s => ![44,45,47,48,50,51].includes(s.online_id));
         }
