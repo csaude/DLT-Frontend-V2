@@ -850,13 +850,16 @@ const BeneficiaryForm: React.FC = ({ route , subServices, beneficiaries_interven
         formik.setFieldValue(fieldName, moment(tempDate).format('YYYY-MM-DD'));
 
         setIsDatePickerVisible(false);
-        let age = calculateAge(selectedDate);
-        setAge(age + '');
-        formik.setFieldValue('age', age + '');
-        if (age > 17) {
-            setsexWorkerEnabled(true);
-        } else {
-            setsexWorkerEnabled(false);
+
+        if (fieldName == 'date_of_birth') {
+            let age = calculateAge(selectedDate);
+            setAge(age + '');
+            formik.setFieldValue('age', age + '');
+            if (age > 17) {
+                setsexWorkerEnabled(true);
+            } else {
+                setsexWorkerEnabled(false);
+            }
         }
     }
 
