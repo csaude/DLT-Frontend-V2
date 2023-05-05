@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { TouchableHighlight, TouchableOpacity } from 'react-native';
+import { TouchableHighlight } from 'react-native';
 import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
-import { View, HStack, Text, VStack, FormControl, Input, TextArea, Center, Icon, Box, IconButton, Flex, Heading, Divider, useToast, Alert, InputGroup, InputLeftAddon, Button } from 'native-base';
-import { MaterialIcons, Ionicons, MaterialCommunityIcons } from "@native-base/icons";
+import { View, HStack, Text, VStack, FormControl, Input, TextArea, Center, Icon, Box, IconButton, Flex, Heading, Divider, useToast, Alert, InputGroup, InputLeftAddon } from 'native-base';
+import { MaterialIcons, Ionicons } from "@native-base/icons";
 import { useFormik } from 'formik';
 import { database } from '../../../database';
 import { Q } from "@nozbe/watermelondb";
@@ -11,11 +11,12 @@ import { Picker } from '@react-native-picker/picker';
 import ModalSelector from 'react-native-modal-selector-searchable';
 import styles from './styles1';
 import moment from 'moment';
-import DatePicker, { getFormatedDate } from 'react-native-modern-datepicker';
 import { sync } from "../../../database/sync";
 import { SuccessHandler } from '../../../components/SyncIndicator';
 import { Context } from '../../../routes/DrawerNavigator';
 import MyDatePicker from '../../../components/DatePicker';
+import { calculateAge } from '../../../models/Utils';
+import { COMMUNITY, SCHOOL, US } from '../../../utils/constants';
 
 const ReferenceForm: React.FC = ({ route }: any) => {
 
@@ -58,13 +59,13 @@ const ReferenceForm: React.FC = ({ route }: any) => {
             const partnerType = (partnerSerialized[0] as any).partner_type;
 
             if ((userSerialized[0] as any).entry_point === "3") {
-                setEntryPoints([{ "id": '1', "name": "US" }, { "id": '2', "name": "CM" }, { "id": '3', "name": "ES" }]);
+                setEntryPoints([US, COMMUNITY, SCHOOL]);
             } else if (partnerType === "1") {
-                setEntryPoints([{ "id": '2', "name": "CM" }, { "id": '3', "name": "ES" }]);
+                setEntryPoints([COMMUNITY, SCHOOL]);
             } else if (partnerType === "2") {
-                setEntryPoints([{ "id": '1', "name": "US" }, { "id": '3', "name": "ES" }]);
+                setEntryPoints([US, SCHOOL]);
             } else {
-                setEntryPoints([{ "id": '1', "name": "US" }, { "id": '2', "name": "CM" }, { "id": '3', "name": "ES" }]);
+                setEntryPoints([US, COMMUNITY, SCHOOL]);
             }
 
             setEntryPoint((userSerialized[0] as any).entry_point == "1" ? "US" : (userSerialized[0] as any).entry_point == "2" ? "CM" : "ES")
@@ -149,6 +150,10 @@ const ReferenceForm: React.FC = ({ route }: any) => {
             errors.notify_to = 'Obrigatório';
         }
 
+        if (!values.date) {
+            errors.date = 'Obrigatório';
+        }
+
         return errors;
     }
 
@@ -196,7 +201,34 @@ const ReferenceForm: React.FC = ({ route }: any) => {
         const getServicesList = await database.get('services').query(
             Q.where('service_type', value)
         ).fetch();
-        const servicesSerialized = getServicesList.map(item => item._raw);
+        let servicesSerialized = getServicesList.map(item => item._raw);
+        const age = calculateAge(beneficiary.date_of_birth);
+
+        if (age < 15) {
+            if (age < 14 && value == 2) {
+                // Retirar Guião de facilitação
+                servicesSerialized = servicesSerialized.filter(s => ![46,49,52].includes(s.online_id));
+            }
+            if (beneficiary.vblt_sexually_active != null && beneficiary.vblt_sexually_active == 0 && value == 1) {
+                // Retirar Promoção e Provisão de Preservativos e Aconselhamento e testagem em saúde
+                servicesSerialized = servicesSerialized.filter(s => ![1,9].includes(s.online_id));
+            }
+            if (beneficiary.vblt_is_student == 0) {
+                if (value == 2) {
+                    // Retirar AVANTE ESTUDANTE
+                    servicesSerialized = servicesSerialized.filter(s => ![45,48,51].includes(s.online_id));
+                }
+            } else {
+                if (value == 2) {
+                    // Retirar AVANTE RAPARIGA
+                    servicesSerialized = servicesSerialized.filter(s => ![44,47,50].includes(s.online_id));
+                    
+                }
+            }
+        } else if (value == 2) {
+            // Retirar AVANTE RAPARIGA e AVANTE ESTUDANTE
+            servicesSerialized = servicesSerialized.filter(s => ![44,45,47,48,50,51].includes(s.online_id));
+        }
         setServices(servicesSerialized);
     }
 
@@ -391,7 +423,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                                     </FormControl.ErrorMessage>
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'reference_code' in formik.errors}>
-                                    <FormControl.Label>{"Cód. Ref. no Livro (PE: " + entryPoint + "; Mês: 1-12, Ano: 23-99)"}</FormControl.Label>
+                                    <FormControl.Label>{"Cód. Ref. Livro (PE:" + entryPoint + "; Pág.; Mês:1-12; Ano:23-99)"}</FormControl.Label>
                                     <Input onBlur={formik.handleBlur('reference_code')} placeholder="Ex: PE-NºPag-Mês-Ano" onChangeText={formik.handleChange('reference_code')} value={formik.values.reference_code} />
                                     <FormControl.ErrorMessage>
                                         {formik.errors.reference_code}
