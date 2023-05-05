@@ -215,6 +215,7 @@ const BeneficiariesList: React.FC = () => {
         setBeneficiary(data);
         setBeneficiaryModalVisible(false);
         setBeneficiaryPartnerModalVisible(false);
+        handleViewModalVisible(true, data);
     }
 
     

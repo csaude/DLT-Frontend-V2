@@ -138,9 +138,14 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
                 {/* <Avatar color="white" bg={'warning.600'} > */}
                 <Avatar color="white" bg={randomHexColor()} >
                     {
-                        maskName ? 
-                        "D"  : 
-                        data.item.name.charAt(0).toUpperCase() + data.item.surname.charAt(0).toUpperCase()}
+                        (data.item.gender === "1") ?
+                            <Icon as={Ionicons} name="man" color="white" size={35} />
+                            :
+                            (data.item.gender === "2") ?
+                                <Icon as={Ionicons} name="woman" color="white" size={35} />
+                                :
+                                <Icon as={Ionicons} name="person" color="white" size={35} />
+                    }
                     
                 </Avatar>
 
@@ -298,7 +303,6 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
         setTimeout(() => {
             setRefreshData(false);
             getUserBeneficiaries(loggedUser?.online_id);
-            console.log(userBeneficiaries);
             setRefreshing(false);
             setRefreshData(true);
         }, );
@@ -605,7 +609,7 @@ const renderServerItem = (data: any) => (
                                             </VStack>
                                         </Alert>
                                     }}/>
-                            }>
+                                    }>
                                     <Box alignItems='center'>
                                         {/* <Ionicons name="md-checkmark-circle" size={100} color="#0d9488" /> */}
                                         <Alert w="100%" status="success">
