@@ -244,7 +244,7 @@ const StepReference = ({ form, beneficiary, reference, firstStepValues }: any) =
         <Col span={8}>
           <Form.Item
             name="referenceCode"
-            label={"Cód. Ref. no Livro (PE: " + entryPoint + "; Mês: 1-12, Ano: 23-99)"}
+            label={"Cód. Ref. Livro (PE:" + entryPoint + "; Pág.; Mês:1-12, Ano:23-99)"}
             rules={[{ required: true, message: 'Obrigatório' }]}
             initialValue={reference === undefined ? "" : reference?.referenceCode}
           >

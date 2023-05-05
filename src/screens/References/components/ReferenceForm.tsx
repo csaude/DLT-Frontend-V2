@@ -419,7 +419,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                                     </FormControl.ErrorMessage>
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'reference_code' in formik.errors}>
-                                    <FormControl.Label>{"Cód. Ref. no Livro (PE: " + entryPoint + "; Mês: 1-12, Ano: 23-99)"}</FormControl.Label>
+                                    <FormControl.Label>{"Cód. Ref. Livro (PE:" + entryPoint + "; Pág.; Mês:1-12; Ano:23-99)"}</FormControl.Label>
                                     <Input onBlur={formik.handleBlur('reference_code')} placeholder="Ex: PE-NºPag-Mês-Ano" onChangeText={formik.handleChange('reference_code')} value={formik.values.reference_code} />
                                     <FormControl.ErrorMessage>
                                         {formik.errors.reference_code}
