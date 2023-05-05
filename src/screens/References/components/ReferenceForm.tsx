@@ -150,6 +150,10 @@ const ReferenceForm: React.FC = ({ route }: any) => {
             errors.notify_to = 'Obrigatório';
         }
 
+        if (!values.date) {
+            errors.date = 'Obrigatório';
+        }
+
         return errors;
     }
 
