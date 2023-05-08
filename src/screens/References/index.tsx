@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, TouchableOpacity, TouchableHighlight } from 'react-native';
+import { View, TouchableOpacity, TouchableHighlight, RefreshControl } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { useToast, HStack, Text, Avatar, Pressable, Icon, Box, Alert, VStack, Input } from 'native-base';
 import { navigate } from '../../routes/NavigationRef';
@@ -18,6 +18,8 @@ import { ADMIN } from '../../utils/constants';
 const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, services, subServices }: any) => {
     const [searchField, setSearchField] = useState('');
     const [userReferences, setUserReferences] = useState<any>([]);
+    const [refreshData, setRefreshData] = useState(false);
+    const [refreshing, setRefreshing] = React.useState(false);
     const loggedUser: any = useContext(Context);
     const loggedUserPartner = loggedUser?.partners ? loggedUser?.partners.id : loggedUser?.partner_id;
     const toast = useToast();
@@ -46,6 +48,16 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
             return "Sync"
         }
     }
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        setTimeout(() => {
+            setRefreshData(false);
+            setRefreshing(false);
+            setRefreshData(true);
+        }, );
+    }, []);
+
 
     const viewReference = async (data: any) => {
         const reference = data.item?._raw;
@@ -237,7 +249,7 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
             /** is first time the user logs, is using API* */
             getUserReferences(loggedUser?.id)
         }          
-    },[loggedUser])
+    },[loggedUser, refreshData])
 
     return (
         <View style={styles.container}>
@@ -257,6 +269,7 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
                 previewOpenValue={-40}
                 previewOpenDelay={3000}
                 onRowDidOpen={onRowDidOpen}
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
             />
             <TouchableOpacity onPress={syncronize} style={styles.fab1}>
                 <Icon as={MaterialIcons} name="refresh" size={8} color="#0c4a6e" />

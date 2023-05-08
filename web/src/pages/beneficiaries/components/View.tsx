@@ -1,9 +1,8 @@
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { message, Form, Modal, Card, Row, Col, Image, Table, Button, Drawer, Space } from 'antd';
-import { SearchOutlined, ArrowUpOutlined, EyeOutlined, EditOutlined, PlusOutlined, ExclamationCircleFilled } from '@ant-design/icons';
+import { ArrowUpOutlined, EyeOutlined, EditOutlined, PlusOutlined, ExclamationCircleFilled } from '@ant-design/icons';
 import emblema from '../../../assets/emblema.png';
 import moment from 'moment';
-import { getEntryPoint } from '@app/models/User'
 import { query } from '../../../utils/beneficiary';
 import { query as beneficiaryInterventionQuery } from '../../../utils/beneficiaryIntervention';
 import ViewIntervention from './ViewIntervention';
@@ -20,10 +19,10 @@ import { getInterventionsCount } from '@app/store/actions/interventions';
 
 const { confirm } = Modal;
 
-export function ViewBenefiaryPanel({ beneficiary, handleModalVisible, handleModalRefVisible, user}) {
+export function ViewBenefiaryPanel({ beneficiary, handleModalVisible, handleViewModalVisible, handleModalRefVisible, user}) {
     const [visible, setVisible] = useState<boolean>(false);
     const [isAdd, setIsAdd] = useState<boolean>(false);
-    const [selectedBeneficiary, setSelectedBeneficiary] = useState();
+    const [selectedBeneficiary, setSelectedBeneficiary] = useState(beneficiary);
     const [selectedIntervention, setSelectedIntervention] = useState<any>();
     const [interventions, setInterventions] = useState(beneficiary?.beneficiariesInterventionses);
     const [partner, setPartner] = useState<any>();
@@ -81,6 +80,11 @@ export function ViewBenefiaryPanel({ beneficiary, handleModalVisible, handleModa
         setIsAdd(true);
         setSelectedIntervention(record);
     };
+
+    const onViewBeneficiaryPartner = async (flag?: boolean, id?: any) => {
+        const beneficiary = await query(id);
+        handleViewModalVisible(flag, beneficiary);
+    }
 
     const showCloseConfirm = () => {
         confirm({
@@ -322,7 +326,7 @@ export function ViewBenefiaryPanel({ beneficiary, handleModalVisible, handleModa
                             >
                                 <span>
                                     <Button hidden={beneficiary.partnerId === null} 
-                                        // onClick={} 
+                                        onClick={() => onViewBeneficiaryPartner(true, beneficiary.partnerId)} 
                                         type="primary" 
                                         style={{ background: "#00a65a", borderColor: "#00a65a", borderRadius:'4px' }} >
                                         {`${partner?.neighborhood.locality.district.code}/${partner?.nui}`}
@@ -384,7 +388,7 @@ export function ViewBenefiaryPanel({ beneficiary, handleModalVisible, handleModa
     );
 }
 
-const ViewBeneficiary = ({ beneficiary, modalVisible, handleModalVisible , handleModalRefVisible, user}) => {
+const ViewBeneficiary = ({ beneficiary, modalVisible, handleModalVisible, handleViewModalVisible, handleModalRefVisible, user}) => {
 
     const okHandle = () => {
         handleModalVisible();
@@ -418,7 +422,7 @@ const ViewBeneficiary = ({ beneficiary, modalVisible, handleModalVisible , handl
             onCancel={() => showCloseConfirm()}
         >
             
-            <ViewBenefiaryPanel beneficiary={beneficiary} handleModalVisible={handleModalVisible} handleModalRefVisible={handleModalRefVisible} user={user} />
+            <ViewBenefiaryPanel beneficiary={beneficiary} handleModalVisible={handleModalVisible} handleViewModalVisible={handleViewModalVisible} handleModalRefVisible={handleModalRefVisible} user={user} />
 
         </Modal>
 

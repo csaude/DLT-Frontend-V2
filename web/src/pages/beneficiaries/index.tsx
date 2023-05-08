@@ -215,6 +215,7 @@ const BeneficiariesList: React.FC = () => {
         setBeneficiary(data);
         setBeneficiaryModalVisible(false);
         setBeneficiaryPartnerModalVisible(false);
+        handleViewModalVisible(true, data);
     }
 
     
@@ -522,7 +523,7 @@ const BeneficiariesList: React.FC = () => {
                             sortDirections={["descend", "ascend"]}
                             columns={columns}
                             expandable={{
-                                expandedRowRender: record =>  <div style={{border:"2px solid #d9edf7", backgroundColor:"white"}}><ViewBenefiaryPanel beneficiary={record} handleModalVisible={handleModalVisible} handleModalRefVisible={handleModalRefVisible} user={user} /></div>,
+                                expandedRowRender: record =>  <div style={{border:"2px solid #d9edf7", backgroundColor:"white"}}><ViewBenefiaryPanel beneficiary={record} handleModalVisible={handleModalVisible} handleViewModalVisible={handleViewModalVisible} handleModalRefVisible={handleModalRefVisible} user={user} /></div>,
                                 rowExpandable: record => record.name !== 'Not Expandable',
                             }}
                             dataSource={beneficiaries}
@@ -543,6 +544,7 @@ const BeneficiariesList: React.FC = () => {
                 {...parentMethods}
                 beneficiary={beneficiary} 
                 modalVisible={modalVisible} 
+                handleViewModalVisible={handleViewModalVisible}
                 handleModalRefVisible={handleModalRefVisible}
                 user={user}
             />

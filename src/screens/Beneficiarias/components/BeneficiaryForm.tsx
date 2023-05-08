@@ -299,26 +299,6 @@ const BeneficiaryForm: React.FC = ({ route , subServices, beneficiaries_interven
                 setBeneficairie(ben?._raw);
                 setNewNui(ben?._raw.nui);
                 setLoading(false);
-
-                toast.show({
-                    placement: "top",
-                    render: () => {
-                        return (
-                            <Alert w="100%" variant="left-accent" colorScheme="success" status="success">
-                                <VStack space={2} flexShrink={1} w="100%">
-                                    <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
-                                        <HStack space={2} flexShrink={1} alignItems="center">
-                                            <Alert.Icon />
-                                            <Text color="coolGray.800">
-                                                Beneficiária Registada com Sucesso!
-                                            </Text>
-                                        </HStack>
-                                    </HStack>
-                                </VStack>
-                            </Alert>
-                        );
-                    }
-                })
                                 
             }
 
@@ -538,6 +518,26 @@ const BeneficiaryForm: React.FC = ({ route , subServices, beneficiaries_interven
                         record.vblt_sex_worker = Number(formik.values.vblt_sex_worker)
                     record._status = "updated"
                 })
+
+                toast.show({
+                    placement: "top",
+                    render: () => {
+                        return (
+                            <Alert w="100%" variant="left-accent" colorScheme="success" status="success">
+                                <VStack space={2} flexShrink={1} w="100%">
+                                    <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
+                                        <HStack space={2} flexShrink={1} alignItems="center">
+                                            <Alert.Icon />
+                                            <Text color="coolGray.800">
+                                                Beneficiária Actualizada com Sucesso!
+                                            </Text>
+                                        </HStack>
+                                    </HStack>
+                                </VStack>
+                            </Alert>
+                        );
+                    }
+                })
                 return updateBeneficiary;
 
             }
@@ -592,6 +592,26 @@ const BeneficiaryForm: React.FC = ({ route , subServices, beneficiaries_interven
                 await sequenceToUpdate.update((sequence: any) => {
                     sequence.last_nui = String(newNui)
                 });
+
+                toast.show({
+                    placement: "top",
+                    render: () => {
+                        return (
+                            <Alert w="100%" variant="left-accent" colorScheme="success" status="success">
+                                <VStack space={2} flexShrink={1} w="100%">
+                                    <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
+                                        <HStack space={2} flexShrink={1} alignItems="center">
+                                            <Alert.Icon />
+                                            <Text color="coolGray.800">
+                                                Beneficiária Registada com Sucesso!
+                                            </Text>
+                                        </HStack>
+                                    </HStack>
+                                </VStack>
+                            </Alert>
+                        );
+                    }
+                })
                 return newBeneficiary;
             }
         });
@@ -850,13 +870,16 @@ const BeneficiaryForm: React.FC = ({ route , subServices, beneficiaries_interven
         formik.setFieldValue(fieldName, moment(tempDate).format('YYYY-MM-DD'));
 
         setIsDatePickerVisible(false);
-        let age = calculateAge(selectedDate);
-        setAge(age + '');
-        formik.setFieldValue('age', age + '');
-        if (age > 17) {
-            setsexWorkerEnabled(true);
-        } else {
-            setsexWorkerEnabled(false);
+
+        if (fieldName == 'date_of_birth') {
+            let age = calculateAge(selectedDate);
+            setAge(age + '');
+            formik.setFieldValue('age', age + '');
+            if (age > 17) {
+                setsexWorkerEnabled(true);
+            } else {
+                setsexWorkerEnabled(false);
+            }
         }
     }
 
