@@ -52,6 +52,18 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     const [organization, setOrganization] = useState<any>([]);
     const [currentInformedProvider, setCurrentInformedProvider] = useState('') ;
     const [servicesState,setServicesState] = useState<any>([]);
+    const [initialValues, setInitialValues] = useState<any>({});
+    const [loading, setLoading] = useState(false);
+    
+    let mounted = true;
+    const loggedUser: any = useContext(Context);
+    const toast = useToast();
+    const userId = loggedUser.online_id == undefined ? loggedUser.id : loggedUser.online_id;
+    const userEntryPoint = loggedUser?.entry_point == undefined ? loggedUser.entryPoint : loggedUser?.entry_point
+
+    const avanteEstudanteOnlineIds = [45,48,51];
+    const avanteRaparigaOnlineIds = [44,47,50];
+    const guiaFacilitacaoOnlineIds = [46,49,52];
 
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
@@ -91,8 +103,9 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     }
 
     const getPartner = async() => {
+        const partnerId = loggedUser.partner_id == undefined ? loggedUser.partners.id : loggedUser.partner_id;
         const partners = await database.get('partners').query(
-            Q.where('online_id', parseInt(loggedUser.partner_id))
+            Q.where('online_id', parseInt(partnerId))
         ).fetch();
         const partnerSerialied = partners.map(item => item._raw)[0];
         setOrganization(partnerSerialied);
@@ -110,18 +123,8 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     const showDatepicker = () => {
         showMode('calendar');
     };
-    const [initialValues, setInitialValues] = useState<any>({});
-    let mounted = true;
-    const [loading, setLoading] = useState(false);
-    const loggedUser: any = useContext(Context);
-    const toast = useToast();
-
-    const avanteEstudanteOnlineIds = [45,48,51];
-    const avanteRaparigaOnlineIds = [44,47,50];
-    const guiaFacilitacaoOnlineIds = [46,49,52];
 
     useEffect(() => {
-     
         if (mounted) {
             setServicesState(services)
             getPartner()  
@@ -185,7 +188,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                 })[0];
 
                 onChangeEntryPoint(intervention.entry_point);
-                onChangeUs(intervention.us_id)
+                onChangeUs(intervention.us_id);
 
                 initValues = {
                     areaServicos_id: selService._raw.service_type,
@@ -195,7 +198,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                     result: intervention.result,
                     date: intervention.date,
                     us_id: selUs.online_id,
-                    activist_id: loggedUser.online_id,
+                    activist_id: userId,
                     entry_point: intervention.entry_point,
                     provider: intervention.provider,
                     remarks: intervention.remarks,
@@ -309,7 +312,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                     intervention.result = values.result
                     intervention.date = '' + text
                     intervention.us_id = values.us_id
-                    intervention.activist_id = loggedUser.online_id
+                    intervention.activist_id = userId
                     intervention.entry_point = values.entry_point
                     intervention.provider = values.provider
                     intervention.remarks = values.remarks
@@ -326,7 +329,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                     intervention.result = values.result
                     intervention.date = '' + text
                     intervention.us_id = values.us_id
-                    intervention.activist_id = loggedUser.online_id
+                    intervention.activist_id = userId
                     intervention.entry_point = values.entry_point
                     intervention.provider = values.provider
                     intervention.remarks = values.remarks
@@ -382,21 +385,21 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
 
                 if(isNewIntervention){
                     setCurrentInformedProvider(loggedUser?.name+' '+loggedUser?.surname)   
-                    if(loggedUser?.entry_point !== undefined){
-                        onChangeEntryPoint(loggedUser?.entry_point);
+                    if(userEntryPoint !== undefined){
+                        onChangeEntryPoint(userEntryPoint);
                     }
                     if(organization?.partner_type==1){
                         setInitialValues({
                             areaServicos_id: '1',
-                            entry_point: loggedUser?.entry_point,
-                            provider: loggedUser?.online_id,
+                            entry_point: userEntryPoint,
+                            provider: userId,
                         })
                     }
                     else if(organization?.partner_type==2){
                         setInitialValues({
                             areaServicos_id: '2',
-                            entry_point: loggedUser?.entry_point ,
-                            provider: loggedUser?.online_id,
+                            entry_point: userEntryPoint ,
+                            provider: userId,
                         })
                     }
                 }
@@ -434,7 +437,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     useEffect(()=>{
         const validateLoggedUser =async ()=>{
             const userDetailsQ = await userDetailsCollection.query(
-                                Q.where('user_id', loggedUser.online_id)
+                                Q.where('user_id', userId)
                             ).fetch();
             const userDetailRaw = userDetailsQ[0]?._raw            
             const isMentora = userDetailRaw?.profile_id == MENTOR ? true : false;

@@ -108,8 +108,9 @@ const StepReference = ({ form, beneficiary, reference, firstStepValues }: any) =
   }
 
   const onChangeEntryPoint = async (e: any) => {
+    const type = e?.target?.value === undefined ? e : e?.target?.value;
     var payload = {
-      typeId: e?.target?.value === undefined ? e : e?.target?.value,
+      typeId: type,
       localityId: reference !== undefined ? 
                                 reference.notifyTo?.localities[0]?.id :
                                 beneficiary?.locality?.id
@@ -142,6 +143,8 @@ const StepReference = ({ form, beneficiary, reference, firstStepValues }: any) =
         setServiceTypeEnabled(false);
     } else {
         setServiceTypes([{ "id": 'CLINIC', "name": "Clínico" }, { "id": 'COMMUNITY', "name": "Comunitário" }]);
+        onChangeTipoServico(type === '1' ? 'CLINIC' :'COMMUNITY');
+        setServiceTypeEnabled(true);
     }
   }
 
@@ -241,7 +244,7 @@ const StepReference = ({ form, beneficiary, reference, firstStepValues }: any) =
         <Col span={8}>
           <Form.Item
             name="referenceCode"
-            label={"Cód. Ref. no Livro (PE: " + entryPoint + "; Mês: 1-12, Ano: 23-99)"}
+            label={"Cód. Ref. Livro (PE:" + entryPoint + "; Pág.; Mês:1-12, Ano:23-99)"}
             rules={[{ required: true, message: 'Obrigatório' }]}
             initialValue={reference === undefined ? "" : reference?.referenceCode}
           >
