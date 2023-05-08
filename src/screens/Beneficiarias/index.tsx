@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useRef } from 'react';
 import { View, StyleSheet, TouchableOpacity, TouchableHighlight, ScrollView, Platform, RefreshControl } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { useToast, Alert, HStack, Text, Avatar, Pressable, Icon, Box, Select, Heading, VStack, FormControl, Input, Link, Button, CheckIcon, WarningOutlineIcon, Center, Flex, Badge, Modal, InfoIcon, IconButton, CloseIcon, Checkbox } from 'native-base';
@@ -32,7 +32,8 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
     const [beneficiariesResultLoaded, setBeneficiariesResultLoaded] = useState(false)
     const [refreshData, setRefreshData] = useState(false)
     const [refreshing, setRefreshing] = React.useState(false);
-    const toast = useToast();
+    const toast = useToast();        
+    const inputRef:any = useRef(null);
 
     const syncronize = () => {
         sync({ username: loggedUser.username })
@@ -317,7 +318,7 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
            /** is first time the user logs, is using API* */  
             getUserBeneficiaries(loggedUser?.id) 
         }          
-    },[loggedUser, refreshData])
+    },[loggedUser, refreshData, inputRef])
 
     const filteredBeneficiaries = userBeneficiaries?.filter(beneficiarie => (beneficiarie._raw.nui).toLowerCase().includes(searchField.toLowerCase()))
     // const sortedBeneficiaries = filteredBeneficiaries.sort((benf1, benf2) => benf2._raw.nui.localeCompare(benf1._raw.nui));
@@ -474,7 +475,7 @@ const renderServerItem = (data: any) => (
                     </HStack>
                     <HStack>
                         <Text color="darkBlue.800">
-                            { moment(new Date(data.item.date_created)).format('DD-MM-YYYY') }
+                            { moment(new Date(data.item.dateCreated)).format('DD-MM-YYYY') }
                         </Text>
                     </HStack>
                     <HStack>
@@ -500,13 +501,18 @@ const renderServerItem = (data: any) => (
              getServerBeneficiaries(searchField,token)
         }
     }
-
+    
     const handleSyncCustomBeneficiary =()=>{
+
         const userId = loggedUser.online_id !== undefined?  loggedUser.online_id : loggedUser.id
         customSyncBeneficiary({ nui: searchField, userId })
                 .then(() => {
                     setRefreshData(true)
                     setServerBeneficiaries([])
+                    setSearchField('')
+                    if (inputRef.current) {
+                        inputRef.current.clear();
+                    }
                     toast.show({
                     placement: "top",
                     render: () => {
@@ -524,7 +530,7 @@ const renderServerItem = (data: any) => (
             <View style={styles.container}>
                 <View style={styles.heading}>
                     <Box alignItems="center" w="80%" bgColor="white" style={{ borderRadius: 5, }}>
-                        <Input w={{ base: "100%", md: "25%" }} onChangeText={handleChange}
+                        <Input ref={inputRef} w={{ base: "100%", md: "25%" }} onChangeText={handleChange}
                             InputLeftElement={<Icon as={MaterialIcons} name="search" size={5} ml="2" color="muted.700" />} placeholder="Search"
                             style={{ borderRadius: 45 }} />
                     </Box>
