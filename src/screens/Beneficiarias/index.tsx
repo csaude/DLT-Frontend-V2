@@ -475,7 +475,7 @@ const renderServerItem = (data: any) => (
                     </HStack>
                     <HStack>
                         <Text color="darkBlue.800">
-                            { moment(new Date(data.item.date_created)).format('DD-MM-YYYY') }
+                            { moment(new Date(data.item.dateCreated)).format('DD-MM-YYYY') }
                         </Text>
                     </HStack>
                     <HStack>
