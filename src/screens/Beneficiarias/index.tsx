@@ -34,7 +34,10 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
     const [refreshing, setRefreshing] = React.useState(false);
     const toast = useToast();        
     const inputRef:any = useRef(null);
+
     const [isLoadingRequest, setLoadingRequest] = useState(false)
+
+
 
     const syncronize = () => {
         sync({ username: loggedUser.username })
