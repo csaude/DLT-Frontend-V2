@@ -35,7 +35,6 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     const [initialValues, setInitialValues] = useState<any>({});
     const [loading, setLoading] = useState(false);
     const [show, setShow] = useState(false);
-    const [isSync, setIsSync] = useState(false);
     const [text, setText] = useState('');
     const [date, setDate] = useState(new Date());
     const [users, setUsers] = useState<any>([]);
