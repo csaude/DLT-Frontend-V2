@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext, useRef } from 'react';
 import { View, StyleSheet, TouchableOpacity, TouchableHighlight, ScrollView, Platform, RefreshControl } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
-import { useToast, Alert, HStack, Text, Avatar, Pressable, Icon, Box, Select, Heading, VStack, FormControl, Input, Link, Button, CheckIcon, WarningOutlineIcon, Center, Flex, Badge, Modal, InfoIcon, IconButton, CloseIcon, Checkbox } from 'native-base';
+import { useToast, Alert, HStack, Text, Avatar, Pressable, Icon, Box, Select, Heading, VStack, FormControl, Input, Link, Button, CheckIcon, WarningOutlineIcon, Center, Flex, Badge, Modal, InfoIcon, IconButton, CloseIcon, Checkbox, Spinner } from 'native-base';
 import { navigate } from '../../routes/NavigationRef';
 import withObservables from '@nozbe/with-observables';
 import { MaterialIcons, Ionicons } from "@native-base/icons";
@@ -34,6 +34,10 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
     const [refreshing, setRefreshing] = React.useState(false);
     const toast = useToast();        
     const inputRef:any = useRef(null);
+
+    const [isLoadingRequest, setLoadingRequest] = useState(false)
+
+
 
     const syncronize = () => {
         sync({ username: loggedUser.username })
@@ -372,8 +376,30 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
                 });
     }
     
+    const ErrorNoDataFound: React.FC = () => {
+    return (
+        <>
+            <Alert w="100%" variant="left-accent" colorScheme="error" status="error">
+                <VStack space={2} flexShrink={1} w="100%">
+                    <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
+                        <HStack space={2} flexShrink={1} alignItems="center">
+                            <Alert.Icon />
+                            <Text color="coolGray.800">
+                                Nenhuma Beneficiaria foi encontrada com este NUI!
+                            </Text>
+                        </HStack>
+                    </HStack>
+                </VStack>
+            </Alert>
+
+        </>
+    );
+}
+
+    
     const getServerBeneficiaries = async(nui, token)=> {
         setShowAuthModal(true)
+        setLoadingRequest(true)
         await fetch(
                 `${BENEFICIARY_TO_SYNC_URL}?nui=${nui}&userId=${userId}`
                 , {
@@ -386,9 +412,23 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
             }
                 ).then((response) => response.json())
                  .then((data) => {
+                    if(data.length<1){
+                        setSearchField('')
+                        if (inputRef.current) {
+                            inputRef.current.clear();
+                        }
+                   
+                        toast.show({
+                                placement: "top",
+                                render: () => {
+                                    return (<ErrorNoDataFound />);
+                                }
+                            })
+                    }
                     setServerBeneficiaries(data)
                     setBeneficiariesResultLoaded(true)
             });
+            setLoadingRequest(false)
         }
 
      const ErrorInvalidPasswordHandler: React.FC = () => {
@@ -525,6 +565,14 @@ const renderServerItem = (data: any) => (
                 });
         }
 
+        const MySpinner = () => {
+            return (
+                <HStack space={8} justifyContent="center" alignItems="center">
+                <Spinner size="lg" />
+                </HStack>
+            );
+            };
+
     return (
         <>
             <View style={styles.container}>
@@ -550,6 +598,9 @@ const renderServerItem = (data: any) => (
                 /> }
                 {filteredBeneficiaries.length < 1 && searchField !=='' && serverBeneficiaries.length < 1 && !beneficiariesResultLoaded &&
                  <Center flex={1} px="3" >
+                    {isLoadingRequest &&
+                        <View><MySpinner/></View>
+                    }
                              <VStack space={2} flexShrink={1}>
                                             <HStack>
                                                 <InfoIcon mt="1"  />
@@ -587,9 +638,7 @@ const renderServerItem = (data: any) => (
                             </Button>    
                         </>
                         }
-                        {serverBeneficiaries.length < 1 && beneficiariesResultLoaded && !refreshData &&
-                            <View><Text>Nenhum(a) Beneficiária(o) foi encontrada com o NUI: {searchField}</Text></View>
-                        }
+                        
                     </> 
                 }
 

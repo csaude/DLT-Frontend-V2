@@ -10,6 +10,7 @@ import { database } from "../../database";
 import { useSelector } from 'react-redux'
 import { RootState } from "../../store";
 import { MaterialIcons } from "@native-base/icons";
+import axios from "axios";
 
 interface LoginData{
     username?: string | undefined;
@@ -81,19 +82,16 @@ const ChangePassword: React.FC = ({ route }: any) => {
     const onSubmit = async (values: any) => {
     
         try {
-            const data = await fetch(`${CHANGE_PASSWORD_URL}`, {
-                method: 'PUT',
-                headers: {
+            const data = {
+                    username: values.username,
+                    recoverPassword: values.password
+            } 
+            const headers = {
                   Accept: 'application/json',
                   'Content-Type': 'application/json',
                   Authorization: `Bearer ${params.token}`
-                },
-                
-                body: JSON.stringify({
-                    username: values.username,
-                    recoverPassword: values.password
-                })
-            });
+            }
+            const res = await axios.put(`${CHANGE_PASSWORD_URL}`, data, {headers});
 
             showToast("success", "Alterado!!!", "Alterado com sucesso!");	
 
@@ -114,6 +112,7 @@ const ChangePassword: React.FC = ({ route }: any) => {
                 const users = await database.get('users').find(usersQ[0]._raw.id)
                 await users.update(() => {
                     users['password_last_change_date'] = formattedDate
+                    users['password'] = res.data.password
                 })
             })
 
