@@ -35,6 +35,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     const [initialValues, setInitialValues] = useState<any>({});
     const [loading, setLoading] = useState(false);
     const [show, setShow] = useState(false);
+    const [isSync, setIsSync] = useState(false);
     const [text, setText] = useState('');
     const [date, setDate] = useState(new Date());
     const [users, setUsers] = useState<any>([]);
@@ -155,6 +156,17 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
         }
 
     }
+    useEffect(() => {
+        isSync ?  
+            toast.show({
+                placement: "top",
+                render:() => {
+                    return (<SuccessHandler />);
+                }
+            })
+        : '';
+
+    }, [isSync])
 
     const onSubmit = async (values: any) => {
 
@@ -226,12 +238,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
 
     const syncronize = () => {       
         sync({username: loggedUser.username})
-                .then(() => toast.show({
-                                placement: "top",
-                                render:() => {
-                                    return (<SuccessHandler />);
-                                }
-                            }))
+                .then(() => ( setIsSync(true)))
                 .catch(() => toast.show({
                                 placement: "top",
                                 render:() => {
