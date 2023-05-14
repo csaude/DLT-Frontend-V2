@@ -11,7 +11,7 @@ import DatePicker, { getToday, getFormatedDate } from 'react-native-modern-datep
 import { Picker } from '@react-native-picker/picker';
 import withObservables from '@nozbe/with-observables';
 import { database } from '../../../database';
-import { navigate } from '../../../routes/NavigationRef';
+import { navigate, navigationRef } from '../../../routes/NavigationRef';
 import ModalSelector from 'react-native-modal-selector-searchable';
 import { Q } from "@nozbe/watermelondb";
 import { Formik } from 'formik';
@@ -22,6 +22,7 @@ import { sync } from '../../../database/sync';
 import { ErrorHandler, SuccessHandler } from '../../../components/SyncIndicator';
 import moment from 'moment';
 import { MENTOR } from '../../../utils/constants';
+import Spinner from 'react-native-loading-spinner-overlay/lib';
 
 const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     const { reference, beneficiarie, intervention } = route.params;
@@ -34,6 +35,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     const [initialValues, setInitialValues] = useState<any>({});
     const [loading, setLoading] = useState(false);
     const [show, setShow] = useState(false);
+    const [isSync, setIsSync] = useState(false);
     const [text, setText] = useState('');
     const [date, setDate] = useState(new Date());
     const [users, setUsers] = useState<any>([]);
@@ -154,8 +156,21 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
         }
 
     }
+    useEffect(() => {
+        isSync ?  
+            toast.show({
+                placement: "top",
+                render:() => {
+                    return (<SuccessHandler />);
+                }
+            })
+        : '';
+
+    }, [isSync])
 
     const onSubmit = async (values: any) => {
+
+        setLoading(true);
   
         const newObject = await database.write(async () => {
             
@@ -201,21 +216,29 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                 });
               
         });
-        toast.show({ placement: "bottom", title: "Service Provided Successfully! " });
-
-        navigate({ name: "ReferencesList", params: { } });
 
         syncronize();
+        await delay(5000);
+        syncronize();
+
+        navigationRef.reset({
+            index: 0,
+            routes: [{ name: 'ReferencesList', 
+                        params: {} 
+                    }]
+        });
+
+        setLoading(false);
+
     }
 
-    const syncronize = () => {
+    const delay = ms => new Promise(
+        resolve => setTimeout(resolve, ms)
+    );
+
+    const syncronize = () => {       
         sync({username: loggedUser.username})
-                .then(() => toast.show({
-                                placement: "top",
-                                render:() => {
-                                    return (<SuccessHandler />);
-                                }
-                            }))
+                .then(() => ( setIsSync(true)))
                 .catch(() => toast.show({
                                 placement: "top",
                                 render:() => {
@@ -287,7 +310,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                                 Q.where('user_id', loggedUser.online_id)
                             ).fetch();
             const userDetailRaw = userDetailsQ[0]?._raw            
-            const isMentora = userDetailRaw?.profile_id == MENTOR ? true : false;
+            const isMentora = userDetailRaw?.['profile_id'] == MENTOR ? true : false;
             
             if(isMentora){
                 setEntryPoints([{ "id": '2', "name": "CM" }, { "id": '3', "name": "ES" }]);
@@ -300,6 +323,13 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
         <KeyboardAvoidingView>
             <ScrollView>
                 <View style={styles.webStyle}>
+                    {loading ?
+                        <Spinner
+                            visible={true}
+                            textContent={'Provendo o servico...'}
+                            textStyle={styles.spinnerTextStyle}
+                        /> : undefined
+                    }
                     <Center w="100%" bgColor="white">
                         <Box safeArea p="2" w="90%" py="8">
 

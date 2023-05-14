@@ -121,6 +121,17 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
             }))
     }
 
+    const delay = ms => new Promise(
+        resolve => setTimeout(resolve, ms)
+    );
+
+    const handleOnPress = async() => {
+        syncronize();
+        await delay(5000);
+        const userId = loggedUser?.online_id !== undefined ? loggedUser?.online_id : loggedUser?.id;
+        getUserReferences(userId);;
+    }
+
     const onRowDidOpen = (rowKey: any) => {
     };
 
@@ -220,24 +231,24 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
         reference.beneficiary_nui.toLowerCase().includes(searchField.toLowerCase())
     )
 
-    const sortedReferences = filteredReferences.sort((ref1, ref2) => ref1._raw.status - ref2._raw.status || moment(ref2._raw.date_created).format('YYYY-MM-DD').localeCompare(moment(ref1._raw.date_created).format('YYYY-MM-DD')));
+    const sortedReferences = filteredReferences.sort((ref1, ref2) => ref1._raw.status - ref2._raw.status || moment(ref2._raw.date_created).format('YYYY-MM-DD HH:mm:ss').localeCompare(moment(ref1._raw.date_created).format('YYYY-MM-DD HH:mm:ss')));
 
     const getUserReferences = async (currentUserId) =>{
         const referencesCollection = database.get("references")
 
-        if(loggedUser?.profile_id == ADMIN || loggedUser?.profiles == ADMIN){
-                setUserReferences(references)    
-        }else{
+        // if(loggedUser?.profile_id == ADMIN || loggedUser?.profiles == ADMIN){
+        //         setUserReferences(references)    
+        // }else{
                 const beneficiariesByUserId = await referencesCollection.query(
-                    Q.or(
-                        Q.where('user_created',currentUserId.toString()),
-                        Q.where('referred_by',currentUserId),
-                        Q.where('notify_to' ,currentUserId)
-                    ),
-                    Q.where('status',Q.notEq(3))
+                    // Q.or(
+                    //     Q.where('user_created',currentUserId.toString()),
+                    //     Q.where('referred_by',currentUserId),
+                    //     Q.where('notify_to' ,currentUserId)
+                    // ),
+                    // Q.where('status',Q.notEq(3))
                 ).fetch()
                 setUserReferences(beneficiariesByUserId) 
-        }        
+        // }        
     }
 
      useEffect(()=>{
@@ -271,7 +282,7 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
                 onRowDidOpen={onRowDidOpen}
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
             />
-            <TouchableOpacity onPress={syncronize} style={styles.fab1}>
+            <TouchableOpacity onPress={handleOnPress} style={styles.fab1}>
                 <Icon as={MaterialIcons} name="refresh" size={8} color="#0c4a6e" />
             </TouchableOpacity>
         </View>

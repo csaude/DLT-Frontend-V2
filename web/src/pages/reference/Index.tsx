@@ -352,10 +352,10 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             filterSearch: true,         
         },
         { 
-            title: 'Referido em', 
+            title: 'Data Registo', 
             dataIndex: 'dateCreated', 
             key: 'dateCreated',
-            render: (val: string) => <span>{moment(val).format('YYYY-MM-DD')}</span>,
+            render: (val: string) => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
         },
         { 
             title: 'Nota Referência', 
@@ -383,6 +383,12 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             dataIndex: '', 
             key: '',
             render: (text, record)  => record?.notifyTo?.phoneNumber,
+        },
+        { 
+            title: 'Data Emissão', 
+            dataIndex: 'date', 
+            key: 'date',
+            render: (val: string) => <span>{moment(val).format('YYYY-MM-DD')}</span>,
         },		
         { 
             title: 'Notificar ao', 

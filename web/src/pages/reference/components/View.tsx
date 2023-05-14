@@ -286,26 +286,28 @@ export function ViewReferencePanel({selectedReference, columns}) {
                                 <Row>
                                     <Col className="gutter-row" span={3}><b>Data Registo</b></Col>
                                     <Col className="gutter-row" span={3}><b>Referente</b></Col>
-                                    <Col className="gutter-row" span={3}><b>Contacto</b></Col>
-                                    <Col className="gutter-row" span={3}><b>Nº do Livro</b></Col>
+                                    <Col className="gutter-row" span={2}><b>Contacto</b></Col>
+                                    <Col className="gutter-row" span={3}><b>Data Emissão</b></Col>
+                                    <Col className="gutter-row" span={2}><b>Nº do Livro</b></Col>
                                     <Col className="gutter-row" span={3}><b>Organização</b></Col>
                                     <Col className="gutter-row" span={3}><b>Cod Referências</b></Col>
                                     <Col className="gutter-row" span={3}><b>Tipo Serviço</b></Col>
-                                    <Col className="gutter-row" span={3}><b>Status</b></Col>
+                                    <Col className="gutter-row" span={2}><b>Status</b></Col>
                                 </Row>
                                 <hr style={{
                                     background: 'gray',
                                     height: '1px',
                                     }}/>
                                 <Row>
-                                    <Col className="gutter-row" span={3}>{moment(reference?.dateCreated).format('YYYY-MM-DD HH:MM')}</Col>
+                                    <Col className="gutter-row" span={3}>{moment(reference?.dateCreated).format('YYYY-MM-DD HH:mm:ss')}</Col>
                                     <Col className="gutter-row" span={3}>{user?.name+' '+user?.surname}</Col>
-                                    <Col className="gutter-row" span={3}>{user?.phoneNumber}</Col>
-                                    <Col className="gutter-row" span={3}>{reference?.bookNumber}</Col>
+                                    <Col className="gutter-row" span={2}>{user?.phoneNumber}</Col>
+                                    <Col className="gutter-row" span={3}>{moment(reference?.date).format('YYYY-MM-DD')}</Col>
+                                    <Col className="gutter-row" span={2}>{reference?.bookNumber}</Col>
                                     <Col className="gutter-row" span={3}>{user?.partners?.name}</Col>
                                     <Col className="gutter-row" span={3}>{reference?.referenceCode}</Col>
                                     <Col className="gutter-row" span={3}>{reference?.serviceType==1? 'Serviços Clínicos': 'Serviços Comunitários'}</Col>
-                                    <Col className="gutter-row" span={3}>{reference?.status==0?  
+                                    <Col className="gutter-row" span={2}>{reference?.status==0?  
                                                                             <Text type="danger" >Pendente </Text> 
                                                                         : reference?.status==1? 
                                                                             <Text type="warning" >Atendida Parcialmente </Text>
