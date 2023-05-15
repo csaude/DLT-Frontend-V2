@@ -1,23 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { Platform, View, KeyboardAvoidingView, ScrollView } from 'react-native';
-import { Center, Box, Text, Heading, VStack, FormControl, Input, HStack, InfoIcon, Alert, Button, Image, useToast, IconButton, CloseIcon, Link, Modal, InputGroup, Pressable, Icon } from 'native-base';
+import { KeyboardAvoidingView, ScrollView } from 'react-native';
+import { Center, Box, Text, Heading, VStack, FormControl, Input, HStack, InfoIcon, Alert, Button, Image, useToast, IconButton, CloseIcon, Link, Modal, Pressable, Icon } from 'native-base';
 import { navigate } from '../../routes/NavigationRef';
-import { Formik, useFormik } from 'formik';
-import * as Yup from 'yup';
+import { Formik } from 'formik';
 import { Q } from '@nozbe/watermelondb'
 import NetInfo from "@react-native-community/netinfo";
 import { database } from '../../database';
 import { LOGIN_API_URL, PING_URL, SYNC_API_URL_PREFIX, UPDATE_PASSWORD_URL, VERIFY_USER_API_URL } from '../../services/api';
 import { MaterialIcons } from "@native-base/icons";
 import { sync } from "../../database/sync";
-import { toast } from 'react-toastify';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import bcrypt from 'bcryptjs';
 import Spinner from 'react-native-loading-spinner-overlay';
 import styles from './style'
-import { loadUser, logoutUser } from "../../store/authSlice";
+import { loadUser } from "../../store/authSlice";
 import moment from 'moment';
-import { MANAGER, MENTOR, NURSE } from "../../utils/constants";
+import { COUNSELOR, MENTOR, NURSE } from "../../utils/constants";
 import axios from "axios";
 
 interface LoginData {
@@ -219,9 +217,9 @@ const Login: React.FC = ({ route }: any) => {
             {              
                 const profileId = response.data?.profiles.id;
 
-                if (![MENTOR, NURSE, MANAGER].includes(profileId)) {
+                if (![MENTOR, NURSE, COUNSELOR].includes(profileId)) {
                 setLoading(false);
-                return showToast('Restrição de Acesso', 'Apenas Enfermeiras e Mentoras Podem Aceder a Aplicativo Móvel!');
+                return showToast('Restrição de Acesso', 'Apenas Enfermeiras, Connselheiras e Mentoras Podem Aceder a Aplicativo Móvel!');
                 }
             }
         } catch (error:any) {
