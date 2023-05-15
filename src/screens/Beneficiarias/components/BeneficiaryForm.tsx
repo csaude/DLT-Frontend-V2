@@ -57,6 +57,7 @@ const BeneficiaryForm: React.FC = ({ route , subServices, beneficiaries_interven
     const [step, setStep] = useState(1);
     const [showModal, setShowModal] = useState(false);
     const [newNui, setNewNui] = useState();
+    const [isEdit, setIsEdit] = useState(false);
     const [district, setDistrict] = useState<any>()
     const [isDateRequired, setIsDateRequired] = useState<any>(true);
     const [age, setAge] = useState<any>(undefined);
@@ -458,6 +459,7 @@ const BeneficiaryForm: React.FC = ({ route , subServices, beneficiaries_interven
         setDistrict(district);
 
         const isEdit = beneficiarie && beneficiarie?.id;
+        setIsEdit(isEdit);
 
         const newObject = await database.write(async () => {
 
@@ -1772,7 +1774,11 @@ const BeneficiaryForm: React.FC = ({ route , subServices, beneficiaries_interven
                 <Modal isOpen={showModal} onClose={() => handleOk(beneficiarie)}>
                     <Modal.Content maxWidth="400px">
                         <Modal.CloseButton />
-                        <Modal.Header>Confirmação Registo</Modal.Header>
+                        <Modal.Header>
+                            {
+                                isEdit ? 'Confirmação Actualização' : 'Confirmação Registo'
+                            }
+                        </Modal.Header>
                         <Modal.Body>
                             <ScrollView>
                                 <Box alignItems='center'>
@@ -1782,7 +1788,9 @@ const BeneficiaryForm: React.FC = ({ route , subServices, beneficiaries_interven
                                         <HStack space={2} flexShrink={1}>
                                             <Alert.Icon mt="1" />
                                             <Text fontSize="sm" color="coolGray.800">
-                                                Beneficiária Registada com Sucesso!
+                                                {
+                                                    isEdit ? 'Beneficiária Actualizada com Sucesso!' : 'Beneficiária Registada com Sucesso!'
+                                                }
                                             </Text>
                                         </HStack>
                                     </Alert>

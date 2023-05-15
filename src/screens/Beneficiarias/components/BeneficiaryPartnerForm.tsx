@@ -56,6 +56,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
     const [step, setStep] = useState(1);
     const [showModal, setShowModal] = useState(false);
     const [newNui, setNewNui] = useState();
+    const [isEdit, setIsEdit] = useState(false);
     const [district, setDistrict] = useState<any>()
     const [isDateRequired, setIsDateRequired] = useState<any>(true);
     const [age, setAge] = useState<any>(undefined);
@@ -428,6 +429,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
         const district = districts.filter(d => d.online_id === formik.values.district)[0];
         setDistrict(district);                    
         const isEdit = beneficiarie && beneficiarie?.id;
+        setIsEdit(isEdit);
 
         const newObject = await database.write(async () => {
 
@@ -1168,7 +1170,11 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
                 <Modal isOpen={showModal} onClose={() => handleOk(beneficiarie)}>
                     <Modal.Content maxWidth="400px">
                         <Modal.CloseButton />
-                        <Modal.Header>Confirmação Registo</Modal.Header>
+                        <Modal.Header>
+                            {
+                                isEdit ? 'Confirmação Actualização' : 'Confirmação Registo'
+                            }
+                        </Modal.Header>
                         <Modal.Body>
                             <ScrollView>
                                 <Box alignItems='center'>
@@ -1178,7 +1184,9 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
                                         <HStack space={2} flexShrink={1}>
                                             <Alert.Icon mt="1"  />
                                             <Text fontSize="sm" color="coolGray.800">
-                                                Beneficiário Registado com Sucesso!
+                                                {
+                                                    isEdit ? 'Beneficiário Actualizado com Sucesso!' : 'Beneficiário Registado com Sucesso!'
+                                                }
                                             </Text>
                                         </HStack>
                                     </Alert>                               
