@@ -140,19 +140,21 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
         >
             <HStack width="100%" px={4}
                 flex={1} space={5} alignItems="center">
-                {/* <Avatar color="white" bg={'warning.600'} > */}
-                <Avatar color="white" bg={randomHexColor()} >
                     {
                         (data.item.gender === "1") ?
-                            <Icon as={Ionicons} name="man" color="white" size={35} />
+                            <Avatar color="white" bg="blue.500" >
+                                <Icon as={Ionicons} name="man" color="white" size={35} />
+                            </Avatar>
                             :
                             (data.item.gender === "2") ?
-                                <Icon as={Ionicons} name="woman" color="white" size={35} />
+                                <Avatar color="white" bg="pink.500" >
+                                    <Icon as={Ionicons} name="woman" color="white" size={35} />
+                                </Avatar>
                                 :
-                                <Icon as={Ionicons} name="person" color="white" size={35} />
-                    }
-                    
-                </Avatar>
+                                <Avatar color="white" bg="amber.500" >
+                                    <Icon as={Ionicons} name="person" color="white" size={35} />
+                                </Avatar>
+                    }                    
 
                 <View style={{width:"50%"}}>
                     <HStack>
