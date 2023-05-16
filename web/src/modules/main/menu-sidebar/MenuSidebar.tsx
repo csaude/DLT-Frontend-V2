@@ -7,7 +7,7 @@ import { queryCount as referenceQueryCount } from '../../../utils/reference';
 import { query as queryUser } from '../../../utils/users';
 import { getUserParams } from '@app/models/Utils';
 import { getReferencesTotal } from '../../../store/actions/reference';
-import { getBeneficiaryTotal } from '../../../store/actions/beneficiary';
+import { getBeneficiariesTotal } from '../../../store/actions/beneficiary';
 import styled from 'styled-components';
 import { getInterventionsCount } from '@app/store/actions/interventions';
 import { getUsernames } from '@app/store/actions/users';
@@ -139,7 +139,7 @@ const MenuSidebar = () => {
       const user = await queryUser(localStorage.user);
       const beneficiaryTotal = await beneficiaryQueryCount(getUserParams(user));
       const referenceTotal = await referenceQueryCount(user.id);
-      dispatch(getBeneficiaryTotal(beneficiaryTotal))
+      dispatch(getBeneficiariesTotal(beneficiaryTotal))
       dispatch(getReferencesTotal(referenceTotal))
       dispatch(getInterventionsCount())
       dispatch(getUsernames())
