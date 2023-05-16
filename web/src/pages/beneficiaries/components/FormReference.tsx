@@ -11,7 +11,9 @@ import { queryCount as beneficiaryQueryCount } from '../../../utils/beneficiary'
 import { queryCount as referenceQueryCount } from '../../../utils/reference';
 import { query as queryUser } from '../../../utils/users';
 import { useDispatch } from 'react-redux';
+
 import { getBeneficiariesTotal } from '@app/store/actions/beneficiary';
+
 import { getReferencesTotal } from '@app/store/actions/reference';
 import { getInterventionsCount } from '@app/store/actions/interventions';
 import { getUserParams } from '@app/models/Utils';
@@ -68,6 +70,7 @@ const FormReference = ({ form, beneficiary, reference, modalVisible, handleAdd, 
       const user = await queryUser(localStorage.user);
       const beneficiaryTotal = await beneficiaryQueryCount(getUserParams(user));
       const referenceTotal = await referenceQueryCount(user.id);
+
       dispatch(getBeneficiariesTotal(beneficiaryTotal))
       dispatch(getReferencesTotal(referenceTotal))
       dispatch(getInterventionsCount())
