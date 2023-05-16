@@ -41,7 +41,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
     const [ us, setUs] = useState<any[]>([]);
     const [ loggedUser, setLoggedUser ] = useState<any>(undefined);
     const [ currentPageIndex, setCurrentPageIndex] = useState(0);
-    const pageSize = 500;
+    const pageSize = 100;
     const [searchNui, setSearchNui] = useState<any>()
     const [nui, setNui] = useState('')
     let data
