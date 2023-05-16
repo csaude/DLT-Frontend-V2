@@ -17,6 +17,11 @@ import { Context } from '../../../routes/DrawerNavigator';
 import MyDatePicker from '../../../components/DatePicker';
 import { calculateAge } from '../../../models/Utils';
 import { COMMUNITY, SCHOOL, US } from '../../../utils/constants';
+import { useDispatch } from 'react-redux';
+import { beneficiariesFetchCount } from '../../../services/beneficiaryService';
+import { getBeneficiariesTotal } from '../../../store/beneficiarySlice';
+import { referencesFetchCount } from '../../../services/referenceService';
+import { getReferencesTotal } from '../../../store/referenceSlice';
 
 const ReferenceForm: React.FC = ({ route }: any) => {
 
@@ -28,6 +33,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
     } = route.params;
 
     const toast = useToast();
+    const dispatch = useDispatch();
 
     const [errors, setErrors] = useState(false);
     const [partners, setPartners] = useState<any>([]);
@@ -314,6 +320,16 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                     return (<ErrorHandler />);
                 }
             }));
+
+        getTotals().catch(err=>console.error(err))
+    }
+
+    const getTotals = async () =>{
+        const countBen = await beneficiariesFetchCount();
+        dispatch(getBeneficiariesTotal(countBen));
+        
+        const countRef = await referencesFetchCount();
+        dispatch(getReferencesTotal(countRef));
     }
 
     const showDatepicker = () => {
