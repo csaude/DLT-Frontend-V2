@@ -110,7 +110,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
 
     const handleAttendServicesSequence = ()=> {
         if(refServices[index+1] === undefined){
-            dispatch(resetNextServiceIndex())
+            setVisible(false)
         }else{
             dispatch(updateNextServiceIndex())
         }
@@ -336,7 +336,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
                                     dataSource={refServices}
                                     pagination={false}                                
                                 />
-                                <Button htmlType="submit" disabled={!canAddress} onClick={() => attendToRequiredServices(refServices)} type="primary">
+                                <Button htmlType="submit" disabled={!canAddress || reference?.status!==0 && reference?.status!==1} onClick={() => attendToRequiredServices(refServices)} type="primary">
                                     Atender
                                 </Button>
                             </Card>
