@@ -130,7 +130,7 @@ const Login: React.FC = ({ route }: any) => {
                             </Alert>
                         );
                     }
-                }))
+                })).then(()=> getTotals().catch(err=>console.log(err)) )
                 .catch(() => toasty.show({
                     placement: "top",
                     render: () => {
@@ -150,8 +150,6 @@ const Login: React.FC = ({ route }: any) => {
                         );
                     }
                 }))
-
-            getTotals().catch(err=>console.log(err))
 
             if (loggedUser.newPassword == '1') {
                 navigate({ name: "ChangePassword", params: { loggedUser: loggedUser, token: token } });
