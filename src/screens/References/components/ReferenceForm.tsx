@@ -324,7 +324,6 @@ const ReferenceForm: React.FC = ({ route }: any) => {
             Q.where('beneficiary_offline_id', beneficiary.id),
          ).fetch();
         const serializedReferences = syncedReferences.map(item => item._raw);
-        console.log(serializedReferences);
 
         navigate({
             name: 'Referencias',
