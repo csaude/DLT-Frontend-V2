@@ -1,18 +1,20 @@
-import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react';
-import { Button, View , Text} from 'react-native';
+import React, { createContext, useEffect } from 'react';
+import { View , Text} from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { NavigationContainer } from '@react-navigation/native';
 import CustomDrawer from './components/CustomDrawer';
-import UsersNavigator from './UsersNavigator';
 import BeneficiariesNavigator from './BeneficiariesNavigator';
 import RefencesNavigator from './ReferencesNavigator'
 import { navigate } from './NavigationRef';
 import { Q } from "@nozbe/watermelondb";
 import { database } from '../database';
-import { loadLocalRawResource } from 'react-native-svg';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { loadUserProvinces, loadUserDistricts, loadUserLocalities, loadUserUss } from '../store/authSlice';
 import styles from './components/style';
+import { Badge, Box, VStack } from 'native-base';
+import { beneficiariesFetchCount } from '../services/beneficiaryService';
+import { referencesFetchCount } from '../services/referenceService';
+import { getBeneficiariesTotal } from '../store/beneficiarySlice';
+import { getReferencesTotal } from '../store/referenceSlice';
 
 function HomeScreen({ navigation }: any) {
   return (
@@ -31,6 +33,9 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
   const userDetailsCollection = database.get('user_details')
   const dispatch = useDispatch()
 
+  const beneficiariesTotal = useSelector((state:any)=>state.beneficiary.total)
+  const referencesTotal = useSelector((state:any)=>state.reference.total)
+
   useEffect(()=>{
       const getUserDetails = async()=>{   
         if(loggedUser.online_id !== undefined)    {
@@ -45,6 +50,8 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
         }               
       }   
       getUserDetails().catch(error=>console.log(error));   
+      
+      getTotals().catch(error=>console.log(error));  
   },[])
 
   const getProvincesByIds =async (userDetails)=>{   
@@ -120,6 +127,30 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
     return () => clearTimeout(timer);
   }, []);
 
+  const ItemBadge = ({ label, total }) => {
+    return <Box alignItems="center">
+        <VStack>
+          <Text  style={{ fontWeight: 'bold' }}>{label}
+          <Badge // bg="red.400"
+            colorScheme={total>0?"info" : "danger"} rounded="full"   variant="solid" alignSelf="flex-end" _text={{
+              fontSize: 12
+            }}>
+          {total}
+          </Badge>   
+          </Text> 
+        </VStack>
+      </Box>;
+  }
+
+  const getTotals = async () =>{
+      const countBen = await beneficiariesFetchCount();
+      dispatch(getBeneficiariesTotal(countBen));
+      
+      const countRef = await referencesFetchCount();
+      dispatch(getReferencesTotal(countRef));
+  }
+
+
   return (
     <Context.Provider value={loggedUser}>
       <Drawer.Navigator 
@@ -144,16 +175,18 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
         <Drawer.Screen name="Beneficiaries" 
             component={BeneficiariesNavigator}
             options={{                     
-                title: 'Beneficiárias',
+                title: '',
                 headerTitle: '',
+                drawerIcon: () => <ItemBadge label="Beneficiárias" total={beneficiariesTotal}/>,
             }}
             
         />        
         <Drawer.Screen name="References" 
             component={RefencesNavigator}
             options={{                     
-                title: 'Referências',
+                title: '',
                 headerTitle: '',
+                drawerIcon: () => <ItemBadge label="Referências" total={referencesTotal} />,
             }}
             
         />

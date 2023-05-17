@@ -46,7 +46,7 @@ const BeneficiariesList: React.FC = () => {
     const [ partners, setPartners] = useState<any[]>([]);
     const [ visibleName, setVisibleName ] = useState<any>(true);
     const [ currentPageIndex, setCurrentPageIndex ] = useState(0);
-    const pageSize = 500;
+    const pageSize = 100;
 
     const interventionSelector = useSelector((state: any) => state?.intervention);
     const userSelector = useSelector((state: any) => state?.user);

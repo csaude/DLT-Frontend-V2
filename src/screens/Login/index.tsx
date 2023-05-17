@@ -17,6 +17,10 @@ import { loadUser } from "../../store/authSlice";
 import moment from 'moment';
 import { COUNSELOR, MENTOR, NURSE } from "../../utils/constants";
 import axios from "axios";
+import { beneficiariesFetchCount } from "../../services/beneficiaryService";
+import { getBeneficiariesTotal } from "../../store/beneficiarySlice";
+import { referencesFetchCount } from "../../services/referenceService";
+import { getReferencesTotal } from "../../store/referenceSlice";
 
 interface LoginData {
     email?: string | undefined;
@@ -147,6 +151,8 @@ const Login: React.FC = ({ route }: any) => {
                     }
                 }))
 
+            getTotals().catch(err=>console.log(err))
+
             if (loggedUser.newPassword == '1') {
                 navigate({ name: "ChangePassword", params: { loggedUser: loggedUser, token: token } });
             } else if (loggedUser.isEnabled == '1'){
@@ -155,6 +161,14 @@ const Login: React.FC = ({ route }: any) => {
         }
 
     }, [loggedUser]);
+
+    const getTotals = async () =>{
+        const countBen = await beneficiariesFetchCount();
+        dispatch(getBeneficiariesTotal(countBen));
+        
+        const countRef = await referencesFetchCount();
+        dispatch(getReferencesTotal(countRef));
+    }
 
     const validate = (values: any) => {
         const errors: LoginData = {};

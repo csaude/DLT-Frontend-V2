@@ -7,6 +7,16 @@ import StepReferenceService from './StepReferenceService';
 import { add } from '@app/utils/reference';
 import moment from 'moment';
 import { stringify } from 'qs';
+import { queryCount as beneficiaryQueryCount } from '../../../utils/beneficiary';
+import { queryCount as referenceQueryCount } from '../../../utils/reference';
+import { query as queryUser } from '../../../utils/users';
+import { useDispatch } from 'react-redux';
+
+import { getBeneficiariesTotal } from '@app/store/actions/beneficiary';
+
+import { getReferencesTotal } from '@app/store/actions/reference';
+import { getInterventionsCount } from '@app/store/actions/interventions';
+import { getUserParams } from '@app/models/Utils';
 
 const { Option } = Select;
 const { Step } = Steps;
@@ -18,6 +28,8 @@ const FormReference = ({ form, beneficiary, reference, modalVisible, handleAdd, 
     const [firstStepValues, setFirstStepValues] = useState();
     const [secondStepValues, setSecondStepValues] = useState();
     const [services, setServices] = useState<any>([]);
+
+    const dispatch = useDispatch()
 
     useEffect(() => { 
         if(!modalVisible){
@@ -54,6 +66,18 @@ const FormReference = ({ form, beneficiary, reference, modalVisible, handleAdd, 
         handleModalRefVisible(false);
     }
 
+      const getTotals = async () =>{
+      const user = await queryUser(localStorage.user);
+      const beneficiaryTotal = await beneficiaryQueryCount(getUserParams(user));
+      const referenceTotal = await referenceQueryCount(user.id);
+
+      dispatch(getBeneficiariesTotal(beneficiaryTotal))
+      dispatch(getReferencesTotal(referenceTotal))
+      dispatch(getInterventionsCount())
+  }
+
+ 
+
     const onSubmit = async () => {
 
         handleAdd(firstStepValues);
@@ -65,6 +89,8 @@ const FormReference = ({ form, beneficiary, reference, modalVisible, handleAdd, 
             handleModalRefVisible(false);
 
         }
+
+        getTotals().catch(err=>console.log(err))
     }
 
     const showCloseConfirm = () => {

@@ -1,9 +1,13 @@
 import {combineReducers, configureStore} from '@reduxjs/toolkit';
 
-import auth from './authSlice'
+import authSlice from './authSlice'
+import beneficiarySlice from './beneficiarySlice';
+import referenceSlice from './referenceSlice';
 
 const rootReducer = combineReducers({
-  auth : auth
+  auth : authSlice,
+  beneficiary: beneficiarySlice,
+  reference: referenceSlice,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

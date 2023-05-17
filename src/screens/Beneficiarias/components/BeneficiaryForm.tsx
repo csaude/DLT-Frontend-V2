@@ -18,10 +18,14 @@ import { calculateAge, getMaxDate, getMinDate } from '../../../models/Utils';
 import styles from './styles';
 import { SuccessHandler, ErrorHandler } from "../../../components/SyncIndicator";
 import { sync } from "../../../database/sync";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import { MENTOR } from '../../../utils/constants';
 import MyDatePicker from '../../../components/DatePicker';
+import { beneficiariesFetchCount } from '../../../services/beneficiaryService';
+import { getBeneficiariesTotal } from '../../../store/beneficiarySlice';
+import { referencesFetchCount } from '../../../services/referenceService';
+import { getReferencesTotal } from '../../../store/referenceSlice';
 
 const BeneficiaryForm: React.FC = ({ route , subServices, beneficiaries_interventions }: any) => {
     const loggedUser: any = useContext(Context);
@@ -206,6 +210,7 @@ const BeneficiaryForm: React.FC = ({ route , subServices, beneficiaries_interven
 
     }, []);
     const toast = useToast();
+    const dispatch = useDispatch()
 
     const formik = useFormik({
         initialValues: {
@@ -265,6 +270,15 @@ const BeneficiaryForm: React.FC = ({ route , subServices, beneficiaries_interven
         validateOnChange: false
     });
 
+    const getTotals = async () =>{
+        const countBen = await beneficiariesFetchCount();
+        dispatch(getBeneficiariesTotal(countBen));
+        
+        const countRef = await referencesFetchCount();
+        dispatch(getReferencesTotal(countRef));
+    }
+
+
     const onNextStep = () => {
 
         const errorsList = validate(formik.values);
@@ -311,6 +325,8 @@ const BeneficiaryForm: React.FC = ({ route , subServices, beneficiaries_interven
         if (partnerHasErrors) {
             setErrors(true)
         }
+
+        getTotals().catch(err=>console.error(err))
     };
 
     const onPreviousStep = () => {
