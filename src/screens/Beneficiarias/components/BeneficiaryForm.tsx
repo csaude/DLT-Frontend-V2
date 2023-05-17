@@ -158,10 +158,16 @@ const BeneficiaryForm: React.FC = ({ route , subServices, beneficiaries_interven
                 setNeighborhoods(neighborhoodsSerialized);
             }
             const fetchPartners = async () => {
-                const partnersQ = await database.get('beneficiaries').query(
-                    Q.where('gender', '1'),
-                    Q.where('online_id', beneficiarie.partner_id)
-                ).fetch();
+                const partnersQ = isNaN(Number(beneficiarie.partner_id)) ? 
+                                            await database.get('beneficiaries').query(
+                                                Q.where('gender', '1'),
+                                                Q.where('id', beneficiarie.partner_id)
+                                            ).fetch()
+                                : 
+                                            await database.get('beneficiaries').query(
+                                                Q.where('gender', '1'),
+                                                Q.where('online_id', Number(beneficiarie.partner_id)),
+                                            ).fetch();
                 const benefPartiner = partnersQ[0]?._raw;
 
                 handleSearchPartner(benefPartiner?.['nui']);
@@ -491,7 +497,7 @@ const BeneficiaryForm: React.FC = ({ route , subServices, beneficiaries_interven
                         record.address = formik.values.address,
                         record.phone_number = formik.values.phone_number,
                         record.e_mail = formik.values.e_mail,
-                        record.partner_id = Number(formik.values?.partner_id),
+                        record.partner_id = formik.values?.partner_id,
                         record.entry_point = formik.values.entry_point,
                         record.us_id = formik.values.us_id,
                         record.neighborhood_id = formik.values.neighborhood_id,
@@ -574,7 +580,7 @@ const BeneficiaryForm: React.FC = ({ route , subServices, beneficiaries_interven
                         beneficiary.phone_number = formik.values.phone_number,
                         beneficiary.e_mail = formik.values.e_mail,
                         beneficiary.organization_id = organization_id,
-                        beneficiary.partner_id = Number(formik.values?.partner_id),
+                        beneficiary.partner_id = formik.values?.partner_id,
                         beneficiary.entry_point = formik.values.entry_point,
                         beneficiary.us_id = formik.values.us_id,
                         beneficiary.neighborhood_id = formik.values.neighborhood_id,
@@ -871,7 +877,7 @@ const BeneficiaryForm: React.FC = ({ route , subServices, beneficiaries_interven
             } else {
                 setPartnerHasErrors(true)
             }
-            formik.setFieldValue('partner_id', benefPartiner?.['online_id']);
+            formik.setFieldValue('partner_id', benefPartiner?.['id']);
         }
 
         setLoadingData(false);
