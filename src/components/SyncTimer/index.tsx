@@ -52,7 +52,7 @@ const SyncTimer = () => {
       }
     };
 
-    const interval = setInterval(checkInternetConnection, 1 * 60 * 1000); // Executa a verificação a cada 30 minutos(para testar pode reduzir para 1 e depois devolver assim que fechar o teste)
+    const interval = setInterval(checkInternetConnection, 30 * 60 * 1000); // Executa a verificação a cada 30 minutos(para testar pode reduzir para 1 e depois devolver assim que fechar o teste)
 
     return () => {
       clearInterval(interval); // Limpa o intervalo quando o componente é desmontado
