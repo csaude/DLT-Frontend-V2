@@ -665,7 +665,12 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
         }
 
         return (
-            <Picker enabled={!isDateRequired} onValueChange={onchangeAge} selectedValue={age} placeholder="Seleccione a Idade" >
+            <Picker 
+                style={styles.textBlack}
+                enabled={!isDateRequired}
+                onValueChange={onchangeAge}
+                selectedValue={age}
+                placeholder="Seleccione a Idade" >
                 <Picker.Item label="-- Seleccione a Idade --" value="0" />
                 {idades.map(item => (
                     <Picker.Item key={item} value={item} label={item}></Picker.Item>
@@ -876,6 +881,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
                                 <FormControl isRequired isInvalid={'entry_point' in formik.errors}>
                                     <FormControl.Label>Ponto de Entrada</FormControl.Label>
                                     <Picker
+                                        style={styles.textBlack}
                                         selectedValue={formik.values.entry_point ? formik.values.entry_point : loggedUser.entry_point !== undefined ? loggedUser.entry_point : loggedUser.entryPoint}
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
@@ -895,6 +901,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
                                 <FormControl isRequired isInvalid={'us_id' in formik.errors}>
                                     <FormControl.Label>Local</FormControl.Label>
                                     <Picker
+                                        style={styles.textBlack}
                                         selectedValue={formik.values.us_id}
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
@@ -953,6 +960,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
                                 <FormControl isRequired isInvalid={'neighborhood_id' in formik.errors}>
                                     <FormControl.Label>Bairro</FormControl.Label>
                                     <Picker
+                                        style={styles.textBlack}
                                         selectedValue={formik.values.neighborhood_id}
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
@@ -1085,6 +1093,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
                                 <FormControl isRequired={schoolInfoEnabled} isInvalid={'vblt_school_grade' in formik.errors}>
                                     <FormControl.Label>Classe</FormControl.Label>
                                     <Picker
+                                        style={styles.textBlack}
                                         selectedValue={formik.values.vblt_school_grade}
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
@@ -1134,6 +1143,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
                                 <FormControl isRequired={deficiencyTypeEnabled} isInvalid={'vblt_deficiency_type' in formik.errors}>
                                     <FormControl.Label>Tipo de Deficiência</FormControl.Label>
                                     <Picker
+                                        style={styles.textBlack}
                                         selectedValue={formik.values.vblt_deficiency_type}
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
