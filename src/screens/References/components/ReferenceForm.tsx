@@ -17,6 +17,7 @@ import { Context } from '../../../routes/DrawerNavigator';
 import MyDatePicker from '../../../components/DatePicker';
 import { calculateAge } from '../../../models/Utils';
 import { COMMUNITY, SCHOOL, US } from '../../../utils/constants';
+import Spinner from 'react-native-loading-spinner-overlay/lib';
 import { useDispatch } from 'react-redux';
 import { beneficiariesFetchCount } from '../../../services/beneficiaryService';
 import { getBeneficiariesTotal } from '../../../store/beneficiarySlice';
@@ -47,6 +48,8 @@ const ReferenceForm: React.FC = ({ route }: any) => {
     const [entryPointEnabled, setEntryPointEnabled] = useState(true);
     const [serviceTypes, setServiceTypes] = useState<any>([]);
     const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
+    const [isSync, setIsSync] = useState(false);
+    const [loading, setLoading] = useState(false);
     const loggedUser: any = useContext(Context);
 
     useEffect(() => {
@@ -257,8 +260,21 @@ const ReferenceForm: React.FC = ({ route }: any) => {
         const usersSerialized = getUsersList.map(item => item._raw);
         setUsers(usersSerialized);
     }
+    useEffect(() => {
+        isSync ?  
+            toast.show({
+                placement: "top",
+                render:() => {
+                    return (<SuccessHandler />);
+                }
+            })
+        : '';
+
+    }, [isSync])
 
     const handleSubmit = async (values?: any) => {
+
+        setLoading(true);
 
         const savedR = await database.write(async () => {
 
@@ -278,7 +294,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                 ref.remarks = formik.values.description
                 ref.status = 0
                 ref.us_id = formik.values.us_id
-                ref.user_created = ""+userId,
+                ref.user_created = ""+userId
                 ref.date_created = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
             });
 
@@ -290,7 +306,8 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                 const newRefService = await database.get('references_services').create((refServ: any) => {
                     refServ.reference_id = savedR._raw.id
                     refServ.service_id = element.online_id
-                    refServ.status = '1'
+                    refServ.status = 0
+                    refServ.date_created = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
                 });
             });
 
@@ -298,28 +315,41 @@ const ReferenceForm: React.FC = ({ route }: any) => {
 
         const newReferencesMap = [savedR._raw, ...references];
 
+        syncronize();
+        await delay(5000);
+        syncronize();
+        await delay(1000);
+
+        const syncedReferences = await database.get('references').query(
+            Q.where('beneficiary_offline_id', beneficiary.id),
+         ).fetch();
+        const serializedReferences = syncedReferences.map(item => item._raw);
+
         navigate({
             name: 'Referencias',
             params: {
                 beneficiary: beneficiary,
-                references: newReferencesMap
+                references: serializedReferences
             },
             merge: true,
         });
 
-        sync({ username: loggedUser.username })
-            .then(() => toast.show({
-                placement: "top",
-                render: () => {
-                    return (<SuccessHandler />);
-                }
-            }))
-            .catch(() => toast.show({
-                placement: "top",
-                render: () => {
-                    return (<ErrorHandler />);
-                }
-            }));
+        setLoading(false);
+    }
+
+    const delay = ms => new Promise(
+        resolve => setTimeout(resolve, ms)
+    );
+
+    const syncronize = () => {       
+        sync({username: loggedUser.username})
+                .then(() => ( setIsSync(true)))
+                .catch(() => toast.show({
+                                placement: "top",
+                                render:() => {
+                                    return (<ErrorHandler />);
+                                }
+                            }))
 
         getTotals().catch(err=>console.error(err))
     }
@@ -405,6 +435,14 @@ const ReferenceForm: React.FC = ({ route }: any) => {
     return (
         <>
             <View style={{ flex: 1, backgroundColor: "white" }}>
+
+                {loading ?
+                    <Spinner
+                        visible={true}
+                        textContent={'Registando a referência...'}
+                        textStyle={styles.spinnerTextStyle}
+                    /> : undefined
+                }
                 <ProgressSteps >
                     <ProgressStep label="Dados da Referencia" onNext={onNextStep} errors={errors} nextBtnText='Próximo >>'>
                         <View style={{ alignItems: 'center' }}>
@@ -546,7 +584,6 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                                                 onBlur={formik.handleBlur('name')}
                                                 value={formik.values.date}
                                                 onChangeText={formik.handleChange('date')}
-                                                //value={moment(new Date(datePickerValue)).format('YYYY-MM-DD')}
                                                 placeholder="yyyy-MM-dd" />
                                         </InputGroup>
                                     </HStack>
@@ -560,21 +597,6 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                                     <TextArea onBlur={formik.handleBlur('description')} autoCompleteType={false} value={formik.values.description} onChange={formik.handleChange('description')} w="100%" />
 
                                 </FormControl>
-                                {/* <FormControl isRequired isInvalid={'status' in formik.errors}>
-                                    <FormControl.Label>Status</FormControl.Label>
-                                    <Picker
-                                        selectedValue={formik.values.status}
-                                        onValueChange={(itemValue, itemIndex) => {
-                                            formik.setFieldValue('status', itemValue);
-                                        }
-                                        }>
-                                        <Picker.Item key={'1'} label={"Activo"} value={1} />
-                                        <Picker.Item key={'2'} label={"Cancelado"} value={2} />
-                                    </Picker>
-                                    <FormControl.ErrorMessage>
-                                        {formik.errors.status}
-                                    </FormControl.ErrorMessage>
-                                </FormControl> */}
                             </VStack>
                         </View>
                     </ProgressStep>

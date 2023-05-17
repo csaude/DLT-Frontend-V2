@@ -106,7 +106,7 @@ export default appSchema({
           {name: 'phone_number', type: 'string', isOptional: true},
           {name: 'e_mail', type: 'string', isOptional: true},
           {name: 'via', type: 'number', isOptional: true},
-          {name: 'partner_id',  type: "number", isOptional: true },
+          {name: 'partner_id',  type: "string", isOptional: true },
           {name: 'entry_point',  type: "string", isIndexed: true },
           {name: 'neighborhood_id',  type: "number", isIndexed: true },
           {name: 'locality_id',  type: "number", isOptional: true },
