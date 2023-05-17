@@ -10,6 +10,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: 'white',
     },
+    textBlack:{
+        color: '#212121', 
+    },
     webStyle:{
         ...Platform.select({
             web:{
