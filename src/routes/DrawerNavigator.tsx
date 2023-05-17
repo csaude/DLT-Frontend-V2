@@ -14,10 +14,12 @@ import { beneficiariesFetchCount } from '../services/beneficiaryService';
 import { referencesFetchCount } from '../services/referenceService';
 import { getBeneficiariesTotal } from '../store/beneficiarySlice';
 import { getReferencesTotal } from '../store/referenceSlice';
+import SyncTimer from '../components/SyncTimer';
 
 function HomeScreen({ navigation }: any) {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <SyncTimer/>
       <Text>Dreams Layering Tool </Text>
     </View>
   );
