@@ -12,11 +12,12 @@ import { database } from '../database';
 import { loadLocalRawResource } from 'react-native-svg';
 import { useDispatch } from 'react-redux';
 import { loadUserProvinces, loadUserDistricts, loadUserLocalities, loadUserUss } from '../store/authSlice';
+import styles from './components/style';
 
 function HomeScreen({ navigation }: any) {
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Dreams Layering Tool </Text>
+    <View style={styles.container}>
+      <Text style={styles.text}>Dreams Layering Tool </Text>
     </View>
   );
 }
