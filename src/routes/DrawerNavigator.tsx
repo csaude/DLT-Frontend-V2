@@ -130,7 +130,7 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
   const ItemBadge = ({ label, total }) => {
     return <Box alignItems="center">
         <VStack>
-          <Text  style={{ fontWeight: 'bold' , color: '#424345'}}>{label}
+          <Text  style={{ fontWeight: 'bold', color: '#424345'}}>{label}
           <Badge // bg="red.400"
             colorScheme={total>0?"info" : "danger"} rounded="full"   variant="solid" alignSelf="flex-end" _text={{
               fontSize: 12
