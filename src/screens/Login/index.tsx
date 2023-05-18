@@ -21,6 +21,8 @@ import { beneficiariesFetchCount } from "../../services/beneficiaryService";
 import { getBeneficiariesTotal } from "../../store/beneficiarySlice";
 import { referencesFetchCount } from "../../services/referenceService";
 import { getReferencesTotal } from "../../store/referenceSlice";
+import { loadBeneficiariesInterventionsCounts } from "../../store/beneficiaryInterventionSlice";
+import { beneficiariesInterventionsFetchCount } from "../../services/beneficiaryInterventionService";
 
 interface LoginData {
     email?: string | undefined;
@@ -166,6 +168,9 @@ const Login: React.FC = ({ route }: any) => {
         
         const countRef = await referencesFetchCount();
         dispatch(getReferencesTotal(countRef));
+        
+        const beneficiaryIntervsCont = await beneficiariesInterventionsFetchCount();
+        dispatch(loadBeneficiariesInterventionsCounts(beneficiaryIntervsCont));
     }
 
     const validate = (values: any) => {
