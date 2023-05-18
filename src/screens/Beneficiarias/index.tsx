@@ -17,6 +17,7 @@ import { Formik } from 'formik';
 import { LOGIN_API_URL } from '../../services/api';
 import { ADMIN, MNE, SUPERVISOR } from '../../utils/constants';
 import moment from 'moment';
+import { useSelector } from 'react-redux';
 
 const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries_interventions }: any) => {    
     const [showModal, setShowModal] = useState(false);
@@ -36,7 +37,7 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
     const inputRef:any = useRef(null);
 
     const [isLoadingRequest, setLoadingRequest] = useState(false)
-
+    const totals = useSelector((state:any)=>state.beneficiaryIntervention.totals)
 
 
     const syncronize = () => {
@@ -132,6 +133,27 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
         }
     },[])
 
+
+      const ItemBadge =  ({ label, beneficiary_id }) => {   
+
+            const getCountByBeneficiary=()=>{
+                const result = totals?.filter((item) => item.beneficiary_id === beneficiary_id);
+                return result[0]?.total
+            }   
+
+            return (
+                <HStack> 
+                    <Text>{label} : </Text>  
+                    <Badge // bg="red.400"
+                        colorScheme={getCountByBeneficiary() > 0 ? "info" : "danger"}   alignSelf="flex-end" _text={{
+                        fontSize: 12
+                        }}>
+                        {getCountByBeneficiary()}
+                    </Badge>                                     
+                </HStack>
+            )
+        }
+
     const renderItem = (data: any) => (
         <TouchableHighlight
             onPress={() => viewBeneficiaries(data)}
@@ -175,6 +197,10 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
                         <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
                         {` ${data.item.locality_name}`}
                         </Text>
+                    </HStack>
+                    <HStack>
+                        <View style={{paddingTop:5}}><Ionicons name="cog" size={11} color="#17a2b8"/></View>
+                        <ItemBadge label={'Serviços'} beneficiary_id={data.item.online_id} />
                     </HStack>
                 </View>
                 <View >
