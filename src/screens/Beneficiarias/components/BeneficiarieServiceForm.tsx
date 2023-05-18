@@ -63,7 +63,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
 
     const avanteEstudanteOnlineIds = [45,48,51];
     const avanteRaparigaOnlineIds = [44,47,50];
-    const guiaFacilitacaoOnlineIds = [46,49,52];
+    const guiaFacilitacaoOnlineIds = [46,49,52,57];
 
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
@@ -144,7 +144,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
             })
 
             const disableEstudanteAndRapariga =   services.filter(service=>{              
-                    return !avanteRaparigaOnlineIds.includes(service._raw.online_id) && !avanteEstudanteOnlineIds.includes(service._raw.online_id) ;
+                    return !avanteRaparigaOnlineIds.includes(service._raw.online_id) && !avanteEstudanteOnlineIds.includes(service._raw.online_id) &&  service._raw.online_id != 56;
             })
 
             if(beneficiarie.vblt_is_student==1 && getBeneficiarieAge() < 15){                    
