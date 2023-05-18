@@ -440,7 +440,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                                 Q.where('user_id', userId)
                             ).fetch();
             const userDetailRaw = userDetailsQ[0]?._raw            
-            const isMentora = userDetailRaw?.profile_id == MENTOR ? true : false;
+            const isMentora = userDetailRaw?.['profile_id'] == MENTOR ? true : false;
             
             if(isMentora){
                 setEntryPoints([{ "id": '2', "name": "CM" }, { "id": '3', "name": "ES" }]);
