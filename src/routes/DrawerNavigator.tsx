@@ -9,6 +9,7 @@ import { Q } from "@nozbe/watermelondb";
 import { database } from '../database';
 import { useDispatch, useSelector } from 'react-redux';
 import { loadUserProvinces, loadUserDistricts, loadUserLocalities, loadUserUss } from '../store/authSlice';
+import styles from './components/style';
 import { Badge, Box, VStack } from 'native-base';
 import { beneficiariesFetchCount } from '../services/beneficiaryService';
 import { referencesFetchCount } from '../services/referenceService';
@@ -18,9 +19,8 @@ import SyncTimer from '../components/SyncTimer';
 
 function HomeScreen({ navigation }: any) {
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <SyncTimer/>
-      <Text>Dreams Layering Tool </Text>
+    <View style={styles.container}>
+      <Text style={styles.text}>Dreams Layering Tool </Text>
     </View>
   );
 }
@@ -131,7 +131,7 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
   const ItemBadge = ({ label, total }) => {
     return <Box alignItems="center">
         <VStack>
-          <Text  style={{ fontWeight: 'bold' }}>{label}
+          <Text  style={{ fontWeight: 'bold', color: '#424345'}}>{label}
           <Badge // bg="red.400"
             colorScheme={total>0?"info" : "danger"} rounded="full"   variant="solid" alignSelf="flex-end" _text={{
               fontSize: 12

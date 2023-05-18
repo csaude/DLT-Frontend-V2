@@ -37,7 +37,7 @@ const MyDatePicker = ({ onDateSelection, minDate, maxDate, currentDate ,isEdit})
 
   return (
     <>
-      <Icon as={MaterialIcons} name="mode-edit" size={6} color="gray.200" onPress={showDatepicker} />
+      <Icon as={MaterialIcons} name="mode-edit" size={6} color="gray.600" onPress={showDatepicker} />
 
       {show && (
         <DateTimePicker

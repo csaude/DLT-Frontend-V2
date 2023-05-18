@@ -26,7 +26,8 @@ const SyncTimer = () => {
         })
       )
       .then(() => setOpen(false))
-      .catch(() =>
+      .catch(() =>{          
+        setOpen(false)
         toast
           .show({
             placement: "top",
@@ -34,7 +35,7 @@ const SyncTimer = () => {
               return <ErrorHandler />;
             },
           })
-          .then(() => setOpen(false))
+        }
       );
   };
 

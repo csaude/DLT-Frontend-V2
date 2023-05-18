@@ -20,6 +20,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         height: 90,
     },
+    textBlack:{
+        color: '#212121', 
+    },
     fab: {
         position: 'absolute',
         width: 56,

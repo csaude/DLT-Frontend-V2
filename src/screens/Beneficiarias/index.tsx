@@ -17,6 +17,7 @@ import { Formik } from 'formik';
 import { LOGIN_API_URL } from '../../services/api';
 import { ADMIN, MNE, SUPERVISOR } from '../../utils/constants';
 import moment from 'moment';
+import { useSelector } from 'react-redux';
 
 const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries_interventions }: any) => {    
     const [showModal, setShowModal] = useState(false);
@@ -36,7 +37,7 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
     const inputRef:any = useRef(null);
 
     const [isLoadingRequest, setLoadingRequest] = useState(false)
-
+    const totals = useSelector((state:any)=>state.beneficiaryIntervention.totals)
 
 
     const syncronize = () => {
@@ -132,6 +133,27 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
         }
     },[])
 
+
+      const ItemBadge =  ({ label, beneficiary_id }) => {   
+
+            const getCountByBeneficiary=()=>{
+                const result = totals?.filter((item) => item.beneficiary_id === beneficiary_id);
+                return result[0]?.total
+            }   
+
+            return (
+                <HStack> 
+                    <Text>{label} : </Text>  
+                    <Badge // bg="red.400"
+                        colorScheme={getCountByBeneficiary() > 0 ? "info" : "danger"}   alignSelf="flex-end" _text={{
+                        fontSize: 12
+                        }}>
+                        {getCountByBeneficiary()}
+                    </Badge>                                     
+                </HStack>
+            )
+        }
+
     const renderItem = (data: any) => (
         <TouchableHighlight
             onPress={() => viewBeneficiaries(data)}
@@ -140,19 +162,21 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
         >
             <HStack width="100%" px={4}
                 flex={1} space={5} alignItems="center">
-                {/* <Avatar color="white" bg={'warning.600'} > */}
-                <Avatar color="white" bg={randomHexColor()} >
                     {
                         (data.item.gender === "1") ?
-                            <Icon as={Ionicons} name="man" color="white" size={35} />
+                            <Avatar color="white" bg="blue.500" >
+                                <Icon as={Ionicons} name="man" color="white" size={35} />
+                            </Avatar>
                             :
                             (data.item.gender === "2") ?
-                                <Icon as={Ionicons} name="woman" color="white" size={35} />
+                                <Avatar color="white" bg="pink.500" >
+                                    <Icon as={Ionicons} name="woman" color="white" size={35} />
+                                </Avatar>
                                 :
-                                <Icon as={Ionicons} name="person" color="white" size={35} />
-                    }
-                    
-                </Avatar>
+                                <Avatar color="white" bg="amber.500" >
+                                    <Icon as={Ionicons} name="person" color="white" size={35} />
+                                </Avatar>
+                    }                    
 
                 <View style={{width:"50%"}}>
                     <HStack>
@@ -175,6 +199,10 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
                         <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
                         {` ${data.item.locality_name}`}
                         </Text>
+                    </HStack>
+                    <HStack>
+                        <View style={{paddingTop:5}}><Ionicons name="cog" size={11} color="#17a2b8"/></View>
+                        <ItemBadge label={'Serviços'} beneficiary_id={data.item.online_id} />
                     </HStack>
                 </View>
                 <View >
@@ -307,7 +335,7 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
         setRefreshing(true);
         setTimeout(() => {
             setRefreshData(false);
-            getUserBeneficiaries(loggedUser?.online_id);
+            getUserBeneficiaries(loggedUser?.online_id ? loggedUser?.online_id : loggedUser?.id);
             setRefreshing(false);
             setRefreshData(true);
         }, );

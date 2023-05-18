@@ -56,6 +56,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
     const [step, setStep] = useState(1);
     const [showModal, setShowModal] = useState(false);
     const [newNui, setNewNui] = useState();
+    const [isEdit, setIsEdit] = useState(false);
     const [district, setDistrict] = useState<any>()
     const [isDateRequired, setIsDateRequired] = useState<any>(true);
     const [age, setAge] = useState<any>(undefined);
@@ -434,6 +435,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
         const district = districts.filter(d => d.online_id === formik.values.district)[0];
         setDistrict(district);                    
         const isEdit = beneficiarie && beneficiarie?.id;
+        setIsEdit(isEdit);
 
         const newObject = await database.write(async () => {
 
@@ -669,7 +671,12 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
         }
 
         return (
-            <Picker enabled={!isDateRequired} onValueChange={onchangeAge} selectedValue={age} placeholder="Seleccione a Idade" >
+            <Picker 
+                style={styles.textBlack}
+                enabled={!isDateRequired}
+                onValueChange={onchangeAge}
+                selectedValue={age}
+                placeholder="Seleccione a Idade" >
                 <Picker.Item label="-- Seleccione a Idade --" value="0" />
                 {idades.map(item => (
                     <Picker.Item key={item} value={item} label={item}></Picker.Item>
@@ -880,6 +887,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
                                 <FormControl isRequired isInvalid={'entry_point' in formik.errors}>
                                     <FormControl.Label>Ponto de Entrada</FormControl.Label>
                                     <Picker
+                                        style={styles.textBlack}
                                         selectedValue={formik.values.entry_point ? formik.values.entry_point : loggedUser.entry_point !== undefined ? loggedUser.entry_point : loggedUser.entryPoint}
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
@@ -899,6 +907,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
                                 <FormControl isRequired isInvalid={'us_id' in formik.errors}>
                                     <FormControl.Label>Local</FormControl.Label>
                                     <Picker
+                                        style={styles.textBlack}
                                         selectedValue={formik.values.us_id}
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
@@ -957,6 +966,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
                                 <FormControl isRequired isInvalid={'neighborhood_id' in formik.errors}>
                                     <FormControl.Label>Bairro</FormControl.Label>
                                     <Picker
+                                        style={styles.textBlack}
                                         selectedValue={formik.values.neighborhood_id}
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
@@ -1089,6 +1099,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
                                 <FormControl isRequired={schoolInfoEnabled} isInvalid={'vblt_school_grade' in formik.errors}>
                                     <FormControl.Label>Classe</FormControl.Label>
                                     <Picker
+                                        style={styles.textBlack}
                                         selectedValue={formik.values.vblt_school_grade}
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
@@ -1138,6 +1149,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
                                 <FormControl isRequired={deficiencyTypeEnabled} isInvalid={'vblt_deficiency_type' in formik.errors}>
                                     <FormControl.Label>Tipo de Deficiência</FormControl.Label>
                                     <Picker
+                                        style={styles.textBlack}
                                         selectedValue={formik.values.vblt_deficiency_type}
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
@@ -1174,7 +1186,11 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
                 <Modal isOpen={showModal} onClose={() => handleOk(beneficiarie)}>
                     <Modal.Content maxWidth="400px">
                         <Modal.CloseButton />
-                        <Modal.Header>Confirmação Registo</Modal.Header>
+                        <Modal.Header>
+                            {
+                                isEdit ? 'Confirmação Actualização' : 'Confirmação Registo'
+                            }
+                        </Modal.Header>
                         <Modal.Body>
                             <ScrollView>
                                 <Box alignItems='center'>
@@ -1184,7 +1200,9 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
                                         <HStack space={2} flexShrink={1}>
                                             <Alert.Icon mt="1"  />
                                             <Text fontSize="sm" color="coolGray.800">
-                                                Beneficiário Registado com Sucesso!
+                                                {
+                                                    isEdit ? 'Beneficiário Actualizado com Sucesso!' : 'Beneficiário Registado com Sucesso!'
+                                                }
                                             </Text>
                                         </HStack>
                                     </Alert>                               
