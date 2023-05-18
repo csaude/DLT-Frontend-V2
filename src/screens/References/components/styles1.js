@@ -58,6 +58,9 @@ const styles = StyleSheet.create({
         //marginBottom: '2%',
         color: '#134e4a',
     },
+    spinnerTextStyle: {
+        color: '#FFF'
+    },
 });
 
 export default styles;

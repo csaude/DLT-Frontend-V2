@@ -15,6 +15,7 @@ import { beneficiariesFetchCount } from '../services/beneficiaryService';
 import { referencesFetchCount } from '../services/referenceService';
 import { getBeneficiariesTotal } from '../store/beneficiarySlice';
 import { getReferencesTotal } from '../store/referenceSlice';
+import SyncTimer from '../components/SyncTimer';
 
 function HomeScreen({ navigation }: any) {
   return (

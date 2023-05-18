@@ -1,14 +1,16 @@
 import React, { useState, useEffect, useContext } from "react";
 import { View, KeyboardAvoidingView, ScrollView, Text } from 'react-native';
-import { Box, Heading, Divider, Avatar, Icon, Flex } from "native-base";
+import { Box, Heading, Divider, Avatar, Icon, Flex, HStack, Badge } from "native-base";
 import { Context } from '../../../routes/DrawerNavigator';
 import { Ionicons } from "@native-base/icons";
 import styles from './styles';
 import { ADMIN, MNE, SUPERVISOR } from "../../../utils/constants";
+import { useSelector } from "react-redux";
 
 const DadosPessoaisView: React.FC = ({ route }: any) => {
     const [maskName,setMaskName,] = useState(false)
     const loggedUser: any = useContext(Context);
+    const totals = useSelector((state:any)=>state.beneficiaryIntervention.totals)
 
     const {
         beneficiary,
@@ -37,6 +39,11 @@ const DadosPessoaisView: React.FC = ({ route }: any) => {
             setMaskName(true)
         }
     },[])
+
+        const getCountByBeneficiary=(beneficiary_id)=>{
+                const result = totals?.filter((item) => item.beneficiary_id === beneficiary_id);
+                return result[0]?.total
+        }  
     
     return (
         <KeyboardAvoidingView style={styles.background}>
@@ -101,6 +108,8 @@ const DadosPessoaisView: React.FC = ({ route }: any) => {
                                             "ES"
                                     }
                                 </Text>
+
+                                <Text style={styles.txtLabelInfo}> <Text style={styles.txtLabel}>Serviços: </Text> {getCountByBeneficiary(beneficiary.online_id)}</Text>
                             </Box>
                         </Flex>
                     </View>

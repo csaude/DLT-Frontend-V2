@@ -18,7 +18,7 @@ export interface BeneficiariesModel {
     enrollment_date?: string,
     is_orphan?: any,
     via?: any,
-    partner_id?: any,
+    partner_id?: string,
     entry_point?: any,
     neighborhood_id?: any,
     locality_id?: any,

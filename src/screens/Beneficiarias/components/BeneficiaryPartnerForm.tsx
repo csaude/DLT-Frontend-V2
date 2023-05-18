@@ -207,10 +207,16 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
             setPartnerHasErrors(true)
         }
         else if(e.length === 7 || e.length === 10){  
-            const partnersQ = await database.get('beneficiaries').query(
-                                Q.where('gender', '2'),
-                                Q.where('nui',e)
-                            ).fetch();
+            const partnersQ = isNaN(Number(beneficiarie.partner_id)) ? 
+                                        await database.get('beneficiaries').query(
+                                            Q.where('gender', '2'),
+                                            Q.where('id', beneficiarie.partner_id)
+                                        ).fetch()
+                            : 
+                                        await database.get('beneficiaries').query(
+                                            Q.where('gender', '2'),
+                                            Q.where('online_id', Number(beneficiarie.partner_id)),
+                                        ).fetch();
             const benefPartiner = partnersQ[0]?._raw;
             if(benefPartiner){
                 setPartnerHasErrors(false)
@@ -447,7 +453,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
                     beneficiarie.address = formik.values.address, 
                     beneficiarie.phone_number = formik.values.phone_number, 
                     beneficiarie.e_mail = formik.values.e_mail,
-                    beneficiarie.partner_id = Number(formik.values?.partner_id),
+                    beneficiarie.partner_id = formik.values?.partner_id,
                     beneficiarie.entry_point = formik.values.entry_point, 
                     beneficiarie.us_id = formik.values.us_id,
                     beneficiarie.neighborhood_id = formik.values.neighborhood_id, 
@@ -490,7 +496,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
                 beneficiary.phone_number = formik.values.phone_number, 
                 beneficiary.e_mail = formik.values.e_mail, 
                 beneficiary.organization_id = organization_id, 
-                beneficiary.partner_id = Number(formik.values?.partner_id),
+                beneficiary.partner_id = formik.values?.partner_id,
                 beneficiary.entry_point = formik.values.entry_point, 
                 beneficiary.us_id = formik.values.us_id,
                 beneficiary.neighborhood_id = formik.values.neighborhood_id, 
@@ -737,7 +743,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
                                     <HStack w="100%" flex={1} space={5} alignItems="center"  >
                                         <InputGroup w={{ base: "70%", md: "285" }}>
                                             <InputLeftAddon>
-                                                <MyDatePicker onDateSelection={e=>handleDataFromDatePickerComponent(e,'date_of_birth')} minDate={minBirthYear}  maxDate={maxBirthYear} currentDate={beneficiarie?.date_of_birth}/>
+                                                <MyDatePicker onDateSelection={e=>handleDataFromDatePickerComponent(e,'date_of_birth')} minDate={minBirthYear}  maxDate={maxBirthYear} currentDate={beneficiarie?.date_of_birth} isEdit={beneficiarie && beneficiarie?.id}/>
                                             </InputLeftAddon> 
                                             <Input isDisabled w={{ base: "70%", md: "100%" }}
                                                 onPressIn={() => showDatepicker()}
@@ -788,7 +794,7 @@ const BeneficiaryPartnerForm: React.FC = ({ route , subServices, beneficiaries_i
                                     <HStack w="100%" flex={1} space={5} alignItems="center"  >
                                         <InputGroup w={{ base: "70%", md: "285" }}>
                                             <InputLeftAddon>
-                                                <MyDatePicker onDateSelection={e=>handleDataFromDatePickerComponent(e,'enrollment_date')}  minDate={new Date('2017-01-01')} maxDate={new Date()} currentDate={beneficiarie?.enrollment_date}/>
+                                                <MyDatePicker onDateSelection={e=>handleDataFromDatePickerComponent(e,'enrollment_date')}  minDate={new Date('2017-01-01')} maxDate={new Date()} currentDate={beneficiarie?.enrollment_date} isEdit={beneficiarie && beneficiarie?.id}/>
                                             </InputLeftAddon> 
                                             <Input isDisabled w={{ base: "70%", md: "100%" }}
                                                 onPressIn={() => showDatepicker2()}
