@@ -309,7 +309,7 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
         setRefreshing(true);
         setTimeout(() => {
             setRefreshData(false);
-            getUserBeneficiaries(loggedUser?.online_id);
+            getUserBeneficiaries(loggedUser?.online_id ? loggedUser?.online_id : loggedUser?.id);
             setRefreshing(false);
             setRefreshData(true);
         }, );
