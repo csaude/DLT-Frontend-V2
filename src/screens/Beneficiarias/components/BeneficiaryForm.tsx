@@ -877,7 +877,8 @@ const BeneficiaryForm: React.FC = ({ route , subServices, beneficiaries_interven
             } else {
                 setPartnerHasErrors(true)
             }
-            formik.setFieldValue('partner_id', benefPartiner?.['id']);
+            const partnerId = benefPartiner?.['online_id'] ? benefPartiner?.['online_id'] : benefPartiner?.['id'];
+            formik.setFieldValue('partner_id', partnerId+"");
         }
 
         setLoadingData(false);
