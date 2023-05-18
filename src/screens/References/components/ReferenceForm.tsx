@@ -216,27 +216,27 @@ const ReferenceForm: React.FC = ({ route }: any) => {
         if (age < 15) {
             if (age < 14 && value == 2) {
                 // Retirar Guião de facilitação
-                servicesSerialized = servicesSerialized.filter(s => ![46,49,52].includes(s.online_id));
+                servicesSerialized = servicesSerialized.filter(s => ![46,49,52].includes(s['online_id']));
             }
             if (beneficiary.vblt_sexually_active != null && beneficiary.vblt_sexually_active == 0 && value == 1) {
                 // Retirar Promoção e Provisão de Preservativos e Aconselhamento e testagem em saúde
-                servicesSerialized = servicesSerialized.filter(s => ![1,9].includes(s.online_id));
+                servicesSerialized = servicesSerialized.filter(s => ![1,9].includes(s['online_id']));
             }
             if (beneficiary.vblt_is_student == 0) {
                 if (value == 2) {
                     // Retirar AVANTE ESTUDANTE
-                    servicesSerialized = servicesSerialized.filter(s => ![45,48,51].includes(s.online_id));
+                    servicesSerialized = servicesSerialized.filter(s => ![45,48,51].includes(s['online_id']));
                 }
             } else {
                 if (value == 2) {
                     // Retirar AVANTE RAPARIGA
-                    servicesSerialized = servicesSerialized.filter(s => ![44,47,50].includes(s.online_id));
+                    servicesSerialized = servicesSerialized.filter(s => ![44,47,50].includes(s['online_id']));
                     
                 }
             }
         } else if (value == 2) {
             // Retirar AVANTE RAPARIGA e AVANTE ESTUDANTE
-            servicesSerialized = servicesSerialized.filter(s => ![44,45,47,48,50,51].includes(s.online_id));
+            servicesSerialized = servicesSerialized.filter(s => ![44,45,47,48,50,51].includes(s['online_id']));
         }
         setServices(servicesSerialized);
     }
@@ -450,6 +450,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                                 <FormControl isRequired isInvalid={'refer_to' in formik.errors}>
                                     <FormControl.Label>Referir Para</FormControl.Label>
                                     <Picker
+                                        style={styles.textBlack}
                                         selectedValue={formik.values.refer_to}
                                         enabled={entryPointEnabled}
                                         onValueChange={(itemValue, itemIndex) => {
@@ -486,6 +487,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                                 <FormControl isRequired isInvalid={'service_type' in formik.errors}>
                                     <FormControl.Label>Tipo de Serviço</FormControl.Label>
                                     <Picker
+                                        style={styles.textBlack}
                                         selectedValue={formik.values.service_type}
                                         enabled={serviceTypes.length > 1}
                                         onValueChange={(itemValue, itemIndex) => {
@@ -510,6 +512,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                                 <FormControl isRequired isInvalid={'partner_id' in formik.errors}>
                                     <FormControl.Label>Organização</FormControl.Label>
                                     <Picker
+                                        style={styles.textBlack}
                                         selectedValue={formik.values.partner_id}
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
@@ -533,6 +536,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                                 <FormControl isRequired isInvalid={'us_id' in formik.errors}>
                                     <FormControl.Label>Local</FormControl.Label>
                                     <Picker
+                                        style={styles.textBlack}
                                         selectedValue={formik.values.us_id}
                                         onValueChange={(itemValue, itemIndex) => {
                                             if (itemIndex !== 0) {
