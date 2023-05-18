@@ -28,8 +28,8 @@ const CustomDrawer: React.FC<DrawerProps> = ({ onLogout, /*loggedUser,*/ ...prop
                 }}
             >
                 <View>
-                    <Text>{`${loggedUser?.name} ${loggedUser?.surname}`}  </Text>
-                    <Text>{loggedUser?.email}</Text>
+                    <Text style={{ color: '#212121'}}>{`${loggedUser?.name} ${loggedUser?.surname}`}  </Text>
+                    <Text style={{ color: '#212121'}}>{loggedUser?.email}</Text>
                 </View>
                 <Image
                     source={{
@@ -52,7 +52,7 @@ const CustomDrawer: React.FC<DrawerProps> = ({ onLogout, /*loggedUser,*/ ...prop
                 }}
                 onPress={()=> onLogout()}
             >
-                <Text>Log Out</Text>
+                <Text style={{ color: '#212121'}}>Log Out</Text>
             </TouchableOpacity>
         </View>
     );
