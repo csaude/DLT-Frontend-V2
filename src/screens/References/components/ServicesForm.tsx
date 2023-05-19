@@ -23,6 +23,7 @@ import { ErrorHandler, SuccessHandler } from '../../../components/SyncIndicator'
 import moment from 'moment';
 import { MENTOR } from '../../../utils/constants';
 import Spinner from 'react-native-loading-spinner-overlay/lib';
+import MyDatePicker from '../../../components/DatePicker';
 
 const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     const { reference, beneficiarie, intervention } = route.params;
@@ -71,6 +72,16 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
         const currentDate = selectedDate || date;
         setShow(false);
         setDate(currentDate);
+        setText(selectedDate);
+    }
+
+    const handleDataFromDatePickerComponent=(selectedDate) =>{
+
+        selectedDate.replaceAll('/', '-')
+          const currentDate = selectedDate || date;
+        setShow(false);
+        setDate(currentDate);
+
         setText(selectedDate);
     }
 
@@ -503,9 +514,8 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                                             base: "70%",
                                             md: "285",
                                         }}>
-                                            <InputLeftAddon>
-                                                <Button style={{ width: 10 }} onPress={() => showDatepicker()}>
-                                                </Button>
+                                            <InputLeftAddon>                                               
+                                                <MyDatePicker onDateSelection={e => handleDataFromDatePickerComponent(e)} minDate={new Date('2017-01-01')} maxDate={new Date()} currentDate={undefined} isEdit={undefined}/>
                                             </InputLeftAddon>
                                             <Input isDisabled
                                                 w={{
