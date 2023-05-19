@@ -197,7 +197,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                     sub_service_id: intervention.sub_service_id,
                     result: intervention.result,
                     date: intervention.date,
-                    us_id: selUs.online_id,
+                    us_id: selUs?.online_id,
                     activist_id: userId,
                     entry_point: intervention.entry_point,
                     provider: intervention.provider,
