@@ -32,9 +32,13 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
 
     useEffect(() => {
         const fetchData = async () => {
+            const fieldAge = form.getFieldValue('age');
             if (beneficiary === undefined) {
                 const fieldEntryPoint = form.getFieldValue('entry_point');
                 form.setFieldsValue({entry_point: fieldEntryPoint ? fieldEntryPoint : userEntryPoint});
+                setAge(fieldAge);
+            } else {
+                setAge(fieldAge ? fieldAge : calculateAge(beneficiary.dateOfBirth)+'');
             }
 
             const loggedUser = await query(localStorage.user);
@@ -182,13 +186,18 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
     const IdadeSelect: React.FC<SelectProps> = ({ value, onChange, defaultValue }: SelectProps) => {
 
         const onchangeAge = (value: any) => {
-            var today = new Date();
-            var birthYear = today.getFullYear() - value;
-            var birthDate = new Date(birthYear + "/01/01");
-            setBirthDate(birthDate);
-            value === null ? setIsDateSet(false) : setIsDateSet(true);
-
-            setAge(value);
+            if (value === undefined) {
+                setBirthDate(undefined);
+                setAge(undefined);
+                setIsDateSet(false);
+            } else {
+                var today = new Date();
+                var birthYear = today.getFullYear() - value;
+                var birthDate = new Date(birthYear + "/01/01");
+                setBirthDate(birthDate);
+                setAge(value);
+                setIsDateSet(true);
+            }
         }
 
         useEffect(() => {
@@ -207,7 +216,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
         }, [age, birthDate]);
 
         return (
-            <Select disabled={isDateRequired} onChange={onchangeAge} value={age} placeholder="Seleccione a Idade" >
+            <Select allowClear disabled={isDateRequired} onChange={onchangeAge} value={age} placeholder="Seleccione a Idade" >
                 {Idades.map(item => (
                     <Option key={item} value={item}>{item}</Option>
                 ))}

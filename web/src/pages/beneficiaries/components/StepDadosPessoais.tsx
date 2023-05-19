@@ -37,9 +37,13 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
             const partners = beneficiaries.filter(b => b.gender == '1');
             setPartners(partners);
         
+            const fieldAge = form.getFieldValue('age');
             if(beneficiary === undefined) {
                 const fieldEntryPoint = form.getFieldValue('entry_point');
                 form.setFieldsValue({entry_point: fieldEntryPoint ? fieldEntryPoint : userEntryPoint});
+                setAge(fieldAge);
+            } else {
+                setAge(fieldAge ? fieldAge : calculateAge(beneficiary.dateOfBirth)+'');
             }
 
             const loggedUser = await query(localStorage.user);
@@ -182,7 +186,7 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
 
     const onChangeBirthDate = (value:any) => {
         if (value != undefined){
-        setAge(calculateAge(value)+'');
+            setAge(calculateAge(value)+'');
         }else{
             setAge(undefined);
         }
@@ -205,13 +209,19 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
     const IdadeSelect: React.FC<SelectProps> = ({ value, onChange, defaultValue }: SelectProps) => {
         
         const onchangeAge = (value: any) =>{
-            var today = new Date();
-            var birthYear = today.getFullYear() - value;
-            var birthDate = new Date(birthYear + "/01/01");
-            setBirthDate(birthDate);
-            setAge(value);
+            if (value === undefined) {
+                setBirthDate(undefined);
+                setAge(undefined);
+                setIsDateSet(false);
                 
-            value === null ? setIsDateSet(false) : setIsDateSet(true);
+            } else {
+                var today = new Date();
+                var birthYear = today.getFullYear() - value;
+                var birthDate = new Date(birthYear + "/01/01");
+                setBirthDate(birthDate);
+                setAge(value);
+                setIsDateSet(true);
+            }
         }
 
         useEffect(() => {
@@ -230,7 +240,7 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
         }, [age, birthDate]);
 
         return (
-            <Select disabled={isDateRequired} onChange={onchangeAge} value={age} placeholder="Seleccione a Idade" >
+            <Select allowClear disabled={isDateRequired} onChange={onchangeAge} value={age} placeholder="Seleccione a Idade" >
                 {Idades.map(item => (
                     <Option key={item} value={item}>{item}</Option>
                 ))}
