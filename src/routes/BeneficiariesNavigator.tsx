@@ -57,7 +57,7 @@ const BeneficiariesNavigator: React.FC = () => {
         <BeneficiaryStack.Screen name="ReferenceForm" component={ReferenceForm} options={{
                     headerTitle: (props) => (
                       <Text {...props} style={{ color: 'black', fontWeight: 'bold' }}>
-                        back
+                        Registo de Referencia
                       </Text>
                     ),
                     headerShown:true
