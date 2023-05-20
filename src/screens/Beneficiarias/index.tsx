@@ -626,6 +626,14 @@ const renderServerItem = (data: any) => (
     return (
         <>
             <View style={styles.container}>
+            {loading ?
+                <Spinner
+                    visible={true}
+                    textContent={'Sincronizando...'}
+                    textStyle={styles.spinnerTextStyle}
+                /> : undefined
+            }
+
                 <View style={styles.heading}>
                     <Box alignItems="center" w="80%" bgColor="white" style={{ borderRadius: 5, }}>
                         <Input ref={inputRef} w={{ base: "100%", md: "25%" }} onChangeText={handleChange}
@@ -807,13 +815,6 @@ const renderServerItem = (data: any) => (
                     </Modal.Content>
                 </Modal>
             </Center>
-            {loading ?
-                <Spinner
-                    visible={true}
-                    textContent={'Sincronizando...'}
-                    textStyle={styles.spinnerTextStyle}
-                /> : undefined
-            }
         </>
         
     );
