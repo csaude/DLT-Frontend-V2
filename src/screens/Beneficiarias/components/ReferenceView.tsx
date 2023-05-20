@@ -1,20 +1,21 @@
 import React, { useState, useEffect, useContext } from "react";
 import { View, TouchableHighlight } from 'react-native';
-import { useToast, HStack, Text, Icon, VStack, Pressable, Spacer, Stagger, IconButton, Center } from "native-base";
-import { MaterialIcons, Ionicons } from "@native-base/icons";
+import { useToast, HStack, Text,VStack, Center } from "native-base";
+import { Ionicons } from "@native-base/icons";
 import { navigate } from '../../../routes/NavigationRef';
 import styles from './styles';
 import { database } from '../../../database';
-import { Q } from "@nozbe/watermelondb";
-import withObservables from '@nozbe/with-observables';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import StepperButton from './StapperButton';
-import { SuccessHandler, ErrorHandler} from "../../../components/SyncIndicator";
+import { SuccessHandler, ErrorHandler, WithoutNetwork} from "../../../components/SyncIndicator";
 import { Context } from '../../../routes/DrawerNavigator';
 import { sync } from '../../../database/sync';
+import NetInfo from "@react-native-community/netinfo";
+import Spinner from "react-native-loading-spinner-overlay/lib";
 
 const ReferenceView: React.FC = ({ route }: any) => {
-
+    const [loading, setLoading] = useState(false);
+	const [isOffline, setIsOffline] = useState(false);
     const {
         beneficiary,
         references,
@@ -24,21 +25,32 @@ const ReferenceView: React.FC = ({ route }: any) => {
     const toast = useToast();
 
     const syncronize = () => {
-        sync({username: loggedUser.username})
+        setLoading(true);      
+        if(isOffline){
+			toast.show({
+                placement: "top",
+                render: () => {
+                    return (<WithoutNetwork />);
+                }
+            })
+			setLoading(false);
+		}else{
+            sync({ username: loggedUser.username })
                 .then(() => toast.show({
-                                placement: "top",
-                                render:() => {
-                                    return (<SuccessHandler />);
-                                }
-                            }))
+                    placement: "top",
+                    render: () => {
+                        return (<SuccessHandler />);
+                    }
+                }))
                 .catch(() => toast.show({
-                                placement: "top",
-                                render:() => {
-                                    return (<ErrorHandler />);
-                                }
-                            }))
+                    placement: "top",
+                    render: () => {
+                        return (<ErrorHandler />);
+                    }
+                }))
+            setLoading(false);
+        }
     }
-    //console.log(references);
 
     useEffect(() => {
         const fetchRefsData = async () => {
@@ -51,8 +63,13 @@ const ReferenceView: React.FC = ({ route }: any) => {
         }
 
         fetchRefsData().catch(error => console.log(error));
-    }, []);
 
+        const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
+			const status = !(state.isConnected && state.isInternetReachable);
+			setIsOffline(status);
+		});
+		return () => removeNetInfoSubscription();
+    }, []);
 
     const renderItem = (data: any) => {
         //console.log(data.item);
@@ -106,6 +123,13 @@ const ReferenceView: React.FC = ({ route }: any) => {
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                     <Text color="coolGray.500" >Não existem Referencias Registadas!</Text>
                 </View>
+            }
+            {loading ?
+                <Spinner
+                    visible={true}
+                    textContent={'Sincronizando...'}
+                    textStyle={styles.spinnerTextStyle}
+                /> : undefined
             }
             <Center flex={1} px="3" >
                 <StepperButton onAdd={() => navigate({ name: "ReferenceForm", params: { beneficiary:  beneficiary, 
