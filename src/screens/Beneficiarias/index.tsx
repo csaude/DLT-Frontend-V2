@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext, useRef } from 'react';
 import { View, StyleSheet, TouchableOpacity, TouchableHighlight, ScrollView, Platform, RefreshControl } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
-import { useToast, Alert, HStack, Text, Avatar, Pressable, Icon, Box, Select, Heading, VStack, FormControl, Input, Link, Button, CheckIcon, WarningOutlineIcon, Center, Flex, Badge, Modal, InfoIcon, IconButton, CloseIcon, Checkbox, Spinner } from 'native-base';
+import { useToast, Alert, HStack, Text, Avatar, Pressable, Icon, Box, Select, Heading, VStack, FormControl, Input, Link, Button, CheckIcon, WarningOutlineIcon, Center, Flex, Badge, Modal, InfoIcon, IconButton, CloseIcon, Checkbox, Spinner as SpinnerBase } from 'native-base';
 import { navigate } from '../../routes/NavigationRef';
 import withObservables from '@nozbe/with-observables';
 import { MaterialIcons, Ionicons } from "@native-base/icons";
@@ -11,18 +11,22 @@ import { Context } from '../../routes/DrawerNavigator';
 import StepperButton from './components/StapperButton';
 import styles from './styles';
 import { sync, customSyncBeneficiary } from '../../database/sync';
-import { SuccessHandler, ErrorHandler } from "../../components/SyncIndicator";
+import { SuccessHandler, ErrorHandler, WithoutNetwork } from "../../components/SyncIndicator";
 import { BENEFICIARY_TO_SYNC_URL } from '../../services/api';
 import { Formik } from 'formik';
 import { LOGIN_API_URL } from '../../services/api';
 import { ADMIN, MNE, SUPERVISOR } from '../../utils/constants';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
+import NetInfo from "@react-native-community/netinfo";
+import Spinner from "react-native-loading-spinner-overlay/lib";
 
 const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries_interventions }: any) => {    
     const [showModal, setShowModal] = useState(false);
     const [searchField, setSearchField] = useState('');
     const [userBeneficiaries, setUserBeneficiaries] = useState<any>([]);
+	const [loading, setLoading] = useState(false);
+	const [isOffline, setIsOffline] = useState(false);
     const [maskName,setMaskName,] = useState(false)
     const loggedUser: any = useContext(Context);
     const [showAuthModal, setShowAuthModal] = useState(false);
@@ -41,7 +45,17 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
 
 
     const syncronize = () => {
-        sync({ username: loggedUser.username })
+		setLoading(true);       
+		if(isOffline){
+			toast.show({
+                placement: "top",
+                render: () => {
+                    return (<WithoutNetwork />);
+                }
+            })
+			setLoading(false);
+		}else{
+            sync({ username: loggedUser.username })
             .then(() => toast.show({
                 placement: "top",
                 render: () => {
@@ -54,6 +68,8 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
                     return (<ErrorHandler />);
                 }
             }))
+			setLoading(false);
+        }
     }
 
     const viewBeneficiaries = async (data: any) => {
@@ -131,6 +147,11 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
         else{
             setMaskName(true)
         }
+        const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
+			const offline = !(state.isConnected && state.isInternetReachable);
+			setIsOffline(offline);
+		});
+		return () => removeNetInfoSubscription();
     },[])
 
 
@@ -596,7 +617,7 @@ const renderServerItem = (data: any) => (
         const MySpinner = () => {
             return (
                 <HStack space={8} justifyContent="center" alignItems="center">
-                <Spinner size="lg" />
+                <SpinnerBase size="lg" />
                 </HStack>
             );
             };
@@ -785,6 +806,13 @@ const renderServerItem = (data: any) => (
                     </Modal.Content>
                 </Modal>
             </Center>
+            {loading ?
+                <Spinner
+                    visible={true}
+                    textContent={'Sincronizando...'}
+                    textStyle={styles.spinnerTextStyle}
+                /> : undefined
+            }
         </>
         
     );

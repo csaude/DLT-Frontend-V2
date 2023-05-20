@@ -19,6 +19,23 @@ const styles = StyleSheet.create({
       color: '#0c4a6e',
       fontWeight: 'bold',
     },
+    spinnerTextStyle: {
+      color: '#FFF'
+    },
+    container: {
+      flex: 1,
+      backgroundColor: '#F5FCFF'
+    },
+    welcome: {
+      fontSize: 20,
+      textAlign: 'center',
+      margin: 10
+    },
+    instructions: {
+      textAlign: 'center',
+      color: 'red', 
+      marginBottom: 5
+    },
     list: {
       margin: 5,
       backgroundColor: 'white',
