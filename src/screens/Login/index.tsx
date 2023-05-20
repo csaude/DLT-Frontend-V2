@@ -363,7 +363,7 @@ const Login: React.FC = ({ route }: any) => {
                             <Heading color="coolGray.600"
                                 _dark={{ color: "warmGray.200" }}
                                 fontWeight="medium" size="lg" py="2">
-                                <Text color="darkBlue.800">Login  </Text>
+                                <Text color="darkBlue.800">Autenticação  </Text>
                             </Heading>
                         </Center>
                         <Center w="90%" >
@@ -372,7 +372,7 @@ const Login: React.FC = ({ route }: any) => {
                                     <HStack space={4} flexShrink={1}>
                                         <Alert.Icon mt="1" />
                                         <Text fontSize="sm" color="coolGray.800">
-                                            Utilizador ou Senha Invalidos!
+                                            Utilizador ou Senha Inválidos!
                                         </Text>
                                     </HStack>
 
@@ -395,7 +395,7 @@ const Login: React.FC = ({ route }: any) => {
                                     errors
                                 }) => <VStack space={3} w="100%">
                                         <FormControl isRequired isInvalid={'username' in errors}>
-                                            <FormControl.Label>Username</FormControl.Label>
+                                            <FormControl.Label>Nome do utilizador</FormControl.Label>
 
                                             <Input onBlur={handleBlur('username')} placeholder="Insira o Username" onChangeText={handleChange('username')} value={values.username} />
                                             <FormControl.ErrorMessage>
@@ -404,7 +404,7 @@ const Login: React.FC = ({ route }: any) => {
                                         </FormControl>
 
                                         <FormControl isRequired isInvalid={'password' in errors}>
-                                            <FormControl.Label>Password</FormControl.Label>
+                                            <FormControl.Label>Senha</FormControl.Label>
                                             <Input type={show ? "text" : "password"} onBlur={handleBlur('password')}
                                                 InputRightElement={
                                                     <Pressable onPress={() => setShow(!show)}>
@@ -425,7 +425,7 @@ const Login: React.FC = ({ route }: any) => {
 
                                         }
                                         <Button isLoading={loading} isLoadingText="Autenticando" onPress={handleSubmit} my="10" colorScheme="primary">
-                                            Login
+                                        Autenticar
                                         </Button>
                                         <Link
                                             // href="https://nativebase.io" 

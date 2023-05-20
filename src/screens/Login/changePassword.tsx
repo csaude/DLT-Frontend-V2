@@ -176,7 +176,7 @@ const ChangePassword: React.FC = ({ route }: any) => {
                                 errors
                             }) => <VStack space={3} w="100%">
                                 <FormControl isRequired isInvalid={'password' in errors}>
-                                    <FormControl.Label>Password</FormControl.Label>
+                                    <FormControl.Label>Senha</FormControl.Label>
              
                                     <Input 
                                         type={showPass ? "text" : "password"} 
@@ -192,7 +192,7 @@ const ChangePassword: React.FC = ({ route }: any) => {
                                     </FormControl.ErrorMessage>
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'rePassword' in errors}>
-                                    <FormControl.Label>Confirm Password</FormControl.Label>
+                                    <FormControl.Label>Confirma a Senha</FormControl.Label>
                                     <Input 
                                         type={show ? "text" : "password"}
                                         onBlur={handleBlur('rePassword')} 
@@ -207,7 +207,7 @@ const ChangePassword: React.FC = ({ route }: any) => {
                                     </FormControl.ErrorMessage>
                                 </FormControl>
                                 <Button onPress={handleSubmit} my="10" colorScheme="primary">
-                                    Submit
+                                    Salvar
                                 </Button>
                             </VStack>
                         }

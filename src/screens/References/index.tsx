@@ -9,7 +9,9 @@ import { Q } from "@nozbe/watermelondb";
 import { database } from '../../database';
 import { Context } from '../../routes/DrawerNavigator';
 import { sync } from '../../database/sync';
-import { SuccessHandler, ErrorHandler } from "../../components/SyncIndicator";
+import { SuccessHandler, ErrorHandler, WithoutNetwork } from "../../components/SyncIndicator";
+import NetInfo from "@react-native-community/netinfo";
+import Spinner from "react-native-loading-spinner-overlay/lib";
 
 import styles from './styles';
 import moment from 'moment';
@@ -21,6 +23,8 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
     const [refreshData, setRefreshData] = useState(false);
     const [refreshing, setRefreshing] = React.useState(false);
     const loggedUser: any = useContext(Context);
+    const [loading, setLoading] = useState(false);
+	const [isOffline, setIsOffline] = useState(false);
     const loggedUserPartner = loggedUser?.partners ? loggedUser?.partners.id : loggedUser?.partner_id;
     const toast = useToast();
 
@@ -106,19 +110,31 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
     }
 
     const syncronize = () => {
-        sync({ username: loggedUser.username })
-            .then(() => toast.show({
+        setLoading(true);      
+        if(isOffline){
+			toast.show({
                 placement: "top",
                 render: () => {
-                    return (<SuccessHandler />);
+                    return (<WithoutNetwork />);
                 }
-            }))
-            .catch(() => toast.show({
-                placement: "top",
-                render: () => {
-                    return (<ErrorHandler />);
-                }
-            }))
+            })
+			setLoading(false);
+		}else{
+            sync({ username: loggedUser.username })
+                .then(() => toast.show({
+                    placement: "top",
+                    render: () => {
+                        return (<SuccessHandler />);
+                    }
+                }))
+                .catch(() => toast.show({
+                    placement: "top",
+                    render: () => {
+                        return (<ErrorHandler />);
+                    }
+                }))
+            setLoading(false);
+        }
     }
 
     const delay = ms => new Promise(
@@ -250,6 +266,14 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
                 setUserReferences(beneficiariesByUserId) 
         // }        
     }
+    useEffect(() => {
+       
+        const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
+			const status = !(state.isConnected && state.isInternetReachable);
+			setIsOffline(status);
+		});
+		return () => removeNetInfoSubscription();
+    }, []);
 
      useEffect(()=>{
         if(loggedUser?.online_id !== undefined){
