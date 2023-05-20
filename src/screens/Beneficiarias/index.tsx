@@ -635,7 +635,7 @@ const renderServerItem = (data: any) => (
                 }
                     <Box alignItems="center" w="80%" bgColor="white" style={{ borderRadius: 5, }}>
                         <Input ref={inputRef} w={{ base: "100%", md: "25%" }} onChangeText={handleChange}
-                            InputLeftElement={<Icon as={MaterialIcons} name="search" size={5} ml="2" color="muted.700" />} placeholder="Search"
+                            InputLeftElement={<Icon as={MaterialIcons} name="search" size={5} ml="2" color="muted.700" />} placeholder="Pesquisar"
                             style={{ borderRadius: 45 }} />
                     </Box>
 
