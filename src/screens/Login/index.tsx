@@ -410,7 +410,7 @@ const Login: React.FC = ({ route }: any) => {
                                                     <Pressable onPress={() => setShow(!show)}>
                                                         <Icon as={<MaterialIcons name={show ? "visibility" : "visibility-off"} />} size={5} mr="2" color="muted.400" />
                                                     </Pressable>}
-                                                placeholder="Insira a Password" onChangeText={handleChange('password')}
+                                                placeholder="Insira a Senha" onChangeText={handleChange('password')}
                                                 value={values.password} />
                                             <FormControl.ErrorMessage>
                                                 {errors.password}
@@ -435,7 +435,7 @@ const Login: React.FC = ({ route }: any) => {
                                             }} mt={-0.5} _web={{
                                                 mb: -1
                                             }}>
-                                            Esqueceu a password?
+                                            Esqueceu a senha?
                                         </Link>
                                     </VStack>
                                 }
