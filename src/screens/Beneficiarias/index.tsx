@@ -148,8 +148,9 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
             setMaskName(true)
         }
         const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
-			const offline = !(state.isConnected && state.isInternetReachable);
-			setIsOffline(offline);
+			const status = !(state.isConnected && state.isInternetReachable);
+            console.log(status);
+			setIsOffline(status);
 		});
 		return () => removeNetInfoSubscription();
     },[])
