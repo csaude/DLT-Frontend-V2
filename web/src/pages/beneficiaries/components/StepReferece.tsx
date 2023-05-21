@@ -5,7 +5,7 @@ import { allPartnersByType, allPartnersByTypeDistrict } from '@app/utils/partner
 import { query, allUsesByUs, allUsersByProfilesAndUser, queryByUserId } from '@app/utils/users';
 import { allUs, allUsByType } from '@app/utils/uSanitaria';
 import {queryByCreated} from '@app/utils/reference';
-import { COUNSELOR, MANAGER, MENTOR, NURSE, SUPERVISOR } from '@app/utils/contants';
+import { COUNSELOR, MENTOR, NURSE, SUPERVISOR } from '@app/utils/contants';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
 import { getEntryPoint } from '@app/models/User';
@@ -32,7 +32,8 @@ const StepReference = ({ form, beneficiary, reference, firstStepValues }: any) =
   const selectedReference = beneficiary;
   let userId = localStorage.getItem('user');
 
-  const referers = useSelector((state:any)=> state.user.referers)
+  const referers = useSelector((state:any)=> state.user.referers);
+  const sortedReferes = referers.sort((u1, u2) => (u1.name + u1.surname).localeCompare(u2.name + u2.surname));
 
   useEffect(() => {
 
@@ -44,13 +45,13 @@ const StepReference = ({ form, beneficiary, reference, firstStepValues }: any) =
         form.setFieldsValue({ referenceNote: 
                               ('REFDR' + String(userId).padStart(3, '0') + String(beneficiary.locality.district.province.id) + String(((await queryByCreated(userId))?.length)+ 1).padStart(3, '0'))
                             });
-        form.setFieldsValue({ referredBy: [MANAGER, SUPERVISOR, MENTOR, NURSE, COUNSELOR].includes(loggedUser.profiles.id)? userId : '' });
+        form.setFieldsValue({ referredBy: [SUPERVISOR, MENTOR, NURSE, COUNSELOR].includes(loggedUser.profiles.id)? userId : '' });
       } else {
         const regUser = await queryByUserId(reference?.createdBy);
         form.setFieldsValue({ createdBy: regUser?.name + ' ' + regUser?.surname });
         form.setFieldsValue({ referenceNote: reference.referenceNote});
 
-        setStatusEnabled(reference.userCreated === userId || ![MANAGER, MENTOR, NURSE, COUNSELOR].includes(loggedUser.profiles.id));
+        setStatusEnabled(reference.userCreated === userId || ![MENTOR, NURSE, COUNSELOR].includes(loggedUser.profiles.id));
       }
 
       const partnerType = loggedUser.partners.partnerType;
@@ -150,7 +151,8 @@ const StepReference = ({ form, beneficiary, reference, firstStepValues }: any) =
 
   const onChangeUs = async (value: any) => {
     const data = await allUsesByUs(value);
-    setUsers(data);
+    const sortedUsers = data.sort((u1, u2) => (u1.name + u1.surname).localeCompare(u2.name + u2.surname));
+    setUsers(sortedUsers);
   }
 
   const onChangeStatus =async (e:any) => {
@@ -210,7 +212,7 @@ const StepReference = ({ form, beneficiary, reference, firstStepValues }: any) =
             initialValue={reference === undefined ? "" : reference?.referredBy?.id.toString()}
           >
               <Select placeholder="Seleccione o Referente" >
-                  {referers?.map(item => (
+                  {sortedReferes?.map(item => (
                       <Option key={item.id}>{item.name + ' ' + item.surname}</Option>
                   ))}
               </Select>
