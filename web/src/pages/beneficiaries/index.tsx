@@ -17,7 +17,7 @@ import { add as addRef, Reference } from '../../utils/reference';
 import FormReference from './components/FormReference';
 import { allDistrict } from '@app/utils/district';
 import { Title } from '@app/components';
-import { ADMIN, COUNSELOR, MANAGER, MENTOR, MNE, NURSE, SUPERVISOR } from '@app/utils/contants';
+import { ADMIN, COUNSELOR, MENTOR, MNE, NURSE, SUPERVISOR } from '@app/utils/contants';
 import { useDispatch, useSelector } from 'react-redux';
 import LoadingModal from '@app/components/modal/LoadingModal';
 import { loadReferers } from '@app/store/actions/users';
@@ -112,7 +112,7 @@ const BeneficiariesList: React.FC = () => {
 
         const fetchReferersUsers = async () =>{
             var payload = {
-                profiles: [MANAGER, SUPERVISOR, MENTOR, NURSE, COUNSELOR].toString(),
+                profiles: [SUPERVISOR, MENTOR, NURSE, COUNSELOR].toString(),
                 userId: Number(userId)
             }
         

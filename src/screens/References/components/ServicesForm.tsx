@@ -7,11 +7,11 @@ import {
     Input, Button, HStack,
     Alert, useToast, InputGroup, InputLeftAddon, Checkbox
 } from 'native-base';
-import DatePicker, { getToday, getFormatedDate } from 'react-native-modern-datepicker';
+import DatePicker, { getToday } from 'react-native-modern-datepicker';
 import { Picker } from '@react-native-picker/picker';
 import withObservables from '@nozbe/with-observables';
 import { database } from '../../../database';
-import { navigate, navigationRef } from '../../../routes/NavigationRef';
+import { navigationRef } from '../../../routes/NavigationRef';
 import ModalSelector from 'react-native-modal-selector-searchable';
 import { Q } from "@nozbe/watermelondb";
 import { Formik } from 'formik';
@@ -61,7 +61,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
             result: '',
             date: '',
             us_id: reference.us_id,
-            activist_id: loggedUser?.online_id,
+            activist_id: loggedUser?.online_id !== undefined ?  loggedUser.online_id : loggedUser.id,
             entry_point: reference?.refer_to,
             provider: notifyTo?.name + '' + notifyTo?.surname,
             remarks: '',
@@ -197,6 +197,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                 intervention.entry_point = values.entry_point
                 intervention.provider = ''+values.provider
                 intervention.remarks = values.remarks
+                intervention.date_created = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
                 intervention.status = initialVal.status
 
             });
