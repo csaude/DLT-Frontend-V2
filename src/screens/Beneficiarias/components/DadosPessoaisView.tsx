@@ -51,15 +51,21 @@ const DadosPessoaisView: React.FC = ({ route }: any) => {
                 <View style={styles.user}>
                     <View style={styles.containerForm}>
                         <Box style={styles.userLogo}>
-                            <Avatar color="white" bg={'primary.500'} size={150}>
+                            <Avatar color="white" bg={'primary.500'} size={150}>                               
                                 {
-                                    (beneficiary.gender === "1") ?
+                                (beneficiary.gender === "1") ?
+                                    <Avatar color="white" bg={'primary.500'} size={150} >
                                         <Icon as={Ionicons} name="man" color="white" size={70} />
+                                    </Avatar>
                                     :
                                     (beneficiary.gender === "2") ?
-                                        <Icon as={Ionicons} name="woman" color="white" size={70} />
-                                    :
-                                        <Icon as={Ionicons} name="person" color="white" size={70} />
+                                        <Avatar color="white" bg="pink.500" size={150} >
+                                            <Icon as={Ionicons} name="woman" color="white" size={70} />
+                                        </Avatar>
+                                        :
+                                        <Avatar color="white" bg="amber.500" size={150} >
+                                            <Icon as={Ionicons} name="person" color="white" size={70} />
+                                        </Avatar>
                                 }
                             </Avatar>
                             <Box style={styles.userText}>
@@ -71,7 +77,7 @@ const DadosPessoaisView: React.FC = ({ route }: any) => {
                             </Box>
                         </Box>
                         <Flex direction="column" mb="2.5" _text={{ color: "coolGray.800" }}>
-                            <Box bg="primary.500" p="2" rounded="lg">
+                            <Box bg={beneficiary.gender === "2" ? "pink.500" : "primary.500"} p="2" rounded="lg">
                                 <Heading size="md" color="white">Detalhes da Beneficiária</Heading>
                                 <Divider />
                                 <Text style={styles.txtLabelInfo}>
