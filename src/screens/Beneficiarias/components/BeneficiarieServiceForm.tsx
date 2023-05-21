@@ -665,9 +665,11 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                                                     keyExtractor={item => item.online_id}
                                                     labelExtractor={item => `${item.name} ${item.surname}`}
                                                     renderItem={undefined}
-                                                    initValue="Select something yummy!"
+                                                    initValue=""
                                                     accessible={true}
-                                                    cancelButtonAccessibilityLabel={'Cancel Button'}
+                                                    cancelText={'Cancelar'}
+                                                    searchText={'Pesquisar'}
+                                                    cancelButtonAccessibilityLabel={'Cancelar'}
                                                     onChange={(option) => { setSelectedUser(`${option.name} ${option.surname}`); setFieldValue('provider', option.online_id); }}>
                                                     <Input type='text' onBlur={handleBlur('provider')} placeholder={currentInformedProvider}  onChangeText={handleChange('provider')} value={selectedUser} />
                                                 </ModalSelector> :
