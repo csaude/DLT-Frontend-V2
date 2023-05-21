@@ -565,6 +565,8 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                                             renderItem={undefined}
                                             initValue="Select something yummy!"
                                             accessible={true}
+                                            cancelText={'Cancelar'}
+                                            searchText={'Pesquisar'}
                                             cancelButtonAccessibilityLabel={'Cancel Button'}
                                             onChange={(option) => { setSelectedUser(`${option.name} ${option.surname}`); setFieldValue('provider', `${option.name} ${option.surname}`); }}>
                                             <Input type='text' onBlur={handleBlur('provider')} placeholder={currentInformedProvider} onChangeText={handleChange('provider')} value={selectedUser} />

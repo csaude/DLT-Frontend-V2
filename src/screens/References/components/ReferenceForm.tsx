@@ -588,6 +588,8 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                                         renderItem={undefined}
                                         initValue="Select something yummy!"
                                         accessible={true}
+                                        cancelText={'Cancelar'}
+                                        searchText={'Pesquisar'}
                                         cancelButtonAccessibilityLabel={'Cancel Button'}
                                         onChange={(option) => { setSelectedUser(`${option.name} ${option.surname}`); formik.setFieldValue('notify_to', option.online_id); }}>
                                         <Input type='text' onBlur={formik.handleBlur('notify_to')} placeholder="Seleccione o provedor a notificar" onChangeText={formik.handleChange('notify_to')} value={selectedUser} />
@@ -639,6 +641,8 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                                             renderItem={undefined}
                                             initValue="Seleccione Serviço a Associar"
                                             accessible={true}
+                                            cancelText={'Cancelar'}
+                                            searchText={'Pesquisar'}
                                             cancelButtonAccessibilityLabel={'Cancel Button'}
                                             onChange={(option) => { onSelectService(option); }}>
                                             <Input minW={390} InputLeftElement={<Icon as={MaterialIcons} name="add-circle" size={5} ml="2" color="muted.700" />}
