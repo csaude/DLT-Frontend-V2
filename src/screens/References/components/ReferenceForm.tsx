@@ -352,15 +352,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
 
     const syncronize = () => {       
         setLoading(true);       
-		if(isOffline){
-			toast.show({
-                placement: "top",
-                render: () => {
-                    return (<WithoutNetwork />);
-                }
-            })
-			setLoading(false);
-		}else{
+		if(!isOffline){
             sync({ username: loggedUser.username })
             .then(() =>( setIsSync(true)))
             .catch(() => toast.show({
@@ -368,9 +360,9 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                 render: () => {
                     return (<ErrorHandler />);
                 }
-            }))
-			setLoading(false);
+            }))	
         }
+        setLoading(false);
 
         getTotals().catch(err=>console.error(err))
     }

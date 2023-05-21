@@ -263,15 +263,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
 
     const syncronize = () => {       
         setLoading(true);       
-		if(isOffline){
-			toast.show({
-                placement: "top",
-                render: () => {
-                    return (<WithoutNetwork />);
-                }
-            })
-			setLoading(false);
-		}else{
+		if(!isOffline){
             sync({ username: loggedUser.username })
             .then(() =>( setIsSync(true)))
             .catch(() => toast.show({
@@ -280,8 +272,8 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                     return (<ErrorHandler />);
                 }
             }))
-			setLoading(false);
-        }
+		}
+		setLoading(false);
     }
 
     const getPartner = async() => {

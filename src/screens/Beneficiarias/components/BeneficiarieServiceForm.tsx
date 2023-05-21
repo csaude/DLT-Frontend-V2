@@ -372,15 +372,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
         });
 
         setLoading(true);       
-		if(isOffline){
-			toast.show({
-                placement: "top",
-                render: () => {
-                    return (<WithoutNetwork />);
-                }
-            })
-			setLoading(false);
-		}else{
+		if(!isOffline){
             sync({ username: loggedUser.username })
             .then(() => toast.show({
                 placement: "top",
@@ -393,9 +385,9 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                 render: () => {
                     return (<ErrorHandler />);
                 }
-            }))
+            }))			
+		}
 			setLoading(false);
-        }
     }
 
     useEffect(()=>{
