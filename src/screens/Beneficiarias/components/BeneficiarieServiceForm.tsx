@@ -9,7 +9,7 @@ import {
     Alert, useToast, InputGroup, InputLeftAddon, IconButton, CloseIcon
 }
     from 'native-base';
-import { SuccessHandler, ErrorHandler } from "../../../components/SyncIndicator";
+import { SuccessHandler, ErrorHandler, WithoutNetwork } from "../../../components/SyncIndicator";
 
 import moment from 'moment';
 import { Picker } from '@react-native-picker/picker';
@@ -25,6 +25,7 @@ import { Context } from '../../../routes/DrawerNavigator';
 import styles from './styles';
 import { MENTOR } from '../../../utils/constants';
 import MyDatePicker from '../../../components/DatePicker';
+import NetInfo from "@react-native-community/netinfo";
 
 const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }: any) => {
     const { beneficiarie, intervs, intervention, isNewIntervention } = route.params;
@@ -47,6 +48,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     const [currentInformedProvider, setCurrentInformedProvider] = useState('') ;
     const [servicesState,setServicesState] = useState<any>([]);
     const [initialValues, setInitialValues] = useState<any>({});
+    const [isOffline, setIsOffline] = useState(false);
     const [loading, setLoading] = useState(false);
     
     let mounted = true;
@@ -66,6 +68,17 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
 
         setText(selectedDate);
     }
+
+
+    useEffect(() => {
+      
+        const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
+			const status = !(state.isConnected && state.isInternetReachable);
+			setIsOffline(status);
+		});
+		return () => removeNetInfoSubscription();
+
+    }, []);
 
     const handleDataFromDatePickerComponent=(selectedDate) =>{
 
@@ -358,7 +371,17 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
             merge: true,
         });
 
-        sync({ username: loggedUser.username })
+        setLoading(true);       
+		if(isOffline){
+			toast.show({
+                placement: "top",
+                render: () => {
+                    return (<WithoutNetwork />);
+                }
+            })
+			setLoading(false);
+		}else{
+            sync({ username: loggedUser.username })
             .then(() => toast.show({
                 placement: "top",
                 render: () => {
@@ -370,7 +393,9 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                 render: () => {
                     return (<ErrorHandler />);
                 }
-            }));
+            }))
+			setLoading(false);
+        }
     }
 
     useEffect(()=>{

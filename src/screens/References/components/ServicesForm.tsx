@@ -19,11 +19,12 @@ import { Context } from '../../../routes/DrawerNavigator';
 
 import styles from './styles';
 import { sync } from '../../../database/sync';
-import { ErrorHandler, SuccessHandler } from '../../../components/SyncIndicator';
+import { ErrorHandler, SuccessHandler, WithoutNetwork } from '../../../components/SyncIndicator';
 import moment from 'moment';
 import { MENTOR } from '../../../utils/constants';
 import Spinner from 'react-native-loading-spinner-overlay/lib';
 import MyDatePicker from '../../../components/DatePicker';
+import NetInfo from "@react-native-community/netinfo";
 
 const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     const { reference, beneficiarie, intervention } = route.params;
@@ -43,6 +44,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     const [notifyTo, setNotifyTo] = useState<any>(undefined);
     const [us, setUs] = useState<any>([]);
     const [checked, setChecked] = useState(false);
+	const [isOffline, setIsOffline] = useState(false);
     const [selectedUser, setSelectedUser] = useState<any>("");
     const [organization, setOrganization] = useState<any>();
     const [isClinicalOrCommunityPartner, setClinicalOrCommunityPartner]= useState(false);
@@ -167,6 +169,17 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
         }
 
     }
+
+    useEffect(() => {
+      
+        const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
+			const status = !(state.isConnected && state.isInternetReachable);
+			setIsOffline(status);
+		});
+		return () => removeNetInfoSubscription();
+
+    }, []);
+
     useEffect(() => {
         isSync ?  
             toast.show({
@@ -249,14 +262,26 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     );
 
     const syncronize = () => {       
-        sync({username: loggedUser.username})
-                .then(() => ( setIsSync(true)))
-                .catch(() => toast.show({
-                                placement: "top",
-                                render:() => {
-                                    return (<ErrorHandler />);
-                                }
-                            }))
+        setLoading(true);       
+		if(isOffline){
+			toast.show({
+                placement: "top",
+                render: () => {
+                    return (<WithoutNetwork />);
+                }
+            })
+			setLoading(false);
+		}else{
+            sync({ username: loggedUser.username })
+            .then(() =>( setIsSync(true)))
+            .catch(() => toast.show({
+                placement: "top",
+                render: () => {
+                    return (<ErrorHandler />);
+                }
+            }))
+			setLoading(false);
+        }
     }
 
     const getPartner = async() => {

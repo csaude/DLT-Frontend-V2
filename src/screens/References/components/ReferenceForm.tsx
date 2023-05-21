@@ -12,7 +12,7 @@ import ModalSelector from 'react-native-modal-selector-searchable';
 import styles from './styles1';
 import moment from 'moment';
 import { sync } from "../../../database/sync";
-import { SuccessHandler } from '../../../components/SyncIndicator';
+import { SuccessHandler, WithoutNetwork } from '../../../components/SyncIndicator';
 import { Context } from '../../../routes/DrawerNavigator';
 import MyDatePicker from '../../../components/DatePicker';
 import { calculateAge } from '../../../models/Utils';
@@ -23,6 +23,7 @@ import { beneficiariesFetchCount } from '../../../services/beneficiaryService';
 import { getBeneficiariesTotal } from '../../../store/beneficiarySlice';
 import { referencesFetchCount } from '../../../services/referenceService';
 import { getReferencesTotal } from '../../../store/referenceSlice';
+import NetInfo from "@react-native-community/netinfo";
 
 const ReferenceForm: React.FC = ({ route }: any) => {
 
@@ -51,6 +52,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
     const [isSync, setIsSync] = useState(false);
     const [loading, setLoading] = useState(false);
     const loggedUser: any = useContext(Context);
+	const [isOffline, setIsOffline] = useState(false);
 
     useEffect(() => {
 
@@ -81,6 +83,13 @@ const ReferenceForm: React.FC = ({ route }: any) => {
         }
 
         fetchEntryPoints().catch(error => console.log(error));
+
+        const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
+			const status = !(state.isConnected && state.isInternetReachable);
+			setIsOffline(status);
+		});
+		return () => removeNetInfoSubscription();
+
     }, []);
 
     const formik = useFormik({
@@ -342,14 +351,26 @@ const ReferenceForm: React.FC = ({ route }: any) => {
     );
 
     const syncronize = () => {       
-        sync({username: loggedUser.username})
-                .then(() => ( setIsSync(true)))
-                .catch(() => toast.show({
-                                placement: "top",
-                                render:() => {
-                                    return (<ErrorHandler />);
-                                }
-                            }))
+        setLoading(true);       
+		if(isOffline){
+			toast.show({
+                placement: "top",
+                render: () => {
+                    return (<WithoutNetwork />);
+                }
+            })
+			setLoading(false);
+		}else{
+            sync({ username: loggedUser.username })
+            .then(() =>( setIsSync(true)))
+            .catch(() => toast.show({
+                placement: "top",
+                render: () => {
+                    return (<ErrorHandler />);
+                }
+            }))
+			setLoading(false);
+        }
 
         getTotals().catch(err=>console.error(err))
     }
