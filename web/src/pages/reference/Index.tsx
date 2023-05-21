@@ -15,7 +15,7 @@ import ViewReferral from './components/View';
 import FormReference from '../beneficiaries/components/FormReference';
 import FullPageLoader from '@app/components/full-page-loader/FullPageLoader';
 import { Title } from '@app/components';
-import { ADMIN, COUNSELOR, MANAGER, MENTOR, NURSE, SUPERVISOR } from '@app/utils/contants';
+import { ADMIN, COUNSELOR, MENTOR, NURSE, SUPERVISOR } from '@app/utils/contants';
 import LoadingModal from '@app/components/modal/LoadingModal';
 import { useDispatch } from 'react-redux';
 import { loadReferers } from '@app/store/actions/users';
@@ -84,7 +84,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
 
         const fetchReferersUsers = async () =>{
             var payload = {
-                profiles: [MANAGER, SUPERVISOR, MENTOR, NURSE, COUNSELOR].toString(),
+                profiles: [SUPERVISOR, MENTOR, NURSE, COUNSELOR].toString(),
                 userId: Number(userId)
             }
         

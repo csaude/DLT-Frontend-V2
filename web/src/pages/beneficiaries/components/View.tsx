@@ -13,7 +13,7 @@ import 'antd/dist/antd.css';
 
 import '../styles.css'
 import InterventionForm from './InterventionForm';
-import { ADMIN, MANAGER, MENTOR, MNE, SUPERVISOR } from '@app/utils/contants';
+import { ADMIN, MENTOR, MNE, SUPERVISOR } from '@app/utils/contants';
 import { useDispatch } from 'react-redux';
 import { getInterventionsCount } from '@app/store/actions/interventions';
 
@@ -212,7 +212,7 @@ export function ViewBenefiaryPanel({ beneficiary, handleModalVisible, handleView
             dataIndex: '',
             key: 'intervention',
             render: (text, record)  => 
-                ((user.profiles.id == MENTOR || user.profiles.id == MANAGER && user.partners.partnerType == 2) && record.subServices.service.id == 9)? 
+                ((user.profiles.id == MENTOR && user.partners.partnerType == 2) && record.subServices.service.id == 9)? 
                 '' : record.subServices.name,
         },
         {

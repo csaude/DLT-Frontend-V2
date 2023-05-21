@@ -1,25 +1,16 @@
-import React, { Fragment, useEffect, useState } from 'react';
-import { Badge, Button, Steps, Row, Col, Input, message, InputNumber, Form, DatePicker, Checkbox, Select, Radio, Divider, SelectProps, Card, Table, Typography, Space, Drawer } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Button, Row, Col, Input, message, Form, Select, Card, Table, Typography, Space, Drawer } from 'antd';
 import './index.css';
 import moment from 'moment';
 import { DeleteFilled, PlusOutlined } from '@ant-design/icons';
 import { query as queryUser } from '@app/utils/users';
 import { query as queryBeneficiary } from "@app/utils/beneficiary";
 import { query as beneficiaryInterventionQuery } from '../../../utils/beneficiaryIntervention';
-import { queryByType, queryByTypeAndBeneficiary } from '@app/utils/service'
-import { MANAGER, MENTOR } from '@app/utils/contants';
+import { queryByTypeAndBeneficiary } from '@app/utils/service'
+import { MENTOR } from '@app/utils/contants';
 
 const { Option } = Select;
-const { Step } = Steps;
 const { TextArea } = Input;
-
-const { Text } = Typography;
-
-const options = [
-    { label: 'US', value: '1' },
-    { label: 'CM', value: '2' },
-    { label: 'ES', value: '3' },
-];
 
 const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, handleRefServicesList }: any) => {
 
@@ -220,7 +211,7 @@ const StepReferenceService = ({ form, reference, beneficiary, firstStepValues, h
             title: 'Intervenções',
             dataIndex: '',
             key: 'intervention',
-            render: (text, record) => ((user?.profiles.id == MENTOR || user?.profiles.id == MANAGER && user?.partners.partnerType == 2) && record.subServices.service.id == 9)? '' : record.subServices.name,
+            render: (text, record) => ((user?.profiles.id == MENTOR && user?.partners.partnerType == 2) && record.subServices.service.id == 9)? '' : record.subServices.name,
         },
         {
             title: 'Atendido Por',

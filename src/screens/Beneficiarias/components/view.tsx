@@ -45,18 +45,22 @@ const ViewBeneficiaries: React.FC = ({ route }: any) => {
             <ScrollView>
                 <View style={styles.user}>
                     <View style={styles.containerForm}>
-                        <Box style={styles.userLogo}>
-                            <Avatar color="white" bg={'primary.500'} size={150}>
-                                {
-                                    (beneficiary.gender === "1") ?
+                        <Box style={styles.userLogo}>                           
+                            {
+                                (beneficiary.gender === "1") ?
+                                    <Avatar color="white" bg="blue.500" >
                                         <Icon as={Ionicons} name="man" color="white" size={70} />
-                                        :
-                                        (beneficiary.gender === "2") ?
+                                    </Avatar>
+                                    :
+                                    (beneficiary.gender === "2") ?
+                                        <Avatar color="white" bg="pink.500" >
                                             <Icon as={Ionicons} name="woman" color="white" size={70} />
-                                            :
+                                        </Avatar>
+                                        :
+                                        <Avatar color="white" bg="amber.500" >
                                             <Icon as={Ionicons} name="person" color="white" size={70} />
-                                }
-                            </Avatar>
+                                        </Avatar>
+                            }
                             <Box style={styles.userText}>
                                 <Text>{beneficiary.username}</Text>
                                 <Heading style={styles.username}>{beneficiary.name} {beneficiary.surname}</Heading>
@@ -107,7 +111,7 @@ const ViewBeneficiaries: React.FC = ({ route }: any) => {
                                     }
                                 </Text>
                             </Box>
-                            <Spacer  />
+                            <Spacer />
                             <Box bg="primary.500" p="2" rounded="md" mt="1%" marginTop={4}>
                                 <Heading size="md" color="white">Serviços</Heading>
                                 <Divider />
@@ -132,32 +136,32 @@ const ViewBeneficiaries: React.FC = ({ route }: any) => {
                                         </>
                                     )*/
                                     //return { id: subservice._raw.online_id, name: subservice._raw.name, intervention: e._raw }
-                                    interventions.map((item) => 
-                                        
-                                            <View key={item.id} style={{
-                                                paddingVertical: 15,
-                                                paddingHorizontal: 10,
-                                                flexDirection: "row",
-                                                //justifyContent: "space-around",
-                                                alignItems: "center"
-                                            }}>
+                                    interventions.map((item) =>
 
-                                                <MaterialIcons name="medical-services" size={24} color="white" />
-                                                <Text style={{ color: 'white' }} key={item.id.toString()}>
-                                                    {item.name}
-                                                </Text>
-                                                <Button onPress={() => navigate({ name: "BeneficiarieServiceForm", params: { beneficiarie: beneficiary, intervention: item.intervention, isNewIntervention: false  } })}>
+                                        <View key={item.id} style={{
+                                            paddingVertical: 15,
+                                            paddingHorizontal: 10,
+                                            flexDirection: "row",
+                                            //justifyContent: "space-around",
+                                            alignItems: "center"
+                                        }}>
+
+                                            <MaterialIcons name="medical-services" size={24} color="white" />
+                                            <Text style={{ color: 'white' }} key={item.id.toString()}>
+                                                {item.name}
+                                            </Text>
+                                            <Button onPress={() => navigate({ name: "BeneficiarieServiceForm", params: { beneficiarie: beneficiary, intervention: item.intervention, isNewIntervention: false } })}>
                                                 <Icon as={MaterialIcons} name="edit" size={5} color="gray.200" />
-                                                </Button>
-                                            </View>
+                                            </Button>
+                                        </View>
 
-                                      
+
                                     )
 
                                 }
 
                                 <Stack direction="row" space={3}>
-                                    <Button mt="3" colorScheme="success" ml="85%" onPress={() => navigate({ name: "BeneficiarieServiceForm", params: { beneficiarie: beneficiary, isNewIntervention: false  } })}>
+                                    <Button mt="3" colorScheme="success" ml="85%" onPress={() => navigate({ name: "BeneficiarieServiceForm", params: { beneficiarie: beneficiary, isNewIntervention: false } })}>
                                         <Icon as={MaterialIcons} name="add" size={5} color="gray.200" />
                                     </Button>
                                 </Stack>

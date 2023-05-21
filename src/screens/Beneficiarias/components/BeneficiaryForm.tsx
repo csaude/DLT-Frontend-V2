@@ -16,7 +16,7 @@ import DatePicker, { getFormatedDate } from 'react-native-modern-datepicker';
 import { Context } from '../../../routes/DrawerNavigator';
 import { calculateAge, getMaxDate, getMinDate } from '../../../models/Utils';
 import styles from './styles';
-import { SuccessHandler, ErrorHandler } from "../../../components/SyncIndicator";
+import { SuccessHandler, ErrorHandler, WithoutNetwork } from "../../../components/SyncIndicator";
 import { sync } from "../../../database/sync";
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../store';
@@ -25,6 +25,7 @@ import MyDatePicker from '../../../components/DatePicker';
 import { beneficiariesFetchCount } from '../../../services/beneficiaryService';
 import { getBeneficiariesTotal } from '../../../store/beneficiarySlice';
 import { referencesFetchCount } from '../../../services/referenceService';
+import NetInfo from "@react-native-community/netinfo";
 import { getReferencesTotal } from '../../../store/referenceSlice';
 
 const BeneficiaryForm: React.FC = ({ route , subServices, beneficiaries_interventions }: any) => {
@@ -75,7 +76,7 @@ const BeneficiaryForm: React.FC = ({ route , subServices, beneficiaries_interven
     const [searchPartner, setSearchPartner] = useState<any>(undefined);
     const [partnerHasErrors, setPartnerHasErrors] = useState(false)
     const [isUsVisible, setUsVisible] = useState(false);
-
+	const [isOffline, setIsOffline] = useState(false);
 
     const minBirthYear = new Date();
     minBirthYear.setFullYear(new Date().getFullYear() - 24);
@@ -213,6 +214,12 @@ const BeneficiaryForm: React.FC = ({ route , subServices, beneficiaries_interven
             setUsVisible(isUserAllowed)
         }
         validateLoggedUser().catch(err=>console.error(err))
+
+        const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
+			const status = !(state.isConnected && state.isInternetReachable);
+			setIsOffline(status);
+		});
+		return () => removeNetInfoSubscription();
 
     }, []);
     const toast = useToast();
@@ -639,8 +646,10 @@ const BeneficiaryForm: React.FC = ({ route , subServices, beneficiaries_interven
                 return newBeneficiary;
             }
         });
-
-        sync({ username: loggedUser.username })
+        
+        setLoading(true);       
+		if(!isOffline){
+			sync({ username: loggedUser.username })
             .then(() => toast.show({
                 placement: "top",
                 render: () => {
@@ -652,7 +661,9 @@ const BeneficiaryForm: React.FC = ({ route , subServices, beneficiaries_interven
                 render: () => {
                     return (<ErrorHandler />);
                 }
-            }));
+            }))
+		}
+			setLoading(false);
 
         return newObject;
     }

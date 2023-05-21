@@ -185,7 +185,7 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
                 flex={1} space={5} alignItems="center">
                     {
                         (data.item.gender === "1") ?
-                            <Avatar color="white" bg="blue.500" >
+                            <Avatar color="white" bg="primary.500" >
                                 <Icon as={Ionicons} name="man" color="white" size={35} />
                             </Avatar>
                             :
@@ -635,7 +635,7 @@ const renderServerItem = (data: any) => (
                 }
                     <Box alignItems="center" w="80%" bgColor="white" style={{ borderRadius: 5, }}>
                         <Input ref={inputRef} w={{ base: "100%", md: "25%" }} onChangeText={handleChange}
-                            InputLeftElement={<Icon as={MaterialIcons} name="search" size={5} ml="2" color="muted.700" />} placeholder="Search"
+                            InputLeftElement={<Icon as={MaterialIcons} name="search" size={5} ml="2" color="muted.700" />} placeholder="Pesquisar"
                             style={{ borderRadius: 45 }} />
                     </Box>
 

@@ -1,21 +1,17 @@
 import React, { useEffect, useState, useContext } from 'react';
 import {
     View, KeyboardAvoidingView, ScrollView,
-    TextInput, TouchableOpacity, Platform,
 }
     from 'react-native';
 import {
-    Center, Box, Select, Text, Heading, VStack, FormControl,
-    Input, Link, Button, CheckIcon, WarningOutlineIcon, HStack, Checkbox,
-    Alert, Flex, useToast, Stack, InputGroup, InputLeftAddon, InputRightAddon, Radio, IconButton, CloseIcon
+    Center, Box, Text, VStack, FormControl,
+    Input, Button, HStack, Checkbox,
+    Alert, useToast, InputGroup, InputLeftAddon, IconButton, CloseIcon
 }
     from 'native-base';
-import { SuccessHandler, ErrorHandler } from "../../../components/SyncIndicator";
+import { SuccessHandler, ErrorHandler, WithoutNetwork } from "../../../components/SyncIndicator";
 
 import moment from 'moment';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import DatePicker, { getToday, getFormatedDate } from 'react-native-modern-datepicker';
-import { stringify } from 'qs';
 import { Picker } from '@react-native-picker/picker';
 import { Formik } from 'formik';
 import { Q } from "@nozbe/watermelondb";
@@ -23,14 +19,13 @@ import { navigate } from '../../../routes/NavigationRef';
 import withObservables from '@nozbe/with-observables';
 import { database } from '../../../database';
 import ModalSelector from 'react-native-modal-selector-searchable';
-import { MaterialIcons } from "@native-base/icons";
-import Beneficiaries_interventions, { BeneficiariesInterventionsModel } from '../../../models/Beneficiaries_interventions';
 import { sync } from "../../../database/sync";
 import { Context } from '../../../routes/DrawerNavigator';
 
 import styles from './styles';
 import { MENTOR } from '../../../utils/constants';
 import MyDatePicker from '../../../components/DatePicker';
+import NetInfo from "@react-native-community/netinfo";
 
 const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }: any) => {
     const { beneficiarie, intervs, intervention, isNewIntervention } = route.params;
@@ -53,6 +48,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     const [currentInformedProvider, setCurrentInformedProvider] = useState('') ;
     const [servicesState,setServicesState] = useState<any>([]);
     const [initialValues, setInitialValues] = useState<any>({});
+    const [isOffline, setIsOffline] = useState(false);
     const [loading, setLoading] = useState(false);
     
     let mounted = true;
@@ -72,6 +68,17 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
 
         setText(selectedDate);
     }
+
+
+    useEffect(() => {
+      
+        const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
+			const status = !(state.isConnected && state.isInternetReachable);
+			setIsOffline(status);
+		});
+		return () => removeNetInfoSubscription();
+
+    }, []);
 
     const handleDataFromDatePickerComponent=(selectedDate) =>{
 
@@ -268,7 +275,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     }
 
     const validate = (values: any) => {
-        const errors: BeneficiariesInterventionsModel = {};
+        const errors: any = {};
 
         if (!values.service_id) {
             errors.id = message;
@@ -333,6 +340,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                     intervention.entry_point = values.entry_point
                     intervention.provider = values.provider
                     intervention.remarks = values.remarks
+                    intervention.date_created = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
                     intervention.status = 1
                 });
                 showToast('success','Provido', 'Serviço provido com sucesso!');
@@ -363,7 +371,9 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
             merge: true,
         });
 
-        sync({ username: loggedUser.username })
+        setLoading(true);       
+		if(!isOffline){
+            sync({ username: loggedUser.username })
             .then(() => toast.show({
                 placement: "top",
                 render: () => {
@@ -375,7 +385,9 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                 render: () => {
                     return (<ErrorHandler />);
                 }
-            }));
+            }))			
+		}
+			setLoading(false);
     }
 
     useEffect(()=>{
@@ -645,9 +657,11 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                                                     keyExtractor={item => item.online_id}
                                                     labelExtractor={item => `${item.name} ${item.surname}`}
                                                     renderItem={undefined}
-                                                    initValue="Select something yummy!"
+                                                    initValue=""
                                                     accessible={true}
-                                                    cancelButtonAccessibilityLabel={'Cancel Button'}
+                                                    cancelText={'Cancelar'}
+                                                    searchText={'Pesquisar'}
+                                                    cancelButtonAccessibilityLabel={'Cancelar'}
                                                     onChange={(option) => { setSelectedUser(`${option.name} ${option.surname}`); setFieldValue('provider', option.online_id); }}>
                                                     <Input type='text' onBlur={handleBlur('provider')} placeholder={currentInformedProvider}  onChangeText={handleChange('provider')} value={selectedUser} />
                                                 </ModalSelector> :
