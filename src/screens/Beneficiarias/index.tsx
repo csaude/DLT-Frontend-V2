@@ -185,7 +185,7 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
                 flex={1} space={5} alignItems="center">
                     {
                         (data.item.gender === "1") ?
-                            <Avatar color="white" bg="blue.500" >
+                            <Avatar color="white" bg="primary.500" >
                                 <Icon as={Ionicons} name="man" color="white" size={35} />
                             </Avatar>
                             :
