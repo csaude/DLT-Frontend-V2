@@ -14,7 +14,8 @@ export interface BeneficiariesInterventionsModel {
     provider?: any,
     remarks?: string,
     status?: any,
-    online_id?: any
+    online_id?: any,
+    date_created: string
 }
 
 export default class Beneficiaries_interventions extends Model {
@@ -32,5 +33,6 @@ export default class Beneficiaries_interventions extends Model {
     @text("remarks") remarks;
     @field("status") status;
     @field("online_id") online_id;
+    @text("date_created") date_created;
 
 }

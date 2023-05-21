@@ -10,7 +10,7 @@ import ReferenceInterventionForm from "@app/pages/reference/components/Reference
 import { addSubService, SubServiceParams } from '@app/utils/service'
 import { Checkbox } from 'antd';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
-import { COUNSELOR, MANAGER, MENTOR, NURSE } from "@app/utils/contants";
+import { MENTOR } from "@app/utils/contants";
 import { useDispatch, useSelector } from "react-redux";
 import { resetNextServiceIndex, updateNextServiceIndex, loadRemarks } from "@app/store/reducers/referenceIntervention";
 
@@ -259,7 +259,7 @@ export function ViewReferencePanel({selectedReference, columns}) {
             dataIndex: '', 
             key: 'intervention',
             render: (text, record)  => (
-                (loggedUser.profiles.id == MENTOR || loggedUser.profiles.id == MANAGER && loggedUser.partners.partnerType == 2) && record.subServices.service.id == 9)? '' : record.subServices.name,
+                (loggedUser.profiles.id == MENTOR && loggedUser.partners.partnerType == 2) && record.subServices.service.id == 9)? '' : record.subServices.name,
         },
         { title: 'Atendido Por', 
             dataIndex: '', 
