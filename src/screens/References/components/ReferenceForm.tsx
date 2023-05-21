@@ -215,8 +215,8 @@ const ReferenceForm: React.FC = ({ route }: any) => {
 
         if (age < 15) {
             if (age < 14 && value == 2) {
-                // Retirar Guião de facilitação
-                servicesSerialized = servicesSerialized.filter(s => ![46,49,52].includes(s['online_id']));
+                // Retirar Guião de facilitação e AFLATEEN
+                servicesSerialized = servicesSerialized.filter(s => ![46,49,52,57].includes(s['online_id']));
             }
             if (beneficiary.vblt_sexually_active != null && beneficiary.vblt_sexually_active == 0 && value == 1) {
                 // Retirar Promoção e Provisão de Preservativos e Aconselhamento e testagem em saúde
@@ -235,8 +235,8 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                 }
             }
         } else if (value == 2) {
-            // Retirar AVANTE RAPARIGA e AVANTE ESTUDANTE
-            servicesSerialized = servicesSerialized.filter(s => ![44,45,47,48,50,51].includes(s['online_id']));
+            // Retirar AVANTE RAPARIGA e AVANTE ESTUDANTE e AFLATOUN
+            servicesSerialized = servicesSerialized.filter(s => ![44,45,47,48,50,51,56].includes(s['online_id']));
         }
         setServices(servicesSerialized);
     }

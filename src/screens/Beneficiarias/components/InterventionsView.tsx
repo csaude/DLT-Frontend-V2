@@ -6,11 +6,16 @@ import { navigate } from '../../../routes/NavigationRef';
 import styles from './styles';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import StepperButton from './StapperButton';
-import { SuccessHandler, ErrorHandler } from "../../../components/SyncIndicator";
+import { SuccessHandler, ErrorHandler, WithoutNetwork } from "../../../components/SyncIndicator";
 import { Context } from '../../../routes/DrawerNavigator';
 import { sync } from '../../../database/sync';
+import NetInfo from "@react-native-community/netinfo";
+import Spinner from "react-native-loading-spinner-overlay/lib";
 
 const InterventionsView: React.FC = ({ route }: any) => {
+
+	const [loading, setLoading] = useState(false);
+	const [isOffline, setIsOffline] = useState(false);
 
     const {
         beneficiary,
@@ -19,20 +24,40 @@ const InterventionsView: React.FC = ({ route }: any) => {
     const loggedUser: any = useContext(Context);
     const toast = useToast();
 
+    useEffect(()=>{
+        const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
+			const status = !(state.isConnected && state.isInternetReachable);
+			setIsOffline(status);
+		});
+		return () => removeNetInfoSubscription();
+    },[])
+
     const syncronize = () => {
-        sync({ username: loggedUser.username })
-            .then(() => toast.show({
+		setLoading(true);      
+        if(isOffline){
+			toast.show({
                 placement: "top",
                 render: () => {
-                    return (<SuccessHandler />);
+                    return (<WithoutNetwork />);
                 }
-            }))
-            .catch(() => toast.show({
-                placement: "top",
-                render: () => {
-                    return (<ErrorHandler />);
-                }
-            }))
+            })
+			setLoading(false);
+		}else{
+            sync({ username: loggedUser.username })
+                .then(() => toast.show({
+                    placement: "top",
+                    render: () => {
+                        return (<SuccessHandler />);
+                    }
+                }))
+                .catch(() => toast.show({
+                    placement: "top",
+                    render: () => {
+                        return (<ErrorHandler />);
+                    }
+                }))
+            setLoading(false);
+        }
     }
 
     const renderItem = (data: any) => (
@@ -103,6 +128,13 @@ const InterventionsView: React.FC = ({ route }: any) => {
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                     <Text color="coolGray.500" >Não existem Intervenções Registadas!</Text>
                 </View>
+            }  
+            {loading ?
+                <Spinner
+                    visible={true}
+                    textContent={'Sincronizando...'}
+                    textStyle={styles.spinnerTextStyle}
+                /> : undefined
             }
             <Center flex={1} px="3" >
                 <StepperButton onAdd={() => navigate({ name: "BeneficiarieServiceForm", params: { beneficiarie: beneficiary, intervs: interventions, isNewIntervention: true  } })}

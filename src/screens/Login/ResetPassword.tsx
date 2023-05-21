@@ -215,10 +215,10 @@ const ResetPassword: React.FC = () => {
 									<VStack space={3} w="100%">
 
 										<FormControl isRequired isInvalid={"username" in errors}>
-											<FormControl.Label>Username</FormControl.Label>
+											<FormControl.Label>Nome do utilizador</FormControl.Label>
 											<Input
 												onBlur={handleBlur("username")}
-												placeholder="Insira o Username"
+												placeholder="Insira o nome do utilizador"
 												onChangeText={handleChange("username")}
 												value={values.username}
 											/>
@@ -228,11 +228,11 @@ const ResetPassword: React.FC = () => {
 										</FormControl>
 
 										<FormControl isRequired isInvalid={"password" in errors}>
-											<FormControl.Label>Nova Password</FormControl.Label>
+											<FormControl.Label>Nova Senha</FormControl.Label>
 											<Input
 												type={showPass ? "text" : "password"}
 												onBlur={handleBlur("password")}
-												placeholder="Insira a nova password"
+												placeholder="Insira a nova senha"
 												InputRightElement={<Pressable onPress={() => setShowPass(!showPass)}>
 													<Icon as={<MaterialIcons name={showPass ? "visibility" : "visibility-off"} />} size={5} mr="2" color="muted.400" />
 												</Pressable>}
@@ -246,12 +246,12 @@ const ResetPassword: React.FC = () => {
 
 										<FormControl isRequired isInvalid={"rePassword" in errors}>
 											<FormControl.Label>
-												Repetir a nova Password
+												Repetir a nova Senha
 											</FormControl.Label>
 											<Input
 												type={show ? "text" : "password"}
 												onBlur={handleBlur("rePassword")}
-												placeholder="Repita a nova password"
+												placeholder="Repita a nova senha"
 												InputRightElement={<Pressable onPress={() => setShow(!show)}>
 													<Icon as={<MaterialIcons name={show ? "visibility" : "visibility-off"} />} size={5} mr="2" color="muted.400" />
 												</Pressable>}
