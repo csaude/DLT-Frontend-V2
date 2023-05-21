@@ -229,7 +229,7 @@ const Login: React.FC = ({ route }: any) => {
         }
 
         try {
-            const response = await axios.get(`${VERIFY_USER_API_URL}/${values.username}`);
+            const response = await axios.get(`${VERIFY_USER_API_URL}/${values.username.trim()}`);
             if(response.data)
             {              
                 const profileId = response.data?.profiles.id;
@@ -245,7 +245,7 @@ const Login: React.FC = ({ route }: any) => {
 
 
         try {            
-            const loginResponse = await fetch(`${LOGIN_API_URL}?username=${values.username}&password=${encodeURIComponent(values.password)}`);
+            const loginResponse = await fetch(`${LOGIN_API_URL}?username=${values.username.trim()}&password=${encodeURIComponent(values.password)}`);
             const loginJson = await loginResponse.json();
             const status = loginJson.status;
             const account = loginJson.account;
@@ -257,7 +257,7 @@ const Login: React.FC = ({ route }: any) => {
                  return showToast('Ocorreu um Erro!', getMessage(status));
                 }
             } else {
-                await fetchPrefix(values.username);
+                await fetchPrefix(values.username.trim());
                 setToken(loginJson.token);
                 setLoggedUser(account);
                 dispatch(loadUser(account));
@@ -270,7 +270,7 @@ const Login: React.FC = ({ route }: any) => {
         setLoading(false);
         } else {
             try {
-                var logguedUser: any = (await users.query(Q.where('username', Q.like(`%${Q.sanitizeLikeString(values.username)}%`))).fetch())[0];
+                var logguedUser: any = (await users.query(Q.where('username', Q.like(`%${Q.sanitizeLikeString(values.username.trim())}%`))).fetch())[0];
 
                 var authenticated = bcrypt.compareSync(values.password, logguedUser?._raw?.password);
                 const userDetailsQ = await userDetails.query().fetch();
