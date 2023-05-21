@@ -197,6 +197,7 @@ export default appSchema({
           {name: 'activist_id', type: "number", isIndexed: true },
           {name: 'entry_point', type: 'string'},
           {name: 'provider', type: 'string'},
+          {name: 'date_created', type: 'string', isOptional: true},
           {name: 'remarks', type: 'string', isOptional: true},
           {name: 'status', type: 'number'},
           {name: 'online_id', type: 'string',isOptional: true}
