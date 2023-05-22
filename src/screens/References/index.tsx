@@ -196,7 +196,7 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
 
                     {data.item?._raw.is_awaiting_sync === 1 && data.item?._raw._status === "updated" ?
                         <>
-                            <Text color="coolGray.500" >{` ${data.item.date_created}`}</Text>
+                            <Text color="coolGray.500" >{ moment(new Date(data.item.date_created)).format('DD-MM-YYYY')}</Text>
 
                             <HStack>
                                 <View style={{ paddingTop: 10 }}>
@@ -208,7 +208,7 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
 
                         </> :
                         <>
-                            <Text color="coolGray.500" >{` ${data.item.date_created}`}</Text>
+                            <Text color="coolGray.500" >{ moment(new Date(data.item.date_created)).format('DD-MM-YYYY')}</Text>
                             <HStack>
                                 <View style={{ paddingTop: 5 }}><Ionicons name="checkmark-circle" size={11} color="#17a2b8" /></View>
 
