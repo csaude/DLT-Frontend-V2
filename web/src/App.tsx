@@ -1,5 +1,5 @@
-import React, {useEffect} from 'react';
-import {BrowserRouter, Routes, Route, HashRouter} from 'react-router-dom';
+import {useEffect} from 'react';
+import {Routes, Route, HashRouter} from 'react-router-dom';
 import Main from '@modules/main/Main';
 import Login from '@modules/login/Login';
 import NewPassword from "@modules/new-password/NewPassword";
@@ -33,6 +33,7 @@ import RenewPassword from './modules/new-password/RenewPassword';
 import OrganizationList from './pages/organization';
 import ReportAgyw from './pages/report/agyw/ReportAgyw';
 import PreviewAgyw from './pages/report/agyw/ReportPreview';
+import { handleUserInteraction } from './store/reducers/auth';
 
 
 const App = () => {
@@ -46,6 +47,38 @@ const App = () => {
       dispatch(setWindowSize(size));
     }
   }, [windowSize]);
+
+  useEffect(() => {
+    const handleClick = (event) => {
+      dispatch(handleUserInteraction())
+    };
+
+    const handleFormSubmit = (event) => {
+      dispatch(handleUserInteraction())
+    };
+
+    const handleScroll = (event) => {
+      dispatch(handleUserInteraction())
+    };
+
+    const handleKeyboard = (event) => {
+       dispatch(handleUserInteraction())
+    }
+
+    // Add event listeners
+    document.addEventListener('click', handleClick);
+    document.addEventListener('submit', handleFormSubmit);
+    document.addEventListener('scroll', handleScroll);
+    document.addEventListener('keydown', handleKeyboard);
+    
+    // Clean up event listeners
+    return () => {
+      document.removeEventListener('click', handleClick);
+      document.removeEventListener('submit', handleFormSubmit);
+      document.removeEventListener('scroll', handleScroll);
+      document.removeEventListener('keydown', handleKeyboard);
+    };
+  }, []);
  
   return (
     <HashRouter>
