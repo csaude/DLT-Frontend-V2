@@ -334,14 +334,13 @@ const ReferenceForm: React.FC = ({ route }: any) => {
          ).fetch();
         const serializedReferences = syncedReferences.map(item => item._raw);
 
-        navigationRef.reset({
-            index: 0,
-            routes: [{ name: 'Referencias', 
-                        params: {
-                            beneficiary: beneficiary,
-                            references: serializedReferences
-                        } 
-                    }]
+        navigate({
+            name: 'Referencias',
+            params: {
+                beneficiary: beneficiary,
+                references: serializedReferences
+            },
+            merge: true,
         });
 
         setLoading(false);
