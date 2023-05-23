@@ -6,7 +6,7 @@ import { MaterialIcons, Ionicons } from "@native-base/icons";
 import { useFormik } from 'formik';
 import { database } from '../../../database';
 import { Q } from "@nozbe/watermelondb";
-import { navigate, navigationRef } from '../../../routes/NavigationRef';
+import { navigate } from '../../../routes/NavigationRef';
 import { Picker } from '@react-native-picker/picker';
 import ModalSelector from 'react-native-modal-selector-searchable';
 import styles from './styles1';
