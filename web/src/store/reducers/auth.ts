@@ -5,6 +5,7 @@ export interface AuthState {
   token: string | null;
   user?: any;
   currentUser: any;
+  event: any
 }
 
 const initialState: AuthState = {
@@ -20,6 +21,7 @@ const initialState: AuthState = {
     surname: null,
     dateCreated: null
   },
+  event : null
 };
 
 export const authSlice = createSlice({
@@ -44,10 +46,13 @@ export const authSlice = createSlice({
     },
     loadUser: (state, {payload}) => {
       state.currentUser = payload;
+    },
+    handleUserInteraction: (state) =>{
+      state.event =  state.event + 1
     }
   }
 });
 
-export const {loginUser, logoutUser, loadUser} = authSlice.actions;
+export const {loginUser, logoutUser, loadUser, handleUserInteraction} = authSlice.actions;
 
 export default authSlice.reducer;
