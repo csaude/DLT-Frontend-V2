@@ -24,6 +24,7 @@ import { Context } from '../../../routes/DrawerNavigator';
 
 import styles from './styles';
 import { MENTOR } from '../../../utils/constants';
+import Spinner from 'react-native-loading-spinner-overlay/lib';
 import MyDatePicker from '../../../components/DatePicker';
 import NetInfo from "@react-native-community/netinfo";
 
@@ -450,14 +451,14 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
             <ScrollView>
                 <View style={styles.webStyle}>
                     <Center w="100%" bgColor="white">
+                        {loading ?
+                            <Spinner
+                                visible={true}
+                                textContent={'Provendo o serviço...'}
+                                textStyle={styles.spinnerTextStyle}
+                            /> : undefined
+                        }
                         <Box safeArea p="2" w="90%" py="8">
-                            {/* <Heading size="lg" color="coolGray.800"
-                                _dark={{ color: "warmGray.50" }}
-                                fontWeight="semibold"
-                                marginBottom={5}
-                                marginTop={0} >
-                                Prover Serviço
-                            </Heading> */}
                             <Alert status="info" colorScheme="info">
                                 <HStack flexShrink={1} space={2} alignItems="center">
                                     <Alert.Icon />

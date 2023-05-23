@@ -352,7 +352,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                     {loading ?
                         <Spinner
                             visible={true}
-                            textContent={'Provendo o servico...'}
+                            textContent={'Provendo o serviço...'}
                             textStyle={styles.spinnerTextStyle}
                         /> : undefined
                     }
