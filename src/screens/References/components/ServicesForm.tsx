@@ -39,7 +39,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     const [show, setShow] = useState(false);
     const [isSync, setIsSync] = useState(false);
     const [text, setText] = useState('');
-    const [date, setDate] = useState(new Date());
+    const [date, setDate] = useState();
     const [users, setUsers] = useState<any>([]);
     const [notifyTo, setNotifyTo] = useState<any>(undefined);
     const [us, setUs] = useState<any>([]);
@@ -115,7 +115,6 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
 
     const validate = (values: any) => {
         const errors: any = {};
-
 
         if (!values.service_id) {
             errors.id = message;
@@ -261,8 +260,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
         resolve => setTimeout(resolve, ms)
     );
 
-    const syncronize = () => {       
-        setLoading(true);       
+    const syncronize = () => {     
 		if(!isOffline){
             sync({ username: loggedUser.username })
             .then(() =>( setIsSync(true)))
@@ -273,7 +271,6 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                 }
             }))
 		}
-		setLoading(false);
     }
 
     const getPartner = async() => {
@@ -514,7 +511,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                                     </FormControl.ErrorMessage>
                                 </FormControl>
 
-                                <FormControl isRequired>
+                                <FormControl isRequired isInvalid={'date' in errors}>
                                     <FormControl.Label>Data Benefício</FormControl.Label>
 
                                     {show && (
@@ -525,8 +522,6 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                                             onSelectedChange={date => onChange(null, date.replaceAll('/', '-'))}
                                         />
                                     )}
-
-
                                     <HStack alignItems="center">
                                         <InputGroup w={{
                                             base: "70%",
@@ -543,8 +538,9 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                                                 placeholder="yyyy-M-dd" />
                                         </InputGroup>
                                     </HStack>
-
-
+                                    <FormControl.ErrorMessage>
+                                        {errors.date}
+                                    </FormControl.ErrorMessage>
                                 </FormControl>
                                 <FormControl isRequired isInvalid={'provider' in errors}>
                                     <FormControl.Label>Provedor do Serviço</FormControl.Label>
@@ -579,7 +575,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
 
                                 </FormControl>
                                 <Button isLoading={loading} isLoadingText="Cadastrando" onPress={handleSubmit} my="10" colorScheme="primary">
-                                    Submeter
+                                    Atender
                                 </Button>
                             </VStack>
                             }
