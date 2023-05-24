@@ -1,4 +1,4 @@
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import {Routes, Route, HashRouter} from 'react-router-dom';
 import Main from '@modules/main/Main';
 import Login from '@modules/login/Login';
@@ -33,14 +33,13 @@ import RenewPassword from './modules/new-password/RenewPassword';
 import OrganizationList from './pages/organization';
 import ReportAgyw from './pages/report/agyw/ReportAgyw';
 import PreviewAgyw from './pages/report/agyw/ReportPreview';
-import { handleUserInteraction } from './store/reducers/event';
-
 
 const App = () => {
   const windowSize = useWindowSize();
   const screenSize = useSelector((state: any) => state.ui.screenSize);
   const dispatch = useDispatch();
-  const eventsActive = useSelector((state:any)=> state.event.active)
+  const [userEvent, setUserEvent] = useState<any>()
+   let userRole = localStorage.getItem('userRole');
 
   useEffect(() => {
     const size = calculateWindowSize(windowSize.width);
@@ -50,36 +49,56 @@ const App = () => {
   }, [windowSize]);
 
   useEffect(() => {
-    const handleClick = (event) => {
-      dispatch(handleUserInteraction('handleClick'))
+    const handleClick = async () => {
+       localStorage.setItem('event', 'handleClick')
     };
 
-    const handleKeyboard = (event) => {
-      dispatch(handleUserInteraction('handleUserInteraction'))
+    const handleKeyboard = async () => {
+       localStorage.setItem('event', 'handleKeyboard')
     }
 
-    const handleFormSubmit = (event) => {
-      dispatch(handleUserInteraction('handleUserInteraction'))
+    const handleFormSubmit = async () => {
+       localStorage.setItem('event', 'handleFormSubmit')
     };
 
-    const handleScroll = (event) => {
-      dispatch(handleUserInteraction('handleUserInteraction'))
+    const handleScroll = async () => {
+      localStorage.setItem('event', 'handleScroll')
     };
 
     // Add event listeners
-    eventsActive && document.addEventListener('click', handleClick);
-    eventsActive && document.addEventListener('keydown', handleKeyboard);
-    eventsActive && document.addEventListener('submit', handleFormSubmit);
-    eventsActive && document.addEventListener('scroll', handleScroll);
+    document.addEventListener('click', handleClick);
+    document.addEventListener('keydown', handleKeyboard);
+    document.addEventListener('submit', handleFormSubmit);
+    document.addEventListener('scroll', handleScroll);
     
     // Clean up event listeners
     return () => {
-      eventsActive && document.removeEventListener('click', handleClick);
-      eventsActive && document.removeEventListener('submit', handleFormSubmit);
-      eventsActive && document.removeEventListener('scroll', handleScroll);
-      eventsActive && document.removeEventListener('keydown', handleKeyboard);
+      document.removeEventListener('click', handleClick);
+      document.removeEventListener('submit', handleFormSubmit);
+      document.removeEventListener('scroll', handleScroll);
+      document.removeEventListener('keydown', handleKeyboard);
     };
-  }, [eventsActive]);
+  }, [localStorage]);
+
+    useEffect(() => {
+    const intervalId = setInterval(() => {
+      setUserEvent(localStorage.getItem('event'))    
+    }, 2000);
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {   
+      localStorage.clear()
+       window.location.href = '/login';
+    }, 
+      // 10000 // so para testes
+      userRole==="ADMIN" ? 86400000 : 1800000  //
+    );
+    return () => clearTimeout(timer);
+  }, [userEvent]);
  
   return (
     <HashRouter>

@@ -3,7 +3,7 @@ import { edit as editRef, Reference, pagedQueryByUser} from '@app/utils/referenc
 import {allDistrict} from '@app/utils/district';
 import { allUsersByProfilesAndUser, query  as query1} from '@app/utils/users';
 import { query as beneficiaryQuery } from '@app/utils/beneficiary';
-import { Card, Table, Button, Space, Badge, Input, Typography, Form, message, ConfigProvider, Row, Col } from 'antd';
+import { Card, Table, Button, Space, Input, Typography, Form, message, ConfigProvider, Row, Col } from 'antd';
 import ptPT  from 'antd/lib/locale-provider/pt_PT';
 import 'antd/dist/antd.css';
 import moment from 'moment';
@@ -13,13 +13,11 @@ import { SearchOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import ViewReferral from './components/View';
 import FormReference from '../beneficiaries/components/FormReference';
-import FullPageLoader from '@app/components/full-page-loader/FullPageLoader';
 import { Title } from '@app/components';
 import { ADMIN, COUNSELOR, MENTOR, NURSE, SUPERVISOR } from '@app/utils/contants';
 import LoadingModal from '@app/components/modal/LoadingModal';
 import { useDispatch } from 'react-redux';
 import { loadReferers } from '@app/store/actions/users';
-import { handleActiveEvents } from '@app/store/reducers/event';
 
 const { Text } = Typography;
 
@@ -82,7 +80,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
         } 
     
         fetchData()
-        .then(()=>dispatch(handleActiveEvents(true)))
+        .then()
         .catch(error => console.log(error));
 
         const fetchReferersUsers = async () =>{
