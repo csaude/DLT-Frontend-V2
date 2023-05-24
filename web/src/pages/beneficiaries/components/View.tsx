@@ -16,6 +16,7 @@ import InterventionForm from './InterventionForm';
 import { ADMIN, MENTOR, MNE, SUPERVISOR } from '@app/utils/contants';
 import { useDispatch } from 'react-redux';
 import { getInterventionsCount } from '@app/store/actions/interventions';
+import { handleActiveEvents } from '@app/store/reducers/event';
 
 const { confirm } = Modal;
 
@@ -62,7 +63,7 @@ export function ViewBenefiaryPanel({ beneficiary, handleModalVisible, handleView
     };
 
     const onAddReference = (flag?: boolean, record?: any) => {
-
+        dispatch(handleActiveEvents(false));
         handleModalVisible(); 
         handleModalRefVisible(flag, record);  
     };

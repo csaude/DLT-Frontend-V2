@@ -9,6 +9,7 @@ import interventionReducer from './reducers/interventions';
 import userReducer from './reducers/user';
 import { reportSlice } from './reducers/report';
 import { referenceInterventionSlice } from './reducers/referenceIntervention';
+import { eventSlice } from './reducers/event';
 
 const store = configureStore({
   reducer: {
@@ -19,7 +20,8 @@ const store = configureStore({
     intervention: interventionReducer,
     user: userReducer,
     report: reportSlice.reducer,
-    referenceIntervention: referenceInterventionSlice.reducer
+    referenceIntervention: referenceInterventionSlice.reducer,
+    event: eventSlice.reducer
   },
   middleware: (getDefaultMiddleware) => [
     ...getDefaultMiddleware().concat(createLogger())

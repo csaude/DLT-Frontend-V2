@@ -19,6 +19,7 @@ import { ADMIN, COUNSELOR, MENTOR, NURSE, SUPERVISOR } from '@app/utils/contants
 import LoadingModal from '@app/components/modal/LoadingModal';
 import { useDispatch } from 'react-redux';
 import { loadReferers } from '@app/store/actions/users';
+import { handleActiveEvents } from '@app/store/reducers/event';
 
 const { Text } = Typography;
 
@@ -80,7 +81,9 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             setLoggedUser(loggedUser);
         } 
     
-        fetchData().catch(error => console.log(error));
+        fetchData()
+        .then(()=>dispatch(handleActiveEvents(true)))
+        .catch(error => console.log(error));
 
         const fetchReferersUsers = async () =>{
             var payload = {

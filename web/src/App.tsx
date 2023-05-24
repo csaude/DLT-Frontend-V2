@@ -33,13 +33,14 @@ import RenewPassword from './modules/new-password/RenewPassword';
 import OrganizationList from './pages/organization';
 import ReportAgyw from './pages/report/agyw/ReportAgyw';
 import PreviewAgyw from './pages/report/agyw/ReportPreview';
-import { handleUserInteraction } from './store/reducers/auth';
+import { handleUserInteraction } from './store/reducers/event';
 
 
 const App = () => {
   const windowSize = useWindowSize();
   const screenSize = useSelector((state: any) => state.ui.screenSize);
   const dispatch = useDispatch();
+  const eventsActive = useSelector((state:any)=> state.event.active)
 
   useEffect(() => {
     const size = calculateWindowSize(windowSize.width);
@@ -50,35 +51,35 @@ const App = () => {
 
   useEffect(() => {
     const handleClick = (event) => {
-      dispatch(handleUserInteraction())
-    };
-
-    const handleFormSubmit = (event) => {
-      dispatch(handleUserInteraction())
-    };
-
-    const handleScroll = (event) => {
-      dispatch(handleUserInteraction())
+      dispatch(handleUserInteraction('handleClick'))
     };
 
     const handleKeyboard = (event) => {
-       dispatch(handleUserInteraction())
+      dispatch(handleUserInteraction('handleUserInteraction'))
     }
 
+    const handleFormSubmit = (event) => {
+      dispatch(handleUserInteraction('handleUserInteraction'))
+    };
+
+    const handleScroll = (event) => {
+      dispatch(handleUserInteraction('handleUserInteraction'))
+    };
+
     // Add event listeners
-    document.addEventListener('click', handleClick);
-    document.addEventListener('submit', handleFormSubmit);
-    document.addEventListener('scroll', handleScroll);
-    document.addEventListener('keydown', handleKeyboard);
+    eventsActive && document.addEventListener('click', handleClick);
+    eventsActive && document.addEventListener('keydown', handleKeyboard);
+    eventsActive && document.addEventListener('submit', handleFormSubmit);
+    eventsActive && document.addEventListener('scroll', handleScroll);
     
     // Clean up event listeners
     return () => {
-      document.removeEventListener('click', handleClick);
-      document.removeEventListener('submit', handleFormSubmit);
-      document.removeEventListener('scroll', handleScroll);
-      document.removeEventListener('keydown', handleKeyboard);
+      eventsActive && document.removeEventListener('click', handleClick);
+      eventsActive && document.removeEventListener('submit', handleFormSubmit);
+      eventsActive && document.removeEventListener('scroll', handleScroll);
+      eventsActive && document.removeEventListener('keydown', handleKeyboard);
     };
-  }, []);
+  }, [eventsActive]);
  
   return (
     <HashRouter>
