@@ -38,13 +38,18 @@ const UserDropdown = () => {
 
   let userRole = localStorage.getItem('userRole');
 
+  const userEvent = useSelector((state:any)=>state.auth.event)
+
   useEffect(() => {
     const timer = setTimeout(() => {   
       dispatch(logoutUser());
       navigate('/login');
-    }, userRole==="ADMIN" ? 86400000 : 1800000);
+    }, 
+      //30000 // so para testes
+      userRole==="ADMIN" ? 86400000 : 1800000  //
+    );
     return () => clearTimeout(timer);
-  }, []);
+  }, [userEvent]);
 
   useEffect(() => {
     const handleTabClose = event => {

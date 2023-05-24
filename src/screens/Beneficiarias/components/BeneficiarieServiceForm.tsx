@@ -24,6 +24,7 @@ import { Context } from '../../../routes/DrawerNavigator';
 
 import styles from './styles';
 import { MENTOR } from '../../../utils/constants';
+import Spinner from 'react-native-loading-spinner-overlay/lib';
 import MyDatePicker from '../../../components/DatePicker';
 import NetInfo from "@react-native-community/netinfo";
 
@@ -35,7 +36,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
 
     const userDetailsCollection = database.get('user_details')
 
-    const [date, setDate] = useState(new Date());
+    const [date, setDate] = useState();
     const [users, setUsers] = useState<any>([]);
     const [selectedUser, setSelectedUser] = useState<any>("");
     const [checked, setChecked] = useState(false);
@@ -62,15 +63,6 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     const avanteRaparigaOnlineIds = [44,47,50];
     const guiaFacilitacaoOnlineIds = [46,49,52,57];
 
-    const onChange = (event, selectedDate) => {
-        const currentDate = selectedDate || date;
-        setShow(false);
-        setDate(currentDate);
-
-        setText(selectedDate);
-    }
-
-
     useEffect(() => {
       
         const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
@@ -83,9 +75,9 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
 
     const handleDataFromDatePickerComponent=(selectedDate) =>{
 
-        selectedDate.replaceAll('/', '-')
+        selectedDate.replaceAll('/', '-');
           const currentDate = selectedDate || date;
-        setShow(false);
+        setShow(false);        
         setDate(currentDate);
 
         setText(selectedDate);
@@ -126,10 +118,6 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     const showMode = (currentMode) => {
         setShow(true);
         setMode(currentMode);
-    };
-
-    const showDatepicker = () => {
-        showMode('calendar');
     };
 
     useEffect(() => {
@@ -214,7 +202,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                 }
 
                 setText(intervention.date);
-                setDate(new Date(intervention.date));
+                setDate(intervention.date);
 
             } else {
                 initValues = {
@@ -239,7 +227,6 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
             }
         }
 
-
     }, [intervention]);
 
     const getBeneficiarieAge = ()=>{
@@ -247,7 +234,6 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     }
 
     const message = "Este campo é Obrigatório";
-
 
     const showToast = (status, message, description) => {
         return toast.show({
@@ -291,7 +277,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
         }
 
         if (!date) {
-            errors.date = message;
+            errors.date = message; 
         }
 
         if (!values.us_id) {
@@ -522,14 +508,14 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
             <ScrollView>
                 <View style={styles.webStyle}>
                     <Center w="100%" bgColor="white">
+                        {loading ?
+                            <Spinner
+                                visible={true}
+                                textContent={'Provendo o serviço...'}
+                                textStyle={styles.spinnerTextStyle}
+                            /> : undefined
+                        }
                         <Box safeArea p="2" w="90%" py="8">
-                            {/* <Heading size="lg" color="coolGray.800"
-                                _dark={{ color: "warmGray.50" }}
-                                fontWeight="semibold"
-                                marginBottom={5}
-                                marginTop={0} >
-                                Prover Serviço
-                            </Heading> */}
                             <Alert status="info" colorScheme="info">
                                 <HStack flexShrink={1} space={2} alignItems="center">
                                     <Alert.Icon />
@@ -682,7 +668,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                                             </FormControl.ErrorMessage>
                                         </FormControl>
 
-                                        <FormControl isRequired>
+                                        <FormControl isRequired  isInvalid={'date' in errors}>
                                             <FormControl.Label>Data Benefício</FormControl.Label>
                                             <HStack alignItems="center">
                                                 <InputGroup w={{
@@ -700,8 +686,9 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                                                         placeholder="yyyy-M-dd" />
                                                 </InputGroup>
                                             </HStack>
-
-
+                                            <FormControl.ErrorMessage>
+                                                {errors.date}
+                                            </FormControl.ErrorMessage>
                                         </FormControl>
                                        
                                         <FormControl isRequired isInvalid={'provider' in errors}>
@@ -737,7 +724,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
 
                                         </FormControl>                                       
                                         <Button isLoading={loading} isLoadingText="Cadastrando" onPress={handleSubmit} my="10" colorScheme="primary">
-                                            Cadastrar
+                                            Salvar
                                         </Button>
                                     </VStack>
                                 }
