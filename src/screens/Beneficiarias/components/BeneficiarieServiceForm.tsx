@@ -705,7 +705,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                                                     cancelText={'Cancelar'}
                                                     searchText={'Pesquisar'}
                                                     cancelButtonAccessibilityLabel={'Cancelar'}
-                                                    onChange={(option) => { setSelectedUser(`${option.name} ${option.surname}`); setFieldValue('provider', option.online_id); }}>
+                                                    onChange={(option) => { setSelectedUser(`${option.name} ${option.surname}`); setFieldValue('provider', `${option.name} ${option.surname}`); }}>
                                                     <Input type='text' onBlur={handleBlur('provider')} placeholder={currentInformedProvider}  onChangeText={handleChange('provider')} value={selectedUser} />
                                                 </ModalSelector> :
                                                 <Input onBlur={handleBlur('provider')} placeholder="Insira o Nome do Provedor" onChangeText={handleChange('provider')} value={values.provider} />
