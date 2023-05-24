@@ -322,16 +322,18 @@ const ReferenceForm: React.FC = ({ route }: any) => {
 
         });
 
-        const newReferencesMap = [savedR._raw, ...references];
-
         syncronize();
         await delay(5000);
         syncronize();
         await delay(1000);
 
         const syncedReferences = await database.get('references').query(
-            Q.where('beneficiary_offline_id', beneficiary.id),
+            Q.or(
+                Q.where('beneficiary_offline_id', beneficiary.id),
+                Q.where('beneficiary_id', beneficiary.online_id),
+            )
          ).fetch();
+
         const serializedReferences = syncedReferences.map(item => item._raw);
 
         navigate({
