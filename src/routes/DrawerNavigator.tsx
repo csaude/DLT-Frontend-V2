@@ -1,5 +1,5 @@
-import React, { createContext, useEffect } from 'react';
-import { View , Text} from 'react-native';
+import React, { createContext, useEffect, useState } from 'react';
+import { View , Text, AppState, InteractionManager, Keyboard, NativeEventEmitter, NativeModules} from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import CustomDrawer from './components/CustomDrawer';
 import BeneficiariesNavigator from './BeneficiariesNavigator';
@@ -16,6 +16,7 @@ import { referencesFetchCount } from '../services/referenceService';
 import { getBeneficiariesTotal } from '../store/beneficiarySlice';
 import { getReferencesTotal } from '../store/referenceSlice';
 import SyncTimer from '../components/SyncTimer';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function HomeScreen({ navigation }: any) {
   return (
@@ -122,11 +123,12 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
         navigate({
           name: "Login"
         });
-    },  
-     1800000
+    }, 
+    //  30000 //So para testes 
+     1800000 
     );
     return () => clearTimeout(timer);
-  }, []);
+  }, [AsyncStorage.getItem('event')]);
 
   const ItemBadge = ({ label, total }) => {
     return <Box alignItems="center">

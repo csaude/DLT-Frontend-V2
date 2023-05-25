@@ -1,14 +1,46 @@
-import 'react-native-gesture-handler';
-import React from 'react';
-import { StatusBar, useColorScheme } from 'react-native';
-import { NativeBaseProvider } from 'native-base';
-import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
-import { navigationRef } from './src/routes/NavigationRef'
-import {Provider as ReduxProvider} from 'react-redux';
-import AppMain from './src/routes';
-import store from './src/store';
+import "react-native-gesture-handler";
+import React, { useEffect, useState } from "react";
+import {
+  Keyboard,
+  NativeEventEmitter,
+  NativeModules,
+  StatusBar,
+  useColorScheme,
+} from "react-native";
+import { NativeBaseProvider } from "native-base";
+import {
+  NavigationContainer,
+  DefaultTheme,
+  DarkTheme,
+} from "@react-navigation/native";
+import { navigationRef } from "./src/routes/NavigationRef";
+import { Provider as ReduxProvider } from "react-redux";
+import AppMain from "./src/routes";
+import store from "./src/store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const App = () => {
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      async () => {
+        await AsyncStorage.setItem("event", "keyboardDidShow");
+      }
+    );
+
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      async () => {
+        await AsyncStorage.setItem("event", "keyboardDidHide");
+      }
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+
   const scheme = useColorScheme();
   const MyTheme = {
     ...DefaultTheme,
