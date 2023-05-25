@@ -19,7 +19,7 @@ const store = configureStore({
     intervention: interventionReducer,
     user: userReducer,
     report: reportSlice.reducer,
-    referenceIntervention: referenceInterventionSlice.reducer
+    referenceIntervention: referenceInterventionSlice.reducer,
   },
   middleware: (getDefaultMiddleware) => [
     ...getDefaultMiddleware().concat(createLogger())
