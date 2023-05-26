@@ -288,7 +288,29 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
             errors.entry_point = message;
         }
 
+        if (!values.provider) {
+            errors.provider = message;
+        }
+
         return errors;
+    }
+            
+    const validateBeneficiaryIntervention = async (values: any) => {
+        
+        const benefInterv = await database.get('beneficiaries_interventions').query(
+            Q.where('beneficiary_id', parseInt(beneficiarie.online_id)),
+            Q.where('sub_service_id', parseInt(values.sub_service_id)),
+            Q.where('date','' + text)
+        ).fetch();
+
+        const benefIntervSerialied = benefInterv.map(item => item._raw);
+
+        if(benefIntervSerialied.length>0){
+             toast.show({ placement: "top", title: "Beneficiária já tem esta intervenção para esta data!" });
+        }else{
+            onSubmit(values)
+        }
+
     }
 
     useEffect(() => {
@@ -320,7 +342,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                     intervention.us_id = values.us_id
                     intervention.activist_id = userId
                     intervention.entry_point = values.entry_point
-                    intervention.provider = values.provider
+                    intervention.provider = ''+values.provider
                     intervention.remarks = values.remarks
                     intervention.status = 1
                     intervention._status = "updated"
@@ -337,12 +359,15 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                     intervention.us_id = values.us_id
                     intervention.activist_id = userId
                     intervention.entry_point = values.entry_point
-                    intervention.provider = values.provider
+                    intervention.provider = ''+values.provider
                     intervention.remarks = values.remarks
                     intervention.date_created = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
                     intervention.status = 1
                 });
                 showToast('success','Provido', 'Serviço provido com sucesso!');
+
+                console.log(newIntervention);
+
                 return newIntervention;
             }
 
@@ -386,31 +411,33 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
               
         });
 
-        var newIntr: any = newObject._raw;
-        let subserviceObj = subServices.filter((item) => {
-            return item._raw.online_id == newIntr.sub_service_id
-        })[0];
-        const nIobj =  { id: subserviceObj._raw.online_id, name: subserviceObj._raw.name, intervention: newIntr }
-
-        let newIntervMap;
-        if(isEdit){
-            newIntervMap = intervs.map(item => item.intervention.id === nIobj.intervention.id ? nIobj: item);
-        } else {
-            newIntervMap = [nIobj, ...intervs];
-        }
-
         syncronize();
         await delay(5000);
         syncronize();
+
+        const syncedInterventions = await database.get('beneficiaries_interventions').query(
+            Q.or(
+                Q.where('beneficiary_offline_id', beneficiarie.id),
+                Q.where('beneficiary_id', beneficiarie.online_id),
+            )
+        ).fetch();
+
+        const interventionObjects = syncedInterventions.map((e: any) => {
+            let subservice = subServices.filter((item) => {
+                return item?._raw.online_id == e?._raw.sub_service_id
+            })[0];
+            return { id: subservice?._raw.online_id + e?._raw.date, name: subservice?._raw.name, intervention: e?._raw }
+        });
 
         navigate({
             name: 'Serviços',
             params: {
                 beneficiary: beneficiarie,
-                interventions: newIntervMap
+                interventions: interventionObjects /*newIntervMap*/
             },
             merge: true,
         });
+        setLoading(false);
     }
 
     const delay = ms => new Promise(
@@ -418,7 +445,6 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     );
 
     const syncronize = () => {       
-        setLoading(true);       
 		if(!isOffline){
             sync({ username: loggedUser.username })
             .then(() =>( setIsSync(true)))
@@ -429,7 +455,6 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                 }
             }))
 		}
-		setLoading(false);
     }
 
     useEffect(()=>{
@@ -446,14 +471,14 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                         setInitialValues({
                             areaServicos_id: '1',
                             entry_point: userEntryPoint,
-                            provider: userId,
+                            provider: loggedUser?.name+' '+loggedUser?.surname,
                         })
                     }
                     else if(organization?.partner_type==2){
                         setInitialValues({
                             areaServicos_id: '2',
                             entry_point: userEntryPoint ,
-                            provider: userId,
+                            provider: loggedUser?.name+' '+loggedUser?.surname,
                         })
                     }
                 }
@@ -526,7 +551,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                             </Alert>
 
                             <Formik initialValues={initialValues}
-                                onSubmit={onSubmit} 
+                                onSubmit={validateBeneficiaryIntervention} 
                                 validate={validate} 
                                 enableReinitialize={true}
                                 validateOnChange={false}
@@ -695,22 +720,22 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                                             <FormControl.Label>Provedor do Serviço</FormControl.Label>
 
                                             {checked === false ?
-                                                <ModalSelector
-                                                    data={users}
-                                                    keyExtractor={item => item.online_id}
-                                                    labelExtractor={item => `${item.name} ${item.surname}`}
-                                                    renderItem={undefined}
-                                                    initValue=""
-                                                    accessible={true}
-                                                    cancelText={'Cancelar'}
-                                                    searchText={'Pesquisar'}
-                                                    cancelButtonAccessibilityLabel={'Cancelar'}
-                                                    onChange={(option) => { setSelectedUser(`${option.name} ${option.surname}`); setFieldValue('provider', `${option.name} ${option.surname}`); }}>
-                                                    <Input type='text' onBlur={handleBlur('provider')} placeholder={currentInformedProvider}  onChangeText={handleChange('provider')} value={selectedUser} />
-                                                </ModalSelector> :
-                                                <Input onBlur={handleBlur('provider')} placeholder="Insira o Nome do Provedor" onChangeText={handleChange('provider')} value={values.provider} />
-                                            }
-                                            <Checkbox value="one" onChange={onChangeToOutros}>Outro</Checkbox>
+                                                 <ModalSelector
+                                                 data={users}
+                                                 keyExtractor={item => item.online_id}
+                                                 labelExtractor={item => `${item.name} ${item.surname}`}
+                                                 renderItem={undefined}
+                                                 initValue="Select something yummy!"
+                                                 accessible={true}
+                                                 cancelText={'Cancelar'}
+                                                 searchText={'Pesquisar'}
+                                                 cancelButtonAccessibilityLabel={'Cancel Button'}
+                                                 onChange={(option) => { setSelectedUser(`${option.name} ${option.surname}`); setFieldValue('provider', `${option.name} ${option.surname}`); }}>
+                                                 <Input type='text' onBlur={handleBlur('provider')} placeholder={currentInformedProvider} onChangeText={handleChange('provider')} value={selectedUser} />
+                                             </ModalSelector> :
+                                             <Input onBlur={handleBlur('provider')} placeholder="Insira o Nome do Provedor" onChangeText={handleChange('provider')} value={values.provider} />
+                                         }
+                                         <Checkbox value="one" onChange={onChangeToOutros}>Outro</Checkbox>
 
                                             <FormControl.ErrorMessage>
                                                 {errors.provider}
