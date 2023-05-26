@@ -34,7 +34,6 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
 
   const userDetailsCollection = database.get('user_details')
   const dispatch = useDispatch()
-  const userEvents = useSelector((state:any)=>state.auth.event)
 
   const beneficiariesTotal = useSelector((state:any)=>state.beneficiary.total)
   const referencesTotal = useSelector((state:any)=>state.reference.total)

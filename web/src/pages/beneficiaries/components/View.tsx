@@ -62,7 +62,6 @@ export function ViewBenefiaryPanel({ beneficiary, handleModalVisible, handleView
     };
 
     const onAddReference = (flag?: boolean, record?: any) => {
-
         handleModalVisible(); 
         handleModalRefVisible(flag, record);  
     };

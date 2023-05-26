@@ -40,6 +40,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     const [users, setUsers] = useState<any>([]);
     const [selectedUser, setSelectedUser] = useState<any>("");
     const [checked, setChecked] = useState(false);
+    const [isSync, setIsSync] = useState(false);
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
     const [text, setText] = useState('');
@@ -290,6 +291,18 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
         return errors;
     }
 
+    useEffect(() => {
+        isSync ?  
+            toast.show({
+                placement: "top",
+                render:() => {
+                    return (<SuccessHandler />);
+                }
+            })
+        : '';
+
+    }, [isSync])
+
     const onSubmit = async (values: any) => {
         setLoading(true);
 
@@ -335,6 +348,44 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
 
         });
 
+        const interv = newObject._raw;
+        await database.write(async () => {
+            const subService = await database.get('sub_services').query(
+                Q.where('online_id', interv.sub_service_id)
+            );
+            
+            const referenceSToUpdate = await database.get('references_services').query(
+                Q.where('service_id', parseInt(subService[0]._raw?.service_id))
+            ).fetch();
+
+            const referencesIds = referenceSToUpdate.map(r => parseInt(r._raw.reference_id));
+
+            const referencesToUpdate = await database.get('references').query(
+                Q.where('online_id', Q.oneOf(referencesIds)),
+                Q.where('beneficiary_id', beneficiarie.online_id)
+            ).fetch();
+
+            const refsToUpdateIds = referencesToUpdate.map(r => parseInt(r._raw.online_id));
+
+            const filteredRefServices = referenceSToUpdate.filter(r => refsToUpdateIds.includes(parseInt(r._raw.reference_id)));
+
+            referencesToUpdate.forEach(async(ref) => {
+                const updatedreference = await ref.update((reference: any) => {
+                    reference._raw.beneficiary_offline_id = beneficiarie.id
+                    reference._raw.is_awaiting_sync = parseInt("1")
+                    reference._raw._status = "updated"
+                });
+            });
+
+            filteredRefServices.forEach(async(refService) => {
+                const updatedrefservice = await refService.update((interventionS: any) => {
+                    interventionS._raw.is_awaiting_sync = parseInt("1")
+                    interventionS._raw._status = "updated"
+                });
+            });
+              
+        });
+
         var newIntr: any = newObject._raw;
         let subserviceObj = subServices.filter((item) => {
             return item._raw.online_id == newIntr.sub_service_id
@@ -348,6 +399,10 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
             newIntervMap = [nIobj, ...intervs];
         }
 
+        syncronize();
+        await delay(5000);
+        syncronize();
+
         navigate({
             name: 'Serviços',
             params: {
@@ -356,23 +411,25 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
             },
             merge: true,
         });
-     
+    }
+
+    const delay = ms => new Promise(
+        resolve => setTimeout(resolve, ms)
+    );
+
+    const syncronize = () => {       
+        setLoading(true);       
 		if(!isOffline){
             sync({ username: loggedUser.username })
-            .then(() => toast.show({
-                placement: "top",
-                render: () => {
-                    return (<SuccessHandler />);
-                }
-            }))
+            .then(() =>( setIsSync(true)))
             .catch(() => toast.show({
                 placement: "top",
                 render: () => {
                     return (<ErrorHandler />);
                 }
-            }))			
+            }))
 		}
-			setLoading(false);
+		setLoading(false);
     }
 
     useEffect(()=>{
@@ -648,7 +705,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                                                     cancelText={'Cancelar'}
                                                     searchText={'Pesquisar'}
                                                     cancelButtonAccessibilityLabel={'Cancelar'}
-                                                    onChange={(option) => { setSelectedUser(`${option.name} ${option.surname}`); setFieldValue('provider', option.online_id); }}>
+                                                    onChange={(option) => { setSelectedUser(`${option.name} ${option.surname}`); setFieldValue('provider', `${option.name} ${option.surname}`); }}>
                                                     <Input type='text' onBlur={handleBlur('provider')} placeholder={currentInformedProvider}  onChangeText={handleChange('provider')} value={selectedUser} />
                                                 </ModalSelector> :
                                                 <Input onBlur={handleBlur('provider')} placeholder="Insira o Nome do Provedor" onChangeText={handleChange('provider')} value={values.provider} />
