@@ -433,7 +433,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
             name: 'Serviços',
             params: {
                 beneficiary: beneficiarie,
-                interventions: interventionObjects /*newIntervMap*/
+                interventions: interventionObjects
             },
             merge: true,
         });
@@ -725,7 +725,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                                                  keyExtractor={item => item.online_id}
                                                  labelExtractor={item => `${item.name} ${item.surname}`}
                                                  renderItem={undefined}
-                                                 initValue="Select something yummy!"
+                                                 initValue=""
                                                  accessible={true}
                                                  cancelText={'Cancelar'}
                                                  searchText={'Pesquisar'}
