@@ -17,6 +17,7 @@ import { getBeneficiariesTotal } from '../store/beneficiarySlice';
 import { getReferencesTotal } from '../store/referenceSlice';
 import SyncTimer from '../components/SyncTimer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import UsersNavigator from './UsersNavigator';
 
 function HomeScreen({ navigation }: any) {
   return (
@@ -118,6 +119,13 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
     });
   };
 
+  const configPag = (e?: any) => {
+    navigate({
+      name: "UserProfile"
+    });
+  };
+
+
    useEffect(() => {
     const timer = setTimeout(() => {   
         navigate({
@@ -166,7 +174,7 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
             fontWeight: 'bold',
             },
         }}
-        drawerContent={(props) => <CustomDrawer { ...props } onLogout={onLogout} /*loggedUser={loggedUser}*/ />}
+        drawerContent={(props) => <CustomDrawer { ...props } onLogout={onLogout} configPag={configPag}/*loggedUser={loggedUser}*/ />}
       >
         <Drawer.Screen name="Home" 
             component={HomeScreen} 
@@ -193,15 +201,15 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
             }}
             
         />
-        {/* <Drawer.Screen name="Users" 
+          <Drawer.Screen name="Users" 
             component={UsersNavigator}  
             options={{                     
-                title: 'Utilizadores', 
+                title: 'Configurações', 
                 headerTitle: '',
             }}
             
         />
-       */}
+      
       </Drawer.Navigator>
     </Context.Provider>
   );
