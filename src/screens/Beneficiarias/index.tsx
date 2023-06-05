@@ -20,6 +20,7 @@ import moment from 'moment';
 import { useSelector } from 'react-redux';
 import NetInfo from "@react-native-community/netinfo";
 import Spinner from "react-native-loading-spinner-overlay/lib";
+import { resolveBeneficiaryOfflineIds } from '../../services/beneficiaryService';
 
 const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries_interventions }: any) => {    
     const [showModal, setShowModal] = useState(false);
@@ -71,6 +72,10 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
 			setLoading(false);
         }
     }
+
+    useEffect(()=>{
+        resolveBeneficiaryOfflineIds()
+    },[])
 
     const viewBeneficiaries = async (data: any) => {
 

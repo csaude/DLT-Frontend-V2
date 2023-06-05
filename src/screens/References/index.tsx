@@ -16,6 +16,7 @@ import Spinner from "react-native-loading-spinner-overlay/lib";
 import styles from './styles';
 import moment from 'moment';
 import { ADMIN } from '../../utils/constants';
+import { resolveBeneficiaryOfflineIds } from '../../services/beneficiaryService';
 
 const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, services, subServices }: any) => {
     const [searchField, setSearchField] = useState('');
@@ -285,6 +286,10 @@ const ReferencesMain: React.FC = ({ references, beneficiaries, users, partners, 
             getUserReferences(loggedUser?.id)
         }          
     },[loggedUser, refreshData])
+
+    useEffect(()=>{
+        resolveBeneficiaryOfflineIds()
+    },[])
 
     return (
         <View style={styles.container}>
