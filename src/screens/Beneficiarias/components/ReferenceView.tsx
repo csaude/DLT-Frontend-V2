@@ -97,7 +97,7 @@ const ReferenceView: React.FC = ({ route }: any) => {
                             Estado:
                         </Text>
                         <Text color="darkBlue.300" _dark={{ color: "warmGray.200" }}>
-                            {` ${ data.item.status === 0? 'Pendente' : data.item.status === 1? 'Atendido parcialmente': 'Atendido'}`}
+                            {` ${ data.item.status === 0? 'Pendente' : data.item.status === 1? 'Atendida parcialmente': 'Atendida'}`}
                         </Text>
                     </HStack>
                 </VStack>

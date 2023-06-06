@@ -101,7 +101,7 @@ const UsersList: React.FC = () => {
         filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
         onFilter: (value, record) =>
                     record[dataIndex]
-                        ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
+                        ? (dataIndex == 'name' ? record[dataIndex] + ' ' + record['surname'] : record[dataIndex]).toString().toLowerCase().includes(value.toLowerCase())
                         : '',
         onFilterDropdownVisibleChange: visible => {
                 if (visible) {
