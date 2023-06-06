@@ -273,7 +273,7 @@ const UsersRegistrationForm: React.FC = ({ route, localities, profiles, us, part
                                         <FormControl isRequired isInvalid={'username' in errors}>
                                             <FormControl.Label>Username</FormControl.Label>
                     
-                                            <Input onBlur={handleBlur('username')} placeholder="Insira o Username" onChangeText={handleChange('username')} value={values.username} />
+                                            <Input onBlur={handleBlur('username')} placeholder="Insira o Utilizador" onChangeText={handleChange('username')} value={values.username} />
                                             <FormControl.ErrorMessage>
                                                 {errors.username}
                                             </FormControl.ErrorMessage>

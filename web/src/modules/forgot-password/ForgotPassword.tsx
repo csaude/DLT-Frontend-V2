@@ -125,7 +125,7 @@ const ForgotPassword = () => {
                   id="username"
                   name="username"
                   type=""
-                  placeholder="Insira o Username"
+                  placeholder="Insira o Utilizador"
                   onChange={handleChange}
                   value={values.username}
                   isValid={touched.username && !errors.username}
