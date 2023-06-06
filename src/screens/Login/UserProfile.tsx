@@ -14,13 +14,20 @@ import { database } from '../../database';
 import { Q } from "@nozbe/watermelondb";
 import styles from "./styles";
 import { Context } from "../../routes/DrawerNavigator";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store";
 
 const UserProfile: React.FC = ({ route }:any) => {
     // const {user, profile, locality, partner, us} = route.params;
 
     const loggedUser: any = useContext(Context);
     const user = loggedUser;
+    const userDetails = useSelector((state: RootState) => state.auth.userDetails);
     console.log(user);
+    console.log("==================================================================");
+    console.log(userDetails);
+    console.log("==================================================================");
+    const firstLogin = loggedUser?.entry_point === undefined ? "1" : "2";
 
     return (
         <KeyboardAvoidingView  style={styles.background}>
@@ -33,8 +40,9 @@ const UserProfile: React.FC = ({ route }:any) => {
                             </Avatar>
                             <Box style={styles.userText}>     
                                 <Text>{ user?.username }</Text> 
-                                <Heading style={styles.username}>{ user?.name } { user?.surname }</Heading>    
-                                <Text>{ user?.phone_number }</Text>                                              
+                                <Heading style={styles.username}>{ user?.name } { user?.surname }</Heading>  
+                                <Text>{ user?.email }</Text>     
+                                <Text>{ firstLogin === '1'? user?.id : user?.online_id }</Text>                                                                                                                                  
                             </Box> 
                         </Box>
                         <Text style={styles.txtLabel}>Detalhes do Utilizador</Text>
@@ -51,9 +59,9 @@ const UserProfile: React.FC = ({ route }:any) => {
                                     "Unidade Sanitaria"
                                     : 
                                 (user?.entry_point==="2") ? 
-                                    "Escola"
+                                    "Comunidade"
                                     : 
-                                    "Comunidade"                                            
+                                    "Escola"                                            
                                 }  
                             </Text>
                                 
@@ -66,13 +74,10 @@ const UserProfile: React.FC = ({ route }:any) => {
                         </Flex>
                         <Divider />
 
-                        <Text> <Text style={styles.txtLabel}>Estado: </Text> { "Activo" /*(user.status===1)  ? "Activo" : "Inactivo" */}</Text>
+                        <Text> <Text style={styles.txtLabel}>Estado: </Text> { (user.status===1)  ? "Activo" : "Inactivo" }</Text>
                     </View>
                 </View>
             </ScrollView>
-            <TouchableOpacity onPress={() => navigate({name: "UserForm", params: {user: user}}) } style={styles.fab}>
-                <Icon as={Ionicons} name="pencil" size={7} color="white" />
-            </TouchableOpacity>
         </KeyboardAvoidingView>
     );
 }
