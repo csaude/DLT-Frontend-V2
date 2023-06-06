@@ -7,7 +7,6 @@ export const beneficiariesFetchCount = async () => {
     .get("beneficiaries")
     .query()
     .fetchCount();
-  // console.log(count);
   return count;
 };
 
