@@ -30,7 +30,7 @@ const FormReference = ({
   handleRefServicesList,
 }: any) => {
   const [current, setCurrent] = useState(0);
-  const [firstStepValues, setFirstStepValues] = useState();
+  const [firstStepValues, setFirstStepValues] = useState<any>();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -130,6 +130,7 @@ const FormReference = ({
           reference={reference}
           beneficiary={beneficiary}
           handleRefServicesList={handleRefServicesList}
+          firstStepValues={firstStepValues}
         />
       ),
     },

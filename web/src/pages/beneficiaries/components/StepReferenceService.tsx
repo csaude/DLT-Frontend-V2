@@ -20,6 +20,7 @@ import { query as queryBeneficiary } from "@app/utils/beneficiary";
 import { query as beneficiaryInterventionQuery } from "../../../utils/beneficiaryIntervention";
 import { queryByTypeAndBeneficiary } from "@app/utils/service";
 import { MENTOR } from "@app/utils/contants";
+import PropTypes from "prop-types";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -482,5 +483,12 @@ const StepReferenceService = ({
       </div>
     </>
   );
+};
+StepReferenceService.propTypes = {
+  form: PropTypes.object.isRequired,
+  reference: PropTypes.object.isRequired,
+  beneficiary: PropTypes.object.isRequired,
+  firstStepValues: PropTypes.object.isRequired,
+  handleRefServicesList: PropTypes.func.isRequired,
 };
 export default StepReferenceService;

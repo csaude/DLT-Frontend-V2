@@ -111,7 +111,7 @@ const ServiceForm = ({
               name="ageBands"
               label="Faixas Etárias"
               rules={[{ required: true, message: RequiredFieldMessage }]}
-              initialValue={service?.ageBands.split(",")}
+              initialValue={service?.ageBands?.split(",")}
             >
               <Select
                 mode="multiple"
