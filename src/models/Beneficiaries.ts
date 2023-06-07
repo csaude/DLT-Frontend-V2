@@ -57,6 +57,7 @@ export interface BeneficiariesModel {
     vblt_sti_history?:any,
     vblt_sex_worker?:any,
     vblt_house_sustainer?:any,
+    offline_id?:string,
     created_by?:any,
     updated_by?:any
 }
@@ -117,4 +118,5 @@ export default class Beneficiarie extends Model {
     @field("vblt_sex_worker") vblt_sex_worker;
     @field("vblt_house_sustainer") vblt_house_sustainer;
     @field("references_a") references;
+    @text("offline_id") offline_id;
 }

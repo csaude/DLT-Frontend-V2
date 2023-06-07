@@ -1,8 +1,14 @@
 import {synchronize} from '@nozbe/watermelondb/sync';
 import { database } from './index';
 import { SYNC_API_URL, CUSTOM_SYNC_URL } from '../services/api'
+import { resolveBeneficiaryOfflineIds } from '../services/beneficiaryService';
 
 export async function sync({ username }) {
+  await doSync({username})
+  await resolveBeneficiaryOfflineIds()
+  await doSync({username})
+}
+export async function doSync({ username }) {
     await synchronize({
         database,
         pullChanges: async ({lastPulledAt}) => {

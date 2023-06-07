@@ -10,8 +10,8 @@ import { database } from '../database';
 import { useDispatch, useSelector } from 'react-redux';
 import { loadUserProvinces, loadUserDistricts, loadUserLocalities, loadUserUss } from '../store/authSlice';
 import styles from './components/style';
-import { Badge, Box, VStack } from 'native-base';
-import { beneficiariesFetchCount } from '../services/beneficiaryService';
+import { Badge, Box, VStack, useToast } from 'native-base';
+import { beneficiariesFetchCount, resolveBeneficiaryOfflineIds } from '../services/beneficiaryService';
 import { referencesFetchCount } from '../services/referenceService';
 import { getBeneficiariesTotal } from '../store/beneficiarySlice';
 import { getReferencesTotal } from '../store/referenceSlice';
@@ -19,6 +19,10 @@ import SyncTimer from '../components/SyncTimer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function HomeScreen({ navigation }: any) {
+  useEffect(()=>{
+      resolveBeneficiaryOfflineIds()
+  },[])
+
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Dreams Layering Tool </Text>
@@ -112,7 +116,7 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
                 }
           }
 
-  const onLogout = (e?: any) => {
+  const onLogout = () => {
     navigate({
       name: "Login"
     });

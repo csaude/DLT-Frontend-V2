@@ -111,7 +111,7 @@ const Login = () => {
                 <Form.Control
                   id="email"
                   name="email"
-                  placeholder="Insira o Username"
+                  placeholder="Insira o Utilizador"
                   onChange={handleChange}
                   value={values.email}
                   isValid={touched.email && !errors.email}
@@ -136,7 +136,7 @@ const Login = () => {
                   id="password"
                   name="password"
                   type={passwordType}
-                  placeholder="Insira a Password"
+                  placeholder="Insira a Senha"
                   onChange={handleChange}
                   value={values.password}
                   isValid={touched.password && !errors.password}

@@ -320,7 +320,7 @@ const UsersForm = ({ form, user, modalVisible, handleModalVisible, handleAdd }) 
                             rules={[{ required: true, message: RequiredFieldMessage }]}
                             initialValue={user?.username}
                         >
-                            <Input placeholder="Insira o Username" />
+                            <Input placeholder="Insira o Utilizador" />
                         </Form.Item>
                     </Col>
                     <Col span={8}>
