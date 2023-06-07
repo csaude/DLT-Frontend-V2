@@ -16,7 +16,6 @@ import "./index.css";
 import moment from "moment";
 import { DeleteFilled, PlusOutlined } from "@ant-design/icons";
 import { query as queryUser } from "@app/utils/users";
-import { query as queryBeneficiary } from "@app/utils/beneficiary";
 import { query as beneficiaryInterventionQuery } from "../../../utils/beneficiaryIntervention";
 import { queryByTypeAndBeneficiary } from "@app/utils/service";
 import { MENTOR } from "@app/utils/contants";
@@ -44,14 +43,12 @@ const StepReferenceService = ({
   beneficiary =
     reference !== undefined ? reference?.beneficiaries : beneficiary;
 
-  const showDrawer = (record: any) => {
+  const showDrawer = () => {
     setVisible(true);
   };
 
   useEffect(() => {
     const fetchData = async () => {
-      const data1 = await queryBeneficiary(beneficiary.id);
-
       if (firstStepValues !== undefined) {
         const payload = {
           serviceType: firstStepValues?.serviceType,
@@ -131,7 +128,7 @@ const StepReferenceService = ({
   const onAddService = () => {
     form
       .validateFields()
-      .then(async (values) => {
+      .then(async () => {
         const servOther = {
           servico: selectedService,
           description: form.getFieldValue("outros"),
@@ -166,7 +163,7 @@ const StepReferenceService = ({
         setVisible(false);
         form.setFieldValue("outros", "");
       })
-      .catch((error) => {
+      .catch(() => {
         message.error({
           content: "Nenhum Serviço selecionado!",
           className: "custom-class",

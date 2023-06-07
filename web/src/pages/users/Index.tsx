@@ -14,7 +14,6 @@ import ptPT from "antd/lib/locale-provider/pt_PT";
 import { query } from "../../utils/users";
 import { allPartners } from "@app/utils/partners";
 import { allProfiles } from "@app/utils/profiles";
-import { allProvinces } from "@app/utils/locality";
 import { UserModel, getEntryPoint } from "../../models/User";
 import { SearchOutlined, PlusOutlined, EditOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
@@ -48,7 +47,6 @@ const UsersList: React.FC = () => {
       const data = await query();
       const partners = await allPartners();
       const profiles = await allProfiles();
-      const provinces = await allProvinces();
       setUsers(data);
       setPartners(partners);
       setProfiles(profiles);
