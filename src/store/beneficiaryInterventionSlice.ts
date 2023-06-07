@@ -1,8 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-export interface InterventionCount{
-    beneficiary_id : number,
-    total: number,
+export interface InterventionCount {
+  beneficiary_id: number;
+  total: number;
 }
 
 export interface BeneficiaryInterventionSlice {
@@ -18,7 +18,7 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     loadBeneficiariesInterventionsCounts: (state, { payload }) => {
-        state.totals = payload;
+      state.totals = payload;
     },
   },
 });

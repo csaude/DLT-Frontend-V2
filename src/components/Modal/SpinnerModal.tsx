@@ -1,7 +1,8 @@
 import React from "react";
 import { FormControl, HStack, Modal, Spinner } from "native-base";
+import PropTypes from "prop-types";
 
-export const SpinnerModal = ({ open, title, message }) => {
+const SpinnerModal = ({ open, title, message }) => {
   const MySpinner = () => {
     return (
       <HStack space={8} justifyContent="center" alignItems="center">
@@ -16,7 +17,7 @@ export const SpinnerModal = ({ open, title, message }) => {
         <Modal.Header>{title}</Modal.Header>
         <Modal.Body>
           <FormControl>
-            <MySpinner/>
+            <MySpinner />
             <FormControl.Label>{message}</FormControl.Label>
           </FormControl>
         </Modal.Body>
@@ -24,3 +25,11 @@ export const SpinnerModal = ({ open, title, message }) => {
     </Modal>
   );
 };
+
+SpinnerModal.propTypes = {
+  open: PropTypes.object.isRequired,
+  title: PropTypes.object.isRequired,
+  message: PropTypes.object.isRequired,
+};
+
+export { SpinnerModal };

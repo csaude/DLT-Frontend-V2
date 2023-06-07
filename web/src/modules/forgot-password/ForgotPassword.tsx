@@ -1,124 +1,120 @@
-import React, { useState } from 'react';
-import {Link} from 'react-router-dom';
-import {toast} from 'react-toastify';
-import {useTranslation} from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import {Button} from '@components';
-import {faEnvelope, faEye, faEyeSlash, faLock, faUser} from '@fortawesome/free-solid-svg-icons';
-import {setWindowClass} from '@app/utils/helpers';
-import * as Yup from 'yup';
-import {useFormik} from 'formik';
-import {Form, InputGroup} from 'react-bootstrap';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@components";
+import { faEye, faEyeSlash, faUser } from "@fortawesome/free-solid-svg-icons";
+import { setWindowClass } from "@app/utils/helpers";
+import * as Yup from "yup";
+import { useFormik } from "formik";
+import { Form, InputGroup } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import * as AuthService from '../../services/auth';
-import {verifyUserByUsername} from '../../utils/login';
-import { Alert } from 'antd';
+import { verifyUserByUsername } from "../../utils/login";
+import { Alert } from "antd";
 
 const ForgotPassword = () => {
   const [isAuthLoading, setAuthLoading] = useState(false);
-  const [t] = useTranslation();
   const [passwordType, setPasswordType] = useState("password");
-
   const navigate = useNavigate();
 
-  const updatePassword = async (username: string, password: string) => {
+  const updatePassword = async () => {
     try {
       setAuthLoading(true);
-      const data = await AuthService.updatePassword(username, password);
-      toast.success('Redefinição de senha submetida com sucesso!');
-      navigate('/');
-    } catch ( error ) {
-      toast.error( 'Failed');
+      toast.success("Redefinição de senha submetida com sucesso!");
+      navigate("/");
+    } catch (error) {
+      toast.error("Failed");
     }
   };
 
-  const getMessage = status => {
-      if(status==404){
-          return 'O utilizador informado não está cadastrado no sistema, para autenticar precisa estar cadastrado no sistema'
-      }
-      else if(status==423){
-          return 'O utilizador informado encontra-se inactivo, por favor contacte a equipe de suporte para activação do utilizador'
-      }
-      else if(status==401){
-          return 'A password informada não está correcta, por favor corrija a password e tente novamente'
-      }
-      else if(status==500){
-          return 'Ocorreu um Erro na autenticação do seu utilizador, por favor contacte a equipe de suporte para mais detalhes!'
-      }
-      else if (status==undefined) {
-        return 'Do momento o sistema encontra-se em manutenção, por favor aguarde a disponibilidade do sistema e tente novamente'
-      }
-  } 
+  const getMessage = (status) => {
+    if (status == 404) {
+      return "O utilizador informado não está cadastrado no sistema, para autenticar precisa estar cadastrado no sistema";
+    } else if (status == 423) {
+      return "O utilizador informado encontra-se inactivo, por favor contacte a equipe de suporte para activação do utilizador";
+    } else if (status == 401) {
+      return "A password informada não está correcta, por favor corrija a password e tente novamente";
+    } else if (status == 500) {
+      return "Ocorreu um Erro na autenticação do seu utilizador, por favor contacte a equipe de suporte para mais detalhes!";
+    } else if (status == undefined) {
+      return "Do momento o sistema encontra-se em manutenção, por favor aguarde a disponibilidade do sistema e tente novamente";
+    }
+  };
 
-  
-  const {handleChange, values, handleSubmit, touched, errors} = useFormik({
+  const { handleChange, values, handleSubmit, touched, errors } = useFormik({
     initialValues: {
-      username: '',
-      password: '',
-      rePassword: ''
-    },    
+      username: "",
+      password: "",
+      rePassword: "",
+    },
     validationSchema: Yup.object({
       username: Yup.string()
-        .min(5, 'Deve conter 5 caracter ou mais')
-        .required('Obrigatório'),
+        .min(5, "Deve conter 5 caracter ou mais")
+        .required("Obrigatório"),
       password: Yup.string()
-        .required('Obrigatório')
-        .max(25, 'Deve conter 25 caracteres ou menos')
-        .matches(/(?=.*\d)/,'Deve conter número')
-        .matches(/(?=.*[a-z])/,'Deve conter minúscula')
-        .matches(/(?=.*[A-Z])/, 'Deve conter Maiúscula')
-        .matches(/(?=.*[@$!%*#?&])/,'Deve conter caracter especial')
-        .min(8, 'Deve conter 8 caracter ou mais'),
+        .required("Obrigatório")
+        .max(25, "Deve conter 25 caracteres ou menos")
+        .matches(/(?=.*\d)/, "Deve conter número")
+        .matches(/(?=.*[a-z])/, "Deve conter minúscula")
+        .matches(/(?=.*[A-Z])/, "Deve conter Maiúscula")
+        .matches(/(?=.*[@$!%*#?&])/, "Deve conter caracter especial")
+        .min(8, "Deve conter 8 caracter ou mais"),
       rePassword: Yup.string()
-        .oneOf([Yup.ref('password'), null], 'As senhas devem corresponder')
-        .required('Obrigatório')
+        .oneOf([Yup.ref("password"), null], "As senhas devem corresponder")
+        .required("Obrigatório"),
     }),
     onSubmit: async (values) => {
-      try{
-          await verifyUserByUsername(values.username);
-          updatePassword(values.username, values.password);
-          toast.success('Um email de confirmação foi enviado!');
-       } catch ( error ) {
-          const errSt = JSON.stringify(error);
-          const errObj = JSON.parse(errSt)
-          toast.error(getMessage(errObj.status));
-       }
-    }
+      try {
+        await verifyUserByUsername(values.username);
+        updatePassword();
+        toast.success("Um email de confirmação foi enviado!");
+      } catch (error) {
+        const errSt = JSON.stringify(error);
+        const errObj = JSON.parse(errSt);
+        toast.error(getMessage(errObj.status));
+      }
+    },
   });
 
-  const togglePassword =()=>{
-
-    if(passwordType==="password")
-    {
-     setPasswordType("")
-     return;
+  const togglePassword = () => {
+    if (passwordType === "password") {
+      setPasswordType("");
+      return;
     }
-    setPasswordType("password")
+    setPasswordType("password");
   };
 
-  setWindowClass('hold-transition login-page');
+  setWindowClass("hold-transition login-page");
 
   return (
     <div className="login-box">
       <div className="card card-outline card-primary">
-        <div style={{alignItems  : 'center', width:'50%' }}>
-          <img  style={{  width: "100%", marginLeft: "50%", marginTop:"10%"}}  src={'img/dreams.png'} />
+        <div style={{ alignItems: "center", width: "50%" }}>
+          <img
+            style={{ width: "100%", marginLeft: "50%", marginTop: "10%" }}
+            src={"img/dreams.png"}
+          />
         </div>
         <div className="card-header text-center">
           <Link to="/" className="h4">
             <p className="login-box-msg">
-              <b>Dreams</b><span> Layering Tool</span>
+              <b>Dreams</b>
+              <span> Layering Tool</span>
             </p>
           </Link>
         </div>
         <div className="card-body">
           <p className="login-box-msg">Redefinir a senha</p>
-              <div className="row alert">                     
-                    <Alert message="Todas as senhas inseridas devem ter pelo menos 8 caracteres alfanuméricos contendo: 1 letra maiúscula, 1 letra minúscula, 1 símbolo e 1 número." type="warning" showIcon closable />
-              </div>  
+          <div className="row alert">
+            <Alert
+              message="Todas as senhas inseridas devem ter pelo menos 8 caracteres alfanuméricos contendo: 1 letra maiúscula, 1 letra minúscula, 1 símbolo e 1 número."
+              type="warning"
+              showIcon
+              closable
+            />
+          </div>
           <form onSubmit={handleSubmit}>
-           
             <div className="mb-3">
               <InputGroup className="mb-3">
                 <Form.Control
@@ -164,12 +160,17 @@ const ForgotPassword = () => {
                 ) : (
                   <InputGroup.Append>
                     <InputGroup.Text>
-                      { 
-                        passwordType==="password"? 
-                          <FontAwesomeIcon icon={faEyeSlash} onClick={togglePassword} />
-                        :
-                          <FontAwesomeIcon icon={faEye} onClick={togglePassword} />
-                      }
+                      {passwordType === "password" ? (
+                        <FontAwesomeIcon
+                          icon={faEyeSlash}
+                          onClick={togglePassword}
+                        />
+                      ) : (
+                        <FontAwesomeIcon
+                          icon={faEye}
+                          onClick={togglePassword}
+                        />
+                      )}
                     </InputGroup.Text>
                   </InputGroup.Append>
                 )}
@@ -187,11 +188,12 @@ const ForgotPassword = () => {
                   value={values.rePassword}
                   isValid={touched.rePassword && !errors.rePassword}
                   isInvalid={touched.rePassword && !!errors.rePassword}
-                  onPaste={(e)=>{
-                    e.preventDefault()
+                  onPaste={(e) => {
+                    e.preventDefault();
                     return false;
-                  }} onCopy={(e)=>{
-                    e.preventDefault()
+                  }}
+                  onCopy={(e) => {
+                    e.preventDefault();
                     return false;
                   }}
                 />
@@ -201,12 +203,18 @@ const ForgotPassword = () => {
                   </Form.Control.Feedback>
                 ) : (
                   <InputGroup.Append>
-                    <InputGroup.Text>{ 
-                        passwordType==="password"? 
-                          <FontAwesomeIcon icon={faEyeSlash} onClick={togglePassword} />
-                        :
-                          <FontAwesomeIcon icon={faEye} onClick={togglePassword} />
-                      }
+                    <InputGroup.Text>
+                      {passwordType === "password" ? (
+                        <FontAwesomeIcon
+                          icon={faEyeSlash}
+                          onClick={togglePassword}
+                        />
+                      ) : (
+                        <FontAwesomeIcon
+                          icon={faEye}
+                          onClick={togglePassword}
+                        />
+                      )}
                     </InputGroup.Text>
                   </InputGroup.Append>
                 )}
@@ -214,12 +222,12 @@ const ForgotPassword = () => {
             </div>
             <div className="row">
               <div className="col-12">
-                <Button 
-                  block 
+                <Button
+                  block
                   type="submit"
                   isLoading={isAuthLoading}
-                  style={{background:"#0C4A6E"}} 
-                > 
+                  style={{ background: "#0C4A6E" }}
+                >
                   Solicitar
                 </Button>
               </div>

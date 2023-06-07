@@ -73,16 +73,16 @@ const ReportAgyw = () => {
       const districtsIds = selectedDistricts.map((district) => {
         return district.id;
       });
-      const startDate = moment(initialDate).format("YYYY-MM-DD")
-      const endDate =  moment(finalDate).format("YYYY-MM-DD")
-           
+      const startDate = moment(initialDate).format("YYYY-MM-DD");
+      const endDate = moment(finalDate).format("YYYY-MM-DD");
+
       const responseData = await agywPrevQuery(
         districtsIds,
         startDate,
         endDate
       );
-      
-      dispatch(loadAgywData(responseData))
+
+      dispatch(loadAgywData(responseData));
       navigate("/previewAgyw", {
         state: {
           provinces: selectedProvinces,
@@ -146,11 +146,7 @@ const ReportAgyw = () => {
               </Select>
             </Form.Item>
 
-            <Form.Item
-              name="initialDate"
-              label="Data Inicial"
-
-            >
+            <Form.Item name="initialDate" label="Data Inicial">
               <Space direction="vertical">
                 <DatePicker
                   onChange={(e) => {
@@ -160,11 +156,7 @@ const ReportAgyw = () => {
               </Space>
             </Form.Item>
 
-            <Form.Item
-              name="finalDate"
-              label="Data Final"
-
-            >
+            <Form.Item name="finalDate" label="Data Final">
               <Space direction="vertical">
                 <DatePicker
                   onChange={(e) => {

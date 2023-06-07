@@ -1,23 +1,33 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Platform } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Icon } from "native-base";
 import { MaterialIcons } from "@native-base/icons";
-import moment, { max } from "moment";
+import moment from "moment";
+import PropTypes from "prop-types";
 
-const MyDatePicker = ({ onDateSelection, minDate, maxDate, currentDate ,isEdit}) => {
-  const defaultDate =  currentDate != null && currentDate!='' && currentDate!=undefined? currentDate: new Date();
+const MyDatePicker = ({
+  onDateSelection,
+  minDate,
+  maxDate,
+  currentDate,
+  isEdit,
+}) => {
+  const defaultDate =
+    currentDate != null && currentDate != "" && currentDate != undefined
+      ? currentDate
+      : new Date();
   const [date, setDate] = useState(new Date(defaultDate));
   const [mode, setMode] = useState<any>("date");
   const [show, setShow] = useState(false);
 
   const onChange = (event, selectedDate) => {
-    if (event.type === 'dismissed' && !isEdit) {
+    if (event.type === "dismissed" && !isEdit) {
       setDate(new Date());
-    }else{
-          const formatedDate = moment(selectedDate).format('YYYY-MM-DD')
-          setDate(selectedDate);
-          onDateSelection(formatedDate);
+    } else {
+      const formatedDate = moment(selectedDate).format("YYYY-MM-DD");
+      setDate(selectedDate);
+      onDateSelection(formatedDate);
     }
     setShow(false);
   };
@@ -37,7 +47,13 @@ const MyDatePicker = ({ onDateSelection, minDate, maxDate, currentDate ,isEdit})
 
   return (
     <>
-      <Icon as={MaterialIcons} name="mode-edit" size={6} color="gray.600" onPress={showDatepicker} />
+      <Icon
+        as={MaterialIcons}
+        name="mode-edit"
+        size={6}
+        color="gray.600"
+        onPress={showDatepicker}
+      />
 
       {show && (
         <DateTimePicker
@@ -52,6 +68,14 @@ const MyDatePicker = ({ onDateSelection, minDate, maxDate, currentDate ,isEdit})
       )}
     </>
   );
+};
+
+MyDatePicker.propTypes = {
+  onDateSelection: PropTypes.func.isRequired,
+  minDate: PropTypes.object.isRequired,
+  maxDate: PropTypes.object.isRequired,
+  currentDate: PropTypes.object.isRequired,
+  isEdit: PropTypes.bool.isRequired,
 };
 
 export default MyDatePicker;

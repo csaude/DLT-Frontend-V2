@@ -1,6 +1,6 @@
+import React, { Fragment } from "react";
 import { Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { Fragment } from "react";
 import { useSelector } from "react-redux";
 
 const hadSchoolAllowance = ({ districtId }) => {
@@ -29,38 +29,38 @@ const hadSchoolAllowance = ({ districtId }) => {
   const time_1 = arrTotals.filter((item) => item.key == enrollmentTime_0_6);
   const totals1 = time_1[0];
 
-  let ages_10_14_time_1 = totals1?.value[ages_10_14];
-  let ages_15_19_time_1 = totals1?.value[ages_15_19];
-  let ages_20_24_time_1 = totals1?.value[ages_20_24];
-  let ages_25_29_time_1 = totals1?.value[ages_25_29];
-  let subTotal_time_1 = totals1?.value[subtotal];
+  const ages_10_14_time_1 = totals1?.value[ages_10_14];
+  const ages_15_19_time_1 = totals1?.value[ages_15_19];
+  const ages_20_24_time_1 = totals1?.value[ages_20_24];
+  const ages_25_29_time_1 = totals1?.value[ages_25_29];
+  const subTotal_time_1 = totals1?.value[subtotal];
 
   const time_2 = arrTotals.filter((item) => item.key == enrollmentTime_7_12);
   const totals2 = time_2[0];
 
-  let ages_10_14_time_2 = totals2?.value[ages_10_14];
-  let ages_15_19_time_2 = totals2?.value[ages_15_19];
-  let ages_20_24_time_2 = totals2?.value[ages_20_24];
-  let ages_25_29_time_2 = totals2?.value[ages_25_29];
-  let subTotal_time_2 = totals2?.value[subtotal];
+  const ages_10_14_time_2 = totals2?.value[ages_10_14];
+  const ages_15_19_time_2 = totals2?.value[ages_15_19];
+  const ages_20_24_time_2 = totals2?.value[ages_20_24];
+  const ages_25_29_time_2 = totals2?.value[ages_25_29];
+  const subTotal_time_2 = totals2?.value[subtotal];
 
   const time_3 = arrTotals.filter((item) => item.key == enrollmentTime_13_24);
   const totals3 = time_3[0];
 
-  let ages_10_14_time_3 = totals3?.value[ages_10_14];
-  let ages_15_19_time_3 = totals3?.value[ages_15_19];
-  let ages_20_24_time_3 = totals3?.value[ages_20_24];
-  let ages_25_29_time_3 = totals3?.value[ages_25_29];
-  let subTotal_time_3 = totals3?.value[subtotal];
+  const ages_10_14_time_3 = totals3?.value[ages_10_14];
+  const ages_15_19_time_3 = totals3?.value[ages_15_19];
+  const ages_20_24_time_3 = totals3?.value[ages_20_24];
+  const ages_25_29_time_3 = totals3?.value[ages_25_29];
+  const subTotal_time_3 = totals3?.value[subtotal];
 
   const time_4 = arrTotals.filter((item) => item.key == enrollmentTime_25_plus);
   const totals4 = time_4[0];
 
-  let ages_10_14_time_4 = totals4?.value[ages_10_14];
-  let ages_15_19_time_4 = totals4?.value[ages_15_19];
-  let ages_20_24_time_4 = totals4?.value[ages_20_24];
-  let ages_25_29_time_4 = totals4?.value[ages_25_29];
-  let subTotal_time_4 = totals4?.value[subtotal];
+  const ages_10_14_time_4 = totals4?.value[ages_10_14];
+  const ages_15_19_time_4 = totals4?.value[ages_15_19];
+  const ages_20_24_time_4 = totals4?.value[ages_20_24];
+  const ages_25_29_time_4 = totals4?.value[ages_25_29];
+  const subTotal_time_4 = totals4?.value[subtotal];
 
   interface DataType {
     key: string;
