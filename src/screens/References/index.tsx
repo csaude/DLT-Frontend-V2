@@ -110,7 +110,7 @@ const ReferencesMain: React.FC = ({
         return item?._raw.online_id == e?._raw.sub_service_id;
       })[0];
       return {
-        id: subservice?._raw.online_id,
+        id: subservice?._raw.online_id + e?._raw.date,
         name: subservice?._raw.name,
         intervention: e?._raw,
       };

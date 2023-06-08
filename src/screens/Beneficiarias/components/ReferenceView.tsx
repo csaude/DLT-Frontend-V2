@@ -112,8 +112,8 @@ const ReferenceView: React.FC = ({ route }: any) => {
                   data.item.status === 0
                     ? "Pendente"
                     : data.item.status === 1
-                    ? "Atendido parcialmente"
-                    : "Atendido"
+                    ? "Atendida parcialmente"
+                    : "Atendida"
                 }`}
               </Text>
             </HStack>

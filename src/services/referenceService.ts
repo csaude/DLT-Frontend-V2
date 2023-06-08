@@ -5,6 +5,5 @@ export const referencesFetchCount = async () => {
     .get("references")
     .query()
     .fetchCount();
-  // console.log(count);
   return count;
 };

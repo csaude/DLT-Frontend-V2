@@ -347,19 +347,34 @@ const ReferenceForm: React.FC = ({ route }: any) => {
           ref.date_created = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
         });
 
-      return newReference;
-    });
+            return newReference;
+        });
+
+        await database.write(async () => {
+            referServices.forEach(async (element) => {
+                const newRefService = await database.get('references_services').create((refServ: any) => {
+                    refServ.reference_id = savedR._raw.id
+                    refServ.service_id = element.online_id
+                    refServ.status = 0
+                    refServ.date_created = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
+                });
+            });
+
+        });
 
     syncronize();
     await delay(5000);
     syncronize();
     await delay(1000);
 
-    const syncedReferences = await database
-      .get("references")
-      .query(Q.where("beneficiary_offline_id", beneficiary.id))
-      .fetch();
-    const serializedReferences = syncedReferences.map((item) => item._raw);
+        const syncedReferences = await database.get('references').query(
+            Q.or(
+                Q.where('beneficiary_offline_id', beneficiary.id),
+                Q.where('beneficiary_id', beneficiary.online_id),
+            )
+         ).fetch();
+
+        const serializedReferences = syncedReferences.map(item => item._raw);
 
     navigate({
       name: "Referencias",

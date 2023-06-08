@@ -6,7 +6,6 @@ export const beneficiariesFetchCount = async () => {
     .get("beneficiaries")
     .query()
     .fetchCount();
-  // console.log(count);
   return count;
 };
 
@@ -16,7 +15,6 @@ export const resolveBeneficiaryOfflineIds = async () => {
     .query(Q.where("offline_id", null))
     .fetch();
   const offlineIds = beneficiaryQ.map((item) => item._raw.id);
-  console.log("-----offlineIds------", offlineIds);
 
   await database.write(async () => {
     for (const offlineId of offlineIds) {
