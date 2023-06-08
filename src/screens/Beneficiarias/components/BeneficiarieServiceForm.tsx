@@ -392,7 +392,7 @@ const BeneficiarieServiceForm: React.FC = ({
       intervention: newIntr,
     };
 
-    const newIntervMap;
+    let newIntervMap;
     if (isEdit) {
       newIntervMap = intervs.map((item) =>
         item.intervention.id === nIobj.intervention.id ? nIobj : item

@@ -180,6 +180,10 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
       </Box>
     );
   };
+  ItemBadge.propTypes = {
+    label: PropTypes.string.isRequired,
+    total: PropTypes.string.isRequired,
+  };
 
   const getTotals = async () => {
     const countBen = await beneficiariesFetchCount();
@@ -250,10 +254,6 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
       </Drawer.Navigator>
     </Context.Provider>
   );
-};
-DrawerNavigation.propTypes = {
-  label: PropTypes.object.isRequired,
-  total: PropTypes.object.isRequired,
 };
 
 export default DrawerNavigation;
