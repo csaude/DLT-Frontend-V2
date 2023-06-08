@@ -45,8 +45,7 @@ const BeneficiarieServiceForm: React.FC = ({
   services,
   subServices,
 }: any) => {
-  const { beneficiarie, intervs, intervention, isNewIntervention } =
-    route.params;
+  const { beneficiarie, intervention, isNewIntervention } = route.params;
 
   const areaServicos = [
     { id: "1", name: "Serviços Clinicos" },
@@ -64,7 +63,7 @@ const BeneficiarieServiceForm: React.FC = ({
   const [users, setUsers] = useState<any>([]);
   const [selectedUser, setSelectedUser] = useState<any>("");
   const [checked, setChecked] = useState(false);
-    const [isSync, setIsSync] = useState(false);
+  const [isSync, setIsSync] = useState(false);
   const [text, setText] = useState("");
   const [uss, setUss] = useState<any>([]);
   const [isClinicalOrCommunityPartner, setClinicalOrCommunityPartner] =
@@ -331,42 +330,45 @@ const BeneficiarieServiceForm: React.FC = ({
       errors.entry_point = message;
     }
 
-        if (!values.provider) {
-            errors.provider = message;
-        }
+    if (!values.provider) {
+      errors.provider = message;
+    }
 
     return errors;
   };
-            
-    const validateBeneficiaryIntervention = async (values: any) => {
-        
-        const benefInterv = await database.get('beneficiaries_interventions').query(
-            Q.where('beneficiary_id', parseInt(beneficiarie.online_id)),
-            Q.where('sub_service_id', parseInt(values.sub_service_id)),
-            Q.where('date','' + text)
-        ).fetch();
 
-        const benefIntervSerialied = benefInterv.map(item => item._raw);
+  const validateBeneficiaryIntervention = async (values: any) => {
+    const benefInterv = await database
+      .get("beneficiaries_interventions")
+      .query(
+        Q.where("beneficiary_id", parseInt(beneficiarie.online_id)),
+        Q.where("sub_service_id", parseInt(values.sub_service_id)),
+        Q.where("date", "" + text)
+      )
+      .fetch();
 
-        if(benefIntervSerialied.length>0){
-             toast.show({ placement: "top", title: "Beneficiária já tem esta intervenção para esta data!" });
-        }else{
-            onSubmit(values)
-        }
+    const benefIntervSerialied = benefInterv.map((item) => item._raw);
 
+    if (benefIntervSerialied.length > 0) {
+      toast.show({
+        placement: "top",
+        title: "Beneficiária já tem esta intervenção para esta data!",
+      });
+    } else {
+      onSubmit(values);
     }
+  };
 
-    useEffect(() => {
-        isSync ?  
-            toast.show({
-                placement: "top",
-                render:() => {
-                    return (<SuccessHandler />);
-                }
-            })
-        : '';
-
-    }, [isSync])
+  useEffect(() => {
+    isSync
+      ? toast.show({
+          placement: "top",
+          render: () => {
+            return <SuccessHandler />;
+          },
+        })
+      : "";
+  }, [isSync]);
 
   const onSubmit = async (values: any) => {
     setLoading(true);
@@ -386,7 +388,7 @@ const BeneficiarieServiceForm: React.FC = ({
           intervention.us_id = values.us_id;
           intervention.activist_id = userId;
           intervention.entry_point = values.entry_point;
-          intervention.provider = ''+values.provider;
+          intervention.provider = "" + values.provider;
           intervention.remarks = values.remarks;
           intervention.status = 1;
           intervention._status = "updated";
@@ -405,7 +407,7 @@ const BeneficiarieServiceForm: React.FC = ({
             intervention.us_id = values.us_id;
             intervention.activist_id = userId;
             intervention.entry_point = values.entry_point;
-            intervention.provider = ''+values.provider;
+            intervention.provider = "" + values.provider;
             intervention.remarks = values.remarks;
             intervention.date_created = moment(new Date()).format(
               "YYYY-MM-DD HH:mm:ss"
@@ -414,95 +416,111 @@ const BeneficiarieServiceForm: React.FC = ({
           });
         showToast("success", "Provido", "Serviço provido com sucesso!");
 
-                console.log(newIntervention);
+        console.log(newIntervention);
 
         return newIntervention;
       }
     });
 
-        const interv = newObject._raw;
-        await database.write(async () => {
-            const subService = await database.get('sub_services').query(
-                Q.where('online_id', interv.sub_service_id)
-            );
-            
-            const referenceSToUpdate = await database.get('references_services').query(
-                Q.where('service_id', parseInt(subService[0]._raw?.service_id))
-            ).fetch();
+    const interv = newObject._raw;
+    await database.write(async () => {
+      const subService = await database
+        .get("sub_services")
+        .query(Q.where("online_id", interv.sub_service_id));
 
-            const referencesIds = referenceSToUpdate.map(r => parseInt(r._raw.reference_id));
+      const referenceSToUpdate = await database
+        .get("references_services")
+        .query(Q.where("service_id", parseInt(subService[0]._raw?.service_id)))
+        .fetch();
 
-            const referencesToUpdate = await database.get('references').query(
-                Q.where('online_id', Q.oneOf(referencesIds)),
-                Q.where('beneficiary_id', beneficiarie.online_id)
-            ).fetch();
+      const referencesIds = referenceSToUpdate.map((r) =>
+        parseInt(r._raw.reference_id)
+      );
 
-            const refsToUpdateIds = referencesToUpdate.map(r => parseInt(r._raw.online_id));
+      const referencesToUpdate = await database
+        .get("references")
+        .query(
+          Q.where("online_id", Q.oneOf(referencesIds)),
+          Q.where("beneficiary_id", beneficiarie.online_id)
+        )
+        .fetch();
 
-            const filteredRefServices = referenceSToUpdate.filter(r => refsToUpdateIds.includes(parseInt(r._raw.reference_id)));
+      const refsToUpdateIds = referencesToUpdate.map((r) =>
+        parseInt(r._raw.online_id)
+      );
 
-            referencesToUpdate.forEach(async(ref) => {
-                const updatedreference = await ref.update((reference: any) => {
-                    reference._raw.beneficiary_offline_id = beneficiarie.id
-                    reference._raw.is_awaiting_sync = parseInt("1")
-                    reference._raw._status = "updated"
-                });
-            });
+      const filteredRefServices = referenceSToUpdate.filter((r) =>
+        refsToUpdateIds.includes(parseInt(r._raw.reference_id))
+      );
 
-            filteredRefServices.forEach(async(refService) => {
-                const updatedrefservice = await refService.update((interventionS: any) => {
-                    interventionS._raw.is_awaiting_sync = parseInt("1")
-                    interventionS._raw._status = "updated"
-                });
-            });
-              
+      referencesToUpdate.forEach(async (ref) => {
+        await ref.update((reference: any) => {
+          reference._raw.beneficiary_offline_id = beneficiarie.id;
+          reference._raw.is_awaiting_sync = parseInt("1");
+          reference._raw._status = "updated";
         });
+      });
 
-        syncronize();
-        await delay(5000);
-        syncronize();
-
-        const syncedInterventions = await database.get('beneficiaries_interventions').query(
-            Q.or(
-                Q.where('beneficiary_offline_id', beneficiarie.id),
-                Q.where('beneficiary_id', beneficiarie.online_id),
-            )
-        ).fetch();
-
-        const interventionObjects = syncedInterventions.map((e: any) => {
-            let subservice = subServices.filter((item) => {
-                return item?._raw.online_id == e?._raw.sub_service_id
-            })[0];
-            return { id: subservice?._raw.online_id + e?._raw.date, name: subservice?._raw.name, intervention: e?._raw }
+      filteredRefServices.forEach(async (refService) => {
+        await refService.update((interventionS: any) => {
+          interventionS._raw.is_awaiting_sync = parseInt("1");
+          interventionS._raw._status = "updated";
         });
+      });
+    });
 
-        navigate({
-            name: 'Serviços',
-            params: {
-                beneficiary: beneficiarie,
-                interventions: interventionObjects
+    syncronize();
+    await delay(5000);
+    syncronize();
+
+    const syncedInterventions = await database
+      .get("beneficiaries_interventions")
+      .query(
+        Q.or(
+          Q.where("beneficiary_offline_id", beneficiarie.id),
+          Q.where("beneficiary_id", beneficiarie.online_id)
+        )
+      )
+      .fetch();
+
+    const interventionObjects = syncedInterventions.map((e: any) => {
+      const subservice = subServices.filter((item) => {
+        return item?._raw.online_id == e?._raw.sub_service_id;
+      })[0];
+      return {
+        id: subservice?._raw.online_id + e?._raw.date,
+        name: subservice?._raw.name,
+        intervention: e?._raw,
+      };
+    });
+
+    navigate({
+      name: "Serviços",
+      params: {
+        beneficiary: beneficiarie,
+        interventions: interventionObjects,
+      },
+      merge: true,
+    });
+    setLoading(false);
+  };
+
+  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  const syncronize = () => {
+    if (!isOffline) {
+      sync({ username: loggedUser.username })
+        .then(() => setIsSync(true))
+        .catch(() =>
+          toast.show({
+            placement: "top",
+            render: () => {
+              return <ErrorHandler />;
             },
-            merge: true,
-        });
-        setLoading(false);
+          })
+        );
     }
-
-    const delay = ms => new Promise(
-        resolve => setTimeout(resolve, ms)
-    );
-
-    const syncronize = () => {       
-		if(!isOffline){
-            sync({ username: loggedUser.username })
-            .then(() =>( setIsSync(true)))
-            .catch(() => toast.show({
-                placement: "top",
-                render: () => {
-                    return (<ErrorHandler />);
-                }
-            }))
-		}
-    }
+  };
 
   useEffect(() => {
     if (
@@ -522,13 +540,13 @@ const BeneficiarieServiceForm: React.FC = ({
           setInitialValues({
             areaServicos_id: "1",
             entry_point: userEntryPoint,
-            provider: loggedUser?.name+' '+loggedUser?.surname,
+            provider: loggedUser?.name + " " + loggedUser?.surname,
           });
         } else if (organization?.partner_type == 2) {
           setInitialValues({
             areaServicos_id: "2",
             entry_point: userEntryPoint,
-            provider: loggedUser?.name+' '+loggedUser?.surname,
+            provider: loggedUser?.name + " " + loggedUser?.surname,
           });
         }
       }
@@ -818,23 +836,46 @@ const BeneficiarieServiceForm: React.FC = ({
                     <FormControl isRequired isInvalid={"provider" in errors}>
                       <FormControl.Label>Provedor do Serviço</FormControl.Label>
 
-                                            {checked === false ?
-                                                 <ModalSelector
-                                                 data={users}
-                                                 keyExtractor={item => item.online_id}
-                                                 labelExtractor={item => `${item.name} ${item.surname}`}
-                                                 renderItem={undefined}
-                                                 initValue=""
-                                                 accessible={true}
-                                                 cancelText={'Cancelar'}
-                                                 searchText={'Pesquisar'}
-                                                 cancelButtonAccessibilityLabel={'Cancel Button'}
-                                                 onChange={(option) => { setSelectedUser(`${option.name} ${option.surname}`); setFieldValue('provider', `${option.name} ${option.surname}`); }}>
-                                                 <Input type='text' onBlur={handleBlur('provider')} placeholder={currentInformedProvider} onChangeText={handleChange('provider')} value={selectedUser} />
-                                             </ModalSelector> :
-                                             <Input onBlur={handleBlur('provider')} placeholder="Insira o Nome do Provedor" onChangeText={handleChange('provider')} value={values.provider} />
-                                         }
-                                         <Checkbox value="one" onChange={onChangeToOutros}>Outro</Checkbox>
+                      {checked === false ? (
+                        <ModalSelector
+                          data={users}
+                          keyExtractor={(item) => item.online_id}
+                          labelExtractor={(item) =>
+                            `${item.name} ${item.surname}`
+                          }
+                          renderItem={undefined}
+                          initValue=""
+                          accessible={true}
+                          cancelText={"Cancelar"}
+                          searchText={"Pesquisar"}
+                          cancelButtonAccessibilityLabel={"Cancel Button"}
+                          onChange={(option) => {
+                            setSelectedUser(`${option.name} ${option.surname}`);
+                            setFieldValue(
+                              "provider",
+                              `${option.name} ${option.surname}`
+                            );
+                          }}
+                        >
+                          <Input
+                            type="text"
+                            onBlur={handleBlur("provider")}
+                            placeholder={currentInformedProvider}
+                            onChangeText={handleChange("provider")}
+                            value={selectedUser}
+                          />
+                        </ModalSelector>
+                      ) : (
+                        <Input
+                          onBlur={handleBlur("provider")}
+                          placeholder="Insira o Nome do Provedor"
+                          onChangeText={handleChange("provider")}
+                          value={values.provider}
+                        />
+                      )}
+                      <Checkbox value="one" onChange={onChangeToOutros}>
+                        Outro
+                      </Checkbox>
 
                       <FormControl.ErrorMessage>
                         {errors.provider}

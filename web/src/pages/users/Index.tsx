@@ -120,7 +120,10 @@ const UsersList: React.FC = () => {
     ),
     onFilter: (value, record) =>
       record[dataIndex]
-        ? (dataIndex == 'name' ? record[dataIndex] + ' ' + record['surname'] : record[dataIndex])
+        ? (dataIndex == "name"
+            ? record[dataIndex] + " " + record["surname"]
+            : record[dataIndex]
+          )
             .toString()
             .toLowerCase()
             .includes(value.toLowerCase())
