@@ -325,7 +325,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
   const handleSubmit = async () => {
     setLoading(true);
 
-    await database.write(async () => {
+    const savedR = await database.write(async () => {
       const newReference = await database
         .get("references")
         .create((ref: any) => {
