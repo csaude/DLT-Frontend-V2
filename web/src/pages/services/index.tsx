@@ -336,7 +336,5 @@ const ServicesList: React.FC = () => {
     </>
   );
 };
-// ServicesList.propTypes = {
-//   : PropTypes.object.isRequired
-// }
+
 export default ServicesList;

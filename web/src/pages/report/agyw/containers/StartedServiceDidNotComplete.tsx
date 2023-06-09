@@ -161,7 +161,7 @@ const StartedServiceDidNotComplete = ({ districtId }) => {
 };
 
 StartedServiceDidNotComplete.propTypes = {
-  districtId: PropTypes.object.isRequired,
+  districtId: PropTypes.number.isRequired,
 };
 
 export default StartedServiceDidNotComplete;

@@ -162,6 +162,6 @@ const CompletedAtLeastOnePrimaryService = ({ districtId }) => {
   );
 };
 CompletedAtLeastOnePrimaryService.propTypes = {
-  districtId: PropTypes.object.isRequired,
+  districtId: PropTypes.number.isRequired,
 };
 export default CompletedAtLeastOnePrimaryService;

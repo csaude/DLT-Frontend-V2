@@ -165,6 +165,6 @@ const CompletedPrimaryPackageAndSecondaryService = ({ districtId }) => {
 };
 
 CompletedPrimaryPackageAndSecondaryService.propTypes = {
-  districtId: PropTypes.object.isRequired,
+  districtId: PropTypes.number.isRequired,
 };
 export default CompletedPrimaryPackageAndSecondaryService;

@@ -888,8 +888,10 @@ const BeneficiaryPartnerForm: React.FC = ({
                           }
                           minDate={minBirthYear}
                           maxDate={maxBirthYear}
-                          currentDate={beneficiarie?.date_of_birth}
-                          isEdit={beneficiarie && beneficiarie?.id}
+                          currentDate={new Date(beneficiarie?.date_of_birth)}
+                          isEdit={
+                            beneficiarie && beneficiarie?.id ? true : false
+                          }
                         />
                       </InputLeftAddon>
                       <Input
@@ -972,8 +974,10 @@ const BeneficiaryPartnerForm: React.FC = ({
                           }
                           minDate={new Date("2017-01-01")}
                           maxDate={new Date()}
-                          currentDate={beneficiarie?.enrollment_date}
-                          isEdit={beneficiarie && beneficiarie?.id}
+                          currentDate={new Date(beneficiarie?.enrollment_date)}
+                          isEdit={
+                            beneficiarie && beneficiarie?.id ? true : false
+                          }
                         />
                       </InputLeftAddon>
                       <Input

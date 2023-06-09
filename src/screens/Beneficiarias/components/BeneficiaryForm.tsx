@@ -51,6 +51,7 @@ import { getBeneficiariesTotal } from "../../../store/beneficiarySlice";
 import { referencesFetchCount } from "../../../services/referenceService";
 import NetInfo from "@react-native-community/netinfo";
 import { getReferencesTotal } from "../../../store/referenceSlice";
+import PropTypes from "prop-types";
 
 const BeneficiaryForm: React.FC = ({
   route,
@@ -122,6 +123,8 @@ const BeneficiaryForm: React.FC = ({
   const [partnerHasErrors, setPartnerHasErrors] = useState(false);
   const [isUsVisible, setUsVisible] = useState(false);
   const [isOffline, setIsOffline] = useState(false);
+
+  console.log("----------");
 
   const minBirthYear = new Date();
   minBirthYear.setFullYear(new Date().getFullYear() - 24);
@@ -1053,6 +1056,7 @@ const BeneficiaryForm: React.FC = ({
   }, [value]);
 
   const handleDataFromDatePickerComponent = (selectedDate, fieldName) => {
+    console.log(selectedDate, fieldName);
     const tempDate = new Date(selectedDate);
     formik.setFieldValue(fieldName, moment(tempDate).format("YYYY-MM-DD"));
 
@@ -1153,8 +1157,14 @@ const BeneficiaryForm: React.FC = ({
                           }
                           minDate={minBirthYear}
                           maxDate={maxBirthYear}
-                          currentDate={beneficiarie?.date_of_birth}
-                          isEdit={beneficiarie && beneficiarie?.id}
+                          currentDate={
+                            beneficiarie?.date_of_birth
+                              ? new Date(beneficiarie?.date_of_birth)
+                              : new Date()
+                          }
+                          isEdit={
+                            beneficiarie && beneficiarie?.id ? true : false
+                          }
                         />
                       </InputLeftAddon>
                       <Input
@@ -1237,8 +1247,14 @@ const BeneficiaryForm: React.FC = ({
                           }
                           minDate={new Date("2017-01-01")}
                           maxDate={new Date()}
-                          currentDate={beneficiarie?.enrollment_date}
-                          isEdit={beneficiarie && beneficiarie?.id}
+                          currentDate={
+                            beneficiarie?.enrollment_date
+                              ? new Date(beneficiarie?.enrollment_date)
+                              : new Date()
+                          }
+                          isEdit={
+                            beneficiarie && beneficiarie?.id ? true : false
+                          }
                         />
                       </InputLeftAddon>
                       <Input
@@ -2704,4 +2720,11 @@ const enhance = withObservables([], () => ({
     .observe(),
   subServices: database.collections.get("sub_services").query().observe(),
 }));
+
+BeneficiaryForm.propTypes = {
+  route: PropTypes.object.isRequired,
+  subServices: PropTypes.array.isRequired,
+  beneficiaries_interventions: PropTypes.array.isRequired,
+};
+
 export default enhance(BeneficiaryForm);

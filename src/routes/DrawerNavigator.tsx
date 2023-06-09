@@ -182,7 +182,7 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
   };
   ItemBadge.propTypes = {
     label: PropTypes.string.isRequired,
-    total: PropTypes.string.isRequired,
+    total: PropTypes.number.isRequired,
   };
 
   const getTotals = async () => {

@@ -164,6 +164,6 @@ const CompletedViolenceService = ({ districtId }) => {
 };
 
 CompletedViolenceService.propTypes = {
-  districtId: PropTypes.object.isRequired,
+  districtId: PropTypes.number.isRequired,
 };
 export default CompletedViolenceService;

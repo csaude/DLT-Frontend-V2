@@ -163,7 +163,7 @@ const CompletedSocialEconomicApproaches = ({ districtId }) => {
 };
 
 CompletedSocialEconomicApproaches.propTypes = {
-  districtId: PropTypes.object.isRequired,
+  districtId: PropTypes.number.isRequired,
 };
 
 export default CompletedSocialEconomicApproaches;

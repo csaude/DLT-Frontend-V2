@@ -40,6 +40,8 @@ import NetInfo from "@react-native-community/netinfo";
 const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
   const { reference, beneficiarie, intervention } = route.params;
 
+  console.log("-----intervention------", intervention);
+
   const loggedUser: any = useContext(Context);
   const toast = useToast();
 
@@ -595,8 +597,14 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                               }
                               minDate={new Date("2017-01-01")}
                               maxDate={new Date()}
-                              currentDate={undefined}
-                              isEdit={undefined}
+                              currentDate={
+                                intervention?.service.service_id
+                                  ? new Date(intervention.date_created)
+                                  : new Date()
+                              }
+                              isEdit={
+                                intervention?.service.service_id ? true : false
+                              }
                             />
                           </InputLeftAddon>
                           <Input

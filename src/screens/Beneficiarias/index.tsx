@@ -1022,8 +1022,9 @@ const enhance = withObservables([], () => ({
 }));
 
 BeneficiariesMain.propTypes = {
-  beneficiary_id: PropTypes.object.isRequired,
-  label: PropTypes.object.isRequired,
+  beneficiaries: PropTypes.array.isRequired,
+  subServices: PropTypes.array.isRequired,
+  beneficiaries_interventions: PropTypes.array.isRequired,
 };
 
 export default enhance(BeneficiariesMain);

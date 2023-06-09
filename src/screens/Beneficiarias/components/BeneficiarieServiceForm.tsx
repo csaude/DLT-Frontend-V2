@@ -38,6 +38,7 @@ import { MENTOR } from "../../../utils/constants";
 import Spinner from "react-native-loading-spinner-overlay/lib";
 import MyDatePicker from "../../../components/DatePicker";
 import NetInfo from "@react-native-community/netinfo";
+import PropTypes from "prop-types";
 
 const BeneficiarieServiceForm: React.FC = ({
   route,
@@ -204,7 +205,7 @@ const BeneficiarieServiceForm: React.FC = ({
       }
 
       const isEdit = intervention && intervention.id;
-      const initValues = {};
+      let initValues = {};
 
       if (isEdit) {
         const selSubService = subServices.filter((e) => {
@@ -446,11 +447,11 @@ const BeneficiarieServiceForm: React.FC = ({
         .fetch();
 
       const refsToUpdateIds = referencesToUpdate.map((r) =>
-        parseInt(r._raw.online_id)
+        parseInt(r._raw?.online_id)
       );
 
       const filteredRefServices = referenceSToUpdate.filter((r) =>
-        refsToUpdateIds.includes(parseInt(r._raw.reference_id))
+        refsToUpdateIds.includes(parseInt(r._raw?.reference_id))
       );
 
       referencesToUpdate.forEach(async (ref) => {
@@ -813,8 +814,14 @@ const BeneficiarieServiceForm: React.FC = ({
                               }
                               minDate={new Date("2017-01-01")}
                               maxDate={new Date()}
-                              currentDate={intervention?.date}
-                              isEdit={intervention && intervention.id}
+                              currentDate={
+                                intervention?.date
+                                  ? new Date(intervention?.date)
+                                  : new Date()
+                              }
+                              isEdit={
+                                intervention && intervention.id ? true : false
+                              }
                             />
                           </InputLeftAddon>
                           <Input
@@ -916,5 +923,12 @@ const enhance = withObservables([], () => ({
   subServices: database.collections.get("sub_services").query().observe(),
   us: database.collections.get("us").query().observe(),
 }));
+
+BeneficiarieServiceForm.propTypes = {
+  route: PropTypes.object.isRequired,
+  us: PropTypes.array.isRequired,
+  services: PropTypes.array.isRequired,
+  subServices: PropTypes.array.isRequired,
+};
 
 export default enhance(BeneficiarieServiceForm);

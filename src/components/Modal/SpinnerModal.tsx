@@ -27,9 +27,9 @@ const SpinnerModal = ({ open, title, message }) => {
 };
 
 SpinnerModal.propTypes = {
-  open: PropTypes.object.isRequired,
-  title: PropTypes.object.isRequired,
-  message: PropTypes.object.isRequired,
+  open: PropTypes.bool.isRequired,
+  title: PropTypes.string.isRequired,
+  message: PropTypes.string.isRequired,
 };
 
 export { SpinnerModal };

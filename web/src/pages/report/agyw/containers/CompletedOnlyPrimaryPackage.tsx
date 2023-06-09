@@ -161,6 +161,6 @@ const CompletedOnlyPrimaryPackage = ({ districtId }) => {
 };
 
 CompletedOnlyPrimaryPackage.propTypes = {
-  districtId: PropTypes.object.isRequired,
+  districtId: PropTypes.number.isRequired,
 };
 export default CompletedOnlyPrimaryPackage;
