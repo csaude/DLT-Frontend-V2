@@ -344,6 +344,7 @@ const UsersList: React.FC = () => {
                         columns={columns}
                         dataSource={users}
                         bordered
+                        scroll={{ x: 1500 }}
                     />
                 </ConfigProvider>
 

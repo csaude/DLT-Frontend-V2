@@ -339,9 +339,11 @@ const BeneficiariesList: React.FC = () => {
                 <Text type="danger" >   
                     {record.district?.code}/{record.nui}
                 </Text>),
+          width: 120,
         },
         { title: 'Nome do Beneficiário', dataIndex: 'name', key: 'name', ...getColumnSearchProps('name'),
             render: (text, record) => getName(record),
+          width: 200,
         },
         { title: 'Sexo', dataIndex: 'gender', key: 'gender',
             filters: [
@@ -368,6 +370,7 @@ const BeneficiariesList: React.FC = () => {
                   />
                 );
               },
+              width: 70,
         },
         { title: 'PE', dataIndex: '', key: 'entryPoint', 
             filters: [
@@ -386,7 +389,8 @@ const BeneficiariesList: React.FC = () => {
             ],
             onFilter: (value, record) => record.entryPoint == value,
             filterSearch: true,
-            render: (text, record)  => getEntryPoint(record.entryPoint) 
+            render: (text, record)  => getEntryPoint(record.entryPoint),
+            width: 60,
         },
         { title: 'Distrito', dataIndex: '', key: 'district',
             render: (text, record)  => record.district.name,
@@ -406,6 +410,7 @@ const BeneficiariesList: React.FC = () => {
                     <Badge count={getBeneficiaryIntervention(record.id)} />
                 );
             },
+            width: 60,
         },
         { title: 'Org',
             dataIndex: 'partner', 
@@ -447,6 +452,7 @@ const BeneficiariesList: React.FC = () => {
                     </Button>
                 </Space>
           ),
+          width: 100,
         },
     ];
 
@@ -498,25 +504,25 @@ const BeneficiariesList: React.FC = () => {
                         }
                 >   
                 
-                <Row gutter={16} >
-                    <Col className="gutter-row" span={4}>
-                        <Form.Item
-                            name="nui"
-                            label="NUI"
-                            initialValue={searchNui}
-                        >
-                            <Input placeholder="Pesquisar por NUI" 
-                                value={searchNui} 
-                                onChange={e => setSearchNui(e.target.value) }                                 
-                                />
-                        </Form.Item>
-                    </Col>
-                    <Col className="gutter-row" span={12}>
-                        <Button type="primary" onClick={handleGlobalSearch}>
-                            Pesquisar
-                        </Button>
-                    </Col>
-                </Row>              
+                    <Row gutter={16} >
+                        <Col className="gutter-row" xs={8} xl={8} span={4}>
+                            <Form.Item
+                                name="nui"
+                                label="NUI"
+                                initialValue={searchNui}
+                            >
+                                <Input placeholder="Pesquisar por NUI" 
+                                    value={searchNui} 
+                                    onChange={e => setSearchNui(e.target.value) }                                 
+                                    />
+                            </Form.Item>
+                        </Col>
+                        <Col className="gutter-row" span={12}>
+                            <Button type="primary" onClick={handleGlobalSearch}>
+                                Pesquisar
+                            </Button>
+                        </Col>
+                    </Row>              
                     <ConfigProvider locale={ptPT}>
                         <Table
                             rowKey="id"
@@ -528,6 +534,7 @@ const BeneficiariesList: React.FC = () => {
                             }}
                             dataSource={beneficiaries}
                             bordered
+                            scroll={{ x: 1500 }}
                         />
                          <Space >                            
                             <Button disabled={currentPageIndex===0} onClick={loadPreviousPage} size="small" style={{ width: 90 }}>
