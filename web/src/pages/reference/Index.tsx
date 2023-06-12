@@ -662,7 +662,7 @@ const ReferenceList: React.FC = () => {
         headStyle={{ color: "#17a2b8" }}
       >
         <Row gutter={16}>
-          <Col className="gutter-row" span={4}>
+          <Col className="gutter-row" xs={8} xl={8} span={4}>
             <Form.Item name="nui" label="NUI" initialValue={searchNui}>
               <Input
                 placeholder="Pesquisar por NUI"
@@ -691,6 +691,7 @@ const ReferenceList: React.FC = () => {
               onClick={loadPreviousPage}
               size="small"
               style={{ width: 90 }}
+                        scroll={{ x: 1500 }}
             >
               {"<<"} Anterior
             </Button>

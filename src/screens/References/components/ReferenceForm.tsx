@@ -64,6 +64,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
   const [loading, setLoading] = useState(false);
   const loggedUser: any = useContext(Context);
   const [isOffline, setIsOffline] = useState(false);
+    const [refNote, setRefNote] = useState('');
 
   useEffect(() => {
     const fetchEntryPoints = async () => {
@@ -100,7 +101,13 @@ const ReferenceForm: React.FC = ({ route }: any) => {
       );
     };
 
+        const getRefNote = async () => {
+            const prefix: any = (await database.get('sequences').query().fetch())[0]?._raw;
+            setRefNote('REFDR' + prefix.prefix + '0' + String(refs + 1).padStart(3, '0'));
+        }
+
     fetchEntryPoints().catch((error) => console.log(error));
+        getRefNote().catch(error => console.log(error));
 
     const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
       const status = !(state.isConnected && state.isInternetReachable);
@@ -334,7 +341,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
           ref.beneficiary_offline_id = beneficiary.id;
           ref.refer_to = formik.values.refer_to;
           (ref.referred_by = userId), (ref.notify_to = formik.values.notify_to);
-          ref.reference_note = getNotaRef();
+          ref.reference_note = refNote;
           ref.description = formik.values.description;
           ref.book_number = formik.values.book_number;
           ref.reference_code = formik.values.reference_code;
@@ -833,7 +840,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                   </Text>
                   <Text style={styles.txtLabelInfo}>
                     <Text style={styles.txtLabel}> Nota da Referência: </Text>
-                    {getNotaRef()}
+                    {refNote}
                   </Text>
                   <Text style={styles.txtLabelInfo}>
                     <Text style={styles.txtLabel}>
