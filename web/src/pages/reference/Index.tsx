@@ -526,7 +526,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             <Card title="Lista de Referências e Contra-Referências" bordered={false} headStyle={{color:"#17a2b8"}}>
 
                 <Row gutter={16} >
-                    <Col className="gutter-row" span={4}>
+                    <Col className="gutter-row" xs={8} xl={8} span={4}>
                         <Form.Item
                             name="nui"
                             label="NUI"
@@ -551,6 +551,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                         columns={columnsRef}
                         dataSource={references}
                         bordered
+                        scroll={{ x: 1500 }}
                     >
                     </Table>
                      <Space >                            

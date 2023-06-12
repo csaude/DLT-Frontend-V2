@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { TouchableHighlight } from 'react-native';
 import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
-import { View, HStack, Text, VStack, FormControl, Input, TextArea, Center, Icon, Box, IconButton, Flex, Heading, Divider, useToast, Alert, InputGroup, InputLeftAddon } from 'native-base';
+import { View, HStack, Text, VStack, FormControl, Input, TextArea, Icon, Box, IconButton, Flex, Heading, Divider, useToast, Alert, InputGroup, InputLeftAddon } from 'native-base';
 import { MaterialIcons, Ionicons } from "@native-base/icons";
 import { useFormik } from 'formik';
 import { database } from '../../../database';
@@ -12,7 +12,7 @@ import ModalSelector from 'react-native-modal-selector-searchable';
 import styles from './styles1';
 import moment from 'moment';
 import { sync } from "../../../database/sync";
-import { SuccessHandler, WithoutNetwork } from '../../../components/SyncIndicator';
+import { SuccessHandler } from '../../../components/SyncIndicator';
 import { Context } from '../../../routes/DrawerNavigator';
 import MyDatePicker from '../../../components/DatePicker';
 import { calculateAge } from '../../../models/Utils';
@@ -29,7 +29,6 @@ const ReferenceForm: React.FC = ({ route }: any) => {
 
     const {
         beneficiary,
-        references,
         userId,
         refs
     } = route.params;
@@ -53,6 +52,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
     const [loading, setLoading] = useState(false);
     const loggedUser: any = useContext(Context);
 	const [isOffline, setIsOffline] = useState(false);
+    const [refNote, setRefNote] = useState('');
 
     useEffect(() => {
 
@@ -82,7 +82,13 @@ const ReferenceForm: React.FC = ({ route }: any) => {
             setEntryPoint((userSerialized[0] as any).entry_point == "1" ? "US" : (userSerialized[0] as any).entry_point == "2" ? "CM" : "ES")
         }
 
+        const getRefNote = async () => {
+            const prefix: any = (await database.get('sequences').query().fetch())[0]?._raw;
+            setRefNote('REFDR' + prefix.prefix + '0' + String(refs + 1).padStart(3, '0'));
+        }
+
         fetchEntryPoints().catch(error => console.log(error));
+        getRefNote().catch(error => console.log(error));
 
         const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
 			const status = !(state.isConnected && state.isInternetReachable);
@@ -294,7 +300,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                 ref.refer_to = formik.values.refer_to
                 ref.referred_by = userId,
                 ref.notify_to = formik.values.notify_to
-                ref.reference_note = getNotaRef()
+                ref.reference_note = refNote
                 ref.description = formik.values.description
                 ref.book_number = formik.values.book_number
                 ref.reference_code = formik.values.reference_code
@@ -420,10 +426,6 @@ const ReferenceForm: React.FC = ({ route }: any) => {
 
         const partners_a = partners.filter(item => item.online_id === id);
         return partners_a[0]?.name;
-    }
-
-    const getNotaRef = () => {
-        return 'REFDR' + String(userId).padStart(3, '0') + '0' + String(refs + 1).padStart(3, '0');
     }
 
     const renderItem = (data: any) => (
@@ -675,7 +677,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                                     <Text style={styles.txtLabelInfo}>
                                         <Text style={styles.txtLabel}> Nota da Referência: </Text>
                                         {
-                                            getNotaRef()
+                                            refNote
                                         }
                                     </Text>
                                     <Text style={styles.txtLabelInfo}>
