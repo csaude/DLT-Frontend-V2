@@ -64,7 +64,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
   const [loading, setLoading] = useState(false);
   const loggedUser: any = useContext(Context);
   const [isOffline, setIsOffline] = useState(false);
-    const [refNote, setRefNote] = useState('');
+  const [refNote, setRefNote] = useState("");
 
   useEffect(() => {
     const fetchEntryPoints = async () => {
@@ -101,13 +101,16 @@ const ReferenceForm: React.FC = ({ route }: any) => {
       );
     };
 
-        const getRefNote = async () => {
-            const prefix: any = (await database.get('sequences').query().fetch())[0]?._raw;
-            setRefNote('REFDR' + prefix.prefix + '0' + String(refs + 1).padStart(3, '0'));
-        }
+    const getRefNote = async () => {
+      const prefix: any = (await database.get("sequences").query().fetch())[0]
+        ?._raw;
+      setRefNote(
+        "REFDR" + prefix.prefix + "0" + String(refs + 1).padStart(3, "0")
+      );
+    };
 
     fetchEntryPoints().catch((error) => console.log(error));
-        getRefNote().catch(error => console.log(error));
+    getRefNote().catch((error) => console.log(error));
 
     const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
       const status = !(state.isConnected && state.isInternetReachable);

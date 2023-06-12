@@ -691,7 +691,7 @@ const ReferenceList: React.FC = () => {
               onClick={loadPreviousPage}
               size="small"
               style={{ width: 90 }}
-                        scroll={{ x: 1500 }}
+              scroll={{ x: 1500 }}
             >
               {"<<"} Anterior
             </Button>

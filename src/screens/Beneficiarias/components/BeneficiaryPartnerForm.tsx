@@ -978,7 +978,11 @@ const BeneficiaryPartnerForm: React.FC = ({
                           }
                           minDate={new Date("2017-01-01")}
                           maxDate={new Date()}
-                          currentDate={beneficiarie?.enrollment_date? new Date(beneficiarie?.enrollment_date): new Date()}
+                          currentDate={
+                            beneficiarie?.enrollment_date
+                              ? new Date(beneficiarie?.enrollment_date)
+                              : new Date()
+                          }
                           isEdit={
                             beneficiarie && beneficiarie?.id ? true : false
                           }
