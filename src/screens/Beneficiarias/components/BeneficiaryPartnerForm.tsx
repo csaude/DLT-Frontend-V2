@@ -888,7 +888,11 @@ const BeneficiaryPartnerForm: React.FC = ({
                           }
                           minDate={minBirthYear}
                           maxDate={maxBirthYear}
-                          currentDate={new Date(beneficiarie?.date_of_birth)}
+                          currentDate={
+                            beneficiarie?.date_of_birth
+                              ? new Date(beneficiarie?.date_of_birth)
+                              : new Date()
+                          }
                           isEdit={
                             beneficiarie && beneficiarie?.id ? true : false
                           }
@@ -974,7 +978,7 @@ const BeneficiaryPartnerForm: React.FC = ({
                           }
                           minDate={new Date("2017-01-01")}
                           maxDate={new Date()}
-                          currentDate={new Date(beneficiarie?.enrollment_date)}
+                          currentDate={beneficiarie?.enrollment_date? new Date(beneficiarie?.enrollment_date): new Date()}
                           isEdit={
                             beneficiarie && beneficiarie?.id ? true : false
                           }
