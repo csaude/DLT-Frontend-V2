@@ -205,6 +205,7 @@ const BeneficiariesMain: React.FC = ({
     return () => removeNetInfoSubscription();
   }, []);
 
+  // eslint-disable-next-line react/prop-types
   const ItemBadge = ({ label, beneficiary_id }) => {
     const getCountByBeneficiary = () => {
       const result = totals?.filter(

@@ -462,15 +462,6 @@ const ReferenceForm: React.FC = ({ route }: any) => {
     return partners_a[0]?.name;
   };
 
-  const getNotaRef = () => {
-    return (
-      "REFDR" +
-      String(userId).padStart(3, "0") +
-      "0" +
-      String(refs + 1).padStart(3, "0")
-    );
-  };
-
   const renderItem = (data: any) => (
     <TouchableHighlight
       style={styles.rowFront}
