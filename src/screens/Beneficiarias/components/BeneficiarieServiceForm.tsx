@@ -9,7 +9,7 @@ import {
     Alert, useToast, InputGroup, InputLeftAddon, IconButton, CloseIcon
 }
     from 'native-base';
-import { SuccessHandler, ErrorHandler, WithoutNetwork } from "../../../components/SyncIndicator";
+import { SuccessHandler, ErrorHandler } from "../../../components/SyncIndicator";
 
 import moment from 'moment';
 import { Picker } from '@react-native-picker/picker';
@@ -23,6 +23,7 @@ import { sync } from "../../../database/sync";
 import { Context } from '../../../routes/DrawerNavigator';
 
 import styles from './styles';
+import { calculateAge } from '../../../models/Utils';
 import { MENTOR } from '../../../utils/constants';
 import Spinner from 'react-native-loading-spinner-overlay/lib';
 import MyDatePicker from '../../../components/DatePicker';
@@ -62,6 +63,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     const avanteEstudanteOnlineIds = [45,48,51];
     const avanteRaparigaOnlineIds = [44,47,50];
     const guiaFacilitacaoOnlineIds = [46,49,52,57];
+    const avanteIds = [157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199,200,207,208,209];
 
     useEffect(() => {
       
@@ -123,7 +125,21 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
     useEffect(() => {
         if (mounted) {
             setServicesState(services)
-            getPartner()  
+            getPartner();
+
+            const age = calculateAge(beneficiarie.date_of_birth);
+            let is15AndStartedAvante = false;
+
+            const interventionsIds = intervs.map(item => item.intervention.sub_service_id);
+            console.log(interventionsIds);
+            console.log(age);
+
+            interventionsIds.forEach(element => {
+                if (avanteIds.includes(element)) {
+                    is15AndStartedAvante = true;
+                    return;
+                }
+            });
             
             const disableRapariga =(hasFacilitacao)=> services.filter(service=>{  
                 if(hasFacilitacao)            
@@ -143,8 +159,8 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                     return !avanteRaparigaOnlineIds.includes(service._raw.online_id) && !avanteEstudanteOnlineIds.includes(service._raw.online_id) &&  service._raw.online_id != 56;
             })
 
-            if(beneficiarie.vblt_is_student==1 && getBeneficiarieAge() < 15){                    
-                if(getBeneficiarieAge()>= 14 && getBeneficiarieAge() < 15 ){      
+            if(beneficiarie.vblt_is_student==1 && (age < 15 || is15AndStartedAvante)){                    
+                if(age >= 14 && age < 15 ){      
                     const foundServices = disableRapariga(true); 
                     setServicesState(foundServices)
                 }else{
@@ -152,8 +168,8 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                     setServicesState(foundServices)       
                 }
             }
-            else if(beneficiarie.vblt_is_student == 0 && getBeneficiarieAge() < 15){               
-                if(getBeneficiarieAge() >= 14 && getBeneficiarieAge() < 15 ){
+            else if(beneficiarie.vblt_is_student == 0 && (age < 15 || is15AndStartedAvante)){               
+                if(age >= 14 && age < 15 ){
                     const foundServices = disableEstudante(true);    
                     setServicesState(foundServices)
                 }else{
@@ -161,7 +177,7 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
                     setServicesState(foundServices)
                 }                     
             }
-            else if(getBeneficiarieAge() > 15){
+            else if(age >= 15){
                 const foundServices = disableEstudanteAndRapariga
                 setServicesState(foundServices)
             }
@@ -228,10 +244,6 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
         }
 
     }, [intervention]);
-
-    const getBeneficiarieAge = ()=>{
-        return new Date().getFullYear() - new Date(beneficiarie.date_of_birth).getFullYear();;
-    }
 
     const message = "Este campo é Obrigatório";
 
