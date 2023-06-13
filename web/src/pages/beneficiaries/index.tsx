@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {  pagedQueryByFilters, query } from '../../utils/beneficiary';
+import {   pagedQueryByFiltersByFilters, query } from '../../utils/beneficiary';
 import { allUsersByProfilesAndUser, query as queryUser } from '../../utils/users';
 import { Badge, Button, message, Card, Input, Space, Table, Typography, Form, ConfigProvider, Row, Col, Select } from 'antd';
 import ptPT  from 'antd/lib/locale-provider/pt_PT';
@@ -51,6 +51,21 @@ const BeneficiariesList: React.FC = () => {
 
     const interventionSelector = useSelector((state: any) => state?.intervention);
     const userSelector = useSelector((state: any) => state?.user);
+
+    const convertedUserData: FilterObject[] = userSelector?.users?.map(([value, label]) => ({
+                                                                                        value: value.toString(),
+                                                                                        label: label.charAt(0).toUpperCase() + label.slice(1),
+                                                                                        }));
+    const convertedDistrictsData: FilterObject[] = districts?.map(item=>({value:item.id, label:item.name}))
+
+    const [searchNui, setSearchNui] = useState<any>('')
+    const [searchDistrict, setSearchDistrict] = useState<any>('')
+    const [searchUserCreator, setSearchUserCreator] = useState<any>('')
+
+    const [district,setDistrict] = useState<any>()
+    const [userCreator, setUserCreator] = useState<any>()
+    const [nui, setNui] = useState<any>()
+
 
     const convertedUserData: FilterObject[] = userSelector?.users?.map(([value, label]) => ({
                                                                                         value: value.toString(),
