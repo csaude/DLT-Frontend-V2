@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from 'react';
-import { View , Text, AppState, InteractionManager, Keyboard, NativeEventEmitter, NativeModules} from 'react-native';
+import { View , Text, AppState, InteractionManager, Keyboard, NativeEventEmitter, NativeModules, StyleSheet} from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import CustomDrawer from './components/CustomDrawer';
 import BeneficiariesNavigator from './BeneficiariesNavigator';
@@ -170,12 +170,14 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
     <Context.Provider value={loggedUser}>
       <Drawer.Navigator 
         screenOptions={{
+          // drawerContentContainerStyle:  ,style={{ fontWeight: 'bold', color: '#424345'}}
             headerStyle: {
                 backgroundColor:'#17a2b8', //'#0c4a6e',
             },
             headerTintColor: '#fff',
             headerTitleStyle: {   
             fontWeight: 'bold',
+            color: '#424345',
             },
         }}
         drawerContent={(props) => <CustomDrawer { ...props } onLogout={onLogout} /*loggedUser={loggedUser}*/ />}
@@ -206,7 +208,7 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
             
         />
           <Drawer.Screen name="Users" 
-            component={UsersNavigator}  
+            component={UsersNavigator} 
             options={{                     
                 title: 'Perfil', 
                 headerTitle: '',
