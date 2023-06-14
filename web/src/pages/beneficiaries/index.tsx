@@ -56,7 +56,10 @@ const BeneficiariesList: React.FC = () => {
                                                                                         value: value.toString(),
                                                                                         label: label.charAt(0).toUpperCase() + label.slice(1),
                                                                                         }));
+    convertedUserData.unshift({ value: '', label: '--- não selecionado ---' })
+
     const convertedDistrictsData: FilterObject[] = districts?.map(item=>({value:item.id, label:item.name}))
+    convertedDistrictsData.unshift({ value: '', label: '--- não selecionado ---' })
 
     const [searchNui, setSearchNui] = useState<any>('')
     const [searchDistrict, setSearchDistrict] = useState<any>('')
@@ -535,10 +538,10 @@ const BeneficiariesList: React.FC = () => {
                 >   
                 
                     <Row gutter={16} >
-                        <Col className="gutter-row" xs={8} xl={8} span={4}>
+                        <Col className="gutter-row" >
                             <Form.Item
                                 name="nui"
-                                label="NUI"
+                                label=""
                                 initialValue={nui}
                             >
                                 <Input placeholder="Pesquisar por NUI" 

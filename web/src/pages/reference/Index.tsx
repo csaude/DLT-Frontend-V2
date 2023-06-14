@@ -37,7 +37,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
     const [ referredPartners, setReferredPartners] = useState<any[]>([]);
     const [ referrers, setReferrers] = useState<any[]>([]);
     const [ users, setUsers] = useState<any[]>([]);
-    const [ district, setDistrict] = useState<any[]>([]);
+    const [ district, setDistrict] = useState<any>();
     const [ us, setUs] = useState<any[]>([]);
     const [ loggedUser, setLoggedUser ] = useState<any>(undefined);
     const [ currentPageIndex, setCurrentPageIndex] = useState(0);
@@ -58,7 +58,10 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                                                                                         value: value.toString(),
                                                                                         label: label.charAt(0).toUpperCase() + label.slice(1),
                                                                                         }));
+    convertedUserData.unshift({ value: '', label: '--- não selecionado ---' })
+
     const convertedDistrictsData: FilterObject[] = districts?.map(item=>({value:item.id, label:item.name}))
+    convertedDistrictsData.unshift({ value: '', label: '--- não selecionado ---' })
     
     const navigate = useNavigate();
 
@@ -555,10 +558,10 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             <Card title="Lista de Referências e Contra-Referências" bordered={false} headStyle={{color:"#17a2b8"}}>
 
                 <Row gutter={16} >
-                    <Col className="gutter-row" xs={8} xl={8} span={4}>
+                    <Col className="gutter-row" >
                         <Form.Item
                             name="nui"
-                            label="NUI"
+                            label=""
                             initialValue={searchNui}
                         >
                             <Input placeholder="Pesquisar por NUI" 
