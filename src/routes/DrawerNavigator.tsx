@@ -178,7 +178,7 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
             fontWeight: 'bold',
             },
         }}
-        drawerContent={(props) => <CustomDrawer { ...props } onLogout={onLogout} configPag={configPag}/*loggedUser={loggedUser}*/ />}
+        drawerContent={(props) => <CustomDrawer { ...props } onLogout={onLogout} /*loggedUser={loggedUser}*/ />}
       >
         <Drawer.Screen name="Home" 
             component={HomeScreen} 
