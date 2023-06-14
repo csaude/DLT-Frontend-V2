@@ -565,7 +565,7 @@ const BeneficiariesList: React.FC = () => {
                            <Col className="gutter-row"  >
                               <Select
                                 showSearch
-                                placeholder="Select o distrito"
+                                placeholder="Selecione o distrito"
                                 optionFilterProp="children"
                                 onChange={e => onChange(e,'district')}
                                 onSearch={()=>{/**Its OK */}}
