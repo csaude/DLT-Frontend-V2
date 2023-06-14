@@ -58,10 +58,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                                                                                         value: value.toString(),
                                                                                         label: label.charAt(0).toUpperCase() + label.slice(1),
                                                                                         }));
-    convertedUserData.unshift({ value: '', label: '--- não selecionado ---' })
-
     const convertedDistrictsData: FilterObject[] = districts?.map(item=>({value:item.id, label:item.name}))
-    convertedDistrictsData.unshift({ value: '', label: '--- não selecionado ---' })
     
     const navigate = useNavigate();
 
@@ -552,6 +549,18 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
         }
     }
     
+    function onClear(name) {
+        if(name === 'userCreator'){
+            setUserCreator(undefined)
+        }
+        if(name === 'district'){
+            setDistrict(undefined)
+        }
+        if (beneficiary){
+            beneficiary.partnerNUI = null;
+        }
+    }
+
     return (
         <>
             <Title />
@@ -574,6 +583,8 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                             <Col  className="gutter-row">
                               <Select
                                 showSearch
+                                allowClear
+                                onClear={()=>onClear('userCreator')}
                                 placeholder="Selecione o utilizador"
                                 optionFilterProp="children"
                                 onChange={e => onChange(e,'userCreator')}
@@ -588,6 +599,8 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                            <Col className="gutter-row"  >
                               <Select
                                 showSearch
+                                allowClear
+                                onClear={()=>onClear('userCreator')}
                                 placeholder="Selecione o distrito"
                                 optionFilterProp="children"
                                 onChange={e => onChange(e,'district')}

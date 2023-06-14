@@ -56,10 +56,7 @@ const BeneficiariesList: React.FC = () => {
                                                                                         value: value.toString(),
                                                                                         label: label.charAt(0).toUpperCase() + label.slice(1),
                                                                                         }));
-    convertedUserData.unshift({ value: '', label: '--- não selecionado ---' })
-
     const convertedDistrictsData: FilterObject[] = districts?.map(item=>({value:item.id, label:item.name}))
-    convertedDistrictsData.unshift({ value: '', label: '--- não selecionado ---' })
 
     const [searchNui, setSearchNui] = useState<any>('')
     const [searchDistrict, setSearchDistrict] = useState<any>('')
@@ -518,6 +515,18 @@ const BeneficiariesList: React.FC = () => {
         }
     }
 
+    function onClear(name) {
+        if(name === 'userCreator'){
+            setUserCreator(undefined)
+        }
+        if(name === 'district'){
+            setDistrict(undefined)
+        }
+        if (beneficiary){
+            beneficiary.partnerNUI = null;
+        }
+    }
+
     return (
         
         <>        
@@ -554,6 +563,8 @@ const BeneficiariesList: React.FC = () => {
                             <Col  className="gutter-row">
                               <Select
                                 showSearch
+                                allowClear
+                                onClear={()=>onClear('userCreator')}
                                 placeholder="Selecione o utilizador"
                                 optionFilterProp="children"
                                 onChange={e => onChange(e,'userCreator')}
@@ -563,11 +574,14 @@ const BeneficiariesList: React.FC = () => {
                                 }
                                 options={convertedUserData}
                               />
+                         
                           </Col >
 
                            <Col className="gutter-row"  >
                               <Select
                                 showSearch
+                                allowClear
+                                onClear={()=>onClear('district')}
                                 placeholder="Selecione o distrito"
                                 optionFilterProp="children"
                                 onChange={e => onChange(e,'district')}
