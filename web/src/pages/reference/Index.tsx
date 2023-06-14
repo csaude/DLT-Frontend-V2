@@ -552,12 +552,11 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
     function onClear(name) {
         if(name === 'userCreator'){
             setUserCreator(undefined)
+            setSearchUserCreator('')
         }
         if(name === 'district'){
             setDistrict(undefined)
-        }
-        if (beneficiary){
-            beneficiary.partnerNUI = null;
+            setSearchDistrict('')
         }
     }
 
@@ -600,7 +599,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
                               <Select
                                 showSearch
                                 allowClear
-                                onClear={()=>onClear('userCreator')}
+                                onClear={()=>onClear('district')}
                                 placeholder="Selecione o distrito"
                                 optionFilterProp="children"
                                 onChange={e => onChange(e,'district')}

@@ -518,12 +518,11 @@ const BeneficiariesList: React.FC = () => {
     function onClear(name) {
         if(name === 'userCreator'){
             setUserCreator(undefined)
+            setSearchUserCreator('')
         }
         if(name === 'district'){
             setDistrict(undefined)
-        }
-        if (beneficiary){
-            beneficiary.partnerNUI = null;
+            setSearchDistrict('')
         }
     }
 
