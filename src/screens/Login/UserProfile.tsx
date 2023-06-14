@@ -16,18 +16,54 @@ import styles from "./styles";
 import { Context } from "../../routes/DrawerNavigator";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
+import withObservables from "@nozbe/with-observables";
 
-const UserProfile: React.FC = ({ route }:any) => {
+const UserProfile: React.FC = ({ route , users}:any) => {
     // const {user, profile, locality, partner, us} = route.params;
 
     const loggedUser: any = useContext(Context);
-    const user = loggedUser;
-    const userDetails = useSelector((state: RootState) => state.auth.userDetails);
+    // const user = loggedUser;
+    // const userDetails = useSelector((state: RootState) => state.auth.userDetails);
+    // const userDetailsCollection = database.get('users');
+    // const [user, setUser] = useState<any>([]);
+
+    const firstLogin = loggedUser?.entry_point === undefined ? "1" : "2";
+    const user = users.filter((e) => {
+        return e?._raw.online_id == (firstLogin === '1'? loggedUser?.id : loggedUser?.online_id)
+    })[0]?._raw;
+    // const userDetail = userDetailsCollection.query(
+    //     Q.where('online_id', parseInt(firstLogin === '1'? userOn?.id : userOn?.online_id))
+    // ).fetch();
+    // const getUser = (user_id: any) => {
+    //     const localUser = users.filter((e) => {
+    //         return e?._raw.online_id == user_id
+    //     })[0]?._raw;
+    //     // setUser(localUser);
+    // }
+     
+    // const getUser = async (currentUserId) =>{
+        
+    //     const userDetailsCollection = database.get('users')
+    //     // const beneficiariesCollection = database.get("beneficiaries")
+
+    //     const userDetailsQ = await userDetailsCollection.query(
+    //             Q.where('online_id', parseInt(currentUserId))
+    //         ).fetch();
+    //     const userDetailsRaw = userDetailsQ[0]?._raw
+   
+    //     // const oneUser = await beneficiariesCollection.query(Q.where('bar', 1)).fetch()
+    //             // setUserBeneficiaries(beneficiaries)
+    // }
+
+    // console.log(getUser(firstLogin === '1'? loggedUser?.id : loggedUser?.online_id));
+    // console.log(users.__changes);
+    // setUser(getUser(firstLogin === '1'? user?.id : user?.online_id));
+    console.log("==================================================================");
     console.log(user);
     console.log("==================================================================");
-    console.log(userDetails);
-    console.log("==================================================================");
-    const firstLogin = loggedUser?.entry_point === undefined ? "1" : "2";
+    // console.log(userDetails);
+    // console.log("==================================================================");
+   
 
     return (
         <KeyboardAvoidingView  style={styles.background}>
@@ -74,7 +110,7 @@ const UserProfile: React.FC = ({ route }:any) => {
                         </Flex>
                         <Divider />
 
-                        <Text> <Text style={styles.txtLabel}>Estado: </Text> { (user.status===1)  ? "Activo" : "Inactivo" }</Text>
+                        <Text> <Text style={styles.txtLabel}>Estado: </Text> { (user?.status===1)  ? "Activo" : "Inactivo" }</Text>
                     </View>
                 </View>
             </ScrollView>
@@ -82,4 +118,10 @@ const UserProfile: React.FC = ({ route }:any) => {
     );
 }
 
-export default UserProfile;
+const enhance = withObservables([], () => ({
+    users: database.collections
+      .get("users")
+      .query().observe(),
+}));
+
+export default enhance(UserProfile);
