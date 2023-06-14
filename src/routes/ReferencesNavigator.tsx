@@ -14,7 +14,7 @@ const ReferencesNavigator: React.FC = () => {
             <ReferenceStack.Screen name="ReferenceView" component={ReferenceViewStack} options={{
                     headerTitle: (props) => (
                       <Text {...props} style={{ color: 'black', fontWeight: 'bold' }}>
-                        back
+                        Referência
                       </Text>
                     ),
                     headerShown:true

@@ -2,6 +2,8 @@ import { Model } from "@nozbe/watermelondb";
 import { field, text } from "@nozbe/watermelondb/decorators";
 
 export interface UsersModel {
+    us_id: string;
+    locality_id: string;
     id?: string,
     surname?: string,
     name?: string,

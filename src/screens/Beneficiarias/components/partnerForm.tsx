@@ -171,7 +171,9 @@ const partnerForm: React.FC = ({ route, localities, profiles, us, partners, serv
     const message = "Este campo é Obrigatório"
 
     const validate = (values: any) => {
-        const errors: BeneficiariesInterventionsModel = {};
+        const errors: BeneficiariesInterventionsModel = {
+            date_created: ''
+        };
 
 
         if (!values.service_id) {

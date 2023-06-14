@@ -3,7 +3,7 @@ import { edit as editRef, Reference, pagedQueryByUser} from '@app/utils/referenc
 import {allDistrict} from '@app/utils/district';
 import { allUsersByProfilesAndUser, query  as query1} from '@app/utils/users';
 import { query as beneficiaryQuery } from '@app/utils/beneficiary';
-import { Card, Table, Button, Space, Input, Typography, Form, message, ConfigProvider, Row, Col } from 'antd';
+import { Card, Table, Button, Space, Input, Typography, Form, message, ConfigProvider, Row, Col, Select } from 'antd';
 import ptPT  from 'antd/lib/locale-provider/pt_PT';
 import 'antd/dist/antd.css';
 import moment from 'moment';
@@ -16,8 +16,9 @@ import FormReference from '../beneficiaries/components/FormReference';
 import { Title } from '@app/components';
 import { ADMIN, COUNSELOR, MENTOR, NURSE, SUPERVISOR } from '@app/utils/contants';
 import LoadingModal from '@app/components/modal/LoadingModal';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { loadReferers } from '@app/store/actions/users';
+import { FilterObject } from '@app/models/FilterObject';
 
 const { Text } = Typography;
 
@@ -36,15 +37,28 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
     const [ referredPartners, setReferredPartners] = useState<any[]>([]);
     const [ referrers, setReferrers] = useState<any[]>([]);
     const [ users, setUsers] = useState<any[]>([]);
-    const [ district, setDistrict] = useState<any[]>([]);
+    const [ district, setDistrict] = useState<any>();
     const [ us, setUs] = useState<any[]>([]);
     const [ loggedUser, setLoggedUser ] = useState<any>(undefined);
     const [ currentPageIndex, setCurrentPageIndex] = useState(0);
     const pageSize = 100;
-    const [searchNui, setSearchNui] = useState<any>()
-    const [nui, setNui] = useState('')
     let data
     const [dataLoading, setDataLoading] = useState(false)
+
+    const [searchNui, setSearchNui] = useState<any>('')
+    const [searchDistrict, setSearchDistrict] = useState<any>('')
+    const [searchUserCreator, setSearchUserCreator] = useState<any>('')
+
+    const [nui, setNui] = useState<any>()
+    const [userCreator, setUserCreator] = useState<any>()
+    const [ districts, setDistricts] = useState<any[]>([]);
+    
+    const userSelector = useSelector((state: any) => state?.user);
+    const convertedUserData: FilterObject[] = userSelector?.users?.map(([value, label]) => ({
+                                                                                        value: value.toString(),
+                                                                                        label: label.charAt(0).toUpperCase() + label.slice(1),
+                                                                                        }));
+    const convertedDistrictsData: FilterObject[] = districts?.map(item=>({value:item.id, label:item.name}))
     
     const navigate = useNavigate();
 
@@ -56,7 +70,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
         
         const fetchData = async () => {
             setDataLoading(true)
-            data = await pagedQueryByUser(localStorage.user, currentPageIndex, pageSize, nui);
+            data = await pagedQueryByUser(localStorage.user, currentPageIndex, pageSize, searchNui, searchUserCreator, searchDistrict);
             const districts = await allDistrict();
             const loggedUser = await query1(localStorage.user);
 
@@ -75,7 +89,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             setReferrers(referrers);
             setUsers(referreds);
             setUs(existingUs);
-            setDistrict(districts);
+            setDistricts(districts);
             setLoggedUser(loggedUser);
         } 
     
@@ -95,7 +109,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
 
         fetchReferersUsers().catch(error => console.log(error));
     
-    }, [modalVisible, currentPageIndex, nui]);
+    }, [modalVisible, currentPageIndex, searchNui, searchUserCreator, searchDistrict]);
 
     const handleModalRefVisible = (flag?: boolean) => {
         setReferenceModalVisible(!!flag);
@@ -339,7 +353,7 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
             dataIndex: '', 
             key: 'type',
             render: (text, record)  => record?.beneficiaries?.district?.name,
-            filters: filterItem(district)(i => i.name),
+            filters: filterItem(districts)(i => i.name),
             onFilter: (value, record) => record?.beneficiaries?.district?.name == value,
             filterSearch: true,
         },
@@ -515,29 +529,89 @@ const ReferenceList: React.FC = ({resetModal}: any) => {
     }
 
     const handleGlobalSearch = async () =>{
-        if(searchNui !== undefined){
-            setNui(searchNui)
+        if(nui !== undefined){
+            setSearchNui(nui)
+        }
+        if(userCreator !== undefined){
+            setSearchUserCreator(userCreator)
+        }
+        if(district !== undefined){
+            setSearchDistrict(district)
         }
     }
     
+    const onChange =(e, name)=>{
+        if(name === 'userCreator'){
+            setUserCreator(e)
+        }
+        if(name === 'district'){
+            setDistrict(e)
+        }
+    }
+    
+    function onClear(name) {
+        if(name === 'userCreator'){
+            setUserCreator(undefined)
+            setSearchUserCreator('')
+        }
+        if(name === 'district'){
+            setDistrict(undefined)
+            setSearchDistrict('')
+        }
+    }
+
     return (
         <>
             <Title />
             <Card title="Lista de Referências e Contra-Referências" bordered={false} headStyle={{color:"#17a2b8"}}>
 
                 <Row gutter={16} >
-                    <Col className="gutter-row" xs={8} xl={8} span={4}>
+                    <Col className="gutter-row" >
                         <Form.Item
                             name="nui"
-                            label="NUI"
+                            label=""
                             initialValue={searchNui}
                         >
                             <Input placeholder="Pesquisar por NUI" 
                                 value={searchNui} 
-                                onChange={e => setSearchNui(e.target.value) }                                 
+                                onChange={e => setNui(e.target.value) }                                 
                                 />
                         </Form.Item>
                     </Col>
+
+                            <Col  className="gutter-row">
+                              <Select
+                                showSearch
+                                allowClear
+                                onClear={()=>onClear('userCreator')}
+                                placeholder="Selecione o utilizador"
+                                optionFilterProp="children"
+                                onChange={e => onChange(e,'userCreator')}
+                                onSearch={()=>{/**Its OK */}}
+                                filterOption={(input, option) =>
+                                  (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                                }
+                                options={convertedUserData}
+                              />
+                          </Col >
+
+                           <Col className="gutter-row"  >
+                              <Select
+                                showSearch
+                                allowClear
+                                onClear={()=>onClear('district')}
+                                placeholder="Selecione o distrito"
+                                optionFilterProp="children"
+                                onChange={e => onChange(e,'district')}
+                                onSearch={()=>{/**Its OK */}}
+                                filterOption={(input, option) =>
+                                  (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                                }
+                                options={convertedDistrictsData}
+                              />
+                          </Col>
+                        
+                     
                     <Col className="gutter-row" span={12}>
                         <Button type="primary" onClick={handleGlobalSearch}>
                             Pesquisar

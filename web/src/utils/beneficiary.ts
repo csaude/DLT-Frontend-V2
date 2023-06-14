@@ -19,10 +19,10 @@ export async function query(payload?: any) {
     return res;
 }
 
-export async function pagedQuery(payload?: any, pageIndex?: any, pageSize?: any, searchNui?: any) {
+export async function pagedQueryByFilters(payload?: any, pageIndex?: any, pageSize?: any, searchNui?: any, searchUserCreator?:number, searchDistrict?:number) {
     let url: string;
     if (payload.userId){
-      url = `/api/beneficiaries?${stringify(payload)}&pageIndex=${pageIndex}&pageSize=${pageSize}&searchNui=${searchNui}`;
+      url = `/api/beneficiaries?${stringify(payload)}&pageIndex=${pageIndex}&pageSize=${pageSize}&searchNui=${searchNui}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`;
     }
     else {
       url = '/api/beneficiaries/' + payload;

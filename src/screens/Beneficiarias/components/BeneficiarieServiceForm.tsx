@@ -388,23 +388,23 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
         const interv = newObject._raw;
         await database.write(async () => {
             const subService = await database.get('sub_services').query(
-                Q.where('online_id', interv.sub_service_id)
+                Q.where('online_id', interv['sub_service_id'])
             );
             
             const referenceSToUpdate = await database.get('references_services').query(
                 Q.where('service_id', parseInt(subService[0]._raw?.service_id))
             ).fetch();
 
-            const referencesIds = referenceSToUpdate.map(r => parseInt(r._raw.reference_id));
+            const referencesIds = referenceSToUpdate.map(r => parseInt(r._raw['reference_id']));
 
             const referencesToUpdate = await database.get('references').query(
                 Q.where('online_id', Q.oneOf(referencesIds)),
                 Q.where('beneficiary_id', beneficiarie.online_id)
             ).fetch();
 
-            const refsToUpdateIds = referencesToUpdate.map(r => parseInt(r._raw.online_id));
+            const refsToUpdateIds = referencesToUpdate.map(r => parseInt(r._raw['online_id']));
 
-            const filteredRefServices = referenceSToUpdate.filter(r => refsToUpdateIds.includes(parseInt(r._raw.reference_id)));
+            const filteredRefServices = referenceSToUpdate.filter(r => refsToUpdateIds.includes(parseInt(r._raw['reference_id'])));
 
             referencesToUpdate.forEach(async(ref) => {
                 const updatedreference = await ref.update((reference: any) => {
