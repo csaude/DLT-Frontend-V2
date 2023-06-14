@@ -131,8 +131,6 @@ const BeneficiarieServiceForm: React.FC = ({ route, us, services, subServices }:
             let is15AndStartedAvante = false;
 
             const interventionsIds = intervs.map(item => item.intervention.sub_service_id);
-            console.log(interventionsIds);
-            console.log(age);
 
             interventionsIds.forEach(element => {
                 if (avanteIds.includes(element)) {
