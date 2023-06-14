@@ -208,7 +208,7 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
           <Drawer.Screen name="Users" 
             component={UsersNavigator}  
             options={{                     
-                title: 'Configurações', 
+                title: 'Perfil', 
                 headerTitle: '',
             }}
             

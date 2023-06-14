@@ -13,8 +13,7 @@ import withObservables from "@nozbe/with-observables";
 
 const UserProfile: React.FC = ({ profiles , users, provinces, districts, localities, us }:any) => {
     
-    const loggedUser: any = useContext(Context);
-    
+    const loggedUser: any = useContext(Context);    
     const user = users.filter((e) => {
         return e?._raw.online_id == (loggedUser?.entry_point === undefined ? loggedUser?.id : loggedUser?.online_id)
     })[0]?._raw;
