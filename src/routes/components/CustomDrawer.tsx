@@ -46,7 +46,7 @@ const CustomDrawer: React.FC<DrawerProps> = ({ onLogout, /*loggedUser,*/ ...prop
                     position: 'absolute',
                     right: 0,
                     left: 0,
-                    bottom: 50,
+                    bottom: 30,
                     backgroundColor: '#f6f6f6',
                     padding: 20,
                 }}

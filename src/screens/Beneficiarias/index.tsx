@@ -213,13 +213,6 @@ const BeneficiariesMain: React.FC = ({ beneficiaries, subServices, beneficiaries
                             {` ${data.item._raw.district_code}/${data.item.nui}`}
                         </Text>
                     </HStack>
-                    {/* <HStack style={{alignContent:'center'}}>
-                        <View style={{paddingTop:5}}><Ionicons name="person" size={11} color="#17a2b8"/></View>
-                        
-                        <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
-                           {maskName ? 'DREAMS'+data.item.nui  : ` ${data.item.name} ${data.item.surname}`}
-                        </Text>
-                    </HStack> */}
                     <HStack>
                         <View style={{paddingTop:5}}><Ionicons name="navigate" size={11} color="#17a2b8"/></View>
                         <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>

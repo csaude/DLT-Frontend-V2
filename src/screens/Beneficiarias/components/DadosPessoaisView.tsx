@@ -78,7 +78,7 @@ const DadosPessoaisView: React.FC = ({ route }: any) => {
                         </Box>
                         <Flex direction="column" mb="2.5" _text={{ color: "coolGray.800" }}>
                             <Box bg={beneficiary.gender === "2" ? "pink.500" : "primary.500"} p="2" rounded="lg">
-                                <Heading size="md" color="white">Detalhes da Beneficiária</Heading>
+                                <Heading size="md" color="white">Detalhes d{beneficiary.gender === "2" ? 'a Beneficiária':'o Beneficiário'} </Heading>
                                 <Divider />
                                 <Text style={styles.txtLabelInfo}>
                                     <Text style={styles.txtLabel}> Idade: </Text>

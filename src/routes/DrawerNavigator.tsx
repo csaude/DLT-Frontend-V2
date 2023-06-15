@@ -17,6 +17,7 @@ import { getBeneficiariesTotal } from '../store/beneficiarySlice';
 import { getReferencesTotal } from '../store/referenceSlice';
 import SyncTimer from '../components/SyncTimer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import UsersNavigator from './UsersNavigator';
 
 function HomeScreen({ navigation }: any) {
   useEffect(()=>{
@@ -122,6 +123,13 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
     });
   };
 
+  const configPag = (e?: any) => {
+    navigate({
+      name: "UserProfile"
+    });
+  };
+
+
    useEffect(() => {
     const timer = setTimeout(() => {   
         navigate({
@@ -197,15 +205,15 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
             }}
             
         />
-        {/* <Drawer.Screen name="Users" 
+          <Drawer.Screen name="Users" 
             component={UsersNavigator}  
             options={{                     
-                title: 'Utilizadores', 
+                title: 'Perfil', 
                 headerTitle: '',
             }}
             
         />
-       */}
+      
       </Drawer.Navigator>
     </Context.Provider>
   );
