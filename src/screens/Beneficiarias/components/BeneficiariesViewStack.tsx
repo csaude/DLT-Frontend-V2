@@ -57,6 +57,7 @@ export default function BeneficiariesViewStack({ route }) {
       <Tab.Screen name="Referencias" component={ReferenceView} options={{ headerShown: false }}
         initialParams={{
           beneficiary: route.params?.beneficiary,
+          interventions: route.params?.interventions,
           references: route.params?.references
         }} />
     </Tab.Navigator>

@@ -29,6 +29,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
 
     const {
         beneficiary,
+        intervs,
         userId,
         refs
     } = route.params;
@@ -53,6 +54,8 @@ const ReferenceForm: React.FC = ({ route }: any) => {
     const loggedUser: any = useContext(Context);
 	const [isOffline, setIsOffline] = useState(false);
     const [refNote, setRefNote] = useState('');
+
+    const avanteIds = [157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199,200,207,208,209];
 
     useEffect(() => {
 
@@ -227,9 +230,19 @@ const ReferenceForm: React.FC = ({ route }: any) => {
         ).fetch();
         let servicesSerialized = getServicesList.map(item => item._raw);
         const age = calculateAge(beneficiary.date_of_birth);
+        let is15AndStartedAvante = false;
 
-        if (age < 15) {
-            if (age < 14 && value == 2) {
+        const interventionsIds = intervs.map(item => item.intervention.sub_service_id);
+
+        interventionsIds.forEach(element => {
+            if (avanteIds.includes(element)) {
+                is15AndStartedAvante = true;
+                return;
+            }
+        });
+
+        if (age < 15 || is15AndStartedAvante) {
+            if ((age < 14 || is15AndStartedAvante) && value == 2) {
                 // Retirar Guião de facilitação e AFLATEEN
                 servicesSerialized = servicesSerialized.filter(s => ![46,49,52,57].includes(s['online_id']));
             }
@@ -246,7 +259,6 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                 if (value == 2) {
                     // Retirar AVANTE RAPARIGA
                     servicesSerialized = servicesSerialized.filter(s => ![44,47,50].includes(s['online_id']));
-                    
                 }
             }
         } else if (value == 2) {
