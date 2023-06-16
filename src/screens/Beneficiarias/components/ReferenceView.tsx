@@ -18,6 +18,7 @@ const ReferenceView: React.FC = ({ route }: any) => {
 	const [isOffline, setIsOffline] = useState(false);
     const {
         beneficiary,
+        interventions,
         references,
     } = route.params;
     //const [references, setReferences] = useState<any>([]);
@@ -133,6 +134,7 @@ const ReferenceView: React.FC = ({ route }: any) => {
             }
             <Center flex={1} px="3" >
                 <StepperButton onAdd={() => navigate({ name: "ReferenceForm", params: { beneficiary:  beneficiary, 
+                                                                                            intervs: interventions,
                                                                                             references: references,
                                                                                             userId: isNaN(loggedUser.id) ? loggedUser.online_id : loggedUser.id, 
                                                                                             refs: references.length} })}
