@@ -200,6 +200,15 @@ const BeneficiaryForm: React.FC = ({
           ? setIsEnable(true)
           : setIsEnable(false);
       }
+
+      const entryPoint =
+        formik.values.entry_point !== undefined
+          ? formik.values.entry_point
+          : loggedUser.entryPoint !== undefined
+          ? loggedUser.entryPoint
+          : loggedUser.entry_point;
+      formik.setFieldValue("entry_point", entryPoint);
+      onChangeEntryPoint(entryPoint);
     }
 
     const userDetailsQ = await userDetailsCollection
@@ -229,14 +238,6 @@ const BeneficiaryForm: React.FC = ({
       formik.setFieldValue("age", age + "");
       setsexWorkerEnabled(age > 17);
 
-      const entryPoint =
-        formik.values.entry_point !== undefined
-          ? formik.values.entry_point
-          : loggedUser.entryPoint !== undefined
-          ? loggedUser.entryPoint
-          : loggedUser.entry_point;
-      formik.setFieldValue("entry_point", entryPoint);
-      onChangeEntryPoint(entryPoint);
     }
 
     fetchMetaData().catch((error) => console.log(error));
