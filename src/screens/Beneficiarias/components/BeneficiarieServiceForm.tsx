@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, memo } from "react";
 import { View, KeyboardAvoidingView, ScrollView } from "react-native";
 import {
   Center,
@@ -931,4 +931,4 @@ BeneficiarieServiceForm.propTypes = {
   subServices: PropTypes.array.isRequired,
 };
 
-export default enhance(BeneficiarieServiceForm);
+export default memo(enhance(BeneficiarieServiceForm));

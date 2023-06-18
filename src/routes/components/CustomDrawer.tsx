@@ -55,7 +55,7 @@ const CustomDrawer: React.FC<DrawerProps> = ({
           backgroundColor: "#f6f6f6",
           padding: 20,
         }}
-        onPress={() => onLogout()}
+        onPress={onLogout}
       >
         <Text style={{ color: "#212121" }}>Sair</Text>
       </TouchableOpacity>

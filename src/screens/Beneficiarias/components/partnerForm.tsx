@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, memo } from "react";
 import { View, KeyboardAvoidingView, ScrollView } from "react-native";
 import {
   Center,
@@ -1588,4 +1588,4 @@ const enhance = withObservables([], () => ({
   partners: database.collections.get("partners").query().observe(),
   us: database.collections.get("us").query().observe(),
 }));
-export default enhance(partnerForm);
+export default memo(enhance(partnerForm));

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { KeyboardAvoidingView, ScrollView } from "react-native";
 import {
   Center,
@@ -298,4 +298,4 @@ const ChangePassword: React.FC = ({ route }: any) => {
   );
 };
 
-export default ChangePassword;
+export default memo(ChangePassword);

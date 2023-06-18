@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, {
+  useEffect,
+  useState,
+  useContext,
+  memo,
+  useCallback,
+} from "react";
 import { TouchableHighlight } from "react-native";
 import { ProgressSteps, ProgressStep } from "react-native-progress-steps";
 import {
@@ -66,49 +72,49 @@ const ReferenceForm: React.FC = ({ route }: any) => {
   const [isOffline, setIsOffline] = useState(false);
   const [refNote, setRefNote] = useState("");
 
+  const fetchEntryPoints = useCallback(async () => {
+    const user = await database
+      .get("users")
+      .query(Q.where("online_id", userId))
+      .fetch();
+    const userSerialized = user.map((item) => item._raw);
+
+    const partner = await database
+      .get("partners")
+      .query(Q.where("online_id", (userSerialized[0] as any).partner_id))
+      .fetch();
+    const partnerSerialized = partner.map((item) => item._raw);
+
+    const partnerType = (partnerSerialized[0] as any).partner_type;
+
+    if ((userSerialized[0] as any).entry_point === "3") {
+      setEntryPoints([US, COMMUNITY, SCHOOL]);
+    } else if (partnerType === "1") {
+      setEntryPoints([COMMUNITY, SCHOOL]);
+    } else if (partnerType === "2") {
+      setEntryPoints([US, SCHOOL]);
+    } else {
+      setEntryPoints([US, COMMUNITY, SCHOOL]);
+    }
+
+    setEntryPoint(
+      (userSerialized[0] as any).entry_point == "1"
+        ? "US"
+        : (userSerialized[0] as any).entry_point == "2"
+        ? "CM"
+        : "ES"
+    );
+  }, []);
+
+  const getRefNote = useCallback(async () => {
+    const prefix: any = (await database.get("sequences").query().fetch())[0]
+      ?._raw;
+    setRefNote(
+      "REFDR" + prefix.prefix + "0" + String(refs + 1).padStart(3, "0")
+    );
+  }, []);
+
   useEffect(() => {
-    const fetchEntryPoints = async () => {
-      const user = await database
-        .get("users")
-        .query(Q.where("online_id", userId))
-        .fetch();
-      const userSerialized = user.map((item) => item._raw);
-
-      const partner = await database
-        .get("partners")
-        .query(Q.where("online_id", (userSerialized[0] as any).partner_id))
-        .fetch();
-      const partnerSerialized = partner.map((item) => item._raw);
-
-      const partnerType = (partnerSerialized[0] as any).partner_type;
-
-      if ((userSerialized[0] as any).entry_point === "3") {
-        setEntryPoints([US, COMMUNITY, SCHOOL]);
-      } else if (partnerType === "1") {
-        setEntryPoints([COMMUNITY, SCHOOL]);
-      } else if (partnerType === "2") {
-        setEntryPoints([US, SCHOOL]);
-      } else {
-        setEntryPoints([US, COMMUNITY, SCHOOL]);
-      }
-
-      setEntryPoint(
-        (userSerialized[0] as any).entry_point == "1"
-          ? "US"
-          : (userSerialized[0] as any).entry_point == "2"
-          ? "CM"
-          : "ES"
-      );
-    };
-
-    const getRefNote = async () => {
-      const prefix: any = (await database.get("sequences").query().fetch())[0]
-        ?._raw;
-      setRefNote(
-        "REFDR" + prefix.prefix + "0" + String(refs + 1).padStart(3, "0")
-      );
-    };
-
     fetchEntryPoints().catch((error) => console.log(error));
     getRefNote().catch((error) => console.log(error));
 
@@ -164,7 +170,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
     }
   };
 
-  const validate = (values: any) => {
+  const validate = useCallback((values: any) => {
     const errors: any = {};
 
     if (!values.refer_to) {
@@ -200,7 +206,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
     }
 
     return errors;
-  };
+  }, []);
 
   const onChangePE = (value: any) => {
     if (value === "1") {
@@ -462,41 +468,44 @@ const ReferenceForm: React.FC = ({ route }: any) => {
     return partners_a[0]?.name;
   };
 
-  const renderItem = (data: any) => (
-    <TouchableHighlight
-      style={styles.rowFront}
-      underlayColor={"#AAA"}
-      key={data.online_id}
-    >
-      <HStack
-        w="100%"
-        px={4}
-        flex={1}
-        space={5}
-        alignItems="center"
+  const renderItem = useCallback(
+    (data: any) => (
+      <TouchableHighlight
+        style={styles.rowFront}
+        underlayColor={"#AAA"}
         key={data.online_id}
       >
-        <Ionicons name="medkit" size={35} color="#0d9488" />
-        <VStack width="250px">
-          <Text
-            _dark={{
-              color: "warmGray.50",
-            }}
-            color="darkBlue.800"
-          >
-            {data.name}
-          </Text>
-        </VStack>
-        <IconButton
-          size="sm"
-          colorScheme="trueGray"
-          onPress={() => onRemoveService(data)}
-          icon={
-            <Icon as={Ionicons} name="trash" size="lg" color="trueGray.400" />
-          }
-        />
-      </HStack>
-    </TouchableHighlight>
+        <HStack
+          w="100%"
+          px={4}
+          flex={1}
+          space={5}
+          alignItems="center"
+          key={data.online_id}
+        >
+          <Ionicons name="medkit" size={35} color="#0d9488" />
+          <VStack width="250px">
+            <Text
+              _dark={{
+                color: "warmGray.50",
+              }}
+              color="darkBlue.800"
+            >
+              {data.name}
+            </Text>
+          </VStack>
+          <IconButton
+            size="sm"
+            colorScheme="trueGray"
+            onPress={() => onRemoveService(data)}
+            icon={
+              <Icon as={Ionicons} name="trash" size="lg" color="trueGray.400" />
+            }
+          />
+        </HStack>
+      </TouchableHighlight>
+    ),
+    []
   );
 
   return (
@@ -899,4 +908,4 @@ const ErrorHandler: React.FC = () => {
   );
 };
 
-export default ReferenceForm;
+export default memo(ReferenceForm);

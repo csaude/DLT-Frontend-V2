@@ -13,6 +13,12 @@ import { navigationRef } from "./NavigationRef";
 
 const BeneficiaryStack = createNativeStackNavigator();
 
+const routeBeneficiariesList = () =>
+  navigationRef.reset({
+    index: 0,
+    routes: [{ name: "BeneficiariesList" }],
+  });
+
 const BeneficiariesNavigator: React.FC = () => {
   return (
     <BeneficiaryStack.Navigator
@@ -28,15 +34,7 @@ const BeneficiariesNavigator: React.FC = () => {
         component={BeneficiariesViewStack}
         options={{
           headerTitle: () => (
-            <Button
-              colorScheme="unstyled"
-              onPress={() =>
-                navigationRef.reset({
-                  index: 0,
-                  routes: [{ name: "BeneficiariesList" }],
-                })
-              }
-            >
+            <Button colorScheme="unstyled" onPress={routeBeneficiariesList}>
               <Ionicons
                 name="arrow-back-outline"
                 size={25}

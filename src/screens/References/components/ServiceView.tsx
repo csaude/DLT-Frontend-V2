@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo, useCallback } from "react";
 import { View, TouchableHighlight } from "react-native";
 import { HStack, Text, Icon, VStack, Pressable } from "native-base";
 import { Ionicons } from "@native-base/icons";
@@ -9,7 +9,7 @@ import { SwipeListView } from "react-native-swipe-list-view";
 const ServicesView: React.FC = ({ route }: any) => {
   const { reference, beneficiary, services, attendDisabled } = route.params;
 
-  const renderItem = (data: any) => {
+  const renderItem = useCallback((data: any) => {
     return (
       <TouchableHighlight
         onPress={() =>
@@ -57,31 +57,34 @@ const ServicesView: React.FC = ({ route }: any) => {
         </HStack>
       </TouchableHighlight>
     );
-  };
+  }, []);
 
-  const renderHiddenItem = (data: any) => (
-    <HStack flex={1} pl={2}>
-      <Pressable
-        px={4}
-        ml="auto"
-        bg="lightBlue.700"
-        justifyContent="center"
-        disabled={attendDisabled}
-        onPress={() =>
-          navigate({
-            name: "ServicesForm",
-            params: {
-              reference: reference,
-              beneficiarie: beneficiary,
-              intervention: data.item,
-            },
-          })
-        }
-        _pressed={{ opacity: 0.5 }}
-      >
-        <Icon as={Ionicons} name="create" size={6} color="gray.200" />
-      </Pressable>
-    </HStack>
+  const renderHiddenItem = useCallback(
+    (data: any) => (
+      <HStack flex={1} pl={2}>
+        <Pressable
+          px={4}
+          ml="auto"
+          bg="lightBlue.700"
+          justifyContent="center"
+          disabled={attendDisabled}
+          onPress={() =>
+            navigate({
+              name: "ServicesForm",
+              params: {
+                reference: reference,
+                beneficiarie: beneficiary,
+                intervention: data.item,
+              },
+            })
+          }
+          _pressed={{ opacity: 0.5 }}
+        >
+          <Icon as={Ionicons} name="create" size={6} color="gray.200" />
+        </Pressable>
+      </HStack>
+    ),
+    []
   );
 
   return (
@@ -109,4 +112,4 @@ const ServicesView: React.FC = ({ route }: any) => {
   );
 };
 
-export default ServicesView;
+export default memo(ServicesView);

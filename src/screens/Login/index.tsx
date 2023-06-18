@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import { KeyboardAvoidingView, ScrollView } from "react-native";
 import {
   Center,
@@ -226,7 +226,7 @@ const Login: React.FC = ({ route }: any) => {
     }
   }, [loggedUser]);
 
-  const getTotals = async () => {
+  const getTotals = useCallback(async () => {
     const countBen = await beneficiariesFetchCount();
     dispatch(getBeneficiariesTotal(countBen));
 
@@ -235,9 +235,9 @@ const Login: React.FC = ({ route }: any) => {
 
     const beneficiaryIntervsCont = await beneficiariesInterventionsFetchCount();
     dispatch(loadBeneficiariesInterventionsCounts(beneficiaryIntervsCont));
-  };
+  }, []);
 
-  const validate = (values: any) => {
+  const validate = useCallback((values: any) => {
     const errors: LoginData = {};
 
     if (!values.username) {
@@ -249,9 +249,9 @@ const Login: React.FC = ({ route }: any) => {
     }
 
     return errors;
-  };
+  }, []);
 
-  const getMessage = (status) => {
+  const getMessage = useCallback((status) => {
     setLoading(false);
     if (status == 404) {
       return "O utilizador informado não está cadastrado no sistema, para autenticar precisa estar cadastrado no sistema";
@@ -264,9 +264,9 @@ const Login: React.FC = ({ route }: any) => {
     } else if (status == undefined) {
       return "Do momento o sistema encontra-se em manutenção, por favor aguarde a disponibilidade do sistema e tente novamente";
     }
-  };
+  }, []);
 
-  const onSubmit = async (values: any) => {
+  const onSubmit = useCallback(async (values: any) => {
     setLoading(true);
 
     // check if users table is synced
@@ -384,9 +384,9 @@ const Login: React.FC = ({ route }: any) => {
       }
       setLoading(false);
     }
-  };
+  }, []);
 
-  const isVeryOldPassword = async (user) => {
+  const isVeryOldPassword = useCallback(async (user) => {
     let passwordLastChangeDate;
     const today = moment(new Date());
 
@@ -407,7 +407,7 @@ const Login: React.FC = ({ route }: any) => {
     return diff.asDays() > 182
       ? setPasswordExpired(true)
       : setPasswordExpired(false);
-  };
+  }, []);
 
   useEffect(() => {
     if (passwordExpired) {
@@ -422,7 +422,7 @@ const Login: React.FC = ({ route }: any) => {
     }
   }, [passwordExpired, setPasswordExpired]);
 
-  const saveUserDatails = async (user) => {
+  const saveUserDatails = useCallback(async (user) => {
     const provinces_ids = user.provinces.map((province) => {
       return province.id;
     });
@@ -455,7 +455,7 @@ const Login: React.FC = ({ route }: any) => {
         userDetail.partner_id = user.partners.id;
       });
     });
-  };
+  }, []);
 
   return (
     <KeyboardAvoidingView style={styles.container}>
@@ -639,4 +639,4 @@ const Login: React.FC = ({ route }: any) => {
   );
 };
 
-export default Login;
+export default memo(Login);

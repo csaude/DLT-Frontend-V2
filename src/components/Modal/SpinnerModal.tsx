@@ -1,15 +1,15 @@
-import React from "react";
+import React, { memo, useCallback } from "react";
 import { FormControl, HStack, Modal, Spinner } from "native-base";
 import PropTypes from "prop-types";
 
 const SpinnerModal = ({ open, title, message }) => {
-  const MySpinner = () => {
+  const MySpinner = useCallback(() => {
     return (
       <HStack space={8} justifyContent="center" alignItems="center">
         <Spinner size="lg" />
       </HStack>
     );
-  };
+  }, []);
 
   return (
     <Modal isOpen={open}>
@@ -32,4 +32,4 @@ SpinnerModal.propTypes = {
   message: PropTypes.string.isRequired,
 };
 
-export { SpinnerModal };
+export default memo(SpinnerModal);

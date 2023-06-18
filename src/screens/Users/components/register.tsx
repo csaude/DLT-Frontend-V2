@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, {
+  useEffect,
+  useState,
+  useContext,
+  useCallback,
+  memo,
+} from "react";
 import { View, KeyboardAvoidingView, ScrollView } from "react-native";
 import {
   Center,
@@ -75,7 +81,7 @@ const UsersRegistrationForm: React.FC = ({
     }
   }, [user]);
 
-  const validate = (values: any) => {
+  const validate = useCallback((values: any) => {
     const errors: UsersModel = {};
 
     if (!values.surname) {
@@ -115,9 +121,9 @@ const UsersRegistrationForm: React.FC = ({
     }
 
     return errors;
-  };
+  }, []);
 
-  const onSubmit = async (values: any) => {
+  const onSubmit = useCallback(async (values: any) => {
     setLoading(true);
 
     const localityName = localities.filter((e) => {
@@ -259,7 +265,7 @@ const UsersRegistrationForm: React.FC = ({
           },
         })
       );
-  };
+  }, []);
 
   return (
     <KeyboardAvoidingView>
@@ -525,4 +531,4 @@ const enhance = withObservables([], () => ({
   partners: database.collections.get("partners").query().observe(),
   us: database.collections.get("us").query().observe(),
 }));
-export default enhance(UsersRegistrationForm);
+export default memo(enhance(UsersRegistrationForm));

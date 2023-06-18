@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { View } from "react-native";
 import { Alert, Text, HStack, VStack } from "native-base";
 
@@ -95,4 +95,4 @@ const SyncIndicator = () => {
     </View>
   );
 };
-export default SyncIndicator;
+export default memo(SyncIndicator);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, memo } from "react";
 import { View, KeyboardAvoidingView, ScrollView, Text } from "react-native";
 import { Box, Heading, Divider, Avatar, Icon, Flex } from "native-base";
 import { Context } from "../../../routes/DrawerNavigator";
@@ -137,4 +137,4 @@ const DadosPessoaisView: React.FC = ({ route }: any) => {
   );
 };
 
-export default DadosPessoaisView;
+export default memo(DadosPessoaisView);

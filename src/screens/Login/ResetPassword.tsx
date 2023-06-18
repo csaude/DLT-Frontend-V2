@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import { KeyboardAvoidingView, ScrollView } from "react-native";
 import {
   Center,
@@ -41,7 +41,7 @@ const ResetPassword: React.FC = () => {
 
   const toasty = useToast();
 
-  const showToast = (status, message, description) => {
+  const showToast = useCallback((status, message, description) => {
     return toasty.show({
       placement: "top",
       render: () => {
@@ -69,7 +69,7 @@ const ResetPassword: React.FC = () => {
         );
       },
     });
-  };
+  }, []);
 
   useEffect(() => {
     const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
@@ -79,7 +79,7 @@ const ResetPassword: React.FC = () => {
     return () => removeNetInfoSubscription();
   }, []);
 
-  const validate = (values: any) => {
+  const validate = useCallback((values: any) => {
     const errors: LoginData = {};
 
     if (!values.username) {
@@ -94,10 +94,10 @@ const ResetPassword: React.FC = () => {
       errors.rePassword = "Obrigatório";
     }
     return errors;
-  };
+  }, []);
 
   // Inicio Do Reset
-  const onSubmit = async () => {
+  const onSubmit = useCallback(async () => {
     setLoading(true);
     try {
       if (isOffline) {
@@ -124,7 +124,7 @@ const ResetPassword: React.FC = () => {
       setLoading(false);
       showToast("error", "Falha!!!", "Erro ao redefinir a senha!");
     }
-  };
+  }, []);
 
   return (
     <KeyboardAvoidingView style={styles.container}>
@@ -290,4 +290,4 @@ const ResetPassword: React.FC = () => {
   );
 };
 
-export default ResetPassword;
+export default memo(ResetPassword);

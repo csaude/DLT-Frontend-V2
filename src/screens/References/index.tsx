@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, {
+  useEffect,
+  useState,
+  useContext,
+  memo,
+  useCallback,
+} from "react";
 import {
   View,
   TouchableOpacity,
@@ -84,7 +90,7 @@ const ReferencesMain: React.FC = ({
     });
   }, []);
 
-  const viewReference = async (data: any) => {
+  const viewReference = useCallback(async (data: any) => {
     const reference = data.item?._raw;
     const beneficiary = getBeneficiary(reference.beneficiary_id)?._raw;
     const notifyTo = `${
@@ -148,9 +154,9 @@ const ReferencesMain: React.FC = ({
         attendDisabled: attendDisabled,
       },
     });
-  };
+  }, []);
 
-  const syncronize = () => {
+  const syncronize = useCallback(() => {
     if (isOffline) {
       toast.show({
         placement: "top",
@@ -177,11 +183,11 @@ const ReferencesMain: React.FC = ({
           })
         );
     }
-  };
+  }, []);
 
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-  const handleOnPress = async () => {
+  const handleOnPress = useCallback(async () => {
     syncronize();
     await delay(5000);
     const userId =
@@ -189,131 +195,145 @@ const ReferencesMain: React.FC = ({
         ? loggedUser?.online_id
         : loggedUser?.id;
     getUserReferences(userId);
-  };
+  }, []);
 
   const onRowDidOpen = () => {
     /**Its OK */
   };
 
-  const renderItem = (data: any) => (
-    <TouchableHighlight
-      onPress={() => viewReference(data)}
-      style={styles.rowFront}
-      underlayColor={"#AAA"}
-    >
-      <HStack width="100%" px={4} flex={1} space={5} alignItems="center">
-        {loggedUserPartner ===
-        getUser(data.item?._raw.referred_by)?.partner_id ? (
-          <Ionicons name="exit" size={40} color="#0d9488" />
-        ) : (
-          <Ionicons name="enter" size={40} color="#0d9488" />
-        )}
-        <VStack width="200px">
-          <HStack>
-            <Text color="warmGray.400" _dark={{ color: "warmGray.200" }}>
-              NUI:
-            </Text>
-            <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
-              {` ${data.item.beneficiary_nui}`}
-            </Text>
-          </HStack>
-          <HStack>
-            <View style={{ paddingTop: 5 }}>
-              <Ionicons name="notifications" size={11} color="#17a2b8" />
-            </View>
-            <View style={{ paddingTop: 5 }}>
-              <Ionicons name="person" size={11} color="#17a2b8" />
-            </View>
-            <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
-              {` ${
-                getUser(data.item?._raw.notify_to)?.name +
-                " " +
-                getUser(data.item?._raw.notify_to)?.surname
-              }`}
-            </Text>
-          </HStack>
-
-          <HStack>
-            <View style={{ paddingTop: 5 }}>
-              <Ionicons name="notifications" size={11} color="#17a2b8" />
-            </View>
-            <View style={{ paddingTop: 5 }}>
-              <Ionicons name="md-home" size={11} color="#17a2b8" />
-            </View>
-            {getUser(data.item?._raw.user_created) && (
-              <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
-                {` ${getUser(data.item?._raw.notify_to)?.organization_name}`}
-              </Text>
-            )}
-          </HStack>
-        </VStack>
-        <VStack alignSelf="flex-start" marginTop={2} width="100px">
-          {data.item?._raw.is_awaiting_sync === 1 &&
-          data.item?._raw._status === "updated" ? (
-            <>
-              <Text color="coolGray.500">
-                {moment(new Date(data.item.date_created)).format("DD-MM-YYYY")}
-              </Text>
-
-              <HStack>
-                <View style={{ paddingTop: 10 }}>
-                  <Ionicons
-                    name="information-circle"
-                    size={15}
-                    color="#fb923c"
-                  />
-                </View>
-                <Ionicons name="md-refresh" size={30} color="#a8a29e" />
-              </HStack>
-            </>
+  const renderItem = useCallback(
+    (data: any) => (
+      <TouchableHighlight
+        onPress={() => viewReference(data)}
+        style={styles.rowFront}
+        underlayColor={"#AAA"}
+      >
+        <HStack width="100%" px={4} flex={1} space={5} alignItems="center">
+          {loggedUserPartner ===
+          getUser(data.item?._raw.referred_by)?.partner_id ? (
+            <Ionicons name="exit" size={40} color="#0d9488" />
           ) : (
-            <>
-              <Text color="coolGray.500">
-                {moment(new Date(data.item.date_created)).format("DD-MM-YYYY")}
-              </Text>
-              <HStack>
-                <View style={{ paddingTop: 5 }}>
-                  <Ionicons name="checkmark-circle" size={11} color="#17a2b8" />
-                </View>
-
-                <Text
-                  color={
-                    data.item?._raw.status == 0
-                      ? "danger.700"
-                      : data.item?._raw.status == 1
-                      ? "warning.700"
-                      : "success.700"
-                  }
-                  _dark={{ color: "warmGray.200" }}
-                >
-                  {` ${getStatus(data.item?._raw.status)}`}
-                </Text>
-              </HStack>
-            </>
+            <Ionicons name="enter" size={40} color="#0d9488" />
           )}
-        </VStack>
-      </HStack>
-    </TouchableHighlight>
+          <VStack width="200px">
+            <HStack>
+              <Text color="warmGray.400" _dark={{ color: "warmGray.200" }}>
+                NUI:
+              </Text>
+              <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
+                {` ${data.item.beneficiary_nui}`}
+              </Text>
+            </HStack>
+            <HStack>
+              <View style={{ paddingTop: 5 }}>
+                <Ionicons name="notifications" size={11} color="#17a2b8" />
+              </View>
+              <View style={{ paddingTop: 5 }}>
+                <Ionicons name="person" size={11} color="#17a2b8" />
+              </View>
+              <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
+                {` ${
+                  getUser(data.item?._raw.notify_to)?.name +
+                  " " +
+                  getUser(data.item?._raw.notify_to)?.surname
+                }`}
+              </Text>
+            </HStack>
+
+            <HStack>
+              <View style={{ paddingTop: 5 }}>
+                <Ionicons name="notifications" size={11} color="#17a2b8" />
+              </View>
+              <View style={{ paddingTop: 5 }}>
+                <Ionicons name="md-home" size={11} color="#17a2b8" />
+              </View>
+              {getUser(data.item?._raw.user_created) && (
+                <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
+                  {` ${getUser(data.item?._raw.notify_to)?.organization_name}`}
+                </Text>
+              )}
+            </HStack>
+          </VStack>
+          <VStack alignSelf="flex-start" marginTop={2} width="100px">
+            {data.item?._raw.is_awaiting_sync === 1 &&
+            data.item?._raw._status === "updated" ? (
+              <>
+                <Text color="coolGray.500">
+                  {moment(new Date(data.item.date_created)).format(
+                    "DD-MM-YYYY"
+                  )}
+                </Text>
+
+                <HStack>
+                  <View style={{ paddingTop: 10 }}>
+                    <Ionicons
+                      name="information-circle"
+                      size={15}
+                      color="#fb923c"
+                    />
+                  </View>
+                  <Ionicons name="md-refresh" size={30} color="#a8a29e" />
+                </HStack>
+              </>
+            ) : (
+              <>
+                <Text color="coolGray.500">
+                  {moment(new Date(data.item.date_created)).format(
+                    "DD-MM-YYYY"
+                  )}
+                </Text>
+                <HStack>
+                  <View style={{ paddingTop: 5 }}>
+                    <Ionicons
+                      name="checkmark-circle"
+                      size={11}
+                      color="#17a2b8"
+                    />
+                  </View>
+
+                  <Text
+                    color={
+                      data.item?._raw.status == 0
+                        ? "danger.700"
+                        : data.item?._raw.status == 1
+                        ? "warning.700"
+                        : "success.700"
+                    }
+                    _dark={{ color: "warmGray.200" }}
+                  >
+                    {` ${getStatus(data.item?._raw.status)}`}
+                  </Text>
+                </HStack>
+              </>
+            )}
+          </VStack>
+        </HStack>
+      </TouchableHighlight>
+    ),
+    []
   );
 
-  const renderHiddenItem = (data: any) => (
-    <HStack flex={1} pl={2}>
-      <Pressable
-        px={4}
-        ml="auto"
-        bg="lightBlue.700"
-        justifyContent="center"
-        onPress={() => viewReference(data)}
-        _pressed={{ opacity: 0.5 }}
-      >
-        <Icon
-          as={MaterialIcons}
-          name="remove-red-eye"
-          size={6}
-          color="gray.200"
-        />
-      </Pressable>
-    </HStack>
+  const renderHiddenItem = useCallback(
+    (data: any) => (
+      <HStack flex={1} pl={2}>
+        <Pressable
+          px={4}
+          ml="auto"
+          bg="lightBlue.700"
+          justifyContent="center"
+          onPress={() => viewReference(data)}
+          _pressed={{ opacity: 0.5 }}
+        >
+          <Icon
+            as={MaterialIcons}
+            name="remove-red-eye"
+            size={6}
+            color="gray.200"
+          />
+        </Pressable>
+      </HStack>
+    ),
+    []
   );
 
   const handleChange = (e: any) => {
@@ -324,18 +344,21 @@ const ReferencesMain: React.FC = ({
     reference.beneficiary_nui.toLowerCase().includes(searchField.toLowerCase())
   );
 
-  const sortedReferences = filteredReferences.sort(
-    (ref1, ref2) =>
-      ref1._raw.status - ref2._raw.status ||
-      moment(ref2._raw.date_created)
-        .format("YYYY-MM-DD HH:mm:ss")
-        .localeCompare(
-          moment(ref1._raw.date_created).format("YYYY-MM-DD HH:mm:ss")
-        )
+  const sortedReferences = useCallback(
+    filteredReferences.sort(
+      (ref1, ref2) =>
+        ref1._raw.status - ref2._raw.status ||
+        moment(ref2._raw.date_created)
+          .format("YYYY-MM-DD HH:mm:ss")
+          .localeCompare(
+            moment(ref1._raw.date_created).format("YYYY-MM-DD HH:mm:ss")
+          )
+    ),
+    []
   );
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const getUserReferences = async (currentUserId) => {
+  const getUserReferences = useCallback(async (currentUserId) => {
     const referencesCollection = database.get("references");
 
     // if(loggedUser?.profile_id == ADMIN || loggedUser?.profiles == ADMIN){
@@ -353,7 +376,7 @@ const ReferencesMain: React.FC = ({
       .fetch();
     setUserReferences(beneficiariesByUserId);
     // }
-  };
+  }, []);
   useEffect(() => {
     const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
       const status = !(state.isConnected && state.isInternetReachable);
@@ -431,4 +454,4 @@ const enhance = withObservables([], () => ({
   subServices: database.collections.get("sub_services").query().observe(),
 }));
 
-export default enhance(ReferencesMain);
+export default memo(enhance(ReferencesMain));

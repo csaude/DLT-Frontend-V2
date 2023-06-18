@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, memo } from "react";
 import { View, TouchableHighlight } from "react-native";
 import {
   useToast,
@@ -196,4 +196,4 @@ const InterventionsView: React.FC = ({ route }: any) => {
   );
 };
 
-export default InterventionsView;
+export default memo(InterventionsView);

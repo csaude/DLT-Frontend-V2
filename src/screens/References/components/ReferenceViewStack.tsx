@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import DadosReferenciaView from "./DadosReferenciaView";
 import InterventionsView from "./InterventionsView";
@@ -71,4 +71,4 @@ ReferenceViewStack.propTypes = {
   route: PropTypes.object.isRequired,
 };
 
-export default ReferenceViewStack;
+export default memo(ReferenceViewStack);

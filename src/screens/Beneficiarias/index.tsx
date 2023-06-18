@@ -1,5 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useState, useContext, useRef } from "react";
+import React, {
+  useEffect,
+  useState,
+  useContext,
+  useRef,
+  useCallback,
+} from "react";
 import {
   View,
   TouchableHighlight,
@@ -47,11 +53,19 @@ import { Formik } from "formik";
 import { LOGIN_API_URL } from "../../services/api";
 import { ADMIN, MNE, SUPERVISOR } from "../../utils/constants";
 import moment from "moment";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import NetInfo from "@react-native-community/netinfo";
 import Spinner from "react-native-loading-spinner-overlay/lib";
 import { resolveBeneficiaryOfflineIds } from "../../services/beneficiaryService";
 import PropTypes from "prop-types";
+import { loadProvinces } from "../../store/provinceSlice";
+import { loadDistricts } from "../../store/districtSlice ";
+import { loadLocalities } from "../../store/localitySlice";
+import { loadNeighborhoods } from "../../store/neighborhoodsSlice";
+import { fetchProvinces } from "../../services/provinceService";
+import { fetchDistricts } from "../../services/districtService";
+import { fetchLocalities } from "../../services/localityService";
+import { fetchNeighborhoods } from "../../services/neighborhoodsService";
 
 const BeneficiariesMain: React.FC = ({
   beneficiaries,
@@ -76,13 +90,14 @@ const BeneficiariesMain: React.FC = ({
   const [refreshing, setRefreshing] = React.useState(false);
   const toast = useToast();
   const inputRef: any = useRef(null);
+  const dispatch = useDispatch();
 
   const [isLoadingRequest, setLoadingRequest] = useState(false);
   const totals = useSelector(
     (state: any) => state.beneficiaryIntervention.totals
   );
 
-  const syncronize = () => {
+  const syncronize = useCallback(() => {
     setLoading(true);
     if (isOffline) {
       toast.show({
@@ -112,59 +127,62 @@ const BeneficiariesMain: React.FC = ({
         );
       setLoading(false);
     }
-  };
+  }, [isOffline, loggedUser.username, toast]);
 
   useEffect(() => {
     resolveBeneficiaryOfflineIds();
   }, []);
 
-  const viewBeneficiaries = async (data: any) => {
-    const beneficiarie = data.item?._raw;
+  const viewBeneficiaries = useCallback(
+    async (data: any) => {
+      const beneficiarie = data.item?._raw;
 
-    //let items = beneficiarie.references_a.split(/[\[(, )\]]/); //split string into an array of elements
-    //let referenceIdArray = items.filter(item => item.trim().length > 0); // remove white space elements
+      //let items = beneficiarie.references_a.split(/[\[(, )\]]/); //split string into an array of elements
+      //let referenceIdArray = items.filter(item => item.trim().length > 0); // remove white space elements
 
-    /*const beneficiaryReferences = references.filter((e) => {
+      /*const beneficiaryReferences = references.filter((e) => {
             return referenceIdArray.includes("" + e._raw.online_id);
         });*/
 
-    const beneficiaryId = beneficiarie.online_id
-      ? beneficiarie.online_id
-      : beneficiarie.id;
+      const beneficiaryId = beneficiarie.online_id
+        ? beneficiarie.online_id
+        : beneficiarie.id;
 
-    const references = await database
-      .get("references")
-      .query(Q.where("beneficiary_id", beneficiaryId))
-      .fetch();
+      const references = await database
+        .get("references")
+        .query(Q.where("beneficiary_id", beneficiaryId))
+        .fetch();
 
-    const beneficiaryReferencesSerializable = references.map((e) => {
-      return e._raw;
-    });
+      const beneficiaryReferencesSerializable = references.map((e) => {
+        return e._raw;
+      });
 
-    const interventions = beneficiaries_interventions.filter((e) => {
-      return e._raw.beneficiary_id == beneficiarie.online_id;
-    });
+      const interventions = beneficiaries_interventions.filter((e) => {
+        return e._raw.beneficiary_id == beneficiarie.online_id;
+      });
 
-    const interventionObjects = interventions.map((e) => {
-      const subservice = subServices.filter((item) => {
-        return item._raw.online_id == e._raw.sub_service_id;
-      })[0];
-      return {
-        id: subservice._raw.online_id + e?._raw.date,
-        name: subservice._raw.name,
-        intervention: e._raw,
-      };
-    });
+      const interventionObjects = interventions.map((e) => {
+        const subservice = subServices.filter((item) => {
+          return item._raw.online_id == e._raw.sub_service_id;
+        })[0];
+        return {
+          id: subservice._raw.online_id + e?._raw.date,
+          name: subservice._raw.name,
+          intervention: e._raw,
+        };
+      });
 
-    navigate({
-      name: "BeneficiariesView",
-      params: {
-        beneficiary: beneficiarie,
-        interventions: interventionObjects,
-        references: beneficiaryReferencesSerializable,
-      },
-    });
-  };
+      navigate({
+        name: "BeneficiariesView",
+        params: {
+          beneficiary: beneficiarie,
+          interventions: interventionObjects,
+          references: beneficiaryReferencesSerializable,
+        },
+      });
+    },
+    [beneficiaries_interventions, subServices]
+  );
 
   const randomHexColor = () => {
     return "#000000".replace(/0/g, () => {
@@ -176,7 +194,7 @@ const BeneficiariesMain: React.FC = ({
     console.log("This row opened", rowKey);
   };
 
-  const age = (data: any) => {
+  const age = useCallback((data: any) => {
     const now = new Date();
     const birth = new Date(data);
     const m = now.getMonth() - birth.getMonth();
@@ -187,7 +205,7 @@ const BeneficiariesMain: React.FC = ({
     }
 
     return age;
-  };
+  }, []);
 
   useEffect(() => {
     if (
@@ -206,7 +224,7 @@ const BeneficiariesMain: React.FC = ({
   }, []);
 
   // eslint-disable-next-line react/prop-types
-  const ItemBadge = ({ label, beneficiary_id }) => {
+  const ItemBadge = useCallback(({ label, beneficiary_id }) => {
     const getCountByBeneficiary = () => {
       const result = totals?.filter(
         (item) => item.beneficiary_id === beneficiary_id
@@ -228,134 +246,140 @@ const BeneficiariesMain: React.FC = ({
         </Badge>
       </HStack>
     );
-  };
+  }, []);
 
-  const renderItem = (data: any) => (
-    <TouchableHighlight
-      onPress={() => viewBeneficiaries(data)}
-      style={styles.rowFront}
-      underlayColor={"#AAA"}
-    >
-      <HStack width="100%" px={4} flex={1} space={5} alignItems="center">
-        {data.item.gender === "1" ? (
-          <Avatar color="white" bg="primary.500">
-            <Icon as={Ionicons} name="man" color="white" size={35} />
-          </Avatar>
-        ) : data.item.gender === "2" ? (
-          <Avatar color="white" bg="pink.500">
-            <Icon as={Ionicons} name="woman" color="white" size={35} />
-          </Avatar>
-        ) : (
-          <Avatar color="white" bg="amber.500">
-            <Icon as={Ionicons} name="person" color="white" size={35} />
-          </Avatar>
-        )}
+  const renderItem = useCallback(
+    (data: any) => (
+      <TouchableHighlight
+        onPress={() => viewBeneficiaries(data)}
+        style={styles.rowFront}
+        underlayColor={"#AAA"}
+      >
+        <HStack width="100%" px={4} flex={1} space={5} alignItems="center">
+          {data.item.gender === "1" ? (
+            <Avatar color="white" bg="primary.500">
+              <Icon as={Ionicons} name="man" color="white" size={35} />
+            </Avatar>
+          ) : data.item.gender === "2" ? (
+            <Avatar color="white" bg="pink.500">
+              <Icon as={Ionicons} name="woman" color="white" size={35} />
+            </Avatar>
+          ) : (
+            <Avatar color="white" bg="amber.500">
+              <Icon as={Ionicons} name="person" color="white" size={35} />
+            </Avatar>
+          )}
 
-        <View style={{ width: "50%" }}>
-          <HStack>
-            <Text color="warmGray.400" _dark={{ color: "warmGray.200" }}>
-              NUI:
-            </Text>
-            <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
-              {` ${data.item._raw.district_code}/${data.item.nui}`}
-            </Text>
-          </HStack>
-          {/* <HStack style={{alignContent:'center'}}>
+          <View style={{ width: "50%" }}>
+            <HStack>
+              <Text color="warmGray.400" _dark={{ color: "warmGray.200" }}>
+                NUI:
+              </Text>
+              <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
+                {` ${data.item._raw.district_code}/${data.item.nui}`}
+              </Text>
+            </HStack>
+            {/* <HStack style={{alignContent:'center'}}>
                         <View style={{paddingTop:5}}><Ionicons name="person" size={11} color="#17a2b8"/></View>
                         
                         <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
                            {maskName ? 'DREAMS'+data.item.nui  : ` ${data.item.name} ${data.item.surname}`}
                         </Text>
                     </HStack> */}
-          <HStack>
-            <View style={{ paddingTop: 5 }}>
-              <Ionicons name="navigate" size={11} color="#17a2b8" />
-            </View>
-            <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
-              {` ${data.item.locality_name}`}
-            </Text>
-          </HStack>
-          <HStack>
-            <View style={{ paddingTop: 5 }}>
-              <Ionicons name="cog" size={11} color="#17a2b8" />
-            </View>
-            <ItemBadge
-              label={"Serviços"}
-              beneficiary_id={data.item.online_id}
-            />
-          </HStack>
-        </View>
-        <View>
-          <Text color="darkBlue.800"></Text>
-          <HStack>
-            <View style={{ paddingTop: 5 }}>
-              <Ionicons name="calendar" size={11} color="#17a2b8" />
-            </View>
-            <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
-              {` ${age(data.item.date_of_birth)} Anos`}
-            </Text>
-          </HStack>
-          <HStack>
-            <Text color="darkBlue.800">
-              {moment(new Date(data.item.date_created)).format("DD-MM-YYYY")}
-            </Text>
-          </HStack>
-          <HStack>
-            <Badge colorScheme="info">
-              {data.item.entry_point === "1"
-                ? "US"
-                : data.item.entry_point === "2"
-                ? "CM"
-                : "ES"}
-            </Badge>
-          </HStack>
-        </View>
-      </HStack>
-    </TouchableHighlight>
+            <HStack>
+              <View style={{ paddingTop: 5 }}>
+                <Ionicons name="navigate" size={11} color="#17a2b8" />
+              </View>
+              <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
+                {` ${data.item.locality_name}`}
+              </Text>
+            </HStack>
+            <HStack>
+              <View style={{ paddingTop: 5 }}>
+                <Ionicons name="cog" size={11} color="#17a2b8" />
+              </View>
+              <ItemBadge
+                label={"Serviços"}
+                beneficiary_id={data.item.online_id}
+              />
+            </HStack>
+          </View>
+          <View>
+            <Text color="darkBlue.800"></Text>
+            <HStack>
+              <View style={{ paddingTop: 5 }}>
+                <Ionicons name="calendar" size={11} color="#17a2b8" />
+              </View>
+              <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
+                {` ${age(data.item.date_of_birth)} Anos`}
+              </Text>
+            </HStack>
+            <HStack>
+              <Text color="darkBlue.800">
+                {moment(new Date(data.item.date_created)).format("DD-MM-YYYY")}
+              </Text>
+            </HStack>
+            <HStack>
+              <Badge colorScheme="info">
+                {data.item.entry_point === "1"
+                  ? "US"
+                  : data.item.entry_point === "2"
+                  ? "CM"
+                  : "ES"}
+              </Badge>
+            </HStack>
+          </View>
+        </HStack>
+      </TouchableHighlight>
+    ),
+    []
   );
 
-  const renderHiddenItem = (data: any, rowMap: any) => (
-    <HStack flex={1} pl={2}>
-      <Pressable
-        px={4}
-        ml="auto"
-        bg="lightBlue.700"
-        justifyContent="center"
-        onPress={() => viewBeneficiaries(data)}
-        _pressed={{ opacity: 0.5 }}
-      >
-        <Icon
-          as={MaterialIcons}
-          name="remove-red-eye"
-          size={6}
-          color="gray.200"
-        />
-      </Pressable>
-      <Pressable
-        px={4}
-        bg="lightBlue.800"
-        justifyContent="center"
-        onPress={() =>
-          navigate({
-            name:
-              data.item._raw.gender == 1
-                ? "BeneficiaryPartnerForm"
-                : "BeneficiaryForm",
-            params: { beneficiary: data.item._raw },
-          })
-        }
-        _pressed={{ opacity: 0.5 }}
-      >
-        <Icon as={MaterialIcons} name="mode-edit" size={6} color="gray.200" />
-      </Pressable>
-    </HStack>
+  const renderHiddenItem = useCallback(
+    (data: any, rowMap: any) => (
+      <HStack flex={1} pl={2}>
+        <Pressable
+          px={4}
+          ml="auto"
+          bg="lightBlue.700"
+          justifyContent="center"
+          onPress={() => viewBeneficiaries(data)}
+          _pressed={{ opacity: 0.5 }}
+        >
+          <Icon
+            as={MaterialIcons}
+            name="remove-red-eye"
+            size={6}
+            color="gray.200"
+          />
+        </Pressable>
+        <Pressable
+          px={4}
+          bg="lightBlue.800"
+          justifyContent="center"
+          onPress={() =>
+            navigate({
+              name:
+                data.item._raw.gender == 1
+                  ? "BeneficiaryPartnerForm"
+                  : "BeneficiaryForm",
+              params: { beneficiary: data.item._raw },
+            })
+          }
+          _pressed={{ opacity: 0.5 }}
+        >
+          <Icon as={MaterialIcons} name="mode-edit" size={6} color="gray.200" />
+        </Pressable>
+      </HStack>
+    ),
+    []
   );
 
   const handleChange = (e: any) => {
     setSearchField(e);
   };
 
-  const getUserBeneficiaries = async (currentUserId) => {
+  const getUserBeneficiaries = useCallback(async (currentUserId) => {
     const districtCollection = database.get("districts");
     const localityCollection = database.get("localities");
     const neighborhoodCollection = database.get("neighborhoods");
@@ -425,7 +449,7 @@ const BeneficiariesMain: React.FC = ({
     //         setRefreshData(false)
     const beneficiaries = await beneficiariesCollection.query().fetch();
     setUserBeneficiaries(beneficiaries);
-  };
+  }, []);
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -447,7 +471,7 @@ const BeneficiariesMain: React.FC = ({
       /** is first time the user logs, is using API* */
       getUserBeneficiaries(loggedUser?.id);
     }
-  }, [loggedUser, refreshData, inputRef]);
+  }, [loggedUser, refreshData, inputRef, getUserBeneficiaries]);
 
   const filteredBeneficiaries = userBeneficiaries?.filter((beneficiarie) =>
     beneficiarie._raw.nui.toLowerCase().includes(searchField.toLowerCase())
@@ -463,7 +487,7 @@ const BeneficiariesMain: React.FC = ({
       : loggedUser?.id;
   const toasty = useToast();
 
-  const showToast = (message, description) => {
+  const showToast = useCallback((message, description) => {
     return toasty.show({
       placement: "top",
       render: () => {
@@ -491,9 +515,9 @@ const BeneficiariesMain: React.FC = ({
         );
       },
     });
-  };
+  }, []);
 
-  const handleAuthorization = async (values) => {
+  const handleAuthorization = useCallback(async (values) => {
     await fetch(
       `${LOGIN_API_URL}?username=${
         values.username
@@ -515,9 +539,9 @@ const BeneficiariesMain: React.FC = ({
         showToast("Falha de Conexão", "Por favor contacte o suporte!");
         console.log(error);
       });
-  };
+  }, []);
 
-  const ErrorNoDataFound: React.FC = () => {
+  const ErrorNoDataFound: React.FC = useCallback(() => {
     return (
       <>
         <Alert
@@ -544,9 +568,9 @@ const BeneficiariesMain: React.FC = ({
         </Alert>
       </>
     );
-  };
+  }, []);
 
-  const getServerBeneficiaries = async (nui, token) => {
+  const getServerBeneficiaries = useCallback(async (nui, token) => {
     setShowAuthModal(true);
     setLoadingRequest(true);
     await fetch(`${BENEFICIARY_TO_SYNC_URL}?nui=${nui}&userId=${userId}`, {
@@ -576,9 +600,9 @@ const BeneficiariesMain: React.FC = ({
         setBeneficiariesResultLoaded(true);
       });
     setLoadingRequest(false);
-  };
+  }, []);
 
-  const ErrorInvalidPasswordHandler: React.FC = () => {
+  const ErrorInvalidPasswordHandler: React.FC = useCallback(() => {
     return (
       <>
         <Alert
@@ -603,7 +627,7 @@ const BeneficiariesMain: React.FC = ({
         </Alert>
       </>
     );
-  };
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -616,77 +640,80 @@ const BeneficiariesMain: React.FC = ({
     setBeneficiariesResultLoaded(false);
   }, [searchField]);
 
-  const renderServerItem = (data: any) => (
-    <TouchableHighlight
-      onPress={() => console.log(data)}
-      style={styles.rowFront}
-      underlayColor={"#AAA"}
-      disabled
-    >
-      <HStack width="100%" px={4} flex={1} space={5} alignItems="center">
-        <Avatar color="white" bg={randomHexColor()}>
-          {maskName
-            ? "D"
-            : data.item.name.charAt(0).toUpperCase() +
-              data.item.surname.charAt(0).toUpperCase()}
-        </Avatar>
+  const renderServerItem = useCallback(
+    (data: any) => (
+      <TouchableHighlight
+        onPress={() => console.log(data)}
+        style={styles.rowFront}
+        underlayColor={"#AAA"}
+        disabled
+      >
+        <HStack width="100%" px={4} flex={1} space={5} alignItems="center">
+          <Avatar color="white" bg={randomHexColor()}>
+            {maskName
+              ? "D"
+              : data.item.name.charAt(0).toUpperCase() +
+                data.item.surname.charAt(0).toUpperCase()}
+          </Avatar>
 
-        <View style={{ width: "50%" }}>
-          <HStack>
-            <Text color="warmGray.400" _dark={{ color: "warmGray.200" }}>
-              NUI:
-            </Text>
-            <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
-              {` ${data.item.district.code}/${data.item.nui}`}
-            </Text>
-          </HStack>
-          <HStack style={{ alignContent: "center" }}>
-            <View style={{ paddingTop: 5 }}>
-              <Ionicons name="person" size={11} color="#17a2b8" />
-            </View>
+          <View style={{ width: "50%" }}>
+            <HStack>
+              <Text color="warmGray.400" _dark={{ color: "warmGray.200" }}>
+                NUI:
+              </Text>
+              <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
+                {` ${data.item.district.code}/${data.item.nui}`}
+              </Text>
+            </HStack>
+            <HStack style={{ alignContent: "center" }}>
+              <View style={{ paddingTop: 5 }}>
+                <Ionicons name="person" size={11} color="#17a2b8" />
+              </View>
 
-            <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
-              {maskName
-                ? "DREAMS" + data.item.nui
-                : ` ${data.item.name} ${data.item.surname}`}
-            </Text>
-          </HStack>
-          <HStack>
-            <View style={{ paddingTop: 5 }}>
-              <Ionicons name="navigate" size={11} color="#17a2b8" />
-            </View>
-            <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
-              {` ${data.item.locality.name}`}
-            </Text>
-          </HStack>
-        </View>
-        <View>
-          <Text color="darkBlue.800">{data.item.entryPoint}</Text>
-          <HStack>
-            <View style={{ paddingTop: 5 }}>
-              <Ionicons name="calendar" size={11} color="#17a2b8" />
-            </View>
-            <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
-              {` ${age(data.item.dateOfBirth)} Anos`}
-            </Text>
-          </HStack>
-          <HStack>
-            <Text color="darkBlue.800">
-              {moment(new Date(data.item.dateCreated)).format("DD-MM-YYYY")}
-            </Text>
-          </HStack>
-          <HStack>
-            <Badge colorScheme="info">
-              {data.item.entryPoint === "1"
-                ? "US"
-                : data.item.entryPoint === "2"
-                ? "CM"
-                : "ES"}
-            </Badge>
-          </HStack>
-        </View>
-      </HStack>
-    </TouchableHighlight>
+              <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
+                {maskName
+                  ? "DREAMS" + data.item.nui
+                  : ` ${data.item.name} ${data.item.surname}`}
+              </Text>
+            </HStack>
+            <HStack>
+              <View style={{ paddingTop: 5 }}>
+                <Ionicons name="navigate" size={11} color="#17a2b8" />
+              </View>
+              <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
+                {` ${data.item.locality.name}`}
+              </Text>
+            </HStack>
+          </View>
+          <View>
+            <Text color="darkBlue.800">{data.item.entryPoint}</Text>
+            <HStack>
+              <View style={{ paddingTop: 5 }}>
+                <Ionicons name="calendar" size={11} color="#17a2b8" />
+              </View>
+              <Text color="darkBlue.800" _dark={{ color: "warmGray.200" }}>
+                {` ${age(data.item.dateOfBirth)} Anos`}
+              </Text>
+            </HStack>
+            <HStack>
+              <Text color="darkBlue.800">
+                {moment(new Date(data.item.dateCreated)).format("DD-MM-YYYY")}
+              </Text>
+            </HStack>
+            <HStack>
+              <Badge colorScheme="info">
+                {data.item.entryPoint === "1"
+                  ? "US"
+                  : data.item.entryPoint === "2"
+                  ? "CM"
+                  : "ES"}
+              </Badge>
+            </HStack>
+          </View>
+        </HStack>
+      </TouchableHighlight>
+    ),
+    []
   );
 
   const getAuth = () => {
@@ -697,7 +724,7 @@ const BeneficiariesMain: React.FC = ({
     }
   };
 
-  const handleSyncCustomBeneficiary = () => {
+  const handleSyncCustomBeneficiary = useCallback(() => {
     const userId =
       loggedUser.online_id !== undefined ? loggedUser.online_id : loggedUser.id;
     customSyncBeneficiary({ nui: searchField, userId })
@@ -719,7 +746,7 @@ const BeneficiariesMain: React.FC = ({
         showToast("Falha de Conexão", "Por favor contacte o suporte!");
         console.log(error);
       });
-  };
+  }, []);
 
   const MySpinner = () => {
     return (
@@ -728,6 +755,21 @@ const BeneficiariesMain: React.FC = ({
       </HStack>
     );
   };
+
+  useEffect(() => {
+    const fetchMetaData = async () => {
+      const provinces = await fetchProvinces();
+      const districts = await fetchDistricts();
+      const localities = await fetchLocalities();
+      const neighborhoods = await fetchNeighborhoods();
+
+      dispatch(loadProvinces(provinces));
+      dispatch(loadDistricts(districts));
+      dispatch(loadLocalities(localities));
+      dispatch(loadNeighborhoods(neighborhoods));
+    };
+    fetchMetaData();
+  }, [dispatch]);
 
   return (
     <>

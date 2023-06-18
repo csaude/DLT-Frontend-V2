@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, memo } from "react";
 import { View, TouchableHighlight } from "react-native";
 import { useToast, HStack, Text, VStack, Center } from "native-base";
 import { Ionicons } from "@native-base/icons";
@@ -175,4 +175,4 @@ const ReferenceView: React.FC = ({ route }: any) => {
   );
 };
 
-export default ReferenceView;
+export default memo(ReferenceView);

@@ -15,7 +15,14 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "plugins": ["react", "@typescript-eslint", "prettier", "unused-imports"],
+  "plugins": [
+    "react",
+    "@typescript-eslint",
+    "prettier",
+    "unused-imports",
+    "react-perf",
+    "react-hooks"
+  ],
   "rules": {
     // "indent": ["error", "tab"], //accepting indentation (temporary, then we can change)
     "linebreak-style": ["error", "unix"],
@@ -24,7 +31,10 @@
     "prettier/prettier": "error",
     "@typescript-eslint/no-explicit-any": "off", //accepting use of any as a type,
     "@typescript-eslint/ban-ts-comment": "off", //accepting // @ts-ignore
-    "unused-imports/no-unused-imports": "error"
+    "unused-imports/no-unused-imports": "error",
+    "react-perf/jsx-no-new-function-as-prop": "off",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
   },
   "settings": {
     "react": {

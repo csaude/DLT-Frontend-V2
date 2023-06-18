@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { memo, useCallback, useState } from "react";
 import { Platform } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Icon } from "native-base";
@@ -21,29 +21,37 @@ const MyDatePicker = ({
   const [mode, setMode] = useState<any>("date");
   const [show, setShow] = useState(false);
 
-  const onChange = (event, selectedDate) => {
-    if (event.type === "dismissed" && !isEdit) {
-      setDate(new Date());
-    } else {
-      const formatedDate = moment(selectedDate).format("YYYY-MM-DD");
-      setDate(selectedDate);
-      onDateSelection(formatedDate);
-    }
-    setShow(false);
-  };
-
-  const showMode = (currentMode) => {
-    if (Platform.OS === "android") {
+  const onChange = useCallback(
+    (event, selectedDate) => {
+      console.log("---show---", show);
+      if (event.type === "dismissed" && !isEdit) {
+        setDate(new Date());
+      } else {
+        const formatedDate = moment(selectedDate).format("YYYY-MM-DD");
+        setDate(selectedDate);
+        onDateSelection(formatedDate);
+      }
       setShow(false);
-      // for iOS, add a button that closes the picker
-    }
-    setMode(currentMode);
-  };
+    },
+    [isEdit, onDateSelection, show]
+  );
 
-  const showDatepicker = () => {
+  const showMode = useCallback(
+    (currentMode) => {
+      console.log("---show---", show);
+      if (Platform.OS === "android") {
+        setShow(false);
+        // for iOS, add a button that closes the picker
+      }
+      setMode(currentMode);
+    },
+    [show]
+  );
+
+  const showDatepicker = useCallback(() => {
     showMode("date");
     setShow(true);
-  };
+  }, [showMode]);
 
   return (
     <>
@@ -78,4 +86,4 @@ MyDatePicker.propTypes = {
   isEdit: PropTypes.bool.isRequired,
 };
 
-export default MyDatePicker;
+export default memo(MyDatePicker);

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { memo, useCallback, useContext } from "react";
 import { View, TouchableHighlight } from "react-native";
 import { HStack, Text, VStack } from "native-base";
 import { Ionicons } from "@native-base/icons";
@@ -10,42 +10,45 @@ const InterventionsView: React.FC = ({ route }: any) => {
   const { interventions } = route.params;
   const loggedUser: any = useContext(Context);
 
-  const renderItem = (data: any) => (
-    <TouchableHighlight style={styles.rowFront} underlayColor={"#AAA"}>
-      <HStack width="100%" px={4} flex={1} space={5} alignItems="center">
-        <Ionicons name="medkit" size={50} color="#0d9488" />
-        <VStack width="200px">
-          <Text
-            _dark={{
-              color: "warmGray.50",
-            }}
-            color="darkBlue.800"
-          >
-            {loggedUser.profile_id == 4 &&
-            [26, 67, 68].includes(data.item.intervention.sub_service_id)
-              ? "Aconselhamento e Testagem em Saúde"
-              : data.item.name}
+  const renderItem = useCallback(
+    (data: any) => (
+      <TouchableHighlight style={styles.rowFront} underlayColor={"#AAA"}>
+        <HStack width="100%" px={4} flex={1} space={5} alignItems="center">
+          <Ionicons name="medkit" size={50} color="#0d9488" />
+          <VStack width="200px">
+            <Text
+              _dark={{
+                color: "warmGray.50",
+              }}
+              color="darkBlue.800"
+            >
+              {loggedUser.profile_id == 4 &&
+              [26, 67, 68].includes(data.item.intervention.sub_service_id)
+                ? "Aconselhamento e Testagem em Saúde"
+                : data.item.name}
+            </Text>
+            <HStack>
+              <Text color="warmGray.400" _dark={{ color: "warmGray.200" }}>
+                Ponto de Entrada:
+              </Text>
+              <Text color="darkBlue.300" _dark={{ color: "warmGray.200" }}>
+                {` ${
+                  data.item.intervention.entry_point === "1"
+                    ? "US"
+                    : data.item.intervention.entry_point === "2"
+                    ? "CM"
+                    : "ES"
+                }`}
+              </Text>
+            </HStack>
+          </VStack>
+          <Text color="coolGray.500" alignSelf="flex-start" marginTop={2}>
+            {data.item.intervention.date}
           </Text>
-          <HStack>
-            <Text color="warmGray.400" _dark={{ color: "warmGray.200" }}>
-              Ponto de Entrada:
-            </Text>
-            <Text color="darkBlue.300" _dark={{ color: "warmGray.200" }}>
-              {` ${
-                data.item.intervention.entry_point === "1"
-                  ? "US"
-                  : data.item.intervention.entry_point === "2"
-                  ? "CM"
-                  : "ES"
-              }`}
-            </Text>
-          </HStack>
-        </VStack>
-        <Text color="coolGray.500" alignSelf="flex-start" marginTop={2}>
-          {data.item.intervention.date}
-        </Text>
-      </HStack>
-    </TouchableHighlight>
+        </HStack>
+      </TouchableHighlight>
+    ),
+    []
   );
 
   return (
@@ -72,4 +75,4 @@ const InterventionsView: React.FC = ({ route }: any) => {
   );
 };
 
-export default InterventionsView;
+export default memo(InterventionsView);

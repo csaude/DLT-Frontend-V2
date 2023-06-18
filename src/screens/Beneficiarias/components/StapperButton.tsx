@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import {
   HStack,
   Icon,
@@ -125,4 +125,4 @@ const StapperButton: React.FC<any> = ({
     </Center>
   );
 };
-export default StapperButton;
+export default memo(StapperButton);

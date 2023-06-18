@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, {
+  useEffect,
+  useState,
+  useContext,
+  useCallback,
+  memo,
+} from "react";
 import { View, KeyboardAvoidingView, ScrollView } from "react-native";
 import {
   Center,
@@ -96,27 +102,27 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     status: 1,
   };
 
-  const onChange = (event, selectedDate) => {
+  const onChange = useCallback((event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShow(false);
     setDate(currentDate);
     setText(selectedDate);
-  };
+  }, []);
 
-  const handleDataFromDatePickerComponent = (selectedDate) => {
+  const handleDataFromDatePickerComponent = useCallback((selectedDate) => {
     selectedDate.replaceAll("/", "-");
     const currentDate = selectedDate || date;
     setShow(false);
     setDate(currentDate);
 
     setText(selectedDate);
-  };
+  }, []);
 
   const onChangeToOutros = (value) => {
     setChecked(value);
   };
 
-  const onChangeEntryPoint = async (value: any) => {
+  const onChangeEntryPoint = useCallback(async (value: any) => {
     const uss = await database
       .get("us")
       .query(
@@ -126,18 +132,18 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
       .fetch();
     const ussSerialied = uss.map((item) => item._raw);
     setUs(ussSerialied);
-  };
+  }, []);
 
-  const onChangeUs = async (value: any) => {
+  const onChangeUs = useCallback(async (value: any) => {
     const getUsersList = await database
       .get("users")
       .query(Q.where("us_ids", Q.like(`%${value}%`)))
       .fetch();
     const usersSerialized = getUsersList.map((item) => item._raw);
     setUsers(usersSerialized);
-  };
+  }, []);
 
-  const validate = (values: any) => {
+  const validate = useCallback((values: any) => {
     const errors: any = {};
 
     if (!values.service_id) {
@@ -173,9 +179,9 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     }
 
     return errors;
-  };
+  }, []);
 
-  const validateBeneficiaryIntervention = async (values: any) => {
+  const validateBeneficiaryIntervention = useCallback(async (values: any) => {
     const benefInterv = await database
       .get("beneficiaries_interventions")
       .query(
@@ -195,7 +201,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     } else {
       onSubmit(values);
     }
-  };
+  }, []);
 
   useEffect(() => {
     const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
@@ -216,7 +222,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
       : "";
   }, [isSync]);
 
-  const onSubmit = async (values: any) => {
+  const onSubmit = useCallback(async (values: any) => {
     setLoading(true);
 
     await database.write(async () => {
@@ -281,11 +287,11 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     });
 
     setLoading(false);
-  };
+  }, []);
 
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-  const syncronize = () => {
+  const syncronize = useCallback(() => {
     if (!isOffline) {
       sync({ username: loggedUser.username })
         .then(() => setIsSync(true))
@@ -298,9 +304,9 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
           })
         );
     }
-  };
+  }, []);
 
-  const getPartner = async () => {
+  const getPartner = useCallback(async () => {
     const partner_id =
       loggedUser.partner_id !== undefined
         ? loggedUser.partner_id
@@ -311,16 +317,16 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
       .fetch();
     const partnerSerialied = partners.map((item) => item._raw)[0];
     setOrganization(partnerSerialied);
-  };
+  }, []);
 
-  const getUserToNotify = async () => {
+  const getUserToNotify = useCallback(async () => {
     const userToNotify = await database
       .get("users")
       .query(Q.where("online_id", parseInt(reference.notify_to)))
       .fetch();
     const userSerialied = userToNotify.map((item) => item._raw)[0];
     setNotifyTo(userSerialied);
-  };
+  }, []);
 
   useEffect(() => {
     getUserToNotify();
@@ -360,21 +366,22 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     }
   }, [onChangeUs, beneficiarie]);
 
-  useEffect(() => {
-    const validateLoggedUser = async () => {
-      const userDetailsQ = await userDetailsCollection
-        .query(Q.where("user_id", loggedUser.online_id))
-        .fetch();
-      const userDetailRaw = userDetailsQ[0]?._raw;
-      const isMentora = userDetailRaw?.["profile_id"] == MENTOR ? true : false;
+  const validateLoggedUser = useCallback(async () => {
+    const userDetailsQ = await userDetailsCollection
+      .query(Q.where("user_id", loggedUser.online_id))
+      .fetch();
+    const userDetailRaw = userDetailsQ[0]?._raw;
+    const isMentora = userDetailRaw?.["profile_id"] == MENTOR ? true : false;
 
-      if (isMentora) {
-        setEntryPoints([
-          { id: "2", name: "CM" },
-          { id: "3", name: "ES" },
-        ]);
-      }
-    };
+    if (isMentora) {
+      setEntryPoints([
+        { id: "2", name: "CM" },
+        { id: "3", name: "ES" },
+      ]);
+    }
+  }, []);
+
+  useEffect(() => {
     validateLoggedUser().catch((err) => console.error(err));
   }, []);
 
@@ -705,4 +712,4 @@ const enhance = withObservables([], () => ({
   subServices: database.collections.get("sub_services").query().observe(),
 }));
 
-export default enhance(ServicesForm);
+export default memo(enhance(ServicesForm));

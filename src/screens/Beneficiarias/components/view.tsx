@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { View, KeyboardAvoidingView, ScrollView, Text } from "react-native";
 import {
   Box,
@@ -199,4 +199,4 @@ const ViewBeneficiaries: React.FC = ({ route }: any) => {
   );
 };
 
-export default ViewBeneficiaries;
+export default memo(ViewBeneficiaries);

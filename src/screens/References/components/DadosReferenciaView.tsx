@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, memo, useCallback } from "react";
 import { View, KeyboardAvoidingView, ScrollView, Text } from "react-native";
 import { Box, Heading, Divider, Avatar, Icon, Flex } from "native-base";
 import { Ionicons } from "@native-base/icons";
@@ -13,14 +13,14 @@ const DadosReferenciaView: React.FC = ({ route }: any) => {
 
   const userCollection = database.get("users");
 
-  const getUserById = async (userId) => {
+  const getUserById = useCallback(async (userId) => {
     const userQ = await userCollection
       .query(Q.where("online_id", userId))
       .fetch();
     const fullname = userQ[0]?._raw["name"] + " " + userQ[0]?._raw["surname"];
 
     setReferred_by(fullname);
-  };
+  }, []);
 
   useEffect(() => {
     getUserById(route.params?.reference.referred_by);
@@ -116,4 +116,4 @@ const DadosReferenciaView: React.FC = ({ route }: any) => {
   );
 };
 
-export default DadosReferenciaView;
+export default memo(DadosReferenciaView);
