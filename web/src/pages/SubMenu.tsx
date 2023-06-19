@@ -1,5 +1,5 @@
-import React from 'react';
-import {ContentHeader} from '@components';
+import React from "react";
+import { ContentHeader } from "@components";
 
 const SubMenu = () => {
   return (

@@ -16,8 +16,8 @@ function userReducer(state = initialState, action) {
     case LOAD_REFERERS:
       return {
         ...state,
-        referers: payload
-      }
+        referers: payload,
+      };
     default:
       return state;
   }

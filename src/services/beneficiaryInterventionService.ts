@@ -32,4 +32,3 @@ export const beneficiariesInterventionsFetchCount = async () => {
 
   return totals;
 };
-

@@ -1,4 +1,5 @@
-import { Form, Modal } from "antd";
+import React from "react";
+import { Modal } from "antd";
 import Spinner from "../spinner";
 import "./styles.css";
 

@@ -1,14 +1,14 @@
-import React, {useCallback, useState} from 'react';
-import {Option} from '@app/utils/themes';
-import {v4 as uuidv4} from 'uuid';
+import React, { useCallback, useState } from "react";
+import { Option } from "@app/utils/themes";
+import { v4 as uuidv4 } from "uuid";
 
 export interface SelectProps {
   disabled?: boolean;
   options: Array<Option>;
   value?: string;
   className?: string;
-  type: 'custom' | 'default';
-  onChange?: Function;
+  type: "custom" | "default";
+  onChange?: any;
   children: any;
 }
 
@@ -19,7 +19,7 @@ const Select = ({
   type,
   children,
   className,
-  onChange
+  onChange,
 }: SelectProps) => {
   const [ID] = useState(uuidv4());
 
@@ -30,15 +30,19 @@ const Select = ({
   };
 
   const getSelectClassName = useCallback(() => {
-    if (type === 'custom') {
-      return 'custom-select';
+    if (type === "custom") {
+      return "custom-select";
     }
-    return 'form-control';
+    return "form-control";
   }, [type]);
 
   return (
-    <div className={`form-group ${className || ''}`}>
-      <label htmlFor={ID} className="select-label" style={{fontWeight: '500'}}>
+    <div className={`form-group ${className || ""}`}>
+      <label
+        htmlFor={ID}
+        className="select-label"
+        style={{ fontWeight: "500" }}
+      >
         {children}
       </label>
       <select
