@@ -79,8 +79,10 @@ const InterventionForm = ({ record, beneficiary }: any) => {
       setUser(user);
       setUsers(listUser);
 
-      let entryPoint = record ? record.entryPoint : user?.entryPoint;
-      let provider = record ? record.provider : user.name + " " + user.surname;
+      const entryPoint = record ? record.entryPoint : user?.entryPoint;
+      const provider = record
+        ? record.provider
+        : user.name + " " + user.surname;
 
       if (entryPoint != undefined) {
         form.setFieldsValue({ entryPoint: entryPoint });

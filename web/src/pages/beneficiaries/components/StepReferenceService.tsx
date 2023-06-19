@@ -368,7 +368,7 @@ const StepReferenceService = ({
                 extra={
                   <Button
                     type="primary"
-                    onClick={() => showDrawer(user)}
+                    onClick={() => showDrawer()}
                     icon={<PlusOutlined />}
                     style={{
                       background: "#00a65a",

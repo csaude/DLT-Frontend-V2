@@ -50,7 +50,7 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
   const [references, setReferences] = useState<any[]>([]);
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
-  const [reference, setReference] = useState();
+  const [reference, setReference] = useState<any>();
   const [services, setServices] = useState<any>([]);
   const [beneficiary, setBeneficiary] = useState<any>(undefined);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
@@ -60,15 +60,33 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
   const [referredPartners, setReferredPartners] = useState<any[]>([]);
   const [referrers, setReferrers] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
-  const [district, setDistrict] = useState<any[]>([]);
+  const [district, setDistrict] = useState<any>();
   const [us, setUs] = useState<any[]>([]);
   const [loggedUser, setLoggedUser] = useState<any>(undefined);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const pageSize = 100;
-  const [searchNui, setSearchNui] = useState<any>();
-  const [nui, setNui] = useState("");
   let data;
   const [dataLoading, setDataLoading] = useState(false);
+
+  const [searchNui, setSearchNui] = useState<any>("");
+  const [searchDistrict, setSearchDistrict] = useState<any>("");
+  const [searchUserCreator, setSearchUserCreator] = useState<any>("");
+
+  const [nui, setNui] = useState<any>();
+  const [userCreator, setUserCreator] = useState<any>();
+  const [districts, setDistricts] = useState<any[]>([]);
+
+  const userSelector = useSelector((state: any) => state?.user);
+  const convertedUserData: FilterObject[] = userSelector?.users?.map(
+    ([value, label]) => ({
+      value: value.toString(),
+      label: label.charAt(0).toUpperCase() + label.slice(1),
+    })
+  );
+  const convertedDistrictsData: FilterObject[] = districts?.map((item) => ({
+    value: item.id,
+    label: item.name,
+  }));
 
   const navigate = useNavigate();
 
@@ -147,7 +165,7 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
       .catch((error) => console.log(error));
 
     const fetchReferersUsers = async () => {
-      var payload = {
+      const payload = {
         profiles: [SUPERVISOR, MENTOR, NURSE, COUNSELOR].toString(),
         userId: Number(userId),
       };
@@ -186,7 +204,7 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
   };
 
   const handleAdd = () => {
-    /**Its OK */
+    /**Its OK*/
   };
 
   const handleModalVisible = (flag?: boolean) => {
@@ -339,7 +357,7 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
         setTimeout(() => searchInput.select(), 100);
       }
     },
-    render: (value) =>
+    render: (value, record) =>
       searchedColumn === dataIndex ? (
         <Highlighter
           highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
@@ -658,10 +676,36 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
   };
 
   const handleGlobalSearch = async () => {
-    if (searchNui !== undefined) {
-      setNui(searchNui);
+    if (nui !== undefined) {
+      setSearchNui(nui);
+    }
+    if (userCreator !== undefined) {
+      setSearchUserCreator(userCreator);
+    }
+    if (district !== undefined) {
+      setSearchDistrict(district);
     }
   };
+
+  const onChange = (e, name) => {
+    if (name === "userCreator") {
+      setUserCreator(e);
+    }
+    if (name === "district") {
+      setDistrict(e);
+    }
+  };
+
+  function onClear(name) {
+    if (name === "userCreator") {
+      setUserCreator(undefined);
+      setSearchUserCreator("");
+    }
+    if (name === "district") {
+      setDistrict(undefined);
+      setSearchDistrict("");
+    }
+  }
 
   return (
     <>
@@ -672,15 +716,56 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
         headStyle={{ color: "#17a2b8" }}
       >
         <Row gutter={16}>
-          <Col className="gutter-row" xs={8} xl={8} span={4}>
-            <Form.Item name="nui" label="NUI" initialValue={searchNui}>
+          <Col className="gutter-row">
+            <Form.Item name="nui" label="" initialValue={searchNui}>
               <Input
                 placeholder="Pesquisar por NUI"
                 value={searchNui}
-                onChange={(e) => setSearchNui(e.target.value)}
+                onChange={(e) => setNui(e.target.value)}
               />
             </Form.Item>
           </Col>
+
+          <Col className="gutter-row">
+            <Select
+              showSearch
+              allowClear
+              onClear={() => onClear("userCreator")}
+              placeholder="Selecione o utilizador"
+              optionFilterProp="children"
+              onChange={(e) => onChange(e, "userCreator")}
+              onSearch={() => {
+                /**Its OK */
+              }}
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={convertedUserData}
+            />
+          </Col>
+
+          <Col className="gutter-row">
+            <Select
+              showSearch
+              allowClear
+              onClear={() => onClear("district")}
+              placeholder="Selecione o distrito"
+              optionFilterProp="children"
+              onChange={(e) => onChange(e, "district")}
+              onSearch={() => {
+                /**Its OK */
+              }}
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={convertedDistrictsData}
+            />
+          </Col>
+
           <Col className="gutter-row" span={12}>
             <Button type="primary" onClick={handleGlobalSearch}>
               Pesquisar

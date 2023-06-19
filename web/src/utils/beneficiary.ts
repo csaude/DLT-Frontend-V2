@@ -13,14 +13,22 @@ export async function query(payload?: any) {
   return res;
 }
 
-export async function pagedQueryByFilters(payload?: any, pageIndex?: any, pageSize?: any, searchNui?: any, searchUserCreator?:number, searchDistrict?:number) {
-    let url: string;
-    if (payload.userId){
-      url = `/api/beneficiaries?${stringify(payload)}&pageIndex=${pageIndex}&pageSize=${pageSize}&searchNui=${searchNui}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`;
-    }
-    else {
-      url = '/api/beneficiaries/' + payload;
-    }
+export async function pagedQueryByFilters(
+  payload?: any,
+  pageIndex?: any,
+  pageSize?: any,
+  searchNui?: any,
+  searchUserCreator?: number,
+  searchDistrict?: number
+) {
+  let url: string;
+  if (payload.userId) {
+    url = `/api/beneficiaries?${stringify(
+      payload
+    )}&pageIndex=${pageIndex}&pageSize=${pageSize}&searchNui=${searchNui}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`;
+  } else {
+    url = "/api/beneficiaries/" + payload;
+  }
 
   const res = await select(url);
   return res;

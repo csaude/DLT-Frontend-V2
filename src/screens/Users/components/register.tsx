@@ -152,7 +152,6 @@ const UsersRegistrationForm: React.FC = ({
           user.locality_id = values.locality_id;
           user.partner_id = values.partner_id;
           user.us_id = values.us_id;
-          user.online_id = user.online_id;
           user._status = "updated";
         });
 

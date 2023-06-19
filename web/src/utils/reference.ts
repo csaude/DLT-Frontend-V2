@@ -69,8 +69,17 @@ export async function queryByUser(id: any) {
   return res;
 }
 
-export async function pagedQueryByUser(id?: any, pageIndex?: any, pageSize?: any, searchNui?: any, searchUserCreator?:number, searchDistrict?:number) {
-    const res = await select(`/api/references/byUser/${id}?pageIndex=${pageIndex}&pageSize=${pageSize}&searchNui=${searchNui}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`);
+export async function pagedQueryByUser(
+  id?: any,
+  pageIndex?: any,
+  pageSize?: any,
+  searchNui?: any,
+  searchUserCreator?: number,
+  searchDistrict?: number
+) {
+  const res = await select(
+    `/api/references/byUser/${id}?pageIndex=${pageIndex}&pageSize=${pageSize}&searchNui=${searchNui}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`
+  );
 
   return res;
 }
