@@ -174,3 +174,5 @@ const ReferenceView: React.FC = ({ route }: any) => {
     </>
   );
 };
+
+export default ReferenceView;

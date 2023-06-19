@@ -1,11 +1,14 @@
-import React, { useEffect, useState, useContext, useRef } from "react";
+import React, {
+  useEffect,
+  useState,
+  useContext,
+  useRef,
+  useCallback,
+} from "react";
 import {
   View,
-  StyleSheet,
-  TouchableOpacity,
   TouchableHighlight,
   ScrollView,
-  Platform,
   RefreshControl,
 } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
@@ -18,23 +21,16 @@ import {
   Pressable,
   Icon,
   Box,
-  Select,
-  Heading,
   VStack,
   FormControl,
   Input,
-  Link,
   Button,
-  CheckIcon,
-  WarningOutlineIcon,
   Center,
-  Flex,
   Badge,
   Modal,
   InfoIcon,
   IconButton,
   CloseIcon,
-  Checkbox,
   Spinner as SpinnerBase,
 } from "native-base";
 import { navigate } from "../../routes/NavigationRef";
@@ -56,10 +52,18 @@ import { Formik } from "formik";
 import { LOGIN_API_URL } from "../../services/api";
 import { ADMIN, MNE, SUPERVISOR } from "../../utils/constants";
 import moment from "moment";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import NetInfo from "@react-native-community/netinfo";
 import Spinner from "react-native-loading-spinner-overlay/lib";
-import { resolveBeneficiaryOfflineIds } from "../../services/beneficiaryService";
+import {
+  beneficiariesFetchCount,
+  resolveBeneficiaryOfflineIds,
+} from "../../services/beneficiaryService";
+import { getBeneficiariesTotal } from "../../store/beneficiarySlice";
+import { loadBeneficiariesInterventionsCounts } from "../../store/beneficiaryInterventionSlice";
+import { referencesFetchCount } from "../../services/referenceService";
+import { getReferencesTotal } from "../../store/referenceSlice";
+import { beneficiariesInterventionsFetchCount } from "../../services/beneficiaryInterventionService";
 
 const BeneficiariesMain: React.FC = ({
   beneficiaries,
@@ -86,6 +90,19 @@ const BeneficiariesMain: React.FC = ({
   const inputRef: any = useRef(null);
 
   const [isLoadingRequest, setLoadingRequest] = useState(false);
+  const dispatch = useDispatch();
+
+  const getTotals = useCallback(async () => {
+    const countBen = await beneficiariesFetchCount();
+    dispatch(getBeneficiariesTotal(countBen));
+
+    const countRef = await referencesFetchCount();
+    dispatch(getReferencesTotal(countRef));
+
+    const beneficiaryIntervsCont = await beneficiariesInterventionsFetchCount();
+    dispatch(loadBeneficiariesInterventionsCounts(beneficiaryIntervsCont));
+  }, []);
+
   const totals = useSelector(
     (state: any) => state.beneficiaryIntervention.totals
   );
@@ -124,6 +141,7 @@ const BeneficiariesMain: React.FC = ({
 
   useEffect(() => {
     resolveBeneficiaryOfflineIds();
+    getTotals();
   }, []);
 
   const viewBeneficiaries = async (data: any) => {
@@ -154,7 +172,7 @@ const BeneficiariesMain: React.FC = ({
     });
 
     const interventionObjects = interventions.map((e) => {
-      let subservice = subServices.filter((item) => {
+      const subservice = subServices.filter((item) => {
         return item._raw.online_id == e._raw.sub_service_id;
       })[0];
       return {
@@ -213,6 +231,7 @@ const BeneficiariesMain: React.FC = ({
     return () => removeNetInfoSubscription();
   }, []);
 
+  // eslint-disable-next-line react/prop-types
   const ItemBadge = ({ label, beneficiary_id }) => {
     const getCountByBeneficiary = () => {
       const result = totals?.filter(

@@ -4,33 +4,41 @@ import {
   Center,
   Box,
   Text,
-  Heading,
   VStack,
   FormControl,
   Input,
   Button,
   HStack,
+  Checkbox,
   Alert,
   useToast,
   InputGroup,
   InputLeftAddon,
+  IconButton,
+  CloseIcon,
 } from "native-base";
 import {
   SuccessHandler,
   ErrorHandler,
 } from "../../../components/SyncIndicator";
 
-import DatePicker, { getToday } from "react-native-modern-datepicker";
+import moment from "moment";
 import { Picker } from "@react-native-picker/picker";
 import { Formik } from "formik";
+import { Q } from "@nozbe/watermelondb";
 import { navigate } from "../../../routes/NavigationRef";
 import withObservables from "@nozbe/with-observables";
 import { database } from "../../../database";
-import { BeneficiariesInterventionsModel } from "../../../models/Beneficiaries_interventions";
+import ModalSelector from "react-native-modal-selector-searchable";
 import { sync } from "../../../database/sync";
 import { Context } from "../../../routes/DrawerNavigator";
 
 import styles from "./styles";
+import { MENTOR } from "../../../utils/constants";
+import Spinner from "react-native-loading-spinner-overlay/lib";
+import MyDatePicker from "../../../components/DatePicker";
+import NetInfo from "@react-native-community/netinfo";
+import PropTypes from "prop-types";
 
 const BeneficiarieServiceForm: React.FC = ({
   route,
@@ -38,50 +46,164 @@ const BeneficiarieServiceForm: React.FC = ({
   services,
   subServices,
 }: any) => {
-  // console.log(route.params);
-  const { beneficiarie, intervs, intervention } = route.params;
+  const { beneficiarie, intervention, isNewIntervention } = route.params;
 
   const areaServicos = [
     { id: "1", name: "Serviços Clinicos" },
     { id: "2", name: "Serviços Comunitarios" },
   ];
-  const entry_points = [
+  const [entryPoints, setEntryPoints] = useState([
     { id: "1", name: "US" },
-    { id: "3", name: "CM" },
-    { id: "2", name: "ES" },
-  ];
+    { id: "2", name: "CM" },
+    { id: "3", name: "ES" },
+  ]);
 
-  const [date, setDate] = useState(new Date());
-  const [mode, setMode] = useState("date");
-  const [show, setShow] = useState(false);
+  const userDetailsCollection = database.get("user_details");
+
+  const [date, setDate] = useState();
+  const [users, setUsers] = useState<any>([]);
+  const [selectedUser, setSelectedUser] = useState<any>("");
+  const [checked, setChecked] = useState(false);
+  const [isSync, setIsSync] = useState(false);
   const [text, setText] = useState("");
+  const [uss, setUss] = useState<any>([]);
+  const [isClinicalOrCommunityPartner, setClinicalOrCommunityPartner] =
+    useState(false);
+  const [organization, setOrganization] = useState<any>([]);
+  const [currentInformedProvider, setCurrentInformedProvider] = useState("");
+  const [servicesState, setServicesState] = useState<any>([]);
+  const [initialValues, setInitialValues] = useState<any>({});
+  const [isOffline, setIsOffline] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const onChange = (event, selectedDate) => {
+  let mounted = true;
+  const loggedUser: any = useContext(Context);
+  const toast = useToast();
+  const userId =
+    loggedUser.online_id == undefined ? loggedUser.id : loggedUser.online_id;
+  const userEntryPoint =
+    loggedUser?.entry_point == undefined
+      ? loggedUser.entryPoint
+      : loggedUser?.entry_point;
+
+  const avanteEstudanteOnlineIds = [45, 48, 51];
+  const avanteRaparigaOnlineIds = [44, 47, 50];
+  const guiaFacilitacaoOnlineIds = [46, 49, 52, 57];
+
+  useEffect(() => {
+    const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
+      const status = !(state.isConnected && state.isInternetReachable);
+      setIsOffline(status);
+    });
+    return () => removeNetInfoSubscription();
+  }, []);
+
+  const handleDataFromDatePickerComponent = (selectedDate) => {
+    selectedDate.replaceAll("/", "-");
     const currentDate = selectedDate || date;
-    setShow(false);
+    // setShow(false);
     setDate(currentDate);
 
-    // let tempDate = new Date(currentDate);
-    // setText(moment(tempDate).format('YYYY-MM-DD'));
     setText(selectedDate);
   };
 
-  const showMode = (currentMode) => {
-    setShow(true);
-    setMode(currentMode);
+  const onChangeEntryPoint = async (value: any) => {
+    const uss = await database
+      .get("us")
+      .query(
+        Q.where("entry_point", parseInt(value)),
+        Q.where("locality_id", parseInt(beneficiarie?.locality_id))
+      )
+      .fetch();
+    const ussSerialied = uss.map((item) => item._raw);
+    setUss(ussSerialied);
   };
 
-  const showDatepicker = () => {
-    showMode("calendar");
+  const onChangeUs = async (value: any) => {
+    const getUsersList = await database
+      .get("users")
+      .query(Q.where("us_ids", Q.like(`%${value}%`)))
+      .fetch();
+    const usersSerialized = getUsersList.map((item) => item._raw);
+    setUsers(usersSerialized);
   };
-  const [initialValues, setInitialValues] = useState<any>({});
-  let mounted = true;
-  const [loading, setLoading] = useState(false);
-  const loggedUser: any = useContext(Context);
-  const toast = useToast();
+
+  const getPartner = async () => {
+    const partnerId =
+      loggedUser.partner_id == undefined
+        ? loggedUser.partners.id
+        : loggedUser.partner_id;
+    const partners = await database
+      .get("partners")
+      .query(Q.where("online_id", parseInt(partnerId)))
+      .fetch();
+    const partnerSerialied = partners.map((item) => item._raw)[0];
+    setOrganization(partnerSerialied);
+  };
+
+  const onChangeToOutros = (value) => {
+    setChecked(value);
+  };
 
   useEffect(() => {
     if (mounted) {
+      setServicesState(services);
+      getPartner();
+
+      const disableRapariga = (hasFacilitacao) =>
+        services.filter((service) => {
+          if (hasFacilitacao)
+            return !avanteRaparigaOnlineIds.includes(service._raw.online_id);
+          else
+            return (
+              !avanteRaparigaOnlineIds.includes(service._raw.online_id) &&
+              !guiaFacilitacaoOnlineIds.includes(service._raw.online_id)
+            );
+        });
+
+      const disableEstudante = (hasFacilitacao) =>
+        services.filter((service) => {
+          if (hasFacilitacao)
+            return !avanteEstudanteOnlineIds.includes(service._raw.online_id);
+          else
+            return (
+              !avanteEstudanteOnlineIds.includes(service._raw.online_id) &&
+              !guiaFacilitacaoOnlineIds.includes(service._raw.online_id)
+            );
+        });
+
+      const disableEstudanteAndRapariga = services.filter((service) => {
+        return (
+          !avanteRaparigaOnlineIds.includes(service._raw.online_id) &&
+          !avanteEstudanteOnlineIds.includes(service._raw.online_id) &&
+          service._raw.online_id != 56
+        );
+      });
+
+      if (beneficiarie.vblt_is_student == 1 && getBeneficiarieAge() < 15) {
+        if (getBeneficiarieAge() >= 14 && getBeneficiarieAge() < 15) {
+          const foundServices = disableRapariga(true);
+          setServicesState(foundServices);
+        } else {
+          const foundServices = disableRapariga(false);
+          setServicesState(foundServices);
+        }
+      } else if (
+        beneficiarie.vblt_is_student == 0 &&
+        getBeneficiarieAge() < 15
+      ) {
+        if (getBeneficiarieAge() >= 14 && getBeneficiarieAge() < 15) {
+          const foundServices = disableEstudante(true);
+          setServicesState(foundServices);
+        } else {
+          const foundServices = disableEstudante(false);
+          setServicesState(foundServices);
+        }
+      } else if (getBeneficiarieAge() > 15) {
+        const foundServices = disableEstudanteAndRapariga;
+        setServicesState(foundServices);
+      }
+
       const isEdit = intervention && intervention.id;
       let initValues = {};
 
@@ -94,6 +216,13 @@ const BeneficiarieServiceForm: React.FC = ({
           return e._raw.online_id == selSubService._raw.service_id;
         })[0];
 
+        const selUs = us.filter((e) => {
+          return e._raw.online_id == intervention.us_id;
+        })[0];
+
+        onChangeEntryPoint(intervention.entry_point);
+        onChangeUs(intervention.us_id);
+
         initValues = {
           areaServicos_id: selService._raw.service_type,
           service_id: selService._raw.online_id,
@@ -101,8 +230,8 @@ const BeneficiarieServiceForm: React.FC = ({
           sub_service_id: intervention.sub_service_id,
           result: intervention.result,
           date: intervention.date,
-          us_id: intervention.us_id,
-          activist_id: intervention.activist_id,
+          us_id: selUs?.online_id,
+          activist_id: userId,
           entry_point: intervention.entry_point,
           provider: intervention.provider,
           remarks: intervention.remarks,
@@ -110,7 +239,7 @@ const BeneficiarieServiceForm: React.FC = ({
         };
 
         setText(intervention.date);
-        setDate(new Date(intervention.date));
+        setDate(intervention.date);
       } else {
         initValues = {
           areaServicos_id: "",
@@ -136,10 +265,47 @@ const BeneficiarieServiceForm: React.FC = ({
     }
   }, [intervention]);
 
+  const getBeneficiarieAge = () => {
+    return (
+      new Date().getFullYear() -
+      new Date(beneficiarie.date_of_birth).getFullYear()
+    );
+  };
+
   const message = "Este campo é Obrigatório";
 
+  const showToast = (status, message, description) => {
+    return toast.show({
+      placement: "top",
+      render: () => {
+        return (
+          <Alert w="100%" status={status}>
+            <VStack space={2} flexShrink={1} w="100%">
+              <HStack flexShrink={1} space={2} justifyContent="space-between">
+                <HStack space={2} flexShrink={1}>
+                  <Alert.Icon mt="1" />
+                  <Text fontSize="md" color="coolGray.800">
+                    {message}
+                  </Text>
+                </HStack>
+                <IconButton
+                  variant="unstyled"
+                  _focus={{ borderWidth: 0 }}
+                  icon={<CloseIcon size="3" color="coolGray.600" />}
+                />
+              </HStack>
+              <Box pl="6" _text={{ color: "coolGray.600" }}>
+                {description}
+              </Box>
+            </VStack>
+          </Alert>
+        );
+      },
+    });
+  };
+
   const validate = (values: any) => {
-    const errors: BeneficiariesInterventionsModel = {};
+    const errors: any = {};
 
     if (!values.service_id) {
       errors.id = message;
@@ -165,12 +331,45 @@ const BeneficiarieServiceForm: React.FC = ({
       errors.entry_point = message;
     }
 
-    if (!values.status) {
-      errors.status = message;
+    if (!values.provider) {
+      errors.provider = message;
     }
 
     return errors;
   };
+
+  const validateBeneficiaryIntervention = async (values: any) => {
+    const benefInterv = await database
+      .get("beneficiaries_interventions")
+      .query(
+        Q.where("beneficiary_id", parseInt(beneficiarie.online_id)),
+        Q.where("sub_service_id", parseInt(values.sub_service_id)),
+        Q.where("date", "" + text)
+      )
+      .fetch();
+
+    const benefIntervSerialied = benefInterv.map((item) => item._raw);
+
+    if (benefIntervSerialied.length > 0) {
+      toast.show({
+        placement: "top",
+        title: "Beneficiária já tem esta intervenção para esta data!",
+      });
+    } else {
+      onSubmit(values);
+    }
+  };
+
+  useEffect(() => {
+    isSync
+      ? toast.show({
+          placement: "top",
+          render: () => {
+            return <SuccessHandler />;
+          },
+        })
+      : "";
+  }, [isSync]);
 
   const onSubmit = async (values: any) => {
     setLoading(true);
@@ -183,173 +382,254 @@ const BeneficiarieServiceForm: React.FC = ({
           .get("beneficiaries_interventions")
           .find(intervention.id);
         const updatedIntervention = await interventionToUpdate.update(() => {
-          intervention.beneficiary_id = beneficiarie.online_id;
           intervention.sub_service_id = values.sub_service_id;
           intervention.remarks = values.remarks;
           intervention.result = values.result;
           intervention.date = "" + text;
           intervention.us_id = values.us_id;
-          intervention.activist_id = 1; //values.activist_id
+          intervention.activist_id = userId;
           intervention.entry_point = values.entry_point;
-          intervention.provider = values.provider;
+          intervention.provider = "" + values.provider;
           intervention.remarks = values.remarks;
-          intervention.status = values.status;
+          intervention.status = 1;
           intervention._status = "updated";
         });
-
-        const interv = newObject._raw;
-        await database.write(async () => {
-          const subService = await database
-            .get("sub_services")
-            .query(Q.where("online_id", interv["sub_service_id"]));
-
-          const referenceSToUpdate = await database
-            .get("references_services")
-            .query(
-              Q.where("service_id", parseInt(subService[0]._raw?.service_id))
-            )
-            .fetch();
-
-          const referencesIds = referenceSToUpdate.map((r) =>
-            parseInt(r._raw["reference_id"])
-          );
-
-          const referencesToUpdate = await database
-            .get("references")
-            .query(
-              Q.where("online_id", Q.oneOf(referencesIds)),
-              Q.where("beneficiary_id", beneficiarie.online_id)
-            )
-            .fetch();
-
-          const refsToUpdateIds = referencesToUpdate.map((r) =>
-            parseInt(r._raw.online_id)
-          );
-
-          const filteredRefServices = referenceSToUpdate.filter((r) =>
-            refsToUpdateIds.includes(parseInt(r._raw.reference_id))
-          );
-
-          referencesToUpdate.forEach(async (ref) => {
-            const updatedreference = await ref.update((reference: any) => {
-              reference._raw.beneficiary_offline_id = beneficiarie.id;
-              reference._raw.is_awaiting_sync = parseInt("1");
-              reference._raw._status = "updated";
-            });
-          });
-
-          filteredRefServices.forEach(async (refService) => {
-            const updatedrefservice = await refService.update(
-              (interventionS: any) => {
-                interventionS._raw.is_awaiting_sync = parseInt("1");
-                interventionS._raw._status = "updated";
-              }
-            );
-          });
-        });
-
+        showToast("success", "Actualizado", "Serviço actualizado com sucesso!");
         return updatedIntervention;
       } else {
         const newIntervention = await database.collections
           .get("beneficiaries_interventions")
           .create((intervention: any) => {
             intervention.beneficiary_id = beneficiarie.online_id;
+            intervention.beneficiary_offline_id = beneficiarie.id;
             intervention.sub_service_id = values.sub_service_id;
             intervention.result = values.result;
             intervention.date = "" + text;
             intervention.us_id = values.us_id;
-            intervention.activist_id = loggedUser.id;
+            intervention.activist_id = userId;
             intervention.entry_point = values.entry_point;
-            intervention.provider = values.provider;
+            intervention.provider = "" + values.provider;
             intervention.remarks = values.remarks;
-            intervention.status = values.status;
+            intervention.date_created = moment(new Date()).format(
+              "YYYY-MM-DD HH:mm:ss"
+            );
+            intervention.status = 1;
           });
-        toast.show({
-          placement: "bottom",
-          title: "Intervention Saved Successfully: " + newIntervention._raw.id,
-        });
+        showToast("success", "Provido", "Serviço provido com sucesso!");
+
+        console.log(newIntervention);
+
         return newIntervention;
       }
     });
 
-    const newIntr: any = newObject._raw;
-    const subserviceObj = subServices.filter((item) => {
-      return item._raw.online_id == newIntr.sub_service_id;
-    })[0];
-    const nIobj = {
-      id: subserviceObj._raw.online_id,
-      name: subserviceObj._raw.name,
-      intervention: newIntr,
-    };
+    const interv = newObject._raw;
+    await database.write(async () => {
+      const subService = await database
+        .get("sub_services")
+        .query(Q.where("online_id", interv.sub_service_id));
 
-    let newIntervMap;
-    if (isEdit) {
-      newIntervMap = intervs.map((item) =>
-        item.intervention.id === nIobj.intervention.id ? nIobj : item
+      const referenceSToUpdate = await database
+        .get("references_services")
+        .query(Q.where("service_id", parseInt(subService[0]._raw?.service_id)))
+        .fetch();
+
+      const referencesIds = referenceSToUpdate.map((r) =>
+        parseInt(r._raw.reference_id)
       );
-    } else {
-      newIntervMap = [nIobj, ...intervs];
-    }
+
+      const referencesToUpdate = await database
+        .get("references")
+        .query(
+          Q.where("online_id", Q.oneOf(referencesIds)),
+          Q.where("beneficiary_id", beneficiarie.online_id)
+        )
+        .fetch();
+
+      const refsToUpdateIds = referencesToUpdate.map((r) =>
+        parseInt(r._raw?.online_id)
+      );
+
+      const filteredRefServices = referenceSToUpdate.filter((r) =>
+        refsToUpdateIds.includes(parseInt(r._raw?.reference_id))
+      );
+
+      referencesToUpdate.forEach(async (ref) => {
+        await ref.update((reference: any) => {
+          reference._raw.beneficiary_offline_id = beneficiarie.id;
+          reference._raw.is_awaiting_sync = parseInt("1");
+          reference._raw._status = "updated";
+        });
+      });
+
+      filteredRefServices.forEach(async (refService) => {
+        await refService.update((interventionS: any) => {
+          interventionS._raw.is_awaiting_sync = parseInt("1");
+          interventionS._raw._status = "updated";
+        });
+      });
+    });
+
+    syncronize();
+    await delay(5000);
+    syncronize();
+
+    const syncedInterventions = await database
+      .get("beneficiaries_interventions")
+      .query(
+        Q.or(
+          Q.where("beneficiary_offline_id", beneficiarie.id),
+          Q.where("beneficiary_id", beneficiarie.online_id)
+        )
+      )
+      .fetch();
+
+    const interventionObjects = syncedInterventions.map((e: any) => {
+      const subservice = subServices.filter((item) => {
+        return item?._raw.online_id == e?._raw.sub_service_id;
+      })[0];
+      return {
+        id: subservice?._raw.online_id + e?._raw.date,
+        name: subservice?._raw.name,
+        intervention: e?._raw,
+      };
+    });
 
     navigate({
       name: "Serviços",
       params: {
         beneficiary: beneficiarie,
-        interventions: newIntervMap,
+        interventions: interventionObjects,
       },
       merge: true,
     });
-
-    sync({ username: loggedUser.username })
-      .then(() =>
-        toast.show({
-          placement: "top",
-          render: () => {
-            return <SuccessHandler />;
-          },
-        })
-      )
-      .catch(() =>
-        toast.show({
-          placement: "top",
-          render: () => {
-            return <ErrorHandler />;
-          },
-        })
-      );
+    setLoading(false);
   };
+
+  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  const syncronize = () => {
+    if (!isOffline) {
+      sync({ username: loggedUser.username })
+        .then(() => setIsSync(true))
+        .catch(() =>
+          toast.show({
+            placement: "top",
+            render: () => {
+              return <ErrorHandler />;
+            },
+          })
+        );
+    }
+  };
+
+  useEffect(() => {
+    if (
+      organization?.partner_type !== undefined &&
+      (organization?.partner_type == 1 || organization?.partner_type == 2)
+    ) {
+      setClinicalOrCommunityPartner(true);
+
+      if (isNewIntervention) {
+        setCurrentInformedProvider(
+          loggedUser?.name + " " + loggedUser?.surname
+        );
+        if (userEntryPoint !== undefined) {
+          onChangeEntryPoint(userEntryPoint);
+        }
+        if (organization?.partner_type == 1) {
+          setInitialValues({
+            areaServicos_id: "1",
+            entry_point: userEntryPoint,
+            provider: loggedUser?.name + " " + loggedUser?.surname,
+          });
+        } else if (organization?.partner_type == 2) {
+          setInitialValues({
+            areaServicos_id: "2",
+            entry_point: userEntryPoint,
+            provider: loggedUser?.name + " " + loggedUser?.surname,
+          });
+        }
+      }
+    } else {
+      setClinicalOrCommunityPartner(false);
+    }
+  }, [users, organization, loggedUser]);
+
+  useEffect(() => {
+    if (
+      isNewIntervention ||
+      intervention?.provider === "" ||
+      intervention?.provider === undefined ||
+      intervention?.provider === null
+    ) {
+      setCurrentInformedProvider("Selecione o Provedor");
+    } else {
+      const user = users.filter((user) => {
+        return user.online_id == intervention?.provider;
+      })[0];
+      if (user) {
+        setCurrentInformedProvider(user?.name + " " + user?.surname);
+      } else {
+        setCurrentInformedProvider(intervention?.provider + "");
+      }
+    }
+  }, [users, intervention]);
+
+  useEffect(() => {
+    if (isNewIntervention && isClinicalOrCommunityPartner) {
+      setCurrentInformedProvider(loggedUser?.name + " " + loggedUser?.surname);
+    }
+  }, [onChangeUs, beneficiarie]);
+
+  useEffect(() => {
+    const validateLoggedUser = async () => {
+      const userDetailsQ = await userDetailsCollection
+        .query(Q.where("user_id", userId))
+        .fetch();
+      const userDetailRaw = userDetailsQ[0]?._raw;
+      const isMentora = userDetailRaw?.["profile_id"] == MENTOR ? true : false;
+
+      if (isMentora) {
+        setEntryPoints([
+          { id: "2", name: "CM" },
+          { id: "3", name: "ES" },
+        ]);
+      }
+    };
+    validateLoggedUser().catch((err) => console.error(err));
+  }, []);
 
   return (
     <KeyboardAvoidingView>
       <ScrollView>
         <View style={styles.webStyle}>
           <Center w="100%" bgColor="white">
+            {loading ? (
+              <Spinner
+                visible={true}
+                textContent={"Provendo o serviço..."}
+                textStyle={styles.spinnerTextStyle}
+              />
+            ) : undefined}
             <Box safeArea p="2" w="90%" py="8">
-              <Heading
-                size="lg"
-                color="coolGray.800"
-                _dark={{ color: "warmGray.50" }}
-                fontWeight="semibold"
-                marginBottom={5}
-                marginTop={0}
-              >
-                Prover Serviço
-              </Heading>
               <Alert status="info" colorScheme="info">
                 <HStack flexShrink={1} space={2} alignItems="center">
                   <Alert.Icon />
                   <Text fontSize="xs" fontWeight="medium" color="coolGray.800">
                     Preencha os campos abaixo para prover um serviço a
-                    Beneficiaria!
+                    Beneficiária!
                   </Text>
                 </HStack>
               </Alert>
 
               <Formik
                 initialValues={initialValues}
-                onSubmit={onSubmit}
+                onSubmit={validateBeneficiaryIntervention}
                 validate={validate}
                 enableReinitialize={true}
+                validateOnChange={false}
+                validateOnBlur={false}
               >
                 {({
                   handleChange,
@@ -366,7 +646,10 @@ const BeneficiarieServiceForm: React.FC = ({
                     >
                       <FormControl.Label>Área de Serviços</FormControl.Label>
                       <Picker
-                        style={styles.dropDownPicker}
+                        enabled={
+                          isNewIntervention && !isClinicalOrCommunityPartner
+                        }
+                        style={styles.dropDownPickerDisabled}
                         selectedValue={values.areaServicos_id}
                         onValueChange={(itemValue, itemIndex) => {
                           if (itemIndex !== 0) {
@@ -406,7 +689,7 @@ const BeneficiarieServiceForm: React.FC = ({
                           label="-- Seleccione o Serviço --"
                           value="0"
                         />
-                        {services
+                        {servicesState
                           .filter((e) => {
                             return e.service_type == values.areaServicos_id;
                           })
@@ -468,6 +751,7 @@ const BeneficiarieServiceForm: React.FC = ({
                         onValueChange={(itemValue, itemIndex) => {
                           if (itemIndex !== 0) {
                             setFieldValue("entry_point", itemValue);
+                            onChangeEntryPoint(itemValue);
                           }
                         }}
                       >
@@ -475,7 +759,7 @@ const BeneficiarieServiceForm: React.FC = ({
                           label="-- Seleccione o ponto de Entrada --"
                           value=""
                         />
-                        {entry_points.map((item) => (
+                        {entryPoints.map((item) => (
                           <Picker.Item
                             key={item.id}
                             label={item.name}
@@ -496,11 +780,12 @@ const BeneficiarieServiceForm: React.FC = ({
                         onValueChange={(itemValue, itemIndex) => {
                           if (itemIndex !== 0) {
                             setFieldValue("us_id", itemValue);
+                            onChangeUs(itemValue);
                           }
                         }}
                       >
                         <Picker.Item label="-- Seleccione a US --" value="0" />
-                        {us.map((item) => (
+                        {uss.map((item) => (
                           <Picker.Item
                             key={item.online_id}
                             label={item.name}
@@ -513,25 +798,8 @@ const BeneficiarieServiceForm: React.FC = ({
                       </FormControl.ErrorMessage>
                     </FormControl>
 
-                    <FormControl isRequired>
+                    <FormControl isRequired isInvalid={"date" in errors}>
                       <FormControl.Label>Data Benefício</FormControl.Label>
-
-                      {show && (
-                        // <DateTimePicker
-                        //     testID="dateTimePicker"
-                        //     value={date}
-                        //     // mode={mode}
-                        //     onChange={onChange}
-                        // />
-                        <DatePicker
-                          mode="calendar"
-                          maximumDate={getToday()}
-                          onSelectedChange={(date) =>
-                            onChange(null, date.replaceAll("/", "-"))
-                          }
-                        />
-                      )}
-
                       <HStack alignItems="center">
                         <InputGroup
                           w={{
@@ -540,10 +808,21 @@ const BeneficiarieServiceForm: React.FC = ({
                           }}
                         >
                           <InputLeftAddon>
-                            <Button
-                              style={{ width: 10 }}
-                              onPress={() => showDatepicker()}
-                            ></Button>
+                            <MyDatePicker
+                              onDateSelection={(e) =>
+                                handleDataFromDatePickerComponent(e)
+                              }
+                              minDate={new Date("2017-01-01")}
+                              maxDate={new Date()}
+                              currentDate={
+                                intervention?.date
+                                  ? new Date(intervention?.date)
+                                  : new Date()
+                              }
+                              isEdit={
+                                intervention && intervention.id ? true : false
+                              }
+                            />
                           </InputLeftAddon>
                           <Input
                             isDisabled
@@ -556,16 +835,55 @@ const BeneficiarieServiceForm: React.FC = ({
                           />
                         </InputGroup>
                       </HStack>
+                      <FormControl.ErrorMessage>
+                        {errors.date}
+                      </FormControl.ErrorMessage>
                     </FormControl>
+
                     <FormControl isRequired isInvalid={"provider" in errors}>
                       <FormControl.Label>Provedor do Serviço</FormControl.Label>
 
-                      <Input
-                        onBlur={handleBlur("provider")}
-                        placeholder="Insira o seu Nome"
-                        onChangeText={handleChange("provider")}
-                        value={values.provider}
-                      />
+                      {checked === false ? (
+                        <ModalSelector
+                          data={users}
+                          keyExtractor={(item) => item.online_id}
+                          labelExtractor={(item) =>
+                            `${item.name} ${item.surname}`
+                          }
+                          renderItem={undefined}
+                          initValue=""
+                          accessible={true}
+                          cancelText={"Cancelar"}
+                          searchText={"Pesquisar"}
+                          cancelButtonAccessibilityLabel={"Cancel Button"}
+                          onChange={(option) => {
+                            setSelectedUser(`${option.name} ${option.surname}`);
+                            setFieldValue(
+                              "provider",
+                              `${option.name} ${option.surname}`
+                            );
+                          }}
+                        >
+                          <Input
+                            type="text"
+                            onBlur={handleBlur("provider")}
+                            placeholder={currentInformedProvider}
+                            onChangeText={handleChange("provider")}
+                            value={selectedUser}
+                          />
+                        </ModalSelector>
+                      ) : (
+                        <Input
+                          onBlur={handleBlur("provider")}
+                          placeholder="Insira o Nome do Provedor"
+                          onChangeText={handleChange("provider")}
+                          value={values.provider}
+                        />
+                      )}
+                      <Checkbox value="one" onChange={onChangeToOutros}>
+                        Outro
+                      </Checkbox>
+
                       <FormControl.ErrorMessage>
                         {errors.provider}
                       </FormControl.ErrorMessage>
@@ -581,27 +899,6 @@ const BeneficiarieServiceForm: React.FC = ({
                         value={values.remarks}
                       />
                     </FormControl>
-
-                    <FormControl isRequired isInvalid={"status" in errors}>
-                      <FormControl.Label>Status</FormControl.Label>
-                      <Picker
-                        style={styles.dropDownPicker}
-                        selectedValue={values.status}
-                        onValueChange={(itemValue, itemIndex) => {
-                          if (itemIndex !== 0) {
-                            setFieldValue("status", itemValue);
-                          }
-                        }}
-                      >
-                        <Picker.Item value="1" />
-                        <Picker.Item key={"1"} label={"Activo"} value={1} />
-                        <Picker.Item key={"2"} label={"Cancelado"} value={2} />
-                      </Picker>
-                      <FormControl.ErrorMessage>
-                        {errors.status}
-                      </FormControl.ErrorMessage>
-                    </FormControl>
-
                     <Button
                       isLoading={loading}
                       isLoadingText="Cadastrando"
@@ -609,7 +906,7 @@ const BeneficiarieServiceForm: React.FC = ({
                       my="10"
                       colorScheme="primary"
                     >
-                      Cadastrar
+                      Salvar
                     </Button>
                   </VStack>
                 )}
@@ -626,5 +923,12 @@ const enhance = withObservables([], () => ({
   subServices: database.collections.get("sub_services").query().observe(),
   us: database.collections.get("us").query().observe(),
 }));
+
+BeneficiarieServiceForm.propTypes = {
+  route: PropTypes.object.isRequired,
+  us: PropTypes.array.isRequired,
+  services: PropTypes.array.isRequired,
+  subServices: PropTypes.array.isRequired,
+};
 
 export default enhance(BeneficiarieServiceForm);
