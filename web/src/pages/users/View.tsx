@@ -19,7 +19,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import styles from "./styles";
 
-const userView = () => {
+const UserView = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
   const { user }: any = state;
@@ -137,4 +137,4 @@ const userView = () => {
   );
 };
 
-export default userView;
+export default UserView;

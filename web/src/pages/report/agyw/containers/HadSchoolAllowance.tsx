@@ -2,8 +2,9 @@ import React, { Fragment } from "react";
 import { Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useSelector } from "react-redux";
+import PropTypes from "prop-types";
 
-const hadSchoolAllowance = ({ districtId }) => {
+const HadSchoolAllowance = ({ districtId }) => {
   const responseData = useSelector((state: any) => state.report.agyw);
 
   const ages_10_14 = "9-14";
@@ -157,4 +158,8 @@ const hadSchoolAllowance = ({ districtId }) => {
   );
 };
 
-export default hadSchoolAllowance;
+HadSchoolAllowance.propTypes = {
+  districtId: PropTypes.number.isRequired,
+};
+
+export default HadSchoolAllowance;

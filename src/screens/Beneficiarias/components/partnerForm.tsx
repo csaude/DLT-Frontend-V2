@@ -32,7 +32,7 @@ import { Context } from "../../../routes/DrawerNavigator";
 
 import styles from "./styles";
 
-const partnerForm: React.FC = ({ route, services, subServices }: any) => {
+const PartnerForm: React.FC = ({ route, services, subServices }: any) => {
   // console.log(route.params);
   const { beneficiarie, intervention } = route.params;
 
@@ -1588,4 +1588,4 @@ const enhance = withObservables([], () => ({
   partners: database.collections.get("partners").query().observe(),
   us: database.collections.get("us").query().observe(),
 }));
-export default memo(enhance(partnerForm));
+export default memo(enhance(PartnerForm));
