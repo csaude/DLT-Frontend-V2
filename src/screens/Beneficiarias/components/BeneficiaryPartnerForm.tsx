@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useCallback } from "react";
 import {
   View,
   HStack,
@@ -107,123 +107,103 @@ const BeneficiaryPartnerForm: React.FC = ({
   const maxBirthYear = new Date();
   maxBirthYear.setFullYear(new Date().getFullYear() - 9);
 
-  useEffect(() => {
-    const fetchProvincesData = async () => {
-      const getProvsList = await database.get("provinces").query().fetch();
-      const provSerialized = getProvsList.map((item) => item._raw);
+  const fetchMetaData = useCallback(async () => {
+    const getProvsList = await database.get("provinces").query().fetch();
+    const provSerialized = getProvsList.map((item) => item._raw);
 
-      setProvinces(provSerialized);
+    setProvinces(provSerialized);
 
-      if (userDetail?.provinces[0]?.id != undefined) {
-        const getDistList = await database
-          .get("districts")
-          .query(Q.where("province_id", userDetail?.provinces[0]?.id))
+    if (userDetail?.provinces[0]?.id != undefined) {
+      const getDistList = await database
+        .get("districts")
+        .query(Q.where("province_id", userDetail?.provinces[0]?.id))
+        .fetch();
+      const distsSerialized = getDistList.map((item) => item._raw);
+      setDistricts(distsSerialized);
+
+      userDetail?.provinces?.length > 1
+        ? setIsProvEnable(true)
+        : setIsProvEnable(false);
+    }
+
+    if (userDetail?.districts[0]?.id != undefined) {
+      userDetail?.districts?.length > 1
+        ? setIsDisEnable(true)
+        : setIsDisEnable(false);
+
+      const getLocList = await database
+        .get("localities")
+        .query(Q.where("district_id", userDetail.districts[0].id))
+        .fetch();
+      const locsSerialized = getLocList.map((item) => item._raw);
+      setLocalities(locsSerialized);
+
+      if (userDetail?.localities[0]?.id != undefined) {
+        const getNeiList = await database
+          .get("neighborhoods")
+          .query(Q.where("locality_id", Number(userDetail?.localities[0]?.id)))
           .fetch();
-        const distsSerialized = getDistList.map((item) => item._raw);
-        setDistricts(distsSerialized);
-
-        userDetail?.provinces?.length > 1
-          ? setIsProvEnable(true)
-          : setIsProvEnable(false);
-      }
-
-      if (userDetail?.districts[0]?.id != undefined) {
-        const getDistList = await database
-          .get("districts")
-          .query(Q.where("province_id", userDetail?.provinces[0]?.id))
-          .fetch();
-        const distsSerialized = getDistList.map((item) => item._raw);
-        setDistricts(distsSerialized);
+        const neiSerialized = getNeiList.map((item) => item._raw);
+        setNeighborhoods(neiSerialized);
 
         userDetail?.districts?.length > 1
-          ? setIsDisEnable(true)
-          : setIsDisEnable(false);
-
-        const getLocList = await database
-          .get("localities")
-          .query(Q.where("district_id", userDetail.districts[0].id))
-          .fetch();
-        const locsSerialized = getLocList.map((item) => item._raw);
-        setLocalities(locsSerialized);
-
-        if (userDetail?.localities[0]?.id != undefined) {
-          const getNeiList = await database
-            .get("neighborhoods")
-            .query(
-              Q.where("locality_id", Number(userDetail?.localities[0]?.id))
-            )
-            .fetch();
-          const neiSerialized = getNeiList.map((item) => item._raw);
-          setNeighborhoods(neiSerialized);
-
-          userDetail?.districts?.length > 1
-            ? setIsEnable(true)
-            : userDetail?.localities?.length > 1
-            ? setIsEnable(true)
-            : setIsEnable(false);
-        }
+          ? setIsEnable(true)
+          : userDetail?.localities?.length > 1
+          ? setIsEnable(true)
+          : setIsEnable(false);
       }
-    };
+    }
+  }, []);
 
-    fetchProvincesData().catch((error) => console.log(error));
+  const fetchUpdateData = useCallback(async () => {
+    const districtsList = await database
+      .get("districts")
+      .query(Q.where("province_id", Number(beneficiarie.province_id)))
+      .fetch();
+    const districts = districtsList.map((item) => item._raw);
+    setDistricts(districts);
+
+    const localitiesList = await database
+      .get("localities")
+      .query(Q.where("district_id", Number(beneficiarie.district_id)))
+      .fetch();
+    const localities = localitiesList.map((item) => item._raw);
+    setLocalities(localities);
+
+    const ussList = await database
+      .get("us")
+      .query(
+        Q.where("locality_id", Number(beneficiarie?.locality_id)),
+        Q.where("entry_point", Number(beneficiarie?.entry_point))
+      )
+      .fetch();
+    const usSerialized = ussList.map((item) => item._raw);
+    setUss(usSerialized);
+
+    const neighborhoodsList = await database
+      .get("neighborhoods")
+      .query(Q.where("locality_id", Number(beneficiarie?.locality_id)))
+      .fetch();
+    const neighborhoodsSerialized = neighborhoodsList.map((item) => item._raw);
+    setNeighborhoods(neighborhoodsSerialized);
+
+    const partnersQ = await database
+      .get("beneficiaries")
+      .query(
+        Q.where("gender", "2"),
+        Q.where("online_id", beneficiarie.partner_id)
+      )
+      .fetch();
+    const benefPartiner = partnersQ[0]?._raw;
+
+    handleSearchPartner(benefPartiner?.["nui"]);
+  }, []);
+
+  useEffect(() => {
+    fetchMetaData().catch((error) => console.log(error));
 
     if (beneficiarie) {
-      const fetchDistricstData = async () => {
-        const districtsList = await database
-          .get("districts")
-          .query(Q.where("province_id", Number(beneficiarie.province_id)))
-          .fetch();
-        const districts = districtsList.map((item) => item._raw);
-        setDistricts(districts);
-      };
-      const fetchLocalitiesData = async () => {
-        const localitiesList = await database
-          .get("localities")
-          .query(Q.where("district_id", Number(beneficiarie.district_id)))
-          .fetch();
-        const localities = localitiesList.map((item) => item._raw);
-        setLocalities(localities);
-      };
-      const fetchUssData = async () => {
-        const ussList = await database
-          .get("us")
-          .query(
-            Q.where("locality_id", Number(beneficiarie?.locality_id)),
-            Q.where("entry_point", Number(beneficiarie?.entry_point))
-          )
-          .fetch();
-        const usSerialized = ussList.map((item) => item._raw);
-        setUss(usSerialized);
-      };
-      const fetchNeighborhoodsData = async () => {
-        const neighborhoodsList = await database
-          .get("neighborhoods")
-          .query(Q.where("locality_id", Number(beneficiarie?.locality_id)))
-          .fetch();
-        const neighborhoodsSerialized = neighborhoodsList.map(
-          (item) => item._raw
-        );
-        setNeighborhoods(neighborhoodsSerialized);
-      };
-      const fetchPartners = async () => {
-        const partnersQ = await database
-          .get("beneficiaries")
-          .query(
-            Q.where("gender", "2"),
-            Q.where("online_id", beneficiarie.partner_id)
-          )
-          .fetch();
-        const benefPartiner = partnersQ[0]?._raw;
-
-        handleSearchPartner(benefPartiner?.["nui"]);
-      };
-
-      fetchPartners().catch((error) => console.log(error));
-
-      fetchDistricstData().catch((error) => console.log(error));
-      fetchLocalitiesData().catch((error) => console.log(error));
-      fetchUssData().catch((error) => console.log(error));
-      fetchNeighborhoodsData().catch((error) => console.log(error));
+      fetchUpdateData().catch((error) => console.log(error));
 
       setValue(beneficiarie?.vblt_lives_with.split(","));
       setSchoolInfoEnabled(beneficiarie.vblt_is_student == 1);
@@ -695,25 +675,25 @@ const BeneficiaryPartnerForm: React.FC = ({
     formik.setFieldValue("name", result);
   };
 
-  const onChangeProvinces = async (provId: any) => {
+  const onChangeProvinces = useCallback(async (provId: any) => {
     const getDistList = await database
       .get("districts")
       .query(Q.where("province_id", provId))
       .fetch();
     const distsSerialized = getDistList.map((item) => item._raw);
     setDistricts(distsSerialized);
-  };
+  }, []);
 
-  const onChangeDistricts = async (distId: any) => {
+  const onChangeDistricts = useCallback(async (distId: any) => {
     const getLocList = await database
       .get("localities")
       .query(Q.where("district_id", distId))
       .fetch();
     const locsSerialized = getLocList.map((item) => item._raw);
     setLocalities(locsSerialized);
-  };
+  }, []);
 
-  const onChangeLocalities = async (locId: any) => {
+  const onChangeLocalities = useCallback(async (locId: any) => {
     const getNeiList = await database
       .get("neighborhoods")
       .query(Q.where("locality_id", Number(locId)))
@@ -733,9 +713,9 @@ const BeneficiaryPartnerForm: React.FC = ({
       const usSerialized = getUsList.map((item) => item._raw);
       setUss(usSerialized);
     }
-  };
+  }, []);
 
-  const onChangeEntryPoint = async (entryPoint: any) => {
+  const onChangeEntryPoint = useCallback(async (entryPoint: any) => {
     const locality = formik.values.locality;
     if (locality) {
       const getUsList = await database
@@ -750,7 +730,7 @@ const BeneficiaryPartnerForm: React.FC = ({
     }
 
     setLoadingData(false);
-  };
+  }, []);
 
   const isStudentChange = async (value: any) => {
     setSchoolInfoEnabled(value == 1);
@@ -762,7 +742,7 @@ const BeneficiaryPartnerForm: React.FC = ({
   };
 
   const IdadePicker: React.FC<PickerProps> = () => {
-    const onchangeAge = (value: any) => {
+    const onchangeAge = useCallback((value: any) => {
       const today = new Date();
       const birthYear = today.getFullYear() - value;
       const bDate = new Date(birthYear + "-01-01");
@@ -773,7 +753,7 @@ const BeneficiaryPartnerForm: React.FC = ({
         getFormatedDate(bDate, "yyyy-MM-DD")
       );
       formik.setFieldValue("age", value);
-    };
+    }, []);
 
     return (
       <Picker
@@ -795,13 +775,16 @@ const BeneficiaryPartnerForm: React.FC = ({
     formik.setFieldValue("vblt_lives_with", value?.toString());
   }, [value]);
 
-  const handleDataFromDatePickerComponent = (selectedDate, fieldName) => {
-    const tempDate = new Date(selectedDate);
-    formik.setFieldValue(fieldName, moment(tempDate).format("YYYY-MM-DD"));
+  const handleDataFromDatePickerComponent = useCallback(
+    (selectedDate, fieldName) => {
+      const tempDate = new Date(selectedDate);
+      formik.setFieldValue(fieldName, moment(tempDate).format("YYYY-MM-DD"));
 
-    setAge(calculateAge(selectedDate) + "");
-    formik.setFieldValue("age", calculateAge(selectedDate) + "");
-  };
+      setAge(calculateAge(selectedDate) + "");
+      formik.setFieldValue("age", calculateAge(selectedDate) + "");
+    },
+    []
+  );
 
   return (
     <>
@@ -822,424 +805,428 @@ const BeneficiaryPartnerForm: React.FC = ({
                   textContent={"Carregando dados..."}
                   textStyle={styles.spinnerTextStyle}
                 />
-              ) : undefined}
-              <VStack space={3} w="90%">
-                <FormControl
-                  style={{
-                    display: beneficiarie === undefined ? "none" : "flex",
-                  }}
-                >
-                  <FormControl.Label>NUI</FormControl.Label>
-                  <Text style={styles.formNUI}>
-                    {beneficiarie === undefined ? "" : beneficiarie.nui}
-                  </Text>
-                </FormControl>
-                <FormControl
-                  isRequired
-                  isInvalid={"surname" in formik.errors}
-                  style={{
-                    display: beneficiarie === undefined ? "flex" : "none",
-                  }}
-                >
-                  <FormControl.Label>Apelido</FormControl.Label>
-                  <Input
-                    onBlur={formik.handleBlur("surname")}
-                    placeholder="Insira o Apelido"
-                    onChangeText={formik.handleChange("surname")}
-                    value={formik.values.surname}
-                  />
-                  <FormControl.ErrorMessage>
-                    {formik.errors.surname}
-                  </FormControl.ErrorMessage>
-                </FormControl>
-                <FormControl
-                  isRequired
-                  isInvalid={"name" in formik.errors}
-                  style={{
-                    display: beneficiarie === undefined ? "flex" : "none",
-                  }}
-                >
-                  <FormControl.Label>Nome</FormControl.Label>
-                  <Input
-                    onBlur={formik.handleBlur("name")}
-                    placeholder="Insira o Nome"
-                    onChangeText={(name) => onChangeName(name)}
-                    value={formik.values.name}
-                  />
-                  <FormControl.ErrorMessage>
-                    {formik.errors.name}
-                  </FormControl.ErrorMessage>
-                </FormControl>
-                <FormControl
-                  isRequired={isDateRequired}
-                  isInvalid={"date_of_birth" in formik.errors}
-                >
-                  <FormControl.Label>Data Nascimento</FormControl.Label>
+              ) : (
+                <VStack space={3} w="90%">
+                  <FormControl
+                    style={{
+                      display: beneficiarie === undefined ? "none" : "flex",
+                    }}
+                  >
+                    <FormControl.Label>NUI</FormControl.Label>
+                    <Text style={styles.formNUI}>
+                      {beneficiarie === undefined ? "" : beneficiarie.nui}
+                    </Text>
+                  </FormControl>
+                  <FormControl
+                    isRequired
+                    isInvalid={"surname" in formik.errors}
+                    style={{
+                      display: beneficiarie === undefined ? "flex" : "none",
+                    }}
+                  >
+                    <FormControl.Label>Apelido</FormControl.Label>
+                    <Input
+                      onBlur={formik.handleBlur("surname")}
+                      placeholder="Insira o Apelido"
+                      onChangeText={formik.handleChange("surname")}
+                      value={formik.values.surname}
+                    />
+                    <FormControl.ErrorMessage>
+                      {formik.errors.surname}
+                    </FormControl.ErrorMessage>
+                  </FormControl>
+                  <FormControl
+                    isRequired
+                    isInvalid={"name" in formik.errors}
+                    style={{
+                      display: beneficiarie === undefined ? "flex" : "none",
+                    }}
+                  >
+                    <FormControl.Label>Nome</FormControl.Label>
+                    <Input
+                      onBlur={formik.handleBlur("name")}
+                      placeholder="Insira o Nome"
+                      onChangeText={(name) => onChangeName(name)}
+                      value={formik.values.name}
+                    />
+                    <FormControl.ErrorMessage>
+                      {formik.errors.name}
+                    </FormControl.ErrorMessage>
+                  </FormControl>
+                  <FormControl
+                    isRequired={isDateRequired}
+                    isInvalid={"date_of_birth" in formik.errors}
+                  >
+                    <FormControl.Label>Data Nascimento</FormControl.Label>
 
-                  <HStack w="100%" flex={1} space={5} alignItems="center">
-                    <InputGroup w={{ base: "70%", md: "285" }}>
-                      <InputLeftAddon>
-                        <MyDatePicker
-                          onDateSelection={(e) =>
-                            handleDataFromDatePickerComponent(
-                              e,
-                              "date_of_birth"
-                            )
-                          }
-                          minDate={minBirthYear}
-                          maxDate={maxBirthYear}
-                          currentDate={
-                            beneficiarie?.date_of_birth
-                              ? new Date(beneficiarie?.date_of_birth)
-                              : new Date()
-                          }
-                          isEdit={
-                            beneficiarie && beneficiarie?.id ? true : false
-                          }
+                    <HStack w="100%" flex={1} space={5} alignItems="center">
+                      <InputGroup w={{ base: "70%", md: "285" }}>
+                        <InputLeftAddon>
+                          <MyDatePicker
+                            onDateSelection={(e) =>
+                              handleDataFromDatePickerComponent(
+                                e,
+                                "date_of_birth"
+                              )
+                            }
+                            minDate={minBirthYear}
+                            maxDate={maxBirthYear}
+                            currentDate={
+                              beneficiarie?.date_of_birth
+                                ? new Date(beneficiarie?.date_of_birth)
+                                : new Date()
+                            }
+                            isEdit={
+                              beneficiarie && beneficiarie?.id ? true : false
+                            }
+                          />
+                        </InputLeftAddon>
+                        <Input
+                          isDisabled
+                          w={{ base: "70%", md: "100%" }}
+                          onPressIn={() => {
+                            /**None */
+                          }}
+                          onBlur={formik.handleBlur("name")}
+                          value={formik.values.date_of_birth}
+                          // onChangeText={formik.handleChange('date_of_birth')}
+                          //value={moment(new Date(datePickerValue)).format('YYYY-MM-DD')}
+                          placeholder="yyyy-MM-dd"
                         />
-                      </InputLeftAddon>
-                      <Input
-                        isDisabled
-                        w={{ base: "70%", md: "100%" }}
-                        onPressIn={() => {
-                          /**None */
-                        }}
-                        onBlur={formik.handleBlur("name")}
-                        value={formik.values.date_of_birth}
-                        // onChangeText={formik.handleChange('date_of_birth')}
-                        //value={moment(new Date(datePickerValue)).format('YYYY-MM-DD')}
-                        placeholder="yyyy-MM-dd"
-                      />
-                    </InputGroup>
-                  </HStack>
+                      </InputGroup>
+                    </HStack>
 
-                  <FormControl.ErrorMessage>
-                    {formik.errors.date_of_birth}
-                  </FormControl.ErrorMessage>
-                </FormControl>
-                <FormControl>
-                  <Checkbox
-                    isInvalid
-                    value="invalid"
-                    onChange={onChangeCheckbox}
+                    <FormControl.ErrorMessage>
+                      {formik.errors.date_of_birth}
+                    </FormControl.ErrorMessage>
+                  </FormControl>
+                  <FormControl>
+                    <Checkbox
+                      isInvalid
+                      value="invalid"
+                      onChange={onChangeCheckbox}
+                    >
+                      <Text>Não Conhece a Data de Nascimento</Text>
+                    </Checkbox>
+                  </FormControl>
+                  <FormControl
+                    isRequired={!isDateRequired}
+                    isInvalid={"age" in formik.errors}
                   >
-                    <Text>Não Conhece a Data de Nascimento</Text>
-                  </Checkbox>
-                </FormControl>
-                <FormControl
-                  isRequired={!isDateRequired}
-                  isInvalid={"age" in formik.errors}
-                >
-                  <FormControl.Label>Idade (em anos)</FormControl.Label>
-                  <IdadePicker />
-                  <FormControl.ErrorMessage>
-                    {formik.errors.age}
-                  </FormControl.ErrorMessage>
-                </FormControl>
-                <FormControl
-                  isRequired
-                  isInvalid={"nationality" in formik.errors}
-                >
-                  <FormControl.Label>Nacionalidade</FormControl.Label>
-                  <Picker
-                    enabled={false}
-                    style={styles.dropDownPickerDisabled}
-                    selectedValue={formik.values.nationality}
-                    onValueChange={(itemValue, itemIndex) => {
-                      if (itemIndex !== 0) {
-                        formik.setFieldValue("nationality", itemValue);
-                      }
-                    }}
+                    <FormControl.Label>Idade (em anos)</FormControl.Label>
+                    <IdadePicker />
+                    <FormControl.ErrorMessage>
+                      {formik.errors.age}
+                    </FormControl.ErrorMessage>
+                  </FormControl>
+                  <FormControl
+                    isRequired
+                    isInvalid={"nationality" in formik.errors}
                   >
-                    <Picker.Item
-                      label="-- Seleccione a nacionalidade --"
-                      value="0"
-                    />
-                    <Picker.Item key="1" label="Moçambicana" value="1" />
-                  </Picker>
-                  <FormControl.ErrorMessage>
-                    {formik.errors.nationality}
-                  </FormControl.ErrorMessage>
-                </FormControl>
-                <FormControl
-                  isRequired
-                  isInvalid={"enrollment_date" in formik.errors}
-                >
-                  <FormControl.Label>Data Inscrição</FormControl.Label>
-                  <HStack w="100%" flex={1} space={5} alignItems="center">
-                    <InputGroup w={{ base: "70%", md: "285" }}>
-                      <InputLeftAddon>
-                        <MyDatePicker
-                          onDateSelection={(e) =>
-                            handleDataFromDatePickerComponent(
-                              e,
-                              "enrollment_date"
-                            )
-                          }
-                          minDate={new Date("2017-01-01")}
-                          maxDate={new Date()}
-                          currentDate={
-                            beneficiarie?.enrollment_date
-                              ? new Date(beneficiarie?.enrollment_date)
-                              : new Date()
-                          }
-                          isEdit={
-                            beneficiarie && beneficiarie?.id ? true : false
-                          }
+                    <FormControl.Label>Nacionalidade</FormControl.Label>
+                    <Picker
+                      enabled={false}
+                      style={styles.dropDownPickerDisabled}
+                      selectedValue={formik.values.nationality}
+                      onValueChange={(itemValue, itemIndex) => {
+                        if (itemIndex !== 0) {
+                          formik.setFieldValue("nationality", itemValue);
+                        }
+                      }}
+                    >
+                      <Picker.Item
+                        label="-- Seleccione a nacionalidade --"
+                        value="0"
+                      />
+                      <Picker.Item key="1" label="Moçambicana" value="1" />
+                    </Picker>
+                    <FormControl.ErrorMessage>
+                      {formik.errors.nationality}
+                    </FormControl.ErrorMessage>
+                  </FormControl>
+                  <FormControl
+                    isRequired
+                    isInvalid={"enrollment_date" in formik.errors}
+                  >
+                    <FormControl.Label>Data Inscrição</FormControl.Label>
+                    <HStack w="100%" flex={1} space={5} alignItems="center">
+                      <InputGroup w={{ base: "70%", md: "285" }}>
+                        <InputLeftAddon>
+                          <MyDatePicker
+                            onDateSelection={(e) =>
+                              handleDataFromDatePickerComponent(
+                                e,
+                                "enrollment_date"
+                              )
+                            }
+                            minDate={new Date("2017-01-01")}
+                            maxDate={new Date()}
+                            currentDate={
+                              beneficiarie?.enrollment_date
+                                ? new Date(beneficiarie?.enrollment_date)
+                                : new Date()
+                            }
+                            isEdit={
+                              beneficiarie && beneficiarie?.id ? true : false
+                            }
+                          />
+                        </InputLeftAddon>
+                        <Input
+                          isDisabled
+                          w={{ base: "70%", md: "100%" }}
+                          onPressIn={() => {
+                            /**None */
+                          }}
+                          onBlur={formik.handleBlur("name")}
+                          value={formik.values.enrollment_date}
+                          onChangeText={formik.handleChange("enrollment_date")}
+                          //value={moment(new Date(datePickerValue)).format('YYYY-MM-DD')}
+                          placeholder="yyyy-MM-dd"
                         />
-                      </InputLeftAddon>
-                      <Input
-                        isDisabled
-                        w={{ base: "70%", md: "100%" }}
-                        onPressIn={() => {
-                          /**None */
-                        }}
-                        onBlur={formik.handleBlur("name")}
-                        value={formik.values.enrollment_date}
-                        onChangeText={formik.handleChange("enrollment_date")}
-                        //value={moment(new Date(datePickerValue)).format('YYYY-MM-DD')}
-                        placeholder="yyyy-MM-dd"
-                      />
-                    </InputGroup>
-                  </HStack>
+                      </InputGroup>
+                    </HStack>
 
-                  <FormControl.ErrorMessage>
-                    {formik.errors.enrollment_date}
-                  </FormControl.ErrorMessage>
-                </FormControl>
-                <FormControl
-                  isRequired
-                  isInvalid={"province" in formik.errors}
-                  style={{ display: isProvEnable ? "flex" : "none" }}
-                >
-                  <FormControl.Label>Provincia</FormControl.Label>
-                  <Picker
-                    enabled={isProvEnable}
-                    style={styles.dropDownPickerDisabled}
-                    selectedValue={formik.values.province}
-                    onValueChange={(itemValue, itemIndex) => {
-                      if (itemIndex !== 0) {
-                        formik.setFieldValue("province", itemValue);
-                        onChangeProvinces(itemValue);
+                    <FormControl.ErrorMessage>
+                      {formik.errors.enrollment_date}
+                    </FormControl.ErrorMessage>
+                  </FormControl>
+                  <FormControl
+                    isRequired
+                    isInvalid={"province" in formik.errors}
+                    style={{ display: isProvEnable ? "flex" : "none" }}
+                  >
+                    <FormControl.Label>Provincia</FormControl.Label>
+                    <Picker
+                      enabled={isProvEnable}
+                      style={styles.dropDownPickerDisabled}
+                      selectedValue={formik.values.province}
+                      onValueChange={(itemValue, itemIndex) => {
+                        if (itemIndex !== 0) {
+                          formik.setFieldValue("province", itemValue);
+                          onChangeProvinces(itemValue);
+                        }
+                      }}
+                    >
+                      <Picker.Item
+                        label="-- Seleccione a Província --"
+                        value="0"
+                      />
+                      {provinces.map((item) => (
+                        <Picker.Item
+                          key={item.online_id}
+                          label={item.name}
+                          value={item.online_id}
+                        />
+                      ))}
+                    </Picker>
+                    <FormControl.ErrorMessage>
+                      {formik.errors.province}
+                    </FormControl.ErrorMessage>
+                  </FormControl>
+                  <FormControl
+                    isRequired
+                    isInvalid={"district" in formik.errors}
+                    style={{ display: isDisEnable ? "flex" : "none" }}
+                  >
+                    <FormControl.Label>Distrito</FormControl.Label>
+                    <Picker
+                      enabled={isDisEnable}
+                      style={styles.dropDownPickerDisabled}
+                      selectedValue={formik.values.district}
+                      onValueChange={(itemValue, itemIndex) => {
+                        if (itemIndex !== 0) {
+                          formik.setFieldValue("district", itemValue);
+                          onChangeDistricts(itemValue);
+                        }
+                      }}
+                    >
+                      <Picker.Item
+                        label="-- Seleccione o Distrito --"
+                        value="0"
+                      />
+                      {districts.map((item) => (
+                        <Picker.Item
+                          key={item.online_id}
+                          label={item.name}
+                          value={item.online_id}
+                        />
+                      ))}
+                    </Picker>
+                    <FormControl.ErrorMessage>
+                      {formik.errors.district}
+                    </FormControl.ErrorMessage>
+                  </FormControl>
+                  <FormControl
+                    isRequired
+                    isInvalid={"locality" in formik.errors}
+                    style={{ display: isEnable ? "flex" : "none" }}
+                  >
+                    <FormControl.Label>Posto Administrativo</FormControl.Label>
+                    <Picker
+                      enabled={isEnable}
+                      style={styles.dropDownPickerDisabled}
+                      selectedValue={formik.values.locality}
+                      onValueChange={(itemValue, itemIndex) => {
+                        if (itemIndex !== 0) {
+                          formik.setFieldValue("locality", itemValue);
+                          onChangeLocalities(itemValue);
+                        }
+                      }}
+                    >
+                      <Picker.Item
+                        label="-- Seleccione o Posto Administrativo --"
+                        value="0"
+                      />
+                      {localities.map((item) => (
+                        <Picker.Item
+                          key={item.online_id}
+                          label={item.name}
+                          value={item.online_id}
+                        />
+                      ))}
+                    </Picker>
+                    <FormControl.ErrorMessage>
+                      {formik.errors.locality}
+                    </FormControl.ErrorMessage>
+                  </FormControl>
+                  <FormControl
+                    isRequired
+                    isInvalid={"entry_point" in formik.errors}
+                  >
+                    <FormControl.Label>Ponto de Entrada</FormControl.Label>
+                    <Picker
+                      style={styles.textBlack}
+                      selectedValue={
+                        formik.values.entry_point
+                          ? formik.values.entry_point
+                          : loggedUser.entry_point !== undefined
+                          ? loggedUser.entry_point
+                          : loggedUser.entryPoint
                       }
+                      onValueChange={(itemValue, itemIndex) => {
+                        if (itemIndex !== 0) {
+                          formik.setFieldValue("entry_point", itemValue);
+                          onChangeEntryPoint(itemValue);
+                        }
+                      }}
+                    >
+                      <Picker.Item label="-- Seleccione o PE --" value="0" />
+                      {isUsVisible && (
+                        <Picker.Item key="1" label="US" value="1" />
+                      )}
+                      <Picker.Item key="2" label="CM" value="2" />
+                      <Picker.Item key="3" label="ES" value="3" />
+                    </Picker>
+                    <FormControl.ErrorMessage>
+                      {formik.errors.entry_point}
+                    </FormControl.ErrorMessage>
+                  </FormControl>
+                  <FormControl isRequired isInvalid={"us_id" in formik.errors}>
+                    <FormControl.Label>Local</FormControl.Label>
+                    <Picker
+                      style={styles.textBlack}
+                      selectedValue={formik.values.us_id}
+                      onValueChange={(itemValue, itemIndex) => {
+                        if (itemIndex !== 0) {
+                          formik.setFieldValue("us_id", itemValue);
+                        }
+                      }}
+                    >
+                      <Picker.Item label="-- Seleccione o Local --" value="0" />
+                      {uss.map((item) => (
+                        <Picker.Item
+                          key={item.online_id}
+                          label={item.name}
+                          value={item.online_id}
+                        />
+                      ))}
+                    </Picker>
+                    <FormControl.ErrorMessage>
+                      {formik.errors.us_id}
+                    </FormControl.ErrorMessage>
+                  </FormControl>
+                  <FormControl
+                    style={{
+                      display: beneficiarie === undefined ? "flex" : "none",
                     }}
                   >
-                    <Picker.Item
-                      label="-- Seleccione a Província --"
-                      value="0"
+                    <FormControl.Label>Alcunha</FormControl.Label>
+                    <Input
+                      onBlur={formik.handleBlur("nick_name")}
+                      placeholder="Insira a Alcunha"
+                      onChangeText={formik.handleChange("nick_name")}
+                      value={formik.values.nick_name}
                     />
-                    {provinces.map((item) => (
-                      <Picker.Item
-                        key={item.online_id}
-                        label={item.name}
-                        value={item.online_id}
-                      />
-                    ))}
-                  </Picker>
-                  <FormControl.ErrorMessage>
-                    {formik.errors.province}
-                  </FormControl.ErrorMessage>
-                </FormControl>
-                <FormControl
-                  isRequired
-                  isInvalid={"district" in formik.errors}
-                  style={{ display: isDisEnable ? "flex" : "none" }}
-                >
-                  <FormControl.Label>Distrito</FormControl.Label>
-                  <Picker
-                    enabled={isDisEnable}
-                    style={styles.dropDownPickerDisabled}
-                    selectedValue={formik.values.district}
-                    onValueChange={(itemValue, itemIndex) => {
-                      if (itemIndex !== 0) {
-                        formik.setFieldValue("district", itemValue);
-                        onChangeDistricts(itemValue);
-                      }
-                    }}
-                  >
-                    <Picker.Item
-                      label="-- Seleccione o Distrito --"
-                      value="0"
+                  </FormControl>
+                  <FormControl>
+                    <FormControl.Label>
+                      Endereço (Ponto de Referência)
+                    </FormControl.Label>
+                    <Input
+                      onBlur={formik.handleBlur("address")}
+                      placeholder="Insira o Endereço"
+                      onChangeText={formik.handleChange("address")}
+                      value={formik.values.address}
                     />
-                    {districts.map((item) => (
-                      <Picker.Item
-                        key={item.online_id}
-                        label={item.name}
-                        value={item.online_id}
-                      />
-                    ))}
-                  </Picker>
-                  <FormControl.ErrorMessage>
-                    {formik.errors.district}
-                  </FormControl.ErrorMessage>
-                </FormControl>
-                <FormControl
-                  isRequired
-                  isInvalid={"locality" in formik.errors}
-                  style={{ display: isEnable ? "flex" : "none" }}
-                >
-                  <FormControl.Label>Posto Administrativo</FormControl.Label>
-                  <Picker
-                    enabled={isEnable}
-                    style={styles.dropDownPickerDisabled}
-                    selectedValue={formik.values.locality}
-                    onValueChange={(itemValue, itemIndex) => {
-                      if (itemIndex !== 0) {
-                        formik.setFieldValue("locality", itemValue);
-                        onChangeLocalities(itemValue);
-                      }
-                    }}
-                  >
-                    <Picker.Item
-                      label="-- Seleccione o Posto Administrativo --"
-                      value="0"
+                  </FormControl>
+                  <FormControl isInvalid={"phone_number" in formik.errors}>
+                    <FormControl.Label>Telemóvel</FormControl.Label>
+                    <Input
+                      onBlur={formik.handleBlur("phone_number")}
+                      keyboardType="number-pad"
+                      maxLength={9}
+                      placeholder="Insira o Telemóvel"
+                      onChangeText={formik.handleChange("phone_number")}
+                      value={formik.values.phone_number}
                     />
-                    {localities.map((item) => (
-                      <Picker.Item
-                        key={item.online_id}
-                        label={item.name}
-                        value={item.online_id}
-                      />
-                    ))}
-                  </Picker>
-                  <FormControl.ErrorMessage>
-                    {formik.errors.locality}
-                  </FormControl.ErrorMessage>
-                </FormControl>
-                <FormControl
-                  isRequired
-                  isInvalid={"entry_point" in formik.errors}
-                >
-                  <FormControl.Label>Ponto de Entrada</FormControl.Label>
-                  <Picker
-                    style={styles.textBlack}
-                    selectedValue={
-                      formik.values.entry_point
-                        ? formik.values.entry_point
-                        : loggedUser.entry_point !== undefined
-                        ? loggedUser.entry_point
-                        : loggedUser.entryPoint
-                    }
-                    onValueChange={(itemValue, itemIndex) => {
-                      if (itemIndex !== 0) {
-                        formik.setFieldValue("entry_point", itemValue);
-                        onChangeEntryPoint(itemValue);
-                      }
-                    }}
+                    <FormControl.ErrorMessage>
+                      Apenas numeros!!!
+                    </FormControl.ErrorMessage>
+                  </FormControl>
+                  <FormControl isInvalid={"e_mail" in formik.errors}>
+                    <FormControl.Label>E-mail</FormControl.Label>
+                    <Input
+                      onBlur={formik.handleBlur("e_mail")}
+                      placeholder="Insira o E_mail"
+                      onChangeText={formik.handleChange("e_mail")}
+                      value={formik.values.e_mail}
+                    />
+                    <FormControl.ErrorMessage>
+                      {formik.errors.e_mail}
+                    </FormControl.ErrorMessage>
+                  </FormControl>
+                  <FormControl
+                    isRequired
+                    isInvalid={"neighborhood_id" in formik.errors}
                   >
-                    <Picker.Item label="-- Seleccione o PE --" value="0" />
-                    {isUsVisible && (
-                      <Picker.Item key="1" label="US" value="1" />
-                    )}
-                    <Picker.Item key="2" label="CM" value="2" />
-                    <Picker.Item key="3" label="ES" value="3" />
-                  </Picker>
-                  <FormControl.ErrorMessage>
-                    {formik.errors.entry_point}
-                  </FormControl.ErrorMessage>
-                </FormControl>
-                <FormControl isRequired isInvalid={"us_id" in formik.errors}>
-                  <FormControl.Label>Local</FormControl.Label>
-                  <Picker
-                    style={styles.textBlack}
-                    selectedValue={formik.values.us_id}
-                    onValueChange={(itemValue, itemIndex) => {
-                      if (itemIndex !== 0) {
-                        formik.setFieldValue("us_id", itemValue);
-                      }
-                    }}
-                  >
-                    <Picker.Item label="-- Seleccione o Local --" value="0" />
-                    {uss.map((item) => (
+                    <FormControl.Label>Bairro</FormControl.Label>
+                    <Picker
+                      style={styles.textBlack}
+                      selectedValue={formik.values.neighborhood_id}
+                      onValueChange={(itemValue, itemIndex) => {
+                        if (itemIndex !== 0) {
+                          formik.setFieldValue("neighborhood_id", itemValue);
+                        }
+                      }}
+                    >
                       <Picker.Item
-                        key={item.online_id}
-                        label={item.name}
-                        value={item.online_id}
+                        label="-- Seleccione o Bairro --"
+                        value="0"
                       />
-                    ))}
-                  </Picker>
-                  <FormControl.ErrorMessage>
-                    {formik.errors.us_id}
-                  </FormControl.ErrorMessage>
-                </FormControl>
-                <FormControl
-                  style={{
-                    display: beneficiarie === undefined ? "flex" : "none",
-                  }}
-                >
-                  <FormControl.Label>Alcunha</FormControl.Label>
-                  <Input
-                    onBlur={formik.handleBlur("nick_name")}
-                    placeholder="Insira a Alcunha"
-                    onChangeText={formik.handleChange("nick_name")}
-                    value={formik.values.nick_name}
-                  />
-                </FormControl>
-                <FormControl>
-                  <FormControl.Label>
-                    Endereço (Ponto de Referência)
-                  </FormControl.Label>
-                  <Input
-                    onBlur={formik.handleBlur("address")}
-                    placeholder="Insira o Endereço"
-                    onChangeText={formik.handleChange("address")}
-                    value={formik.values.address}
-                  />
-                </FormControl>
-                <FormControl isInvalid={"phone_number" in formik.errors}>
-                  <FormControl.Label>Telemóvel</FormControl.Label>
-                  <Input
-                    onBlur={formik.handleBlur("phone_number")}
-                    keyboardType="number-pad"
-                    maxLength={9}
-                    placeholder="Insira o Telemóvel"
-                    onChangeText={formik.handleChange("phone_number")}
-                    value={formik.values.phone_number}
-                  />
-                  <FormControl.ErrorMessage>
-                    Apenas numeros!!!
-                  </FormControl.ErrorMessage>
-                </FormControl>
-                <FormControl isInvalid={"e_mail" in formik.errors}>
-                  <FormControl.Label>E-mail</FormControl.Label>
-                  <Input
-                    onBlur={formik.handleBlur("e_mail")}
-                    placeholder="Insira o E_mail"
-                    onChangeText={formik.handleChange("e_mail")}
-                    value={formik.values.e_mail}
-                  />
-                  <FormControl.ErrorMessage>
-                    {formik.errors.e_mail}
-                  </FormControl.ErrorMessage>
-                </FormControl>
-                <FormControl
-                  isRequired
-                  isInvalid={"neighborhood_id" in formik.errors}
-                >
-                  <FormControl.Label>Bairro</FormControl.Label>
-                  <Picker
-                    style={styles.textBlack}
-                    selectedValue={formik.values.neighborhood_id}
-                    onValueChange={(itemValue, itemIndex) => {
-                      if (itemIndex !== 0) {
-                        formik.setFieldValue("neighborhood_id", itemValue);
-                      }
-                    }}
-                  >
-                    <Picker.Item label="-- Seleccione o Bairro --" value="0" />
-                    {neighborhoods.map((item) => (
-                      <Picker.Item
-                        key={item.online_id}
-                        label={item.name}
-                        value={item.online_id}
-                      />
-                    ))}
-                  </Picker>
-                  <FormControl.ErrorMessage>
-                    {formik.errors.neighborhood_id}
-                  </FormControl.ErrorMessage>
-                </FormControl>
-              </VStack>
+                      {neighborhoods.map((item) => (
+                        <Picker.Item
+                          key={item.online_id}
+                          label={item.name}
+                          value={item.online_id}
+                        />
+                      ))}
+                    </Picker>
+                    <FormControl.ErrorMessage>
+                      {formik.errors.neighborhood_id}
+                    </FormControl.ErrorMessage>
+                  </FormControl>
+                </VStack>
+              )}
             </View>
           </ProgressStep>
           <ProgressStep

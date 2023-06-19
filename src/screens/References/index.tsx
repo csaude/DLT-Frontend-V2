@@ -2,8 +2,8 @@ import React, {
   useEffect,
   useState,
   useContext,
-  memo,
   useCallback,
+  useMemo,
 } from "react";
 import {
   View,
@@ -57,17 +57,24 @@ const ReferencesMain: React.FC = ({
     : loggedUser?.partner_id;
   const toast = useToast();
 
-  const getBeneficiary = (beneficiary_id: any) => {
-    return beneficiaries.filter((e) => {
-      return e?._raw.online_id == beneficiary_id;
-    })[0];
-  };
+  const getBeneficiary = useCallback(
+    (beneficiary_id: any) => {
+      return beneficiaries.filter((e) => {
+        return e?._raw.online_id == beneficiary_id;
+      })[0];
+    },
+    [beneficiaries]
+  );
 
-  const getUser = (user_id: any) => {
-    return users.filter((e) => {
-      return e?._raw.online_id == user_id;
-    })[0];
-  };
+  const getUser = useCallback(
+    (user_id: any) => {
+      return users.filter((e) => {
+        getBeneficiary;
+        return e?._raw.online_id == user_id;
+      })[0];
+    },
+    [getBeneficiary, users]
+  );
 
   const getStatus = (status: any) => {
     if (status === 0) {
@@ -90,71 +97,76 @@ const ReferencesMain: React.FC = ({
     });
   }, []);
 
-  const viewReference = useCallback(async (data: any) => {
-    const reference = data.item?._raw;
-    const beneficiary = getBeneficiary(reference.beneficiary_id)?._raw;
-    const notifyTo = `${
-      getUser(data.item?._raw.notify_to)?.name +
-      " " +
-      getUser(data.item?._raw.notify_to)?.surname
-    }`;
-    const organization = getUser(data.item?._raw.notify_to)?.organization_name;
-    const attendDisabled =
-      loggedUserPartner === getUser(data.item?._raw.referred_by)?.partner_id;
+  const viewReference = useCallback(
+    async (data: any) => {
+      const reference = data.item?._raw;
+      const beneficiary = getBeneficiary(reference.beneficiary_id)?._raw;
+      const notifyTo = `${
+        getUser(data.item?._raw.notify_to)?.name +
+        " " +
+        getUser(data.item?._raw.notify_to)?.surname
+      }`;
+      const organization = getUser(
+        data.item?._raw.notify_to
+      )?.organization_name;
+      const attendDisabled =
+        loggedUserPartner === getUser(data.item?._raw.referred_by)?.partner_id;
 
-    const beneficiaryId = beneficiary?.online_id
-      ? beneficiary?.online_id
-      : beneficiary?.id;
+      const beneficiaryId = beneficiary?.online_id
+        ? beneficiary?.online_id
+        : beneficiary?.id;
 
-    const interventions = await database
-      .get("beneficiaries_interventions")
-      .query(Q.where("beneficiary_id", beneficiaryId))
-      .fetch();
+      const interventions = await database
+        .get("beneficiaries_interventions")
+        .query(Q.where("beneficiary_id", beneficiaryId))
+        .fetch();
 
-    const interventionObjects = interventions.map((e: any) => {
-      const subservice = subServices.filter((item) => {
-        return item?._raw.online_id == e?._raw.sub_service_id;
-      })[0];
-      return {
-        id: subservice?._raw.online_id + e?._raw.date,
-        name: subservice?._raw.name,
-        intervention: e?._raw,
-      };
-    });
+      const interventionObjects = interventions.map((e: any) => {
+        const subservice = subServices.filter((item) => {
+          return item?._raw.online_id == e?._raw.sub_service_id;
+        })[0];
+        return {
+          id: subservice?._raw.online_id + e?._raw.date,
+          name: subservice?._raw.name,
+          intervention: e?._raw,
+        };
+      });
 
-    const referenceId = reference?.online_id
-      ? reference?.online_id
-      : reference?.id;
+      const referenceId = reference?.online_id
+        ? reference?.online_id
+        : reference?.id;
 
-    const referenceServices = await database
-      .get("references_services")
-      .query(Q.where("reference_id", referenceId + ""))
-      .fetch();
+      const referenceServices = await database
+        .get("references_services")
+        .query(Q.where("reference_id", referenceId + ""))
+        .fetch();
 
-    const servicesObjects = referenceServices.map((e: any) => {
-      const service: any = services.filter((item: any) => {
-        return item?._raw.online_id == e?._raw.service_id;
-      })[0];
-      return {
-        id: service?._raw.online_id,
-        name: service?._raw.name,
-        service: e?._raw,
-      };
-    });
+      const servicesObjects = referenceServices.map((e: any) => {
+        const service: any = services.filter((item: any) => {
+          return item?._raw.online_id == e?._raw.service_id;
+        })[0];
+        return {
+          id: service?._raw.online_id,
+          name: service?._raw.name,
+          service: e?._raw,
+        };
+      });
 
-    navigate({
-      name: "ReferenceView",
-      params: {
-        reference: reference,
-        beneficiary: beneficiary,
-        notify: notifyTo,
-        organization: organization,
-        services: servicesObjects,
-        interventions: interventionObjects,
-        attendDisabled: attendDisabled,
-      },
-    });
-  }, []);
+      navigate({
+        name: "ReferenceView",
+        params: {
+          reference: reference,
+          beneficiary: beneficiary,
+          notify: notifyTo,
+          organization: organization,
+          services: servicesObjects,
+          interventions: interventionObjects,
+          attendDisabled: attendDisabled,
+        },
+      });
+    },
+    [getBeneficiary, getUser, loggedUserPartner, services, subServices]
+  );
 
   const syncronize = useCallback(() => {
     if (isOffline) {
@@ -183,7 +195,7 @@ const ReferencesMain: React.FC = ({
           })
         );
     }
-  }, []);
+  }, [isOffline, loggedUser.username, toast]);
 
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -310,7 +322,7 @@ const ReferencesMain: React.FC = ({
         </HStack>
       </TouchableHighlight>
     ),
-    []
+    [getUser, loggedUserPartner, viewReference]
   );
 
   const renderHiddenItem = useCallback(
@@ -333,7 +345,7 @@ const ReferencesMain: React.FC = ({
         </Pressable>
       </HStack>
     ),
-    []
+    [viewReference]
   );
 
   const handleChange = (e: any) => {
@@ -344,17 +356,18 @@ const ReferencesMain: React.FC = ({
     reference.beneficiary_nui.toLowerCase().includes(searchField.toLowerCase())
   );
 
-  const sortedReferences = useCallback(
-    filteredReferences.sort(
-      (ref1, ref2) =>
-        ref1._raw.status - ref2._raw.status ||
-        moment(ref2._raw.date_created)
-          .format("YYYY-MM-DD HH:mm:ss")
-          .localeCompare(
-            moment(ref1._raw.date_created).format("YYYY-MM-DD HH:mm:ss")
-          )
-    ),
-    []
+  const sortedReferences = useMemo(
+    () =>
+      filteredReferences.sort(
+        (ref1, ref2) =>
+          ref1._raw.status - ref2._raw.status ||
+          moment(ref2._raw.date_created)
+            .format("YYYY-MM-DD HH:mm:ss")
+            .localeCompare(
+              moment(ref1._raw.date_created).format("YYYY-MM-DD HH:mm:ss")
+            )
+      ),
+    [filteredReferences]
   );
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -393,7 +406,7 @@ const ReferencesMain: React.FC = ({
       /** is first time the user logs, is using API* */
       getUserReferences(loggedUser?.id);
     }
-  }, [loggedUser, refreshData]);
+  }, [getUserReferences, loggedUser, refreshData]);
 
   useEffect(() => {
     resolveBeneficiaryOfflineIds();
@@ -454,4 +467,4 @@ const enhance = withObservables([], () => ({
   subServices: database.collections.get("sub_services").query().observe(),
 }));
 
-export default memo(enhance(ReferencesMain));
+export default enhance(ReferencesMain);

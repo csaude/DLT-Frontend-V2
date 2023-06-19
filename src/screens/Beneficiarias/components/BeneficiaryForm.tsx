@@ -900,12 +900,6 @@ const BeneficiaryForm: React.FC = ({
 
   const onChangeEntryPoint = useCallback(async (entryPoint: any) => {
     const locality = formik.values.locality;
-    console.log(
-      "---------formik.values.locality-------",
-      formik.values.locality
-    );
-    console.log("---------locality-------", locality);
-    console.log("---------entryPoint--------", entryPoint);
 
     if (locality) {
       const getUsList = await database
@@ -916,7 +910,6 @@ const BeneficiaryForm: React.FC = ({
         )
         .fetch();
 
-      console.log("-----getUsList-------", getUsList);
       const usSerialized = getUsList.map((item) => item._raw);
       setUss(usSerialized);
     }
@@ -1018,7 +1011,6 @@ const BeneficiaryForm: React.FC = ({
   }, [value]);
 
   const handleDataFromDatePickerComponent = (selectedDate, fieldName) => {
-    console.log(selectedDate, fieldName);
     const tempDate = new Date(selectedDate);
     formik.setFieldValue(fieldName, moment(tempDate).format("YYYY-MM-DD"));
 
@@ -1225,7 +1217,7 @@ const BeneficiaryForm: React.FC = ({
                           onPressIn={() => {
                             /**None */
                           }}
-                          onBlur={formik.handleBlur("name")}
+                          onBlur={formik.handleBlur("enrollment_date")}
                           value={formik.values.enrollment_date}
                           onChangeText={formik.handleChange("enrollment_date")}
                           //value={moment(new Date(datePickerValue)).format('YYYY-MM-DD')}

@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Platform } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Icon } from "native-base";
@@ -13,23 +13,19 @@ const MyDatePicker = ({
   currentDate,
   isEdit,
 }) => {
-  const defaultDate =
-    currentDate != null && currentDate != "" && currentDate != undefined
-      ? currentDate
-      : new Date();
-  const [date, setDate] = useState(new Date(defaultDate));
-  const [mode, setMode] = useState<any>("date");
+  const [date, setDate] = useState(currentDate);
+  const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
 
   const onChange = useCallback(
     (event, selectedDate) => {
-      console.log("---show---", show);
+      console.log("---show onChange---", show);
       if (event.type === "dismissed" && !isEdit) {
         setDate(new Date());
       } else {
-        const formatedDate = moment(selectedDate).format("YYYY-MM-DD");
+        const formattedDate = moment(selectedDate).format("YYYY-MM-DD");
         setDate(selectedDate);
-        onDateSelection(formatedDate);
+        onDateSelection(formattedDate);
       }
       setShow(false);
     },
@@ -38,7 +34,7 @@ const MyDatePicker = ({
 
   const showMode = useCallback(
     (currentMode) => {
-      console.log("---show---", show);
+      console.log("---show showMode---", show);
       if (Platform.OS === "android") {
         setShow(false);
         // for iOS, add a button that closes the picker
@@ -80,10 +76,10 @@ const MyDatePicker = ({
 
 MyDatePicker.propTypes = {
   onDateSelection: PropTypes.func.isRequired,
-  minDate: PropTypes.object.isRequired,
-  maxDate: PropTypes.object.isRequired,
-  currentDate: PropTypes.object.isRequired,
+  minDate: PropTypes.instanceOf(Date).isRequired,
+  maxDate: PropTypes.instanceOf(Date).isRequired,
+  currentDate: PropTypes.instanceOf(Date).isRequired,
   isEdit: PropTypes.bool.isRequired,
 };
 
-export default memo(MyDatePicker);
+export default MyDatePicker;
