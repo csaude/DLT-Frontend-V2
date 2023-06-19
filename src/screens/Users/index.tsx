@@ -1,4 +1,4 @@
-import React, { useState, useContext, useCallback } from "react";
+import React, { useState, useContext } from "react";
 import { View, TouchableOpacity, TouchableHighlight } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
 import {
@@ -33,7 +33,7 @@ const UsersMain: React.FC = ({
   const loggedUser: any = useContext(Context);
   const toast = useToast();
 
-  const viewUser = useCallback((data: any) => {
+  const viewUser = (data: any) => {
     const user = data.item._raw;
     const localityName = localities.filter((e) => {
       return e._raw.online_id == user.locality_id;
@@ -58,9 +58,9 @@ const UsersMain: React.FC = ({
         us: usName,
       },
     });
-  }, []);
+  };
 
-  const syncronize = useCallback(() => {
+  const syncronize = () => {
     sync({ username: loggedUser.username })
       .then(() =>
         toast.show({
@@ -122,7 +122,7 @@ const UsersMain: React.FC = ({
           },
         })
       );
-  }, []);
+  };
 
   const randomHexColor = () => {
     return "#000000".replace(/0/g, () => {
@@ -130,68 +130,69 @@ const UsersMain: React.FC = ({
     });
   };
 
+  const viewRow = (rowMap: any, rowKey: any) => {
+    console.log(typeof rowMap[0], "on View Row");
+    if (rowMap[rowKey]) {
+      rowMap[rowKey].closeRow();
+    }
+  };
+
   const onRowDidOpen = (rowKey: any) => {
     console.log("This row opened", rowKey);
   };
 
-  const renderItem = useCallback(
-    (data: any) => (
-      <TouchableHighlight
-        onPress={() => viewUser(data)}
-        style={styles.rowFront}
-        underlayColor={"#AAA"}
-      >
-        <HStack width="100%" px={4} flex={1} space={5} alignItems="center">
-          {/* <Avatar color="white" bg={'warning.600'} > */}
-          <Avatar color="white" bg={randomHexColor()}>
-            {data.item.username.charAt(0).toUpperCase()}
-            {/* {"A"} */}
-          </Avatar>
-          <View>
-            <Text color="darkBlue.800">{data.item.username} </Text>
-            <Text color="darkBlue.800">
-              {data.item.name} {data.item.surname}
-            </Text>
-            <Text color="darkBlue.800">{data.item.partners?.name}</Text>
-          </View>
-        </HStack>
-      </TouchableHighlight>
-    ),
-    []
+  const renderItem = (data: any) => (
+    <TouchableHighlight
+      onPress={() => viewUser(data)}
+      style={styles.rowFront}
+      underlayColor={"#AAA"}
+    >
+      <HStack width="100%" px={4} flex={1} space={5} alignItems="center">
+        {/* <Avatar color="white" bg={'warning.600'} > */}
+        <Avatar color="white" bg={randomHexColor()}>
+          {data.item.username.charAt(0).toUpperCase()}
+          {/* {"A"} */}
+        </Avatar>
+        <View>
+          <Text color="darkBlue.800">{data.item.username} </Text>
+          <Text color="darkBlue.800">
+            {data.item.name} {data.item.surname}
+          </Text>
+          <Text color="darkBlue.800">{data.item.partners?.name}</Text>
+        </View>
+      </HStack>
+    </TouchableHighlight>
   );
 
-  const renderHiddenItem = useCallback(
-    (data: any) => (
-      <HStack flex={1} pl={2}>
-        <Pressable
-          px={4}
-          ml="auto"
-          bg="lightBlue.700"
-          justifyContent="center"
-          onPress={() => viewUser(data)}
-          _pressed={{ opacity: 0.5 }}
-        >
-          <Icon
-            as={MaterialIcons}
-            name="remove-red-eye"
-            size={6}
-            color="gray.200"
-          />
-        </Pressable>
-        <Pressable
-          px={4}
-          bg="lightBlue.800"
-          justifyContent="center"
-          onPress={() =>
-            navigate({ name: "UserForm", params: { user: data.item._raw } })
-          }
-          _pressed={{ opacity: 0.5 }}
-        >
-          <Icon as={MaterialIcons} name="mode-edit" size={6} color="gray.200" />
-        </Pressable>
-      </HStack>
-    ),
-    []
+  const renderHiddenItem = (data: any, rowMap: any) => (
+    <HStack flex={1} pl={2}>
+      <Pressable
+        px={4}
+        ml="auto"
+        bg="lightBlue.700"
+        justifyContent="center"
+        onPress={() => viewUser(data)}
+        _pressed={{ opacity: 0.5 }}
+      >
+        <Icon
+          as={MaterialIcons}
+          name="remove-red-eye"
+          size={6}
+          color="gray.200"
+        />
+      </Pressable>
+      <Pressable
+        px={4}
+        bg="lightBlue.800"
+        justifyContent="center"
+        onPress={() =>
+          navigate({ name: "UserForm", params: { user: data.item._raw } })
+        }
+        _pressed={{ opacity: 0.5 }}
+      >
+        <Icon as={MaterialIcons} name="mode-edit" size={6} color="gray.200" />
+      </Pressable>
+    </HStack>
   );
 
   const handleChange = (e: any) => {

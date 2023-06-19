@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React from "react";
 import {
   View,
   KeyboardAvoidingView,
@@ -100,4 +100,4 @@ const ViewUsers: React.FC = ({ route }: any) => {
   );
 };
 
-export default memo(ViewUsers);
+export default ViewUsers;

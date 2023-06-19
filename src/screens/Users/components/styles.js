@@ -1,5 +1,7 @@
 import { Dimensions, StyleSheet, Platform } from "react-native";
 
+const { width, height } = Dimensions.get("screen");
+
 const styles = StyleSheet.create({
   background: {
     flex: 1,

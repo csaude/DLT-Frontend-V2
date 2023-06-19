@@ -1,10 +1,4 @@
-import React, {
-  useEffect,
-  useState,
-  useContext,
-  useCallback,
-  memo,
-} from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { View, KeyboardAvoidingView, ScrollView } from "react-native";
 import {
   Center,
@@ -38,6 +32,7 @@ const UsersRegistrationForm: React.FC = ({
   partners,
 }: any) => {
   const [loading, setLoading] = useState(false);
+  const [savedUser, setSavedUser] = useState<any>(null);
   const loggedUser: any = useContext(Context);
   const { user } = route.params;
   let mounted = true; // prevent error:  state update on an unmounted component
@@ -81,7 +76,7 @@ const UsersRegistrationForm: React.FC = ({
     }
   }, [user]);
 
-  const validate = useCallback((values: any) => {
+  const validate = (values: any) => {
     const errors: UsersModel = {};
 
     if (!values.surname) {
@@ -108,22 +103,22 @@ const UsersRegistrationForm: React.FC = ({
       errors.profile_id = message;
     }
 
-    if (!values.localities_ids) {
-      errors.localities_ids = message;
+    if (!values.locality_id) {
+      errors.locality_id = message;
     }
 
     if (!values.partner_id) {
       errors.partner_id = message;
     }
 
-    if (!values.us_ids) {
-      errors.us_ids = message;
+    if (!values.us_id) {
+      errors.us_id = message;
     }
 
     return errors;
-  }, []);
+  };
 
-  const onSubmit = useCallback(async (values: any) => {
+  const onSubmit = async (values: any) => {
     setLoading(true);
 
     const localityName = localities.filter((e) => {
@@ -157,7 +152,7 @@ const UsersRegistrationForm: React.FC = ({
           user.locality_id = values.locality_id;
           user.partner_id = values.partner_id;
           user.us_id = values.us_id;
-          user.online_id = values?.online_id;
+          user.online_id = user.online_id;
           user._status = "updated";
         });
 
@@ -265,7 +260,7 @@ const UsersRegistrationForm: React.FC = ({
           },
         })
       );
-  }, []);
+  };
 
   return (
     <KeyboardAvoidingView>
@@ -531,4 +526,4 @@ const enhance = withObservables([], () => ({
   partners: database.collections.get("partners").query().observe(),
   us: database.collections.get("us").query().observe(),
 }));
-export default memo(enhance(UsersRegistrationForm));
+export default enhance(UsersRegistrationForm);
