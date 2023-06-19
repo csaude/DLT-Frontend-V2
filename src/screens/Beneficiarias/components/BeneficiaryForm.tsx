@@ -1,10 +1,4 @@
-import React, {
-  useEffect,
-  useState,
-  useContext,
-  memo,
-  useCallback,
-} from "react";
+import React, { useEffect, useState, useContext, useCallback } from "react";
 import {
   View,
   HStack,
@@ -137,6 +131,29 @@ const BeneficiaryForm: React.FC = ({
   maxBirthYear.setFullYear(new Date().getFullYear() - 9);
 
   const fetchUpdateData = useCallback(async () => {
+    const districtsList = await database
+      .get("districts")
+      .query(Q.where("province_id", Number(beneficiarie.province_id)))
+      .fetch();
+    const districts = districtsList.map((item) => item._raw);
+    setDistricts(districts);
+
+    const localitiesList = await database
+      .get("localities")
+      .query(Q.where("district_id", Number(beneficiarie.district_id)))
+      .fetch();
+    const localities = localitiesList.map((item) => item._raw);
+    setLocalities(localities);
+    const ussList = await database
+      .get("us")
+      .query(
+        Q.where("locality_id", Number(beneficiarie?.locality_id)),
+        Q.where("entry_point", Number(beneficiarie?.entry_point))
+      )
+      .fetch();
+    const usSerialized = ussList.map((item) => item._raw);
+    setUss(usSerialized);
+
     const partnersQ = isNaN(Number(beneficiarie.partner_id))
       ? await database
           .get("beneficiaries")
@@ -198,15 +215,6 @@ const BeneficiaryForm: React.FC = ({
           ? setIsEnable(true)
           : setIsEnable(false);
       }
-
-      const entryPoint =
-        formik.values.entry_point !== undefined
-          ? formik.values.entry_point
-          : loggedUser.entryPoint !== undefined
-          ? loggedUser.entryPoint
-          : loggedUser.entry_point;
-      formik.setFieldValue("entry_point", entryPoint);
-      onChangeEntryPoint(entryPoint);
     }
 
     const userDetailsQ = await userDetailsCollection
@@ -221,6 +229,8 @@ const BeneficiaryForm: React.FC = ({
   };
 
   useEffect(() => {
+    fetchMetaData().catch((error) => console.log(error));
+
     if (beneficiarie) {
       fetchUpdateData().catch((error) => console.log(error));
 
@@ -235,9 +245,16 @@ const BeneficiaryForm: React.FC = ({
       setAge(age + "");
       formik.setFieldValue("age", age + "");
       setsexWorkerEnabled(age > 17);
+    } else {
+      const entryPoint =
+        formik.values.entry_point !== undefined
+          ? formik.values.entry_point
+          : loggedUser.entryPoint !== undefined
+          ? loggedUser.entryPoint
+          : loggedUser.entry_point;
+      formik.setFieldValue("entry_point", entryPoint);
+      onChangeEntryPoint(entryPoint);
     }
-
-    fetchMetaData().catch((error) => console.log(error));
 
     const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
       const status = !(state.isConnected && state.isInternetReachable);
@@ -2686,4 +2703,4 @@ BeneficiaryForm.propTypes = {
   beneficiaries_interventions: PropTypes.array.isRequired,
 };
 
-export default memo(enhance(BeneficiaryForm));
+export default enhance(BeneficiaryForm);

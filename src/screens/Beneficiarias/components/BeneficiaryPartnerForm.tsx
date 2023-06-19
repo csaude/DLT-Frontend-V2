@@ -69,7 +69,8 @@ const BeneficiaryPartnerForm: React.FC = ({
   const userDetailsCollection = database.get("user_details");
 
   const [value, setValue] = useState([]);
-  const [items] = useState([
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [items, setItems] = useState([
     { label: "Pais", value: "Pais" },
     { label: "Avos", value: "Avos" },
     { label: "Parceiro", value: "Parceiro" },
