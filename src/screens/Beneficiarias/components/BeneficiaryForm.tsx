@@ -130,8 +130,6 @@ const BeneficiaryForm: React.FC = ({
   const [isUsVisible, setUsVisible] = useState(false);
   const [isOffline, setIsOffline] = useState(false);
 
-  console.log("----------");
-
   const minBirthYear = new Date();
   minBirthYear.setFullYear(new Date().getFullYear() - 24);
 
@@ -237,7 +235,6 @@ const BeneficiaryForm: React.FC = ({
       setAge(age + "");
       formik.setFieldValue("age", age + "");
       setsexWorkerEnabled(age > 17);
-
     }
 
     fetchMetaData().catch((error) => console.log(error));
