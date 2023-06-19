@@ -56,7 +56,10 @@ import moment from "moment";
 import { useDispatch, useSelector } from "react-redux";
 import NetInfo from "@react-native-community/netinfo";
 import Spinner from "react-native-loading-spinner-overlay/lib";
-import { resolveBeneficiaryOfflineIds } from "../../services/beneficiaryService";
+import {
+  beneficiariesFetchCount,
+  resolveBeneficiaryOfflineIds,
+} from "../../services/beneficiaryService";
 import PropTypes from "prop-types";
 import { loadProvinces } from "../../store/provinceSlice";
 import { loadDistricts } from "../../store/districtSlice ";
@@ -66,6 +69,11 @@ import { fetchProvinces } from "../../services/provinceService";
 import { fetchDistricts } from "../../services/districtService";
 import { fetchLocalities } from "../../services/localityService";
 import { fetchNeighborhoods } from "../../services/neighborhoodsService";
+import { getBeneficiariesTotal } from "../../store/beneficiarySlice";
+import { referencesFetchCount } from "../../services/referenceService";
+import { getReferencesTotal } from "../../store/referenceSlice";
+import { beneficiariesInterventionsFetchCount } from "../../services/beneficiaryInterventionService";
+import { loadBeneficiariesInterventionsCounts } from "../../store/beneficiaryInterventionSlice";
 
 const BeneficiariesMain: React.FC = ({
   beneficiaries,
@@ -96,6 +104,17 @@ const BeneficiariesMain: React.FC = ({
   const totals = useSelector(
     (state: any) => state.beneficiaryIntervention.totals
   );
+
+  const getTotals = useCallback(async () => {
+    const countBen = await beneficiariesFetchCount();
+    dispatch(getBeneficiariesTotal(countBen));
+
+    const countRef = await referencesFetchCount();
+    dispatch(getReferencesTotal(countRef));
+
+    const beneficiaryIntervsCont = await beneficiariesInterventionsFetchCount();
+    dispatch(loadBeneficiariesInterventionsCounts(beneficiaryIntervsCont));
+  }, []);
 
   const syncronize = useCallback(() => {
     setLoading(true);
@@ -131,6 +150,7 @@ const BeneficiariesMain: React.FC = ({
 
   useEffect(() => {
     resolveBeneficiaryOfflineIds();
+    getTotals();
   }, []);
 
   const viewBeneficiaries = useCallback(

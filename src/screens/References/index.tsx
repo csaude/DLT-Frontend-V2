@@ -38,7 +38,16 @@ import NetInfo from "@react-native-community/netinfo";
 
 import styles from "./styles";
 import moment from "moment";
-import { resolveBeneficiaryOfflineIds } from "../../services/beneficiaryService";
+import {
+  beneficiariesFetchCount,
+  resolveBeneficiaryOfflineIds,
+} from "../../services/beneficiaryService";
+import { getBeneficiariesTotal } from "../../store/beneficiarySlice";
+import { beneficiariesInterventionsFetchCount } from "../../services/beneficiaryInterventionService";
+import { referencesFetchCount } from "../../services/referenceService";
+import { loadBeneficiariesInterventionsCounts } from "../../store/beneficiaryInterventionSlice";
+import { getReferencesTotal } from "../../store/referenceSlice";
+import { useDispatch } from "react-redux";
 
 const ReferencesMain: React.FC = ({
   beneficiaries,
@@ -56,6 +65,18 @@ const ReferencesMain: React.FC = ({
     ? loggedUser?.partners.id
     : loggedUser?.partner_id;
   const toast = useToast();
+  const dispatch = useDispatch();
+
+  const getTotals = useCallback(async () => {
+    const countBen = await beneficiariesFetchCount();
+    dispatch(getBeneficiariesTotal(countBen));
+
+    const countRef = await referencesFetchCount();
+    dispatch(getReferencesTotal(countRef));
+
+    const beneficiaryIntervsCont = await beneficiariesInterventionsFetchCount();
+    dispatch(loadBeneficiariesInterventionsCounts(beneficiaryIntervsCont));
+  }, []);
 
   const getBeneficiary = useCallback(
     (beneficiary_id: any) => {
@@ -410,6 +431,7 @@ const ReferencesMain: React.FC = ({
 
   useEffect(() => {
     resolveBeneficiaryOfflineIds();
+    getTotals();
   }, []);
 
   return (
