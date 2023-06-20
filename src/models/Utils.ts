@@ -4,7 +4,7 @@ export function calculateAge(value: any) {
   const today = new Date();
   const bday = moment(value).format("YYYY-MM-DD");
   const birthDate = new Date(bday);
-  const age = today.getFullYear() - birthDate.getFullYear();
+  let age = today.getFullYear() - birthDate.getFullYear();
   const m = today.getMonth() - birthDate.getMonth();
   if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
     age--;
