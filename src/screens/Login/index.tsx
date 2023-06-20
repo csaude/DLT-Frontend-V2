@@ -306,7 +306,7 @@ const Login: React.FC = ({ route }: any) => {
             setLoading(false);
             return showToast(
               "Restrição de Acesso",
-              "Apenas Enfermeiras, Connselheiras e Mentoras Podem Aceder a Aplicativo Móvel!"
+              "Apenas Enfermeiras, Conselheiras e Mentoras Podem Aceder a Aplicativo Móvel!"
             );
           }
         }
