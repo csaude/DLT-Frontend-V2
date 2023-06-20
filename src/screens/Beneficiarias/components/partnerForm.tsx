@@ -437,7 +437,7 @@ const PartnerForm: React.FC = ({ route, services, subServices }: any) => {
                                       md: "100%",
                                     }}
                                     value={text}
-                                    placeholder="dd-M-yyyy"
+                                    placeholder="dd-MM-yyyy"
                                   />
                                 </InputGroup>
                               </Stack>

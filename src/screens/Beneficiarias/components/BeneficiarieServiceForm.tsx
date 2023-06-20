@@ -831,7 +831,7 @@ const BeneficiarieServiceForm: React.FC = ({
                               md: "100%",
                             }}
                             value={text}
-                            placeholder="yyyy-M-dd"
+                            placeholder="yyyy-MM-dd"
                           />
                         </InputGroup>
                       </HStack>
