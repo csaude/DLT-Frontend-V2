@@ -1024,21 +1024,24 @@ const BeneficiaryForm: React.FC = ({
     formik.setFieldValue("vblt_lives_with", value?.toString());
   }, [value]);
 
-  const handleDataFromDatePickerComponent = (selectedDate, fieldName) => {
-    const tempDate = new Date(selectedDate);
-    formik.setFieldValue(fieldName, moment(tempDate).format("YYYY-MM-DD"));
+  const handleDataFromDatePickerComponent = useCallback(
+    (selectedDate, fieldName) => {
+      const tempDate = new Date(selectedDate);
+      formik.setFieldValue(fieldName, moment(tempDate).format("YYYY-MM-DD"));
 
-    if (fieldName == "date_of_birth") {
-      const age = calculateAge(selectedDate);
-      setAge(age + "");
-      formik.setFieldValue("age", age + "");
-      if (age > 17) {
-        setsexWorkerEnabled(true);
-      } else {
-        setsexWorkerEnabled(false);
+      if (fieldName == "date_of_birth") {
+        const age = calculateAge(selectedDate);
+        setAge(age + "");
+        formik.setFieldValue("age", age + "");
+        if (age > 17) {
+          setsexWorkerEnabled(true);
+        } else {
+          setsexWorkerEnabled(false);
+        }
       }
-    }
-  };
+    },
+    []
+  );
 
   return (
     <>
@@ -1141,9 +1144,9 @@ const BeneficiaryForm: React.FC = ({
                           onPressIn={() => {
                             /**None */
                           }}
-                          onBlur={formik.handleBlur("name")}
+                          onBlur={formik.handleBlur("date_of_birth")}
                           value={formik.values.date_of_birth}
-                          // onChangeText={formik.handleChange('date_of_birth')}
+                          onChangeText={formik.handleChange("date_of_birth")}
                           //value={moment(new Date(datePickerValue)).format('YYYY-MM-DD')}
                           placeholder="yyyy-MM-dd"
                         />
