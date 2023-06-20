@@ -1,10 +1,4 @@
-import React, {
-  useEffect,
-  useState,
-  useContext,
-  useCallback,
-  memo,
-} from "react";
+import React, { useEffect, useState, useContext, useCallback } from "react";
 import { View, KeyboardAvoidingView, ScrollView } from "react-native";
 import {
   Center,
@@ -45,8 +39,6 @@ import NetInfo from "@react-native-community/netinfo";
 
 const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
   const { reference, beneficiarie, intervention } = route.params;
-
-  console.log("-----intervention------", intervention);
 
   const loggedUser: any = useContext(Context);
   const toast = useToast();
@@ -102,17 +94,10 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     status: 1,
   };
 
-  const onChange = useCallback((event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setShow(false);
-    setDate(currentDate);
-    setText(selectedDate);
-  }, []);
-
   const handleDataFromDatePickerComponent = useCallback((selectedDate) => {
     selectedDate.replaceAll("/", "-");
     const currentDate = selectedDate || date;
-    setShow(false);
+    // setShow(false);
     setDate(currentDate);
 
     setText(selectedDate);
@@ -122,7 +107,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     setChecked(value);
   };
 
-  const onChangeEntryPoint = useCallback(async (value: any) => {
+  const onChangeEntryPoint = async (value: any) => {
     const uss = await database
       .get("us")
       .query(
@@ -132,18 +117,18 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
       .fetch();
     const ussSerialied = uss.map((item) => item._raw);
     setUs(ussSerialied);
-  }, []);
+  };
 
-  const onChangeUs = useCallback(async (value: any) => {
+  const onChangeUs = async (value: any) => {
     const getUsersList = await database
       .get("users")
-      .query(Q.where("us_ids", Q.like(`%${value}%`)), Q.where("status", 1))
+      .query(Q.where("us_ids", Q.like(`%${value}%`)))
       .fetch();
     const usersSerialized = getUsersList.map((item) => item._raw);
     setUsers(usersSerialized);
-  }, []);
+  };
 
-  const validate = useCallback((values: any) => {
+  const validate = (values: any) => {
     const errors: any = {};
 
     if (!values.service_id) {
@@ -179,9 +164,9 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     }
 
     return errors;
-  }, []);
+  };
 
-  const validateBeneficiaryIntervention = useCallback(async (values: any) => {
+  const validateBeneficiaryIntervention = async (values: any) => {
     const benefInterv = await database
       .get("beneficiaries_interventions")
       .query(
@@ -201,7 +186,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     } else {
       onSubmit(values);
     }
-  }, []);
+  };
 
   useEffect(() => {
     const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
@@ -222,7 +207,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
       : "";
   }, [isSync]);
 
-  const onSubmit = useCallback(async (values: any) => {
+  const onSubmit = async (values: any) => {
     setLoading(true);
 
     await database.write(async () => {
@@ -287,11 +272,11 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     });
 
     setLoading(false);
-  }, []);
+  };
 
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-  const syncronize = useCallback(() => {
+  const syncronize = () => {
     if (!isOffline) {
       sync({ username: loggedUser.username })
         .then(() => setIsSync(true))
@@ -304,9 +289,9 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
           })
         );
     }
-  }, []);
+  };
 
-  const getPartner = useCallback(async () => {
+  const getPartner = async () => {
     const partner_id =
       loggedUser.partner_id !== undefined
         ? loggedUser.partner_id
@@ -317,16 +302,16 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
       .fetch();
     const partnerSerialied = partners.map((item) => item._raw)[0];
     setOrganization(partnerSerialied);
-  }, []);
+  };
 
-  const getUserToNotify = useCallback(async () => {
+  const getUserToNotify = async () => {
     const userToNotify = await database
       .get("users")
       .query(Q.where("online_id", parseInt(reference.notify_to)))
       .fetch();
     const userSerialied = userToNotify.map((item) => item._raw)[0];
     setNotifyTo(userSerialied);
-  }, []);
+  };
 
   useEffect(() => {
     getUserToNotify();
@@ -366,22 +351,21 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     }
   }, [onChangeUs, beneficiarie]);
 
-  const validateLoggedUser = useCallback(async () => {
-    const userDetailsQ = await userDetailsCollection
-      .query(Q.where("user_id", loggedUser.online_id))
-      .fetch();
-    const userDetailRaw = userDetailsQ[0]?._raw;
-    const isMentora = userDetailRaw?.["profile_id"] == MENTOR ? true : false;
-
-    if (isMentora) {
-      setEntryPoints([
-        { id: "2", name: "CM" },
-        { id: "3", name: "ES" },
-      ]);
-    }
-  }, []);
-
   useEffect(() => {
+    const validateLoggedUser = async () => {
+      const userDetailsQ = await userDetailsCollection
+        .query(Q.where("user_id", loggedUser.online_id))
+        .fetch();
+      const userDetailRaw = userDetailsQ[0]?._raw;
+      const isMentora = userDetailRaw?.["profile_id"] == MENTOR ? true : false;
+
+      if (isMentora) {
+        setEntryPoints([
+          { id: "2", name: "CM" },
+          { id: "3", name: "ES" },
+        ]);
+      }
+    };
     validateLoggedUser().catch((err) => console.error(err));
   }, []);
 
@@ -580,16 +564,6 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
 
                     <FormControl isRequired isInvalid={"date" in errors}>
                       <FormControl.Label>Data Benefício</FormControl.Label>
-
-                      {show && (
-                        <DatePicker
-                          mode="calendar"
-                          maximumDate={getToday()}
-                          onSelectedChange={(date) =>
-                            onChange(null, date.replaceAll("/", "-"))
-                          }
-                        />
-                      )}
                       <HStack alignItems="center">
                         <InputGroup
                           w={{
@@ -605,12 +579,12 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                               minDate={new Date("2017-01-01")}
                               maxDate={new Date()}
                               currentDate={
-                                intervention?.service.service_id
-                                  ? new Date(intervention.date_created)
+                                intervention?.date
+                                  ? new Date(intervention?.date)
                                   : new Date()
                               }
                               isEdit={
-                                intervention?.service.service_id ? true : false
+                                intervention && intervention.id ? true : false
                               }
                             />
                           </InputLeftAddon>
@@ -629,6 +603,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                         {errors.date}
                       </FormControl.ErrorMessage>
                     </FormControl>
+
                     <FormControl isRequired isInvalid={"provider" in errors}>
                       <FormControl.Label>Provedor do Serviço</FormControl.Label>
 
@@ -712,4 +687,4 @@ const enhance = withObservables([], () => ({
   subServices: database.collections.get("sub_services").query().observe(),
 }));
 
-export default memo(enhance(ServicesForm));
+export default enhance(ServicesForm);
