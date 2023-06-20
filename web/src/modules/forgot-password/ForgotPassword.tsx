@@ -10,7 +10,7 @@ import { useFormik } from "formik";
 import { Form, InputGroup } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import * as AuthService from '../../services/auth';
+import * as AuthService from "../../services/auth";
 import { verifyUserByUsername } from "../../utils/login";
 import { Alert } from "antd";
 
