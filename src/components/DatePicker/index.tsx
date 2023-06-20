@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from "react";
-import { Platform } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Icon } from "native-base";
 import { MaterialIcons } from "@native-base/icons";
@@ -14,40 +13,19 @@ const MyDatePicker = ({
   isEdit,
 }) => {
   const [date, setDate] = useState(currentDate);
-  const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
 
-  const onChange = useCallback(
-    (event, selectedDate) => {
-      console.log("---show onChange---", show);
-      if (event.type === "dismissed" && !isEdit) {
-        setDate(new Date());
-      } else {
-        const formattedDate = moment(selectedDate).format("YYYY-MM-DD");
-        setDate(selectedDate);
-        onDateSelection(formattedDate);
-      }
-      setShow(false);
-    },
-    [isEdit, onDateSelection, show]
-  );
-
-  const showMode = useCallback(
-    (currentMode) => {
-      console.log("---show showMode---", show);
-      if (Platform.OS === "android") {
-        setShow(false);
-        // for iOS, add a button that closes the picker
-      }
-      setMode(currentMode);
-    },
-    [show]
-  );
-
-  const showDatepicker = useCallback(() => {
-    showMode("date");
-    setShow(true);
-  }, [showMode]);
+  const onChange = useCallback((event, selectedDate) => {
+    console.log("---show onChange---", show);
+    if (event.type === "dismissed" && !isEdit) {
+      setDate(new Date());
+    } else {
+      const formattedDate = moment(selectedDate).format("YYYY-MM-DD");
+      setDate(selectedDate);
+      onDateSelection(formattedDate);
+    }
+    setShow(false);
+  }, []);
 
   return (
     <>
@@ -56,14 +34,13 @@ const MyDatePicker = ({
         name="mode-edit"
         size={6}
         color="gray.600"
-        onPress={showDatepicker}
+        onPress={() => setShow(true)}
       />
 
       {show && (
         <DateTimePicker
           testID="dateTimePicker"
           value={date}
-          mode={mode}
           is24Hour={true}
           minimumDate={minDate}
           maximumDate={maxDate}
