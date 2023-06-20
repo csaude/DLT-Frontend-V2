@@ -10,6 +10,7 @@ import { useFormik } from "formik";
 import { Form, InputGroup } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+import * as AuthService from '../../services/auth';
 import { verifyUserByUsername } from "../../utils/login";
 import { Alert } from "antd";
 
@@ -18,9 +19,10 @@ const ForgotPassword = () => {
   const [passwordType, setPasswordType] = useState("password");
   const navigate = useNavigate();
 
-  const updatePassword = async () => {
+  const updatePassword = async (username: string, password: string) => {
     try {
       setAuthLoading(true);
+      await AuthService.updatePassword(username, password);
       toast.success("Redefinição de senha submetida com sucesso!");
       navigate("/");
     } catch (error) {
@@ -67,7 +69,7 @@ const ForgotPassword = () => {
     onSubmit: async (values) => {
       try {
         await verifyUserByUsername(values.username);
-        updatePassword();
+        updatePassword(values.username, values.password);
         toast.success("Um email de confirmação foi enviado!");
       } catch (error) {
         const errSt = JSON.stringify(error);
