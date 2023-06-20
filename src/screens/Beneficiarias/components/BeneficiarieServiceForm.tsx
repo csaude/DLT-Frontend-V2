@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useCallback } from "react";
 import { View, KeyboardAvoidingView, ScrollView } from "react-native";
 import {
   Center,
@@ -98,14 +98,14 @@ const BeneficiarieServiceForm: React.FC = ({
     return () => removeNetInfoSubscription();
   }, []);
 
-  const handleDataFromDatePickerComponent = (selectedDate) => {
+  const handleDataFromDatePickerComponent = useCallback((selectedDate) => {
     selectedDate.replaceAll("/", "-");
     const currentDate = selectedDate || date;
     // setShow(false);
     setDate(currentDate);
 
     setText(selectedDate);
-  };
+  }, []);
 
   const onChangeEntryPoint = async (value: any) => {
     const uss = await database
@@ -122,7 +122,7 @@ const BeneficiarieServiceForm: React.FC = ({
   const onChangeUs = async (value: any) => {
     const getUsersList = await database
       .get("users")
-      .query(Q.where("us_ids", Q.like(`%${value}%`)))
+      .query(Q.where("us_ids", Q.like(`%${value}%`)), Q.where("status", 1))
       .fetch();
     const usersSerialized = getUsersList.map((item) => item._raw);
     setUsers(usersSerialized);

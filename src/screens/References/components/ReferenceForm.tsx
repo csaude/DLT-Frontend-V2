@@ -309,7 +309,8 @@ const ReferenceForm: React.FC = ({ route }: any) => {
       .get("users")
       .query(
         Q.where("us_ids", Q.like(`%${value}%`)),
-        Q.where("partner_id", formik.values.partner_id)
+        Q.where("partner_id", formik.values.partner_id),
+        Q.where("status", 1)
       )
       .fetch();
     const usersSerialized = getUsersList.map((item) => item._raw);
@@ -437,10 +438,10 @@ const ReferenceForm: React.FC = ({ route }: any) => {
     dispatch(getReferencesTotal(countRef));
   };
 
-  const handleDataFromDatePickerComponent = (selectedDate) => {
+  const handleDataFromDatePickerComponent = useCallback((selectedDate) => {
     const tempDate = new Date(selectedDate);
     formik.setFieldValue("date", moment(tempDate).format("YYYY-MM-DD"));
-  };
+  }, []);
 
   const onRemoveService = (value: any) => {
     setReferServices((refserv) =>

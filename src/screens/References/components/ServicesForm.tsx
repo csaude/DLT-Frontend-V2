@@ -137,7 +137,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
   const onChangeUs = useCallback(async (value: any) => {
     const getUsersList = await database
       .get("users")
-      .query(Q.where("us_ids", Q.like(`%${value}%`)))
+      .query(Q.where("us_ids", Q.like(`%${value}%`)), Q.where("status", 1))
       .fetch();
     const usersSerialized = getUsersList.map((item) => item._raw);
     setUsers(usersSerialized);
