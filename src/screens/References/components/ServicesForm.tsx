@@ -15,7 +15,6 @@ import {
   InputLeftAddon,
   Checkbox,
 } from "native-base";
-import DatePicker, { getToday } from "react-native-modern-datepicker";
 import { Picker } from "@react-native-picker/picker";
 import withObservables from "@nozbe/with-observables";
 import { database } from "../../../database";
