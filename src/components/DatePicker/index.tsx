@@ -16,7 +16,6 @@ const MyDatePicker = ({
   const [show, setShow] = useState(false);
 
   const onChange = useCallback((event, selectedDate) => {
-    console.log("---show onChange---", show);
     if (event.type === "dismissed" && !isEdit) {
       setDate(new Date());
     } else {

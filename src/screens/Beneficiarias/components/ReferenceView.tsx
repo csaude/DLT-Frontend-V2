@@ -66,7 +66,6 @@ const ReferenceView: React.FC = ({ route }: any) => {
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const refListSerialized = getRefList.map((item) => item._raw);
-      //console.log("references_services: ",refListSerialized);
       //setReferences(refListSerialized);
     };
 
@@ -80,7 +79,6 @@ const ReferenceView: React.FC = ({ route }: any) => {
   }, []);
 
   const renderItem = (data: any) => {
-    //console.log(data.item);
     return (
       <TouchableHighlight style={styles.rowFront} underlayColor={"#AAA"}>
         <HStack width="100%" px={4} flex={1} space={5} alignItems="center">

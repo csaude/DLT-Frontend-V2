@@ -778,7 +778,7 @@ const BeneficiariesMain: React.FC = ({
                   color="muted.700"
                 />
               }
-              placeholder="Pesquisar"
+              placeholder="Pesquisar NUI"
               style={{ borderRadius: 45 }}
             />
           </Box>

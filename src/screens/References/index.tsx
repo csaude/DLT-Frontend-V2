@@ -455,7 +455,7 @@ const ReferencesMain: React.FC = ({
                 color="muted.700"
               />
             }
-            placeholder="Search"
+            placeholder="Pesquisar NUI "
             style={{ borderRadius: 45 }}
           />
         </Box>

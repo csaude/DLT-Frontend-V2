@@ -33,7 +33,6 @@ import { Context } from "../../../routes/DrawerNavigator";
 import styles from "./styles";
 
 const PartnerForm: React.FC = ({ route, services, subServices }: any) => {
-  // console.log(route.params);
   const { beneficiarie, intervention } = route.params;
 
   const [date, setDate] = useState(new Date());
@@ -204,7 +203,6 @@ const PartnerForm: React.FC = ({ route, services, subServices }: any) => {
     setLoading(true);
 
     const isEdit = intervention && intervention.id; // new record if it has id
-    //console.log(intervention, isEdit);
 
     const newObject = await database.write(async () => {
       if (isEdit) {
