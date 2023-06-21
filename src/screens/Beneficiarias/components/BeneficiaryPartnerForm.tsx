@@ -34,10 +34,11 @@ import { getFormatedDate } from "react-native-modern-datepicker";
 import { Context } from "../../../routes/DrawerNavigator";
 import { calculateAge } from "../../../models/Utils";
 import styles from "./styles";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import { MENTOR } from "../../../utils/constants";
 import MyDatePicker from "../../../components/DatePicker";
+import { loadViewedBeneficiaryGender } from "../../../store/beneficiarySlice";
 
 const BeneficiaryPartnerForm: React.FC = ({
   route,
@@ -67,6 +68,7 @@ const BeneficiaryPartnerForm: React.FC = ({
 
   const { beneficiary } = route.params;
   const userDetailsCollection = database.get("user_details");
+  const dispatch = useDispatch();
 
   const [value, setValue] = useState([]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -372,6 +374,7 @@ const BeneficiaryPartnerForm: React.FC = ({
       // // save the Beneficiary locally
       setLoading(true);
       const ben: any = await handleSaveBeneficiary();
+      dispatch(loadViewedBeneficiaryGender(ben.gender));
 
       setBeneficairie(ben?._raw);
       setNewNui(ben?._raw.nui);

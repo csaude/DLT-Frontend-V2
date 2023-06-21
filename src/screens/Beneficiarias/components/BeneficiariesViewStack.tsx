@@ -7,6 +7,7 @@ import DadosPessoaisView from "./DadosPessoaisView";
 import InterventionsView from "./InterventionsView";
 import ReferenceView from "./ReferenceView";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { useSelector } from "react-redux";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function VulnerabilitiesScreen() {
@@ -20,6 +21,9 @@ function VulnerabilitiesScreen() {
 const Tab = createBottomTabNavigator();
 
 function BeneficiariesViewStack({ route }) {
+  const beneficiaryViewed = useSelector(
+    (state: any) => state.beneficiary.viewedBeneficiaryGender
+  );
   return (
     <Tab.Navigator
       initialRouteName="Dados Pessoais"
@@ -28,7 +32,11 @@ function BeneficiariesViewStack({ route }) {
           let iconName;
 
           if (route.name === "Dados Pessoais") {
-            iconName = focused ? "woman" : "woman-outline";
+            if (beneficiaryViewed === "1") {
+              iconName = focused ? "man" : "man-outline";
+            } else if (beneficiaryViewed === "2") {
+              iconName = focused ? "woman" : "woman-outline";
+            }
           } else if (route.name === "Vulnerabilidades") {
             iconName = focused ? "pulse" : "pulse-outline";
           } else if (route.name === "Serviços") {

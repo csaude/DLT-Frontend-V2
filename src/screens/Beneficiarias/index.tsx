@@ -59,7 +59,10 @@ import {
   beneficiariesFetchCount,
   resolveBeneficiaryOfflineIds,
 } from "../../services/beneficiaryService";
-import { getBeneficiariesTotal } from "../../store/beneficiarySlice";
+import {
+  getBeneficiariesTotal,
+  loadViewedBeneficiaryGender,
+} from "../../store/beneficiarySlice";
 import { loadBeneficiariesInterventionsCounts } from "../../store/beneficiaryInterventionSlice";
 import { referencesFetchCount } from "../../services/referenceService";
 import { getReferencesTotal } from "../../store/referenceSlice";
@@ -146,6 +149,8 @@ const BeneficiariesMain: React.FC = ({
 
   const viewBeneficiaries = async (data: any) => {
     const beneficiarie = data.item?._raw;
+
+    dispatch(loadViewedBeneficiaryGender(beneficiarie.gender));
 
     //let items = beneficiarie.references_a.split(/[\[(, )\]]/); //split string into an array of elements
     //let referenceIdArray = items.filter(item => item.trim().length > 0); // remove white space elements
