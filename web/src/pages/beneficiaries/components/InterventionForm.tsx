@@ -79,10 +79,23 @@ const InterventionForm = ({ record, beneficiary }: any) => {
       setUser(user);
       setUsers(listUser);
 
-      const entryPoint = record ? record.entryPoint : user?.entryPoint;
-      const provider = record
-        ? record.provider
-        : user.name + " " + user.surname;
+      let entryPoint;
+      let provider;
+      let codeServiceType;
+
+      if (record) {
+        entryPoint = record.entryPoint;
+        provider = record.provider;
+        codeServiceType = record.subServices.service.serviceType;
+      } else {
+        entryPoint = user?.entryPoint;
+        provider = user.name + " " + user.surname;
+        codeServiceType = user.partners.partnerType;
+      }
+
+      const serviceType = codeServiceType === "1" ? "CLINIC" : "COMMUNITY";
+      form.setFieldsValue({ areaServicos: serviceType });
+      onChangeAreaServiço(serviceType);
 
       if (entryPoint != undefined) {
         form.setFieldsValue({ entryPoint: entryPoint });
