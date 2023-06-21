@@ -41,7 +41,8 @@ const ReferenceInterventionForm = ({ form, reference, refServices }: any) => {
   const [users, setUsers] = React.useState<any>([]);
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [refService] = useState<any>("");
+  const [prevRefService, setPrevRefService] = useState<any>();
+  const [refService, setRefService] = useState<any>("");
   const index = useSelector((state: any) => state.referenceIntervention.index);
   const remarks = useSelector(
     (state: any) => state.referenceIntervention.remarks

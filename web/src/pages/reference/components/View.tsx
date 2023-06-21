@@ -70,10 +70,6 @@ const ViewReferencePanel = ({ selectedReference }) => {
     });
   };
 
-  const goToNextIntervention = () => {
-    setVisible(true);
-  };
-
   const onChange = (e: CheckboxChangeEvent, value) => {
     if (e.target.checked) {
       setSelect([...select, value]);
@@ -144,7 +140,8 @@ const ViewReferencePanel = ({ selectedReference }) => {
   }, []);
 
   const handleAttendServicesSequence = () => {
-    if (refServices[index + 1] === undefined) {
+    setVisible(true);
+    if (requiredServices[index + 1] === undefined) {
       setVisible(false);
     } else {
       dispatch(updateNextServiceIndex());
@@ -202,7 +199,6 @@ const ViewReferencePanel = ({ selectedReference }) => {
 
         setVisible(false);
 
-        goToNextIntervention();
         handleAttendServicesSequence();
       })
       .catch(() => {
