@@ -48,8 +48,8 @@ const DadosReferenciaView: React.FC = ({ route }: any) => {
                 <Divider />
                 <Text style={styles.txtLabelInfo}>
                   {" "}
-                  <Text style={styles.txtLabel}> Data: </Text>{" "}
-                  {reference?.date_created}{" "}
+                  <Text style={styles.txtLabel}> Data de Emissão: </Text>{" "}
+                  {reference?.date}{" "}
                 </Text>
 
                 <Text style={styles.txtLabelInfo}>

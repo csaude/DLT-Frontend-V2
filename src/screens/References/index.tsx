@@ -292,9 +292,7 @@ const ReferencesMain: React.FC = ({
             data.item?._raw._status === "updated" ? (
               <>
                 <Text color="coolGray.500">
-                  {moment(new Date(data.item.date_created)).format(
-                    "DD-MM-YYYY"
-                  )}
+                  {moment(new Date(data.item.date)).format("DD-MM-YYYY")}
                 </Text>
 
                 <HStack>
@@ -311,9 +309,7 @@ const ReferencesMain: React.FC = ({
             ) : (
               <>
                 <Text color="coolGray.500">
-                  {moment(new Date(data.item.date_created)).format(
-                    "DD-MM-YYYY"
-                  )}
+                  {moment(new Date(data.item.date)).format("DD-MM-YYYY")}
                 </Text>
                 <HStack>
                   <View style={{ paddingTop: 5 }}>
