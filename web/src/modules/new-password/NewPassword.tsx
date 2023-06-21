@@ -12,6 +12,7 @@ import { Alert } from "antd";
 import * as Yup from "yup";
 
 import { Form, InputGroup } from "react-bootstrap";
+import * as AuthService from "../../services/auth";
 import "./index.css";
 
 const NewPassword = () => {
@@ -21,9 +22,10 @@ const NewPassword = () => {
 
   const navigate = useNavigate();
 
-  const setNewPassword = async () => {
+  const setNewPassword = async (username: string, newPassword: string) => {
     try {
       setAuthLoading(true);
+      await AuthService.newPassword(username, newPassword);
       toast.success("Password alterado com sucesso!");
       setAuthLoading(false);
       navigate("/");
@@ -53,8 +55,8 @@ const NewPassword = () => {
         .oneOf([Yup.ref("password"), null], "As senhas devem corresponder")
         .required("Obrigatório"),
     }),
-    onSubmit: async () => {
-      setNewPassword();
+    onSubmit: async (values: any) => {
+      setNewPassword(values.userName, values.password);
     },
   });
 
