@@ -1,29 +1,19 @@
 import React, { useCallback, useState } from "react";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import { Icon } from "native-base";
 import { MaterialIcons } from "@native-base/icons";
 import moment from "moment";
 import PropTypes from "prop-types";
+import DatePicker from "react-native-date-picker";
 
-const MyDatePicker = ({
-  onDateSelection,
-  minDate,
-  maxDate,
-  currentDate,
-  isEdit,
-}) => {
+const MyDatePicker = ({ onDateSelection, minDate, maxDate, currentDate }) => {
   const [date, setDate] = useState(currentDate);
-  const [show, setShow] = useState(false);
+  const [open, setOpen] = useState(false);
 
-  const onChange = useCallback((event, selectedDate) => {
-    if (event.type === "dismissed" && !isEdit) {
-      setDate(new Date());
-    } else {
-      const formattedDate = moment(selectedDate).format("YYYY-MM-DD");
-      setDate(selectedDate);
-      onDateSelection(formattedDate);
-    }
-    setShow(false);
+  const handleOnConfirm = useCallback((selectedDate) => {
+    setOpen(false);
+    setDate(selectedDate);
+    const formattedDate = moment(selectedDate).format("YYYY-MM-DD");
+    onDateSelection(formattedDate);
   }, []);
 
   return (
@@ -33,19 +23,22 @@ const MyDatePicker = ({
         name="mode-edit"
         size={6}
         color="gray.600"
-        onPress={() => setShow(true)}
+        onPress={() => setOpen(true)}
       />
 
-      {show && (
-        <DateTimePicker
-          testID="dateTimePicker"
-          value={date}
-          is24Hour={true}
-          minimumDate={minDate}
-          maximumDate={maxDate}
-          onChange={onChange}
-        />
-      )}
+      <DatePicker
+        mode="date"
+        minimumDate={minDate}
+        maximumDate={maxDate}
+        modal
+        open={open}
+        date={date}
+        onConfirm={(date) => handleOnConfirm(date)}
+        onCancel={() => {
+          setOpen(false);
+          setDate(new Date()); //to review
+        }}
+      />
     </>
   );
 };
@@ -55,7 +48,6 @@ MyDatePicker.propTypes = {
   minDate: PropTypes.instanceOf(Date).isRequired,
   maxDate: PropTypes.instanceOf(Date).isRequired,
   currentDate: PropTypes.instanceOf(Date).isRequired,
-  isEdit: PropTypes.bool.isRequired,
 };
 
 export default MyDatePicker;

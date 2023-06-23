@@ -722,7 +722,6 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                           minDate={new Date("2017-01-01")}
                           maxDate={new Date()}
                           currentDate={new Date()}
-                          isEdit={false}
                         />
                       </InputLeftAddon>
                       <Input
