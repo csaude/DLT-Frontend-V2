@@ -1,4 +1,4 @@
-import {createSlice} from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 export interface AuthState {
   isLoggedIn: boolean;
@@ -8,33 +8,33 @@ export interface AuthState {
 }
 
 const initialState: AuthState = {
-  isLoggedIn: !!localStorage.getItem('token'),
-  token: localStorage.getItem('token'),
+  isLoggedIn: !!localStorage.getItem("token"),
+  token: localStorage.getItem("token"),
   user: {
-    provinces : []
+    provinces: [],
   },
   currentUser: {
-    email: 'mail@example.com',
+    email: "mail@example.com",
     picture: null,
     name: null,
     surname: null,
-    dateCreated: null
-  }
+    dateCreated: null,
+  },
 };
 
 export const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
-    loginUser: (state, {payload}) => {
-      localStorage.setItem('token', payload?.token);
+    loginUser: (state, { payload }) => {
+      localStorage.setItem("token", payload?.token);
       console.log(payload);
       state.user = payload?.account;
       state.user.provinces = payload?.account.provinces;
       state.isLoggedIn = true;
       state.token = payload?.token;
-      localStorage.setItem('name', payload?.account.name);
-      localStorage.setItem('surname', payload?.account.surname);
+      localStorage.setItem("name", payload?.account.name);
+      localStorage.setItem("surname", payload?.account.surname);
     },
     logoutUser: (state) => {
       localStorage.clear();
@@ -42,12 +42,12 @@ export const authSlice = createSlice({
       state.isLoggedIn = false;
       state.token = null;
     },
-    loadUser: (state, {payload}) => {
+    loadUser: (state, { payload }) => {
       state.currentUser = payload;
     },
-  }
+  },
 });
 
-export const {loginUser, logoutUser, loadUser} = authSlice.actions;
+export const { loginUser, logoutUser, loadUser } = authSlice.actions;
 
 export default authSlice.reducer;

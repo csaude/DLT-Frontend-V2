@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from "react";
 
 export interface DropdownMenuProps {
   size: string;
@@ -6,16 +6,16 @@ export interface DropdownMenuProps {
   containerTag: string;
 }
 
-const DropdownMenu = ({size, children, containerTag}: DropdownMenuProps) => {
+const DropdownMenu = ({ size, children, containerTag }: DropdownMenuProps) => {
   const dropdownMenuRef = useRef<any>(null);
-  const [styles, setStyles] = useState({left: 'inherit', right: `0px`});
+  const [styles, setStyles] = useState({ left: "inherit", right: "0px" });
   const [classes, setClasses] = useState(
     `dropdown-menu dropdown-menu-right dropdown-menu-${size} show`
   );
 
   const geWindowOffsetWidth = () => {
     const root: HTMLElement | null =
-      document && document.getElementById('root');
+      document && document.getElementById("root");
     if (root) {
       return root.offsetWidth;
     }
@@ -28,26 +28,26 @@ const DropdownMenu = ({size, children, containerTag}: DropdownMenuProps) => {
     if (dropdownMenuElement) {
       const windowWidth = geWindowOffsetWidth();
       const offsetLeft = dropdownMenuElement.getBoundingClientRect().left;
-      const {offsetWidth} = dropdownMenuElement;
+      const { offsetWidth } = dropdownMenuElement;
       const visiblePart = windowWidth - offsetLeft;
 
       if (offsetLeft < 0) {
         setStyles({
-          left: 'inherit',
-          right: `${offsetLeft - 5}px`
+          left: "inherit",
+          right: `${offsetLeft - 5}px`,
         });
       } else if (visiblePart < offsetWidth) {
-        setStyles({left: 'inherit', right: `0px`});
+        setStyles({ left: "inherit", right: "0px" });
       }
     }
   }, [dropdownMenuRef.current, size]);
 
-  if (containerTag === 'ul') {
+  if (containerTag === "ul") {
     return (
       <ul
         ref={dropdownMenuRef}
         className={classes}
-        style={{...styles, padding: 0}}
+        style={{ ...styles, padding: 0 }}
       >
         {children}
       </ul>
@@ -58,7 +58,7 @@ const DropdownMenu = ({size, children, containerTag}: DropdownMenuProps) => {
     <div
       ref={dropdownMenuRef}
       className={classes}
-      style={{...styles, padding: 0}}
+      style={{ ...styles, padding: 0 }}
     >
       {children}
     </div>

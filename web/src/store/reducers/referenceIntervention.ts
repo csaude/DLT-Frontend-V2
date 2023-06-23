@@ -1,31 +1,32 @@
-import {createSlice} from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 export interface ReferenceInterventionState {
   index?: any;
-  remarks?: any
+  remarks?: any;
 }
 
 const initialState: ReferenceInterventionState = {
   index: 0,
-  remarks:''
+  remarks: "",
 };
 
 export const referenceInterventionSlice = createSlice({
-  name: 'referenceIntervention',
+  name: "referenceIntervention",
   initialState,
   reducers: {
     updateNextServiceIndex: (state) => {
-      state.index = state.index+1;
+      state.index = state.index + 1;
     },
     resetNextServiceIndex: (state) => {
       state.index = 0;
     },
-    loadRemarks: (state, {payload})=>{
-      state.remarks = payload
-    }
-  }
+    loadRemarks: (state, { payload }) => {
+      state.remarks = payload;
+    },
+  },
 });
 
-export const {updateNextServiceIndex, resetNextServiceIndex, loadRemarks} = referenceInterventionSlice.actions;
+export const { updateNextServiceIndex, resetNextServiceIndex, loadRemarks } =
+  referenceInterventionSlice.actions;
 
 export default referenceInterventionSlice.reducer;

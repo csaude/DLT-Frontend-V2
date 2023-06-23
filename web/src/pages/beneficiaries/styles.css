@@ -1,11 +1,9 @@
-@import 'antd/dist/antd.css';
+@import "antd/dist/antd.css";
 
-
-.siteDrawer{
-    height:420px;
-    overflow: hidden;
-    position: relative;
-
+.siteDrawer {
+  height: 420px;
+  overflow: hidden;
+  position: relative;
 }
 
 .site-drawer-render-in-current-wrapper {

@@ -1,18 +1,18 @@
-import React, {useState} from 'react';
-import {Link, useNavigate} from 'react-router-dom';
-import {useDispatch} from 'react-redux';
-import {toast} from 'react-toastify';
-import {useFormik} from 'formik';
-import {useTranslation} from 'react-i18next';
-import * as Yup from 'yup';
-import {loginUser} from '@store/reducers/auth';
-import {Button, Checkbox} from '@components';
-import {faEnvelope, faLock} from '@fortawesome/free-solid-svg-icons';
-import {setWindowClass} from '@app/utils/helpers';
-import {Form, InputGroup} from 'react-bootstrap';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+import { useFormik } from "formik";
+import { useTranslation } from "react-i18next";
+import * as Yup from "yup";
+import { loginUser } from "@store/reducers/auth";
+import { Button, Checkbox } from "@components";
+import { faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
+import { setWindowClass } from "@app/utils/helpers";
+import { Form, InputGroup } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import * as AuthService from '../../services/auth';
+import * as AuthService from "../../services/auth";
 
 const Register = () => {
   const [isAuthLoading, setAuthLoading] = useState(false);
@@ -29,10 +29,10 @@ const Register = () => {
       const token = await AuthService.registerByAuth(email, password);
       setAuthLoading(false);
       dispatch(loginUser(token));
-      toast.success('Registration is success');
-      navigate('/');
+      toast.success("Registration is success");
+      navigate("/");
     } catch (error) {
-      toast.error( 'Failed');
+      toast.error("Failed");
       setAuthLoading(false);
     }
   };
@@ -43,10 +43,10 @@ const Register = () => {
       const token = await AuthService.registerByGoogle();
       setGoogleAuthLoading(false);
       dispatch(loginUser(token));
-      toast.success('Authentication is succeed!');
-      navigate('/');
+      toast.success("Authentication is succeed!");
+      navigate("/");
     } catch (error) {
-      toast.error( 'Failed');
+      toast.error("Failed");
       setGoogleAuthLoading(false);
     }
   };
@@ -58,44 +58,44 @@ const Register = () => {
       const token = await AuthService.registerByFacebook();
       setFacebookAuthLoading(false);
       dispatch(loginUser(token));
-      toast.success('Register is succeeded!');
-      navigate('/');
+      toast.success("Register is succeeded!");
+      navigate("/");
     } catch (error) {
       setFacebookAuthLoading(false);
-      toast.error( 'Failed');
+      toast.error("Failed");
     }
   };
 
-  const {handleChange, values, handleSubmit, touched, errors} = useFormik({
+  const { handleChange, values, handleSubmit, touched, errors } = useFormik({
     initialValues: {
-      email: '',
-      password: '',
-      passwordRetype: ''
+      email: "",
+      password: "",
+      passwordRetype: "",
     },
     validationSchema: Yup.object({
-      email: Yup.string().email('Invalid email address').required('Required'),
+      email: Yup.string().email("Invalid email address").required("Required"),
       password: Yup.string()
-        .min(5, 'Must be 5 characters or more')
-        .max(30, 'Must be 30 characters or less')
-        .required('Required'),
+        .min(5, "Must be 5 characters or more")
+        .max(30, "Must be 30 characters or less")
+        .required("Required"),
       passwordRetype: Yup.string()
-        .min(5, 'Must be 5 characters or more')
-        .max(30, 'Must be 30 characters or less')
-        .required('Required')
-        .when('password', {
+        .min(5, "Must be 5 characters or more")
+        .max(30, "Must be 30 characters or less")
+        .required("Required")
+        .when("password", {
           is: (val: string) => !!(val && val.length > 0),
           then: Yup.string().oneOf(
-            [Yup.ref('password')],
-            'Both password need to be the same'
-          )
-        })
+            [Yup.ref("password")],
+            "Both password need to be the same"
+          ),
+        }),
     }),
     onSubmit: (values) => {
       register(values.email, values.password);
-    }
+    },
   });
 
-  setWindowClass('hold-transition register-page');
+  setWindowClass("hold-transition register-page");
 
   return (
     <div className="register-box">
@@ -107,7 +107,7 @@ const Register = () => {
           </Link>
         </div>
         <div className="card-body">
-          <p className="login-box-msg">{t('register.registerNew')}</p>
+          <p className="login-box-msg">{t("register.registerNew")}</p>
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <InputGroup className="mb-3">
@@ -202,7 +202,7 @@ const Register = () => {
                   disabled={isFacebookAuthLoading || isGoogleAuthLoading}
                 >
                   {/* @ts-ignore */}
-                  {t('register.label')}
+                  {t("register.label")}
                 </Button>
               </div>
             </div>
@@ -216,8 +216,8 @@ const Register = () => {
               disabled={isAuthLoading || isGoogleAuthLoading}
             >
               {/* @ts-ignore */}
-              {t('login.button.signUp.social', {
-                what: 'Facebook'
+              {t("login.button.signUp.social", {
+                what: "Facebook",
               })}
             </Button>
             <Button
@@ -229,11 +229,11 @@ const Register = () => {
               disabled={isAuthLoading || isFacebookAuthLoading}
             >
               {/* @ts-ignore */}
-              {t('login.button.signUp.social', {what: 'Google'})}
+              {t("login.button.signUp.social", { what: "Google" })}
             </Button>
           </div>
           <Link to="/login" className="text-center">
-            {t('register.alreadyHave')}
+            {t("register.alreadyHave")}
           </Link>
         </div>
       </div>

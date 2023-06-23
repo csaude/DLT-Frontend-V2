@@ -1,48 +1,48 @@
-import React from 'react';
-import {toast} from 'react-toastify';
-import {Link} from 'react-router-dom';
-import {useTranslation} from 'react-i18next';
-import {Button} from '@components';
-import {faLock} from '@fortawesome/free-solid-svg-icons';
-import {setWindowClass} from '@app/utils/helpers';
-import {useFormik} from 'formik';
-import * as Yup from 'yup';
-import {Form, InputGroup} from 'react-bootstrap';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import React from "react";
+import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { Button } from "@components";
+import { faLock } from "@fortawesome/free-solid-svg-icons";
+import { setWindowClass } from "@app/utils/helpers";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { Form, InputGroup } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const RecoverPassword = () => {
   const [t] = useTranslation();
 
-  const {handleChange, values, handleSubmit, touched, errors} = useFormik({
+  const { handleChange, values, handleSubmit, touched, errors } = useFormik({
     initialValues: {
-      password: '',
-      confirmPassword: ''
+      password: "",
+      confirmPassword: "",
     },
     validationSchema: Yup.object({
       password: Yup.string()
-        .min(5, 'Must be 5 characters or more')
-        .max(30, 'Must be 30 characters or less')
-        .required('Required'),
+        .min(5, "Must be 5 characters or more")
+        .max(30, "Must be 30 characters or less")
+        .required("Required"),
       confirmPassword: Yup.string()
-        .min(5, 'Must be 5 characters or more')
-        .max(30, 'Must be 30 characters or less')
-        .required('Required')
-        .when('password', {
+        .min(5, "Must be 5 characters or more")
+        .max(30, "Must be 30 characters or less")
+        .required("Required")
+        .when("password", {
           is: (val: string) => !!(val && val.length > 0),
           then: Yup.string().oneOf(
-            [Yup.ref('password')],
-            'Both password need to be the same'
-          )
-        })
+            [Yup.ref("password")],
+            "Both password need to be the same"
+          ),
+        }),
     }),
     onSubmit: (values) => {
-      toast.warn('Not yet functional');
+      toast.warn("Not yet functional");
 
       console.log(values);
-    }
+    },
   });
 
-  setWindowClass('hold-transition login-page');
+  setWindowClass("hold-transition login-page");
   return (
     <div className="login-box">
       <div className="card card-outline card-primary">
@@ -53,7 +53,7 @@ const RecoverPassword = () => {
           </Link>
         </div>
         <div className="card-body">
-          <p className="login-box-msg">{t('recover.oneStepAway')}</p>
+          <p className="login-box-msg">{t("recover.oneStepAway")}</p>
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <InputGroup className="mb-3">
@@ -111,13 +111,13 @@ const RecoverPassword = () => {
               <div className="col-12">
                 <Button type="submit" block>
                   {/* @ts-ignore */}
-                  {t('recover.changePassword')}
+                  {t("recover.changePassword")}
                 </Button>
               </div>
             </div>
           </form>
           <p className="mt-3 mb-1">
-            <Link to="/login">{t('login.button.signIn.label')}</Link>
+            <Link to="/login">{t("login.button.signIn.label")}</Link>
           </p>
         </div>
       </div>
