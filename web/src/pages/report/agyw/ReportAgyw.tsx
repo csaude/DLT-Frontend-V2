@@ -146,7 +146,7 @@ const ReportAgyw = () => {
           PEPFAR MER 2.6.1 Indicador Semi-Annual AGYW_PREV
         </Title>
         <Card
-          title="Pârametros do Indicador AGYW_PREV "
+          title="Parâmetros do Indicador AGYW_PREV "
           bordered={false}
           headStyle={{ color: "#17a2b8" }}
           style={{ color: "#17a2b8", marginLeft: "35%", marginRight: "20%" }}
