@@ -1,5 +1,5 @@
-import {SmallBox} from '@app/components';
-import React from 'react';
+import { SmallBox } from "@app/components";
+import React from "react";
 
 const Blank = () => {
   return (
@@ -57,7 +57,7 @@ const Blank = () => {
       </div>
 
       <h5 className="mb-2">
-        Info Box With Custom Shadows{' '}
+        Info Box With Custom Shadows{" "}
         <small>
           <i>Using Bootstraps Shadow Utility</i>
         </small>
@@ -141,7 +141,7 @@ const Blank = () => {
               <span className="info-box-number">41,410</span>
 
               <div className="progress">
-                <div className="progress-bar" style={{width: '70%'}} />
+                <div className="progress-bar" style={{ width: "70%" }} />
               </div>
               <span className="progress-description">
                 70% Increase in 30 Days
@@ -163,7 +163,7 @@ const Blank = () => {
               <span className="info-box-number">41,410</span>
 
               <div className="progress">
-                <div className="progress-bar" style={{width: '70%'}} />
+                <div className="progress-bar" style={{ width: "70%" }} />
               </div>
               <span className="progress-description">
                 70% Increase in 30 Days
@@ -185,7 +185,7 @@ const Blank = () => {
               <span className="info-box-number">41,410</span>
 
               <div className="progress">
-                <div className="progress-bar" style={{width: '70%'}} />
+                <div className="progress-bar" style={{ width: "70%" }} />
               </div>
               <span className="progress-description">
                 70% Increase in 30 Days
@@ -207,7 +207,7 @@ const Blank = () => {
               <span className="info-box-number">41,410</span>
 
               <div className="progress">
-                <div className="progress-bar" style={{width: '70%'}} />
+                <div className="progress-bar" style={{ width: "70%" }} />
               </div>
               <span className="progress-description">
                 70% Increase in 30 Days
@@ -237,7 +237,7 @@ const Blank = () => {
               <span className="info-box-number">41,410</span>
 
               <div className="progress">
-                <div className="progress-bar" style={{width: '70%'}} />
+                <div className="progress-bar" style={{ width: "70%" }} />
               </div>
               <span className="progress-description">
                 70% Increase in 30 Days
@@ -259,7 +259,7 @@ const Blank = () => {
               <span className="info-box-number">41,410</span>
 
               <div className="progress">
-                <div className="progress-bar" style={{width: '70%'}} />
+                <div className="progress-bar" style={{ width: "70%" }} />
               </div>
               <span className="progress-description">
                 70% Increase in 30 Days
@@ -281,7 +281,7 @@ const Blank = () => {
               <span className="info-box-number">41,410</span>
 
               <div className="progress">
-                <div className="progress-bar" style={{width: '70%'}} />
+                <div className="progress-bar" style={{ width: "70%" }} />
               </div>
               <span className="progress-description">
                 70% Increase in 30 Days
@@ -303,7 +303,7 @@ const Blank = () => {
               <span className="info-box-number">41,410</span>
 
               <div className="progress">
-                <div className="progress-bar" style={{width: '70%'}} />
+                <div className="progress-bar" style={{ width: "70%" }} />
               </div>
               <span className="progress-description">
                 70% Increase in 30 Days
@@ -384,7 +384,7 @@ const Blank = () => {
             {/* end loading */}
             <div className="inner">
               <h3>
-                53<sup style={{fontSize: '20px'}}>%</sup>
+                53<sup style={{ fontSize: "20px" }}>%</sup>
               </h3>
 
               <p>Bounce Rate</p>

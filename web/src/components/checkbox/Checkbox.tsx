@@ -1,18 +1,18 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {v4 as uuidv4} from 'uuid';
+import React, { useCallback, useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 export interface CheckboxProps {
   checked: boolean;
-  type?: 'icheck' | 'default' | 'custom';
-  onChange?: Function;
+  type?: "icheck" | "default" | "custom";
+  onChange?: any;
   children: any;
 }
 
 const Checkbox = ({
   checked = false,
   onChange,
-  type = 'default',
-  children
+  type = "default",
+  children,
 }: CheckboxProps) => {
   const [ID] = useState(uuidv4());
   const [value, setValue] = useState(checked);
@@ -34,27 +34,27 @@ const Checkbox = ({
   }, [value]);
 
   const getDivClassName = useCallback(() => {
-    if (type === 'icheck') {
-      return 'icheck-primary';
+    if (type === "icheck") {
+      return "icheck-primary";
     }
-    if (type === 'custom') {
-      return 'custom-control custom-checkbox';
+    if (type === "custom") {
+      return "custom-control custom-checkbox";
     }
-    return 'form-check';
+    return "form-check";
   }, [type]);
 
   const getInputClassName = useCallback(() => {
-    if (type === 'custom') {
-      return 'custom-control-input';
+    if (type === "custom") {
+      return "custom-control-input";
     }
-    return 'form-check-input';
+    return "form-check-input";
   }, [type]);
 
   const getLabelClassName = useCallback(() => {
-    if (type === 'custom') {
-      return 'custom-control-label';
+    if (type === "custom") {
+      return "custom-control-label";
     }
-    return 'form-check-label';
+    return "form-check-label";
   }, [type]);
 
   return (

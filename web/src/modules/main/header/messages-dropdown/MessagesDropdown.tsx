@@ -1,7 +1,7 @@
-import React from 'react';
-import {Link} from 'react-router-dom';
-import {useTranslation} from 'react-i18next';
-import {Dropdown} from '@components';
+import React from "react";
+import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { Dropdown } from "@components";
 
 const MessagesDropdown = () => {
   const [t] = useTranslation();
@@ -36,9 +36,9 @@ const MessagesDropdown = () => {
                 <p className="text-sm text-muted">
                   <i className="far fa-clock mr-1" />
                   <span>
-                    {t('header.messages.ago', {
-                      quantity: '30',
-                      unit: 'Minutes'
+                    {t("header.messages.ago", {
+                      quantity: "30",
+                      unit: "Minutes",
                     })}
                   </span>
                 </p>
@@ -64,9 +64,9 @@ const MessagesDropdown = () => {
                 <p className="text-sm text-muted">
                   <i className="far fa-clock mr-1" />
                   <span>
-                    {t('header.messages.ago', {
-                      quantity: '3',
-                      unit: 'Hours'
+                    {t("header.messages.ago", {
+                      quantity: "3",
+                      unit: "Hours",
                     })}
                   </span>
                 </p>
@@ -92,9 +92,9 @@ const MessagesDropdown = () => {
                 <p className="text-sm text-muted">
                   <i className="far fa-clock mr-1" />
                   <span>
-                    {t('header.messages.ago', {
-                      quantity: '4',
-                      unit: 'Hours'
+                    {t("header.messages.ago", {
+                      quantity: "4",
+                      unit: "Hours",
                     })}
                   </span>
                 </p>
@@ -103,7 +103,7 @@ const MessagesDropdown = () => {
           </Link>
           <div className="dropdown-divider" />
           <Link to="/" className="dropdown-item dropdown-footer">
-            {t('header.messages.seeAll')}
+            {t("header.messages.seeAll")}
           </Link>
         </>
       }
