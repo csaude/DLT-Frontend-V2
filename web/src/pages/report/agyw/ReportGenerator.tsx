@@ -1,6 +1,6 @@
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
-import moment from "moment";
+import moment, { months } from "moment";
 import { agywPrevQuery } from "../../../utils/report";
 
 export async function generateXlsReport(
@@ -641,9 +641,7 @@ export async function generateXlsReport(
     const result = districts.filter((item: { id: any }) => item.id == id);
     return result[0];
   };
-  const dataCheck = () => {
-    /**Its OK */
-  };
+  const dataCheck = () => {};
 
   districtsIds.map((districtsId: string | number) => {
     const completedOnlyPrimaryPackage =

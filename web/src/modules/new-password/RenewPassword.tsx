@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
+import { useTranslation } from "react-i18next";
 import { Button } from "@components";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { setWindowClass } from "@app/utils/helpers";
@@ -12,18 +13,21 @@ import { Alert } from "antd";
 import * as Yup from "yup";
 
 import { Form, InputGroup } from "react-bootstrap";
+import * as AuthService from "../../services/auth";
 import "./index.css";
 
 const RenewPassword = () => {
-  const username = localStorage.getItem("username");
+  let username = localStorage.getItem("username");
   const [isAuthLoading, setAuthLoading] = useState(false);
   const [passwordType, setPasswordType] = useState("password");
 
   const navigate = useNavigate();
+  const [t] = useTranslation();
 
-  const setNewPassword = async () => {
+  const setNewPassword = async (username: string, newPassword: string) => {
     try {
       setAuthLoading(true);
+      const data = await AuthService.newPassword(username, newPassword);
       toast.success("Password alterado com sucesso!");
       setAuthLoading(false);
       navigate("/");
@@ -53,8 +57,8 @@ const RenewPassword = () => {
         .oneOf([Yup.ref("password"), null], "As senhas devem corresponder")
         .required("Obrigatório"),
     }),
-    onSubmit: async () => {
-      setNewPassword();
+    onSubmit: async (values: any) => {
+      setNewPassword(values.userName, values.password);
     },
   });
 

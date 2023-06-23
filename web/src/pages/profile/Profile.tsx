@@ -1,22 +1,24 @@
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
-import { Title } from "@components";
-import PasswordTab from "./PasswordTab";
-import { Card } from "antd";
+import React, {useEffect, useState} from 'react';
+import {useTranslation} from 'react-i18next';
+import { useSelector } from 'react-redux';
+import {ContentHeader, Button, Title} from '@components'
+import PasswordTab from './PasswordTab';
+import { Card } from 'antd';
 
 const Profile = () => {
   const currentUser = useSelector((state: any) => state.auth.user);
-  const [activeTab] = useState("PASSWORD");
-  const username = localStorage.getItem("username");
+  const [activeTab, setActiveTab] = useState('PASSWORD');
+  let userRole = localStorage.getItem('userRole');
+  let username = localStorage.getItem('username');
+  let userEmail = localStorage.getItem('userEmail');
 
+  const toggle = (tab: string) => {
+    if (activeTab !== tab) setActiveTab(tab);
+  };
   return (
     <>
       <Title />
-      <Card
-        title="Perfil"
-        bordered={false}
-        headStyle={{ color: "#17a2b8", fontSize: "150%" }}
-      >
+      <Card title="Perfil" bordered={false} headStyle={{ color: "#17a2b8", fontSize:"150%", }}>         
         <section className="content">
           <div className="container-fluid">
             <div className="row">
@@ -30,10 +32,11 @@ const Profile = () => {
                         alt="User profile"
                       />
                     </div>
-                    <h3 className="profile-username text-center">{username}</h3>
-                    <p className="text-muted text-center">
-                      {currentUser?.name} {currentUser?.surname} |{" "}
-                      {currentUser?.profiles?.description}
+                    <h3 className="profile-username text-center">
+                      {username}
+                    </h3>
+                    <p className="text-muted text-center"> 
+                      {currentUser?.name} {currentUser?.surname} | {currentUser?.profiles?.description}
                     </p>
                     <hr />
 
@@ -41,20 +44,24 @@ const Profile = () => {
                       <i className="fas fa-at mr-2" />
                       E-Mail pessoal/supervisor
                     </strong>
-                    <p className="text-muted">{currentUser?.email}</p>
+                    <p className="text-muted"> 
+                      {currentUser?.email}
+                    </p>
                     <hr />
                     <strong>
                       <i className="fas fa-landmark mr-2" />
                       Organização
                     </strong>
-                    <p className="text-muted">{currentUser?.partners?.name}</p>
+                    <p className="text-muted">
+                      {currentUser?.partners?.name} 
+                    </p>
                     <hr />
                     <strong>
                       <i className="fas fa-map-marked mr-2" />
                       Província(s)
                     </strong>
                     <p className="text-muted">
-                      {currentUser?.provinces.map((u) => u.name + ", ")}
+                      {currentUser?.provinces.map(u => u.name+', ')}
                     </p>
                     <hr />
                     <strong>
@@ -62,7 +69,7 @@ const Profile = () => {
                       Distrito(s)
                     </strong>
                     <p className="text-muted">
-                      {currentUser?.districts.map((u) => u.name + ", ")}
+                      {currentUser?.districts.map(u => u.name+', ')}
                     </p>
                     <hr />
                     <strong>
@@ -70,7 +77,7 @@ const Profile = () => {
                       Posto(s) Administrativo(s)
                     </strong>
                     <p className="text-muted">
-                      {currentUser?.localities.map((u) => u.name + ", ")}
+                      {currentUser?.localities.map(u => u.name+', ')}
                     </p>
                     <hr />
                     <strong>
@@ -78,11 +85,13 @@ const Profile = () => {
                       Alocação
                     </strong>
                     <p className="text-muted">
-                      {currentUser?.us.map((u) => u.name + ", ")}
+                      {currentUser?.us.map(u => u.name+', ')}
+
                     </p>
                   </div>
                   {/* /.card-body */}
                 </div>
+
               </div>
               <div className="col-md-7">
                 <div className="card card-primary">
@@ -91,7 +100,7 @@ const Profile = () => {
                   </div>
                   <div className="card-body">
                     <div className="tab-content">
-                      <PasswordTab isActive={activeTab === "PASSWORD"} />
+                      <PasswordTab isActive={activeTab === 'PASSWORD'} />
                     </div>
                   </div>
                 </div>

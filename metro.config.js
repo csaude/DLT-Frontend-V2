@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-/* eslint-disable @typescript-eslint/no-var-requires */
 /**
  * Metro configuration for React Native
  * https://github.com/facebook/react-native

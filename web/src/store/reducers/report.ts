@@ -1,23 +1,23 @@
-import { createSlice } from "@reduxjs/toolkit";
+import {createSlice} from '@reduxjs/toolkit';
 
 export interface ReportState {
   agyw?: any;
 }
 
 const initialState: ReportState = {
-  agyw: "",
+  agyw: '',
 };
 
 export const reportSlice = createSlice({
-  name: "report",
+  name: 'report',
   initialState,
   reducers: {
-    loadAgywData: (state, { payload }) => {
+    loadAgywData: (state, {payload}) => {
       state.agyw = payload;
-    },
-  },
+    }
+  }
 });
 
-export const { loadAgywData } = reportSlice.actions;
+export const {loadAgywData} = reportSlice.actions;
 
 export default reportSlice.reducer;

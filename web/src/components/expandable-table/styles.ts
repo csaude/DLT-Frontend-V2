@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components'
 
 const Styles = styled.div`
   display: block;
@@ -27,9 +27,8 @@ const Styles = styled.div`
     }
 
     th {
-      color: #3c8dbc;
-    }
-    ,
+      color:#3c8dbc
+    },
     td {
       margin: 0;
       padding: 0.5rem;
@@ -52,5 +51,5 @@ const Styles = styled.div`
       padding: 0.5rem;
     }
   }
-`;
+`
 export default Styles;

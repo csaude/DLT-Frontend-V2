@@ -1,9 +1,9 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React from 'react';
+import {Link} from 'react-router-dom';
 
-const TimelineTab = ({ isActive }: { isActive: boolean }) => {
+const TimelineTab = ({isActive}: {isActive: boolean}) => {
   return (
-    <div className={`tab-pane ${isActive ? "active" : ""}`}>
+    <div className={`tab-pane ${isActive ? 'active' : ''}`}>
       {/* The timeline */}
       <div className="timeline timeline-inverse">
         {/* timeline time label */}
@@ -99,22 +99,22 @@ const TimelineTab = ({ isActive }: { isActive: boolean }) => {
             <div className="timeline-body">
               <img
                 src="img/default-profile.png"
-                style={{ width: "1.6rem", height: "1.6rem" }}
+                style={{width: '1.6rem', height: '1.6rem'}}
                 alt="..."
               />
               <img
                 src="img/default-profile.png"
-                style={{ width: "1.6rem", height: "1.6rem" }}
+                style={{width: '1.6rem', height: '1.6rem'}}
                 alt="..."
               />
               <img
                 src="img/default-profile.png"
-                style={{ width: "1.6rem", height: "1.6rem" }}
+                style={{width: '1.6rem', height: '1.6rem'}}
                 alt="..."
               />
               <img
                 src="img/default-profile.png"
-                style={{ width: "1.6rem", height: "1.6rem" }}
+                style={{width: '1.6rem', height: '1.6rem'}}
                 alt="..."
               />
             </div>

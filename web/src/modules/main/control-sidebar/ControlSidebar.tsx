@@ -1,6 +1,6 @@
-import React, { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Checkbox, Select } from "@app/components";
+import React, {useCallback} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {Checkbox, Select} from '@app/components';
 import {
   setNavbarVariant,
   setSidebarSkin,
@@ -12,15 +12,15 @@ import {
   toggleLayoutFixed,
   toggleMenuChildIndent,
   toggleMenuItemFlat,
-  toggleSidebarMenu,
-} from "@app/store/reducers/ui";
+  toggleSidebarMenu
+} from '@app/store/reducers/ui';
 import {
   NAVBAR_DARK_VARIANTS,
   NAVBAR_LIGHT_VARIANTS,
   SIDEBAR_DARK_SKINS,
-  SIDEBAR_LIGHT_SKINS,
-} from "@app/utils/themes";
-import useScrollPosition from "@app/hooks/useScrollPosition";
+  SIDEBAR_LIGHT_SKINS
+} from '@app/utils/themes';
+import useScrollPosition from '@app/hooks/useScrollPosition';
 
 const ControlSidebar = () => {
   const dispatch = useDispatch();
@@ -95,15 +95,15 @@ const ControlSidebar = () => {
       className="control-sidebar control-sidebar-dark"
       style={{
         top: 0,
-        bottom: footerFixed ? "57px" : "0px",
+        bottom: footerFixed ? '57px' : '0px',
         padding: `${getContainerPaddingTop()} 16px 16px 16px`,
-        overflowY: "scroll",
+        overflowY: 'scroll'
       }}
     >
       <h5>Customize AdminLTE</h5>
       <hr className="mb-2" />
 
-      <div style={{ padding: "8px 0" }}>
+      <div style={{padding: '8px 0'}}>
         <div className="mb-4">
           <Checkbox checked={darkMode} onChange={handleDarkModeChange}>
             Dark mode

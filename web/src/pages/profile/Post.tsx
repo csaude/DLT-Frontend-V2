@@ -1,9 +1,9 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React from 'react';
+import {Link} from 'react-router-dom';
 
-const Post = ({ isClearfix = false }: { isClearfix?: boolean }) => {
+const Post = ({isClearfix = false}: {isClearfix?: boolean}) => {
   return (
-    <div className={`post ${isClearfix ? "clearfix" : ""}`}>
+    <div className={`post ${isClearfix ? 'clearfix' : ''}`}>
       <div className="user-block">
         <img
           className="img-circle img-bordered-sm"

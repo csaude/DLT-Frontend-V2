@@ -3,20 +3,20 @@ export const sleep = (time: number) =>
 
 export const calculateWindowSize = (windowWidth: number) => {
   if (windowWidth >= 1200) {
-    return "lg";
+    return 'lg';
   }
   if (windowWidth >= 992) {
-    return "md";
+    return 'md';
   }
   if (windowWidth >= 768) {
-    return "sm";
+    return 'sm';
   }
-  return "xs";
+  return 'xs';
 };
 
 export const setWindowClass = (classList: string) => {
   const window: HTMLElement | null =
-    document && document.getElementById("root");
+    document && document.getElementById('root');
   if (window) {
     // @ts-ignore
     window.classList = classList;
@@ -24,7 +24,7 @@ export const setWindowClass = (classList: string) => {
 };
 export const addWindowClass = (classList: string) => {
   const window: HTMLElement | null =
-    document && document.getElementById("root");
+    document && document.getElementById('root');
   if (window) {
     // @ts-ignore
     window.classList.add(classList);
@@ -33,7 +33,7 @@ export const addWindowClass = (classList: string) => {
 
 export const removeWindowClass = (classList: string) => {
   const window: HTMLElement | null =
-    document && document.getElementById("root");
+    document && document.getElementById('root');
   if (window) {
     // @ts-ignore
     window.classList.remove(classList);
