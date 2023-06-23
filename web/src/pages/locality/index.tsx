@@ -87,7 +87,7 @@ const LocalityList: React.FC = () => {
           localities.status = values.status;
           const { data } = await edit(localities);
           setLocality((existingItems) => {
-            return existingItems.map((item) => {
+            return existingItems.map((item, j) => {
               return item.id === selectedLocality.id ? data : item;
             });
           });
@@ -102,7 +102,9 @@ const LocalityList: React.FC = () => {
           handleLocalityModalVisible(false);
         }
       })
-      .catch(() => {
+      .catch((error) => {
+        const errSt = JSON.stringify(error);
+        const errObj = JSON.parse(errSt);
         message.error({
           content: "Não foi possível Registar o  Posto Administrativo",
           className: "custom-class",
@@ -181,7 +183,7 @@ const LocalityList: React.FC = () => {
         setTimeout(() => searchInput.select(), 100);
       }
     },
-    render: (value) =>
+    render: (value, record) =>
       searchedColumn === dataIndex ? (
         <Highlighter
           highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
@@ -211,27 +213,27 @@ const LocalityList: React.FC = () => {
       title: "Nome do Distrito",
       dataIndex: "serviceType",
       key: "type",
-      render: (record) => record?.district?.name,
+      render: (text, record) => record?.district?.name,
     },
     {
       title: "Posto Administrativo",
       dataIndex: "name",
       key: "type",
       ...getColumnSearchProps("name"),
-      render: (record) => record?.name,
+      render: (text, record) => record?.name,
     },
     {
       title: "Descrição",
       dataIndex: "description",
       key: "type",
       ...getColumnSearchProps("description"),
-      render: (record) => record?.description,
+      render: (text, record) => record?.description,
     },
     {
       title: "Estado",
       dataIndex: "status",
       key: "type",
-      render: (record) => (
+      render: (text, record) => (
         <Badge
           className="site-badge-count-190"
           count={record.status == 1 ? "Activo" : "Inactivo"}
@@ -259,7 +261,7 @@ const LocalityList: React.FC = () => {
       title: "Acção",
       dataIndex: "",
       key: "x",
-      render: (record) => (
+      render: (text, record) => (
         <Space>
           <Button
             type="primary"
