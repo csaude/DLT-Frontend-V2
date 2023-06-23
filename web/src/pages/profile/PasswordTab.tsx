@@ -1,19 +1,17 @@
-import React, {useState} from 'react';
-import {Link, useNavigate} from 'react-router-dom';
-import {toast} from 'react-toastify';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
-import {useFormik} from 'formik';
-import * as Yup from 'yup';
-import {Button} from '@components';
-import {faEye, faEyeSlash} from '@fortawesome/free-solid-svg-icons';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {Form, InputGroup} from 'react-bootstrap';
-import * as AuthService from '../../services/auth';
-import { useDispatch } from 'react-redux';
-import { logoutUser } from '@app/store/reducers/auth';
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { Button } from "@components";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Form, InputGroup } from "react-bootstrap";
+import { useDispatch } from "react-redux";
+import { logoutUser } from "@app/store/reducers/auth";
 
-const PasswordTab = ({isActive}: {isActive: boolean}) => {
-
+const PasswordTab = ({ isActive }: { isActive: boolean }) => {
   const [isAuthLoading, setAuthLoading] = useState(false);
   const [passwordType, setPasswordType] = useState("password");
 
@@ -21,59 +19,54 @@ const PasswordTab = ({isActive}: {isActive: boolean}) => {
 
   const navigate = useNavigate();
 
-  const setNewPassword = async (username: string, newPassword: string) => {
+  const setNewPassword = async () => {
     try {
-      setAuthLoading(true);      
-      const data = await AuthService.newPassword(username, newPassword);            
-      toast.success('Password alterado com sucesso!');
+      setAuthLoading(true);
+      toast.success("Password alterado com sucesso!");
       setAuthLoading(false);
       dispatch(logoutUser());
-      navigate('/login');
-
-    } catch ( error ) {
+      navigate("/login");
+    } catch (error) {
       setAuthLoading(false);
-      toast.error( 'Erro na alteração da password!');
+      toast.error("Erro na alteração da password!");
       console.log(error);
     }
   };
 
-  const {handleChange, values, handleSubmit, touched, errors} = useFormik({
+  const { handleChange, values, handleSubmit, touched, errors } = useFormik({
     initialValues: {
-      userName: localStorage.getItem('username'),
-      password: '',
-      rePassword: ''
-    },    
+      userName: localStorage.getItem("username"),
+      password: "",
+      rePassword: "",
+    },
     validationSchema: Yup.object({
       password: Yup.string()
-        .required('Obrigatório')
-        .max(25, 'Deve conter 25 caracteres ou menos')
-        .matches(/(?=.*\d)/,'Deve conter número')
-        .matches(/(?=.*[a-z])/,'Deve conter minúscula')
-        .matches(/(?=.*[A-Z])/, 'Deve conter Maiúscula')
-        .matches(/(?=.*[@$!%*#?&])/,'Deve conter caracter especial')
-        .min(8, 'Deve conter 8 caracter ou mais'),
+        .required("Obrigatório")
+        .max(25, "Deve conter 25 caracteres ou menos")
+        .matches(/(?=.*\d)/, "Deve conter número")
+        .matches(/(?=.*[a-z])/, "Deve conter minúscula")
+        .matches(/(?=.*[A-Z])/, "Deve conter Maiúscula")
+        .matches(/(?=.*[@$!%*#?&])/, "Deve conter caracter especial")
+        .min(8, "Deve conter 8 caracter ou mais"),
       rePassword: Yup.string()
-        .oneOf([Yup.ref('password'), null], 'As senhas devem corresponder')
-        .required('Obrigatório')
+        .oneOf([Yup.ref("password"), null], "As senhas devem corresponder")
+        .required("Obrigatório"),
     }),
-    onSubmit: async (values: any) => {
-      setNewPassword(values.userName, values.password);
-    }
+    onSubmit: async () => {
+      setNewPassword();
+    },
   });
 
-
-  const togglePassword =()=>{
-
-    if(passwordType==="password")
-    {
-     setPasswordType("")
-     return;
+  const togglePassword = () => {
+    if (passwordType === "password") {
+      setPasswordType("");
+      return;
     }
-    setPasswordType("password")
+    setPasswordType("password");
   };
 
   return (
-    <div className={`tab-pane ${isActive ? 'active' : ''}`}>
+    <div className={`tab-pane ${isActive ? "active" : ""}`}>
       <form className="form-horizontal" onSubmit={handleSubmit}>
         <div className="form-group row">
           <div className="offset-sm-1 col-sm-10">
@@ -82,7 +75,6 @@ const PasswordTab = ({isActive}: {isActive: boolean}) => {
                 <span>Password</span>
               </label>
               <InputGroup className="mb-3">
-                
                 <Form.Control
                   id="password"
                   name="password"
@@ -100,12 +92,17 @@ const PasswordTab = ({isActive}: {isActive: boolean}) => {
                 ) : (
                   <InputGroup.Append>
                     <InputGroup.Text>
-                      { 
-                        passwordType==="password"? 
-                          <FontAwesomeIcon icon={faEyeSlash} onClick={togglePassword} />
-                        :
-                          <FontAwesomeIcon icon={faEye} onClick={togglePassword} />
-                      }
+                      {passwordType === "password" ? (
+                        <FontAwesomeIcon
+                          icon={faEyeSlash}
+                          onClick={togglePassword}
+                        />
+                      ) : (
+                        <FontAwesomeIcon
+                          icon={faEye}
+                          onClick={togglePassword}
+                        />
+                      )}
                     </InputGroup.Text>
                   </InputGroup.Append>
                 )}
@@ -113,9 +110,9 @@ const PasswordTab = ({isActive}: {isActive: boolean}) => {
             </div>
 
             <div className="mb-3">
-                <label htmlFor="rePassword">
-                  <span>Confirmar a Password</span>
-                </label>
+              <label htmlFor="rePassword">
+                <span>Confirmar a Password</span>
+              </label>
               <InputGroup className="mb-3">
                 <Form.Control
                   id="rePassword"
@@ -126,11 +123,12 @@ const PasswordTab = ({isActive}: {isActive: boolean}) => {
                   value={values.rePassword}
                   isValid={touched.rePassword && !errors.rePassword}
                   isInvalid={touched.rePassword && !!errors.rePassword}
-                  onPaste={(e)=>{
-                    e.preventDefault()
+                  onPaste={(e) => {
+                    e.preventDefault();
                     return false;
-                  }} onCopy={(e)=>{
-                    e.preventDefault()
+                  }}
+                  onCopy={(e) => {
+                    e.preventDefault();
                     return false;
                   }}
                 />
@@ -140,12 +138,18 @@ const PasswordTab = ({isActive}: {isActive: boolean}) => {
                   </Form.Control.Feedback>
                 ) : (
                   <InputGroup.Append>
-                    <InputGroup.Text>{ 
-                        passwordType==="password"? 
-                          <FontAwesomeIcon icon={faEyeSlash} onClick={togglePassword} />
-                        :
-                          <FontAwesomeIcon icon={faEye} onClick={togglePassword} />
-                      }
+                    <InputGroup.Text>
+                      {passwordType === "password" ? (
+                        <FontAwesomeIcon
+                          icon={faEyeSlash}
+                          onClick={togglePassword}
+                        />
+                      ) : (
+                        <FontAwesomeIcon
+                          icon={faEye}
+                          onClick={togglePassword}
+                        />
+                      )}
                     </InputGroup.Text>
                   </InputGroup.Append>
                 )}
@@ -154,14 +158,13 @@ const PasswordTab = ({isActive}: {isActive: boolean}) => {
             <div className="form-group row">
               <div className="col-12">
                 <span className="float-right">
-                  <Button type="submit" block isLoading={isAuthLoading} > 
+                  <Button type="submit" block isLoading={isAuthLoading}>
                     Salvar
                   </Button>
                 </span>
               </div>
             </div>
-
-          </div>          
+          </div>
         </div>
       </form>
     </div>

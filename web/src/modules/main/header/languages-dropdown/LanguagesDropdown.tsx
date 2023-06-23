@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
-import {useTranslation} from 'react-i18next';
-import {Dropdown} from '@components';
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Dropdown } from "@components";
 
 export interface Language {
   key: string;
@@ -10,35 +10,35 @@ export interface Language {
 
 const languages: Language[] = [
   {
-    key: 'en',
-    icon: 'flag-icon-us',
-    label: 'header.language.english'
+    key: "en",
+    icon: "flag-icon-us",
+    label: "header.language.english",
   },
   {
-    key: 'tr',
-    icon: 'flag-icon-tr',
-    label: 'header.language.turkish'
+    key: "tr",
+    icon: "flag-icon-tr",
+    label: "header.language.turkish",
   },
   {
-    key: 'de',
-    icon: 'flag-icon-de',
-    label: 'header.language.german'
+    key: "de",
+    icon: "flag-icon-de",
+    label: "header.language.german",
   },
   {
-    key: 'fr',
-    icon: 'flag-icon-fr',
-    label: 'header.language.french'
+    key: "fr",
+    icon: "flag-icon-fr",
+    label: "header.language.french",
   },
   {
-    key: 'es',
-    icon: 'flag-icon-es',
-    label: 'header.language.spanish'
-  }
+    key: "es",
+    icon: "flag-icon-es",
+    label: "header.language.spanish",
+  },
 ];
 
 const LanguagesDropdown = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const {t, i18n} = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
@@ -57,9 +57,9 @@ const LanguagesDropdown = () => {
 
   const isActiveLanguage = (language: Language) => {
     if (language) {
-      return getCurrentLanguage().key === language.key ? 'active' : '';
+      return getCurrentLanguage().key === language.key ? "active" : "";
     }
-    return '';
+    return "";
   };
 
   return (

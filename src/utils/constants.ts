@@ -8,8 +8,7 @@ export const MENTOR = 21;
 export const NURSE = 22;
 export const COUNSELOR = 23;
 
-
 // Entry Points
-export const US = { "id": '1', "name": "US" }; 
-export const COMMUNITY = { "id": '2', "name": "CM" };
-export const SCHOOL = { "id": '3', "name": "ES" };
+export const US = { id: "1", name: "US" };
+export const COMMUNITY = { id: "2", name: "CM" };
+export const SCHOOL = { id: "3", name: "ES" };
