@@ -127,7 +127,7 @@ export const MENU: IMenuItem[] = [
       //   path: '#',
       // },
       {
-        name: ">> Pepfar Mer 2.6 AGYW_PREV",
+        name: ">> PEPFAR MER 2.6.1 AGYW_PREV",
         path: "/reportAgyw",
       },
       // {
