@@ -25,10 +25,11 @@ export const beneficiariesInterventionsFetchCount = async () => {
       try {
         totals.push(beneficiaryCount);
       } catch (error) {
-        console.error(error);
+        console.log("----err----", error);
       }
     })
   );
 
   return totals;
 };
+

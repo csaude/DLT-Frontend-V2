@@ -1,5 +1,5 @@
-import React, { useRef, useState, useEffect, ReactElement } from "react";
-import DropdownMenu from "./dropdown-menu/DropdownMenu";
+import React, {useRef, useState, useEffect, ReactElement} from 'react';
+import DropdownMenu from './dropdown-menu/DropdownMenu';
 
 export interface DropdownProps {
   isOpen: boolean;
@@ -8,17 +8,17 @@ export interface DropdownProps {
   menuTemplate: any;
   className?: string;
   menuContainerTag?: string;
-  onChange?: any;
+  onChange?: Function;
 }
 
 const Dropdown = ({
   isOpen = false,
-  size = "md",
+  size = 'md',
   buttonTemplate,
   menuTemplate,
   className,
-  menuContainerTag = "div",
-  onChange,
+  menuContainerTag = 'div',
+  onChange
 }: DropdownProps) => {
   const dropdownRef = useRef<any>(null);
   const [dropdownOpen, setDropdownOpen] = useState(isOpen);
@@ -48,16 +48,16 @@ const Dropdown = ({
   }, [isOpen]);
 
   useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside, false);
+    document.addEventListener('mousedown', handleClickOutside, false);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside, false);
+      document.removeEventListener('mousedown', handleClickOutside, false);
     };
   });
 
   return (
     <li
       ref={dropdownRef}
-      className={`nav-item dropdown${className ? ` ${className}` : ""}`}
+      className={`nav-item dropdown${className ? ` ${className}` : ''}`}
     >
       <button onClick={toggleDropdown} type="button" className="nav-link">
         {buttonTemplate}

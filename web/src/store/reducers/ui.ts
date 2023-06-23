@@ -1,15 +1,15 @@
-import { createSlice } from "@reduxjs/toolkit";
+import {createSlice} from '@reduxjs/toolkit';
 import {
   addWindowClass,
   calculateWindowSize,
-  removeWindowClass,
-} from "@app/utils/helpers";
+  removeWindowClass
+} from '@app/utils/helpers';
 import {
   NAVBAR_DARK_VARIANTS,
   NAVBAR_LIGHT_VARIANTS,
   SIDEBAR_DARK_SKINS,
-  SIDEBAR_LIGHT_SKINS,
-} from "@app/utils/themes";
+  SIDEBAR_LIGHT_SKINS
+} from '@app/utils/themes';
 
 export interface UiState {
   screenSize: string;
@@ -30,8 +30,8 @@ export interface UiState {
 const initialState: UiState = {
   screenSize: calculateWindowSize(window.innerWidth),
   darkMode: false,
-  navbarVariant: "navbar-info  navbar-dark",
-  sidebarSkin: "sidebar-light-info",
+  navbarVariant: 'navbar-info  navbar-dark',
+  sidebarSkin: 'sidebar-light-info',
   menuSidebarCollapsed: false,
   controlSidebarCollapsed: true,
   headerBorder: false,
@@ -40,13 +40,13 @@ const initialState: UiState = {
   layoutBoxed: false,
   menuItemFlat: false,
   menuChildIndent: false,
-  layoutFixed: false,
+  layoutFixed: false
 };
 
-addWindowClass("layout-footer-fixed");
+addWindowClass('layout-footer-fixed');
 
 export const uiSlice = createSlice({
-  name: "ui",
+  name: 'ui',
   initialState,
   reducers: {
     toggleSidebarMenu: (state) => {
@@ -61,33 +61,33 @@ export const uiSlice = createSlice({
     toggleHeaderFixed: (state) => {
       state.headerFixed = !state.headerFixed;
       if (state.headerFixed) {
-        addWindowClass("layout-navbar-fixed");
+        addWindowClass('layout-navbar-fixed');
       } else {
-        removeWindowClass("layout-navbar-fixed");
+        removeWindowClass('layout-navbar-fixed');
       }
     },
     toggleFooterFixed: (state) => {
       state.footerFixed = !state.footerFixed;
       if (state.footerFixed) {
-        addWindowClass("layout-footer-fixed");
+        addWindowClass('layout-footer-fixed');
       } else {
-        removeWindowClass("layout-footer-fixed");
+        removeWindowClass('layout-footer-fixed');
       }
     },
     toggleLayoutBoxed: (state) => {
       state.layoutBoxed = !state.layoutBoxed;
       if (state.layoutBoxed) {
-        addWindowClass("layout-boxed");
+        addWindowClass('layout-boxed');
       } else {
-        removeWindowClass("layout-boxed");
+        removeWindowClass('layout-boxed');
       }
     },
     toggleLayoutFixed: (state) => {
       state.layoutFixed = !state.layoutFixed;
       if (state.layoutFixed) {
-        removeWindowClass("layout-fixed");
+        removeWindowClass('layout-fixed');
       } else {
-        addWindowClass("layout-fixed");
+        addWindowClass('layout-fixed');
       }
     },
     toggleMenuItemFlat: (state) => {
@@ -106,29 +106,29 @@ export const uiSlice = createSlice({
         state.sidebarSkin = SIDEBAR_LIGHT_SKINS[0].value;
       }
       if (state.darkMode) {
-        addWindowClass("dark-mode");
+        addWindowClass('dark-mode');
       } else {
-        removeWindowClass("dark-mode");
+        removeWindowClass('dark-mode');
       }
     },
-    setNavbarVariant: (state, { payload }) => {
+    setNavbarVariant: (state, {payload}) => {
       if (state.darkMode) {
         state.navbarVariant = payload || NAVBAR_DARK_VARIANTS[0].value;
       } else {
         state.navbarVariant = payload || NAVBAR_LIGHT_VARIANTS[0].value;
       }
     },
-    setSidebarSkin: (state, { payload }) => {
+    setSidebarSkin: (state, {payload}) => {
       if (state.darkMode) {
         state.sidebarSkin = payload || SIDEBAR_DARK_SKINS[0].value;
       } else {
         state.sidebarSkin = payload || SIDEBAR_LIGHT_SKINS[0].value;
       }
     },
-    setWindowSize: (state, { payload }) => {
+    setWindowSize: (state, {payload}) => {
       state.screenSize = payload;
-    },
-  },
+    }
+  }
 });
 
 export const {
@@ -144,7 +144,7 @@ export const {
   toggleLayoutBoxed,
   toggleMenuItemFlat,
   toggleMenuChildIndent,
-  toggleLayoutFixed,
+  toggleLayoutFixed
 } = uiSlice.actions;
 
 export default uiSlice.reducer;

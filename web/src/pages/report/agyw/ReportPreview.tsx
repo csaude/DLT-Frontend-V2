@@ -1,7 +1,8 @@
-import React, { Fragment } from "react";
 import { Collapse } from "antd";
+import { Fragment, useState } from "react";
 import { useLocation } from "react-router-dom";
 const { Panel } = Collapse;
+import { agywPrevQuery } from "../../../utils/report";
 import CompletedOnlyPrimaryPackage from "./containers/CompletedOnlyPrimaryPackage";
 import CompletedPrimaryPackageAndSecondaryService from "./containers/CompletedPrimaryPackageAndSecondaryService";
 import CompletedAtLeastOnePrimaryService from "./containers/CompletedAtLeastOnePrimaryService";
@@ -18,7 +19,7 @@ const ReportPreview = () => {
   const responseData = useSelector((state: any) => state.report.agyw);
   let currentProvinceId: any;
 
-  const onChange = () => {
+  const onChange = (key) => {
     //console.log(key);
   };
 
@@ -99,7 +100,8 @@ const ReportPreview = () => {
                             <CompletedSocialEconomicApproaches
                               districtId={district.id}
                             />
-                          </p>
+                          </p>                                                                                                  
+                        
                         </Panel>
                       );
                     }

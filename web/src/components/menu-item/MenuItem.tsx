@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import { NavLink, useNavigate, useLocation, Location } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { IMenuItem } from "@app/modules/main/menu-sidebar/MenuSidebar";
-import { useSelector } from "react-redux";
+import { useSelector} from "react-redux";
 
 const MenuItem = ({ menuItem }: { menuItem: IMenuItem }) => {
   const [t] = useTranslation();
@@ -15,7 +15,9 @@ const MenuItem = ({ menuItem }: { menuItem: IMenuItem }) => {
   const benefiarySelector = useSelector(
     (state: any) => state.beneficiary.total
   );
-  const referenceSelector = useSelector((state: any) => state.reference.total);
+  const referenceSelector = useSelector(
+    (state: any) => state.reference.total
+  );
   const toggleMenu = () => {
     setIsMenuExtended(!isMenuExtended);
   };
@@ -25,7 +27,7 @@ const MenuItem = ({ menuItem }: { menuItem: IMenuItem }) => {
       toggleMenu();
       return;
     }
-    navigate(menuItem.path ? menuItem.path : "/");
+    navigate(menuItem.path ? menuItem.path : '/');
   };
 
   const calculateIsActive = (url: Location) => {
@@ -48,7 +50,7 @@ const MenuItem = ({ menuItem }: { menuItem: IMenuItem }) => {
       return benefiarySelector && <Fragment>({benefiarySelector})</Fragment>;
     } else if (menuName === "menusidebar.label.referenceList") {
       return referenceSelector && <Fragment> ({referenceSelector}) </Fragment>;
-    } else return;
+    }else return
   };
 
   useEffect(() => {
@@ -69,15 +71,16 @@ const MenuItem = ({ menuItem }: { menuItem: IMenuItem }) => {
     );
   }, [menuItem]);
 
+  
   return (
-    <li className={`nav-item${isMenuExtended ? " menu-open" : ""}`}>
+    <li className={`nav-item${isMenuExtended ? ' menu-open' : ''}`}>
       <a
         className={`nav-link${
-          isMainActive || isOneOfChildrenActive ? " active" : ""
+          isMainActive || isOneOfChildrenActive ? ' active' : ''
         }`}
         role="link"
         onClick={handleMainMenuAction}
-        style={{ cursor: "pointer" }}
+        style={{cursor: 'pointer'}}
       >
         <i className={`nav-icon ${menuItem.icon}`} />
         <p>

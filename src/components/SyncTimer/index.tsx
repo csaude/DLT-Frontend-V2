@@ -1,17 +1,11 @@
-import React, {
-  memo,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
-import { View } from "react-native";
+import React, { useContext, useEffect, useState } from "react";
+import { View, Text } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
 import { sync } from "../../database/sync";
 import { ErrorHandler, SuccessHandler } from "../SyncIndicator";
 import { useToast } from "native-base";
 import { Context } from "../../routes/DrawerNavigator";
-import SpinnerModal from "../Modal/SpinnerModal";
+import { SpinnerModal } from "../Modal/SpinnerModal";
 
 const SyncTimer = () => {
   const toast = useToast();
@@ -21,7 +15,7 @@ const SyncTimer = () => {
   const message =
     "Aguarde por favor..., Do Momento o aplicativo encontra-se sincronizando com o servidor";
 
-  const executeSync = useCallback(() => {
+  const executeSync = () => {
     sync({ username: loggedUser?.username })
       .then(() =>
         toast.show({
@@ -32,31 +26,33 @@ const SyncTimer = () => {
         })
       )
       .then(() => setOpen(false))
-      .catch(() => {
-        setOpen(false);
-        toast.show({
-          placement: "top",
-          render: () => {
-            return <ErrorHandler />;
-          },
-        });
-      });
-  }, []);
-
-  const checkInternetConnection = useCallback(async () => {
-    const netInfoState = await NetInfo.fetch();
-
-    if (netInfoState.isConnected) {
-      console.log("Conexão à internet disponível!");
-      setOpen(true);
-      executeSync();
-    } else {
-      console.log("Sem conexão à internet.");
-      setOpen(false);
-    }
-  }, []);
+      .catch(() =>{          
+        setOpen(false)
+        toast
+          .show({
+            placement: "top",
+            render: () => {
+              return <ErrorHandler />;
+            },
+          })
+        }
+      );
+  };
 
   useEffect(() => {
+    const checkInternetConnection = async () => {
+      const netInfoState = await NetInfo.fetch();
+
+      if (netInfoState.isConnected) {
+        console.log("Conexão à internet disponível!");
+        setOpen(true);
+        executeSync();
+      } else {
+        console.log("Sem conexão à internet.");
+        setOpen(false);
+      }
+    };
+
     const interval = setInterval(checkInternetConnection, 30 * 60 * 1000); // Executa a verificação a cada 30 minutos(para testar pode reduzir para 1 e depois devolver assim que fechar o teste)
 
     return () => {
@@ -71,4 +67,4 @@ const SyncTimer = () => {
   );
 };
 
-export default memo(SyncTimer);
+export default SyncTimer;

@@ -1,15 +1,23 @@
-import React, { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { toggleSidebarMenu } from "@app/store/reducers/ui";
-import UserDropdown from "@app/modules/main/header/user-dropdown/UserDropdown";
+import React, {useCallback} from 'react';
+import {Link} from 'react-router-dom';
+import {useTranslation} from 'react-i18next';
+import {useDispatch, useSelector} from 'react-redux';
+import {toggleControlSidebar, toggleSidebarMenu} from '@app/store/reducers/ui';
+import {Button} from '@app/components';
+import UserDropdown from '@app/modules/main/header/user-dropdown/UserDropdown';
 
 const Header = () => {
+  const [t] = useTranslation();
   const dispatch = useDispatch();
   const navbarVariant = useSelector((state: any) => state.ui.navbarVariant);
   const headerBorder = useSelector((state: any) => state.ui.headerBorder);
 
   const handleToggleMenuSidebar = () => {
     dispatch(toggleSidebarMenu());
+  };
+
+  const handleToggleControlSidebar = () => {
+    dispatch(toggleControlSidebar());
   };
 
   const getContainerClasses = useCallback(() => {
