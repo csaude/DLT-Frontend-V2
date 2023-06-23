@@ -35,7 +35,7 @@
     "exceljs": "^4.3.0",
     "file-saver": "^2.0.5",
     "formik": "^2.2.9",
-    "moment": "^2.29.3",
+    "moment": "^2.29.4",
     "native-base": "^3.4.1",
     "prop-types": "^15.8.1",
     "qs": "^6.10.3",

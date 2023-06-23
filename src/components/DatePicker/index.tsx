@@ -4,10 +4,12 @@ import { MaterialIcons } from "@native-base/icons";
 import moment from "moment";
 import PropTypes from "prop-types";
 import DatePicker from "react-native-date-picker";
+import "moment/locale/pt"; // Import Portuguese locale for moment
 
 const MyDatePicker = ({ onDateSelection, minDate, maxDate, currentDate }) => {
   const [date, setDate] = useState(currentDate);
   const [open, setOpen] = useState(false);
+  moment.locale("pt"); // Set Portuguese locale
 
   const handleOnConfirm = useCallback((selectedDate) => {
     setOpen(false);
@@ -27,6 +29,8 @@ const MyDatePicker = ({ onDateSelection, minDate, maxDate, currentDate }) => {
       />
 
       <DatePicker
+        title={"Selecione a data"}
+        locale="pt"
         mode="date"
         minimumDate={minDate}
         maximumDate={maxDate}
@@ -36,7 +40,7 @@ const MyDatePicker = ({ onDateSelection, minDate, maxDate, currentDate }) => {
         onConfirm={(date) => handleOnConfirm(date)}
         onCancel={() => {
           setOpen(false);
-          setDate(new Date()); //to review
+          setDate(new Date());
         }}
       />
     </>
