@@ -12,7 +12,7 @@ const { Option } = Select;
 const { Step } = Steps;
 const { confirm } = Modal;
 
-const BeneficiaryPartnerForm = ({ form, beneficiary, modalVisible, handleAddBeneficiary, handleUpdateBeneficiary, handleModalVisible }: any) => {
+const BeneficiaryPartnerForm = ({ form, beneficiary, modalVisible, handleAddBeneficiary, handleUpdateBeneficiary, handleModalVisible, handleViewModalVisible }: any) => {
 
     const [current, setCurrent] = useState(0);
     const [firstStepValues, setFirstStepValues] = useState();
@@ -95,6 +95,7 @@ const BeneficiaryPartnerForm = ({ form, beneficiary, modalVisible, handleAddBene
             const { data } = await add(ben);
             handleAddBeneficiary(data);
             handleModalVisible(false);
+            handleViewModalVisible(true, data);
 
             message.success({
                 content: 'Registado com Sucesso!', className: 'custom-class',
@@ -157,6 +158,8 @@ const BeneficiaryPartnerForm = ({ form, beneficiary, modalVisible, handleAddBene
         })
             .catch(error => {
 
+                handleModalVisible(false);
+
                 message.error({
                     content: 'Não foi possivel Actualizar o Parceiro!', className: 'custom-class',
                     style: {
@@ -205,7 +208,7 @@ const BeneficiaryPartnerForm = ({ form, beneficiary, modalVisible, handleAddBene
                 centered
                 destroyOnClose
                 title={` Registo de Parceiro de Beneficiária`}
-                open={modalVisible}
+                visible={modalVisible}
                 onCancel={() => showCloseConfirm()}
                 maskClosable={false}
                 footer={<div className="steps-action">
