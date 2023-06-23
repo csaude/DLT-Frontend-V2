@@ -1,16 +1,16 @@
 import { Model } from "@nozbe/watermelondb";
-import { field, text, relation } from "@nozbe/watermelondb/decorators";
+import { field, text } from "@nozbe/watermelondb/decorators";
 
 export default class UserDetails extends Model {
-    static table = 'user_details' 
+  static table = "user_details";
 
-    @text("districts") districts;
-    @text("provinces") provinces;
-    @text("localities") localities;    
-    @text("uss") uss;
-    @field("user_id") user_id;  
-    @field("password_last_change_date") password_last_change_date;
-    @field("profile_id") profile_id; 
-    @field("entry_point") entry_point; 
-    @field("partner_id") partner_id;  
+  @text("districts") districts;
+  @text("provinces") provinces;
+  @text("localities") localities;
+  @text("uss") uss;
+  @field("user_id") user_id;
+  @field("password_last_change_date") password_last_change_date;
+  @field("profile_id") profile_id;
+  @field("entry_point") entry_point;
+  @field("partner_id") partner_id;
 }

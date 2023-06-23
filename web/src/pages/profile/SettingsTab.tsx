@@ -1,11 +1,11 @@
-import React from 'react';
-import {Link} from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
-import {Button} from '@components';
+import { Button } from "@components";
 
-const SettingsTab = ({isActive}: {isActive: boolean}) => {
+const SettingsTab = ({ isActive }: { isActive: boolean }) => {
   return (
-    <div className={`tab-pane ${isActive ? 'active' : ''}`}>
+    <div className={`tab-pane ${isActive ? "active" : ""}`}>
       <form className="form-horizontal">
         <div className="form-group row">
           <label htmlFor="inputName" className="col-sm-2 col-form-label">

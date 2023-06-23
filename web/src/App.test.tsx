@@ -1,5 +1,4 @@
-
-test('renders learn react link', () => {
+test("renders learn react link", () => {
   expect(true).toBeTruthy();
 });
 
