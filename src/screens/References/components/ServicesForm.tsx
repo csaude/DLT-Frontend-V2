@@ -582,9 +582,6 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                                   ? new Date(intervention?.date)
                                   : new Date()
                               }
-                              isEdit={
-                                intervention && intervention.id ? true : false
-                              }
                             />
                           </InputLeftAddon>
                           <Input

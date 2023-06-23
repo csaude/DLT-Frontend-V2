@@ -64,8 +64,8 @@ const ViewBenefiaryPanel = ({
 
   useEffect(() => {
     const fetchData = async () => {
-      if (beneficiary.partnerId) {
-        const partner = await query(beneficiary.partnerId);
+      if (beneficiary?.partnerId) {
+        const partner = await query(beneficiary?.partnerId);
         setPartner(partner);
       }
 
@@ -139,12 +139,12 @@ const ViewBenefiaryPanel = ({
         if (selectedIntervention === undefined) {
           const payload: SubServiceParams = {
             id: {
-              beneficiaryId: beneficiary.id,
+              beneficiaryId: beneficiary?.id,
               subServiceId: values.subservice,
               date: moment(values.dataBeneficio).format("YYYY-MM-DD"),
             },
             beneficiaries: {
-              id: "" + beneficiary.id,
+              id: "" + beneficiary?.id,
             },
             subServices: {
               id: values.subservice,
@@ -169,12 +169,12 @@ const ViewBenefiaryPanel = ({
         } else {
           const payload: SubServiceParams = {
             id: {
-              beneficiaryId: beneficiary.id,
+              beneficiaryId: beneficiary?.id,
               subServiceId: selectedIntervention.id.subServiceId,
               date: moment(selectedIntervention.id.date).format("YYYY-MM-DD"),
             },
             beneficiaries: {
-              id: "" + beneficiary.id,
+              id: "" + beneficiary?.id,
             },
             subServices: {
               id: values.subservice,
@@ -306,7 +306,7 @@ const ViewBenefiaryPanel = ({
                   <span>de Adolescente e Jovens</span>
                   <br />
                   <span style={{ fontWeight: "bold", color: "#17a2b8" }}>
-                    {`${beneficiary.district.code}/${beneficiary?.nui}`}
+                    {`${beneficiary?.district.code}/${beneficiary?.nui}`}
                   </span>
                   <br />
                   <span
@@ -454,9 +454,9 @@ const ViewBenefiaryPanel = ({
               >
                 <span>
                   <Button
-                    hidden={beneficiary.partnerId === null}
+                    hidden={beneficiary?.partnerId === null}
                     onClick={() =>
-                      onViewBeneficiaryPartner(true, beneficiary.partnerId)
+                      onViewBeneficiaryPartner(true, beneficiary?.partnerId)
                     }
                     type="primary"
                     style={{

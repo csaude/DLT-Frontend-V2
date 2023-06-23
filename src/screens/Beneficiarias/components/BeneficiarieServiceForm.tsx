@@ -819,9 +819,6 @@ const BeneficiarieServiceForm: React.FC = ({
                                   ? new Date(intervention?.date)
                                   : new Date()
                               }
-                              isEdit={
-                                intervention && intervention.id ? true : false
-                              }
                             />
                           </InputLeftAddon>
                           <Input
