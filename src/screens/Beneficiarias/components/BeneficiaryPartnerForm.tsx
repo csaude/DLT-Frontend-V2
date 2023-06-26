@@ -880,9 +880,6 @@ const BeneficiaryPartnerForm: React.FC = ({
                                 ? new Date(beneficiarie?.date_of_birth)
                                 : new Date()
                             }
-                            isEdit={
-                              beneficiarie && beneficiarie?.id ? true : false
-                            }
                           />
                         </InputLeftAddon>
                         <Input
@@ -969,9 +966,6 @@ const BeneficiaryPartnerForm: React.FC = ({
                               beneficiarie?.enrollment_date
                                 ? new Date(beneficiarie?.enrollment_date)
                                 : new Date()
-                            }
-                            isEdit={
-                              beneficiarie && beneficiarie?.id ? true : false
                             }
                           />
                         </InputLeftAddon>
