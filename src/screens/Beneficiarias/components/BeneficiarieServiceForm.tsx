@@ -161,7 +161,7 @@ const BeneficiarieServiceForm: React.FC = ({
       if (age == 15) {
         const interventionsIds = intervs.map(item => item.intervention.sub_service_id);
         interventionsIds.forEach(element => {
-            if (avanteIds.includes(element)) {
+            if (avanteIds.includes(element) || aflatounIds.includes(element)) {
                 is15AndStartedAvante = true;
                 return;
             }
