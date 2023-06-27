@@ -10,10 +10,17 @@ import moment from "moment";
 const { Step } = Steps;
 const { confirm } = Modal;
 
-const BeneficiaryPartnerForm = ({ form, beneficiary, modalVisible, handleAddBeneficiary, handleUpdateBeneficiary, handleModalVisible }: any) => {
-
-    const [current, setCurrent] = useState(0);
-    const [firstStepValues, setFirstStepValues] = useState();
+const BeneficiaryPartnerForm = ({
+  form,
+  beneficiary,
+  modalVisible,
+  handleAddBeneficiary,
+  handleUpdateBeneficiary,
+  handleModalVisible,
+  handleViewModalVisible,
+}: any) => {
+  const [current, setCurrent] = useState(0);
+  const [firstStepValues, setFirstStepValues] = useState();
 
   useEffect(() => {
     if (!modalVisible) {
@@ -92,6 +99,7 @@ const BeneficiaryPartnerForm = ({ form, beneficiary, modalVisible, handleAddBene
         const { data } = await add(ben);
         handleAddBeneficiary(data);
         handleModalVisible(false);
+        handleViewModalVisible(true, data);
 
         message.success({
           content: "Registado com Sucesso!",
@@ -102,6 +110,7 @@ const BeneficiaryPartnerForm = ({ form, beneficiary, modalVisible, handleAddBene
         });
       })
       .catch(() => {
+        handleModalVisible(false);
         message.error({
           content: "Não foi possivel Registrar o Parceiro!",
           className: "custom-class",

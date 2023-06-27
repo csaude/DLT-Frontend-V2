@@ -287,6 +287,7 @@ const BeneficiariesList: React.FC = () => {
     );
     setBeneficiaries(sortedBeneficiaries);
     setBeneficiary(data);
+    handleViewModalVisible(true, data);
   };
 
   const handleUpdateBeneficiary = (data: any) => {
@@ -298,7 +299,6 @@ const BeneficiariesList: React.FC = () => {
     setBeneficiary(data);
     setBeneficiaryModalVisible(false);
     setBeneficiaryPartnerModalVisible(false);
-    handleViewModalVisible(true, data);
   };
 
   const handleViewModalVisible = (flag?: boolean, record?: any) => {
@@ -722,98 +722,133 @@ const BeneficiariesList: React.FC = () => {
             </Form.Item>
           </Col>
 
-                            <Col  className="gutter-row">
-                              <Select
-                                showSearch
-                                allowClear
-                                onClear={()=>onClear('userCreator')}
-                                placeholder="Selecione o utilizador"
-                                optionFilterProp="children"
-                                onChange={e => onChange(e,'userCreator')}
-                                onSearch={()=>{/**Its OK */}}
-                                filterOption={(input, option) =>
-                                  (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-                                }
-                                options={convertedUserData}
-                              />
-                         
-                          </Col >
+          <Col className="gutter-row">
+            <Select
+              showSearch
+              allowClear
+              onClear={() => onClear("userCreator")}
+              placeholder="Selecione o utilizador"
+              optionFilterProp="children"
+              onChange={(e) => onChange(e, "userCreator")}
+              onSearch={() => {
+                /**Its OK */
+              }}
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={convertedUserData}
+            />
+          </Col>
 
-                           <Col className="gutter-row"  >
-                              <Select
-                                showSearch
-                                allowClear
-                                onClear={()=>onClear('district')}
-                                placeholder="Selecione o distrito"
-                                optionFilterProp="children"
-                                onChange={e => onChange(e,'district')}
-                                onSearch={()=>{/**Its OK */}}
-                                filterOption={(input, option) =>
-                                  (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-                                }
-                                options={convertedDistrictsData}
-                              />
-                          </Col>
-                        
-                     
-                        <Col className="gutter-row" span={12}>
-                            <Button type="primary" onClick={handleGlobalSearch}>
-                                Pesquisar
-                            </Button>
-                        </Col>
-                    </Row>              
-                    <ConfigProvider locale={ptPT}>
-                        <Table
-                            rowKey="id"
-                            sortDirections={["descend", "ascend"]}
-                            columns={columns}
-                            expandable={{
-                                expandedRowRender: record =>  <div style={{border:"2px solid #d9edf7", backgroundColor:"white"}}><ViewBenefiaryPanel beneficiary={record} handleModalVisible={handleModalVisible} handleViewModalVisible={handleViewModalVisible} handleModalRefVisible={handleModalRefVisible} user={user} /></div>,
-                                rowExpandable: record => record.name !== 'Not Expandable',
-                            }}
-                            dataSource={beneficiaries}
-                            bordered
-                            scroll={{ x: 1500 }}
-                        />
-                         <Space >                            
-                            <Button disabled={currentPageIndex===0} onClick={loadPreviousPage} size="small" style={{ width: 90 }}>
-                                {'<<'} Anterior 
-                            </Button>
-                            <Button onClick={loadNextPage} size="small" style={{ width: 90 }}>
-                                Próxima {'>>'}
-                            </Button>
-                        </Space>
-                    </ConfigProvider> 
-                    {<LoadingModal modalVisible={dataLoading} />}
-                </Card>
-            <ViewBeneficiary 
-                {...parentMethods}
-                beneficiary={beneficiary} 
-                modalVisible={modalVisible} 
-                handleViewModalVisible={handleViewModalVisible}
-                handleModalRefVisible={handleModalRefVisible}
-                user={user}
+          <Col className="gutter-row">
+            <Select
+              showSearch
+              allowClear
+              onClear={() => onClear("district")}
+              placeholder="Selecione o distrito"
+              optionFilterProp="children"
+              onChange={(e) => onChange(e, "district")}
+              onSearch={() => {
+                /**Its OK */
+              }}
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={convertedDistrictsData}
             />
-            <FormBeneficiary form={form} beneficiary={beneficiary} beneficiaries={beneficiaries}
-                modalVisible={beneficiaryModalVisible}
-                handleAddBeneficiary={handleAddBeneficiary}
-                handleUpdateBeneficiary={handleUpdateBeneficiary}
-                handleModalVisible={handleBeneficiaryModalVisible} 
-            />
-            <FormBeneficiaryPartner form={form} beneficiary={beneficiary} modalVisible={beneficiaryPartnerModalVisible}
-                handleAddBeneficiary={handleAddBeneficiary}
-                handleUpdateBeneficiary={handleUpdateBeneficiary}
-                handleModalVisible={handleBeneficiaryPartnerModalVisible} 
-            />
-            <FormReference  form={form} beneficiary={beneficiary} 
-                modalVisible={referenceModalVisible}
-                addStatus={addStatus}
-                handleAdd={handleAddRef}   
-                handleModalRefVisible={handleModalRefVisible} 
-                handleRefServicesList={handleRefServicesList}
-            />
-        </>
-    );
-}
+          </Col>
+
+          <Col className="gutter-row" span={12}>
+            <Button type="primary" onClick={handleGlobalSearch}>
+              Pesquisar
+            </Button>
+          </Col>
+        </Row>
+        <ConfigProvider locale={ptPT}>
+          <Table
+            rowKey="id"
+            sortDirections={["descend", "ascend"]}
+            columns={columns}
+            expandable={{
+              expandedRowRender: (record) => (
+                <div
+                  style={{
+                    border: "2px solid #d9edf7",
+                    backgroundColor: "white",
+                  }}
+                >
+                  <ViewBenefiaryPanel
+                    beneficiary={record}
+                    handleModalVisible={handleModalVisible}
+                    handleViewModalVisible={handleViewModalVisible}
+                    handleModalRefVisible={handleModalRefVisible}
+                    user={user}
+                  />
+                </div>
+              ),
+              rowExpandable: (record) => record.name !== "Not Expandable",
+            }}
+            dataSource={beneficiaries}
+            bordered
+            scroll={{ x: 1500 }}
+          />
+          <Space>
+            <Button
+              disabled={currentPageIndex === 0}
+              onClick={loadPreviousPage}
+              size="small"
+              style={{ width: 90 }}
+            >
+              {"<<"} Anterior
+            </Button>
+            <Button onClick={loadNextPage} size="small" style={{ width: 90 }}>
+              Próxima {">>"}
+            </Button>
+          </Space>
+        </ConfigProvider>
+        {<LoadingModal modalVisible={dataLoading} />}
+      </Card>
+      <ViewBeneficiary
+        {...parentMethods}
+        beneficiary={beneficiary}
+        modalVisible={modalVisible}
+        handleViewModalVisible={handleViewModalVisible}
+        handleModalRefVisible={handleModalRefVisible}
+        user={user}
+      />
+      <FormBeneficiary
+        form={form}
+        beneficiary={beneficiary}
+        beneficiaries={beneficiaries}
+        modalVisible={beneficiaryModalVisible}
+        handleAddBeneficiary={handleAddBeneficiary}
+        handleUpdateBeneficiary={handleUpdateBeneficiary}
+        handleModalVisible={handleBeneficiaryModalVisible}
+      />
+      <FormBeneficiaryPartner
+        form={form}
+        beneficiary={beneficiary}
+        modalVisible={beneficiaryPartnerModalVisible}
+        handleAddBeneficiary={handleAddBeneficiary}
+        handleUpdateBeneficiary={handleUpdateBeneficiary}
+        handleModalVisible={handleBeneficiaryPartnerModalVisible}
+        handleViewModalVisible={handleViewModalVisible}
+      />
+      <FormReference
+        form={form}
+        beneficiary={beneficiary}
+        modalVisible={referenceModalVisible}
+        addStatus={addStatus}
+        handleAdd={handleAddRef}
+        handleModalRefVisible={handleModalRefVisible}
+        handleRefServicesList={handleRefServicesList}
+      />
+    </>
+  );
+};
 
 export default BeneficiariesList;
