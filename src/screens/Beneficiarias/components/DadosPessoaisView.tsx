@@ -15,6 +15,14 @@ const DadosPessoaisView: React.FC = ({ route }: any) => {
   );
 
   const { beneficiary } = route.params;
+  const beneficiaryViewed = useSelector(
+    (state: any) => state.beneficiary.viewedBeneficiaryGender
+  );
+
+  const beneficiary_details =
+    beneficiaryViewed === "1"
+      ? "Detalhes do Beneficiário"
+      : " Detalhes da Beneficiária";
 
   const age = (data: any) => {
     const now = new Date();
@@ -87,7 +95,7 @@ const DadosPessoaisView: React.FC = ({ route }: any) => {
                 rounded="lg"
               >
                 <Heading size="md" color="white">
-                  Detalhes da Beneficiária
+                  {beneficiary_details}
                 </Heading>
                 <Divider />
                 <Text style={styles.txtLabelInfo}>

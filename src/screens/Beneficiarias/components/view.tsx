@@ -14,12 +14,21 @@ import {
 import { MaterialIcons, Ionicons } from "@native-base/icons";
 import { navigate } from "../../../routes/NavigationRef";
 import styles from "./styles";
+import { useSelector } from "react-redux";
 
 const ViewBeneficiaries: React.FC = ({ route }: any) => {
   /*const { beneficiarie,
         subServices
     } = route.params;*/
   const { beneficiary, interventions } = route.params;
+  const beneficiaryViewed = useSelector(
+    (state: any) => state.beneficiary.viewedBeneficiaryGender
+  );
+
+  const beneficiary_details =
+    beneficiaryViewed === "1"
+      ? "Detalhes do Beneficiário"
+      : " Detalhes da Beneficiária";
 
   const age = (data: any) => {
     const now = new Date();
@@ -64,7 +73,7 @@ const ViewBeneficiaries: React.FC = ({ route }: any) => {
             <Flex direction="column" mb="2.5" _text={{ color: "coolGray.800" }}>
               <Box bg="primary.500" p="2" rounded="lg">
                 <Heading size="md" color="white">
-                  Detalhes da Beneficiaria
+                  {beneficiary_details}
                 </Heading>
                 <Divider />
                 <Text style={styles.txtLabelInfo}>
