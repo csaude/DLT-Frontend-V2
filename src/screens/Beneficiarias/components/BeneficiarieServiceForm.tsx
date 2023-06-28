@@ -156,8 +156,6 @@ const BeneficiarieServiceForm: React.FC = ({
       const age = calculateAge(beneficiarie.date_of_birth);
       let is15AndStartedAvante = false;
 
-      console.log(age);
-
       if (age == 15) {
         const interventionsIds = intervs.map(item => item.intervention.sub_service_id);
         interventionsIds.forEach(element => {
@@ -167,8 +165,6 @@ const BeneficiarieServiceForm: React.FC = ({
             }
         });
       }
-
-      console.log(is15AndStartedAvante);
 
       const disableRapariga = (hasFacilitacao) =>
         services.filter((service) => {
@@ -426,8 +422,6 @@ const BeneficiarieServiceForm: React.FC = ({
             intervention.status = 1;
           });
         showToast("success", "Provido", "Serviço provido com sucesso!");
-
-        console.log(newIntervention);
 
         return newIntervention;
       }
