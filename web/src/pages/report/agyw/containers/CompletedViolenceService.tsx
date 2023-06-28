@@ -1,11 +1,14 @@
 import React, { Fragment } from "react";
 import { Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
+import { loadBeneficiariesIds } from "@app/store/reducers/report";
 
 const CompletedViolenceService = ({ districtId }) => {
   const responseData = useSelector((state: any) => state.report.agyw);
+  const dispatch = useDispatch();
 
   // const hadSchoolAllowance = responseData[districtId]["had-school-allowance"];
   // const allDisaggregationsTotal =
@@ -146,6 +149,38 @@ const CompletedViolenceService = ({ districtId }) => {
     },
   ];
 
+  const title =
+    "Number of AGYW enrolled in DREAMS that completed an evidence-based intervention focused on preventing violence within the reporting period";
+
+  const beneficiaries =
+    responseData[districtId]["completed-violence-service"].beneficiaries;
+
+  const arrBeneficiaries = Object.keys(beneficiaries).map((key) => ({
+    key,
+    value: beneficiaries[key],
+  }));
+
+  function extractElements(data) {
+    const elements: string[] = [];
+
+    data.forEach((item) => {
+      Object.values(item.value).forEach((value) => {
+        if (Array.isArray(value)) {
+          elements.push(...value);
+        }
+      });
+    });
+
+    return elements;
+  }
+
+  const handleOnCLick = () => {
+    const elements = extractElements(arrBeneficiaries);
+    dispatch(
+      loadBeneficiariesIds({ ids: elements, title: title, total: total })
+    );
+  };
+
   return (
     <Fragment>
       {responseData != undefined && (
@@ -153,9 +188,14 @@ const CompletedViolenceService = ({ districtId }) => {
           columns={columns}
           dataSource={data}
           bordered
-          title={() =>
-            `Number of AGYW enrolled in DREAMS that completed an evidence-based intervention focused on preventing violence within the reporting period: ${total}  `
-          }
+          title={() => (
+            <React.Fragment>
+              {title}:{" "}
+              <Link onClick={handleOnCLick} to="/viewAgyw">
+                {total}
+              </Link>
+            </React.Fragment>
+          )}
           pagination={false}
         />
       )}

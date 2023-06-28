@@ -34,6 +34,16 @@ export async function pagedQueryByFilters(
   return res;
 }
 
+export async function pagedQueryByIds(
+  pageIndex?: any,
+  pageSize?: any,
+  ids?: number[]
+) {
+  const url = `/api/beneficiaries/ids?pageIndex=${pageIndex}&pageSize=${pageSize}&params=${ids}`;
+  const res = await select(url);
+  return res;
+}
+
 export async function add(payload: any) {
   const res = await create("/api/beneficiaries", payload);
   return res;

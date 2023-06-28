@@ -33,7 +33,8 @@ import PrivateRoute from "./routes/PrivateRoute";
 import RenewPassword from "./modules/new-password/RenewPassword";
 import OrganizationList from "./pages/organization";
 import ReportAgyw from "./pages/report/agyw/ReportAgyw";
-import PreviewAgyw from "./pages/report/agyw/ReportPreview";
+import ReportPreview from "./pages/report/agyw/ReportPreview";
+import ReportView from "./pages/report/agyw/ReportView";
 
 const App = () => {
   const windowSize = useWindowSize();
@@ -147,7 +148,8 @@ const App = () => {
             <Route path="/usList" element={<UsList />} />
             {/* // Relatorios */}
             <Route path="/reportAgyw" element={<ReportAgyw />} />
-            <Route path="/previewAgyw" element={<PreviewAgyw />} />
+            <Route path="/previewAgyw" element={<ReportPreview />} />
+            <Route path="/viewAgyw" element={<ReportView />} />
           </Route>
         </Route>
       </Routes>
