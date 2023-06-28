@@ -279,6 +279,7 @@ const BeneficiaryPartnerForm: React.FC = ({
       name: beneficiarie?.name,
       date_of_birth: beneficiarie?.date_of_birth,
       age: calculateAge(beneficiarie?.date_of_birth),
+      gender: "1",
       nationality: "1",
       enrollment_date: beneficiarie?.enrollment_date,
       province:
@@ -521,7 +522,7 @@ const BeneficiaryPartnerForm: React.FC = ({
             (beneficiarie.name = formik.values.name),
             (beneficiarie.nick_name = formik.values.nick_name),
             (beneficiarie.date_of_birth = formik.values.date_of_birth),
-            (beneficiarie.gender = "1"),
+            (beneficiarie.gender = formik.values.gender),
             (beneficiarie.address = formik.values.address),
             (beneficiarie.phone_number = formik.values.phone_number),
             (beneficiarie.e_mail = formik.values.e_mail),
@@ -820,6 +821,39 @@ const BeneficiaryPartnerForm: React.FC = ({
                     <Text style={styles.formNUI}>
                       {beneficiarie === undefined ? "" : beneficiarie.nui}
                     </Text>
+                  </FormControl>
+                  <FormControl
+                    style={{
+                      display: beneficiarie === undefined ? "none" : "flex",
+                    }}
+                  >
+                    <FormControl.Label>Sexo</FormControl.Label>
+                    <Radio.Group
+                      value={formik.values.gender + ""}
+                      onChange={(itemValue) => {
+                        formik.setFieldValue("gender", itemValue);
+                      }}
+                      name="gender"
+                      accessibilityLabel="pick a size"
+                    >
+                      <Stack
+                        direction={{ base: "row", md: "row" }}
+                        alignItems={{
+                          base: "flex-start",
+                          md: "center",
+                        }}
+                        space={4}
+                        w="75%"
+                        maxW="300px"
+                      >
+                        <Radio value="1" colorScheme="green" size="md" my={1}>
+                          M
+                        </Radio>
+                        <Radio value="2" colorScheme="green" size="md" my={1}>
+                          F
+                        </Radio>
+                      </Stack>
+                    </Radio.Group>
                   </FormControl>
                   <FormControl
                     isRequired

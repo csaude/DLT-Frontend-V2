@@ -314,6 +314,20 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
             />
           </Form.Item>
         </Col>
+        <Col className="gutter-row" span={8}>
+          <Form.Item
+            name="gender"
+            label="Sexo"
+            rules={[{ required: true, message: RequiredFieldMessage }]}
+            style={{ textAlign: "left" }}
+            initialValue={beneficiary?.gender}
+          >
+            <Radio.Group>
+              <Radio.Button value={"1"}>M</Radio.Button>
+              <Radio.Button value={"2"}>F</Radio.Button>
+            </Radio.Group>
+          </Form.Item>
+        </Col>
       </Row>
       <Row gutter={16} hidden={beneficiary !== undefined && visibleName}>
         <Col className="gutter-row" span={12}>
