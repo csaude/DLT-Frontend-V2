@@ -39,6 +39,7 @@ import { getInterventionsCount } from "@app/store/actions/interventions";
 import { pagedQueryByBeneficiariesIds } from "@app/utils/beneficiaryIntervention";
 import {
   getAgeAtRegistrationDate,
+  getAgeBandByDate,
   getAgeByDate,
   getAgeRangeAtRegistrationDate,
   getAgeRangeByDate,
@@ -459,6 +460,20 @@ const ReportView: React.FC = () => {
     dispatch(getInterventionsCount());
   }, [currentPageStart, currentPageEnd]);
 
+  const getServiceBandByServiceIdAndAge = (serviceId, dateOfBirth) => {
+    const ageBand = getAgeBandByDate(dateOfBirth); // so para testes
+    const filteredServiceAgebands = reportSelector.serviceAgebands.filter(
+      (serviceAgeband) => {
+        return (
+          serviceAgeband.serviceId === serviceId &&
+          serviceAgeband.ageBand === ageBand
+        );
+      }
+    );
+    // const level = filteredServiceAgebands[0]?.level
+    return filteredServiceAgebands[0]?.level;
+  };
+
   async function handleGenerateXLSXReport() {
     const currentUserName = authSelector?.name;
     let currentPageEnd = 99;
@@ -663,7 +678,10 @@ const ReportView: React.FC = () => {
           values[cell] = intervention.subServices?.name;
 
           cell = cell + 1;
-          values[cell] = "";
+          values[cell] = getServiceBandByServiceIdAndAge(
+            intervention.subServices?.service?.id,
+            intervention.beneficiary.dateOfBirth
+          );
           cell = cell + 1;
           values[cell] =
             intervention.entryPoint == 1

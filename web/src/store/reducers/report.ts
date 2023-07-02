@@ -6,6 +6,7 @@ export interface ReportState {
   allIds: number[];
   title: string;
   total: number;
+  serviceAgebands: [];
 }
 
 const initialState: ReportState = {
@@ -14,6 +15,7 @@ const initialState: ReportState = {
   allIds: [],
   title: "",
   total: 0,
+  serviceAgebands: [],
 };
 
 export const reportSlice = createSlice({
@@ -35,10 +37,17 @@ export const reportSlice = createSlice({
         }
       });
     },
+    loadServiceAgebands: (state, { payload }) => {
+      state.serviceAgebands = payload;
+    },
   },
 });
 
-export const { loadAgywData, loadBeneficiariesIds, loadAllBeneficiariesIds } =
-  reportSlice.actions;
+export const {
+  loadAgywData,
+  loadBeneficiariesIds,
+  loadAllBeneficiariesIds,
+  loadServiceAgebands,
+} = reportSlice.actions;
 
 export default reportSlice.reducer;

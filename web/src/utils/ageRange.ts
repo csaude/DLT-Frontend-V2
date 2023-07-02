@@ -5,13 +5,13 @@ export const range_25_29 = [25, 26, 27, 28, 29];
 
 export const getAgeRangeByAge = (age: number) => {
   if (range_10_14.includes(age)) {
-    return "9-14";
+    return { age_band: 1, range: "9-14" };
   } else if (range_15_19.includes(age)) {
-    return "15-19";
+    return { age_band: 2, range: "15-19" };
   } else if (range_20_24.includes(age)) {
-    return "20-24";
+    return { age_band: 3, range: "20-24" };
   } else if (range_25_29.includes(age)) {
-    return "25-29";
+    return { age_band: 4, range: "25-29" };
   }
 };
 
@@ -55,10 +55,15 @@ export const getAgeRangeAtRegistrationDate = (
   dateOfRegitration
 ) => {
   const age = getAgeAtRegistrationDate(dateOfBirth, dateOfRegitration);
-  return getAgeRangeByAge(age);
+  return getAgeRangeByAge(age)?.range;
 };
 
 export const getAgeRangeByDate = (date) => {
   const age = getAgeByDate(date);
-  return getAgeRangeByAge(age);
+  return getAgeRangeByAge(age)?.range;
+};
+
+export const getAgeBandByDate = (date) => {
+  const age = getAgeByDate(date);
+  return getAgeRangeByAge(age)?.age_band;
 };

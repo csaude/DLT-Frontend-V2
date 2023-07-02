@@ -9,3 +9,9 @@ export async function agywPrevQuery(
   const res = await select(url);
   return res;
 }
+
+export async function serviceAgesBandsQuery() {
+  const url = "/api/service-agebands";
+  const res = await select(url);
+  return res;
+}

@@ -21,7 +21,8 @@ import dreams from "../../../assets/dreams.png";
 import { generateXlsReport } from "./ReportGenerator";
 import { useSelector, useDispatch } from "react-redux";
 import { agywPrevQuery } from "@app/utils/report";
-import { loadAgywData } from "@app/store/reducers/report";
+import { serviceAgesBandsQuery } from "@app/utils/report";
+import { loadAgywData, loadServiceAgebands } from "@app/store/reducers/report";
 import { Title as AppTitle } from "@app/components";
 const { Option } = Select;
 const { Title } = Typography;
@@ -96,7 +97,11 @@ const ReportAgyw = () => {
         endDate
       );
 
+      const responseServiceAgesBands = await serviceAgesBandsQuery();
+
       dispatch(loadAgywData(responseData));
+      dispatch(loadServiceAgebands(responseServiceAgesBands));
+
       navigate("/previewAgyw", {
         state: {
           provinces: selectedProvinces,
