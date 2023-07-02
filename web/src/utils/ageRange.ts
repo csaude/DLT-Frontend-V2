@@ -3,6 +3,20 @@ export const range_15_19 = [15, 16, 17, 18, 19];
 export const range_20_24 = [20, 21, 22, 23, 24];
 export const range_25_29 = [25, 26, 27, 28, 29];
 
+export const getPackageLabel = (id) => {
+  if (id == 1) {
+    return "Primária";
+  } else if (id == 2) {
+    return "Secundário";
+  } else if (id == 3) {
+    return "Contextual";
+  } else if (id == 4) {
+    return "N/A";
+  } else if (id == 5) {
+    return "Primária (Secundário Se Sexualmente Activa)";
+  }
+};
+
 export const getAgeRangeByAge = (age: number) => {
   if (range_10_14.includes(age)) {
     return { age_band: 1, range: "9-14" };

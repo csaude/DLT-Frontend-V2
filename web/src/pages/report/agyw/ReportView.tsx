@@ -43,6 +43,7 @@ import {
   getAgeByDate,
   getAgeRangeAtRegistrationDate,
   getAgeRangeByDate,
+  getPackageLabel,
 } from "@app/utils/ageRange";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
@@ -470,8 +471,8 @@ const ReportView: React.FC = () => {
         );
       }
     );
-    // const level = filteredServiceAgebands[0]?.level
-    return filteredServiceAgebands[0]?.level;
+    const level = filteredServiceAgebands[0]?.level;
+    return getPackageLabel(level);
   };
 
   async function handleGenerateXLSXReport() {
