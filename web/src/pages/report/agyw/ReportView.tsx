@@ -75,7 +75,7 @@ const ReportView: React.FC = () => {
   const userSelector = useSelector((state: any) => state?.user);
   const authSelector = useSelector((state: any) => state?.auth.currentUser);
   const beneficiariesIdsSelector: [] = useSelector(
-    (state: any) => state?.report.allIds
+    (state: any) => state?.report.ids
   );
   const reportSelector = useSelector((state: any) => state?.report);
 
@@ -642,7 +642,7 @@ const ReportView: React.FC = () => {
           values[cell] = intervention.beneficiary?.partners?.name;
           cell = cell + 1;
           values[cell] = moment(intervention.beneficiary.dateCreated).format(
-            "DD/MM/YYYY"
+            "YYYY-MM-DD HH:mm:ss"
           );
           cell = cell + 1;
           values[cell] = intervention.beneficiary.nui;
@@ -664,7 +664,7 @@ const ReportView: React.FC = () => {
           ); //"age group current";
           cell = cell + 1;
           values[cell] = moment(intervention.beneficiary.dateOfBirth).format(
-            "DD/MM/YYYY"
+            "YYYY-MM-DD"
           );
           cell = cell + 1;
           values[cell] = getVulnerabilitiesCounter(intervention.beneficiary);
@@ -693,7 +693,7 @@ const ReportView: React.FC = () => {
           cell = cell + 1;
           values[cell] = intervention.us?.name;
           cell = cell + 1;
-          values[cell] = moment(intervention.id.date).format("DD/MM/YYYY");
+          values[cell] = moment(intervention.id.date).format("YYYY-MM-DD");
           cell = cell + 1;
           values[cell] = intervention.provider;
 
@@ -739,7 +739,7 @@ const ReportView: React.FC = () => {
               size="small"
               style={{ width: 100 }}
             >
-              Export XLS
+              Exportar XLS
             </Button>
           </Space>
           <Table
