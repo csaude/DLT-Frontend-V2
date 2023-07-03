@@ -726,22 +726,25 @@ const ReportView: React.FC = () => {
   return (
     <>
       <Title />
+      <Card style={{ textAlign: "end" }}>
+        <Button
+          onClick={() => handleGenerateXLSXReport()}
+          size="small"
+          style={{ float: "right", width: 100 }}
+        >
+          Exportar XLS
+        </Button>
+      </Card>
       <Card
+        style={{
+          textAlign: "center",
+        }}
         title={`${reportSelector.title}  (${reportSelector.total})`}
         bordered={false}
         headStyle={{ color: "#17a2b8" }}
         extra={<Space></Space>}
       >
         <ConfigProvider locale={ptPT}>
-          <Space>
-            <Button
-              onClick={() => handleGenerateXLSXReport()}
-              size="small"
-              style={{ width: 100 }}
-            >
-              Exportar XLS
-            </Button>
-          </Space>
           <Table
             rowKey="id"
             sortDirections={["descend", "ascend"]}
