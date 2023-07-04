@@ -1,10 +1,13 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import { Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useDispatch, useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
-import { loadBeneficiariesIds } from "@app/store/reducers/report";
+import {
+  loadAllBeneficiariesIds,
+  loadBeneficiariesIds,
+} from "@app/store/reducers/report";
 
 const CompletedOnlyPrimaryPackage = ({ districtId }) => {
   const responseData = useSelector((state: any) => state.report.agyw);
@@ -179,6 +182,11 @@ const CompletedOnlyPrimaryPackage = ({ districtId }) => {
       loadBeneficiariesIds({ ids: elements, title: title_pt, total: total })
     );
   };
+
+  useEffect(() => {
+    const elements = extractElements(arrBeneficiaries);
+    dispatch(loadAllBeneficiariesIds({ ids: elements }));
+  }, [dispatch]);
 
   return (
     <Fragment>
