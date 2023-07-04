@@ -591,6 +591,7 @@ const ReportView: React.FC = () => {
     v1.value = "REMARKS";
 
     let fetchedBeneficiariesIds: number[] = [];
+
     for (let i = 0; i <= currentPageEnd; i++) {
       /*console.log(
         "Size=",
@@ -617,8 +618,6 @@ const ReportView: React.FC = () => {
           fetchedBeneficiariesIds.length == pageSize
         );**/
         const interventions = await pagedQueryByBeneficiariesIds(
-          0,
-          pageSize,
           fetchedBeneficiariesIds
         );
 

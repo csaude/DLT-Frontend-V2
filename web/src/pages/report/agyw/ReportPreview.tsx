@@ -17,6 +17,7 @@ const ReportPreview = () => {
   const { provinces, districts, initialDate, finalDate } = state; // Read values passed on state
 
   const responseData = useSelector((state: any) => state.report.agyw);
+  const allIds = useSelector((state: any) => state.report.allIds);
   const dispatch = useDispatch();
   let currentProvinceId: any;
 
@@ -26,25 +27,8 @@ const ReportPreview = () => {
 
   const title = "Total de Beneficiárias no Indicador AGYW_PREV";
 
-  function extractElements(data) {
-    const elements: string[] = [];
-
-    data.forEach((item) => {
-      Object.values(item.value).forEach((value) => {
-        if (Array.isArray(value)) {
-          elements.push(...value);
-        }
-      });
-    });
-
-    return elements;
-  }
-
-  const handleOnCLick = (arrBeneficiaries, total) => {
-    const elements = extractElements(arrBeneficiaries);
-    dispatch(
-      loadBeneficiariesIds({ ids: elements, title: title, total: total })
-    );
+  const handleOnCLick = (total) => {
+    dispatch(loadBeneficiariesIds({ ids: allIds, title: title, total: total }));
   };
 
   return (
@@ -103,9 +87,7 @@ const ReportPreview = () => {
                           <p>
                             {title}:
                             <Link
-                              onClick={() =>
-                                handleOnCLick(arrBeneficiaries, total)
-                              }
+                              onClick={() => handleOnCLick(total)}
                               to="/viewAgyw"
                             >
                               {" " + total}
