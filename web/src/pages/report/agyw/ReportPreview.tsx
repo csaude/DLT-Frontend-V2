@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import { Collapse } from "antd";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 const { Panel } = Collapse;
 import CompletedOnlyPrimaryPackage from "./containers/CompletedOnlyPrimaryPackage";
 import CompletedPrimaryPackageAndSecondaryService from "./containers/CompletedPrimaryPackageAndSecondaryService";
@@ -9,17 +9,26 @@ import StartedServiceDidNotComplete from "./containers/StartedServiceDidNotCompl
 import CompletedSocialEconomicApproaches from "./containers/CompletedSocialEconomicApproaches";
 import CompletedViolenceService from "./containers/CompletedViolenceService";
 import HadSchoolAllowance from "./containers/HadSchoolAllowance";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { loadBeneficiariesIds } from "@app/store/reducers/report";
 
 const ReportPreview = () => {
   const { state }: any = useLocation();
   const { provinces, districts, initialDate, finalDate } = state; // Read values passed on state
 
   const responseData = useSelector((state: any) => state.report.agyw);
+  const allIds = useSelector((state: any) => state.report.allIds);
+  const dispatch = useDispatch();
   let currentProvinceId: any;
 
   const onChange = () => {
     //console.log(key);
+  };
+
+  const title = "Total de Beneficiárias no Indicador AGYW_PREV";
+
+  const handleOnCLick = (total) => {
+    dispatch(loadBeneficiariesIds({ ids: allIds, title: title, total: total }));
   };
 
   return (
@@ -46,6 +55,19 @@ const ReportPreview = () => {
                         responseData[district.id]["female-beneficiaries"].total;
                       const beneficiariesTotal =
                         responseData[district.id]["total-beneficiaries"].total;
+
+                      const beneficiaries =
+                        responseData[district.id][
+                          "completed-service-not-primary-package"
+                        ].beneficiaries;
+
+                      const arrBeneficiaries = Object.keys(beneficiaries).map(
+                        (key) => ({
+                          key,
+                          value: beneficiaries[key],
+                        })
+                      );
+
                       return (
                         <Panel header={district.name} key={district.id}>
                           <p>Distrito: {" " + district.name}</p>
@@ -63,8 +85,13 @@ const ReportPreview = () => {
                             {" " + maleTotal}
                           </p>
                           <p>
-                            Total de Beneficiárias no Indicador AGYW_PREV:
-                            {" " + total}
+                            {title}:
+                            <Link
+                              onClick={() => handleOnCLick(total)}
+                              to="/viewAgyw"
+                            >
+                              {" " + total}
+                            </Link>
                           </p>
 
                           <p>
