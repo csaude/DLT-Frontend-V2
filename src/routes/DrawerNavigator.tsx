@@ -1,10 +1,18 @@
-import React, { createContext, useEffect, useState } from 'react';
-import { View , Text, AppState, InteractionManager, Keyboard, NativeEventEmitter, NativeModules} from 'react-native';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import CustomDrawer from './components/CustomDrawer';
-import BeneficiariesNavigator from './BeneficiariesNavigator';
-import RefencesNavigator from './ReferencesNavigator'
-import { navigate } from './NavigationRef';
+import React, { createContext, useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  AppState,
+  InteractionManager,
+  Keyboard,
+  NativeEventEmitter,
+  NativeModules,
+} from "react-native";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import CustomDrawer from "./components/CustomDrawer";
+import BeneficiariesNavigator from "./BeneficiariesNavigator";
+import RefencesNavigator from "./ReferencesNavigator";
+import { navigate } from "./NavigationRef";
 import { Q } from "@nozbe/watermelondb";
 import { database } from "../database";
 import { useDispatch, useSelector } from "react-redux";
@@ -204,13 +212,13 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
     <Context.Provider value={loggedUser}>
       <Drawer.Navigator
         screenOptions={{
-            headerStyle: {
-                backgroundColor:'#17a2b8', //'#0c4a6e',
-            },
-            headerTintColor: '#fff',
-            headerTitleStyle: {   
-            fontWeight: 'bold',
-            },
+          headerStyle: {
+            backgroundColor: "#17a2b8", //'#0c4a6e',
+          },
+          headerTintColor: "#fff",
+          headerTitleStyle: {
+            fontWeight: "bold",
+          },
         }}
         drawerContent={(props) => (
           <CustomDrawer
@@ -249,13 +257,13 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
             ),
           }}
         />
-          <Drawer.Screen name="Users" 
-            component={UsersNavigator}  
-            options={{                     
-                title: 'Perfil', 
-                headerTitle: '',
-            }}
-            
+        <Drawer.Screen
+          name="Users"
+          component={UsersNavigator}
+          options={{
+            title: "Perfil",
+            headerTitle: "",
+          }}
         />
       </Drawer.Navigator>
     </Context.Provider>
