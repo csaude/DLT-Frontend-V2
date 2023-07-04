@@ -593,30 +593,16 @@ const ReportView: React.FC = () => {
     let fetchedBeneficiariesIds: number[] = [];
 
     for (let i = 0; i <= currentPageEnd; i++) {
-      /*console.log(
-        "Size=",
-        beneficiariesIdsSelector.length,
-        "elemt:",
-        i,
-        "/from:",
-        currentPageEnd,
-        "FoundElement=",
-        beneficiariesIdsSelector[i]
-      );*/
-
       if (beneficiariesIdsSelector[i] == undefined) {
         break;
       }
 
       fetchedBeneficiariesIds.push(beneficiariesIdsSelector[i]);
 
-      if (fetchedBeneficiariesIds.length == pageSize) {
-        /***console.log(
-          "-------fetchedBeneficiariesIds.length == pageSize------",
-          fetchedBeneficiariesIds.length,
-          pageSize,
-          fetchedBeneficiariesIds.length == pageSize
-        );**/
+      if (
+        fetchedBeneficiariesIds.length == pageSize ||
+        beneficiariesIdsSelector.length < pageSize
+      ) {
         const interventions = await pagedQueryByBeneficiariesIds(
           fetchedBeneficiariesIds
         );
@@ -707,7 +693,6 @@ const ReportView: React.FC = () => {
 
       if (i + 1 == currentPageEnd) {
         currentPageEnd += pageSize;
-        /* console.log("----------currentPageEnd--------------", currentPageEnd);*/
       }
     }
 
