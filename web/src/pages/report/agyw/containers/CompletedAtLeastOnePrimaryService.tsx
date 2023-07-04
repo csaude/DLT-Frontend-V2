@@ -1,11 +1,17 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import { Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
+import {
+  loadAllBeneficiariesIds,
+  loadBeneficiariesIds,
+} from "@app/store/reducers/report";
 
 const CompletedAtLeastOnePrimaryService = ({ districtId }) => {
   const responseData = useSelector((state: any) => state.report.agyw);
+  const dispatch = useDispatch();
 
   const ages_10_14 = "9-14";
   const ages_15_19 = "15-19";
@@ -145,6 +151,46 @@ const CompletedAtLeastOnePrimaryService = ({ districtId }) => {
     },
   ];
 
+  const title =
+    "Beneficiaries that have completed at least one DREAMS service/intervention but not the full primary package";
+  const title_pt =
+    " Beneficiárias que completaram pelo menos um serviço/intervenção do DREAMS mas não o pacote primário completo ";
+
+  const beneficiaries =
+    responseData[districtId]["completed-service-not-primary-package"]
+      .beneficiaries;
+
+  const arrBeneficiaries = Object.keys(beneficiaries).map((key) => ({
+    key,
+    value: beneficiaries[key],
+  }));
+
+  function extractElements(data) {
+    const elements: string[] = [];
+
+    data.forEach((item) => {
+      Object.values(item.value).forEach((value) => {
+        if (Array.isArray(value)) {
+          elements.push(...value);
+        }
+      });
+    });
+
+    return elements;
+  }
+
+  const handleOnCLick = () => {
+    const elements = extractElements(arrBeneficiaries);
+    dispatch(
+      loadBeneficiariesIds({ ids: elements, title: title_pt, total: total })
+    );
+  };
+
+  useEffect(() => {
+    const elements = extractElements(arrBeneficiaries);
+    dispatch(loadAllBeneficiariesIds({ ids: elements }));
+  }, [dispatch]);
+
   return (
     <Fragment>
       {responseData != undefined && (
@@ -152,9 +198,14 @@ const CompletedAtLeastOnePrimaryService = ({ districtId }) => {
           columns={columns}
           dataSource={data}
           bordered
-          title={() =>
-            `Beneficiaries that have completed at least one DREAMS service/intervention but not the full primary package: ${total}  `
-          }
+          title={() => (
+            <React.Fragment>
+              {title}:{" "}
+              <Link onClick={handleOnCLick} to="/viewAgyw">
+                {total}
+              </Link>
+            </React.Fragment>
+          )}
           pagination={false}
         />
       )}

@@ -19,3 +19,9 @@ export async function interventionCountQuery() {
   const res = await select(url);
   return res;
 }
+
+export async function pagedQueryByBeneficiariesIds(ids?: number[]) {
+  const url = `/api/beneficiary-intervention/byBeneficiariesIds?&params=${ids}`;
+  const res = await select(url);
+  return res;
+}
