@@ -152,7 +152,7 @@ const CompletedViolenceService = ({ districtId }) => {
   const title =
     "Number of AGYW enrolled in DREAMS that completed an evidence-based intervention focused on preventing violence within the reporting period";
   const title_pt =
-    "Beneficiárias que completaram uma intervenção baseada em evidências com foco na prevenção da violênc";
+    "Beneficiárias que completaram uma intervenção baseada em evidências com foco na prevenção da violência";
 
   const beneficiaries =
     responseData[districtId]["completed-violence-service"].beneficiaries;
