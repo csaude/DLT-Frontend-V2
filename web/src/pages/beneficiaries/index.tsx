@@ -287,6 +287,7 @@ const BeneficiariesList: React.FC = () => {
     );
     setBeneficiaries(sortedBeneficiaries);
     setBeneficiary(data);
+    handleViewModalVisible(true, data);
   };
 
   const handleUpdateBeneficiary = (data: any) => {
@@ -298,7 +299,6 @@ const BeneficiariesList: React.FC = () => {
     setBeneficiary(data);
     setBeneficiaryModalVisible(false);
     setBeneficiaryPartnerModalVisible(false);
-    handleViewModalVisible(true, data);
   };
 
   const handleViewModalVisible = (flag?: boolean, record?: any) => {
@@ -836,6 +836,7 @@ const BeneficiariesList: React.FC = () => {
         handleAddBeneficiary={handleAddBeneficiary}
         handleUpdateBeneficiary={handleUpdateBeneficiary}
         handleModalVisible={handleBeneficiaryPartnerModalVisible}
+        handleViewModalVisible={handleViewModalVisible}
       />
       <FormReference
         form={form}
