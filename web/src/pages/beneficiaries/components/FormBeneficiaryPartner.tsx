@@ -17,6 +17,7 @@ const BeneficiaryPartnerForm = ({
   handleAddBeneficiary,
   handleUpdateBeneficiary,
   handleModalVisible,
+  handleViewModalVisible,
 }: any) => {
   const [current, setCurrent] = useState(0);
   const [firstStepValues, setFirstStepValues] = useState();
@@ -98,6 +99,7 @@ const BeneficiaryPartnerForm = ({
         const { data } = await add(ben);
         handleAddBeneficiary(data);
         handleModalVisible(false);
+        handleViewModalVisible(true, data);
 
         message.success({
           content: "Registado com Sucesso!",
@@ -108,6 +110,7 @@ const BeneficiaryPartnerForm = ({
         });
       })
       .catch(() => {
+        handleModalVisible(false);
         message.error({
           content: "Não foi possivel Registrar o Parceiro!",
           className: "custom-class",
@@ -217,7 +220,7 @@ const BeneficiaryPartnerForm = ({
         centered
         destroyOnClose
         title={" Registo de Parceiro de Beneficiária"}
-        open={modalVisible}
+        visible={modalVisible}
         onCancel={() => showCloseConfirm()}
         maskClosable={false}
         footer={

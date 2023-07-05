@@ -696,15 +696,6 @@ const ReportView: React.FC = () => {
       if (i == currentPageEnd + 1) {
         currentPageEnd += pageSize;
       }
-
-      console.log(
-        "index = ",
-        i,
-        "currentPageEnd = ",
-        currentPageEnd,
-        " found: ",
-        beneficiariesIdsSelector[i]
-      );
     }
 
     const created = moment(new Date()).format("YYYYMMDD_hhmmss");
