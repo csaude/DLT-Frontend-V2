@@ -592,7 +592,13 @@ const ReportView: React.FC = () => {
 
     let fetchedBeneficiariesIds: number[] = [];
 
-    for (let i = 0; i <= currentPageEnd + 1; i++) {
+    const lastPage = Math.ceil(beneficiariesIdsSelector.length / pageSize);
+
+    for (
+      let i = 0;
+      i <= currentPageEnd + 1 && currentPageEnd <= lastPage * pageSize;
+      i++
+    ) {
       fetchedBeneficiariesIds.push(beneficiariesIdsSelector[i]);
 
       if (
@@ -699,10 +705,6 @@ const ReportView: React.FC = () => {
         " found: ",
         beneficiariesIdsSelector[i]
       );
-      if (beneficiariesIdsSelector[i] == undefined) {
-        console.log("Broke ON i=", i, " and ", beneficiariesIdsSelector[i]);
-        break;
-      }
     }
 
     const created = moment(new Date()).format("YYYYMMDD_hhmmss");
