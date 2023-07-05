@@ -25,3 +25,12 @@
 .steps-action {
   margin-top: 24px;
 }
+
+.center {
+  text-align: center;
+    display: block;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    width: 100%;
+}

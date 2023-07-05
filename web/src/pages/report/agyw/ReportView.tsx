@@ -599,6 +599,7 @@ const ReportView: React.FC = () => {
       i <= currentPageEnd + 1 && currentPageEnd <= lastPage * pageSize;
       i++
     ) {
+
       fetchedBeneficiariesIds.push(beneficiariesIdsSelector[i]);
 
       if (
@@ -705,6 +706,7 @@ const ReportView: React.FC = () => {
         " found: ",
         beneficiariesIdsSelector[i]
       );
+
     }
 
     const created = moment(new Date()).format("YYYYMMDD_hhmmss");
