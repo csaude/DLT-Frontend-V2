@@ -592,10 +592,13 @@ const ReportView: React.FC = () => {
 
     let fetchedBeneficiariesIds: number[] = [];
 
-    for (let i = 0; i <= currentPageEnd; i++) {
-      if (beneficiariesIdsSelector[i] == undefined) {
-        break;
-      }
+    const lastPage = Math.ceil(beneficiariesIdsSelector.length / pageSize);
+
+    for (
+      let i = 0;
+      i <= currentPageEnd + 1 && currentPageEnd <= lastPage * pageSize;
+      i++
+    ) {
 
       fetchedBeneficiariesIds.push(beneficiariesIdsSelector[i]);
 
@@ -691,9 +694,19 @@ const ReportView: React.FC = () => {
         fetchedBeneficiariesIds = [];
       }
 
-      if (i + 1 == currentPageEnd) {
+      if (i == currentPageEnd + 1) {
         currentPageEnd += pageSize;
       }
+
+      console.log(
+        "index = ",
+        i,
+        "currentPageEnd = ",
+        currentPageEnd,
+        " found: ",
+        beneficiariesIdsSelector[i]
+      );
+
     }
 
     const created = moment(new Date()).format("YYYYMMDD_hhmmss");
