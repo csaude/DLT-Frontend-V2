@@ -132,6 +132,7 @@ const BeneficiaryPartnerForm = ({
           "YYYY-MM-DD"
         );
         beneficiary.age = firstStepValues.age;
+        beneficiary.gender = firstStepValues.gender;
         beneficiary.address = firstStepValues.address;
         beneficiary.email = firstStepValues.e_mail;
         beneficiary.phoneNumber = firstStepValues.phone_number;
