@@ -10,32 +10,120 @@ import CompletedSocialEconomicApproaches from "./containers/CompletedSocialEcono
 import CompletedViolenceService from "./containers/CompletedViolenceService";
 import HadSchoolAllowance from "./containers/HadSchoolAllowance";
 import { useDispatch, useSelector } from "react-redux";
-import { loadBeneficiariesIds } from "@app/store/reducers/report";
+import {
+  loadTotalBeneficiariesIds,
+  resetTotalBeneficiariesIds,
+} from "@app/store/reducers/report";
 
 const ReportPreview = () => {
   const { state }: any = useLocation();
   const { provinces, districts, initialDate, finalDate } = state; // Read values passed on state
 
   const responseData = useSelector((state: any) => state.report.agyw);
-  const allIds = useSelector((state: any) => state.report.allIds);
+  const totalIds = useSelector((state: any) => state.report.totalIds);
   const dispatch = useDispatch();
   let currentProvinceId: any;
 
-  const onChange = () => {
-    //console.log(key);
+  const handeOnExpandProvince = () => {
+    /*Collapse on change prov*/
+  };
+
+  function extractElements(data) {
+    const elements: string[] = [];
+
+    data.forEach((item) => {
+      Object.values(item.value).forEach((value) => {
+        if (Array.isArray(value)) {
+          elements.push(...value);
+        }
+      });
+    });
+
+    return elements;
+  }
+
+  const loadCompletedOnlyPrimaryPackage = (total, districtId) => {
+    const beneficiaries =
+      responseData[districtId]["completed-only-primary-package"].beneficiaries;
+
+    const arrBeneficiaries = Object.keys(beneficiaries).map((key) => ({
+      key,
+      value: beneficiaries[key],
+    }));
+
+    const elements = extractElements(arrBeneficiaries);
+    dispatch(
+      loadTotalBeneficiariesIds({ ids: elements, title: title, total: total })
+    );
+  };
+
+  const loadCompletedPrimaryPackageAndSecondaryService = (
+    total,
+    districtId
+  ) => {
+    const beneficiaries =
+      responseData[districtId][
+        "completed-primary-package-and-secondary-service"
+      ].beneficiaries;
+
+    const arrBeneficiaries = Object.keys(beneficiaries).map((key) => ({
+      key,
+      value: beneficiaries[key],
+    }));
+
+    const elements = extractElements(arrBeneficiaries);
+    dispatch(
+      loadTotalBeneficiariesIds({ ids: elements, title: title, total: total })
+    );
+  };
+
+  const loadCompletedAtLeastOnePrimaryService = (total, districtId) => {
+    const beneficiaries =
+      responseData[districtId]["completed-service-not-primary-package"]
+        .beneficiaries;
+
+    const arrBeneficiaries = Object.keys(beneficiaries).map((key) => ({
+      key,
+      value: beneficiaries[key],
+    }));
+
+    const elements = extractElements(arrBeneficiaries);
+    dispatch(
+      loadTotalBeneficiariesIds({ ids: elements, title: title, total: total })
+    );
+  };
+
+  const loadStartedServiceDidNotComplete = (total, districtId) => {
+    const beneficiaries =
+      responseData[districtId]["started-service-did-not-complete"]
+        .beneficiaries;
+
+    const arrBeneficiaries = Object.keys(beneficiaries).map((key) => ({
+      key,
+      value: beneficiaries[key],
+    }));
+
+    const elements = extractElements(arrBeneficiaries);
+    dispatch(
+      loadTotalBeneficiariesIds({ ids: elements, title: title, total: total })
+    );
   };
 
   const title = "Total de Beneficiárias no Indicador AGYW_PREV";
 
-  const handleOnCLick = (total) => {
-    dispatch(loadBeneficiariesIds({ ids: allIds, title: title, total: total }));
+  const handleOnCLick = (total, districtId) => {
+    console.log("---------districtId-------", districtId);
+    dispatch(resetTotalBeneficiariesIds());
+    loadCompletedOnlyPrimaryPackage(total, districtId);
+    loadCompletedPrimaryPackageAndSecondaryService(total, districtId);
+    loadCompletedAtLeastOnePrimaryService(total, districtId);
+    loadStartedServiceDidNotComplete(total, districtId);
   };
-
   return (
     <>
       <p>Data Inicial: {initialDate}</p>
       <p>Data final: {finalDate}</p>
-      <Collapse onChange={onChange}>
+      <Collapse onChange={handeOnExpandProvince}>
         {provinces.map((province) => {
           currentProvinceId = province.id;
           return (
@@ -56,18 +144,6 @@ const ReportPreview = () => {
                       const beneficiariesTotal =
                         responseData[district.id]["total-beneficiaries"].total;
 
-                      const beneficiaries =
-                        responseData[district.id][
-                          "completed-service-not-primary-package"
-                        ].beneficiaries;
-
-                      const arrBeneficiaries = Object.keys(beneficiaries).map(
-                        (key) => ({
-                          key,
-                          value: beneficiaries[key],
-                        })
-                      );
-
                       return (
                         <Panel header={district.name} key={district.id}>
                           <p>Distrito: {" " + district.name}</p>
@@ -87,7 +163,7 @@ const ReportPreview = () => {
                           <p>
                             {title}:
                             <Link
-                              onClick={() => handleOnCLick(total)}
+                              onClick={() => handleOnCLick(total, district.id)}
                               to="/viewAgyw"
                             >
                               {" " + total}
