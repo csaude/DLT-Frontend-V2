@@ -476,6 +476,7 @@ const ReportView: React.FC = () => {
   };
 
   async function handleGenerateXLSXReport() {
+    setDataLoading(true);
     const currentUserName = authSelector?.name;
     let currentPageEnd = 99;
     const pageSize = 100;
@@ -707,6 +708,8 @@ const ReportView: React.FC = () => {
         "PEPFAR_MER_2.6_AGYW_PREV_Beneficiaries_" + created + ".xls"
       );
     });
+
+    setDataLoading(false);
   }
 
   return (
