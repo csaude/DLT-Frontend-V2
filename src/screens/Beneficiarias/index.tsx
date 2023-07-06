@@ -389,7 +389,7 @@ const BeneficiariesMain: React.FC = ({
     const userDetailsQ = await userDetailsCollection
       .query(Q.where("user_id", parseInt(currentUserId)))
       .fetch();
-    const userDetailsRaw = userDetailsQ[0]?._raw;
+    // const userDetailsRaw = userDetailsQ[0]?._raw;
 
     //     if (userDetailsRaw?.['provinces']?.length === 0) {
     //             //"CENTRAL"
@@ -447,7 +447,9 @@ const BeneficiariesMain: React.FC = ({
     //             setUserBeneficiaries(neiBeneficiaries)
     //         }
     //         setRefreshData(false)
-    const beneficiaries = await beneficiariesCollection.query().fetch();
+    const beneficiaries = await beneficiariesCollection
+      .query(Q.where("status", 1))
+      .fetch();
     setUserBeneficiaries(beneficiaries);
   };
 
@@ -1040,7 +1042,7 @@ const enhance = withObservables([], () => ({
   profiles: database.collections.get("profiles").query().observe(),
   beneficiaries_interventions: database.collections
     .get("beneficiaries_interventions")
-    .query()
+    .query(Q.where("status", 1))
     .observe(),
   subServices: database.collections.get("sub_services").query().observe(),
   us: database.collections.get("us").query().observe(),
