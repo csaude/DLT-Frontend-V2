@@ -4,7 +4,7 @@ import { Q } from "@nozbe/watermelondb";
 export const beneficiariesFetchCount = async () => {
   const count = await database.collections
     .get("beneficiaries")
-    .query()
+    .query(Q.where("status", 1))
     .fetchCount();
   return count;
 };
