@@ -114,18 +114,27 @@ const ReportAgyw = () => {
   };
 
   const handleGenerateXLSXReport = () => {
-    const districtsIds = selectedDistricts.map((dist) => {
-      return dist.id;
-    });
-    const startDate = moment(initialDate).format("YYYY-MM-DD");
-    const endDate = moment(finalDate).format("YYYY-MM-DD");
-    generateXlsReport(
-      currentUserName,
-      districtsIds,
-      startDate,
-      endDate,
-      selectedDistricts
-    );
+    if (
+      selectedProvinces.length < 1 ||
+      selectedDistricts.length < 1 ||
+      initialDate === undefined ||
+      finalDate === undefined
+    ) {
+      toast.error("Por favor selecione os filtros para relatorio");
+    } else {
+      const districtsIds = selectedDistricts.map((dist) => {
+        return dist.id;
+      });
+      const startDate = moment(initialDate).format("YYYY-MM-DD");
+      const endDate = moment(finalDate).format("YYYY-MM-DD");
+      generateXlsReport(
+        currentUserName,
+        districtsIds,
+        startDate,
+        endDate,
+        selectedDistricts
+      );
+    }
   };
 
   return (

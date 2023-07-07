@@ -48,6 +48,7 @@ import {
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import { getVulnerabilitiesCounter } from "@app/utils/vulnerabilitiesCounter";
+import { toast } from "react-toastify";
 
 const { Text } = Typography;
 
@@ -476,250 +477,130 @@ const ReportView: React.FC = () => {
   };
 
   async function handleGenerateXLSXReport() {
-    setDataLoading(true);
-    const currentUserName = authSelector?.name;
-    let currentPageEnd = 99;
-    const pageSize = 100;
+    try {
+      setDataLoading(true);
+      const currentUserName = authSelector?.name;
+      const pageElements = 1000;
 
-    const workbook = new ExcelJS.Workbook();
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet("PEPFAR_MER_2.6_AGYW");
 
-    workbook.creator = currentUserName;
-    workbook.lastModifiedBy = currentUserName;
-    workbook.created = new Date();
-    workbook.modified = new Date();
-    workbook.lastPrinted = new Date();
-    workbook.properties.date1904 = true;
-    workbook.calcProperties.fullCalcOnLoad = true;
-    workbook.views = [
-      {
-        x: 0,
-        y: 0,
-        width: 10000,
-        height: 20000,
-        firstSheet: 0,
-        activeTab: 1,
-        visibility: "visible",
-      },
-    ];
-    const worksheet = workbook.addWorksheet("PEPFAR_MER_2.6_AGYW");
+      const headers = [
+        "PROVINCE",
+        "DISTRICT",
+        "NEIGHBORHOOD",
+        "ENTRY POINT",
+        "ORGANIZATION",
+        "DATE REGISTERED",
+        "NUI",
+        "AGE (AT REGISTRATION)",
+        "CURRENT AGE",
+        "AGE GROUP (AT REGISTRATION)",
+        "AGE GROUP (CURRENT)",
+        "DATE OF BIRTH",
+        "NUMBER OF VULNERABILITIES",
+        "TYPE OF SERVICE",
+        "SERVICE",
+        "SUB SERVICE",
+        "SERVICE PACKAGE",
+        "SERVICE ENTRY POINT",
+        "SERVICE LOCATION",
+        "SERVICE DATE",
+        "PROVIDER",
+        "REMARKS",
+      ];
 
-    const a1 = worksheet.getCell("A1");
-    a1.alignment = { vertical: "middle", horizontal: "center" };
-    a1.value = "PROVINCE";
+      const headerRow = worksheet.getRow(1);
+      headers.forEach((header, index) => {
+        const cell = headerRow.getCell(index + 1);
+        cell.alignment = { vertical: "middle", horizontal: "center" };
+        cell.value = header;
+      });
 
-    const b1 = worksheet.getCell("B1");
-    b1.alignment = { vertical: "middle", horizontal: "center" };
-    b1.value = "DISTRICT";
+      const fetchedBeneficiariesIds = beneficiariesIdsSelector.slice(); // Copy the array
+      const lastPage = Math.ceil(fetchedBeneficiariesIds.length / pageElements);
 
-    const c1 = worksheet.getCell("C1");
-    c1.alignment = { vertical: "middle", horizontal: "center" };
-    c1.value = "NEIGHBORHOOD";
+      for (let i = 0; i < lastPage; i++) {
+        const startIdx = i * pageElements;
+        const endIdx = (i + 1) * pageElements;
+        const beneficiaryIds = fetchedBeneficiariesIds.slice(startIdx, endIdx);
 
-    const d1 = worksheet.getCell("D1");
-    d1.alignment = { vertical: "middle", horizontal: "center" };
-    d1.value = "ENTRY POINT";
+        console.log("startIdx = ", startIdx, "endIdx = ", endIdx);
 
-    const e1 = worksheet.getCell("E1");
-    e1.alignment = { vertical: "middle", horizontal: "center" };
-    e1.value = "ORGANIZATION";
+        if (beneficiaryIds.length === 0) {
+          break;
+        }
 
-    const f1 = worksheet.getCell("F1");
-    f1.alignment = { vertical: "middle", horizontal: "center" };
-    f1.value = "DATE REGISTERED";
-
-    const g1 = worksheet.getCell("G1");
-    g1.alignment = { vertical: "middle", horizontal: "center" };
-    g1.value = "NUI";
-
-    const h1 = worksheet.getCell("H1");
-    h1.alignment = { vertical: "middle", horizontal: "center" };
-    h1.value = "AGE (AT REGISTRATION)";
-
-    const bm3 = worksheet.getCell("I1");
-    bm3.alignment = { vertical: "middle", horizontal: "center" };
-    bm3.value = "CURRENT AGE";
-
-    const i1 = worksheet.getCell("J1");
-    i1.alignment = { vertical: "middle", horizontal: "center" };
-    i1.value = "AGE GROUP (AT REGISTRATION)";
-
-    const k1 = worksheet.getCell("K1");
-    k1.alignment = { vertical: "middle", horizontal: "center" };
-    k1.value = "AGE GROUP (CURRENT)";
-
-    const l1 = worksheet.getCell("L1");
-    l1.alignment = { vertical: "middle", horizontal: "center" };
-    l1.value = "DATE OF BIRTH";
-
-    const m1 = worksheet.getCell("M1");
-    m1.alignment = { vertical: "middle", horizontal: "center" };
-    m1.value = "NUMBER OF VULNERABILITIES";
-
-    const n1 = worksheet.getCell("N1");
-    n1.alignment = { vertical: "middle", horizontal: "center" };
-    n1.value = "TYPE OF SERVICE";
-
-    const o1 = worksheet.getCell("O1");
-    o1.alignment = { vertical: "middle", horizontal: "center" };
-    o1.value = "SERVICE";
-
-    const p1 = worksheet.getCell("P1");
-    p1.alignment = { vertical: "middle", horizontal: "center" };
-    p1.value = "SUB SERVICE";
-
-    const q1 = worksheet.getCell("Q1");
-    q1.alignment = { vertical: "middle", horizontal: "center" };
-    q1.value = "SERVICE PACKAGE";
-
-    const r1 = worksheet.getCell("R1");
-    r1.alignment = { vertical: "middle", horizontal: "center" };
-    r1.value = "SERVICE ENTRY POINT";
-
-    const s1 = worksheet.getCell("S1");
-    s1.alignment = { vertical: "middle", horizontal: "center" };
-    s1.value = "SERVICE LOCATION";
-
-    const t1 = worksheet.getCell("T1");
-    t1.alignment = { vertical: "middle", horizontal: "center" };
-    t1.value = "SERVICE DATE";
-
-    const u1 = worksheet.getCell("U1");
-    u1.alignment = { vertical: "middle", horizontal: "center" };
-    u1.value = "PROVIDER";
-
-    const v1 = worksheet.getCell("V1");
-    v1.alignment = { vertical: "middle", horizontal: "center" };
-    v1.value = "REMARKS";
-
-    let fetchedBeneficiariesIds: number[] = [];
-
-    const lastPage = Math.ceil(beneficiariesIdsSelector.length / pageSize);
-
-    for (
-      let i = 0;
-      i <= currentPageEnd + 1 && currentPageEnd <= lastPage * pageSize;
-      i++
-    ) {
-      fetchedBeneficiariesIds.push(beneficiariesIdsSelector[i]);
-
-      if (
-        fetchedBeneficiariesIds.length == pageSize ||
-        beneficiariesIdsSelector.length < pageSize
-      ) {
         const interventions = await pagedQueryByBeneficiariesIds(
-          fetchedBeneficiariesIds
+          beneficiaryIds
         );
 
-        interventions.map(async (intervention: any) => {
-          const values: any = [];
-          let cell = 1;
-          values[cell] =
-            intervention.beneficiary?.locality?.district?.province.name;
-          cell = cell + 1;
-          values[cell] = intervention.beneficiary?.locality?.district?.name;
-          cell = cell + 1;
-          values[cell] = intervention.beneficiary?.neighborhood.name;
-          cell = cell + 1;
-          values[cell] =
-            intervention.beneficiary?.entryPoint == 1
+        interventions.forEach((intervention) => {
+          const values = [
+            intervention.beneficiary?.locality?.district?.province.name,
+            intervention.beneficiary?.locality?.district?.name,
+            intervention.beneficiary?.neighborhood.name,
+            intervention.beneficiary?.entryPoint === 1
               ? "US"
-              : intervention.beneficiary?.entryPoint == 2
+              : intervention.beneficiary?.entryPoint === 2
               ? "CM"
-              : "ES";
-          cell = cell + 1;
-          values[cell] = intervention.beneficiary?.partners?.name;
-          cell = cell + 1;
-          values[cell] = moment(intervention.beneficiary.dateCreated).format(
-            "YYYY-MM-DD HH:mm:ss"
-          );
-          cell = cell + 1;
-          values[cell] = intervention.beneficiary.nui;
-          cell = cell + 1;
-          values[cell] = getAgeAtRegistrationDate(
-            intervention.beneficiary.dateOfBirth,
-            intervention.beneficiary.dateCreated
-          );
-          cell = cell + 1;
-          values[cell] = getAgeByDate(intervention.beneficiary.dateOfBirth);
-          cell = cell + 1;
-          values[cell] = getAgeRangeAtRegistrationDate(
-            intervention.beneficiary.dateOfBirth,
-            intervention.beneficiary.dateCreated
-          ); //"age group at registration";
-          cell = cell + 1;
-          values[cell] = getAgeRangeByDate(
-            intervention.beneficiary.dateOfBirth
-          ); //"age group current";
-          cell = cell + 1;
-          values[cell] = moment(intervention.beneficiary.dateOfBirth).format(
-            "YYYY-MM-DD"
-          );
-          cell = cell + 1;
-          values[cell] = getVulnerabilitiesCounter(intervention.beneficiary);
-          cell = cell + 1;
-          values[cell] =
-            intervention.subServices?.service?.serviceType == 1
-              ? "Serviços  Clinicos"
-              : "Serviços Comunitários";
-          cell = cell + 1;
-          values[cell] = intervention.subServices?.service?.name;
-          cell = cell + 1;
-          values[cell] = intervention.subServices?.name;
-
-          cell = cell + 1;
-          values[cell] = getServiceBandByServiceIdAndAge(
-            intervention.subServices?.service?.id,
-            intervention.beneficiary.dateOfBirth
-          );
-          cell = cell + 1;
-          values[cell] =
-            intervention.entryPoint == 1
+              : "ES",
+            intervention.beneficiary?.partners?.name,
+            moment(intervention.beneficiary.dateCreated).format(
+              "YYYY-MM-DD HH:mm:ss"
+            ),
+            intervention.beneficiary.nui,
+            getAgeAtRegistrationDate(
+              intervention.beneficiary.dateOfBirth,
+              intervention.beneficiary.dateCreated
+            ),
+            getAgeByDate(intervention.beneficiary.dateOfBirth),
+            getAgeRangeAtRegistrationDate(
+              intervention.beneficiary.dateOfBirth,
+              intervention.beneficiary.dateCreated
+            ),
+            getAgeRangeByDate(intervention.beneficiary.dateOfBirth),
+            moment(intervention.beneficiary.dateOfBirth).format("YYYY-MM-DD"),
+            getVulnerabilitiesCounter(intervention.beneficiary),
+            intervention.subServices?.service?.serviceType === 1
+              ? "Serviços Clinicos"
+              : "Serviços Comunitários",
+            intervention.subServices?.service?.name,
+            intervention.subServices?.name,
+            getServiceBandByServiceIdAndAge(
+              intervention.subServices?.service?.id,
+              intervention.beneficiary.dateOfBirth
+            ),
+            intervention.entryPoint === 1
               ? "US"
-              : intervention?.entryPoint == 2
+              : intervention.entryPoint === 2
               ? "CM"
-              : "ES";
-          cell = cell + 1;
-          values[cell] = intervention.us?.name;
-          cell = cell + 1;
-          values[cell] = moment(intervention.id.date).format("YYYY-MM-DD");
-          cell = cell + 1;
-          values[cell] = intervention.provider;
-
-          cell = cell + 1;
-          values[cell] = intervention.remarks;
-          cell = cell + 1;
+              : "ES",
+            intervention.us?.name,
+            moment(intervention.id.date).format("YYYY-MM-DD"),
+            intervention.provider,
+            intervention.remarks,
+          ];
 
           worksheet.addRow(values);
         });
-        fetchedBeneficiariesIds = [];
       }
 
-      if (i == currentPageEnd + 1) {
-        currentPageEnd += pageSize;
-      }
+      const created = moment().format("YYYYMMDD_hhmmss");
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      saveAs(blob, `PEPFAR_MER_2.6_AGYW_PREV_Beneficiaries_${created}.xlsx`);
 
-      console.log(
-        "index = ",
-        i,
-        "currentPageEnd = ",
-        currentPageEnd,
-        " found: ",
-        beneficiariesIdsSelector[i]
-      );
-
+      setDataLoading(false);
+    } catch (error) {
+      // Handle any errors that occur during report generation
+      console.error("Error generating XLSX report:", error);
+      setDataLoading(false);
+      // Display an error message using your preferred method (e.g., toast.error)
+      toast.error("An error occurred during report generation.");
     }
-
-    const created = moment(new Date()).format("YYYYMMDD_hhmmss");
-
-    workbook.xlsx.writeBuffer().then(function (buffer) {
-      const blob = new Blob([buffer], { type: "applicationi/xlsx" });
-      saveAs(
-        blob,
-        "PEPFAR_MER_2.6_AGYW_PREV_Beneficiaries_" + created + ".xls"
-      );
-    });
-
-    setDataLoading(false);
   }
 
   return (
