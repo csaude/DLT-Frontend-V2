@@ -479,7 +479,7 @@ const ReportView: React.FC = () => {
     setDataLoading(true);
     const currentUserName = authSelector?.name;
     let currentPageEnd = 99;
-    const pageSize = 100;
+    const pageElements = 1000;
 
     const workbook = new ExcelJS.Workbook();
 
@@ -593,18 +593,18 @@ const ReportView: React.FC = () => {
 
     let fetchedBeneficiariesIds: number[] = [];
 
-    const lastPage = Math.ceil(beneficiariesIdsSelector.length / pageSize);
+    const lastPage = Math.ceil(beneficiariesIdsSelector.length / pageElements);
 
     for (
       let i = 0;
-      i <= currentPageEnd + 1 && currentPageEnd <= lastPage * pageSize;
+      i <= currentPageEnd + 1 && currentPageEnd <= lastPage * pageElements;
       i++
     ) {
       fetchedBeneficiariesIds.push(beneficiariesIdsSelector[i]);
 
       if (
-        fetchedBeneficiariesIds.length == pageSize ||
-        beneficiariesIdsSelector.length < pageSize
+        fetchedBeneficiariesIds.length == pageElements ||
+        beneficiariesIdsSelector.length < pageElements
       ) {
         const interventions = await pagedQueryByBeneficiariesIds(
           fetchedBeneficiariesIds
@@ -695,7 +695,7 @@ const ReportView: React.FC = () => {
       }
 
       if (i == currentPageEnd + 1) {
-        currentPageEnd += pageSize;
+        currentPageEnd += pageElements;
       }
 
       console.log(
