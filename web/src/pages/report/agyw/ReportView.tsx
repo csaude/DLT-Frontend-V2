@@ -478,7 +478,7 @@ const ReportView: React.FC = () => {
   async function handleGenerateXLSXReport() {
     setDataLoading(true);
     const currentUserName = authSelector?.name;
-    let currentPageEnd = 99;
+    let currentPageEnd = 999;
     const pageElements = 1000;
 
     const workbook = new ExcelJS.Workbook();
@@ -600,6 +600,10 @@ const ReportView: React.FC = () => {
       i <= currentPageEnd + 1 && currentPageEnd <= lastPage * pageElements;
       i++
     ) {
+      if (beneficiariesIdsSelector[i] === undefined) {
+        break;
+      }
+
       fetchedBeneficiariesIds.push(beneficiariesIdsSelector[i]);
 
       if (
