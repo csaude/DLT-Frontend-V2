@@ -706,7 +706,6 @@ const ReportView: React.FC = () => {
         " found: ",
         beneficiariesIdsSelector[i]
       );
-
     }
 
     const created = moment(new Date()).format("YYYYMMDD_hhmmss");
