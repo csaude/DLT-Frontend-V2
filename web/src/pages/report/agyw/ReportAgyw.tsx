@@ -12,6 +12,7 @@ import {
   Typography,
   Image,
 } from "antd";
+import { query } from "@app/utils/users";
 import { queryAll } from "@app/utils/province";
 import { queryDistrictsByProvinces } from "@app/utils/locality";
 import { useNavigate } from "react-router-dom";
@@ -45,7 +46,14 @@ const ReportAgyw = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const provinces = await queryAll();
+      const loggedUser = await query(localStorage.user);
+      let provinces;
+      if (loggedUser.provinces.length > 0) {
+        provinces = loggedUser.provinces;
+      } else {
+        provinces = await queryAll();
+      }
+
       setProvinces(provinces);
     };
 
