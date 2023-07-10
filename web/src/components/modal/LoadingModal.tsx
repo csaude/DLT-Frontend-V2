@@ -10,7 +10,7 @@ const LoadingModal = ({ modalVisible }: any) => {
         width={150}
         centered
         destroyOnClose
-        open={modalVisible}
+        visible={modalVisible}
         maskClosable={false}
         footer={null}
         closable={false}

@@ -144,7 +144,7 @@ const FormReference = ({
         centered
         destroyOnClose
         title={" Referências Dreams"}
-        open={modalVisible}
+        visible={modalVisible}
         maskClosable={false}
         onCancel={() => showCloseConfirm()}
         footer={
