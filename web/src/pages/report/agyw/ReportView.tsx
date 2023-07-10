@@ -539,7 +539,7 @@ const ReportView: React.FC = () => {
           const values = [
             intervention.beneficiary?.locality?.district?.province.name,
             intervention.beneficiary?.locality?.district?.name,
-            intervention.beneficiary?.neighborhood.name,
+            intervention.beneficiary?.neighborhood?.name,
             intervention.beneficiary?.entryPoint === 1
               ? "US"
               : intervention.beneficiary?.entryPoint === 2
