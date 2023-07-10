@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import { Collapse } from "antd";
-import { Link, Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 const { Panel } = Collapse;
 import CompletedOnlyPrimaryPackage from "./containers/CompletedOnlyPrimaryPackage";
 import CompletedPrimaryPackageAndSecondaryService from "./containers/CompletedPrimaryPackageAndSecondaryService";
