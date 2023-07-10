@@ -12,6 +12,7 @@ import {
   Typography,
   Image,
 } from "antd";
+import { query } from "@app/utils/users";
 import { queryAll } from "@app/utils/province";
 import { queryDistrictsByProvinces } from "@app/utils/locality";
 import { useNavigate } from "react-router-dom";
@@ -24,6 +25,7 @@ import { agywPrevQuery } from "@app/utils/report";
 import { serviceAgesBandsQuery } from "@app/utils/report";
 import { loadAgywData, loadServiceAgebands } from "@app/store/reducers/report";
 import { Title as AppTitle } from "@app/components";
+import LoadingModal from "@app/components/modal/LoadingModal";
 const { Option } = Select;
 const { Title } = Typography;
 
@@ -35,6 +37,7 @@ const ReportAgyw = () => {
   const [initialDate, setInitialDate] = useState<any>();
   const [finalDate, setFinalDate] = useState<any>();
   const [form] = Form.useForm();
+  const [dataLoading, setDataLoading] = useState(false);
   const navigate = useNavigate();
   const RequiredFieldMessage = "Obrigatório!";
   const userSelector = useSelector((state: any) => state?.auth);
@@ -43,7 +46,14 @@ const ReportAgyw = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const provinces = await queryAll();
+      const loggedUser = await query(localStorage.user);
+      let provinces;
+      if (loggedUser.provinces.length > 0) {
+        provinces = loggedUser.provinces;
+      } else {
+        provinces = await queryAll();
+      }
+
       setProvinces(provinces);
     };
 
@@ -85,6 +95,7 @@ const ReportAgyw = () => {
     ) {
       toast.error("Por favor selecione os filtros para relatorio");
     } else {
+      setDataLoading(true);
       const districtsIds = selectedDistricts.map((district) => {
         return district.id;
       });
@@ -110,6 +121,7 @@ const ReportAgyw = () => {
           finalDate: moment(finalDate).format("YYYY-MM-DD"),
         },
       });
+      setDataLoading(false);
     }
   };
 
@@ -122,6 +134,7 @@ const ReportAgyw = () => {
     ) {
       toast.error("Por favor selecione os filtros para relatorio");
     } else {
+      setDataLoading(true);
       const districtsIds = selectedDistricts.map((dist) => {
         return dist.id;
       });
@@ -134,6 +147,7 @@ const ReportAgyw = () => {
         endDate,
         selectedDistricts
       );
+      setDataLoading(false);
     }
   };
 
@@ -245,6 +259,7 @@ const ReportAgyw = () => {
           </div>
         </Card>
       </Card>
+      {<LoadingModal modalVisible={dataLoading} />}
     </Fragment>
   );
 };
