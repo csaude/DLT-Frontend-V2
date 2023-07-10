@@ -1,13 +1,10 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment } from "react";
 import { Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useDispatch, useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
-import {
-  loadAllBeneficiariesIds,
-  loadBeneficiariesIds,
-} from "@app/store/reducers/report";
+import { loadBeneficiariesIds } from "@app/store/reducers/report";
 
 const CompletedAtLeastOnePrimaryService = ({ districtId }) => {
   const responseData = useSelector((state: any) => state.report.agyw);
@@ -153,6 +150,8 @@ const CompletedAtLeastOnePrimaryService = ({ districtId }) => {
 
   const title =
     "Beneficiaries that have completed at least one DREAMS service/intervention but not the full primary package";
+  const title_pt =
+    " Beneficiárias que completaram pelo menos um serviço/intervenção do DREAMS mas não o pacote primário completo ";
 
   const beneficiaries =
     responseData[districtId]["completed-service-not-primary-package"]
@@ -180,14 +179,9 @@ const CompletedAtLeastOnePrimaryService = ({ districtId }) => {
   const handleOnCLick = () => {
     const elements = extractElements(arrBeneficiaries);
     dispatch(
-      loadBeneficiariesIds({ ids: elements, title: title, total: total })
+      loadBeneficiariesIds({ ids: elements, title: title_pt, total: total })
     );
   };
-
-  useEffect(() => {
-    const elements = extractElements(arrBeneficiaries);
-    dispatch(loadAllBeneficiariesIds({ ids: elements }));
-  }, [dispatch]);
 
   return (
     <Fragment>

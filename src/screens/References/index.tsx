@@ -131,7 +131,9 @@ const ReferencesMain: React.FC = ({
         data.item?._raw.notify_to
       )?.organization_name;
       const attendDisabled =
-        loggedUserPartner === getUser(data.item?._raw.referred_by)?.partner_id;
+        loggedUserPartner ===
+          getUser(data.item?._raw.referred_by)?.partner_id ||
+        reference.status == 2;
 
       const beneficiaryId = beneficiary?.online_id
         ? beneficiary?.online_id

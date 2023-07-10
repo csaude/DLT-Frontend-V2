@@ -1,13 +1,10 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment } from "react";
 import { Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useDispatch, useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
-import {
-  loadAllBeneficiariesIds,
-  loadBeneficiariesIds,
-} from "@app/store/reducers/report";
+import { loadBeneficiariesIds } from "@app/store/reducers/report";
 
 const CompletedViolenceService = ({ districtId }) => {
   const responseData = useSelector((state: any) => state.report.agyw);
@@ -154,6 +151,8 @@ const CompletedViolenceService = ({ districtId }) => {
 
   const title =
     "Number of AGYW enrolled in DREAMS that completed an evidence-based intervention focused on preventing violence within the reporting period";
+  const title_pt =
+    "Beneficiárias que completaram uma intervenção baseada em evidências com foco na prevenção da violência";
 
   const beneficiaries =
     responseData[districtId]["completed-violence-service"].beneficiaries;
@@ -180,14 +179,9 @@ const CompletedViolenceService = ({ districtId }) => {
   const handleOnCLick = () => {
     const elements = extractElements(arrBeneficiaries);
     dispatch(
-      loadBeneficiariesIds({ ids: elements, title: title, total: total })
+      loadBeneficiariesIds({ ids: elements, title: title_pt, total: total })
     );
   };
-
-  useEffect(() => {
-    const elements = extractElements(arrBeneficiaries);
-    dispatch(loadAllBeneficiariesIds({ ids: elements }));
-  }, [dispatch]);
 
   return (
     <Fragment>

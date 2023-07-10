@@ -20,7 +20,7 @@ import Spinner from "react-native-loading-spinner-overlay/lib";
 const ReferenceView: React.FC = ({ route }: any) => {
   const [loading, setLoading] = useState(false);
   const [isOffline, setIsOffline] = useState(false);
-  const { beneficiary, references } = route.params;
+  const { beneficiary, interventions, references } = route.params;
   //const [references, setReferences] = useState<any>([]);
   const loggedUser: any = useContext(Context);
   const toast = useToast();
@@ -158,6 +158,7 @@ const ReferenceView: React.FC = ({ route }: any) => {
               name: "ReferenceForm",
               params: {
                 beneficiary: beneficiary,
+                intervs: interventions,
                 references: references,
                 userId: isNaN(loggedUser.id)
                   ? loggedUser.online_id

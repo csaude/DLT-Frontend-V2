@@ -1,13 +1,10 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment } from "react";
 import { Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useDispatch, useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
-import {
-  loadAllBeneficiariesIds,
-  loadBeneficiariesIds,
-} from "@app/store/reducers/report";
+import { loadBeneficiariesIds } from "@app/store/reducers/report";
 
 const HadSchoolAllowance = ({ districtId }) => {
   const responseData = useSelector((state: any) => state.report.agyw);
@@ -149,6 +146,8 @@ const HadSchoolAllowance = ({ districtId }) => {
 
   const title =
     "Number of AGYW enrolled in DREAMS that received educational support to remain in, advance, and/or rematriculate in school within the reporting period";
+  const title_pt =
+    "Beneficiárias que receberam apoio escolar para manter-se, progredir e/ou matricular-se na escola";
 
   const beneficiaries =
     responseData[districtId]["had-school-allowance"].beneficiaries;
@@ -174,13 +173,8 @@ const HadSchoolAllowance = ({ districtId }) => {
 
   const handleOnCLick = () => {
     const elements = extractElements(arrBeneficiaries);
-    dispatch(loadBeneficiariesIds({ ids: elements, title: title, total }));
+    dispatch(loadBeneficiariesIds({ ids: elements, title: title_pt, total }));
   };
-
-  useEffect(() => {
-    const elements = extractElements(arrBeneficiaries);
-    dispatch(loadAllBeneficiariesIds({ ids: elements }));
-  }, [dispatch]);
 
   return (
     <Fragment>

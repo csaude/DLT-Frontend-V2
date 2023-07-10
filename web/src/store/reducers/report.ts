@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 export interface ReportState {
   agyw?: any;
   ids?: number[];
-  allIds: number[];
+  totalIds: number[];
   title: string;
   total: number;
   serviceAgebands: [];
@@ -12,7 +12,7 @@ export interface ReportState {
 const initialState: ReportState = {
   agyw: "",
   ids: [],
-  allIds: [],
+  totalIds: [],
   title: "",
   total: 0,
   serviceAgebands: [],
@@ -30,15 +30,21 @@ export const reportSlice = createSlice({
       state.title = payload.title;
       state.total = payload.total;
     },
-    loadAllBeneficiariesIds: (state, { payload }) => {
+    loadTotalBeneficiariesIds: (state, { payload }) => {
       payload.ids?.forEach((id) => {
-        if (!state.allIds.includes(id)) {
-          state.allIds.push(id);
+        if (!state.totalIds.includes(id)) {
+          state.totalIds.push(id);
         }
       });
+      state.ids = state.totalIds;
+      state.title = payload.title;
+      state.total = payload.total;
     },
     loadServiceAgebands: (state, { payload }) => {
       state.serviceAgebands = payload;
+    },
+    resetTotalBeneficiariesIds: (state) => {
+      state.totalIds = [];
     },
   },
 });
@@ -46,8 +52,9 @@ export const reportSlice = createSlice({
 export const {
   loadAgywData,
   loadBeneficiariesIds,
-  loadAllBeneficiariesIds,
+  loadTotalBeneficiariesIds,
   loadServiceAgebands,
+  resetTotalBeneficiariesIds,
 } = reportSlice.actions;
 
 export default reportSlice.reducer;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { pagedQueryByFilters, query } from "../../utils/beneficiary";
+import { edit, pagedQueryByFilters, query } from "../../utils/beneficiary";
 import {
   allUsersByProfilesAndUser,
   query as queryUser,
@@ -19,6 +19,7 @@ import {
   Row,
   Col,
   Select,
+  Modal,
 } from "antd";
 import ptPT from "antd/lib/locale-provider/pt_PT";
 import Highlighter from "react-highlight-words";
@@ -28,6 +29,8 @@ import {
   EditOutlined,
   PlusOutlined,
   EyeOutlined,
+  DeleteOutlined,
+  ExclamationCircleFilled,
 } from "@ant-design/icons";
 import moment from "moment";
 import ViewBeneficiary, { ViewBenefiaryPanel } from "./components/View";
@@ -53,6 +56,7 @@ import { loadReferers } from "@app/store/actions/users";
 import { FilterObject } from "@app/models/FilterObject";
 
 const { Text } = Typography;
+const { confirm } = Modal;
 
 const ages = [
   9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
@@ -206,7 +210,13 @@ const BeneficiariesList: React.FC = () => {
     };
 
     fetchReferersUsers().catch((error) => console.log(error));
-  }, [currentPageIndex, searchNui, searchUserCreator, searchDistrict]);
+  }, [
+    currentPageIndex,
+    searchNui,
+    searchUserCreator,
+    searchDistrict,
+    beneficiary,
+  ]);
 
   const handleAddRef = async (values: any) => {
     if (values !== undefined) {
@@ -287,6 +297,7 @@ const BeneficiariesList: React.FC = () => {
     );
     setBeneficiaries(sortedBeneficiaries);
     setBeneficiary(data);
+    handleViewModalVisible(true, data);
   };
 
   const handleUpdateBeneficiary = (data: any) => {
@@ -298,7 +309,21 @@ const BeneficiariesList: React.FC = () => {
     setBeneficiary(data);
     setBeneficiaryModalVisible(false);
     setBeneficiaryPartnerModalVisible(false);
-    handleViewModalVisible(true, data);
+  };
+
+  const handleVoidBeneficiary = async (beneficiary: any) => {
+    beneficiary.status = 0;
+    beneficiary.updatedBy = localStorage.user;
+    beneficiary.dateUpdated = new Date();
+    const { data } = await edit(beneficiary);
+    setBeneficiary(data);
+    message.success({
+      content: "Excluída com Sucesso!",
+      className: "custom-class",
+      style: {
+        marginTop: "10vh",
+      },
+    });
   };
 
   const handleViewModalVisible = (flag?: boolean, record?: any) => {
@@ -328,6 +353,22 @@ const BeneficiariesList: React.FC = () => {
 
   const handleModalVisible = (flag?: boolean) => {
     setModalVisible(!!flag);
+  };
+
+  const showConfirmVoid = (data: any) => {
+    confirm({
+      title: "Deseja Excluir a Beneficiária com o NUI " + data.nui + "?",
+      icon: <ExclamationCircleFilled />,
+      okText: "Sim",
+      okType: "danger",
+      cancelText: "Não",
+      onOk() {
+        handleVoidBeneficiary(data);
+      },
+      onCancel() {
+        /**Its OK */
+      },
+    });
   };
 
   const fetchPartner = async (record: any) => {
@@ -615,6 +656,12 @@ const BeneficiariesList: React.FC = () => {
             icon={<EditOutlined />}
             onClick={() => onEditBeneficiary(record)}
           ></Button>
+          <Button
+            type="primary"
+            hidden={visibleName === true}
+            icon={<DeleteOutlined />}
+            onClick={() => showConfirmVoid(record)}
+          ></Button>
         </Space>
       ),
       width: 100,
@@ -836,6 +883,7 @@ const BeneficiariesList: React.FC = () => {
         handleAddBeneficiary={handleAddBeneficiary}
         handleUpdateBeneficiary={handleUpdateBeneficiary}
         handleModalVisible={handleBeneficiaryPartnerModalVisible}
+        handleViewModalVisible={handleViewModalVisible}
       />
       <FormReference
         form={form}

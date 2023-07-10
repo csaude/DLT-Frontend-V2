@@ -18,6 +18,7 @@ import {
   EditOutlined,
   PlusOutlined,
   ExclamationCircleFilled,
+  DeleteOutlined,
 } from "@ant-design/icons";
 import emblema from "../../../assets/emblema.png";
 import moment from "moment";
@@ -84,7 +85,7 @@ const ViewBenefiaryPanel = ({
 
     fetchData().catch((error) => console.log("---: ", error));
     fetchBeneficiariesInterventionses().catch((err) => console.log(err));
-  }, []);
+  }, [selectedIntervention]);
 
   const showDrawer = (record: any) => {
     setVisible(true);
@@ -115,6 +116,23 @@ const ViewBenefiaryPanel = ({
     handleViewModalVisible(flag, beneficiary);
   };
 
+  const handleVoidIntervention = async (intervention: any) => {
+    intervention.status = 0;
+    intervention.beneficiaries = { id: intervention.id.beneficiaryId };
+    intervention.date = intervention.id.date;
+    intervention.updatedBy = localStorage.user;
+    intervention.dateUpdated = new Date();
+    const { data } = await updateSubService(intervention);
+    setSelectedIntervention(data);
+    message.success({
+      content: "Excluída com Sucesso!",
+      className: "custom-class",
+      style: {
+        marginTop: "10vh",
+      },
+    });
+  };
+
   const showCloseConfirm = () => {
     confirm({
       title: "Deseja fechar este formulário?",
@@ -125,6 +143,22 @@ const ViewBenefiaryPanel = ({
       onOk() {
         setVisible(false);
         setIsAdd(false);
+      },
+      onCancel() {
+        /**Its OK */
+      },
+    });
+  };
+
+  const showConfirmVoid = (data: any) => {
+    confirm({
+      title: "Deseja Excluir a Intervenção?",
+      icon: <ExclamationCircleFilled />,
+      okText: "Sim",
+      okType: "danger",
+      cancelText: "Não",
+      onOk() {
+        handleVoidIntervention(data);
       },
       onCancel() {
         /**Its OK */
@@ -277,6 +311,12 @@ const ViewBenefiaryPanel = ({
             type="primary"
             icon={<EditOutlined />}
             onClick={() => onEditIntervention(record)}
+          ></Button>
+          <Button
+            type="primary"
+            hidden={visibleName === true}
+            icon={<DeleteOutlined />}
+            onClick={() => showConfirmVoid(record)}
           ></Button>
         </Space>
       ),

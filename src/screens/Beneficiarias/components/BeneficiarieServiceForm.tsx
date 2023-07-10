@@ -34,6 +34,7 @@ import { sync } from "../../../database/sync";
 import { Context } from "../../../routes/DrawerNavigator";
 
 import styles from "./styles";
+import { calculateAge } from "../../../models/Utils";
 import { MENTOR } from "../../../utils/constants";
 import Spinner from "react-native-loading-spinner-overlay/lib";
 import MyDatePicker from "../../../components/DatePicker";
@@ -46,7 +47,8 @@ const BeneficiarieServiceForm: React.FC = ({
   services,
   subServices,
 }: any) => {
-  const { beneficiarie, intervention, isNewIntervention } = route.params;
+  const { beneficiarie, intervs, intervention, isNewIntervention } =
+    route.params;
 
   const areaServicos = [
     { id: "1", name: "Serviços Clinicos" },
@@ -89,6 +91,12 @@ const BeneficiarieServiceForm: React.FC = ({
   const avanteEstudanteOnlineIds = [45, 48, 51];
   const avanteRaparigaOnlineIds = [44, 47, 50];
   const guiaFacilitacaoOnlineIds = [46, 49, 52, 57];
+  const avanteIds = [
+    157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171,
+    172, 173, 174, 175, 176, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188,
+    189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 207, 208, 209,
+  ];
+  const aflatounIds = [218, 218, 219, 220, 221, 222, 223];
 
   useEffect(() => {
     const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
@@ -150,6 +158,21 @@ const BeneficiarieServiceForm: React.FC = ({
       setServicesState(services);
       getPartner();
 
+      const age = calculateAge(beneficiarie.date_of_birth);
+      let is15AndStartedAvante = false;
+
+      if (age == 15) {
+        const interventionsIds = intervs.map(
+          (item) => item.intervention.sub_service_id
+        );
+        interventionsIds.forEach((element) => {
+          if (avanteIds.includes(element) || aflatounIds.includes(element)) {
+            is15AndStartedAvante = true;
+            return;
+          }
+        });
+      }
+
       const disableRapariga = (hasFacilitacao) =>
         services.filter((service) => {
           if (hasFacilitacao)
@@ -180,8 +203,11 @@ const BeneficiarieServiceForm: React.FC = ({
         );
       });
 
-      if (beneficiarie.vblt_is_student == 1 && getBeneficiarieAge() < 15) {
-        if (getBeneficiarieAge() >= 14 && getBeneficiarieAge() < 15) {
+      if (
+        beneficiarie.vblt_is_student == 1 &&
+        (age < 15 || is15AndStartedAvante)
+      ) {
+        if (age >= 14 && (age < 15 || is15AndStartedAvante)) {
           const foundServices = disableRapariga(true);
           setServicesState(foundServices);
         } else {
@@ -190,16 +216,16 @@ const BeneficiarieServiceForm: React.FC = ({
         }
       } else if (
         beneficiarie.vblt_is_student == 0 &&
-        getBeneficiarieAge() < 15
+        (age < 15 || is15AndStartedAvante)
       ) {
-        if (getBeneficiarieAge() >= 14 && getBeneficiarieAge() < 15) {
+        if (age >= 14 && (age < 15 || is15AndStartedAvante)) {
           const foundServices = disableEstudante(true);
           setServicesState(foundServices);
         } else {
           const foundServices = disableEstudante(false);
           setServicesState(foundServices);
         }
-      } else if (getBeneficiarieAge() > 15) {
+      } else if (age >= 15) {
         const foundServices = disableEstudanteAndRapariga;
         setServicesState(foundServices);
       }
@@ -264,13 +290,6 @@ const BeneficiarieServiceForm: React.FC = ({
       };
     }
   }, [intervention]);
-
-  const getBeneficiarieAge = () => {
-    return (
-      new Date().getFullYear() -
-      new Date(beneficiarie.date_of_birth).getFullYear()
-    );
-  };
 
   const message = "Este campo é Obrigatório";
 
@@ -416,8 +435,6 @@ const BeneficiarieServiceForm: React.FC = ({
             intervention.status = 1;
           });
         showToast("success", "Provido", "Serviço provido com sucesso!");
-
-        console.log(newIntervention);
 
         return newIntervention;
       }
