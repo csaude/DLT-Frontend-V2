@@ -119,8 +119,7 @@ const BeneficiarieServiceForm: React.FC = ({
     const uss = await database
       .get("us")
       .query(
-        Q.where("entry_point", parseInt(value)),
-        Q.where("locality_id", parseInt(beneficiarie?.locality_id))
+        Q.where("entry_point", parseInt(value))
       )
       .fetch();
     const ussSerialied = uss.map((item) => item._raw);
