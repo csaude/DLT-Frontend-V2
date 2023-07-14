@@ -151,11 +151,6 @@ const ReportAgyw = () => {
     }
   };
 
-  const handleSelectAll = () => {
-    const allOptionValues = provinces.map((item) => item.id);
-    onChangeProvinces(allOptionValues);
-  };
-
   return (
     <Fragment>
       <AppTitle />
@@ -198,9 +193,6 @@ const ReportAgyw = () => {
                       placeholder="Seleccione as Províncias"
                       onChange={onChangeProvinces}
                     >
-                      <Option key="select-all" onClick={handleSelectAll}>
-                        Selecionar Todas
-                      </Option>
                       {provinces?.map((item) => (
                         <Option key={item.id}>{item.name}</Option>
                       ))}
