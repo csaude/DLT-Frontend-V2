@@ -34,7 +34,7 @@ import { sync } from "../../../database/sync";
 import { Context } from "../../../routes/DrawerNavigator";
 
 import styles from "./styles";
-import { calculateAge } from '../../../models/Utils';
+import { calculateAge } from "../../../models/Utils";
 import { MENTOR } from "../../../utils/constants";
 import Spinner from "react-native-loading-spinner-overlay/lib";
 import MyDatePicker from "../../../components/DatePicker";
@@ -47,7 +47,8 @@ const BeneficiarieServiceForm: React.FC = ({
   services,
   subServices,
 }: any) => {
-  const { beneficiarie, intervs, intervention, isNewIntervention } = route.params;
+  const { beneficiarie, intervs, intervention, isNewIntervention } =
+    route.params;
 
   const areaServicos = [
     { id: "1", name: "Serviços Clinicos" },
@@ -90,7 +91,11 @@ const BeneficiarieServiceForm: React.FC = ({
   const avanteEstudanteOnlineIds = [45, 48, 51];
   const avanteRaparigaOnlineIds = [44, 47, 50];
   const guiaFacilitacaoOnlineIds = [46, 49, 52, 57];
-  const avanteIds = [157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199,200,207,208,209];
+  const avanteIds = [
+    157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171,
+    172, 173, 174, 175, 176, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188,
+    189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 207, 208, 209,
+  ];
   const aflatounIds = [218, 218, 219, 220, 221, 222, 223];
 
   useEffect(() => {
@@ -114,8 +119,7 @@ const BeneficiarieServiceForm: React.FC = ({
     const uss = await database
       .get("us")
       .query(
-        Q.where("entry_point", parseInt(value)),
-        Q.where("locality_id", parseInt(beneficiarie?.locality_id))
+        Q.where("entry_point", parseInt(value))
       )
       .fetch();
     const ussSerialied = uss.map((item) => item._raw);
@@ -157,12 +161,14 @@ const BeneficiarieServiceForm: React.FC = ({
       let is15AndStartedAvante = false;
 
       if (age == 15) {
-        const interventionsIds = intervs.map(item => item.intervention.sub_service_id);
-        interventionsIds.forEach(element => {
-            if (avanteIds.includes(element) || aflatounIds.includes(element)) {
-                is15AndStartedAvante = true;
-                return;
-            }
+        const interventionsIds = intervs.map(
+          (item) => item.intervention.sub_service_id
+        );
+        interventionsIds.forEach((element) => {
+          if (avanteIds.includes(element) || aflatounIds.includes(element)) {
+            is15AndStartedAvante = true;
+            return;
+          }
         });
       }
 
@@ -196,7 +202,10 @@ const BeneficiarieServiceForm: React.FC = ({
         );
       });
 
-      if (beneficiarie.vblt_is_student == 1 && (age < 15 || is15AndStartedAvante)) {
+      if (
+        beneficiarie.vblt_is_student == 1 &&
+        (age < 15 || is15AndStartedAvante)
+      ) {
         if (age >= 14 && (age < 15 || is15AndStartedAvante)) {
           const foundServices = disableRapariga(true);
           setServicesState(foundServices);
@@ -204,7 +213,10 @@ const BeneficiarieServiceForm: React.FC = ({
           const foundServices = disableRapariga(false);
           setServicesState(foundServices);
         }
-      } else if (beneficiarie.vblt_is_student == 0 && (age < 15 || is15AndStartedAvante)) {
+      } else if (
+        beneficiarie.vblt_is_student == 0 &&
+        (age < 15 || is15AndStartedAvante)
+      ) {
         if (age >= 14 && (age < 15 || is15AndStartedAvante)) {
           const foundServices = disableEstudante(true);
           setServicesState(foundServices);
@@ -431,7 +443,7 @@ const BeneficiarieServiceForm: React.FC = ({
     await database.write(async () => {
       const subService = await database
         .get("sub_services")
-        .query(Q.where("online_id", interv.sub_service_id));
+        .query(Q.where("online_id", interv["sub_service_id"]));
 
       const referenceSToUpdate = await database
         .get("references_services")
@@ -439,7 +451,7 @@ const BeneficiarieServiceForm: React.FC = ({
         .fetch();
 
       const referencesIds = referenceSToUpdate.map((r) =>
-        parseInt(r._raw.reference_id)
+        parseInt(r._raw["reference_id"])
       );
 
       const referencesToUpdate = await database
@@ -451,11 +463,11 @@ const BeneficiarieServiceForm: React.FC = ({
         .fetch();
 
       const refsToUpdateIds = referencesToUpdate.map((r) =>
-        parseInt(r._raw?.online_id)
+        parseInt(r._raw?.["online_id"])
       );
 
       const filteredRefServices = referenceSToUpdate.filter((r) =>
-        refsToUpdateIds.includes(parseInt(r._raw?.reference_id))
+        refsToUpdateIds.includes(parseInt(r._raw?.["reference_id"]))
       );
 
       referencesToUpdate.forEach(async (ref) => {
