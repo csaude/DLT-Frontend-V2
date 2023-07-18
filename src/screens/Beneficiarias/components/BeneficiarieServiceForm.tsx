@@ -119,8 +119,7 @@ const BeneficiarieServiceForm: React.FC = ({
     const uss = await database
       .get("us")
       .query(
-        Q.where("entry_point", parseInt(value)),
-        Q.where("locality_id", parseInt(beneficiarie?.locality_id))
+        Q.where("entry_point", parseInt(value))
       )
       .fetch();
     const ussSerialied = uss.map((item) => item._raw);
@@ -444,7 +443,7 @@ const BeneficiarieServiceForm: React.FC = ({
     await database.write(async () => {
       const subService = await database
         .get("sub_services")
-        .query(Q.where("online_id", interv.sub_service_id));
+        .query(Q.where("online_id", interv["sub_service_id"]));
 
       const referenceSToUpdate = await database
         .get("references_services")
@@ -452,7 +451,7 @@ const BeneficiarieServiceForm: React.FC = ({
         .fetch();
 
       const referencesIds = referenceSToUpdate.map((r) =>
-        parseInt(r._raw.reference_id)
+        parseInt(r._raw["reference_id"])
       );
 
       const referencesToUpdate = await database
@@ -464,11 +463,11 @@ const BeneficiarieServiceForm: React.FC = ({
         .fetch();
 
       const refsToUpdateIds = referencesToUpdate.map((r) =>
-        parseInt(r._raw?.online_id)
+        parseInt(r._raw?.["online_id"])
       );
 
       const filteredRefServices = referenceSToUpdate.filter((r) =>
-        refsToUpdateIds.includes(parseInt(r._raw?.reference_id))
+        refsToUpdateIds.includes(parseInt(r._raw?.["reference_id"]))
       );
 
       referencesToUpdate.forEach(async (ref) => {
