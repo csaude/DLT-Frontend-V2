@@ -167,7 +167,7 @@ const BeneficiariesList: React.FC = () => {
         dist1.name.localeCompare(dist2.name)
       );
       const partners = data
-        .map((beneficiary) => beneficiary?.partner)
+        .map((beneficiary) => beneficiary?.partners)
         .filter(
           (value, index, self) =>
             self.findIndex((v) => v?.id === value?.id) === index
@@ -582,7 +582,7 @@ const BeneficiariesList: React.FC = () => {
       key: "partner",
       render: (text, record) => record?.partners?.name,
       filters: filterItem(partners)((i) => i?.name),
-      onFilter: (value, record) => record?.partner?.name == value,
+      onFilter: (value, record) => record?.partners?.name == value,
       filterSearch: true,
     },
     {
