@@ -357,6 +357,7 @@ const BeneficiarieServiceForm: React.FC = ({
   };
 
   const validateBeneficiaryIntervention = async (values: any) => {
+    setLoading(true);
     const benefInterv = await database
       .get("beneficiaries_interventions")
       .query(
@@ -368,13 +369,24 @@ const BeneficiarieServiceForm: React.FC = ({
 
     const benefIntervSerialied = benefInterv.map((item) => item._raw);
 
-    if (benefIntervSerialied.length > 0) {
+    const isEdit = intervention && intervention.id; // new record if it has id
+
+    let changedId = false;
+
+    if (isEdit && benefIntervSerialied.length > 0) {
+      const interv: any = benefIntervSerialied[0];
+      if (interv.sub_service_id != intervention.sub_service_id || interv.date != intervention.date) {
+        changedId = true;
+      }
+    }
+
+    if (benefIntervSerialied.length > 0 && (changedId || !isEdit)) {
       toast.show({
         placement: "top",
         title: "Beneficiária já tem esta intervenção para esta data!",
       });
     } else {
-      onSubmit(values);
+      onSubmit(values, isEdit);
     }
   };
 
@@ -389,18 +401,17 @@ const BeneficiarieServiceForm: React.FC = ({
       : "";
   }, [isSync]);
 
-  const onSubmit = async (values: any) => {
-    setLoading(true);
-
-    const isEdit = intervention && intervention.id; // new record if it has id
+  const onSubmit = async (values: any, isEdit: boolean) => {
 
     const newObject = await database.write(async () => {
       if (isEdit) {
         const interventionToUpdate = await database
           .get("beneficiaries_interventions")
           .find(intervention.id);
-        const updatedIntervention = await interventionToUpdate.update(() => {
-          intervention.sub_service_id = values.sub_service_id;
+          console.log(values);
+          console.log(interventionToUpdate);
+        const updatedIntervention = await interventionToUpdate.update((intervention:any) => {
+          intervention.sub_service_id = Number(values.sub_service_id);
           intervention.remarks = values.remarks;
           intervention.result = values.result;
           intervention.date = "" + text;
@@ -739,7 +750,7 @@ const BeneficiarieServiceForm: React.FC = ({
                         }}
                       >
                         <Picker.Item
-                          label="-- Seleccione o Serviço --"
+                          label="-- Seleccione o Sub-Serviço --"
                           value="0"
                         />
                         {subServices
