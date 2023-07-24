@@ -1,26 +1,31 @@
-import {synchronize} from '@nozbe/watermelondb/sync';
-import { database } from './index';
-import { SYNC_API_URL } from '../services/api'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { synchronize } from "@nozbe/watermelondb/sync";
+import { database } from "./index";
+import { SYNC_API_URL, CUSTOM_SYNC_URL } from "../services/api";
+import { resolveBeneficiaryOfflineIds } from "../services/beneficiaryService";
 
 export async function sync({ username }) {
-    await synchronize({
-        database,
-        pullChanges: async ({lastPulledAt}) => {
-            const response = await fetch(
-              `${SYNC_API_URL}?lastPulledAt=${lastPulledAt}&username=${username}`,
-            );
+  await doSync({ username });
+  await resolveBeneficiaryOfflineIds();
+  await doSync({ username });
+}
+export async function doSync({ username }) {
+  await synchronize({
+    database,
+    pullChanges: async ({ lastPulledAt }) => {
+      const response = await fetch(
+        `${SYNC_API_URL}?lastPulledAt=${lastPulledAt}&username=${username}`
+      );
 
-            if (!response.ok) {
-                
-              throw new Error(await response.text());
-            }   
-      
-            const {changes, timestamp} = await response.json();
-       
-            return {changes, timestamp};
+      if (!response.ok) {
+        throw new Error(await response.text());
+      }
 
+      const { changes, timestamp } = await response.json();
 
-            /* https://github.com/Nozbe/WatermelonDB/issues/7
+      return { changes, timestamp };
+
+      /* https://github.com/Nozbe/WatermelonDB/issues/7
                https://github.com/Nozbe/WatermelonDB/issues/216
 
               import { sanitizedRaw } from 'watermelondb/RawRecord'
@@ -30,17 +35,36 @@ export async function sync({ username }) {
               })
 
             */
-        },
-        pushChanges: async ({changes, lastPulledAt}) => {
-            const response = await fetch(`${SYNC_API_URL}?username=${username}`, {
-              method: 'POST',
-              headers: {'Content-Type': 'application/json'},
-              body: JSON.stringify({changes, lastPulledAt}),
-            });
-            if (!response.ok) {
-      
-              throw new Error(await response.text());
-            }
-        },
-    });
+    },
+    pushChanges: async ({ changes, lastPulledAt }) => {
+      const response = await fetch(`${SYNC_API_URL}?username=${username}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ changes, lastPulledAt }),
+      });
+      if (!response.ok) {
+        throw new Error(await response.text());
+      }
+    },
+  });
+}
+
+export async function customSyncBeneficiary({ nui, userId }) {
+  await synchronize({
+    database,
+    pullChanges: async ({ lastPulledAt }) => {
+      const response = await fetch(
+        `${CUSTOM_SYNC_URL}/beneficiaries?nui=${nui}&userId=${userId}`
+      );
+      if (!response.ok) {
+        throw new Error(await response.text());
+      }
+      const { changes, timestamp } = await response.json();
+
+      return { changes, timestamp };
+    },
+    pushChanges: async () => {
+      /**Its OK*/
+    },
+  });
 }
