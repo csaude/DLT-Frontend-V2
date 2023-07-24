@@ -49,6 +49,19 @@ export const updatePassword = async (username: string, password: string) => {
   return data;
 };
 
+export const newPassword = async (username: string, newPassword: string) => {
+  const response =  await userNewPassword({username: username, recoverPassword: newPassword});
+  const { status, data } = response;
+  localStorage.setItem('isNewPassword', '0');
+  return data;
+ };
+
+export const updatePassword = async (username: string, password: string) => {
+  const response = await requestUpdatePassword({username:username, recoverPassword:password});
+  const { status, data } = response;
+  return data;
+};
+
 export const registerByAuth = async (email: string, password: string) => {
   const token = await Gatekeeper.registerByAuth(email, password);
   localStorage.setItem("token", token);
