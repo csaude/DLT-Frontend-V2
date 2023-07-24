@@ -53,7 +53,7 @@ const App = () => {
         </NativeBaseProvider>
       </NavigationContainer>
     </>
-  );
+    );
 };
 
 export default App;
