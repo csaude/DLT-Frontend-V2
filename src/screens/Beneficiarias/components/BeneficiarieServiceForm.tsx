@@ -371,16 +371,16 @@ const BeneficiarieServiceForm: React.FC = ({
 
     const isEdit = intervention && intervention.id; // new record if it has id
 
-    let changedId = false;
+    let recordAlreadyExists = false;
 
     if (isEdit && benefIntervSerialied.length > 0) {
       const interv: any = benefIntervSerialied[0];
       if (interv.sub_service_id != intervention.sub_service_id || interv.date != intervention.date) {
-        changedId = true;
+        recordAlreadyExists = true;
       }
     }
 
-    if (benefIntervSerialied.length > 0 && (changedId || !isEdit)) {
+    if (benefIntervSerialied.length > 0 && (recordAlreadyExists || !isEdit)) {
       toast.show({
         placement: "top",
         title: "Beneficiária já tem esta intervenção para esta data!",
@@ -408,10 +408,8 @@ const BeneficiarieServiceForm: React.FC = ({
         const interventionToUpdate = await database
           .get("beneficiaries_interventions")
           .find(intervention.id);
-          console.log(values);
-          console.log(interventionToUpdate);
         const updatedIntervention = await interventionToUpdate.update((intervention:any) => {
-          intervention.sub_service_id = Number(values.sub_service_id);
+          intervention.sub_service_id = values.sub_service_id;
           intervention.remarks = values.remarks;
           intervention.result = values.result;
           intervention.date = "" + text;
@@ -751,7 +749,7 @@ const BeneficiarieServiceForm: React.FC = ({
                       >
                         <Picker.Item
                           label="-- Seleccione o Sub-Serviço --"
-                          value="0"
+                          value={0}
                         />
                         {subServices
                           .filter((e) => {
