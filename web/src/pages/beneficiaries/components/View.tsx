@@ -548,7 +548,7 @@ const ViewBenefiaryPanel = ({
           placement="top"
           closable={false}
           onClose={showCloseConfirm}
-          open={visible}
+          visible={visible}
           maskClosable={false}
           getContainer={false}
           style={{ position: "absolute" }}
@@ -630,7 +630,7 @@ const ViewBeneficiary = ({
       centered
       destroyOnClose
       title={" Dados de Registo do Beneficiário"}
-      open={modalVisible}
+      visible={modalVisible}
       maskClosable={false}
       onOk={okHandle}
       onCancel={() => showCloseConfirm()}
