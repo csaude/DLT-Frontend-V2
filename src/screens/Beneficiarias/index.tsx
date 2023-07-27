@@ -152,11 +152,11 @@ const BeneficiariesMain: React.FC = ({
   }, []);
 
   useEffect(() => {
-      const hideIndicator = () => {
-        setLoadingRequest(false);
-      };
-      const timeout = setTimeout(hideIndicator, 6000);
-      return () => clearTimeout(timeout);
+    const hideIndicator = () => {
+      setLoadingRequest(false);
+    };
+    const timeout = setTimeout(hideIndicator, 6000);
+    return () => clearTimeout(timeout);
   }, []);
 
   const viewBeneficiaries = async (data: any) => {
@@ -492,10 +492,12 @@ const BeneficiariesMain: React.FC = ({
   useEffect(() => {
     if (loggedUser?.online_id !== undefined) {
       /** the user logged at least one time***/
-      getUserBeneficiaries(loggedUser?.online_id).then(()=> setLoadingRequest(true));
+      getUserBeneficiaries(loggedUser?.online_id).then(() =>
+        setLoadingRequest(true)
+      );
     } else {
       /** is first time the user logs, is using API* */
-      getUserBeneficiaries(loggedUser?.id).then(()=> setLoadingRequest(true));
+      getUserBeneficiaries(loggedUser?.id).then(() => setLoadingRequest(true));
     }
   }, [loggedUser, refreshData, inputRef]);
 
@@ -784,7 +786,7 @@ const BeneficiariesMain: React.FC = ({
       <View style={styles.container}>
         <SpinnerModal open={isLoadingRequest} title={title} message={message} />
         <View style={styles.heading}>
-          {loading? (
+          {loading ? (
             <Spinner
               visible={true}
               textContent={"Sincronizando..."}
@@ -799,13 +801,14 @@ const BeneficiariesMain: React.FC = ({
           >
             <Input
               ref={inputRef}
-              w={{ base: "100%", md: "25%" }}
+              w="100%" // Set the width to 100% on all screen sizes
+              mx={{ base: "2", md: "0" }} // Add some horizontal margin on smaller screens, none on larger screens
               onChangeText={handleChange}
               InputLeftElement={
                 <Icon
                   as={MaterialIcons}
                   name="search"
-                  size={5}
+                  size={{ base: 5, md: 7 }} // Adjust the icon size for different screen sizes
                   ml="2"
                   color="muted.700"
                 />
