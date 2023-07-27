@@ -1581,11 +1581,11 @@ const PartnerForm: React.FC = ({ route, services, subServices }: any) => {
   );
 };
 const enhance = withObservables([], () => ({
-  localities: database.collections.get("localities").query().observe(),
-  profiles: database.collections.get("profiles").query().observe(),
+  localities: database.collections.get("localities").query(),
+  profiles: database.collections.get("profiles").query(),
   services: database.collections.get("services").query(),
-  subServices: database.collections.get("sub_services").query().observe(),
-  partners: database.collections.get("partners").query().observe(),
-  us: database.collections.get("us").query().observe(),
+  subServices: database.collections.get("sub_services").query(),
+  partners: database.collections.get("partners").query(),
+  us: database.collections.get("us").query(),
 }));
 export default memo(enhance(PartnerForm));

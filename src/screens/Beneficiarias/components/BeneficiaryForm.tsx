@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext, useCallback } from "react";
+import React, { useEffect, useState, useContext, useCallback, memo } from "react";
 import {
   View,
   HStack,
@@ -224,8 +224,6 @@ const BeneficiaryForm: React.FC = ({
     const isUserAllowed =
       userDetailRaw?.["profile_id"] != MENTOR ? true : false;
     setUsVisible(isUserAllowed);
-
-    setLoadingData(false);
   };
 
   useEffect(() => {
@@ -2689,9 +2687,8 @@ const BeneficiaryForm: React.FC = ({
 const enhance = withObservables([], () => ({
   beneficiaries_interventions: database.collections
     .get("beneficiaries_interventions")
-    .query()
-    .observe(),
-  subServices: database.collections.get("sub_services").query().observe(),
+    .query(),
+  subServices: database.collections.get("sub_services").query(),
 }));
 
 BeneficiaryForm.propTypes = {
@@ -2700,4 +2697,4 @@ BeneficiaryForm.propTypes = {
   beneficiaries_interventions: PropTypes.array.isRequired,
 };
 
-export default enhance(BeneficiaryForm);
+export default memo(enhance(BeneficiaryForm));
