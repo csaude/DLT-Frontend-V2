@@ -553,7 +553,7 @@ const UsersForm = ({
             <Form.Item
               name="us"
               label="Locais"
-              initialValue={user?.us.map((item) => {
+              initialValue={user?.us?.map((item) => {
                 return item.id.toString();
               })}
             >
