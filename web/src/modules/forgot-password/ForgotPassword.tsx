@@ -117,6 +117,7 @@ const ForgotPassword = () => {
             />
           </div>
           <form onSubmit={handleSubmit}>
+           
             <div className="mb-3">
               <InputGroup className="mb-3">
                 <Form.Control
