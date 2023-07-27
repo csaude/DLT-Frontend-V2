@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, memo } from "react";
 import { View, TouchableOpacity, TouchableHighlight } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
 import {
@@ -256,10 +256,10 @@ const UsersMain: React.FC = ({
 };
 
 const enhance = withObservables([], () => ({
-  users: database.collections.get("users").query().observe(),
-  localities: database.collections.get("localities").query().observe(),
-  profiles: database.collections.get("profiles").query().observe(),
-  partners: database.collections.get("partners").query().observe(),
-  us: database.collections.get("us").query().observe(),
+  users: database.collections.get("users").query(),
+  localities: database.collections.get("localities").query(),
+  profiles: database.collections.get("profiles").query(),
+  partners: database.collections.get("partners").query(),
+  us: database.collections.get("us").query(),
 }));
-export default enhance(UsersMain);
+export default memo(enhance(UsersMain));
