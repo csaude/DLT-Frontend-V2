@@ -53,7 +53,7 @@ const ServiceForm = ({
       centered
       destroyOnClose
       title="Dados de Registo do Serviço"
-      open={modalVisible}
+      visible={modalVisible}
       onCancel={() => showCloseConfirm()}
       maskClosable={false}
       footer={[

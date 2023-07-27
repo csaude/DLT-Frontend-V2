@@ -69,7 +69,7 @@ const BeneficiaryForm = ({
         centered
         destroyOnClose
         title={" Registo de Beneficiário"}
-        open={modalVisible}
+        visible={modalVisible}
         onOk={okHandle}
         onCancel={() => handleModalVisible(false)}
       >

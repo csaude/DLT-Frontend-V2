@@ -309,7 +309,7 @@ const UsersForm = ({
       centered
       destroyOnClose
       title="Dados de Registo do Utilizador"
-      open={modalVisible}
+      visible={modalVisible}
       onCancel={() => showCloseConfirm()}
       maskClosable={false}
       footer={[
