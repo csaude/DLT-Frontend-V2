@@ -108,9 +108,9 @@ const InterventionsView: React.FC = ({ route }: any) => {
             </Text>
             <Text color="darkBlue.300" _dark={{ color: "warmGray.200" }}>
               {` ${
-                data.item.intervention.entry_point === "1"
+                data.item.intervention?.entry_point === "1"
                   ? "US"
-                  : data.item.intervention.entry_point === "2"
+                  : data.item.intervention?.entry_point === "2"
                   ? "CM"
                   : "ES"
               }`}

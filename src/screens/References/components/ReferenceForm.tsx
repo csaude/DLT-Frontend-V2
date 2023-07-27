@@ -72,7 +72,11 @@ const ReferenceForm: React.FC = ({ route }: any) => {
   const [isOffline, setIsOffline] = useState(false);
   const [refNote, setRefNote] = useState("");
 
-  const avanteIds = [157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199,200,207,208,209];
+  const avanteIds = [
+    157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171,
+    172, 173, 174, 175, 176, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188,
+    189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 207, 208, 209,
+  ];
   const aflatounIds = [218, 218, 219, 220, 221, 222, 223];
 
   const fetchEntryPoints = useCallback(async () => {
@@ -267,15 +271,16 @@ const ReferenceForm: React.FC = ({ route }: any) => {
     const age = calculateAge(beneficiary.date_of_birth);
     let is15AndStartedAvante = false;
 
-
     if (age == 15) {
-      const interventionsIds = intervs.map(item => item.intervention.sub_service_id);
+      const interventionsIds = intervs.map(
+        (item) => item.intervention.sub_service_id
+      );
 
-      interventionsIds.forEach(element => {
-          if (avanteIds.includes(element) || aflatounIds.includes(element)) {
-              is15AndStartedAvante = true;
-              return;
-          }
+      interventionsIds.forEach((element) => {
+        if (avanteIds.includes(element) || aflatounIds.includes(element)) {
+          is15AndStartedAvante = true;
+          return;
+        }
       });
     }
 

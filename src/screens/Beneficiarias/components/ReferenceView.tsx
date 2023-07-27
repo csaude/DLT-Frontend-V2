@@ -157,7 +157,7 @@ const ReferenceView: React.FC = ({ route }: any) => {
             navigate({
               name: "ReferenceForm",
               params: {
-                beneficiary: beneficiary, 
+                beneficiary: beneficiary,
                 intervs: interventions,
                 references: references,
                 userId: isNaN(loggedUser.id)
