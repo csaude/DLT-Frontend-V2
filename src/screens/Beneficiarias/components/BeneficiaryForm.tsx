@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useContext, useCallback, memo } from "react";
+import React, {
+  useEffect,
+  useState,
+  useContext,
+  useCallback,
+  memo,
+} from "react";
 import {
   View,
   HStack,
@@ -123,6 +129,7 @@ const BeneficiaryForm: React.FC = ({
   const [partnerHasErrors, setPartnerHasErrors] = useState(false);
   const [isUsVisible, setUsVisible] = useState(false);
   const [isOffline, setIsOffline] = useState(false);
+  const [isGoToSpecificVblt, setGoToSpecificVblt] = useState(false);
 
   const minBirthYear = new Date();
   minBirthYear.setFullYear(new Date().getFullYear() - 24);
@@ -371,13 +378,21 @@ const BeneficiaryForm: React.FC = ({
       formik.setErrors(errorsList);
     } else {
       // save the Beneficiary locally
+      const district = districts.filter(
+        (d) => d.online_id === formik.values.district
+      )[0];
+      setDistrict(district);
+
       if (beneficiarie == undefined) {
+        setIsEdit(false);
         setLoading(true);
         const ben: any = await handleSaveBeneficiary();
 
         setBeneficairie(ben?._raw);
         setNewNui(ben?._raw.nui);
         setLoading(false);
+      } else {
+        setIsEdit(true);
       }
 
       setErrors(false);
@@ -389,6 +404,8 @@ const BeneficiaryForm: React.FC = ({
     }
 
     getTotals().catch((err) => console.error(err));
+
+    setGoToSpecificVblt(true);
   };
 
   const onPreviousStep = () => {
@@ -2674,6 +2691,66 @@ const BeneficiaryForm: React.FC = ({
                   }}
                 >
                   Concluir
+                </Button>
+              </Button.Group>
+            </Modal.Footer>
+          </Modal.Content>
+        </Modal>
+        <Modal
+          isOpen={isGoToSpecificVblt}
+          onClose={() => handleOk(beneficiarie)}
+        >
+          <Modal.Content maxWidth="400px">
+            <Modal.CloseButton />
+            <Modal.Header>
+              {isEdit ? "Confirmação Actualização" : "Confirmação Registo"}
+            </Modal.Header>
+            <Modal.Body>
+              <ScrollView>
+                <Box alignItems="center">
+                  <Ionicons
+                    name="md-checkmark-circle"
+                    size={100}
+                    color="#0d9488"
+                  />
+                  <Alert w="100%" status="success">
+                    <HStack space={2} flexShrink={1}>
+                      <Alert.Icon mt="1" />
+                      <Text fontSize="sm" color="coolGray.800">
+                        {isEdit
+                          ? "Beneficiária Actualizada com Sucesso!"
+                          : "Beneficiária Registada com Sucesso!"}
+                      </Text>
+                    </HStack>
+                  </Alert>
+
+                  <Text marginTop={3} marginBottom={3}>
+                    NUI da Beneficiária:
+                    <Text fontWeight="bold" color="#008D4C">
+                      {` ${district?.code}/` +
+                        (beneficiarie === undefined
+                          ? `${newNui}`
+                          : beneficiarie.nui)}
+                    </Text>
+                  </Text>
+                  <Divider />
+                </Box>
+              </ScrollView>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button.Group space={2} style={{ marginHorizontal: 5 }}>
+                <Button
+                  onPress={() => {
+                    handleOk(beneficiarie);
+                  }}
+                >
+                  Concluir
+                </Button>
+              </Button.Group>
+
+              <Button.Group space={2}>
+                <Button onPress={() => setGoToSpecificVblt(false)}>
+                  Continuar
                 </Button>
               </Button.Group>
             </Modal.Footer>
