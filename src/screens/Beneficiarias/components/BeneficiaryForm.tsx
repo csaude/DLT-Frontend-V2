@@ -391,6 +391,7 @@ const BeneficiaryForm: React.FC = ({
         setBeneficairie(ben?._raw);
         setNewNui(ben?._raw.nui);
         setLoading(false);
+        setGoToSpecificVblt(true);
       } else {
         setIsEdit(true);
       }
@@ -404,8 +405,6 @@ const BeneficiaryForm: React.FC = ({
     }
 
     getTotals().catch((err) => console.error(err));
-
-    setGoToSpecificVblt(true);
   };
 
   const onPreviousStep = () => {
@@ -857,6 +856,7 @@ const BeneficiaryForm: React.FC = ({
     });
 
     setShowModal(false);
+    setGoToSpecificVblt(false);
   };
 
   const handleSubmit = async () => {
