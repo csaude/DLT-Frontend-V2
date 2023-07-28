@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext, useCallback } from "react";
+import React, { useEffect, useState, useContext, useCallback, memo } from "react";
 import { View, KeyboardAvoidingView, ScrollView } from "react-native";
 import {
   Center,
@@ -680,7 +680,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
 };
 const enhance = withObservables([], () => ({
   services: database.collections.get("services").query(),
-  subServices: database.collections.get("sub_services").query().observe(),
+  subServices: database.collections.get("sub_services").query(),
 }));
 
-export default enhance(ServicesForm);
+export default memo(enhance(ServicesForm));

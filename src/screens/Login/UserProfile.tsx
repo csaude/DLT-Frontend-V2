@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { memo, useContext } from "react";
 import { View, KeyboardAvoidingView, ScrollView, Text } from "react-native";
 import { Box, Heading, Divider, Avatar, Icon, Flex } from "native-base";
 import { Ionicons } from "@native-base/icons";
@@ -135,4 +135,4 @@ const enhance = withObservables([], () => ({
   us: database.collections.get("us").query(),
 }));
 
-export default enhance(UserProfile);
+export default memo(enhance(UserProfile));

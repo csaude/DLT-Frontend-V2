@@ -4,6 +4,7 @@ import React, {
   useContext,
   useCallback,
   useMemo,
+  memo,
 } from "react";
 import {
   View,
@@ -48,6 +49,7 @@ import { referencesFetchCount } from "../../services/referenceService";
 import { loadBeneficiariesInterventionsCounts } from "../../store/beneficiaryInterventionSlice";
 import { getReferencesTotal } from "../../store/referenceSlice";
 import { useDispatch } from "react-redux";
+import SpinnerModal from "../../components/Modal/SpinnerModal";
 
 const ReferencesMain: React.FC = ({
   beneficiaries,
@@ -61,6 +63,7 @@ const ReferencesMain: React.FC = ({
   const [refreshing, setRefreshing] = React.useState(false);
   const loggedUser: any = useContext(Context);
   const [isOffline, setIsOffline] = useState(false);
+  const [isLoadingRequest, setLoadingRequest] = useState(false);
   const loggedUserPartner = loggedUser?.partners
     ? loggedUser?.partners.id
     : loggedUser?.partner_id;
@@ -391,6 +394,7 @@ const ReferencesMain: React.FC = ({
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getUserReferences = useCallback(async (currentUserId) => {
+    setLoadingRequest(true);
     const referencesCollection = database.get("references");
 
     // if(loggedUser?.profile_id == ADMIN || loggedUser?.profiles == ADMIN){
@@ -408,6 +412,7 @@ const ReferencesMain: React.FC = ({
       .fetch();
     setUserReferences(beneficiariesByUserId);
     // }
+    setLoadingRequest(false);
   }, []);
   useEffect(() => {
     const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
@@ -434,6 +439,13 @@ const ReferencesMain: React.FC = ({
 
   return (
     <View style={styles.container}>
+      <SpinnerModal
+        open={isLoadingRequest}
+        title={"Carregando Referências"}
+        message={
+          "Os Dados das Referências estão sendo carregados, por favor aguarde..."
+        }
+      />
       <View style={styles.heading}>
         <Box
           alignItems="center"
@@ -479,12 +491,12 @@ const ReferencesMain: React.FC = ({
 };
 
 const enhance = withObservables([], () => ({
-  references: database.collections.get("references").query().observe(),
-  beneficiaries: database.collections.get("beneficiaries").query().observe(),
-  users: database.collections.get("users").query().observe(),
-  partners: database.collections.get("partners").query().observe(),
-  services: database.collections.get("services").query().observe(),
-  subServices: database.collections.get("sub_services").query().observe(),
+  references: database.collections.get("references").query(),
+  beneficiaries: database.collections.get("beneficiaries").query(),
+  users: database.collections.get("users").query(),
+  partners: database.collections.get("partners").query(),
+  services: database.collections.get("services").query(),
+  subServices: database.collections.get("sub_services").query(),
 }));
 
-export default enhance(ReferencesMain);
+export default memo(enhance(ReferencesMain));

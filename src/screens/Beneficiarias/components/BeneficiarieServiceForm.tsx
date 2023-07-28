@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext, useCallback } from "react";
+import React, { useEffect, useState, useContext, useCallback, memo } from "react";
 import { View, KeyboardAvoidingView, ScrollView } from "react-native";
 import {
   Center,
@@ -118,9 +118,7 @@ const BeneficiarieServiceForm: React.FC = ({
   const onChangeEntryPoint = async (value: any) => {
     const uss = await database
       .get("us")
-      .query(
-        Q.where("entry_point", parseInt(value))
-      )
+      .query(Q.where("entry_point", parseInt(value)))
       .fetch();
     const ussSerialied = uss.map((item) => item._raw);
     setUss(ussSerialied);
@@ -942,8 +940,8 @@ const BeneficiarieServiceForm: React.FC = ({
 };
 const enhance = withObservables([], () => ({
   services: database.collections.get("services").query(),
-  subServices: database.collections.get("sub_services").query().observe(),
-  us: database.collections.get("us").query().observe(),
+  subServices: database.collections.get("sub_services").query(),
+  us: database.collections.get("us").query(),
 }));
 
 BeneficiarieServiceForm.propTypes = {
@@ -953,4 +951,4 @@ BeneficiarieServiceForm.propTypes = {
   subServices: PropTypes.array.isRequired,
 };
 
-export default enhance(BeneficiarieServiceForm);
+export default memo(enhance(BeneficiarieServiceForm));
