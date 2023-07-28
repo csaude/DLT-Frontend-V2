@@ -76,3 +76,47 @@ export async function getUsernamesQuery() {
   const res = await select(url);
   return res;
 }
+
+interface ProvinceFilter {
+  provinces: string[];
+}
+
+export async function allUsesByProvinces(payload?: ProvinceFilter) {
+  let url: string;
+
+  const provs = payload?.provinces.map((v) => {
+    return `provinces=${v}`;
+  });
+  const param = provs?.join("&");
+
+  if (param) {
+    url = "/api/users/provinces?".concat(param);
+  } else {
+    url = "/api/users/provinces";
+  }
+
+  const res = await select(url);
+  return res;
+}
+
+interface DistrictFilter {
+  districts: string[];
+}
+
+export async function allUsesByDistricts(payload?: DistrictFilter) {
+  let url: string;
+
+  const dests = payload?.districts.map((v) => {
+    return `districts=${v}`;
+  });
+  const param = dests?.join("&");
+
+  if (param) {
+    url = "/api/users/districts?".concat(param);
+  } else {
+    url = "/api/users/districts";
+  }
+
+  const res = await select(url);
+  return res;
+}
