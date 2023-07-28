@@ -58,40 +58,18 @@ interface Filter {
 export async function allUsersByProfilesAndUser(payload?: Filter) {
   const url =
     "/api/users/byProfilesAndUser/" + payload?.profiles + "/" + payload?.userId;
-
   const res = await select(url);
   return res;
 }
 
 export async function userById(payload?: any) {
   const url = "/api/users/".concat(payload);
-
   const res = await select(url);
   return res;
 }
 
 export async function getUsernamesQuery() {
   const url = "/api/users/get-usernames";
-
   const res = await select(url);
   return res;
-}
-
-export async function requestUpdatePassword(payload: UserParams) {
-    const res = await update('/users/update-password', payload);
-    return res;
-}
-
-export async function allUsesByUs(payload?: any){
-    let url: string;
-    url = '/api/users/us/'.concat(payload);
-    const res = await select(url);
-    return res;
-}
-
-export async function userById(payload?: any){
-    let url: string;
-    url = '/api/users/'.concat(payload);
-    const res = await select(url);
-    return res;
 }

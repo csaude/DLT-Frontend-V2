@@ -88,6 +88,7 @@ export default appSchema({
         { name: "online_id", type: "number", isOptional: true }, // flag to control if entity is synchronized with the backend
         { name: "organization_name", type: "string" },
         { name: "password_last_change_date", type: "string" },
+        { name: "is_awaiting_sync", type: "number", isOptional: true }, // flag to control if user status is synced
       ],
     }),
     tableSchema({
