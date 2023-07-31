@@ -93,7 +93,7 @@ const LocalityForm = ({
       centered
       destroyOnClose
       title="Dados de Registo do Posto Administrativo/Localidade"
-      open={modalVisible}
+      visible={modalVisible}
       onCancel={() => showCloseConfirm()}
       maskClosable={false}
       footer={[

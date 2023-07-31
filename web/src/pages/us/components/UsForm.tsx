@@ -97,7 +97,7 @@ const UsForm = ({ form, us, modalVisible, handleModalVisible, handleAdd }) => {
       centered
       destroyOnClose
       title="Dados de Registo da Unidade Sanitária"
-      open={modalVisible}
+      visible={modalVisible}
       onCancel={() => showCloseConfirm()}
       maskClosable={false}
       footer={[
