@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext, useCallback } from "react";
+import React, { useEffect, useState, useContext, useCallback, memo } from "react";
 import {
   View,
   HStack,
@@ -1609,8 +1609,7 @@ const BeneficiaryPartnerForm: React.FC = ({
 const enhance = withObservables([], () => ({
   beneficiaries_interventions: database.collections
     .get("beneficiaries_interventions")
-    .query()
-    .observe(),
-  subServices: database.collections.get("sub_services").query().observe(),
+    .query(),
+  subServices: database.collections.get("sub_services").query(),
 }));
-export default enhance(BeneficiaryPartnerForm);
+export default memo(enhance(BeneficiaryPartnerForm));

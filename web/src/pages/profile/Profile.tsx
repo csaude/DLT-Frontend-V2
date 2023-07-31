@@ -83,6 +83,7 @@ const Profile = () => {
                   </div>
                   {/* /.card-body */}
                 </div>
+                {/* /.card-body */}
               </div>
               <div className="col-md-7">
                 <div className="card card-primary">

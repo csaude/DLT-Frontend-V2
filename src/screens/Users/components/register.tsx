@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, memo } from "react";
 import { View, KeyboardAvoidingView, ScrollView } from "react-native";
 import {
   Center,
@@ -520,9 +520,9 @@ const UsersRegistrationForm: React.FC = ({
   );
 };
 const enhance = withObservables([], () => ({
-  localities: database.collections.get("localities").query().observe(),
-  profiles: database.collections.get("profiles").query().observe(),
-  partners: database.collections.get("partners").query().observe(),
-  us: database.collections.get("us").query().observe(),
+  localities: database.collections.get("localities").query(),
+  profiles: database.collections.get("profiles").query(),
+  partners: database.collections.get("partners").query(),
+  us: database.collections.get("us").query(),
 }));
-export default enhance(UsersRegistrationForm);
+export default memo(enhance(UsersRegistrationForm));

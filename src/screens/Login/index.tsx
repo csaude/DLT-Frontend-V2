@@ -274,7 +274,18 @@ const Login: React.FC = ({ route }: any) => {
       .query(Q.where("_status", "synced"))
       .fetchCount();
 
-    if (checkSynced == 0 || resetPassword === "1") {
+    const logguedUser: any = (
+      await users
+        .query(
+          Q.where(
+            "username",
+            Q.like(`%${Q.sanitizeLikeString(values.username.trim())}%`)
+          )
+        )
+        .fetch()
+    )[0];
+
+    if (checkSynced == 0 || resetPassword === "1" || logguedUser._raw.is_awaiting_sync == 1) {
       // checkSynced=0 when db have not synced yet
 
       if (isOffline) {
@@ -325,7 +336,8 @@ const Login: React.FC = ({ route }: any) => {
         const account = loginJson.account;
 
         if (status && status !== 200) {
-          if (resetPassword === "1") {
+          if (resetPassword === "1" || logguedUser._raw.is_awaiting_sync == 1) {
+            setLoading(false);
             return showToast(
               "Conta bloqueada",
               "Contacte o seu supervisor ou vesite seu e-mail!!!"
@@ -347,16 +359,6 @@ const Login: React.FC = ({ route }: any) => {
       setLoading(false);
     } else {
       try {
-        const logguedUser: any = (
-          await users
-            .query(
-              Q.where(
-                "username",
-                Q.like(`%${Q.sanitizeLikeString(values.username.trim())}%`)
-              )
-            )
-            .fetch()
-        )[0];
 
         const authenticated = bcrypt.compareSync(
           values.password,

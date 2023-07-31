@@ -1,13 +1,5 @@
-import React, { createContext, useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  AppState,
-  InteractionManager,
-  Keyboard,
-  NativeEventEmitter,
-  NativeModules,
-} from "react-native";
+import React, { createContext, useEffect } from "react";
+import { View, Text } from "react-native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import CustomDrawer from "./components/CustomDrawer";
 import BeneficiariesNavigator from "./BeneficiariesNavigator";
