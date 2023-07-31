@@ -30,3 +30,25 @@ export async function allDistrictById(payload?: DistrictFilter) {
   const res = await select(url);
   return res;
 }
+
+interface DistrictIdsFilter {
+  districts: string[];
+}
+
+export async function allDistrictsByIds(payload?: DistrictIdsFilter) {
+  let url: string;
+
+  const dests = payload?.districts.map((v) => {
+    return `id=${v}`;
+  });
+  const param = dests?.join("&");
+
+  if (param) {
+    url = "/api/districtsIds?".concat(param);
+  } else {
+    url = "/api/districts";
+  }
+
+  const res = await select(url);
+  return res;
+}

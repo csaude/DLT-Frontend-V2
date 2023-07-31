@@ -56,7 +56,7 @@ import { useDispatch, useSelector } from "react-redux";
 import LoadingModal from "@app/components/modal/LoadingModal";
 import { loadReferers } from "@app/store/actions/users";
 import { FilterObject } from "@app/models/FilterObject";
-import { allDistrict } from "@app/utils/district";
+import { allDistrict, allDistrictsByIds } from "@app/utils/district";
 
 const { Text } = Typography;
 const { confirm } = Modal;
@@ -181,9 +181,20 @@ const BeneficiariesList: React.FC = () => {
         const dIds = user?.districts.map((item) => {
           return item.id + "";
         });
+        const dataDistricts = await allDistrictsByIds({ districts: dIds });
+        console.log(dataDistricts);
+
+        const sortedDistricts = dataDistricts.sort((dist1, dist2) =>
+          dist1.name.localeCompare(dist2.name)
+        );
+
+        setDistricts(sortedDistricts);
 
         const dataUsers = await allUsesByDistricts({ districts: dIds });
-        setListUsers(dataUsers);
+        const sortedUsers = dataUsers.sort((user1, user2) =>
+          user1[1].localeCompare(user2[1])
+        );
+        setListUsers(sortedUsers);
       } else if (user && user.provinces.length > 0) {
         const pIds = user?.provinces.map((item) => {
           return item.id + "";
@@ -204,9 +215,9 @@ const BeneficiariesList: React.FC = () => {
         );
         setListUsers(sortedUsers);
 
-        const district = await allDistrict();
+        const dataDistricts = await allDistrict();
 
-        const sortedDistricts = district.sort((dist1, dist2) =>
+        const sortedDistricts = dataDistricts.sort((dist1, dist2) =>
           dist1.name.localeCompare(dist2.name)
         );
 
