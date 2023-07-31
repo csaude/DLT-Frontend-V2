@@ -46,7 +46,7 @@ export async function allDistrictsByIds(payload?: DistrictIdsFilter) {
   if (param) {
     url = "/api/districtsIds?".concat(param);
   } else {
-    url = "/api/districts";
+    url = "/api/districtsIds";
   }
 
   const res = await select(url);
