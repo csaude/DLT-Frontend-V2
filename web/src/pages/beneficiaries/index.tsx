@@ -95,13 +95,6 @@ const BeneficiariesList: React.FC = () => {
   const interventionSelector = useSelector((state: any) => state?.intervention);
   const userSelector = useSelector((state: any) => state?.user);
 
-  // const convertedUserData: FilterObject[] = userSelector?.users?.map(
-  //   ([value, label]) => ({
-  //     value: value.toString(),
-  //     label: label.charAt(0).toUpperCase() + label.slice(1),
-  //   })
-  // );
-
   const convertedUserData: FilterObject[] = listUsers?.map(
     ([value, label]) => ({
       value: value.toString(),
@@ -182,7 +175,6 @@ const BeneficiariesList: React.FC = () => {
           return item.id + "";
         });
         const dataDistricts = await allDistrictsByIds({ districts: dIds });
-        console.log(dataDistricts);
 
         const sortedDistricts = dataDistricts.sort((dist1, dist2) =>
           dist1.name.localeCompare(dist2.name)
