@@ -8,7 +8,7 @@ export const beneficiariesInterventionsFetchCount = async () => {
     .get("beneficiaries")
     .query()
     .fetch();
-  const beneficiariesIds = beneficiaries.map((item) => item?.online_id);
+  const beneficiariesIds = beneficiaries.map((item) => item?.["online_id"]);
 
   await Promise.all(
     beneficiariesIds.map(async (beneficiary_id) => {

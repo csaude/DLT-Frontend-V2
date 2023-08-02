@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { edit, pagedQueryByFilters, query } from "../../utils/beneficiary";
 import {
   allUsersByProfilesAndUser,
+  allUsesByDistricts,
+  allUsesByProvinces,
   query as queryUser,
 } from "../../utils/users";
 import {
@@ -21,6 +23,7 @@ import {
   Select,
   Modal,
 } from "antd";
+import { queryDistrictsByProvinces } from "@app/utils/locality";
 import ptPT from "antd/lib/locale-provider/pt_PT";
 import Highlighter from "react-highlight-words";
 import "antd/dist/antd.css";
@@ -40,7 +43,6 @@ import FormBeneficiary from "./components/FormBeneficiary";
 import FormBeneficiaryPartner from "./components/FormBeneficiaryPartner";
 import { add as addRef, Reference } from "../../utils/reference";
 import FormReference from "./components/FormReference";
-import { allDistrict } from "@app/utils/district";
 import { Title } from "@app/components";
 import {
   ADMIN,
@@ -54,6 +56,7 @@ import { useDispatch, useSelector } from "react-redux";
 import LoadingModal from "@app/components/modal/LoadingModal";
 import { loadReferers } from "@app/store/actions/users";
 import { FilterObject } from "@app/models/FilterObject";
+import { allDistrict, allDistrictsByIds } from "@app/utils/district";
 
 const { Text } = Typography;
 const { confirm } = Modal;
@@ -66,6 +69,8 @@ const BeneficiariesList: React.FC = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const [users, setUsers] = useState<UserModel[]>([]);
+  const [listUsers, setListUsers] = useState<any[]>([]);
+  const [visibleDistrict, setVisibleDistrict] = useState<any>(true);
   const [updaters, setUpdaters] = useState<UserModel[]>([]);
   const [user, setUser] = React.useState<any>();
   const [beneficiaries, setBeneficiaries] = useState<any[]>([]);
@@ -90,12 +95,13 @@ const BeneficiariesList: React.FC = () => {
   const interventionSelector = useSelector((state: any) => state?.intervention);
   const userSelector = useSelector((state: any) => state?.user);
 
-  const convertedUserData: FilterObject[] = userSelector?.users?.map(
+  const convertedUserData: FilterObject[] = listUsers?.map(
     ([value, label]) => ({
       value: value.toString(),
       label: label.charAt(0).toUpperCase() + label.slice(1),
     })
   );
+
   const convertedDistrictsData: FilterObject[] = districts?.map((item) => ({
     value: item.id,
     label: item.name,
@@ -140,7 +146,6 @@ const BeneficiariesList: React.FC = () => {
     const fetchData = async () => {
       setDataLoading(true);
       const user = await queryUser(localStorage.user);
-
       data = await pagedQueryByFilters(
         getUserParams(user),
         currentPageIndex,
@@ -162,10 +167,55 @@ const BeneficiariesList: React.FC = () => {
       setUser(user);
       setBeneficiaries(sortedBeneficiaries);
 
-      const districts = await allDistrict();
-      const sortedDistricts = districts.sort((dist1, dist2) =>
-        dist1.name.localeCompare(dist2.name)
-      );
+      if (user && user?.districts.length > 0) {
+        user?.districts?.length === 1
+          ? setVisibleDistrict(false)
+          : setVisibleDistrict(true);
+        const dIds = user?.districts.map((item) => {
+          return item.id + "";
+        });
+        const dataDistricts = await allDistrictsByIds({ districts: dIds });
+
+        const sortedDistricts = dataDistricts.sort((dist1, dist2) =>
+          dist1.name.localeCompare(dist2.name)
+        );
+
+        setDistricts(sortedDistricts);
+
+        const dataUsers = await allUsesByDistricts({ districts: dIds });
+        const sortedUsers = dataUsers.sort((user1, user2) =>
+          user1[1].localeCompare(user2[1])
+        );
+        setListUsers(sortedUsers);
+      } else if (user && user.provinces.length > 0) {
+        const pIds = user?.provinces.map((item) => {
+          return item.id + "";
+        });
+
+        const dataUsers = await allUsesByProvinces({ provinces: pIds });
+        const dataDistrict = await queryDistrictsByProvinces({
+          provinces: pIds,
+        });
+
+        setDistricts(dataDistrict);
+        setListUsers(dataUsers);
+      } else {
+        const allUser = userSelector?.users;
+
+        const sortedUsers = allUser.sort((user1, user2) =>
+          user1[1].localeCompare(user2[1])
+        );
+        setListUsers(sortedUsers);
+
+        const dataDistricts = await allDistrict();
+
+        const sortedDistricts = dataDistricts.sort((dist1, dist2) =>
+          dist1.name.localeCompare(dist2.name)
+        );
+
+        setDistricts(sortedDistricts);
+      }
+
       const partners = data
         .map((beneficiary) => beneficiary?.partners)
         .filter(
@@ -187,7 +237,6 @@ const BeneficiariesList: React.FC = () => {
       const creators = users.filter((u) => creatorsIds.includes(u.id));
       const updaters = users.filter((u) => updatersIds.includes(u.id));
 
-      setDistricts(sortedDistricts);
       setPartners(partners);
       setUsers(creators);
       setUpdaters(updaters);
@@ -789,7 +838,7 @@ const BeneficiariesList: React.FC = () => {
             />
           </Col>
 
-          <Col className="gutter-row">
+          <Col className="gutter-row" hidden={visibleDistrict === false}>
             <Select
               showSearch
               allowClear
