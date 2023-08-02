@@ -207,7 +207,6 @@ const Login: React.FC = ({ route }: any) => {
             },
           })
         );
-
       if (loggedUser.newPassword == "1") {
         navigate({
           name: "ChangePassword",
@@ -220,6 +219,7 @@ const Login: React.FC = ({ route }: any) => {
             loggedUser: loggedUser,
             token: token,
             passwordExpired: true,
+            loading: true,
           },
         });
       }
@@ -375,11 +375,9 @@ const Login: React.FC = ({ route }: any) => {
         } else {
           setIsInvalidCredentials(false);
           setLoggedUser(logguedUser._raw);
-
           dispatch(loadUser(logguedUser._raw));
           isVeryOldPassword(logguedUser._raw);
-
-          navigate({ name: "Main", params: { loggedUser: logguedUser._raw } });
+          navigate({ name: "Main", params: { loggedUser: logguedUser._raw, loading: loggedUser === undefined } });
         }
       } catch (error) {
         setIsInvalidCredentials(true);
