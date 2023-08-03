@@ -475,7 +475,7 @@ const ViewBenefiaryPanel = ({
               >
                 <span>MZ</span>
                 <br />
-                <span>{`${beneficiary?.neighborhood?.locality?.name}${
+                <span>{`${beneficiary?.locality?.name}${
                   beneficiary?.address == null
                     ? ""
                     : ", " + beneficiary?.address
