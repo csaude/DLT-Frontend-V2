@@ -1,4 +1,4 @@
-import React, { createContext, useEffect } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import { View, Text } from "react-native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import CustomDrawer from "./components/CustomDrawer";
@@ -15,6 +15,7 @@ import {
   loadUserUss,
 } from "../store/authSlice";
 import styles from "./components/style";
+import styles1 from "../screens/Login/style";
 import { Badge, Box, VStack } from "native-base";
 import {
   beneficiariesFetchCount,
@@ -26,6 +27,7 @@ import { getReferencesTotal } from "../store/referenceSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import UsersNavigator from "./UsersNavigator";
 import PropTypes from "prop-types";
+import Spinner from "react-native-loading-spinner-overlay";
 
 function HomeScreen() {
   useEffect(() => {
@@ -44,7 +46,9 @@ const Drawer = createDrawerNavigator();
 
 const DrawerNavigation: React.FC = ({ route }: any) => {
   // eslint-disable-next-line no-unsafe-optional-chaining
-  const { loggedUser } = route?.params;
+  const { loggedUser, loading } = route?.params;
+
+  const [isLoading, setIsLoading] = useState(loading);
 
   const userDetailsCollection = database.get("user_details");
   const dispatch = useDispatch();
@@ -66,11 +70,17 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
         getLocalitiesByIds(userDetailRaw).catch((err) => console.error(err));
         getUssByIds(userDetailRaw).catch((err) => console.error(err));
       }
+      if (isLoading) {
+        await delay(10000);
+        setIsLoading(false);
+      }
     };
     getUserDetails().catch((error) => console.log(error));
 
     getTotals().catch((error) => console.log(error));
   }, []);
+
+  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   const getProvincesByIds = async (userDetails) => {
     const a = userDetails?.provinces;
@@ -202,6 +212,13 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
 
   return (
     <Context.Provider value={loggedUser}>
+      {isLoading ? (
+        <Spinner
+          visible={true}
+          textContent={"Sincronizando..."}
+          textStyle={styles1.spinnerTextStyle}
+        />
+      ) : undefined}
       <Drawer.Navigator
         screenOptions={{
           headerStyle: {

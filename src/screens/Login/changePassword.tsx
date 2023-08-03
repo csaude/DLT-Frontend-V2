@@ -138,7 +138,7 @@ const ChangePassword: React.FC = ({ route }: any) => {
         });
       });
 
-      navigate({ name: "Main", params: { loggedUser: loggedUser } });
+      navigate({ name: "Main", params: { loggedUser: loggedUser, loading: true } });
     } catch (error) {
       console.log(error);
       showToast("error", "Erro!!!", "Erro a alterar a senha!");
