@@ -22,6 +22,7 @@ import {
   Col,
   Select,
   Modal,
+  Tag,
 } from "antd";
 import { queryDistrictsByProvinces } from "@app/utils/locality";
 import ptPT from "antd/lib/locale-provider/pt_PT";
@@ -117,6 +118,7 @@ const BeneficiariesList: React.FC = () => {
 
   let data;
   const [dataLoading, setDataLoading] = useState(false);
+  const [searchCounter, setSearchCounter] = useState<any>();
 
   const userId = localStorage.getItem("user");
   const dispatch = useDispatch();
@@ -154,6 +156,7 @@ const BeneficiariesList: React.FC = () => {
         searchUserCreator,
         searchDistrict
       );
+      setSearchCounter(data.length);
 
       const sortedBeneficiaries = data.sort((benf1, benf2) =>
         moment(benf2.dateCreated)
@@ -869,6 +872,13 @@ const BeneficiariesList: React.FC = () => {
             rowKey="id"
             sortDirections={["descend", "ascend"]}
             columns={columns}
+            title={(beneficiaries) => (
+              <span style={{ display: "flex", justifyContent: "flex-end" }}>
+                <Tag color={"geekblue"}>
+                  {beneficiaries.length + "/" + searchCounter}
+                </Tag>
+              </span>
+            )}
             expandable={{
               expandedRowRender: (record) => (
                 <div
