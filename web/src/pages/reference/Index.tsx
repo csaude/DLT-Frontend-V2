@@ -5,7 +5,13 @@ import {
   pagedQueryByUser,
 } from "@app/utils/reference";
 import { allDistrict } from "@app/utils/district";
-import { allUsersByProfilesAndUser, query as query1 } from "@app/utils/users";
+import {
+  allUsersByProfilesAndUser,
+  // allUsesByDistricts,
+  // allUsesByProvinces,
+  query as query1,
+} from "@app/utils/users";
+// import { queryDistrictsByProvinces } from "@app/utils/locality";
 import { query as beneficiaryQuery } from "@app/utils/beneficiary";
 import {
   Card,
@@ -20,6 +26,7 @@ import {
   Row,
   Col,
   Select,
+  Tag,
 } from "antd";
 import ptPT from "antd/lib/locale-provider/pt_PT";
 import "antd/dist/antd.css";
@@ -60,6 +67,8 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
   const [referredPartners, setReferredPartners] = useState<any[]>([]);
   const [referrers, setReferrers] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
+  const [listUsers, setListUsers] = useState<any[]>([]);
+  // const [visibleDistrict, setVisibleDistrict] = useState<any>(true);
   const [district, setDistrict] = useState<any>();
   const [us, setUs] = useState<any[]>([]);
   const [loggedUser, setLoggedUser] = useState<any>(undefined);
@@ -67,6 +76,7 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
   const pageSize = 100;
   let data;
   const [dataLoading, setDataLoading] = useState(false);
+  const [searchCounter, setSearchCounter] = useState<any>();
 
   const [searchNui, setSearchNui] = useState<any>("");
   const [searchDistrict, setSearchDistrict] = useState<any>("");
@@ -77,6 +87,7 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
   const [districts, setDistricts] = useState<any[]>([]);
 
   const userSelector = useSelector((state: any) => state?.user);
+  // const convertedUserData: FilterObject[] = listUsers?.map(
   const convertedUserData: FilterObject[] = userSelector?.users?.map(
     ([value, label]) => ({
       value: value.toString(),
@@ -105,6 +116,7 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
         searchUserCreator,
         searchDistrict
       );
+      setSearchCounter(data.length);
       const districts = await allDistrict();
       const loggedUser = await query1(localStorage.user);
 
@@ -777,6 +789,13 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
           <Table
             rowKey={(record?) => `${record.id}${record.id.date}`}
             columns={columnsRef}
+            title={(references) => (
+              <span style={{ display: "flex", justifyContent: "flex-end" }}>
+                <Tag color={"geekblue"}>
+                  {references.length + "/" + searchCounter}
+                </Tag>
+              </span>
+            )}
             dataSource={references}
             bordered
             scroll={{ x: 1500 }}
