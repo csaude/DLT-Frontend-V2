@@ -4,14 +4,14 @@ import {
   Reference,
   pagedQueryByUser,
 } from "@app/utils/reference";
-import { allDistrict } from "@app/utils/district";
+import { allDistrict, allDistrictsByIds } from "@app/utils/district";
 import {
   allUsersByProfilesAndUser,
-  // allUsesByDistricts,
-  // allUsesByProvinces,
+  allUsesByDistricts,
+  allUsesByProvinces,
   query as query1,
 } from "@app/utils/users";
-// import { queryDistrictsByProvinces } from "@app/utils/locality";
+import { queryDistrictsByProvinces } from "@app/utils/locality";
 import { query as beneficiaryQuery } from "@app/utils/beneficiary";
 import {
   Card,
@@ -68,7 +68,7 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
   const [referrers, setReferrers] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
   const [listUsers, setListUsers] = useState<any[]>([]);
-  // const [visibleDistrict, setVisibleDistrict] = useState<any>(true);
+  const [visibleDistrict, setVisibleDistrict] = useState<any>(true);
   const [district, setDistrict] = useState<any>();
   const [us, setUs] = useState<any[]>([]);
   const [loggedUser, setLoggedUser] = useState<any>(undefined);
@@ -87,8 +87,7 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
   const [districts, setDistricts] = useState<any[]>([]);
 
   const userSelector = useSelector((state: any) => state?.user);
-  // const convertedUserData: FilterObject[] = listUsers?.map(
-  const convertedUserData: FilterObject[] = userSelector?.users?.map(
+  const convertedUserData: FilterObject[] = listUsers?.map(
     ([value, label]) => ({
       value: value.toString(),
       label: label.charAt(0).toUpperCase() + label.slice(1),
@@ -117,8 +116,55 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
         searchDistrict
       );
       setSearchCounter(data.length);
-      const districts = await allDistrict();
       const loggedUser = await query1(localStorage.user);
+      if (loggedUser && loggedUser?.districts.length > 0) {
+        loggedUser?.districts?.length === 1
+          ? setVisibleDistrict(false)
+          : setVisibleDistrict(true);
+        const dIds = loggedUser?.districts.map((item) => {
+          return item.id + "";
+        });
+        const dataDistricts = await allDistrictsByIds({ districts: dIds });
+
+        const sortedDistricts = dataDistricts.sort((dist1, dist2) =>
+          dist1.name.localeCompare(dist2.name)
+        );
+
+        setDistricts(sortedDistricts);
+
+        const dataUsers = await allUsesByDistricts({ districts: dIds });
+        const sortedUsers = dataUsers.sort((user1, user2) =>
+          user1[1].localeCompare(user2[1])
+        );
+        setListUsers(sortedUsers);
+      } else if (loggedUser && loggedUser.provinces.length > 0) {
+        const pIds = loggedUser?.provinces.map((item) => {
+          return item.id + "";
+        });
+
+        const dataUsers = await allUsesByProvinces({ provinces: pIds });
+        const dataDistrict = await queryDistrictsByProvinces({
+          provinces: pIds,
+        });
+
+        setDistricts(dataDistrict);
+        setListUsers(dataUsers);
+      } else {
+        const allUser = userSelector?.users;
+
+        const sortedUsers = allUser.sort((user1, user2) =>
+          user1[1].localeCompare(user2[1])
+        );
+        setListUsers(sortedUsers);
+
+        const dataDistricts = await allDistrict();
+
+        const sortedDistricts = dataDistricts.sort((dist1, dist2) =>
+          dist1.name.localeCompare(dist2.name)
+        );
+
+        setDistricts(sortedDistricts);
+      }
 
       const existingUs = data
         .map((reference) => reference.us)
@@ -168,7 +214,6 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
       setReferrers(referrers);
       setUsers(referreds);
       setUs(existingUs);
-      setDistricts(districts);
       setLoggedUser(loggedUser);
     };
 
@@ -758,7 +803,7 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
             />
           </Col>
 
-          <Col className="gutter-row">
+          <Col className="gutter-row" hidden={visibleDistrict === false}>
             <Select
               showSearch
               allowClear
