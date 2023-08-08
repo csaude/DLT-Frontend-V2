@@ -58,6 +58,10 @@ import LoadingModal from "@app/components/modal/LoadingModal";
 import { loadReferers } from "@app/store/actions/users";
 import { FilterObject } from "@app/models/FilterObject";
 import { allDistrict, allDistrictsByIds } from "@app/utils/district";
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
+import { toast } from "react-toastify";
+import { getAgeByDate } from "@app/utils/ageRange";
 
 const { Text } = Typography;
 const { confirm } = Modal;
@@ -95,6 +99,9 @@ const BeneficiariesList: React.FC = () => {
 
   const interventionSelector = useSelector((state: any) => state?.intervention);
   const userSelector = useSelector((state: any) => state?.user);
+  const beneficiariesTotal = useSelector(
+    (state: any) => state.beneficiary.total
+  );
 
   const convertedUserData: FilterObject[] = listUsers?.map(
     ([value, label]) => ({
@@ -131,7 +138,10 @@ const BeneficiariesList: React.FC = () => {
         }
       }
     );
-    return currentInterventin;
+    const filteredInterventions = currentInterventin.filter(
+      (intervention) => intervention
+    );
+    return filteredInterventions[0];
   };
 
   const getUsernames = (userId) => {
@@ -140,7 +150,8 @@ const BeneficiariesList: React.FC = () => {
         return item[1];
       }
     });
-    return currentNames;
+    const filteredNames = currentNames.filter((name) => name);
+    return filteredNames[0];
   };
 
   let searchInput;
@@ -774,6 +785,117 @@ const BeneficiariesList: React.FC = () => {
     }
   }
 
+  const ClickableTag = () => {
+    return (
+      <a href="#" onClick={handleExportarXLS}>
+        <Tag onProgress={handleExportarXLS} color={"geekblue"}>
+          {"Exportar XLS"}
+        </Tag>
+      </a>
+    );
+  };
+
+  const handleExportarXLS = async () => {
+    console.log("On Export XLS");
+
+    try {
+      setDataLoading(true);
+      const pageElements = 1000;
+
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet("grid-export");
+
+      const headers = [
+        "#",
+        "Código do Beneficiário",
+        "Sexo",
+        "PE",
+        "Distrito",
+        "idade",
+        "#Interv",
+        "Org",
+        "Criado Por",
+        "Actualizado Por",
+        "Inscrito Em",
+        "Criado Em",
+      ];
+
+      const headerRow = worksheet.getRow(1);
+      headers.forEach((header, index) => {
+        const cell = headerRow.getCell(index + 1);
+        cell.alignment = { vertical: "middle", horizontal: "center" };
+        cell.value = header;
+      });
+
+      const user = await queryUser(localStorage.user);
+
+      const lastPage = Math.ceil(beneficiariesTotal / pageElements);
+
+      let sequence = 1;
+
+      for (let i = 0; i < lastPage; i++) {
+        data = await pagedQueryByFilters(
+          getUserParams(user),
+          i,
+          pageElements,
+          searchNui,
+          searchUserCreator,
+          searchDistrict
+        );
+
+        const sortedBeneficiaries = data.sort((benf1, benf2) =>
+          moment(benf2.dateCreated)
+            .format("YYYY-MM-DD HH:mm:ss")
+            .localeCompare(
+              moment(benf1.dateCreated).format("YYYY-MM-DD HH:mm:ss")
+            )
+        );
+
+        if (sortedBeneficiaries.length === 0) {
+          break;
+        }
+
+        sortedBeneficiaries.forEach((beneficiary) => {
+          const values = [
+            sequence,
+            beneficiary?.nui,
+            beneficiary?.gender === "1" ? "M" : "F",
+            beneficiary?.entryPoint === 1
+              ? "US"
+              : beneficiary?.entryPoint === 2
+              ? "CM"
+              : "ES",
+            beneficiary?.district?.name,
+            getAgeByDate(beneficiary.dateOfBirth) + " anos",
+            getBeneficiaryIntervention(beneficiary.id),
+            beneficiary?.partners?.name,
+            getUsernames(beneficiary.createdBy),
+            getUsernames(beneficiary.updatedBy),
+            moment(beneficiary.enrollmentDate).format("YYYY-MM-DD"),
+            moment(beneficiary.dateCreated).format("YYYY-MM-DD"),
+          ];
+          sequence++;
+          worksheet.addRow(values);
+        });
+      }
+
+      const created = moment().format("YYYYMMDD_hhmmss");
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      saveAs(blob, `grid-export_${created}.xlsx`);
+
+      setDataLoading(false);
+    } catch (error) {
+      // Handle any errors that occur during report generation
+      console.error("Error generating XLSX report:", error);
+      setDataLoading(false);
+      // Display an error message using your preferred method (e.g., toast.error)
+      toast.error("An error occurred during report generation.");
+    }
+  };
+
   return (
     <>
       <Title />
@@ -877,6 +999,7 @@ const BeneficiariesList: React.FC = () => {
                 <Tag color={"geekblue"}>
                   {beneficiaries.length + "/" + searchCounter}
                 </Tag>
+                <ClickableTag />
               </span>
             )}
             expandable={{

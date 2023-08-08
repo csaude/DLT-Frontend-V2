@@ -1,7 +1,8 @@
 import { GET_USERNAMES, LOAD_REFERERS } from "../actions/types";
 
 const initialState = {
-  interventions: [],
+  users: [],
+  referers: [],
 };
 
 function userReducer(state = initialState, action) {
