@@ -127,7 +127,7 @@ const Login: React.FC = ({ route }: any) => {
         }
       })
       .catch((error) => {
-        showToast("Falha de Conexão", "Por favor contacte o suporte!", error);
+        showToast("Por favor contacte o suporte!", error);
         return undefined;
       });
   };
@@ -279,13 +279,17 @@ const Login: React.FC = ({ route }: any) => {
         .query(
           Q.where(
             "username",
-            Q.like(`%${Q.sanitizeLikeString(values.username.trim())}%`)
+            Q.like(`${Q.sanitizeLikeString(values.username.trim())}`)
           )
         )
         .fetch()
     )[0];
 
-    if (checkSynced == 0 || resetPassword === "1" || logguedUser._raw.is_awaiting_sync == 1) {
+    if (
+      checkSynced == 0 ||
+      resetPassword === "1" ||
+      logguedUser._raw.is_awaiting_sync == 1
+    ) {
       // checkSynced=0 when db have not synced yet
 
       if (isOffline) {
@@ -359,7 +363,6 @@ const Login: React.FC = ({ route }: any) => {
       setLoading(false);
     } else {
       try {
-
         const authenticated = bcrypt.compareSync(
           values.password,
           logguedUser?._raw?.password
@@ -377,7 +380,13 @@ const Login: React.FC = ({ route }: any) => {
           setLoggedUser(logguedUser._raw);
           dispatch(loadUser(logguedUser._raw));
           isVeryOldPassword(logguedUser._raw);
-          navigate({ name: "Main", params: { loggedUser: logguedUser._raw, loading: loggedUser === undefined } });
+          navigate({
+            name: "Main",
+            params: {
+              loggedUser: logguedUser._raw,
+              loading: loggedUser === undefined,
+            },
+          });
         }
       } catch (error) {
         setIsInvalidCredentials(true);
