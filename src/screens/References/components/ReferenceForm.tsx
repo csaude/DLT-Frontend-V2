@@ -433,7 +433,6 @@ const ReferenceForm: React.FC = ({ route }: any) => {
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   const syncronize = () => {
-    setLoading(true);
     if (!isOffline) {
       sync({ username: loggedUser.username })
         .then(() => setIsSync(true))
@@ -446,7 +445,6 @@ const ReferenceForm: React.FC = ({ route }: any) => {
           })
         );
     }
-    setLoading(false);
 
     getTotals().catch((err) => console.error(err));
   };
