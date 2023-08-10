@@ -787,10 +787,8 @@ const BeneficiariesList: React.FC = () => {
 
   const ClickableTag = () => {
     return (
-      <a href="#" onClick={handleExportarXLS}>
-        <Tag onProgress={handleExportarXLS} color={"geekblue"}>
-          {"Exportar XLS"}
-        </Tag>
+      <a onClick={handleExportarXLS}>
+        <Tag color={"geekblue"}>{"Exportar XLS"}</Tag>
       </a>
     );
   };
@@ -803,7 +801,7 @@ const BeneficiariesList: React.FC = () => {
       const pageElements = 1000;
 
       const workbook = new ExcelJS.Workbook();
-      const worksheet = workbook.addWorksheet("grid-export");
+      const worksheet = workbook.addWorksheet("Lista_Beneficiarios_");
 
       const headers = [
         "#",
@@ -818,6 +816,7 @@ const BeneficiariesList: React.FC = () => {
         "Actualizado Por",
         "Inscrito Em",
         "Criado Em",
+        "Actualizado Em",
       ];
 
       const headerRow = worksheet.getRow(1);
@@ -859,7 +858,7 @@ const BeneficiariesList: React.FC = () => {
         sortedBeneficiaries.forEach((beneficiary) => {
           const values = [
             sequence,
-            beneficiary?.nui,
+            beneficiary.district.code + "/" + beneficiary?.nui,
             beneficiary?.gender === "1" ? "M" : "F",
             beneficiary?.entryPoint === 1
               ? "US"
@@ -874,6 +873,9 @@ const BeneficiariesList: React.FC = () => {
             getUsernames(beneficiary.updatedBy),
             moment(beneficiary.enrollmentDate).format("YYYY-MM-DD"),
             moment(beneficiary.dateCreated).format("YYYY-MM-DD"),
+            beneficiary.dateUpdated !== null
+              ? moment(beneficiary.dateUpdated).format("YYYY-MM-DD")
+              : "",
           ];
           sequence++;
           worksheet.addRow(values);
@@ -885,7 +887,7 @@ const BeneficiariesList: React.FC = () => {
       const blob = new Blob([buffer], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
-      saveAs(blob, `grid-export_${created}.xlsx`);
+      saveAs(blob, `Lista_Beneficiarios_${created}.xlsx`);
 
       setDataLoading(false);
     } catch (error) {
