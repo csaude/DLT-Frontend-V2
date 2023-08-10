@@ -825,6 +825,7 @@ const BeneficiariesList: React.FC = () => {
         const cell = headerRow.getCell(index + 1);
         cell.alignment = { vertical: "middle", horizontal: "center" };
         cell.value = header;
+        cell.font = { bold: true };
       });
 
       const user = await queryUser(localStorage.user);
