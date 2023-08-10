@@ -1,5 +1,6 @@
-const URL = "https://prod.dreams.co.mz/dlt-api-0.1/"
+// const URL = "https://prod.dreams.co.mz/dlt-api-0.1/"
 // const URL = "http://172.105.133.124:8080/dlt-api-0.1"
+const URL = "http://10.10.12.50:8083/dlt-api-0.1"
 export const LOGIN_API_URL = `${URL}/api/login`;
 export const VERIFY_USER_API_URL = `${URL}/api/users/username`;
 export const SYNC_API_URL = `${URL}/sync`;
