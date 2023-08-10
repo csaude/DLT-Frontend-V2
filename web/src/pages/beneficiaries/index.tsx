@@ -809,7 +809,7 @@ const BeneficiariesList: React.FC = () => {
         "Sexo",
         "PE",
         "Distrito",
-        "idade",
+        "Idade",
         "#Interv",
         "Org",
         "Criado Por",
