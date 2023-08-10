@@ -801,6 +801,7 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
         "Ref. Para",
         "Organização Referida",
         "Ponto de Entrada para Referência",
+        "Criado em",
         "Estado",
       ];
 
@@ -859,11 +860,8 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
               ? "CM"
               : "ES",
             reference.notifyTo?.partners?.name,
-            reference.beneficiaries?.entryPoint === "1"
-              ? "US"
-              : reference.beneficiaries?.entryPoint === "2"
-              ? "CM"
-              : "ES",
+            reference.us?.name,
+            moment(reference.dateCreated).format("YYYY-MM-DD"),
             reference.status === 1
               ? "Pendente"
               : reference.status === 2
@@ -888,13 +886,13 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
             const cell8 = row.getCell(8);
             cell8.font = textStyling.font;
 
-            const cell12 = row.getCell("M");
-            if (cell12.value === "Pendente") {
-              cell12.font = { bold: true, color: { argb: "FF800000" } }; // Red color
-            } else if (cell12.value === "Atendido") {
-              cell12.font = { bold: true, color: { argb: "004000" } }; // Green color
+            const cellStatus = row.getCell("N");
+            if (cellStatus.value === "Pendente") {
+              cellStatus.font = { bold: true, color: { argb: "FF800000" } }; // Red color
+            } else if (cellStatus.value === "Atendido") {
+              cellStatus.font = { bold: true, color: { argb: "004000" } }; // Green color
             } else {
-              cell12.font = { bold: true };
+              cellStatus.font = { bold: true };
             }
           });
 
