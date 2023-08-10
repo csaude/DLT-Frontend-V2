@@ -405,7 +405,13 @@ const UsersList: React.FC = () => {
         }
       >
         <ConfigProvider locale={ptPT}>
-          <Table rowKey="id" columns={columns} dataSource={users} bordered />
+          <Table
+            rowKey="id"
+            columns={columns}
+            dataSource={users}
+            bordered
+            scroll={{ x: 1500 }}
+          />
         </ConfigProvider>
 
         {<LoadingModal modalVisible={loading} />}
