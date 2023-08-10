@@ -860,9 +860,9 @@ const BeneficiariesList: React.FC = () => {
             sequence,
             beneficiary.district.code + "/" + beneficiary?.nui,
             beneficiary?.gender === "1" ? "M" : "F",
-            beneficiary?.entryPoint === 1
+            beneficiary?.entryPoint === "1"
               ? "US"
-              : beneficiary?.entryPoint === 2
+              : beneficiary?.entryPoint === "2"
               ? "CM"
               : "ES",
             beneficiary?.district?.name,
