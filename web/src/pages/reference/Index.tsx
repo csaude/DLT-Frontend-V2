@@ -49,6 +49,9 @@ import LoadingModal from "@app/components/modal/LoadingModal";
 import { useDispatch, useSelector } from "react-redux";
 import { loadReferers } from "@app/store/actions/users";
 import { FilterObject } from "@app/models/FilterObject";
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
+import { toast } from "react-toastify";
 
 const { Text } = Typography;
 
@@ -102,6 +105,9 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
 
   const userId = localStorage.getItem("user");
   const dispatch = useDispatch();
+  const beneficiariesTotal = useSelector(
+    (state: any) => state.beneficiary.total
+  );
 
   let searchInput;
   useEffect(() => {
@@ -764,6 +770,158 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
     }
   }
 
+  const ClickableTag = () => {
+    return (
+      <a onClick={handleExportarXLS}>
+        <Tag color={"geekblue"}>{"Exportar XLS"}</Tag>
+      </a>
+    );
+  };
+
+  const handleExportarXLS = async () => {
+    console.log("On Export XLS");
+
+    try {
+      setDataLoading(true);
+      const pageElements = 1000;
+
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet("Lista_Referencias");
+
+      const headers = [
+        "#",
+        "Distrito",
+        "Organização Referente",
+        "Referido em",
+        "Nota Referência",
+        "Código do Beneficiário",
+        "Referente",
+        "Contacto",
+        "Notificar ao",
+        "Ref. Para",
+        "Organização Referida",
+        "Ponto de Entrada para Referência",
+        "Criado em",
+        "Estado",
+      ];
+
+      const headerRow = worksheet.getRow(1);
+      headers.forEach((header, index) => {
+        const cell = headerRow.getCell(index + 1);
+        cell.alignment = { vertical: "middle", horizontal: "center" };
+        cell.value = header;
+        cell.font = { bold: true };
+      });
+
+      const user = await query1(localStorage.user);
+
+      const lastPage = Math.ceil(beneficiariesTotal / pageElements);
+
+      let sequence = 1;
+
+      for (let i = 0; i < lastPage; i++) {
+        data = await pagedQueryByUser(
+          localStorage.user,
+          i,
+          pageElements,
+          searchNui,
+          searchUserCreator,
+          searchDistrict
+        );
+
+        const sortedReferences = data.sort((benf1, benf2) =>
+          moment(benf2.dateCreated)
+            .format("YYYY-MM-DD HH:mm:ss")
+            .localeCompare(
+              moment(benf1.dateCreated).format("YYYY-MM-DD HH:mm:ss")
+            )
+        );
+
+        if (sortedReferences.length === 0) {
+          break;
+        }
+
+        sortedReferences.forEach((reference) => {
+          const values = [
+            sequence,
+            reference.beneficiaries?.district?.name,
+            reference.beneficiaries?.partners?.name,
+            moment(reference.date).format("YYYY-MM-DD"),
+            reference.referenceNote,
+            reference.beneficiaries.district.code +
+              "/" +
+              reference.beneficiaries?.nui,
+            reference.referredBy?.name + " " + reference.referredBy?.surname,
+            reference.beneficiaries?.phoneNumber,
+            reference.notifyTo?.name + " " + reference.notifyTo?.surname,
+            reference.beneficiaries?.entryPoint === "1"
+              ? "US"
+              : reference.beneficiaries?.entryPoint === "2"
+              ? "CM"
+              : "ES",
+            reference.notifyTo?.partners?.name,
+            reference.us?.name,
+            moment(reference.dateCreated).format("YYYY-MM-DD"),
+            reference.status === 1
+              ? "Pendente"
+              : reference.status === 2
+              ? "Atendido"
+              : "Cancelado",
+          ];
+          sequence++;
+          worksheet.addRow(values);
+
+          const textStyling = {
+            fontSimple: { color: { argb: "FF800000" } },
+            font: { bold: true, color: { argb: "FF800000" } },
+          };
+
+          worksheet.eachRow((row, rowNumber) => {
+            const cell5 = row.getCell(5);
+            cell5.font = textStyling.fontSimple;
+            const cell6 = row.getCell(6);
+            cell6.font = textStyling.font;
+            const cell7 = row.getCell(7);
+            cell7.font = textStyling.font;
+            const cell8 = row.getCell(8);
+            cell8.font = textStyling.font;
+
+            const cellStatus = row.getCell("N");
+            if (cellStatus.value === "Pendente") {
+              cellStatus.font = { bold: true, color: { argb: "FF800000" } }; // Red color
+            } else if (cellStatus.value === "Atendido") {
+              cellStatus.font = { bold: true, color: { argb: "004000" } }; // Green color
+            } else {
+              cellStatus.font = { bold: true };
+            }
+          });
+
+          headers.forEach((header, index) => {
+            const cell = headerRow.getCell(index + 1);
+            cell.alignment = { vertical: "middle", horizontal: "center" };
+            cell.value = header;
+            cell.font = { bold: true };
+          });
+        });
+      }
+
+      const created = moment().format("YYYYMMDD_hhmmss");
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      saveAs(blob, `Lista_Referencias_${created}.xlsx`);
+
+      setDataLoading(false);
+    } catch (error) {
+      // Handle any errors that occur during report generation
+      console.error("Error generating XLSX report:", error);
+      setDataLoading(false);
+      // Display an error message using your preferred method (e.g., toast.error)
+      toast.error("An error occurred during report generation.");
+    }
+  };
+
   return (
     <>
       <Title />
@@ -839,6 +997,7 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
                 <Tag color={"geekblue"}>
                   {references.length + "/" + searchCounter}
                 </Tag>
+                <ClickableTag />
               </span>
             )}
             dataSource={references}

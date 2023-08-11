@@ -95,7 +95,7 @@ const App = () => {
     const timer = setTimeout(
       () => {
         localStorage.clear();
-        window.location.href = "/login";
+        window.location.href = "/dreams/#/login";
       },
       // 10000 // so para testes
       userRole === "ADMIN" ? 86400000 : 1800000 //
