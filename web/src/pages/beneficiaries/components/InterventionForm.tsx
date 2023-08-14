@@ -144,6 +144,7 @@ const InterventionForm = ({ record, beneficiary }: any) => {
   };
 
   const onChangeServices = async (value: any) => {
+    form.setFieldsValue({ subservice: undefined });
     const data = await querySubServiceByService(value);
     setInterventions(data);
   };
@@ -164,8 +165,14 @@ const InterventionForm = ({ record, beneficiary }: any) => {
   };
 
   const onChangeEntryPoint = async (e: any) => {
+    const ePoint = e?.target?.value === undefined ? e : e?.target?.value;
+
+    if (record?.entryPoint != ePoint) {
+      form.setFieldsValue({ location: undefined });
+    }
+
     const payload = {
-      typeId: e?.target?.value === undefined ? e : e?.target?.value,
+      typeId: ePoint,
       userId: localStorage.user,
     };
 
