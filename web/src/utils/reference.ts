@@ -84,9 +84,14 @@ export async function pagedQueryByUser(
   return res;
 }
 
-export async function queryCount(id: any) {
+export async function queryCountByFilters(
+  id?: any,
+  searchNui?: any,
+  searchUserCreator?: number,
+  searchDistrict?: number
+) {
   const res = await select(
-    "/api/references/byUser/".concat(id).concat("/count")
+    `/api/references/byUser/${id}/countByFilters?searchNui=${searchNui}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`
   );
   return res;
 }

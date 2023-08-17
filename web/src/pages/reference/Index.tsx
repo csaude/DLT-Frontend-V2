@@ -3,6 +3,7 @@ import {
   edit as editRef,
   Reference,
   pagedQueryByUser,
+  queryCountByFilters,
 } from "@app/utils/reference";
 import { allDistrict, allDistrictsByIds } from "@app/utils/district";
 import {
@@ -78,6 +79,7 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const pageSize = 100;
   let data;
+  let countByFilter;
   const [dataLoading, setDataLoading] = useState(false);
   const [searchCounter, setSearchCounter] = useState<any>();
 
@@ -121,7 +123,15 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
         searchUserCreator,
         searchDistrict
       );
-      setSearchCounter(data.length);
+
+      countByFilter = await queryCountByFilters(
+        localStorage.user,
+        searchNui,
+        searchUserCreator,
+        searchDistrict
+      );
+      setSearchCounter(countByFilter);
+
       const loggedUser = await query1(localStorage.user);
       if (loggedUser && loggedUser?.districts.length > 0) {
         loggedUser?.districts?.length === 1
