@@ -872,11 +872,17 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
             reference.notifyTo?.partners?.name,
             reference.us?.name,
             moment(reference.dateCreated).format("YYYY-MM-DD"),
-            reference.status === 1
+            reference.status === 0
               ? "Pendente"
+              : reference.status === 1
+              ? "Atendido Parcialmente"
               : reference.status === 2
               ? "Atendido"
-              : "Cancelado",
+              : reference.status === 3
+              ? "Cancelado"
+              : reference.status === 4
+              ? "Sync"
+              : "Status Desconhecido",
           ];
           sequence++;
           worksheet.addRow(values);
