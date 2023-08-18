@@ -4,8 +4,8 @@ import "./index.css";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import StepReference from "./StepReferece";
 import StepReferenceService from "./StepReferenceService";
-import { queryCount as beneficiaryQueryCount } from "../../../utils/beneficiary";
-import { queryCount as referenceQueryCount } from "../../../utils/reference";
+import { queryCountByFilters as beneficiaryQueryCount } from "../../../utils/beneficiary";
+import { queryCountByFilters as referenceQueryCount } from "../../../utils/reference";
 import { query as queryUser } from "../../../utils/users";
 import { useDispatch } from "react-redux";
 

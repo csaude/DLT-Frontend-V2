@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { edit, pagedQueryByFilters, query } from "../../utils/beneficiary";
+import {
+  edit,
+  pagedQueryByFilters,
+  query,
+  queryCountByFilters,
+} from "../../utils/beneficiary";
 import {
   allUsersByProfilesAndUser,
   allUsesByDistricts,
@@ -124,6 +129,7 @@ const BeneficiariesList: React.FC = () => {
   const [nui, setNui] = useState<any>();
 
   let data;
+  let countByFilter;
   const [dataLoading, setDataLoading] = useState(false);
   const [searchCounter, setSearchCounter] = useState<any>();
 
@@ -167,7 +173,14 @@ const BeneficiariesList: React.FC = () => {
         searchUserCreator,
         searchDistrict
       );
-      setSearchCounter(data.length);
+
+      countByFilter = await queryCountByFilters(
+        getUserParams(user),
+        searchNui,
+        searchUserCreator,
+        searchDistrict
+      );
+      setSearchCounter(countByFilter);
 
       const sortedBeneficiaries = data.sort((benf1, benf2) =>
         moment(benf2.dateCreated)
@@ -1035,10 +1048,10 @@ const BeneficiariesList: React.FC = () => {
               size="small"
               style={{ width: 90 }}
             >
-              {"<<"} Anterior
+              {"<<"} {pageSize}
             </Button>
             <Button onClick={loadNextPage} size="small" style={{ width: 90 }}>
-              Próxima {">>"}
+              {pageSize} {">>"}
             </Button>
           </Space>
         </ConfigProvider>

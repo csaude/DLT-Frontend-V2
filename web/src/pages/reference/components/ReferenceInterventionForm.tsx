@@ -81,6 +81,7 @@ const ReferenceInterventionForm = ({ form, reference, refServices }: any) => {
     });
     form.setFieldsValue({ service: refServices[index]?.services?.id + "" });
     form.setFieldsValue({ outros: remarks });
+    form.setFieldsValue({ dataBeneficio: "" });
   }, [index]);
 
   const onChangeServices = async (value: any) => {
@@ -215,7 +216,6 @@ const ReferenceInterventionForm = ({ form, reference, refServices }: any) => {
           >
             <DatePicker
               style={{ width: "100%" }}
-              defaultPickerValue={moment(new Date(), "YYYY-MM-DD")}
               disabledDate={(d) => !d || d.isAfter(moment(new Date()))}
             />
           </Form.Item>
