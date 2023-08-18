@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { MenuItem } from "@components";
-import { queryCount as beneficiaryQueryCount } from "../../../utils/beneficiary";
-import { queryCount as referenceQueryCount } from "../../../utils/reference";
+import { queryCountByFilters as beneficiaryQueryCount } from "../../../utils/beneficiary";
+import { queryCountByFilters as referenceQueryCount } from "../../../utils/reference";
 import { query as queryUser } from "../../../utils/users";
 import { getUserParams } from "@app/models/Utils";
 import { getReferencesTotal } from "../../../store/actions/reference";
@@ -165,10 +165,24 @@ const MenuSidebar = () => {
   const menuChildIndent = useSelector((state: any) => state.ui.menuChildIndent);
   const dispatch = useDispatch();
 
+  const [searchNui, setSearchNui] = useState<any>("");
+  const [searchDistrict, setSearchDistrict] = useState<any>("");
+  const [searchUserCreator, setSearchUserCreator] = useState<any>("");
+
   const getTotals = async () => {
     const user = await queryUser(localStorage.user);
-    const beneficiaryTotal = await beneficiaryQueryCount(getUserParams(user));
-    const referenceTotal = await referenceQueryCount(user.id);
+    const beneficiaryTotal = await beneficiaryQueryCount(
+      getUserParams(user),
+      searchNui,
+      searchUserCreator,
+      searchDistrict
+    );
+    const referenceTotal = await referenceQueryCount(
+      user.id,
+      searchNui,
+      searchUserCreator,
+      searchDistrict
+    );
     dispatch(getBeneficiariesTotal(beneficiaryTotal));
     dispatch(getReferencesTotal(referenceTotal));
     dispatch(getInterventionsCount());
