@@ -60,6 +60,21 @@ export const MENU: IMenuItem[] = [
     ],
   },
   {
+    name: "menusidebar.label.bulkCancellationReference",
+    path: "/bulkReference",
+    icon: "fas fa-sync",
+    level: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    roles: [
+      "ADMIN",
+      "M&E",
+      "SUPERVISOR",
+      "MENTORA",
+      "ENFERMEIRA",
+      "CONSELHEIRA",
+      "GESTOR",
+    ],
+  },
+  {
     name: "menusidebar.label.configurations",
     path: "#",
     icon: "fas fa-cog",
