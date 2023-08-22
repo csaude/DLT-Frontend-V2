@@ -84,6 +84,21 @@ export async function pagedQueryByUser(
   return res;
 }
 
+export async function pagedQueryPendingByUser(
+  id?: any,
+  pageIndex?: any,
+  pageSize?: any,
+  searchNui?: any,
+  searchUserCreator?: number,
+  searchDistrict?: number
+) {
+  const res = await select(
+    `/api/references/pendingByUser/${id}?pageIndex=${pageIndex}&pageSize=${pageSize}&searchNui=${searchNui}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`
+  );
+
+  return res;
+}
+
 export async function queryCountByFilters(
   id?: any,
   searchNui?: any,
@@ -92,6 +107,17 @@ export async function queryCountByFilters(
 ) {
   const res = await select(
     `/api/references/byUser/${id}/countByFilters?searchNui=${searchNui}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`
+  );
+  return res;
+}
+export async function queryCountByPendingFilters(
+  id?: any,
+  searchNui?: any,
+  searchUserCreator?: number,
+  searchDistrict?: number
+) {
+  const res = await select(
+    `/api/references/byPeddingUser/${id}/countByFilters?searchNui=${searchNui}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`
   );
   return res;
 }
