@@ -107,9 +107,7 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
 
   const userId = localStorage.getItem("user");
   const dispatch = useDispatch();
-  const beneficiariesTotal = useSelector(
-    (state: any) => state.beneficiary.total
-  );
+  const referencesTotal = useSelector((state: any) => state.reference.total);
 
   let searchInput;
   useEffect(() => {
@@ -788,12 +786,14 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
     );
   };
 
+  const pageElements = 1000;
+  const lastPage = Math.ceil(referencesTotal / pageElements);
+
   const handleExportarXLS = async () => {
     console.log("On Export XLS");
 
     try {
       setDataLoading(true);
-      const pageElements = 1000;
 
       const workbook = new ExcelJS.Workbook();
       const worksheet = workbook.addWorksheet("Lista_Referencias");
@@ -825,11 +825,9 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
 
       const user = await query1(localStorage.user);
 
-      const lastPage = Math.ceil(beneficiariesTotal / pageElements);
-
       let sequence = 1;
 
-      for (let i = 0; i < lastPage; i++) {
+      for (let i = 0; i <= lastPage; i++) {
         data = await pagedQueryByUser(
           localStorage.user,
           i,
@@ -911,15 +909,15 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
               cellStatus.font = { bold: true };
             }
           });
-
-          headers.forEach((header, index) => {
-            const cell = headerRow.getCell(index + 1);
-            cell.alignment = { vertical: "middle", horizontal: "center" };
-            cell.value = header;
-            cell.font = { bold: true };
-          });
         });
       }
+
+      headers.forEach((header, index) => {
+        const cell = headerRow.getCell(index + 1);
+        cell.alignment = { vertical: "middle", horizontal: "center" };
+        cell.value = header;
+        cell.font = { bold: true };
+      });
 
       const created = moment().format("YYYYMMDD_hhmmss");
       const buffer = await workbook.xlsx.writeBuffer();
