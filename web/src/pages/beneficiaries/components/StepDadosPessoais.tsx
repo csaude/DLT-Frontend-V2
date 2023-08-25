@@ -143,7 +143,7 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
             locality: loggedUser.localities[0].id.toString(),
           });
           const entryPoint = form.getFieldValue("entry_point");
-          onChangeEntryPoint(entryPoint);
+          onChangeEntryPoint(entryPoint, false);
         }
       } else {
         const district = form.getFieldValue("district");
@@ -159,7 +159,7 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
         }
 
         if (entryPoint !== "" && entryPoint !== undefined) {
-          onChangeEntryPoint(entryPoint);
+          onChangeEntryPoint(entryPoint, false);
         }
       }
     };
@@ -224,7 +224,10 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
     setIsLoading(false);
   };
 
-  const onChangeEntryPoint = async (e: any) => {
+  const onChangeEntryPoint = async (e: any, isClicked: boolean) => {
+    if (isClicked) {
+      form.setFieldsValue({ us: null });
+    }
     const locality =
       user?.localities.length === 1
         ? user.localities[0].id
@@ -546,7 +549,10 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
             style={{ textAlign: "left" }}
             initialValue={beneficiary?.entryPoint}
           >
-            <Radio.Group buttonStyle="solid" onChange={onChangeEntryPoint}>
+            <Radio.Group
+              buttonStyle="solid"
+              onChange={(e) => onChangeEntryPoint(e, true)}
+            >
               {isUsVisible && <Radio.Button value="1">US</Radio.Button>}
               <Radio.Button value="2">CM</Radio.Button>
               <Radio.Button value="3">ES</Radio.Button>
