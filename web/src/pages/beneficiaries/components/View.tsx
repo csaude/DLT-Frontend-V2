@@ -560,6 +560,7 @@ const ViewBenefiaryPanel = ({
                 htmlType="submit"
                 onClick={() => onSubmit()}
                 type="primary"
+                hidden={!isAdd}
               >
                 Salvar
               </Button>
