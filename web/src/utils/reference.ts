@@ -78,7 +78,11 @@ export async function pagedQueryByUser(
   searchDistrict?: number
 ) {
   const res = await select(
-    `/api/references/byUser/${id}?pageIndex=${pageIndex}&pageSize=${pageSize}&searchNui=${searchNui}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`
+    `/api/references/byUser/${id}?pageIndex=${pageIndex}&pageSize=${pageSize}&searchNui=${undefinedToEmpty(
+      searchNui
+    )}&searchUserCreator=${undefinedToEmpty(
+      searchUserCreator
+    )}&searchDistrict=${undefinedToEmpty(searchDistrict)}`
   );
 
   return res;
@@ -94,4 +98,8 @@ export async function queryCountByFilters(
     `/api/references/byUser/${id}/countByFilters?searchNui=${searchNui}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`
   );
   return res;
+}
+
+function undefinedToEmpty(value: any) {
+  return value == undefined ? "" : value;
 }

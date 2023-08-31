@@ -54,9 +54,9 @@ const StepReference = ({
         form.setFieldsValue({
           referenceNote:
             "REFDR" +
-            String(userId).padStart(3, "0") +
+            String(userId).padStart(4, "0") +
             String(beneficiary.locality.district.province.id) +
-            String((await queryByCreated(userId))?.length + 1).padStart(3, "0"),
+            String((await queryByCreated(userId)) + 1).padStart(3, "0"),
         });
         form.setFieldsValue({
           referredBy: [SUPERVISOR, MENTOR, NURSE, COUNSELOR].includes(
