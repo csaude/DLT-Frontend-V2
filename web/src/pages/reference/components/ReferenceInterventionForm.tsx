@@ -72,7 +72,7 @@ const ReferenceInterventionForm = ({ form, reference, refServices }: any) => {
     onChangeServices(refServices[index]?.services?.id).catch((error) =>
       console.log(error)
     );
-    form.setFieldsValue({ subservice: "" });
+    form.setFieldsValue({ subservice: undefined });
     form.setFieldsValue({
       areaServicos:
         refServices[index]?.services?.serviceType === "1"
@@ -81,10 +81,11 @@ const ReferenceInterventionForm = ({ form, reference, refServices }: any) => {
     });
     form.setFieldsValue({ service: refServices[index]?.services?.id + "" });
     form.setFieldsValue({ outros: remarks });
-    form.setFieldsValue({ dataBeneficio: "" });
-  }, [index]);
+    form.setFieldsValue({ dataBeneficio: undefined });
+  }, [index, refServices]);
 
   const onChangeServices = async (value: any) => {
+    form.setFieldsValue({ subservice: undefined });
     const data = await querySubServiceByService(value);
     setInterventions(data);
   };
@@ -103,8 +104,8 @@ const ReferenceInterventionForm = ({ form, reference, refServices }: any) => {
     setUs(data);
 
     if (!isLoading) {
-      form.setFieldsValue({ location: "" });
-      form.setFieldsValue({ provider: "" });
+      form.setFieldsValue({ location: undefined });
+      form.setFieldsValue({ provider: undefined });
     }
   };
 
@@ -113,7 +114,7 @@ const ReferenceInterventionForm = ({ form, reference, refServices }: any) => {
     setUsers(data);
 
     if (!isLoading) {
-      form.setFieldsValue({ provider: "" });
+      form.setFieldsValue({ provider: undefined });
     }
 
     setIsLoading(false);
@@ -140,7 +141,7 @@ const ReferenceInterventionForm = ({ form, reference, refServices }: any) => {
             label="Área de Serviços"
             rules={[{ required: true, message: RequiredFieldMessage }]}
           >
-            <Select placeholder="Select Area Serviço" disabled>
+            <Select placeholder="Seleccione a Área de Serviço" disabled>
               {areaServicos.map((item) => (
                 <Option key={item.id}>{item.name}</Option>
               ))}
@@ -154,7 +155,10 @@ const ReferenceInterventionForm = ({ form, reference, refServices }: any) => {
             rules={[{ required: true, message: RequiredFieldMessage }]}
             initialValue={refService}
           >
-            <Select placeholder="Select Serviço" onChange={onChangeServices}>
+            <Select
+              placeholder="Seleccione o Serviço"
+              onChange={onChangeServices}
+            >
               {refServices?.map((item) => (
                 <Option key={item.services.id}>{item.services.name}</Option>
               ))}
@@ -168,7 +172,7 @@ const ReferenceInterventionForm = ({ form, reference, refServices }: any) => {
             rules={[{ required: true, message: RequiredFieldMessage }]}
           >
             <Select
-              placeholder="Select Sub Serviço"
+              placeholder="Seleccione o Sub-Serviço"
               disabled={interventions === undefined}
               value={undefined}
               onChange={onChangeSubservice}
@@ -200,7 +204,10 @@ const ReferenceInterventionForm = ({ form, reference, refServices }: any) => {
             label="Localização"
             rules={[{ required: true, message: RequiredFieldMessage }]}
           >
-            <Select placeholder="Select Localização" onChange={onChangeUs}>
+            <Select
+              placeholder="Seleccione a Localização"
+              onChange={onChangeUs}
+            >
               {us?.map((item) => (
                 <Option key={item.id}>{item.name}</Option>
               ))}
@@ -216,6 +223,7 @@ const ReferenceInterventionForm = ({ form, reference, refServices }: any) => {
           >
             <DatePicker
               style={{ width: "100%" }}
+              placeholder="Seleccione a Data de Benefício"
               disabledDate={(d) => !d || d.isAfter(moment(new Date()))}
             />
           </Form.Item>
