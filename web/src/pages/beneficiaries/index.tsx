@@ -528,13 +528,18 @@ const BeneficiariesList: React.FC = () => {
     ),
     onFilter: (value, record) =>
       record[dataIndex]
-        ? (dataIndex == "name"
-            ? record[dataIndex] + " " + record["surname"]
-            : record[dataIndex]
-          )
-            .toString()
+        ? value
             .toLowerCase()
-            .includes(value.toLowerCase())
+            .split(" ")
+            .every((item) =>
+              (dataIndex == "name"
+                ? record[dataIndex] + " " + record["surname"]
+                : record[dataIndex]
+              )
+                .toString()
+                .toLowerCase()
+                .includes(item)
+            )
         : "",
     onFilterDropdownVisibleChange: (visible) => {
       if (visible) {
