@@ -260,9 +260,12 @@ const BeneficiariesList: React.FC = () => {
           (value, index, self) => self.findIndex((v) => v === value) === index
         );
 
-      const users = await queryUser();
-      const creators = users.filter((u) => creatorsIds.includes(u.id));
-      const updaters = users.filter((u) => updatersIds.includes(u.id));
+      const creators = userSelector?.loadedUsers.filter((u) =>
+        creatorsIds.includes(u.id)
+      );
+      const updaters = userSelector?.loadedUsers.filter((u) =>
+        updatersIds.includes(u.id)
+      );
 
       setPartners(partners);
       setUsers(creators);
@@ -525,13 +528,18 @@ const BeneficiariesList: React.FC = () => {
     ),
     onFilter: (value, record) =>
       record[dataIndex]
-        ? (dataIndex == "name"
-            ? record[dataIndex] + " " + record["surname"]
-            : record[dataIndex]
-          )
-            .toString()
+        ? value
             .toLowerCase()
-            .includes(value.toLowerCase())
+            .split(" ")
+            .every((item) =>
+              (dataIndex == "name"
+                ? record[dataIndex] + " " + record["surname"]
+                : record[dataIndex]
+              )
+                .toString()
+                .toLowerCase()
+                .includes(item)
+            )
         : "",
     onFilterDropdownVisibleChange: (visible) => {
       if (visible) {
