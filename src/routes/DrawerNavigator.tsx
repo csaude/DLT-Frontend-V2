@@ -28,6 +28,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import UsersNavigator from "./UsersNavigator";
 import PropTypes from "prop-types";
 import Spinner from "react-native-loading-spinner-overlay";
+import AppInfoScreen from "../screens/AppInfo/AppInfoScreen";
 
 function HomeScreen() {
   useEffect(() => {
@@ -271,6 +272,14 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
           component={UsersNavigator}
           options={{
             title: "Perfil",
+            headerTitle: "",
+          }}
+        />
+        <Drawer.Screen
+          name="Info"
+          component={AppInfoScreen}
+          options={{
+            title: "App Information",
             headerTitle: "",
           }}
         />
