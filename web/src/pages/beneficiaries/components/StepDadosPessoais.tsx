@@ -565,7 +565,7 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
             label="Local de Registo"
             rules={[
               {
-                required: user?.us.length !== 1,
+                required: true,
                 message: RequiredFieldMessage,
               },
             ]}
