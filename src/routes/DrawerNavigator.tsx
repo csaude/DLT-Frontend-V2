@@ -28,6 +28,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import UsersNavigator from "./UsersNavigator";
 import PropTypes from "prop-types";
 import Spinner from "react-native-loading-spinner-overlay";
+import AppInfoScreen from "../screens/AppInfo/AppInfoScreen";
 
 function HomeScreen() {
   useEffect(() => {
@@ -181,17 +182,19 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
         <VStack>
           <Text style={{ fontWeight: "bold", color: "#424345" }}>
             {label}
-            <Badge // bg="red.400"
-              colorScheme={total > 0 ? "info" : "danger"}
-              rounded="full"
-              variant="solid"
-              alignSelf="flex-end"
-              _text={{
-                fontSize: 12,
-              }}
-            >
-              {total}
-            </Badge>
+            {total >= 0 && (
+              <Badge // bg="red.400"
+                colorScheme={total > 0 ? "info" : "danger"}
+                rounded="full"
+                variant="solid"
+                alignSelf="flex-end"
+                _text={{
+                  fontSize: 12,
+                }}
+              >
+                {total}
+              </Badge>
+            )}
           </Text>
         </VStack>
       </Box>
@@ -270,8 +273,18 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
           name="Users"
           component={UsersNavigator}
           options={{
-            title: "Perfil",
+            title: "",
             headerTitle: "",
+            drawerIcon: () => <ItemBadge label="Perfil" total={-1} />,
+          }}
+        />
+        <Drawer.Screen
+          name="Info"
+          component={AppInfoScreen}
+          options={{
+            title: "",
+            headerTitle: "",
+            drawerIcon: () => <ItemBadge label="App Information" total={-1} />,
           }}
         />
       </Drawer.Navigator>
