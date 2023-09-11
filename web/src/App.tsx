@@ -36,6 +36,7 @@ import OrganizationList from "./pages/organization";
 import ReportAgyw from "./pages/report/agyw/ReportAgyw";
 import ReportPreview from "./pages/report/agyw/ReportPreview";
 import ReportView from "./pages/report/agyw/ReportView";
+import AppInfo from "./pages/appInfo";
 
 const App = () => {
   const windowSize = useWindowSize();
@@ -152,6 +153,8 @@ const App = () => {
             <Route path="/reportAgyw" element={<ReportAgyw />} />
             <Route path="/previewAgyw" element={<ReportPreview />} />
             <Route path="/viewAgyw" element={<ReportView />} />
+            {/* App Inforation */}
+            <Route path="/appInfo" element={<AppInfo />} />
           </Route>
         </Route>
       </Routes>

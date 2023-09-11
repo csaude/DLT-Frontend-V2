@@ -1,0 +1,92 @@
+{
+    "release": {
+        "version": "12.01.23",
+        "date": "08/09/2023",
+        "changelogs": [
+            {
+                "id":1,
+                "changelog": "Ao actualizar o subserviço de uma intervenção, o sistema não está a persistir a alteração"
+            },
+            {
+                "id":2,
+                "changelog": "Referência: ao atender o serviço, o sistema deve calcular o status com base nos serviços prestados na data de referência ou após ela"
+            },
+            {
+                "id":3,
+                "changelog": "Prover Serviços: Utilizador de Boane Incapaz de Ver Locais (Web e Mobile)"
+            },
+            {
+                "id":4,
+                "changelog": "Permitir que utilizadores realocados ao Posto administrativo da Matola-Rio tenham acesso às beneficiárias que registaram, quando estavam alocadas a Post administrativo de Boane"
+            },
+            {
+                "id":5,
+                "changelog": "Lista de beneficiários: a contagem deve ser de todos os beneficiários por usuário e filtros"
+            },
+            {
+                "id":6,
+                "changelog": "Lista de Beneficiários: Exportação por informações filtradas"
+            },
+            {
+                "id":7,
+                "changelog": "O logout automático da sessão do usuário mantém o menu vazio após limpar a sessão"
+            },
+            {
+                "id":8,
+                "changelog": "Perfil do Usuário: Na Visualização do Perfil do Usuário Logado no Mobile mostra bairros diferentes dos bairros marcados na web"
+            },
+            {
+                "id":9,
+                "changelog": "Unidades Sanitárias: Duplicação de Cadastro de Centros de Saúde"
+            },
+            {
+                "id":10,
+                "changelog": "Prestação de serviço: erro ao visualizar intervenção no celular"
+            },
+            {
+                "id":11,
+                "changelog": "Sincronização: Erro ao sincronizar"
+            },
+            {
+                "id":12,
+                "changelog": "Listar usuários: filtrar por nome e sobrenome"
+            },
+            {
+                "id":13,
+                "changelog": "Visualização do serviço do beneficiário - botão Remover salvar"
+            },
+            {
+                "id":14,
+                "changelog": "Priorizar a opção de exportação de dados das listagens de beneficiárias e referências;"
+            },
+            {
+                "id":15,
+                "changelog": "Lista de Referências: Exportando por informações filtradas"
+            },
+            {
+                "id":16,
+                "changelog": "Referências de serviço: resolver problemas restantes"
+            },
+            {
+                "id":17,
+                "changelog": "Melhoria no carregamentos de dados da beneficiária (Reduzir consumo excessivo de megabytes)"
+            },
+            {
+                "id":18,
+                "changelog": "Referências: atualização de erros e duplicação de notas de referência (Web)"
+            },
+            {
+                "id":19,
+                "changelog": "Lista de referências: a contagem deve ser de todas as referências por usuário e filtros"
+            },
+            {
+                "id":20,
+                "changelog": "Gestão de Referências: Remover Preenchimento Automático de Data de Prestação de Serviço"
+            },
+            {
+                "id":21,
+                "changelog": "Referência: sistema não permite atender o próximo serviço"
+            }
+        ]
+    }
+}
