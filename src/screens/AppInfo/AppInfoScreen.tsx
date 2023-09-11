@@ -8,7 +8,7 @@ const AppInfoScreen: React.FC = () => {
   return (
     <KeyboardAvoidingView style={styles.background}>
       <ScrollView>
-        <View style={styles.user}>
+        <View>
           <View style={styles.containerForm}>
             <Text style={styles.txtLabel}>Detalhes da Aplicação</Text>
             <Divider />
