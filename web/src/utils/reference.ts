@@ -5,7 +5,14 @@ interface ReferenceFilter {
   referenceNote: string;
   statusRef: string;
 }
-
+export interface BulkReferenceCancel {
+  ids: any[];
+  status: string;
+  cancelReason: string;
+  otherReason: string;
+  updatedBy?: string;
+  dateUpdated?: any;
+}
 export interface Reference {
   id?: string;
   beneficiaries: {
@@ -56,6 +63,11 @@ export async function add(payload: Reference) {
 
 export async function edit(payload: any) {
   const res = await update("/api/references/", payload);
+  return res;
+}
+
+export async function bulkCancel(payload: BulkReferenceCancel) {
+  const res = await update("/api/references/bulk", payload);
   return res;
 }
 

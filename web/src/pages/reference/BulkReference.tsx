@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
-  edit as editRef,
-  Reference,
+  bulkCancel as cancelAll,
+  BulkReferenceCancel,
   pagedQueryByUser,
   pagedQueryPendingByUser,
   queryCountByPendingFilters,
@@ -14,7 +14,6 @@ import {
   query as query1,
 } from "@app/utils/users";
 import { queryDistrictsByProvinces } from "@app/utils/locality";
-import { query as beneficiaryQuery } from "@app/utils/beneficiary";
 import {
   Card,
   Table,
@@ -29,33 +28,26 @@ import {
   Col,
   Select,
   Tag,
+  DatePicker,
 } from "antd";
 import ptPT from "antd/lib/locale-provider/pt_PT";
 import "antd/dist/antd.css";
 import moment from "moment";
 import Highlighter from "react-highlight-words";
-import { SearchOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 
 import { useNavigate } from "react-router-dom";
-import ViewReferral from "./components/View";
-import FormReference from "../beneficiaries/components/FormReference";
 import { Title } from "@app/components";
-import {
-  ADMIN,
-  COUNSELOR,
-  MENTOR,
-  NURSE,
-  SUPERVISOR,
-} from "@app/utils/contants";
+import { COUNSELOR, MENTOR, NURSE, SUPERVISOR } from "@app/utils/contants";
 import LoadingModal from "@app/components/modal/LoadingModal";
 import { useDispatch, useSelector } from "react-redux";
 import { loadReferers } from "@app/store/actions/users";
-import { FilterObject } from "@app/models/FilterObject";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import { toast } from "react-toastify";
 
 const { Text } = Typography;
+const { Option } = Select;
 
 const BulkReference: React.FC = ({ resetModal }: any) => {
   const [form] = Form.useForm();
@@ -63,26 +55,20 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const [reference, setReference] = useState<any>();
-  const [services, setServices] = useState<any>([]);
   const [beneficiary, setBeneficiary] = useState<any>(undefined);
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [referenceModalVisible, setReferenceModalVisible] =
-    useState<boolean>(false);
   const [partners, setPartners] = useState<any[]>([]);
   const [referredPartners, setReferredPartners] = useState<any[]>([]);
   const [referrers, setReferrers] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
-  const [listUsers, setListUsers] = useState<any[]>([]);
-  const [visibleDistrict, setVisibleDistrict] = useState<any>(true);
   const [district, setDistrict] = useState<any>();
   const [us, setUs] = useState<any[]>([]);
-  const [loggedUser, setLoggedUser] = useState<any>(undefined);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const pageSize = 100;
   let data;
   let countByFilter;
   const [dataLoading, setDataLoading] = useState(false);
   const [searchCounter, setSearchCounter] = useState<any>();
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   const [searchNui, setSearchNui] = useState<any>("");
   const [searchDistrict, setSearchDistrict] = useState<any>("");
@@ -92,18 +78,19 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
   const [userCreator, setUserCreator] = useState<any>();
   const [districts, setDistricts] = useState<any[]>([]);
 
-  const userSelector = useSelector((state: any) => state?.user);
-  const convertedUserData: FilterObject[] = listUsers?.map(
-    ([value, label]) => ({
-      value: value.toString(),
-      label: label.charAt(0).toUpperCase() + label.slice(1),
-    })
-  );
-  const convertedDistrictsData: FilterObject[] = districts?.map((item) => ({
-    value: item.id,
-    label: item.name,
-  }));
+  const RequiredFieldMessage = "Obrigatório!";
 
+  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+    console.log("Referencias Selecionadas: ", newSelectedRowKeys);
+    setSelectedRowKeys(newSelectedRowKeys);
+  };
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+  };
+
+  const userSelector = useSelector((state: any) => state?.user);
   const navigate = useNavigate();
 
   const userId = localStorage.getItem("user");
@@ -135,9 +122,6 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
 
       const loggedUser = await query1(localStorage.user);
       if (loggedUser && loggedUser?.districts.length > 0) {
-        loggedUser?.districts?.length === 1
-          ? setVisibleDistrict(false)
-          : setVisibleDistrict(true);
         const dIds = loggedUser?.districts.map((item) => {
           return item.id + "";
         });
@@ -153,7 +137,6 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
         const sortedUsers = dataUsers.sort((user1, user2) =>
           user1[1].localeCompare(user2[1])
         );
-        setListUsers(sortedUsers);
       } else if (loggedUser && loggedUser.provinces.length > 0) {
         const pIds = loggedUser?.provinces.map((item) => {
           return item.id + "";
@@ -165,14 +148,12 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
         });
 
         setDistricts(dataDistrict);
-        setListUsers(dataUsers);
       } else {
         const allUser = userSelector?.users;
 
         const sortedUsers = allUser.sort((user1, user2) =>
           user1[1].localeCompare(user2[1])
         );
-        setListUsers(sortedUsers);
 
         const dataDistricts = await allDistrict();
 
@@ -231,7 +212,6 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
       setReferrers(referrers);
       setUsers(referreds);
       setUs(existingUs);
-      setLoggedUser(loggedUser);
     };
 
     fetchData()
@@ -249,99 +229,37 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
     };
 
     fetchReferersUsers().catch((error) => console.log(error));
-  }, [
-    modalVisible,
-    currentPageIndex,
-    searchNui,
-    searchUserCreator,
-    searchDistrict,
-  ]);
-
-  const handleModalRefVisible = (flag?: boolean) => {
-    setReferenceModalVisible(!!flag);
-  };
-
-  const handleViewModalVisible = (flag?: boolean, record?: any) => {
-    setReference(record);
-    setModalVisible(!!flag);
-  };
-
-  const onEditRefence = (record?: any) => {
-    setReference(record);
-    fetchBeneficiary(record?.beneficiaries.id);
-    setReferenceModalVisible(true);
-  };
-
-  const fetchBeneficiary = async (beneficiaryId) => {
-    const beneficiary = await beneficiaryQuery(beneficiaryId);
-    setBeneficiary(beneficiary);
-  };
-
-  const handleAdd = () => {
-    /**Its OK*/
-  };
-
-  const handleModalVisible = (flag?: boolean) => {
-    setModalVisible(!!flag);
-  };
+  }, [currentPageIndex, searchNui, searchUserCreator, searchDistrict]);
 
   const handleRefUpdate = async (values: any) => {
     const ref: any = reference;
     if (values !== undefined) {
-      const servicesObjects = services.map((e: any) => {
-        const listServices: any = {
-          services: { id: e.servico.id },
-          description: e.description,
-          status: 0,
-          createdBy: localStorage.user,
-        };
-        return listServices;
-      });
+      // const ids = selectedRowKeys.map((e: any) => {
+      //   const listIds: any = {
+      //     id: e,
+      //   };
+      //   return listIds;
+      // });
 
-      const payload: Reference = {
-        id: ref?.id,
-        beneficiaries: {
-          id: beneficiary?.id,
-        },
-        referredBy: {
-          id: values.referredBy,
-        },
-        notifyTo: {
-          id: values.notifyTo,
-        },
-        us: {
-          id: values.local,
-        },
-        referenceNote: values.referenceNote,
-        description: "",
-        referTo: values.referTo,
-        bookNumber: values.bookNumber,
-        referenceCode: values.referenceCode,
-        serviceType: values.serviceType === "CLINIC" ? "1" : "2",
-        date: moment(values.date).format("YYYY-MM-DD"),
-        remarks: values.remarks,
-        status: values.status,
+      const payload: BulkReferenceCancel = {
+        ids: selectedRowKeys,
+        status: "3",
         cancelReason: values.cancelReason,
         otherReason: values.otherReason,
-        userCreated: ref?.userCreated,
-        dateCreated: ref?.dateCreated,
         updatedBy: localStorage.user,
         dateUpdated: new Date(),
-        referencesServiceses: servicesObjects,
       };
 
-      if (servicesObjects.length == 0) {
+      if (selectedRowKeys.length == 0) {
         message.error({
-          content: "Referência sem Intervenção!",
+          content: "Nenhuma referência selencionada!",
           className: "custom-class",
           style: {
             marginTop: "10vh",
           },
         });
-
-        setReferenceModalVisible(true);
       } else {
-        const { data } = await editRef(payload);
+        const { data } = await cancelAll(payload);
         const allReferences: any = await pagedQueryByUser(
           localStorage.user,
           currentPageIndex,
@@ -360,16 +278,14 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
         setReferences(sortedReferences);
 
         message.success({
-          content: "Actualizado com Sucesso!" + data?.referenceNote,
+          content: "Referências canceladas com Sucesso!",
           className: "custom-class",
           style: {
             marginTop: "10vh",
           },
         });
 
-        setReferenceModalVisible(false);
-
-        navigate("/referenceList");
+        navigate("/bulkReference");
       }
     }
   };
@@ -443,11 +359,6 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
         value
       ),
   });
-
-  const parentMethods = {
-    handleAdd: handleAdd,
-    handleModalVisible: handleModalVisible,
-  };
 
   const filterItem = (data) => (formatter) =>
     data.map((item) => ({
@@ -535,10 +446,6 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
     clearFilters();
     setSearchText(searchText);
     handleSearch(selectedKeys, confirm, dataIndex);
-  };
-
-  const handleRefServicesList = (data?: any) => {
-    setServices(data);
   };
 
   const columnsRef = [
@@ -702,40 +609,6 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
         ) : (
           ""
         ),
-    },
-    {
-      title: "Acção",
-      dataIndex: "",
-      key: "x",
-      render: (text, record) => (
-        <Space>
-          <Button
-            type="primary"
-            icon={<EyeOutlined />}
-            onClick={() => handleViewModalVisible(true, record)}
-          ></Button>
-          <Button
-            type="primary"
-            disabled={
-              loggedUser?.profiles.id !== ADMIN &&
-              record.referredBy?.partners?.partnerType !==
-                loggedUser?.partners?.partnerType
-            }
-            icon={<EditOutlined />}
-            onClick={() =>
-              record.status == 0
-                ? onEditRefence(record)
-                : message.info({
-                    content: "Referência já atendida!",
-                    className: "custom-class",
-                    style: {
-                      marginTop: "10vh",
-                    },
-                  })
-            }
-          ></Button>
-        </Space>
-      ),
     },
   ];
 
@@ -941,67 +814,145 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
         bordered={false}
         headStyle={{ color: "#17a2b8" }}
       >
-        <Row gutter={16}>
-          <Col className="gutter-row">
-            <Form.Item name="nui" label="" initialValue={searchNui}>
-              <Input
-                placeholder="Pesquisar por NUI"
-                value={searchNui}
-                onChange={(e) => setNui(e.target.value)}
-              />
-            </Form.Item>
+        <Row gutter={5}>
+          <Col span={12}>
+            <Card
+              title="FILTROS"
+              bordered={true}
+              headStyle={{ background: "#17a2b8", color: "#fff" }}
+            >
+              <Row gutter={30}>
+                <Col className="gutter-row" span={12}>
+                  <Form.Item name="start_date" label="Data Inicio">
+                    <DatePicker
+                      // defaultPickerValue={moment(getMaxDate(), "YYYY-MM-DD")}
+                      inputReadOnly={true}
+                      style={{ width: "100%" }}
+                      placeholder="Data Inicio"
+                    />
+                  </Form.Item>
+                </Col>
+                <Col className="gutter-row" span={12}>
+                  <Form.Item name="end_date" label="Data Fim">
+                    <DatePicker
+                      // defaultPickerValue={moment(getMaxDate(), "YYYY-MM-DD")}
+                      inputReadOnly={true}
+                      style={{ width: "100%" }}
+                      placeholder="Data Inicio"
+                    />
+                  </Form.Item>
+                </Col>
+                {/* <Col className="gutter-row"> */}
+                {/* <Form.Item
+                    name="nui"
+                    // label="Data Inicio"
+                    initialValue={searchNui}
+                  >
+                    <Input
+                      placeholder="Pesquisar por NUI"
+                      value={searchNui}
+                      onChange={(e) => setNui(e.target.value)}
+                    />
+                  </Form.Item> */}
+                {/* </Col> */}
+                {/* <Col className="gutter-row" hidden={visibleDistrict === false}>
+                  <Form.Item name="nui" initialValue={searchNui}>
+                    <Select
+                      showSearch
+                      allowClear
+                      onClear={() => onClear("district")}
+                      placeholder="Selecione o distrito"
+                      optionFilterProp="children"
+                      onChange={(e) => onChange(e, "district")}
+                      onSearch={() => {
+                      }}
+                      filterOption={(input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      options={convertedDistrictsData}
+                    />
+                  </Form.Item>
+                </Col> */}
+              </Row>
+              <Row gutter={50}>
+                <Col className="gutter-row" span={12}>
+                  <Button type="primary" onClick={handleGlobalSearch}>
+                    Pesquisar
+                  </Button>
+                </Col>
+              </Row>
+            </Card>
           </Col>
-
-          <Col className="gutter-row">
-            <Select
-              showSearch
-              allowClear
-              onClear={() => onClear("userCreator")}
-              placeholder="Selecione o utilizador"
-              optionFilterProp="children"
-              onChange={(e) => onChange(e, "userCreator")}
-              onSearch={() => {
-                /**Its OK */
-              }}
-              filterOption={(input, option) =>
-                (option?.label ?? "")
-                  .toLowerCase()
-                  .includes(input.toLowerCase())
-              }
-              options={convertedUserData}
-            />
-          </Col>
-
-          <Col className="gutter-row" hidden={visibleDistrict === false}>
-            <Select
-              showSearch
-              allowClear
-              onClear={() => onClear("district")}
-              placeholder="Selecione o distrito"
-              optionFilterProp="children"
-              onChange={(e) => onChange(e, "district")}
-              onSearch={() => {
-                /**Its OK */
-              }}
-              filterOption={(input, option) =>
-                (option?.label ?? "")
-                  .toLowerCase()
-                  .includes(input.toLowerCase())
-              }
-              options={convertedDistrictsData}
-            />
-          </Col>
-
-          <Col className="gutter-row" span={12}>
-            <Button type="primary" onClick={handleGlobalSearch}>
-              Pesquisar
-            </Button>
+          <Col span={12}>
+            <Card
+              title="Detalhes do cancelamento das Referências"
+              bordered={true}
+              headStyle={{ background: "#3366b8", color: "#fff" }}
+            >
+              <Row gutter={30}>
+                <Col className="gutter-row" span={12}>
+                  <Form.Item
+                    name="cancelReason"
+                    label="Motivo de Cancelamento"
+                    rules={[{ required: true, message: RequiredFieldMessage }]}
+                  >
+                    <Select
+                      allowClear
+                      onClear={() => onClear("reason")}
+                      placeholder="Selecione Aqui"
+                      onChange={(e) => onChange(e, "reason")}
+                    >
+                      {[
+                        "Serviço não provido nos últimos 6 meses",
+                        "Beneficiária não encontrada",
+                        "Abandono",
+                        "Beneficiária recusou o serviço",
+                        "Outro Motivo",
+                      ].map((item) => (
+                        <Option key={item}>{item}</Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                </Col>
+                <Col className="gutter-row" span={12} hidden={false}>
+                  <Form.Item
+                    name="otherReason"
+                    label="Outro Motivo"
+                    // rules={[
+                    //   { required: !gbvTimeEnabled, message: RequiredFieldMessage },
+                    // ]}
+                    // style={{ textAlign: "left" }}
+                    initialValue={beneficiary?.vbltVbgTime}
+                  >
+                    <Input
+                      placeholder="Outro Motivo"
+                      value={searchNui}
+                      // onChange={(e) => setNui(e.target.value)}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row gutter={0}>
+                <Col className="gutter-row" span={3}>
+                  <Button type="primary" onClick={handleRefUpdate}>
+                    Salvar
+                  </Button>
+                </Col>
+                <Col className="gutter-row" span={4}>
+                  <Button type="primary" onClick={handleGlobalSearch}>
+                    Cancelar
+                  </Button>
+                </Col>
+              </Row>
+            </Card>
           </Col>
         </Row>
-
         <ConfigProvider locale={ptPT}>
           <Table
-            rowKey={(record?) => `${record.id}${record.id.date}`}
+            rowKey={(record?) => `${record.id}`}
+            rowSelection={rowSelection}
             columns={columnsRef}
             title={(references) => (
               <span style={{ display: "flex", justifyContent: "flex-end" }}>
@@ -1031,20 +982,6 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
         </ConfigProvider>
         {<LoadingModal modalVisible={dataLoading} />}
       </Card>
-      <ViewReferral
-        {...parentMethods}
-        reference={reference}
-        modalVisible={modalVisible}
-      />
-
-      <FormReference
-        form={form}
-        reference={reference}
-        handleUpdate={handleRefUpdate}
-        modalVisible={referenceModalVisible}
-        handleModalRefVisible={handleModalRefVisible}
-        handleRefServicesList={handleRefServicesList}
-      />
     </>
   );
 };
