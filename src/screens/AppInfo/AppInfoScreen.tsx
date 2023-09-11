@@ -2,7 +2,7 @@ import React from "react";
 import { View, KeyboardAvoidingView, ScrollView, Text } from "react-native";
 import { Divider, Flex } from "native-base";
 import styles from "./styles";
-import data from "../../../release.json";
+import data from "./release.json";
 
 const AppInfoScreen: React.FC = () => {
   return (
