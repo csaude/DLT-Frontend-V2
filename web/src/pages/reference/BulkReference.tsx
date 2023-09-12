@@ -35,6 +35,7 @@ import "antd/dist/antd.css";
 import moment from "moment";
 import Highlighter from "react-highlight-words";
 import { SearchOutlined } from "@ant-design/icons";
+import type { FormInstance } from "antd/es/form";
 
 import { useNavigate } from "react-router-dom";
 import { Title } from "@app/components";
@@ -63,6 +64,7 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
   const [district, setDistrict] = useState<any>();
   const [us, setUs] = useState<any[]>([]);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
+  const formRef = React.useRef<FormInstance>(null);
   const pageSize = 100;
   let data;
   let countByFilter;
@@ -654,6 +656,10 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
     }
   }
 
+  const onReset = () => {
+    formRef.current?.resetFields();
+  };
+
   const ClickableTag = () => {
     return (
       <a onClick={handleExportarXLS}>
@@ -891,61 +897,70 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
               bordered={true}
               headStyle={{ background: "#3366b8", color: "#fff" }}
             >
-              <Row gutter={30}>
-                <Col className="gutter-row" span={12}>
-                  <Form.Item
-                    name="cancelReason"
-                    label="Motivo de Cancelamento"
-                    rules={[{ required: true, message: RequiredFieldMessage }]}
-                  >
-                    <Select
-                      allowClear
-                      onClear={() => onClear("reason")}
-                      placeholder="Selecione Aqui"
-                      onChange={(e) => onChange(e, "reason")}
+              <Form
+                ref={formRef}
+                name="ref"
+                initialValues={{ remember: true }}
+                autoComplete="off"
+              >
+                <Row gutter={30}>
+                  <Col className="gutter-row" span={12}>
+                    <Form.Item
+                      name="cancelReason"
+                      label="Motivo de Cancelamento"
+                      rules={[
+                        { required: true, message: RequiredFieldMessage },
+                      ]}
                     >
-                      {[
-                        "Serviço não provido nos últimos 6 meses",
-                        "Beneficiária não encontrada",
-                        "Abandono",
-                        "Beneficiária recusou o serviço",
-                        "Outro Motivo",
-                      ].map((item) => (
-                        <Option key={item}>{item}</Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                </Col>
-                <Col className="gutter-row" span={12} hidden={false}>
-                  <Form.Item
-                    name="otherReason"
-                    label="Outro Motivo"
-                    // rules={[
-                    //   { required: !gbvTimeEnabled, message: RequiredFieldMessage },
-                    // ]}
-                    // style={{ textAlign: "left" }}
-                    initialValue={beneficiary?.vbltVbgTime}
-                  >
-                    <Input
-                      placeholder="Outro Motivo"
-                      value={searchNui}
-                      // onChange={(e) => setNui(e.target.value)}
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row gutter={0}>
-                <Col className="gutter-row" span={3}>
-                  <Button type="primary" onClick={handleRefUpdate}>
-                    Salvar
-                  </Button>
-                </Col>
-                <Col className="gutter-row" span={4}>
-                  <Button type="primary" onClick={handleGlobalSearch}>
-                    Cancelar
-                  </Button>
-                </Col>
-              </Row>
+                      <Select
+                        allowClear
+                        onClear={() => onClear("reason")}
+                        placeholder="Selecione Aqui"
+                        onChange={(e) => onChange(e, "reason")}
+                      >
+                        {[
+                          "Serviço não provido nos últimos 6 meses",
+                          "Beneficiária não encontrada",
+                          "Abandono",
+                          "Beneficiária recusou o serviço",
+                          "Outro Motivo",
+                        ].map((item) => (
+                          <Option key={item}>{item}</Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                  <Col className="gutter-row" span={12} hidden={false}>
+                    <Form.Item
+                      name="otherReason"
+                      label="Outro Motivo"
+                      // rules={[
+                      //   { required: !gbvTimeEnabled, message: RequiredFieldMessage },
+                      // ]}
+                      // style={{ textAlign: "left" }}
+                      initialValue={beneficiary?.vbltVbgTime}
+                    >
+                      <Input
+                        placeholder="Outro Motivo"
+                        value={searchNui}
+                        // onChange={(e) => setNui(e.target.value)}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row gutter={0}>
+                  <Col className="gutter-row" span={3}>
+                    <Button type="primary" onClick={handleRefUpdate}>
+                      Salvar
+                    </Button>
+                  </Col>
+                  <Col className="gutter-row" span={4}>
+                    <Button type="primary" onClick={onReset}>
+                      Cancelar
+                    </Button>
+                  </Col>
+                </Row>
+              </Form>
             </Card>
           </Col>
         </Row>
