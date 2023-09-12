@@ -660,6 +660,10 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
     formRef.current?.resetFields();
   };
 
+  const onReasonBeforeChange = (values: any) => {
+    formRef.current?.setFieldsValue({ otherReason: null });
+  };
+
   const ClickableTag = () => {
     return (
       <a onClick={handleExportarXLS}>
@@ -916,7 +920,7 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
                         allowClear
                         onClear={() => onClear("reason")}
                         placeholder="Selecione Aqui"
-                        onChange={(e) => onChange(e, "reason")}
+                        onChange={(e) => onReasonBeforeChange(e)}
                       >
                         {[
                           "Serviço não provido nos últimos 6 meses",
@@ -937,20 +941,18 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
                       // rules={[
                       //   { required: !gbvTimeEnabled, message: RequiredFieldMessage },
                       // ]}
-                      // style={{ textAlign: "left" }}
-                      initialValue={beneficiary?.vbltVbgTime}
                     >
-                      <Input
-                        placeholder="Outro Motivo"
-                        value={searchNui}
-                        // onChange={(e) => setNui(e.target.value)}
-                      />
+                      <Input placeholder="Outro Motivo" />
                     </Form.Item>
                   </Col>
                 </Row>
                 <Row gutter={0}>
                   <Col className="gutter-row" span={3}>
-                    <Button type="primary" onClick={handleRefUpdate}>
+                    <Button
+                      type="primary"
+                      onClick={handleRefUpdate}
+                      htmlType="submit"
+                    >
                       Salvar
                     </Button>
                   </Col>
