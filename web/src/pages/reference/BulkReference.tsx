@@ -49,6 +49,7 @@ import { toast } from "react-toastify";
 
 const { Text } = Typography;
 const { Option } = Select;
+const { TextArea } = Input;
 
 const BulkReference: React.FC = ({ resetModal }: any) => {
   const [form] = Form.useForm();
@@ -958,7 +959,7 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
                       //   { required: !gbvTimeEnabled, message: RequiredFieldMessage },
                       // ]}
                     >
-                      <Input placeholder="Outro Motivo" />
+                      <TextArea rows={2} placeholder="Outro Motivo" />
                     </Form.Item>
                   </Col>
                 </Row>
