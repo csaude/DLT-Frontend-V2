@@ -682,6 +682,7 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
 
   const onReset = () => {
     formRef.current?.resetFields();
+    setOtherReasonEnabled(false);
   };
 
   const onReasonBeforeChange = (values: any) => {
