@@ -81,6 +81,28 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
   const [districts, setDistricts] = useState<any[]>([]);
 
   const RequiredFieldMessage = "Obrigatório!";
+  const reasons = [
+    {
+      id: 1,
+      desc: "Serviço não provido nos últimos 6 meses",
+    },
+    {
+      id: 2,
+      desc: "Beneficiária não encontrada",
+    },
+    {
+      id: 3,
+      desc: "Abandono",
+    },
+    {
+      id: 4,
+      desc: "Beneficiária recusou o serviço",
+    },
+    {
+      id: 5,
+      desc: "Outro Motivo",
+    },
+  ];
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
     console.log("Referencias Selecionadas: ", newSelectedRowKeys);
@@ -922,14 +944,8 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
                         placeholder="Selecione Aqui"
                         onChange={(e) => onReasonBeforeChange(e)}
                       >
-                        {[
-                          "Serviço não provido nos últimos 6 meses",
-                          "Beneficiária não encontrada",
-                          "Abandono",
-                          "Beneficiária recusou o serviço",
-                          "Outro Motivo",
-                        ].map((item) => (
-                          <Option key={item}>{item}</Option>
+                        {reasons.map((item) => (
+                          <Option key={item.id}>{item.desc}</Option>
                         ))}
                       </Select>
                     </Form.Item>
