@@ -70,6 +70,7 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
   let data;
   let countByFilter;
   const [dataLoading, setDataLoading] = useState(false);
+  const [otherReasonEnabled, setOtherReasonEnabled] = useState(false);
   const [searchCounter, setSearchCounter] = useState<any>();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
@@ -685,6 +686,7 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
 
   const onReasonBeforeChange = (values: any) => {
     formRef.current?.setFieldsValue({ otherReason: null });
+    values == 5 ? setOtherReasonEnabled(true) : setOtherReasonEnabled(false);
   };
 
   const ClickableTag = () => {
@@ -951,13 +953,20 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
                       </Select>
                     </Form.Item>
                   </Col>
-                  <Col className="gutter-row" span={12} hidden={false}>
+                  <Col
+                    className="gutter-row"
+                    span={12}
+                    hidden={!otherReasonEnabled}
+                  >
                     <Form.Item
                       name="otherReason"
                       label="Outro Motivo"
-                      // rules={[
-                      //   { required: !gbvTimeEnabled, message: RequiredFieldMessage },
-                      // ]}
+                      rules={[
+                        {
+                          required: otherReasonEnabled,
+                          message: RequiredFieldMessage,
+                        },
+                      ]}
                     >
                       <TextArea rows={2} placeholder="Outro Motivo" />
                     </Form.Item>
