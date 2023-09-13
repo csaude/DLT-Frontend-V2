@@ -262,7 +262,6 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
   const handleRefUpdate = async (values: any) => {
     const ref: any = reference;
     if (values !== undefined) {
-     
       const payload: BulkReferenceCancel = {
         ids: selectedRowKeys,
         status: "3",
@@ -272,7 +271,6 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
         dateUpdated: moment(new Date()).format("YYYY-MM-DD"),
       };
 
-      
       if (selectedRowKeys.length == 0) {
         message.error({
           content: "Nenhuma referência selencionada!",
