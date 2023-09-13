@@ -50,6 +50,12 @@ export async function allUsesByUs(payload?: any) {
   return res;
 }
 
+export async function allUsesByLocalities(payload?: any) {
+  const url = "/api/users/locality/".concat(payload);
+  const res = await select(url);
+  return res;
+}
+
 interface Filter {
   profiles: string;
   userId: number;
