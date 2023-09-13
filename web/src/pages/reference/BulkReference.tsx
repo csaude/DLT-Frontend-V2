@@ -81,6 +81,8 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
   const [nui, setNui] = useState<any>();
   const [userCreator, setUserCreator] = useState<any>();
   const [districts, setDistricts] = useState<any[]>([]);
+  const [cancelReason, setCancelReason] = useState<any>();
+  const [otherReason, setOtherReason] = useState<any>();
 
   const RequiredFieldMessage = "Obrigatório!";
   const reasons = [
@@ -260,22 +262,17 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
   const handleRefUpdate = async (values: any) => {
     const ref: any = reference;
     if (values !== undefined) {
-      // const ids = selectedRowKeys.map((e: any) => {
-      //   const listIds: any = {
-      //     id: e,
-      //   };
-      //   return listIds;
-      // });
-
+     
       const payload: BulkReferenceCancel = {
         ids: selectedRowKeys,
         status: "3",
-        cancelReason: values.cancelReason,
-        otherReason: values.otherReason,
+        cancelReason: cancelReason,
+        otherReason: otherReason,
         updatedBy: localStorage.user,
-        dateUpdated: new Date(),
+        dateUpdated: moment(new Date()).format("YYYY-MM-DD"),
       };
 
+      
       if (selectedRowKeys.length == 0) {
         message.error({
           content: "Nenhuma referência selencionada!",
@@ -345,15 +342,6 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
             style={{ width: 90 }}
           >
             Pesquisar
-          </Button>
-          <Button
-            onClick={() =>
-              handleReset(clearFilters, selectedKeys, confirm, dataIndex)
-            }
-            size="small"
-            style={{ width: 90 }}
-          >
-            Limpar
           </Button>
         </Space>
       </div>
@@ -688,6 +676,10 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
   const onReasonBeforeChange = (values: any) => {
     formRef.current?.setFieldsValue({ otherReason: null });
     values == 5 ? setOtherReasonEnabled(true) : setOtherReasonEnabled(false);
+    setCancelReason(values);
+  };
+  const onOtherReasonBeforeChange = (values: any) => {
+    setOtherReason(values);
   };
 
   const ClickableTag = () => {
@@ -969,7 +961,13 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={2} placeholder="Outro Motivo" />
+                      <TextArea
+                        rows={2}
+                        placeholder="Outro Motivo"
+                        onChange={(e) =>
+                          onOtherReasonBeforeChange(e.target.value)
+                        }
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
