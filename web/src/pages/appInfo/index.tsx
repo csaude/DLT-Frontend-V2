@@ -27,7 +27,7 @@ const AppInfo = () => {
             color: "#17a2b8",
           }}
         >
-          Informações do aplicativo
+          Detalhes da Aplicação
         </Title>
 
         <Card headStyle={{ color: "#17a2b8" }} style={{ color: "#17a2b8" }}>
