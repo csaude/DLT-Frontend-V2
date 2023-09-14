@@ -11,7 +11,6 @@ export interface BulkReferenceCancel {
   cancelReason: string;
   otherReason: string;
   updatedBy?: string;
-  dateUpdated?: any;
 }
 export interface Reference {
   id?: string;
@@ -67,7 +66,7 @@ export async function edit(payload: any) {
 }
 
 export async function bulkCancel(payload: BulkReferenceCancel) {
-  const res = await update("/api/references/bulk", payload);
+  const res = await update("/api/references/bulkCancel", payload);
   return res;
 }
 

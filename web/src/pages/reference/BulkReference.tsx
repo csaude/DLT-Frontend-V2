@@ -109,7 +109,6 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
   ];
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log("Referencias Selecionadas: ", newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };
 
@@ -268,7 +267,6 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
         cancelReason: cancelReason,
         otherReason: otherReason,
         updatedBy: localStorage.user,
-        dateUpdated: moment(new Date()).format("YYYY-MM-DD"),
       };
 
       if (selectedRowKeys.length == 0) {
@@ -306,6 +304,7 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
           },
         });
 
+        onReset();
         navigate("/bulkReference");
       }
     }
