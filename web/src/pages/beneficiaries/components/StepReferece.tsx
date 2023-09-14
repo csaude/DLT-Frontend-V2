@@ -2,11 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Row, Col, Input, Form, DatePicker, Select, Radio } from "antd";
 import "./index.css";
 import { allPartnersByTypeDistrict } from "@app/utils/partners";
-import {
-  allUsesByLocalities,
-  allUsesByUs,
-  queryByUserId,
-} from "@app/utils/users";
+import { allUsesByUs, queryByUserId } from "@app/utils/users";
 import { allUsByType } from "@app/utils/uSanitaria";
 import { queryByCreated } from "@app/utils/reference";
 import { COUNSELOR, MENTOR, NURSE, SUPERVISOR } from "@app/utils/contants";
@@ -149,10 +145,7 @@ const StepReference = ({
     const type = e?.target?.value === undefined ? e : e?.target?.value;
     const payload = {
       typeId: type,
-      localityId:
-        reference !== undefined
-          ? reference.notifyTo?.localities[0]?.id
-          : beneficiary?.locality?.id,
+      localitiesIds: userLocalitiesIds.toString(),
     };
     const data = await allUsByType(payload);
     setUs(data);
@@ -195,12 +188,7 @@ const StepReference = ({
     const sortedUsers = data.sort((u1, u2) =>
       (u1.name + u1.surname).localeCompare(u2.name + u2.surname)
     );
-    if (sortedUsers.length > 0) {
-      setUsers(sortedUsers);
-    } else {
-      const localityUsers = await allUsesByLocalities(userLocalitiesIds);
-      setUsers(localityUsers);
-    }
+    setUsers(sortedUsers);
   };
 
   const onChangeStatus = async (e: any) => {

@@ -214,7 +214,7 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
       if (entryPoint !== "" && entryPoint !== undefined) {
         const payload = {
           typeId: entryPoint,
-          localityId: values,
+          localitiesIds: values,
         };
         const data = await allUsByType(payload);
         setUs(data);
@@ -235,7 +235,7 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
     if (locality !== "" && locality !== undefined) {
       const payload = {
         typeId: e?.target?.value === undefined ? e : e?.target?.value,
-        localityId: locality,
+        localitiesIds: locality,
       };
       const data = await allUsByType(payload);
       setUs(data);

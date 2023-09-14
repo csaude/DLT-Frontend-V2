@@ -38,12 +38,12 @@ export async function edit(payload: any) {
 }
 interface UsTypeFilter {
   typeId: number;
-  localityId: number;
+  localitiesIds: string;
 }
 export async function allUsByType(payload: UsTypeFilter) {
   let url: string;
   if (payload) {
-    url = "/api/us/type/" + payload.typeId + "/" + payload.localityId;
+    url = "/api/us/type/" + payload.typeId + "/" + payload.localitiesIds;
     const res = await select(url);
     return res;
   }

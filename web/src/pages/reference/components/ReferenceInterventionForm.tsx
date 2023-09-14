@@ -98,7 +98,7 @@ const ReferenceInterventionForm = ({ form, reference, refServices }: any) => {
   const onChangeEntryPoint = async (e: any) => {
     const payload = {
       typeId: e?.target?.value === undefined ? e : e?.target?.value,
-      localityId: reference.notifyTo?.localities[0].id,
+      localitiesIds: reference.notifyTo?.localities[0].id,
     };
     const data = await allUsByType(payload);
     setUs(data);
