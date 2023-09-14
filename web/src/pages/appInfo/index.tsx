@@ -35,13 +35,13 @@ const AppInfo = () => {
             <Form layout="vertical">
               <Row gutter={24}>
                 <Col span={12}>
-                  <Form.Item name="version" label="Version Number">
+                  <Form.Item name="version" label="Número da versão">
                     <Space direction="vertical">{data.release?.version} </Space>
                   </Form.Item>
-                  <Form.Item name="date" label="Build Date">
+                  <Form.Item name="date" label="Data da versão">
                     <Space direction="vertical">{data.release?.date} </Space>
                   </Form.Item>
-                  <Form.Item name="changelog" label="Changelog">
+                  <Form.Item name="changelog" label="Registro de alterações">
                     <Space direction="vertical">
                       {data.release.changelogs?.map((item) => (
                         <p key={item.id}>
