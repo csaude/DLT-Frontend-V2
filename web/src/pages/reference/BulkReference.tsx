@@ -340,6 +340,15 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
           >
             Pesquisar
           </Button>
+          <Button
+            onClick={() =>
+              handleReset(clearFilters, selectedKeys, confirm, dataIndex)
+            }
+            size="small"
+            style={{ width: 90 }}
+          >
+            Limpar
+          </Button>
         </Space>
       </div>
     ),
@@ -406,6 +415,15 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
             style={{ width: 90 }}
           >
             Pesquisar
+          </Button>
+          <Button
+            onClick={() =>
+              handleReset(clearFilters, selectedKeys, confirm, dataIndex)
+            }
+            size="small"
+            style={{ width: 90 }}
+          >
+            Limpar
           </Button>
         </Space>
       </div>
