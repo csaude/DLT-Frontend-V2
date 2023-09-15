@@ -320,7 +320,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
             label="Sexo"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
-            initialValue={beneficiary?.gender}
+            initialValue={beneficiary ? beneficiary?.gender : "1"}
           >
             <Radio.Group>
               <Radio.Button value={"1"}>M</Radio.Button>
