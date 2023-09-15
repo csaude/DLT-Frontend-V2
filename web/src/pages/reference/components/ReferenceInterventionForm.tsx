@@ -15,7 +15,7 @@ import { querySubServiceByService } from "@app/utils/service";
 import { allUsByType } from "@app/utils/uSanitaria";
 import { PlusOutlined } from "@ant-design/icons";
 import moment from "moment";
-import { allUsesByUs } from "@app/utils/users";
+import { allUsersByUs } from "@app/utils/users";
 import { useDispatch, useSelector } from "react-redux";
 import { loadRemarks } from "@app/store/reducers/referenceIntervention";
 
@@ -98,7 +98,7 @@ const ReferenceInterventionForm = ({ form, reference, refServices }: any) => {
   const onChangeEntryPoint = async (e: any) => {
     const payload = {
       typeId: e?.target?.value === undefined ? e : e?.target?.value,
-      localityId: reference.notifyTo?.localities[0].id,
+      localitiesIds: reference.notifyTo?.localities[0].id,
     };
     const data = await allUsByType(payload);
     setUs(data);
@@ -110,7 +110,7 @@ const ReferenceInterventionForm = ({ form, reference, refServices }: any) => {
   };
 
   const onChangeUs = async (value: any) => {
-    const data = await allUsesByUs(value);
+    const data = await allUsersByUs(value);
     setUsers(data);
 
     if (!isLoading) {

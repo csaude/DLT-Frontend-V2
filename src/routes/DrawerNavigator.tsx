@@ -284,7 +284,7 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
           options={{
             title: "",
             headerTitle: "",
-            drawerIcon: () => <ItemBadge label="App Information" total={-1} />,
+            drawerIcon: () => <ItemBadge label="Detalhes da Aplicação" total={-1} />,
           }}
         />
       </Drawer.Navigator>

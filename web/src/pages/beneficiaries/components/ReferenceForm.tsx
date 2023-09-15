@@ -1,7 +1,7 @@
 import React from "react";
 import { Form, Col, Row, Input, Select, Radio } from "antd";
 import { allPartnersByType } from "@app/utils/partners";
-import { allUsesByUs } from "@app/utils/users";
+import { allUsersByUs } from "@app/utils/users";
 import { allUs } from "@app/utils/uSanitaria";
 
 const { Option } = Select;
@@ -43,7 +43,7 @@ const ReferenceForm = (record: any) => {
   };
 
   const onChangeUs = async (value: any) => {
-    const data = await allUsesByUs(value);
+    const data = await allUsersByUs(value);
     setUsers(data);
   };
 
