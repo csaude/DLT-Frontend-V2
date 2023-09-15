@@ -41,7 +41,7 @@ const AppInfo = () => {
                   <Form.Item name="date" label="Data da versão">
                     <Space direction="vertical">{data.release?.date} </Space>
                   </Form.Item>
-                  <Form.Item name="changelog" label="Registro de alterações">
+                  <Form.Item name="changelog" label="Registo de alterações">
                     <Space direction="vertical">
                       {data.release.changelogs?.map((item) => (
                         <p key={item.id}>

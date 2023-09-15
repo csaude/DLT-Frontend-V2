@@ -31,7 +31,7 @@ const AppInfoScreen: React.FC = () => {
               </Text>
             </Flex>
             <Divider />
-            <Text style={styles.txtLabel}>Registro de alterações: </Text>
+            <Text style={styles.txtLabel}>Registo de alterações: </Text>
             {data.release.changelogs?.map((item) => (
               <Text key={item.id}>
                 {"-"} {item.changelog}{" "}
