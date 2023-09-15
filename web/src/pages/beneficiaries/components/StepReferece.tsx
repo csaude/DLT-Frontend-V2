@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Row, Col, Input, Form, DatePicker, Select, Radio } from "antd";
 import "./index.css";
 import { allPartnersByTypeDistrict } from "@app/utils/partners";
-import { allUsesByLocalities, allUsersByUs, queryByUserId } from "@app/utils/users";
+import { allUsersByUs, queryByUserId } from "@app/utils/users";
 import { allUsByType } from "@app/utils/uSanitaria";
 import { queryByCreated } from "@app/utils/reference";
 import { COUNSELOR, MENTOR, NURSE, SUPERVISOR } from "@app/utils/contants";
