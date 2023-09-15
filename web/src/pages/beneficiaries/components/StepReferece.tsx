@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Row, Col, Input, Form, DatePicker, Select, Radio } from "antd";
 import "./index.css";
 import { allPartnersByTypeDistrict } from "@app/utils/partners";
-import { allUsesByUs, queryByUserId } from "@app/utils/users";
+import { allUsesByLocalities, allUsersByUs, queryByUserId } from "@app/utils/users";
 import { allUsByType } from "@app/utils/uSanitaria";
 import { queryByCreated } from "@app/utils/reference";
 import { COUNSELOR, MENTOR, NURSE, SUPERVISOR } from "@app/utils/contants";
@@ -145,7 +145,7 @@ const StepReference = ({
     const type = e?.target?.value === undefined ? e : e?.target?.value;
     const payload = {
       typeId: type,
-      localitiesIds: userLocalitiesIds.toString(),
+      localitiesIds: beneficiary?.locality?.id,
     };
     const data = await allUsByType(payload);
     setUs(data);
@@ -184,7 +184,7 @@ const StepReference = ({
   };
 
   const onChangeUs = async (value: any) => {
-    const data = await allUsesByUs(value);
+    const data = await allUsersByUs(value);
     const sortedUsers = data.sort((u1, u2) =>
       (u1.name + u1.surname).localeCompare(u2.name + u2.surname)
     );
