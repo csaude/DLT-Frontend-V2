@@ -195,7 +195,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
       if (entryPoint !== "" && entryPoint !== undefined) {
         const payload = {
           typeId: entryPoint,
-          localityId: values,
+          localitiesIds: values,
         };
         const data = await allUsByType(payload);
         setUs(data);
@@ -211,7 +211,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
     if (locality !== "" && locality !== undefined) {
       const payload = {
         typeId: e?.target?.value === undefined ? e : e?.target?.value,
-        localityId: locality,
+        localitiesIds: locality,
       };
       const data = await allUsByType(payload);
       setUs(data);
@@ -320,7 +320,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
             label="Sexo"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
-            initialValue={beneficiary?.gender}
+            initialValue={beneficiary ? beneficiary?.gender : "1"}
           >
             <Radio.Group>
               <Radio.Button value={"1"}>M</Radio.Button>

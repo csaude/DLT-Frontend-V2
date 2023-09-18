@@ -44,8 +44,14 @@ export async function requestUpdatePassword(payload: UserParams) {
   return res;
 }
 
-export async function allUsesByUs(payload?: any) {
+export async function allUsersByUs(payload?: any) {
   const url = "/api/users/us/".concat(payload);
+  const res = await select(url);
+  return res;
+}
+
+export async function allUsesByLocalities(payload?: any) {
+  const url = "/api/users/locality/".concat(payload);
   const res = await select(url);
   return res;
 }
