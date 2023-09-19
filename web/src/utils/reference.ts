@@ -98,6 +98,14 @@ export async function pagedQueryByUser(
 
   return res;
 }
+
+function dateTotimestamp(value: any) {
+  const temp = (new Date(value).getTime() / 1000).toString();
+  const res = temp.slice(0, 10);
+
+  return res;
+}
+
 export async function pagedQueryPendingByUser(
   id?: any,
   pageIndex?: any,
@@ -107,7 +115,7 @@ export async function pagedQueryPendingByUser(
 ) {
   if (searchStartDate === undefined || searchEndDate === undefined) {
     searchStartDate = 1483252734;
-    searchEndDate = new Date().getTime();
+    searchEndDate = dateTotimestamp(new Date());
   }
   const res = await select(
     `/api/references/pendingByUser/${id}?pageIndex=${pageIndex}&pageSize=${pageSize}&searchStartDate=${searchStartDate}&searchEndDate=${searchEndDate}`
@@ -129,12 +137,12 @@ export async function queryCountByFilters(
 }
 export async function queryCountByPendingFilters(
   id?: any,
-  searchStartDate?: number,
-  searchEndDate?: number
+  searchStartDate?: any,
+  searchEndDate?: any
 ) {
   if (searchStartDate === undefined || searchEndDate === undefined) {
     searchStartDate = 1483252734;
-    searchEndDate = new Date().getTime();
+    searchEndDate = dateTotimestamp(new Date());
   }
   const res = await select(
     `/api/references/byPeddingUser/${id}/countByFilters?searchStartDate=${searchStartDate}&searchEndDate=${searchEndDate}`
