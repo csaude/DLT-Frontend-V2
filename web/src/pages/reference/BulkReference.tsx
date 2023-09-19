@@ -64,6 +64,7 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
   const [us, setUs] = useState<any[]>([]);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const formRef = React.useRef<FormInstance>(null);
+  const formFilter = React.useRef<FormInstance>(null);
   const pageSize = 100;
   let data;
   let countByFilter;
@@ -599,22 +600,6 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
       title: "Estado",
       dataIndex: "status",
       key: "status",
-      filters: [
-        {
-          text: "Pendente",
-          value: 0,
-        },
-        {
-          text: "Atendida Parcialmente",
-          value: 1,
-        },
-        {
-          text: "Atendida",
-          value: 2,
-        },
-      ],
-      onFilter: (value, record) => record?.status == value,
-      filterSearch: true,
       render: (text, record) =>
         record.status == 0 ? (
           <Text type="danger">Pendente </Text>
@@ -646,13 +631,11 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
     if (endDate != undefined) {
       setSearchEndDate(endDate);
     }
-
-    console.log(startDate);
-    console.log(endDate);
   };
 
   const onReset = () => {
     formRef.current?.resetFields();
+    formFilter.current?.resetFields();
     setOtherReasonEnabled(false);
   };
 
@@ -831,37 +814,42 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
               bordered={true}
               headStyle={{ background: "#17a2b8", color: "#fff" }}
             >
-              <Row gutter={30}>
-                <Col className="gutter-row" span={12}>
-                  <Form.Item name="startDate" label="Data Inicio">
-                    <DatePicker
-                      // defaultPickerValue={moment(getMaxDate(), "YYYY-MM-DD")}
-                      inputReadOnly={true}
-                      style={{ width: "100%" }}
-                      placeholder="Data Inicio"
-                      onChange={(e) => setStartDate(moment(e, "YYYY-MM-DD"))}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col className="gutter-row" span={12}>
-                  <Form.Item name="endDate" label="Data Fim">
-                    <DatePicker
-                      // defaultPickerValue={moment(getMaxDate(), "YYYY-MM-DD")}
-                      inputReadOnly={true}
-                      style={{ width: "100%" }}
-                      placeholder="Data Inicio"
-                      onChange={setEndDate}
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row gutter={50}>
-                <Col className="gutter-row" span={12}>
-                  <Button type="primary" onClick={handleGlobalSearch}>
-                    Pesquisar
-                  </Button>
-                </Col>
-              </Row>
+              <Form
+                ref={formFilter}
+                name="fil"
+                initialValues={{ remember: true }}
+                autoComplete="off"
+              >
+                <Row gutter={30}>
+                  <Col className="gutter-row" span={12}>
+                    <Form.Item name="startDate" label="Data Inicio">
+                      <DatePicker
+                        inputReadOnly={true}
+                        style={{ width: "100%" }}
+                        placeholder="Data Inicio"
+                        onChange={(e) => setStartDate(moment(e, "YYYY-MM-DD"))}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col className="gutter-row" span={12}>
+                    <Form.Item name="endDate" label="Data Fim">
+                      <DatePicker
+                        inputReadOnly={true}
+                        style={{ width: "100%" }}
+                        placeholder="Data Inicio"
+                        onChange={setEndDate}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row gutter={50}>
+                  <Col className="gutter-row" span={12}>
+                    <Button type="primary" onClick={handleGlobalSearch}>
+                      Pesquisar
+                    </Button>
+                  </Col>
+                </Row>
+              </Form>
             </Card>
           </Col>
           <Col span={12}>
