@@ -102,12 +102,11 @@ export async function pagedQueryPendingByUser(
   id?: any,
   pageIndex?: any,
   pageSize?: any,
-  searchNui?: any,
-  searchUserCreator?: number,
-  searchDistrict?: number
+  searchStartDate?: any,
+  searchEndDate?: any
 ) {
   const res = await select(
-    `/api/references/pendingByUser/${id}?pageIndex=${pageIndex}&pageSize=${pageSize}&searchNui=${searchNui}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`
+    `/api/references/pendingByUser/${id}?pageIndex=${pageIndex}&pageSize=${pageSize}&searchStartDate=${searchStartDate}&searchEndDate=${searchEndDate}`
   );
 
   return res;
@@ -126,12 +125,11 @@ export async function queryCountByFilters(
 }
 export async function queryCountByPendingFilters(
   id?: any,
-  searchNui?: any,
-  searchUserCreator?: number,
-  searchDistrict?: number
+  searchStartDate?: number,
+  searchEndDate?: number
 ) {
   const res = await select(
-    `/api/references/byPeddingUser/${id}/countByFilters?searchNui=${searchNui}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`
+    `/api/references/byPeddingUser/${id}/countByFilters?searchStartDate=${searchStartDate}&searchEndDate=${searchEndDate}`
   );
   return res;
 }

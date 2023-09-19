@@ -57,12 +57,10 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const [reference, setReference] = useState<any>();
-  const [beneficiary, setBeneficiary] = useState<any>(undefined);
   const [partners, setPartners] = useState<any[]>([]);
   const [referredPartners, setReferredPartners] = useState<any[]>([]);
   const [referrers, setReferrers] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
-  const [district, setDistrict] = useState<any>();
   const [us, setUs] = useState<any[]>([]);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const formRef = React.useRef<FormInstance>(null);
@@ -74,12 +72,12 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
   const [searchCounter, setSearchCounter] = useState<any>();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
-  const [searchNui, setSearchNui] = useState<any>("");
-  const [searchDistrict, setSearchDistrict] = useState<any>("");
-  const [searchUserCreator, setSearchUserCreator] = useState<any>("");
+  const [searchStartDate, setSearchStartDate] = useState<any>();
+  const [searchEndDate, setSearchEndDate] = useState<any>();
 
+  const [startDate, setStartDate] = useState<any>("");
+  const [endDate, setEndDate] = useState<any>("");
   const [nui, setNui] = useState<any>();
-  const [userCreator, setUserCreator] = useState<any>();
   const [districts, setDistricts] = useState<any[]>([]);
   const [cancelReason, setCancelReason] = useState<any>();
   const [otherReason, setOtherReason] = useState<any>();
@@ -134,16 +132,14 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
         localStorage.user,
         currentPageIndex,
         pageSize,
-        searchNui,
-        searchUserCreator,
-        searchDistrict
+        searchStartDate,
+        searchEndDate
       );
 
       countByFilter = await queryCountByPendingFilters(
         localStorage.user,
-        searchNui,
-        searchUserCreator,
-        searchDistrict
+        searchStartDate,
+        searchEndDate
       );
       setSearchCounter(countByFilter);
 
@@ -256,7 +252,7 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
     };
 
     fetchReferersUsers().catch((error) => console.log(error));
-  }, [currentPageIndex, searchNui, searchUserCreator, searchDistrict]);
+  }, [currentPageIndex, searchStartDate, searchEndDate]);
 
   const handleRefUpdate = async (values: any) => {
     const ref: any = reference;
@@ -643,36 +639,17 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
   };
 
   const handleGlobalSearch = async () => {
-    if (nui !== undefined) {
-      setSearchNui(nui);
+    if (startDate != undefined) {
+      setSearchStartDate(startDate);
     }
-    if (userCreator !== undefined) {
-      setSearchUserCreator(userCreator);
-    }
-    if (district !== undefined) {
-      setSearchDistrict(district);
-    }
-  };
 
-  const onChange = (e, name) => {
-    if (name === "userCreator") {
-      setUserCreator(e);
+    if (endDate != undefined) {
+      setSearchEndDate(endDate);
     }
-    if (name === "district") {
-      setDistrict(e);
-    }
-  };
 
-  function onClear(name) {
-    if (name === "userCreator") {
-      setUserCreator(undefined);
-      setSearchUserCreator("");
-    }
-    if (name === "district") {
-      setDistrict(undefined);
-      setSearchDistrict("");
-    }
-  }
+    console.log(startDate);
+    console.log(endDate);
+  };
 
   const onReset = () => {
     formRef.current?.resetFields();
@@ -742,9 +719,8 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
           localStorage.user,
           i,
           pageElements,
-          searchNui,
-          searchUserCreator,
-          searchDistrict
+          searchStartDate,
+          searchEndDate
         );
 
         const sortedReferences = data.sort((benf1, benf2) =>
@@ -857,58 +833,27 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
             >
               <Row gutter={30}>
                 <Col className="gutter-row" span={12}>
-                  <Form.Item name="start_date" label="Data Inicio">
+                  <Form.Item name="startDate" label="Data Inicio">
                     <DatePicker
                       // defaultPickerValue={moment(getMaxDate(), "YYYY-MM-DD")}
                       inputReadOnly={true}
                       style={{ width: "100%" }}
                       placeholder="Data Inicio"
+                      onChange={(e) => setStartDate(moment(e, "YYYY-MM-DD"))}
                     />
                   </Form.Item>
                 </Col>
                 <Col className="gutter-row" span={12}>
-                  <Form.Item name="end_date" label="Data Fim">
+                  <Form.Item name="endDate" label="Data Fim">
                     <DatePicker
                       // defaultPickerValue={moment(getMaxDate(), "YYYY-MM-DD")}
                       inputReadOnly={true}
                       style={{ width: "100%" }}
                       placeholder="Data Inicio"
+                      onChange={setEndDate}
                     />
                   </Form.Item>
                 </Col>
-                {/* <Col className="gutter-row"> */}
-                {/* <Form.Item
-                    name="nui"
-                    // label="Data Inicio"
-                    initialValue={searchNui}
-                  >
-                    <Input
-                      placeholder="Pesquisar por NUI"
-                      value={searchNui}
-                      onChange={(e) => setNui(e.target.value)}
-                    />
-                  </Form.Item> */}
-                {/* </Col> */}
-                {/* <Col className="gutter-row" hidden={visibleDistrict === false}>
-                  <Form.Item name="nui" initialValue={searchNui}>
-                    <Select
-                      showSearch
-                      allowClear
-                      onClear={() => onClear("district")}
-                      placeholder="Selecione o distrito"
-                      optionFilterProp="children"
-                      onChange={(e) => onChange(e, "district")}
-                      onSearch={() => {
-                      }}
-                      filterOption={(input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      options={convertedDistrictsData}
-                    />
-                  </Form.Item>
-                </Col> */}
               </Row>
               <Row gutter={50}>
                 <Col className="gutter-row" span={12}>
@@ -942,7 +887,6 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
                     >
                       <Select
                         allowClear
-                        onClear={() => onClear("reason")}
                         placeholder="Selecione Aqui"
                         onChange={(e) => onReasonBeforeChange(e)}
                       >
