@@ -243,15 +243,19 @@ const ReportAgyw = () => {
                     </Space>
                   </Form.Item>
 
-                  <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                    <Button
-                      type="primary"
-                      htmlType="submit"
-                      onClick={handleFetchData}
-                    >
-                      Preview
-                    </Button>
-                    <Button onClick={handleGenerateXLSXReport}>Download</Button>
+                  <Form.Item wrapperCol={{ offset: 12, span: 600 }}>
+                    <Space>
+                      <Button
+                        type="primary"
+                        htmlType="submit"
+                        onClick={handleFetchData}
+                      >
+                        Preview
+                      </Button>
+                      <Button type="default" onClick={handleGenerateXLSXReport}>
+                        Download
+                      </Button>
+                    </Space>
                   </Form.Item>
                 </Col>
               </Row>
