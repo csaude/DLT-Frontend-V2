@@ -150,9 +150,11 @@ const BeneficiarieServiceForm: React.FC = ({
     setChecked(value);
   };
 
+  const activeServices = services.filter(item =>item.status == 1);
+
   useEffect(() => {
     if (mounted) {
-      setServicesState(services);
+      setServicesState(activeServices);
       getPartner();
 
       const age = calculateAge(beneficiarie.date_of_birth);
@@ -939,8 +941,8 @@ const BeneficiarieServiceForm: React.FC = ({
   );
 };
 const enhance = withObservables([], () => ({
-  services: database.collections.get("services").query(Q.where("status",1)),
-  subServices: database.collections.get("sub_services").query(Q.where("status",1)),
+  services: database.collections.get("services").query(),
+  subServices: database.collections.get("sub_services").query(),
   us: database.collections.get("us").query(),
 }));
 
