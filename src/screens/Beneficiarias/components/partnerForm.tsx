@@ -75,12 +75,12 @@ const PartnerForm: React.FC = ({ route, services, subServices }: any) => {
         })[0];
 
         const selService = services.filter((e) => {
-          return e._raw.online_id == selSubService._raw.service_id;
+          return e._raw.online_id == selSubService?._raw.service_id;
         })[0];
 
         initValues = {
-          areaServicos_id: selService._raw.service_type,
-          service_id: selService._raw.online_id,
+          areaServicos_id: selService?._raw.service_type,
+          service_id: selService?._raw.online_id,
           beneficiary_id: beneficiarie.online_id,
           sub_service_id: intervention.sub_service_id,
           result: intervention.result,
