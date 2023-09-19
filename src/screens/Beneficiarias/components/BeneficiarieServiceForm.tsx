@@ -672,7 +672,7 @@ const BeneficiarieServiceForm: React.FC = ({
                       <FormControl.Label>Área de Serviços</FormControl.Label>
                       <Picker
                         enabled={
-                          isNewIntervention && !isClinicalOrCommunityPartner
+                          isNewIntervention && !isClinicalOrCommunityPartner || initialValues.areaServicos_id == undefined
                         }
                         style={styles.dropDownPickerDisabled}
                         selectedValue={values.areaServicos_id}
