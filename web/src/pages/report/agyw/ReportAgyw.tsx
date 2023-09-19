@@ -243,7 +243,7 @@ const ReportAgyw = () => {
                     </Space>
                   </Form.Item>
 
-                  <Form.Item wrapperCol={{ offset: 12, span: 600 }}>
+                  <Form.Item wrapperCol={{ offset: 12, span: 16 }}>
                     <Space>
                       <Button
                         type="primary"
