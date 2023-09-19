@@ -340,7 +340,7 @@ const Login: React.FC = ({ route }: any) => {
         const account = loginJson.account;
 
         if (status && status !== 200) {
-          if (resetPassword === "1" || logguedUser._raw.is_awaiting_sync == 1) {
+          if (resetPassword === "1" || logguedUser?._raw.is_awaiting_sync == 1) {
             setLoading(false);
             return showToast(
               "Conta bloqueada",

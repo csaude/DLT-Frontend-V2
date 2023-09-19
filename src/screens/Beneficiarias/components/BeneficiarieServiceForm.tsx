@@ -939,8 +939,8 @@ const BeneficiarieServiceForm: React.FC = ({
   );
 };
 const enhance = withObservables([], () => ({
-  services: database.collections.get("services").query(),
-  subServices: database.collections.get("sub_services").query(),
+  services: database.collections.get("services").query(Q.where("status",1)),
+  subServices: database.collections.get("sub_services").query(Q.where("status",1)),
   us: database.collections.get("us").query(),
 }));
 
