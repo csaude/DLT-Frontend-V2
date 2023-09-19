@@ -651,7 +651,7 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
   const ClickableTag = () => {
     return (
       <a onClick={handleExportarXLS}>
-        <Tag color={"geekblue"}>{"Exportar XLS"}</Tag>
+        {/* <Tag color={"geekblue"}>{"Exportar XLS"}</Tag> */}
       </a>
     );
   };
