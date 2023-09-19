@@ -114,7 +114,7 @@ export async function pagedQueryPendingByUser(
   searchEndDate?: any
 ) {
   if (searchStartDate === undefined || searchEndDate === undefined) {
-    searchStartDate = 1483252734;                   // 01 de Janeiro de 2017 -- Para poder pegar todos dados desde inicio do uso do sistema
+    searchStartDate = 1483252734; // 01 de Janeiro de 2017 -- Para poder pegar todos dados desde inicio do uso do sistema
     searchEndDate = dateTotimestamp(new Date());
   } else {
     searchStartDate = dateTotimestamp(searchStartDate);
