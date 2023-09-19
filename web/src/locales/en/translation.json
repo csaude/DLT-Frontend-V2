@@ -86,6 +86,8 @@
       "usersList": "Lista",
       "usersForm": "Registar",
       "referenceList": "Referências",
+      "referenceManagement": "Gestão de Referências",
+      "bulkCancellationReference": "Cancelamento de Referências Pendentes",
       "reports": "Relatórios DREAMS",
       "appInfo": "Detalhes da Aplicação"
     }
