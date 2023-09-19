@@ -116,7 +116,11 @@ export async function pagedQueryPendingByUser(
   if (searchStartDate === undefined || searchEndDate === undefined) {
     searchStartDate = 1483252734;
     searchEndDate = dateTotimestamp(new Date());
+  } else {
+    searchStartDate = dateTotimestamp(searchStartDate);
+    searchEndDate = dateTotimestamp(searchEndDate);
   }
+
   const res = await select(
     `/api/references/pendingByUser/${id}?pageIndex=${pageIndex}&pageSize=${pageSize}&searchStartDate=${searchStartDate}&searchEndDate=${searchEndDate}`
   );
@@ -143,6 +147,9 @@ export async function queryCountByPendingFilters(
   if (searchStartDate === undefined || searchEndDate === undefined) {
     searchStartDate = 1483252734;
     searchEndDate = dateTotimestamp(new Date());
+  } else {
+    searchStartDate = dateTotimestamp(searchStartDate);
+    searchEndDate = dateTotimestamp(searchEndDate);
   }
   const res = await select(
     `/api/references/byPeddingUser/${id}/countByFilters?searchStartDate=${searchStartDate}&searchEndDate=${searchEndDate}`
