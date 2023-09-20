@@ -163,7 +163,7 @@ const BeneficiariesMain: React.FC = ({
     setLoadingRequest(true);
     setTitle("Carregando Beneficiária");
     setMessage(
-      "Os dados da Beneficiaria Selecioanda estao sendo carregados, por favor aguarde..."
+      "Os dados da Beneficiária Selecionada estão sendo carregados, por favor, aguarde..."
     );
     const beneficiarie = data.item?._raw;
 

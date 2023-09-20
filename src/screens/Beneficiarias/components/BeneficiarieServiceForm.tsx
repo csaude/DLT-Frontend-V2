@@ -150,9 +150,11 @@ const BeneficiarieServiceForm: React.FC = ({
     setChecked(value);
   };
 
+  const activeServices = services.filter(item =>item.status == 1);
+
   useEffect(() => {
     if (mounted) {
-      setServicesState(services);
+      setServicesState(activeServices);
       getPartner();
 
       const age = calculateAge(beneficiarie.date_of_birth);
@@ -171,7 +173,7 @@ const BeneficiarieServiceForm: React.FC = ({
       }
 
       const disableRapariga = (hasFacilitacao) =>
-        services.filter((service) => {
+        activeServices.filter((service) => {
           if (hasFacilitacao)
             return !avanteRaparigaOnlineIds.includes(service._raw.online_id);
           else
@@ -182,7 +184,7 @@ const BeneficiarieServiceForm: React.FC = ({
         });
 
       const disableEstudante = (hasFacilitacao) =>
-        services.filter((service) => {
+      activeServices.filter((service) => {
           if (hasFacilitacao)
             return !avanteEstudanteOnlineIds.includes(service._raw.online_id);
           else
@@ -192,7 +194,7 @@ const BeneficiarieServiceForm: React.FC = ({
             );
         });
 
-      const disableEstudanteAndRapariga = services.filter((service) => {
+      const disableEstudanteAndRapariga = activeServices.filter((service) => {
         return (
           !avanteRaparigaOnlineIds.includes(service._raw.online_id) &&
           !avanteEstudanteOnlineIds.includes(service._raw.online_id) &&
@@ -236,7 +238,7 @@ const BeneficiarieServiceForm: React.FC = ({
         })[0];
 
         const selService = services.filter((e) => {
-          return e._raw.online_id == selSubService._raw.service_id;
+          return e._raw.online_id == selSubService?._raw.service_id;
         })[0];
 
         const selUs = us.filter((e) => {
@@ -247,8 +249,8 @@ const BeneficiarieServiceForm: React.FC = ({
         onChangeUs(intervention.us_id);
 
         initValues = {
-          areaServicos_id: selService._raw.service_type,
-          service_id: selService._raw.online_id,
+          areaServicos_id: selService?._raw.service_type,
+          service_id: selService?._raw.online_id,
           beneficiary_id: beneficiarie.online_id,
           sub_service_id: intervention.sub_service_id,
           result: intervention.result,
@@ -670,7 +672,7 @@ const BeneficiarieServiceForm: React.FC = ({
                       <FormControl.Label>Área de Serviços</FormControl.Label>
                       <Picker
                         enabled={
-                          isNewIntervention && !isClinicalOrCommunityPartner
+                          isNewIntervention && !isClinicalOrCommunityPartner || initialValues.areaServicos_id == undefined
                         }
                         style={styles.dropDownPickerDisabled}
                         selectedValue={values.areaServicos_id}
