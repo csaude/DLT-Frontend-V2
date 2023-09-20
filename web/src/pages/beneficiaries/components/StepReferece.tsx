@@ -36,8 +36,6 @@ const StepReference = ({
   );
   const selectedReference = beneficiary;
   const userId = localStorage.getItem("user");
-  const currentUser = useSelector((state: any) => state.auth.user);
-  const userLocalitiesIds = currentUser?.localities.map((item: any) => item.id);
   const referers = useSelector((state: any) => state.user.referers);
   const sortedReferes = referers.sort((u1, u2) =>
     (u1.name + u1.surname).localeCompare(u2.name + u2.surname)
@@ -145,7 +143,10 @@ const StepReference = ({
     const type = e?.target?.value === undefined ? e : e?.target?.value;
     const payload = {
       typeId: type,
-      localitiesIds: beneficiary?.locality?.id,
+      localitiesIds:
+        reference !== undefined
+          ? reference.notifyTo?.localities.map((i) => i.id)
+          : beneficiary?.locality?.id,
     };
     const data = await allUsByType(payload);
     setUs(data);
