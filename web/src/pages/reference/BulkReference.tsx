@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import {
   bulkCancel as cancelAll,
   BulkReferenceCancel,
-  pagedQueryByUser,
   pagedQueryPendingByUser,
   queryCountByPendingFilters,
 } from "@app/utils/reference";
@@ -276,11 +275,12 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
         });
       } else {
         const { data } = await cancelAll(payload);
-        const allReferences: any = await pagedQueryByUser(
+        const allReferences: any = await pagedQueryPendingByUser(
           localStorage.user,
           currentPageIndex,
           pageSize,
-          nui
+          searchStartDate,
+          searchEndDate
         );
         const sortedReferences = allReferences.sort(
           (ref1, ref2) =>
@@ -651,7 +651,7 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
   const ClickableTag = () => {
     return (
       <a onClick={handleExportarXLS}>
-        {/* <Tag color={"geekblue"}>{"Exportar XLS"}</Tag> */}
+        <Tag color={"geekblue"}>{"Exportar XLS"}</Tag>
       </a>
     );
   };
@@ -691,14 +691,12 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
         cell.font = { bold: true };
       });
 
-      const user = await query1(localStorage.user);
-
       const lastPage = Math.ceil(beneficiariesTotal / pageElements);
 
       let sequence = 1;
 
       for (let i = 0; i < lastPage; i++) {
-        data = await pagedQueryByUser(
+        data = await pagedQueryPendingByUser(
           localStorage.user,
           i,
           pageElements,
@@ -739,12 +737,17 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
             reference.notifyTo?.partners?.name,
             reference.us?.name,
             moment(reference.dateCreated).format("YYYY-MM-DD"),
-            reference.status === 1
+            reference.status === 0
               ? "Pendente"
+              : reference.status === 1
+              ? "Atendida Parcialmente"
               : reference.status === 2
-              ? "Atendido"
-              : "Cancelado",
+              ? "Atendida"
+              : reference.status === 3
+              ? "Cancelado"
+              : "",
           ];
+
           sequence++;
           worksheet.addRow(values);
 
