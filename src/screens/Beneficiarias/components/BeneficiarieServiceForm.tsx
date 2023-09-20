@@ -173,7 +173,7 @@ const BeneficiarieServiceForm: React.FC = ({
       }
 
       const disableRapariga = (hasFacilitacao) =>
-        services.filter((service) => {
+        activeServices.filter((service) => {
           if (hasFacilitacao)
             return !avanteRaparigaOnlineIds.includes(service._raw.online_id);
           else
@@ -184,7 +184,7 @@ const BeneficiarieServiceForm: React.FC = ({
         });
 
       const disableEstudante = (hasFacilitacao) =>
-        services.filter((service) => {
+      activeServices.filter((service) => {
           if (hasFacilitacao)
             return !avanteEstudanteOnlineIds.includes(service._raw.online_id);
           else
@@ -194,7 +194,7 @@ const BeneficiarieServiceForm: React.FC = ({
             );
         });
 
-      const disableEstudanteAndRapariga = services.filter((service) => {
+      const disableEstudanteAndRapariga = activeServices.filter((service) => {
         return (
           !avanteRaparigaOnlineIds.includes(service._raw.online_id) &&
           !avanteEstudanteOnlineIds.includes(service._raw.online_id) &&
