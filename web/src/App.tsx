@@ -21,6 +21,7 @@ import UsersForm from "@pages/users/Form";
 import UserView from "@pages/users/View";
 import BeneficiariesList from "@pages/beneficiaries";
 import ReferenceList from "@pages/reference/Index";
+import BulkReference from "./pages/reference/BulkReference";
 import ProvinceList from "@pages/province/index";
 import DistrictList from "@pages/district";
 import LocalityList from "./pages/locality";
@@ -135,6 +136,7 @@ const App = () => {
             <Route path="/beneficiariesList" element={<BeneficiariesList />} />
             {/* //Rota de Referencias */}
             <Route path="/referenceList" element={<ReferenceList />} />
+            <Route path="/bulkReference" element={<BulkReference />} />
             {/* // Rota para Utilizadores */}
             <Route path="/usersList" element={<Users />} />
             <Route path="/usersForm" element={<UsersForm />} />
