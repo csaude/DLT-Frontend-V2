@@ -57,3 +57,9 @@ export async function allPartnersByDistricts(payload?: PartnerFilter) {
   const res = await select(url);
   return res;
 }
+
+export async function getPartnersQuery() {
+  const url = "/api/partners/get-partners";
+  const res = await select(url);
+  return res;
+}

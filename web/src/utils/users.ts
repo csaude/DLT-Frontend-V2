@@ -1,5 +1,5 @@
 import { create, select, update } from "./crud";
-
+import { stringify } from "qs";
 interface UsersFilter {
   name: string;
 }
@@ -118,6 +118,26 @@ export async function allUsesByDistricts(payload?: DistrictFilter) {
     url = "/api/users/districts?".concat(param);
   } else {
     url = "/api/users/districts";
+  }
+
+  const res = await select(url);
+  return res;
+}
+
+export async function pagedQueryByFilters(
+  payload?: any,
+  pageIndex?: any,
+  pageSize?: any,
+  searchUsername?: any,
+  searchUserCreator?: number
+) {
+  let url: string;
+  if (payload.userId) {
+    url = `/api/users/paged?${stringify(
+      payload
+    )}&pageIndex=${pageIndex}&pageSize=${pageSize}&searchUsername=${searchUsername}&searchUserCreator=${searchUserCreator}`;
+  } else {
+    url = "/api/users/" + payload;
   }
 
   const res = await select(url);
