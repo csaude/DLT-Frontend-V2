@@ -15,3 +15,9 @@ export async function edit(payload: any) {
   const res = await update("/api/provinces", payload);
   return res;
 }
+
+export async function getProvincesQuery() {
+  const url = "/api/provinces/get-provinces";
+  const res = await select(url);
+  return res;
+}

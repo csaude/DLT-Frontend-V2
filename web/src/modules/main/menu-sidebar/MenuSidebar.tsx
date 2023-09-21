@@ -11,6 +11,10 @@ import { getBeneficiariesTotal } from "../../../store/actions/beneficiary";
 import styled from "styled-components";
 import { getInterventionsCount } from "@app/store/actions/interventions";
 import { getUsernames } from "@app/store/actions/users";
+import { getProfiles } from "@app/store/actions/profile";
+import { getPartners } from "@app/store/actions/partner";
+import { getProvinces } from "@app/store/actions/province";
+import { getDistricts } from "@app/store/actions/district";
 
 const StyledUserImage = styled.img`
   height: 4.6rem !important;
@@ -194,6 +198,10 @@ const MenuSidebar = () => {
     dispatch(getReferencesTotal(referenceTotal));
     dispatch(getInterventionsCount());
     dispatch(getUsernames());
+    dispatch(getProfiles());
+    dispatch(getPartners());
+    dispatch(getProvinces());
+    dispatch(getDistricts());
   };
 
   useEffect(() => {
