@@ -15,3 +15,9 @@ export async function allProfiles(payload?: ProfileFilter) {
   const res = await select(url);
   return res;
 }
+
+export async function getProfilesQuery() {
+  const url = "/api/profiles/get-profiles";
+  const res = await select(url);
+  return res;
+}

@@ -52,3 +52,9 @@ export async function allDistrictsByIds(payload?: DistrictIdsFilter) {
   const res = await select(url);
   return res;
 }
+
+export async function getDistrictsQuery() {
+  const url = "/api/districts/get-districts";
+  const res = await select(url);
+  return res;
+}
