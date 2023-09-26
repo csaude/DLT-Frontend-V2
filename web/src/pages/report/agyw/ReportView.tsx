@@ -562,7 +562,7 @@ const ReportView: React.FC = () => {
             getAgeRangeByDate(intervention.beneficiary.dateOfBirth),
             moment(intervention.beneficiary.dateOfBirth).format("YYYY-MM-DD"),
             getVulnerabilitiesCounter(intervention.beneficiary),
-            intervention.subServices?.service?.serviceType === 1
+            intervention.subServices?.service?.serviceType === "1"
               ? "Serviços Clinicos"
               : "Serviços Comunitários",
             intervention.subServices?.service?.name,

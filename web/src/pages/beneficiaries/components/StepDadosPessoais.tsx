@@ -144,6 +144,11 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
           });
           const entryPoint = form.getFieldValue("entry_point");
           onChangeEntryPoint(entryPoint, false);
+        } else if (beneficiary) {
+          const locality = form.getFieldValue("locality");
+          if (locality !== "" && locality !== undefined) {
+            onChangeLocality(locality);
+          }
         }
       } else {
         const district = form.getFieldValue("district");
