@@ -1,13 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  AppState,
-  InteractionManager,
-  Keyboard,
-  NativeEventEmitter,
-  NativeModules,
-} from "react-native";
+import { View, Text } from "react-native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import CustomDrawer from "./components/CustomDrawer";
 import BeneficiariesNavigator from "./BeneficiariesNavigator";
@@ -23,6 +15,7 @@ import {
   loadUserUss,
 } from "../store/authSlice";
 import styles from "./components/style";
+import styles1 from "../screens/Login/style";
 import { Badge, Box, VStack } from "native-base";
 import {
   beneficiariesFetchCount,
@@ -34,6 +27,8 @@ import { getReferencesTotal } from "../store/referenceSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import UsersNavigator from "./UsersNavigator";
 import PropTypes from "prop-types";
+import Spinner from "react-native-loading-spinner-overlay";
+import AppInfoScreen from "../screens/AppInfo/AppInfoScreen";
 
 function HomeScreen() {
   useEffect(() => {
@@ -52,7 +47,9 @@ const Drawer = createDrawerNavigator();
 
 const DrawerNavigation: React.FC = ({ route }: any) => {
   // eslint-disable-next-line no-unsafe-optional-chaining
-  const { loggedUser } = route?.params;
+  const { loggedUser, loading } = route?.params;
+
+  const [isLoading, setIsLoading] = useState(loading);
 
   const userDetailsCollection = database.get("user_details");
   const dispatch = useDispatch();
@@ -74,11 +71,17 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
         getLocalitiesByIds(userDetailRaw).catch((err) => console.error(err));
         getUssByIds(userDetailRaw).catch((err) => console.error(err));
       }
+      if (isLoading) {
+        await delay(10000);
+        setIsLoading(false);
+      }
     };
     getUserDetails().catch((error) => console.log(error));
 
     getTotals().catch((error) => console.log(error));
   }, []);
+
+  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   const getProvincesByIds = async (userDetails) => {
     const a = userDetails?.provinces;
@@ -179,17 +182,19 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
         <VStack>
           <Text style={{ fontWeight: "bold", color: "#424345" }}>
             {label}
-            <Badge // bg="red.400"
-              colorScheme={total > 0 ? "info" : "danger"}
-              rounded="full"
-              variant="solid"
-              alignSelf="flex-end"
-              _text={{
-                fontSize: 12,
-              }}
-            >
-              {total}
-            </Badge>
+            {total >= 0 && (
+              <Badge // bg="red.400"
+                colorScheme={total > 0 ? "info" : "danger"}
+                rounded="full"
+                variant="solid"
+                alignSelf="flex-end"
+                _text={{
+                  fontSize: 12,
+                }}
+              >
+                {total}
+              </Badge>
+            )}
           </Text>
         </VStack>
       </Box>
@@ -210,6 +215,13 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
 
   return (
     <Context.Provider value={loggedUser}>
+      {isLoading ? (
+        <Spinner
+          visible={true}
+          textContent={"Sincronizando..."}
+          textStyle={styles1.spinnerTextStyle}
+        />
+      ) : undefined}
       <Drawer.Navigator
         screenOptions={{
           headerStyle: {
@@ -261,8 +273,18 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
           name="Users"
           component={UsersNavigator}
           options={{
-            title: "Perfil",
+            title: "",
             headerTitle: "",
+            drawerIcon: () => <ItemBadge label="Perfil" total={-1} />,
+          }}
+        />
+        <Drawer.Screen
+          name="Info"
+          component={AppInfoScreen}
+          options={{
+            title: "",
+            headerTitle: "",
+            drawerIcon: () => <ItemBadge label="Detalhes da Aplicação" total={-1} />,
           }}
         />
       </Drawer.Navigator>

@@ -143,7 +143,12 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
             locality: loggedUser.localities[0].id.toString(),
           });
           const entryPoint = form.getFieldValue("entry_point");
-          onChangeEntryPoint(entryPoint);
+          onChangeEntryPoint(entryPoint, false);
+        } else if (beneficiary) {
+          const locality = form.getFieldValue("locality");
+          if (locality !== "" && locality !== undefined) {
+            onChangeLocality(locality);
+          }
         }
       } else {
         const district = form.getFieldValue("district");
@@ -159,7 +164,7 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
         }
 
         if (entryPoint !== "" && entryPoint !== undefined) {
-          onChangeEntryPoint(entryPoint);
+          onChangeEntryPoint(entryPoint, false);
         }
       }
     };
@@ -214,7 +219,7 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
       if (entryPoint !== "" && entryPoint !== undefined) {
         const payload = {
           typeId: entryPoint,
-          localityId: values,
+          localitiesIds: values,
         };
         const data = await allUsByType(payload);
         setUs(data);
@@ -224,7 +229,10 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
     setIsLoading(false);
   };
 
-  const onChangeEntryPoint = async (e: any) => {
+  const onChangeEntryPoint = async (e: any, isClicked: boolean) => {
+    if (isClicked) {
+      form.setFieldsValue({ us: null });
+    }
     const locality =
       user?.localities.length === 1
         ? user.localities[0].id
@@ -232,7 +240,7 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
     if (locality !== "" && locality !== undefined) {
       const payload = {
         typeId: e?.target?.value === undefined ? e : e?.target?.value,
-        localityId: locality,
+        localitiesIds: locality,
       };
       const data = await allUsByType(payload);
       setUs(data);
@@ -546,7 +554,10 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
             style={{ textAlign: "left" }}
             initialValue={beneficiary?.entryPoint}
           >
-            <Radio.Group buttonStyle="solid" onChange={onChangeEntryPoint}>
+            <Radio.Group
+              buttonStyle="solid"
+              onChange={(e) => onChangeEntryPoint(e, true)}
+            >
               {isUsVisible && <Radio.Button value="1">US</Radio.Button>}
               <Radio.Button value="2">CM</Radio.Button>
               <Radio.Button value="3">ES</Radio.Button>
@@ -559,7 +570,7 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
             label="Local de Registo"
             rules={[
               {
-                required: user?.us.length !== 1,
+                required: true,
                 message: RequiredFieldMessage,
               },
             ]}

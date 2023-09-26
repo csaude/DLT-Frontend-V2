@@ -4,6 +4,7 @@ import React, {
   useContext,
   useRef,
   useCallback,
+  memo,
 } from "react";
 import {
   View,
@@ -67,9 +68,9 @@ import { loadBeneficiariesInterventionsCounts } from "../../store/beneficiaryInt
 import { referencesFetchCount } from "../../services/referenceService";
 import { getReferencesTotal } from "../../store/referenceSlice";
 import { beneficiariesInterventionsFetchCount } from "../../services/beneficiaryInterventionService";
+import SpinnerModal from "../../components/Modal/SpinnerModal";
 
 const BeneficiariesMain: React.FC = ({
-  beneficiaries,
   subServices,
   beneficiaries_interventions,
 }: any) => {
@@ -93,6 +94,8 @@ const BeneficiariesMain: React.FC = ({
   const inputRef: any = useRef(null);
 
   const [isLoadingRequest, setLoadingRequest] = useState(false);
+  const [title, setTitle] = useState("");
+  const [message, setMessage] = useState("");
   const dispatch = useDispatch();
 
   const getTotals = useCallback(async () => {
@@ -122,23 +125,24 @@ const BeneficiariesMain: React.FC = ({
       setLoading(false);
     } else {
       sync({ username: loggedUser.username })
-        .then(() =>
+        .then(() => {
+          setLoading(false);
           toast.show({
             placement: "top",
             render: () => {
               return <SuccessHandler />;
             },
-          })
-        )
-        .catch(() =>
+          });
+        })
+        .catch(() => {
+          setLoading(false);
           toast.show({
             placement: "top",
             render: () => {
               return <ErrorHandler />;
             },
-          })
-        );
-      setLoading(false);
+          });
+        });
     }
   };
 
@@ -147,7 +151,20 @@ const BeneficiariesMain: React.FC = ({
     getTotals();
   }, []);
 
+  useEffect(() => {
+    const hideIndicator = () => {
+      setLoadingRequest(false);
+    };
+    const timeout = setTimeout(hideIndicator, 6000);
+    return () => clearTimeout(timeout);
+  }, []);
+
   const viewBeneficiaries = async (data: any) => {
+    setLoadingRequest(true);
+    setTitle("Carregando Beneficiária");
+    setMessage(
+      "Os dados da Beneficiária Selecionada estão sendo carregados, por favor, aguarde..."
+    );
     const beneficiarie = data.item?._raw;
 
     dispatch(loadViewedBeneficiaryGender(beneficiarie.gender));
@@ -181,11 +198,13 @@ const BeneficiariesMain: React.FC = ({
         return item._raw.online_id == e._raw.sub_service_id;
       })[0];
       return {
-        id: subservice._raw.online_id + e?._raw.date,
-        name: subservice._raw.name,
+        id: subservice?._raw.online_id + e?._raw.date,
+        name: subservice?._raw.name,
         intervention: e._raw,
       };
     });
+
+    setLoadingRequest(false);
 
     navigate({
       name: "BeneficiariesView",
@@ -380,6 +399,11 @@ const BeneficiariesMain: React.FC = ({
   };
 
   const getUserBeneficiaries = async (currentUserId) => {
+    setLoadingRequest(true);
+    setTitle("Carregando Beneficiárias");
+    setMessage(
+      "Os Dados das Beneficiárias estão sendo carregados, por favor aguarde..."
+    );
     const districtCollection = database.get("districts");
     const localityCollection = database.get("localities");
     const neighborhoodCollection = database.get("neighborhoods");
@@ -468,10 +492,12 @@ const BeneficiariesMain: React.FC = ({
   useEffect(() => {
     if (loggedUser?.online_id !== undefined) {
       /** the user logged at least one time***/
-      getUserBeneficiaries(loggedUser?.online_id);
+      getUserBeneficiaries(loggedUser?.online_id).then(() =>
+        setLoadingRequest(true)
+      );
     } else {
       /** is first time the user logs, is using API* */
-      getUserBeneficiaries(loggedUser?.id);
+      getUserBeneficiaries(loggedUser?.id).then(() => setLoadingRequest(true));
     }
   }, [loggedUser, refreshData, inputRef]);
 
@@ -758,6 +784,7 @@ const BeneficiariesMain: React.FC = ({
   return (
     <>
       <View style={styles.container}>
+        <SpinnerModal open={isLoadingRequest} title={title} message={message} />
         <View style={styles.heading}>
           {loading ? (
             <Spinner
@@ -774,13 +801,14 @@ const BeneficiariesMain: React.FC = ({
           >
             <Input
               ref={inputRef}
-              w={{ base: "100%", md: "25%" }}
+              w="100%" // Set the width to 100% on all screen sizes
+              mx={{ base: "2", md: "0" }} // Add some horizontal margin on smaller screens, none on larger screens
               onChangeText={handleChange}
               InputLeftElement={
                 <Icon
                   as={MaterialIcons}
                   name="search"
-                  size={5}
+                  size={{ base: 5, md: 7 }} // Adjust the icon size for different screen sizes
                   ml="2"
                   color="muted.700"
                 />
@@ -1037,14 +1065,9 @@ const BeneficiariesMain: React.FC = ({
 };
 
 const enhance = withObservables([], () => ({
-  beneficiaries: database.collections.get("beneficiaries").query().observe(),
-  localities: database.collections.get("localities").query().observe(),
-  profiles: database.collections.get("profiles").query().observe(),
   beneficiaries_interventions: database.collections
     .get("beneficiaries_interventions")
-    .query(Q.where("status", 1))
-    .observe(),
-  subServices: database.collections.get("sub_services").query().observe(),
-  us: database.collections.get("us").query().observe(),
+    .query(Q.where("status", 1)),
+  subServices: database.collections.get("sub_services").query(),
 }));
-export default enhance(BeneficiariesMain);
+export default memo(enhance(BeneficiariesMain));

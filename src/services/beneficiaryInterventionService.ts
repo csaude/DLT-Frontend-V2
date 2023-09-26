@@ -8,15 +8,13 @@ export const beneficiariesInterventionsFetchCount = async () => {
     .get("beneficiaries")
     .query()
     .fetch();
-  const beneficiariesIds = beneficiaries.map((item) => item?.online_id);
+  const beneficiariesIds = beneficiaries.map((item) => item?.["online_id"]);
 
   await Promise.all(
     beneficiariesIds.map(async (beneficiary_id) => {
       const count = await database.collections
         .get("beneficiaries_interventions")
-        .query(Q.where("beneficiary_id", beneficiary_id),
-               Q.where("status", 1)
-        )
+        .query(Q.where("beneficiary_id", beneficiary_id), Q.where("status", 1))
         .fetchCount();
 
       const beneficiaryCount: InterventionCount = {

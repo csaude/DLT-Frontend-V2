@@ -11,11 +11,9 @@ import {
   Radio,
 } from "antd";
 import { useEffect, useState } from "react";
-import { allPartners, allPartnersByDistricts } from "@app/utils/partners";
+import { allPartnersByDistricts } from "@app/utils/partners";
 import { ExclamationCircleFilled } from "@ant-design/icons";
-import { allProfiles } from "@app/utils/profiles";
 import {
-  allProvinces,
   queryDistrictsByProvinces,
   queryLocalitiesByDistricts,
   queryUsByLocalities,
@@ -31,6 +29,7 @@ import {
   SUPERVISOR,
 } from "@app/utils/contants";
 import PropTypes from "prop-types";
+import { useSelector } from "react-redux";
 
 const { Option } = Select;
 const { confirm } = Modal;
@@ -64,25 +63,29 @@ const UsersForm = ({
 
   const RequiredFieldMessage = "Obrigatório!";
 
+  const profilesSelector = useSelector(
+    (state: any) => state?.profile.loadedProfiles
+  );
+  const partnersSelector = useSelector(
+    (state: any) => state?.partner.loadedPartners
+  );
+  const provincesSelector = useSelector(
+    (state: any) => state?.province.loadedProvinces
+  );
+
   useEffect(() => {
-    const fetchData = async () => {
-      const dataPartners = await allPartners();
-      const dataProfiles = await allProfiles();
-      const dataProvinces = await allProvinces();
+    setPartners(partnersSelector);
+    setAllPartners(partnersSelector);
+    setProfiles(profilesSelector);
+    setProvinces(provincesSelector);
 
-      setPartners(dataPartners);
-      setAllPartners(dataPartners);
-      setProfiles(dataProfiles);
-      setProvinces(dataProvinces);
-
-      if (user) {
-        onChangeProfile(user.profiles.id);
-      } else {
-        setDistricts(undefined);
-        setLocalities(undefined);
-        setUs(undefined);
-      }
-    };
+    if (user) {
+      onChangeProfile(user.profiles.id);
+    } else {
+      setDistricts(undefined);
+      setLocalities(undefined);
+      setUs(undefined);
+    }
 
     const fetchDistricts = async () => {
       if (user && user.provinces.length > 0) {
@@ -118,7 +121,6 @@ const UsersForm = ({
       }
     };
 
-    fetchData().catch((error) => console.log(error));
     fetchDistricts().catch((error) => console.log(error));
     fetchLocalities().catch((error) => console.log(error));
     fetchUs().catch((error) => console.log(error));
@@ -309,7 +311,7 @@ const UsersForm = ({
       centered
       destroyOnClose
       title="Dados de Registo do Utilizador"
-      open={modalVisible}
+      visible={modalVisible}
       onCancel={() => showCloseConfirm()}
       maskClosable={false}
       footer={[
@@ -553,7 +555,7 @@ const UsersForm = ({
             <Form.Item
               name="us"
               label="Locais"
-              initialValue={user?.us.map((item) => {
+              initialValue={user?.us?.map((item) => {
                 return item.id.toString();
               })}
             >

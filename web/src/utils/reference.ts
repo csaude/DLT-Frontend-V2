@@ -5,7 +5,13 @@ interface ReferenceFilter {
   referenceNote: string;
   statusRef: string;
 }
-
+export interface BulkReferenceCancel {
+  ids: any[];
+  status: string;
+  cancelReason: string;
+  otherReason: string;
+  updatedBy?: string;
+}
 export interface Reference {
   id?: string;
   beneficiaries: {
@@ -59,6 +65,11 @@ export async function edit(payload: any) {
   return res;
 }
 
+export async function bulkCancel(payload: BulkReferenceCancel) {
+  const res = await update("/api/references/bulkCancel", payload);
+  return res;
+}
+
 export async function queryByCreated(id: any) {
   const res = await select("/api/references/user/".concat(id));
   return res;
@@ -78,15 +89,75 @@ export async function pagedQueryByUser(
   searchDistrict?: number
 ) {
   const res = await select(
-    `/api/references/byUser/${id}?pageIndex=${pageIndex}&pageSize=${pageSize}&searchNui=${searchNui}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`
+    `/api/references/byUser/${id}?pageIndex=${pageIndex}&pageSize=${pageSize}&searchNui=${undefinedToEmpty(
+      searchNui
+    )}&searchUserCreator=${undefinedToEmpty(
+      searchUserCreator
+    )}&searchDistrict=${undefinedToEmpty(searchDistrict)}`
   );
 
   return res;
 }
 
-export async function queryCount(id: any) {
+function dateTotimestamp(value: any) {
+  const temp = (new Date(value).getTime() / 1000).toString();
+  const res = temp.slice(0, 10);
+
+  return res;
+}
+
+export async function pagedQueryPendingByUser(
+  id?: any,
+  pageIndex?: any,
+  pageSize?: any,
+  searchStartDate?: any,
+  searchEndDate?: any
+) {
+  if (searchStartDate === undefined || searchEndDate === undefined) {
+    searchStartDate = 1483252734; // 01 de Janeiro de 2017 -- Para poder pegar todos dados desde inicio do uso do sistema
+    searchEndDate = dateTotimestamp(new Date());
+  } else {
+    searchStartDate = dateTotimestamp(searchStartDate);
+    searchEndDate = dateTotimestamp(searchEndDate);
+  }
+
   const res = await select(
-    "/api/references/byUser/".concat(id).concat("/count")
+    `/api/references/pendingByUser/${id}?pageIndex=${pageIndex}&pageSize=${pageSize}&searchStartDate=${searchStartDate}&searchEndDate=${searchEndDate}`
+  );
+
+  return res;
+}
+
+export async function queryCountByFilters(
+  id?: any,
+  searchNui?: any,
+  searchUserCreator?: number,
+  searchDistrict?: number
+) {
+  const res = await select(
+    `/api/references/byUser/${id}/countByFilters?searchNui=${searchNui}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`
   );
   return res;
+}
+
+export async function queryCountByPendingFilters(
+  id?: any,
+  searchStartDate?: any,
+  searchEndDate?: any
+) {
+  if (searchStartDate === undefined || searchEndDate === undefined) {
+    searchStartDate = 1483252734;
+    searchEndDate = dateTotimestamp(new Date());
+  } else {
+    searchStartDate = dateTotimestamp(searchStartDate);
+    searchEndDate = dateTotimestamp(searchEndDate);
+  }
+  const res = await select(
+    `/api/references/byPeddingUser/${id}/countByFilters?searchStartDate=${searchStartDate}&searchEndDate=${searchEndDate}`
+  );
+  return res;
+}
+
+function undefinedToEmpty(value: any) {
+  return value == undefined ? "" : value;
 }

@@ -30,6 +30,7 @@ const { Option } = Select;
 const { Title } = Typography;
 
 const ReportAgyw = () => {
+  const [loggedUser, setLogguedUser] = useState<any>(undefined);
   const [provinces, setProvinces] = useState<any[]>([]);
   const [selectedProvinces, setSelectedProvinces] = useState<any[]>([]);
   const [districts, setDistricts] = useState<any>(undefined);
@@ -53,7 +54,7 @@ const ReportAgyw = () => {
       } else {
         provinces = await queryAll();
       }
-
+      setLogguedUser(loggedUser);
       setProvinces(provinces);
     };
 
@@ -66,9 +67,16 @@ const ReportAgyw = () => {
         values.includes(item.id.toString())
       );
       setSelectedProvinces(provs);
-      const dataDistricts = await queryDistrictsByProvinces({
-        provinces: Array.isArray(values) ? values : [values],
-      });
+      let dataDistricts;
+      if (loggedUser.districts.length > 0) {
+        dataDistricts = loggedUser.districts.filter((d) =>
+          values.includes(d.province.id.toString())
+        );
+      } else {
+        dataDistricts = await queryDistrictsByProvinces({
+          provinces: Array.isArray(values) ? values : [values],
+        });
+      }
       setDistricts(dataDistricts);
     } else {
       setDistricts(undefined);
@@ -235,15 +243,19 @@ const ReportAgyw = () => {
                     </Space>
                   </Form.Item>
 
-                  <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                    <Button
-                      type="primary"
-                      htmlType="submit"
-                      onClick={handleFetchData}
-                    >
-                      Preview
-                    </Button>
-                    <Button onClick={handleGenerateXLSXReport}>Download</Button>
+                  <Form.Item wrapperCol={{ offset: 12, span: 16 }}>
+                    <Space>
+                      <Button
+                        type="primary"
+                        htmlType="submit"
+                        onClick={handleFetchData}
+                      >
+                        Preview
+                      </Button>
+                      <Button type="default" onClick={handleGenerateXLSXReport}>
+                        Download
+                      </Button>
+                    </Space>
                   </Form.Item>
                 </Col>
               </Row>

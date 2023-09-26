@@ -21,6 +21,7 @@ import UsersForm from "@pages/users/Form";
 import UserView from "@pages/users/View";
 import BeneficiariesList from "@pages/beneficiaries";
 import ReferenceList from "@pages/reference/Index";
+import BulkReference from "./pages/reference/BulkReference";
 import ProvinceList from "@pages/province/index";
 import DistrictList from "@pages/district";
 import LocalityList from "./pages/locality";
@@ -35,6 +36,7 @@ import OrganizationList from "./pages/organization";
 import ReportAgyw from "./pages/report/agyw/ReportAgyw";
 import ReportPreview from "./pages/report/agyw/ReportPreview";
 import ReportView from "./pages/report/agyw/ReportView";
+import AppInfo from "./pages/appInfo";
 
 const App = () => {
   const windowSize = useWindowSize();
@@ -95,7 +97,7 @@ const App = () => {
     const timer = setTimeout(
       () => {
         localStorage.clear();
-        window.location.href = "/login";
+        window.location.reload();
       },
       // 10000 // so para testes
       userRole === "ADMIN" ? 86400000 : 1800000 //
@@ -134,6 +136,7 @@ const App = () => {
             <Route path="/beneficiariesList" element={<BeneficiariesList />} />
             {/* //Rota de Referencias */}
             <Route path="/referenceList" element={<ReferenceList />} />
+            <Route path="/bulkReference" element={<BulkReference />} />
             {/* // Rota para Utilizadores */}
             <Route path="/usersList" element={<Users />} />
             <Route path="/usersForm" element={<UsersForm />} />
@@ -150,6 +153,8 @@ const App = () => {
             <Route path="/reportAgyw" element={<ReportAgyw />} />
             <Route path="/previewAgyw" element={<ReportPreview />} />
             <Route path="/viewAgyw" element={<ReportView />} />
+            {/* App Inforation */}
+            <Route path="/appInfo" element={<AppInfo />} />
           </Route>
         </Route>
       </Routes>

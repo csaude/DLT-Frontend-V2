@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { memo, useContext } from "react";
 import { View, KeyboardAvoidingView, ScrollView, Text } from "react-native";
 import { Box, Heading, Divider, Avatar, Icon, Flex } from "native-base";
 import { Ionicons } from "@native-base/icons";
@@ -6,6 +6,7 @@ import { database } from "../../database";
 import styles from "./styles";
 import { Context } from "../../routes/DrawerNavigator";
 import withObservables from "@nozbe/with-observables";
+import { useSelector } from "react-redux";
 
 const UserProfile: React.FC = ({
   profiles,
@@ -28,9 +29,7 @@ const UserProfile: React.FC = ({
     return e?._raw.online_id == user?.profile_id;
   })[0]?._raw;
 
-  const uss = us.filter((e) => {
-    return (e._raw.online_id = user?.us_ids);
-  })[0]?._raw;
+  const usState = useSelector((state:any) => state?.auth.userDetails.uss)
 
   return (
     <KeyboardAvoidingView style={styles.background}>
@@ -109,7 +108,7 @@ const UserProfile: React.FC = ({
               </Text>
               <Text>
                 {" "}
-                <Text style={styles.txtLabel}>Alocação: </Text> {uss?.name}{" "}
+                <Text style={styles.txtLabel}>Alocação: </Text> {usState?.map((u) => u.name + ", ")} 
               </Text>
             </Flex>
             <Divider />
@@ -135,4 +134,4 @@ const enhance = withObservables([], () => ({
   us: database.collections.get("us").query(),
 }));
 
-export default enhance(UserProfile);
+export default memo(enhance(UserProfile));

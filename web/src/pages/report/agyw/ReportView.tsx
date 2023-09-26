@@ -540,9 +540,9 @@ const ReportView: React.FC = () => {
             intervention.beneficiary?.locality?.district?.province.name,
             intervention.beneficiary?.locality?.district?.name,
             intervention.beneficiary?.neighborhood?.name,
-            intervention.beneficiary?.entryPoint === 1
+            intervention.beneficiary?.entryPoint === "1"
               ? "US"
-              : intervention.beneficiary?.entryPoint === 2
+              : intervention.beneficiary?.entryPoint === "2"
               ? "CM"
               : "ES",
             intervention.beneficiary?.partners?.name,
@@ -562,7 +562,7 @@ const ReportView: React.FC = () => {
             getAgeRangeByDate(intervention.beneficiary.dateOfBirth),
             moment(intervention.beneficiary.dateOfBirth).format("YYYY-MM-DD"),
             getVulnerabilitiesCounter(intervention.beneficiary),
-            intervention.subServices?.service?.serviceType === 1
+            intervention.subServices?.service?.serviceType === "1"
               ? "Serviços Clinicos"
               : "Serviços Comunitários",
             intervention.subServices?.service?.name,
@@ -571,9 +571,9 @@ const ReportView: React.FC = () => {
               intervention.subServices?.service?.id,
               intervention.beneficiary.dateOfBirth
             ),
-            intervention.entryPoint === 1
+            intervention.entryPoint === "1"
               ? "US"
-              : intervention.entryPoint === 2
+              : intervention.entryPoint === "2"
               ? "CM"
               : "ES",
             intervention.us?.name,

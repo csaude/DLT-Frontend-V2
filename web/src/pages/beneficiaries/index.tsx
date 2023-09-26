@@ -1,8 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { edit, pagedQueryByFilters, query } from "../../utils/beneficiary";
+import {
+  edit,
+  pagedQueryByFilters,
+  query,
+  queryCountByFilters,
+} from "../../utils/beneficiary";
 import {
   allUsersByProfilesAndUser,
+  allUsesByDistricts,
+  allUsesByProvinces,
   query as queryUser,
 } from "../../utils/users";
 import {
@@ -20,7 +27,9 @@ import {
   Col,
   Select,
   Modal,
+  Tag,
 } from "antd";
+import { queryDistrictsByProvinces } from "@app/utils/locality";
 import ptPT from "antd/lib/locale-provider/pt_PT";
 import Highlighter from "react-highlight-words";
 import "antd/dist/antd.css";
@@ -40,7 +49,6 @@ import FormBeneficiary from "./components/FormBeneficiary";
 import FormBeneficiaryPartner from "./components/FormBeneficiaryPartner";
 import { add as addRef, Reference } from "../../utils/reference";
 import FormReference from "./components/FormReference";
-import { allDistrict } from "@app/utils/district";
 import { Title } from "@app/components";
 import {
   ADMIN,
@@ -54,6 +62,11 @@ import { useDispatch, useSelector } from "react-redux";
 import LoadingModal from "@app/components/modal/LoadingModal";
 import { loadReferers } from "@app/store/actions/users";
 import { FilterObject } from "@app/models/FilterObject";
+import { allDistrict, allDistrictsByIds } from "@app/utils/district";
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
+import { toast } from "react-toastify";
+import { getAgeByDate } from "@app/utils/ageRange";
 
 const { Text } = Typography;
 const { confirm } = Modal;
@@ -66,6 +79,8 @@ const BeneficiariesList: React.FC = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const [users, setUsers] = useState<UserModel[]>([]);
+  const [listUsers, setListUsers] = useState<any[]>([]);
+  const [visibleDistrict, setVisibleDistrict] = useState<any>(true);
   const [updaters, setUpdaters] = useState<UserModel[]>([]);
   const [user, setUser] = React.useState<any>();
   const [beneficiaries, setBeneficiaries] = useState<any[]>([]);
@@ -89,13 +104,17 @@ const BeneficiariesList: React.FC = () => {
 
   const interventionSelector = useSelector((state: any) => state?.intervention);
   const userSelector = useSelector((state: any) => state?.user);
+  const beneficiariesTotal = useSelector(
+    (state: any) => state.beneficiary.total
+  );
 
-  const convertedUserData: FilterObject[] = userSelector?.users?.map(
+  const convertedUserData: FilterObject[] = listUsers?.map(
     ([value, label]) => ({
       value: value.toString(),
       label: label.charAt(0).toUpperCase() + label.slice(1),
     })
   );
+
   const convertedDistrictsData: FilterObject[] = districts?.map((item) => ({
     value: item.id,
     label: item.name,
@@ -110,7 +129,9 @@ const BeneficiariesList: React.FC = () => {
   const [nui, setNui] = useState<any>();
 
   let data;
+  let countByFilter;
   const [dataLoading, setDataLoading] = useState(false);
+  const [searchCounter, setSearchCounter] = useState<any>();
 
   const userId = localStorage.getItem("user");
   const dispatch = useDispatch();
@@ -123,7 +144,10 @@ const BeneficiariesList: React.FC = () => {
         }
       }
     );
-    return currentInterventin;
+    const filteredInterventions = currentInterventin.filter(
+      (intervention) => intervention
+    );
+    return filteredInterventions[0];
   };
 
   const getUsernames = (userId) => {
@@ -132,7 +156,8 @@ const BeneficiariesList: React.FC = () => {
         return item[1];
       }
     });
-    return currentNames;
+    const filteredNames = currentNames.filter((name) => name);
+    return filteredNames[0];
   };
 
   let searchInput;
@@ -140,7 +165,6 @@ const BeneficiariesList: React.FC = () => {
     const fetchData = async () => {
       setDataLoading(true);
       const user = await queryUser(localStorage.user);
-
       data = await pagedQueryByFilters(
         getUserParams(user),
         currentPageIndex,
@@ -149,6 +173,14 @@ const BeneficiariesList: React.FC = () => {
         searchUserCreator,
         searchDistrict
       );
+
+      countByFilter = await queryCountByFilters(
+        getUserParams(user),
+        searchNui,
+        searchUserCreator,
+        searchDistrict
+      );
+      setSearchCounter(countByFilter);
 
       const sortedBeneficiaries = data.sort((benf1, benf2) =>
         moment(benf2.dateCreated)
@@ -162,10 +194,55 @@ const BeneficiariesList: React.FC = () => {
       setUser(user);
       setBeneficiaries(sortedBeneficiaries);
 
-      const districts = await allDistrict();
-      const sortedDistricts = districts.sort((dist1, dist2) =>
-        dist1.name.localeCompare(dist2.name)
-      );
+      if (user && user?.districts.length > 0) {
+        user?.districts?.length === 1
+          ? setVisibleDistrict(false)
+          : setVisibleDistrict(true);
+        const dIds = user?.districts.map((item) => {
+          return item.id + "";
+        });
+        const dataDistricts = await allDistrictsByIds({ districts: dIds });
+
+        const sortedDistricts = dataDistricts.sort((dist1, dist2) =>
+          dist1.name.localeCompare(dist2.name)
+        );
+
+        setDistricts(sortedDistricts);
+
+        const dataUsers = await allUsesByDistricts({ districts: dIds });
+        const sortedUsers = dataUsers.sort((user1, user2) =>
+          user1[1].localeCompare(user2[1])
+        );
+        setListUsers(sortedUsers);
+      } else if (user && user.provinces.length > 0) {
+        const pIds = user?.provinces.map((item) => {
+          return item.id + "";
+        });
+
+        const dataUsers = await allUsesByProvinces({ provinces: pIds });
+        const dataDistrict = await queryDistrictsByProvinces({
+          provinces: pIds,
+        });
+
+        setDistricts(dataDistrict);
+        setListUsers(dataUsers);
+      } else {
+        const allUser = userSelector?.users;
+
+        const sortedUsers = allUser.sort((user1, user2) =>
+          user1[1].localeCompare(user2[1])
+        );
+        setListUsers(sortedUsers);
+
+        const dataDistricts = await allDistrict();
+
+        const sortedDistricts = dataDistricts.sort((dist1, dist2) =>
+          dist1.name.localeCompare(dist2.name)
+        );
+
+        setDistricts(sortedDistricts);
+      }
+
       const partners = data
         .map((beneficiary) => beneficiary?.partners)
         .filter(
@@ -183,11 +260,13 @@ const BeneficiariesList: React.FC = () => {
           (value, index, self) => self.findIndex((v) => v === value) === index
         );
 
-      const users = await queryUser();
-      const creators = users.filter((u) => creatorsIds.includes(u.id));
-      const updaters = users.filter((u) => updatersIds.includes(u.id));
+      const creators = userSelector?.loadedUsers.filter((u) =>
+        creatorsIds.includes(u.id)
+      );
+      const updaters = userSelector?.loadedUsers.filter((u) =>
+        updatersIds.includes(u.id)
+      );
 
-      setDistricts(sortedDistricts);
       setPartners(partners);
       setUsers(creators);
       setUpdaters(updaters);
@@ -449,13 +528,18 @@ const BeneficiariesList: React.FC = () => {
     ),
     onFilter: (value, record) =>
       record[dataIndex]
-        ? (dataIndex == "name"
-            ? record[dataIndex] + " " + record["surname"]
-            : record[dataIndex]
-          )
-            .toString()
+        ? value
             .toLowerCase()
-            .includes(value.toLowerCase())
+            .split(" ")
+            .every((item) =>
+              (dataIndex == "name"
+                ? record[dataIndex] + " " + record["surname"]
+                : record[dataIndex]
+              )
+                .toString()
+                .toLowerCase()
+                .includes(item)
+            )
         : "",
     onFilterDropdownVisibleChange: (visible) => {
       if (visible) {
@@ -722,6 +806,120 @@ const BeneficiariesList: React.FC = () => {
     }
   }
 
+  const ClickableTag = () => {
+    return (
+      <a onClick={handleExportarXLS}>
+        <Tag color={"geekblue"}>{"Exportar XLS"}</Tag>
+      </a>
+    );
+  };
+
+  const handleExportarXLS = async () => {
+    console.log("On Export XLS");
+
+    try {
+      setDataLoading(true);
+      const pageElements = 1000;
+
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet("Lista_Beneficiarios_");
+
+      const headers = [
+        "#",
+        "Código do Beneficiário",
+        "Sexo",
+        "PE",
+        "Distrito",
+        "Idade",
+        "#Interv",
+        "Org",
+        "Criado Por",
+        "Actualizado Por",
+        "Inscrito Em",
+        "Criado Em",
+        "Actualizado Em",
+      ];
+
+      const headerRow = worksheet.getRow(1);
+      headers.forEach((header, index) => {
+        const cell = headerRow.getCell(index + 1);
+        cell.alignment = { vertical: "middle", horizontal: "center" };
+        cell.value = header;
+        cell.font = { bold: true };
+      });
+
+      const user = await queryUser(localStorage.user);
+
+      const lastPage = Math.ceil(beneficiariesTotal / pageElements);
+
+      let sequence = 1;
+
+      for (let i = 0; i < lastPage; i++) {
+        data = await pagedQueryByFilters(
+          getUserParams(user),
+          i,
+          pageElements,
+          searchNui,
+          searchUserCreator,
+          searchDistrict
+        );
+
+        const sortedBeneficiaries = data.sort((benf1, benf2) =>
+          moment(benf2.dateCreated)
+            .format("YYYY-MM-DD HH:mm:ss")
+            .localeCompare(
+              moment(benf1.dateCreated).format("YYYY-MM-DD HH:mm:ss")
+            )
+        );
+
+        if (sortedBeneficiaries.length === 0) {
+          break;
+        }
+
+        sortedBeneficiaries.forEach((beneficiary) => {
+          const values = [
+            sequence,
+            beneficiary.district.code + "/" + beneficiary?.nui,
+            beneficiary?.gender === "1" ? "M" : "F",
+            beneficiary?.entryPoint === "1"
+              ? "US"
+              : beneficiary?.entryPoint === "2"
+              ? "CM"
+              : "ES",
+            beneficiary?.district?.name,
+            getAgeByDate(beneficiary.dateOfBirth) + " anos",
+            getBeneficiaryIntervention(beneficiary.id),
+            beneficiary?.partners?.name,
+            getUsernames(beneficiary.createdBy),
+            getUsernames(beneficiary.updatedBy),
+            moment(beneficiary.enrollmentDate).format("YYYY-MM-DD"),
+            moment(beneficiary.dateCreated).format("YYYY-MM-DD"),
+            beneficiary.dateUpdated !== null
+              ? moment(beneficiary.dateUpdated).format("YYYY-MM-DD")
+              : "",
+          ];
+          sequence++;
+          worksheet.addRow(values);
+        });
+      }
+
+      const created = moment().format("YYYYMMDD_hhmmss");
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      saveAs(blob, `Lista_Beneficiarios_${created}.xlsx`);
+
+      setDataLoading(false);
+    } catch (error) {
+      // Handle any errors that occur during report generation
+      console.error("Error generating XLSX report:", error);
+      setDataLoading(false);
+      // Display an error message using your preferred method (e.g., toast.error)
+      toast.error("An error occurred during report generation.");
+    }
+  };
+
   return (
     <>
       <Title />
@@ -789,7 +987,7 @@ const BeneficiariesList: React.FC = () => {
             />
           </Col>
 
-          <Col className="gutter-row">
+          <Col className="gutter-row" hidden={visibleDistrict === false}>
             <Select
               showSearch
               allowClear
@@ -820,6 +1018,14 @@ const BeneficiariesList: React.FC = () => {
             rowKey="id"
             sortDirections={["descend", "ascend"]}
             columns={columns}
+            title={(beneficiaries) => (
+              <span style={{ display: "flex", justifyContent: "flex-end" }}>
+                <Tag color={"geekblue"}>
+                  {beneficiaries.length + "/" + searchCounter}
+                </Tag>
+                <ClickableTag />
+              </span>
+            )}
             expandable={{
               expandedRowRender: (record) => (
                 <div
@@ -850,10 +1056,10 @@ const BeneficiariesList: React.FC = () => {
               size="small"
               style={{ width: 90 }}
             >
-              {"<<"} Anterior
+              {"<<"} {pageSize}
             </Button>
             <Button onClick={loadNextPage} size="small" style={{ width: 90 }}>
-              Próxima {">>"}
+              {pageSize} {">>"}
             </Button>
           </Space>
         </ConfigProvider>

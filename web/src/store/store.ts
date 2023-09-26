@@ -9,6 +9,10 @@ import interventionReducer from "./reducers/interventions";
 import userReducer from "./reducers/user";
 import { reportSlice } from "./reducers/report";
 import { referenceInterventionSlice } from "./reducers/referenceIntervention";
+import profileReducer from "./reducers/profile";
+import partnerReducer from "./reducers/partner";
+import provinceReducer from "./reducers/province";
+import districtReducer from "./reducers/district";
 
 const store = configureStore({
   reducer: {
@@ -18,6 +22,10 @@ const store = configureStore({
     reference: referenceReducer,
     intervention: interventionReducer,
     user: userReducer,
+    profile: profileReducer,
+    partner: partnerReducer,
+    province: provinceReducer,
+    district: districtReducer,
     report: reportSlice.reducer,
     referenceIntervention: referenceInterventionSlice.reducer,
   },

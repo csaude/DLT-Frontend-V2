@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Row, Col, Input, Form, DatePicker, Select, Radio } from "antd";
 import "./index.css";
 import { allPartnersByTypeDistrict } from "@app/utils/partners";
-import { allUsesByUs, queryByUserId } from "@app/utils/users";
+import { allUsersByUs, queryByUserId } from "@app/utils/users";
 import { allUsByType } from "@app/utils/uSanitaria";
 import { queryByCreated } from "@app/utils/reference";
 import { COUNSELOR, MENTOR, NURSE, SUPERVISOR } from "@app/utils/contants";
@@ -36,7 +36,6 @@ const StepReference = ({
   );
   const selectedReference = beneficiary;
   const userId = localStorage.getItem("user");
-
   const referers = useSelector((state: any) => state.user.referers);
   const sortedReferes = referers.sort((u1, u2) =>
     (u1.name + u1.surname).localeCompare(u2.name + u2.surname)
@@ -54,9 +53,9 @@ const StepReference = ({
         form.setFieldsValue({
           referenceNote:
             "REFDR" +
-            String(userId).padStart(3, "0") +
-            String(beneficiary.locality.district.province.id) +
-            String((await queryByCreated(userId))?.length + 1).padStart(3, "0"),
+            String(userId).padStart(4, "0") +
+            String(beneficiary.district.province.id) +
+            String((await queryByCreated(userId)) + 1).padStart(4, "0"),
         });
         form.setFieldsValue({
           referredBy: [SUPERVISOR, MENTOR, NURSE, COUNSELOR].includes(
@@ -144,9 +143,9 @@ const StepReference = ({
     const type = e?.target?.value === undefined ? e : e?.target?.value;
     const payload = {
       typeId: type,
-      localityId:
+      localitiesIds:
         reference !== undefined
-          ? reference.notifyTo?.localities[0]?.id
+          ? reference.notifyTo?.localities.map((i) => i.id)
           : beneficiary?.locality?.id,
     };
     const data = await allUsByType(payload);
@@ -186,7 +185,7 @@ const StepReference = ({
   };
 
   const onChangeUs = async (value: any) => {
-    const data = await allUsesByUs(value);
+    const data = await allUsersByUs(value);
     const sortedUsers = data.sort((u1, u2) =>
       (u1.name + u1.surname).localeCompare(u2.name + u2.surname)
     );

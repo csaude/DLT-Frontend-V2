@@ -267,7 +267,7 @@ const BeneficiaryForm = ({
         centered
         destroyOnClose
         title={" Registo de Beneficiária"}
-        open={modalVisible}
+        visible={modalVisible}
         onCancel={() => showCloseConfirm()}
         maskClosable={false}
         footer={

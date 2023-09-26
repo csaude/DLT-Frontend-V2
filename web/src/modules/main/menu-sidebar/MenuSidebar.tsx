@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { MenuItem } from "@components";
-import { queryCount as beneficiaryQueryCount } from "../../../utils/beneficiary";
-import { queryCount as referenceQueryCount } from "../../../utils/reference";
+import { queryCountByFilters as beneficiaryQueryCount } from "../../../utils/beneficiary";
+import { queryCountByFilters as referenceQueryCount } from "../../../utils/reference";
 import { query as queryUser } from "../../../utils/users";
 import { getUserParams } from "@app/models/Utils";
 import { getReferencesTotal } from "../../../store/actions/reference";
@@ -11,6 +11,10 @@ import { getBeneficiariesTotal } from "../../../store/actions/beneficiary";
 import styled from "styled-components";
 import { getInterventionsCount } from "@app/store/actions/interventions";
 import { getUsernames } from "@app/store/actions/users";
+import { getProfiles } from "@app/store/actions/profile";
+import { getPartners } from "@app/store/actions/partner";
+import { getProvinces } from "@app/store/actions/province";
+import { getDistricts } from "@app/store/actions/district";
 
 const StyledUserImage = styled.img`
   height: 4.6rem !important;
@@ -58,6 +62,13 @@ export const MENU: IMenuItem[] = [
       "CONSELHEIRA",
       "GESTOR",
     ],
+  },
+  {
+    name: "menusidebar.label.bulkCancellationReference",
+    path: "/bulkReference",
+    icon: "fas fa-sync",
+    level: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    roles: ["ADMIN", "M&E", "SUPERVISOR"],
   },
   {
     name: "menusidebar.label.configurations",
@@ -140,10 +151,22 @@ export const MENU: IMenuItem[] = [
       // },
     ],
   },
+  {
+    name: "menusidebar.label.appInfo",
+    path: "/appInfo",
+    icon: "fas fa-info-circle", // icon set: https://fontawesome.com/v5/search
+    level: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    roles: [
+      "ADMIN",
+      "M&E",
+      "SUPERVISOR",
+      "MENTORA",
+      "ENFERMEIRA",
+      "CONSELHEIRA",
+      "GESTOR",
+    ],
+  },
 ];
-
-
-
 
 const MenuSidebar = () => {
   const userlogged = useSelector((state: any) => state.auth.user);
@@ -153,14 +176,32 @@ const MenuSidebar = () => {
   const menuChildIndent = useSelector((state: any) => state.ui.menuChildIndent);
   const dispatch = useDispatch();
 
+  const [searchNui, setSearchNui] = useState<any>("");
+  const [searchDistrict, setSearchDistrict] = useState<any>("");
+  const [searchUserCreator, setSearchUserCreator] = useState<any>("");
+
   const getTotals = async () => {
     const user = await queryUser(localStorage.user);
-    const beneficiaryTotal = await beneficiaryQueryCount(getUserParams(user));
-    const referenceTotal = await referenceQueryCount(user.id);
+    const beneficiaryTotal = await beneficiaryQueryCount(
+      getUserParams(user),
+      searchNui,
+      searchUserCreator,
+      searchDistrict
+    );
+    const referenceTotal = await referenceQueryCount(
+      user.id,
+      searchNui,
+      searchUserCreator,
+      searchDistrict
+    );
     dispatch(getBeneficiariesTotal(beneficiaryTotal));
     dispatch(getReferencesTotal(referenceTotal));
     dispatch(getInterventionsCount());
     dispatch(getUsernames());
+    dispatch(getProfiles());
+    dispatch(getPartners());
+    dispatch(getProvinces());
+    dispatch(getDistricts());
   };
 
   useEffect(() => {

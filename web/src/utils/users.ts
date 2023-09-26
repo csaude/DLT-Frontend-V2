@@ -1,5 +1,5 @@
 import { create, select, update } from "./crud";
-
+import { stringify } from "qs";
 interface UsersFilter {
   name: string;
 }
@@ -44,8 +44,14 @@ export async function requestUpdatePassword(payload: UserParams) {
   return res;
 }
 
-export async function allUsesByUs(payload?: any) {
+export async function allUsersByUs(payload?: any) {
   const url = "/api/users/us/".concat(payload);
+  const res = await select(url);
+  return res;
+}
+
+export async function allUsesByLocalities(payload?: any) {
+  const url = "/api/users/locality/".concat(payload);
   const res = await select(url);
   return res;
 }
@@ -58,40 +64,82 @@ interface Filter {
 export async function allUsersByProfilesAndUser(payload?: Filter) {
   const url =
     "/api/users/byProfilesAndUser/" + payload?.profiles + "/" + payload?.userId;
-
   const res = await select(url);
   return res;
 }
 
 export async function userById(payload?: any) {
   const url = "/api/users/".concat(payload);
-
   const res = await select(url);
   return res;
 }
 
 export async function getUsernamesQuery() {
   const url = "/api/users/get-usernames";
+  const res = await select(url);
+  return res;
+}
+
+interface ProvinceFilter {
+  provinces: string[];
+}
+
+export async function allUsesByProvinces(payload?: ProvinceFilter) {
+  let url: string;
+
+  const provs = payload?.provinces.map((v) => {
+    return `provinces=${v}`;
+  });
+  const param = provs?.join("&");
+
+  if (param) {
+    url = "/api/users/provinces?".concat(param);
+  } else {
+    url = "/api/users/provinces";
+  }
 
   const res = await select(url);
   return res;
 }
 
-export async function requestUpdatePassword(payload: UserParams) {
-    const res = await update('/users/update-password', payload);
-    return res;
+interface DistrictFilter {
+  districts: string[];
 }
 
-export async function allUsesByUs(payload?: any){
-    let url: string;
-    url = '/api/users/us/'.concat(payload);
-    const res = await select(url);
-    return res;
+export async function allUsesByDistricts(payload?: DistrictFilter) {
+  let url: string;
+
+  const dests = payload?.districts.map((v) => {
+    return `districts=${v}`;
+  });
+  const param = dests?.join("&");
+
+  if (param) {
+    url = "/api/users/districts?".concat(param);
+  } else {
+    url = "/api/users/districts";
+  }
+
+  const res = await select(url);
+  return res;
 }
 
-export async function userById(payload?: any){
-    let url: string;
-    url = '/api/users/'.concat(payload);
-    const res = await select(url);
-    return res;
+export async function pagedQueryByFilters(
+  payload?: any,
+  pageIndex?: any,
+  pageSize?: any,
+  searchUsername?: any,
+  searchUserCreator?: number
+) {
+  let url: string;
+  if (payload.userId) {
+    url = `/api/users/paged?${stringify(
+      payload
+    )}&pageIndex=${pageIndex}&pageSize=${pageSize}&searchUsername=${searchUsername}&searchUserCreator=${searchUserCreator}`;
+  } else {
+    url = "/api/users/" + payload;
+  }
+
+  const res = await select(url);
+  return res;
 }

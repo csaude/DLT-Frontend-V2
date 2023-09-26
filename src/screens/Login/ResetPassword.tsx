@@ -25,6 +25,9 @@ import NetInfo from "@react-native-community/netinfo";
 import styles from "./style";
 import { MaterialIcons } from "@native-base/icons";
 import Spinner from "react-native-loading-spinner-overlay/lib";
+import { UPDATE_PASSWORD_URL } from "../../services/api";
+import { database } from "../../database";
+import { Q } from "@nozbe/watermelondb";
 
 interface LoginData {
   email?: string | undefined;
@@ -40,6 +43,8 @@ const ResetPassword: React.FC = () => {
   const [showPass, setShowPass] = React.useState(false);
 
   const toasty = useToast();
+
+  const users = database.collections.get("users");
 
   const showToast = useCallback((status, message, description) => {
     return toasty.show({
@@ -97,7 +102,7 @@ const ResetPassword: React.FC = () => {
   }, []);
 
   // Inicio Do Reset
-  const onSubmit = useCallback(async () => {
+  const onSubmit = useCallback(async (values: any) => {
     setLoading(true);
     try {
       if (isOffline) {
@@ -108,6 +113,38 @@ const ResetPassword: React.FC = () => {
           "É necessarrio uma conexão a internet!"
         );
       } else {
+        
+        const logguedUser: any = (
+          await users
+            .query(
+              Q.where(
+                "username",
+                Q.like(`%${Q.sanitizeLikeString(values.username.trim())}%`)
+              )
+            )
+            .fetch()
+        )[0];
+
+        if (logguedUser) {
+          await database.write(async () => {
+            await logguedUser.update((user: any) => {
+              user._raw.is_awaiting_sync = parseInt("1");
+            });
+          });
+        }
+          
+				await fetch(`${UPDATE_PASSWORD_URL}`, {
+					method: "PUT",
+					headers: {
+						Accept: "application/json",
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						username: values.username,
+						recoverPassword: values.password,
+					}),
+				});
+
         setLoading(false);
         showToast(
           "success",

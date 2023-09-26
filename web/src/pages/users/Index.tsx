@@ -9,18 +9,20 @@ import {
   Form,
   Input,
   ConfigProvider,
+  Row,
+  Col,
 } from "antd";
 import ptPT from "antd/lib/locale-provider/pt_PT";
-import { query } from "../../utils/users";
-import { allPartners } from "@app/utils/partners";
-import { allProfiles } from "@app/utils/profiles";
 import { UserModel, getEntryPoint } from "../../models/User";
 import { SearchOutlined, PlusOutlined, EditOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import UsersForm from "./components/UsersForm";
-import { add, edit } from "@app/utils/users";
+import { add, edit, queryByUserId } from "@app/utils/users";
 import { Title } from "@app/components";
 import LoadingModal from "@app/components/modal/LoadingModal";
+import { useSelector } from "react-redux";
+import { pagedQueryByFilters } from "@app/utils/users";
+import { getUserParams } from "@app/models/Utils";
 
 const UsersList: React.FC = () => {
   const [users, setUsers] = useState<UserModel[]>([]);
@@ -34,8 +36,30 @@ const UsersList: React.FC = () => {
   const [profiles, setProfiles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [currentPageIndex, setCurrentPageIndex] = useState(0);
+  const pageSize = 100;
+  const [searchUsername, setSearchNui] = useState<any>("");
+  const [searchDistrict, setSearchDistrict] = useState<any>("");
+  const [searchUserCreator, setSearchUserCreator] = useState<any>("");
+  const [district, setDistrict] = useState<any>();
+  const [userCreator, setUserCreator] = useState<any>();
+  const [username, setUsername] = useState<any>();
+  const [districts, setDistricts] = useState<any[]>([]);
+  const [creators, setCreators] = useState<any[]>([]);
+
+  const profileSelector = useSelector(
+    (state: any) => state?.profile.loadedProfiles
+  );
+  const partnerSelector = useSelector(
+    (state: any) => state?.partner.loadedPartners
+  );
+  const usersSelector = useSelector((state: any) => state?.user.loadedUsers);
+  const districtsSelector = useSelector(
+    (state: any) => state?.district.loadedDistricts
+  );
+
   useEffect(() => {
-    if (users.length > 0) {
+    if (users?.length > 0) {
       setLoading(false);
     }
   }, [users]);
@@ -43,17 +67,35 @@ const UsersList: React.FC = () => {
   let searchInput;
 
   useEffect(() => {
+    setPartners(partnerSelector?.partners);
+    setProfiles(profileSelector?.profiles);
     const fetchData = async () => {
-      const data = await query();
-      const partners = await allPartners();
-      const profiles = await allProfiles();
+      const user = await queryByUserId(localStorage.user);
+      const data = await pagedQueryByFilters(
+        getUserParams(user),
+        currentPageIndex,
+        pageSize,
+        searchUsername,
+        searchUserCreator
+      );
       setUsers(data);
-      setPartners(partners);
-      setProfiles(profiles);
     };
 
     fetchData().catch((error) => console.log(error));
-  }, []);
+
+    console.log(districtsSelector, "--districtsSelector--");
+    console.log(usersSelector, "--usersSelector--");
+
+    const sortedDistricts = districtsSelector?.sort((dist1, dist2) =>
+      dist1?.name.localeCompare(dist2.name)
+    );
+    const sortedCreators = usersSelector?.sort((dist1, dist2) =>
+      dist1?.username.localeCompare(dist2.username)
+    );
+
+    setDistricts(sortedDistricts);
+    setCreators(sortedCreators);
+  }, [currentPageIndex, searchUsername, searchUserCreator, searchDistrict]);
 
   const handleUsersModalVisible = (flag?: boolean) => {
     form.resetFields();
@@ -68,7 +110,7 @@ const UsersList: React.FC = () => {
   };
 
   const filterObjects = (data) => (formatter) =>
-    data.map((item) => ({
+    data?.map((item) => ({
       text: formatter(item),
       value: formatter(item),
     }));
@@ -120,13 +162,18 @@ const UsersList: React.FC = () => {
     ),
     onFilter: (value, record) =>
       record[dataIndex]
-        ? (dataIndex == "name"
-            ? record[dataIndex] + " " + record["surname"]
-            : record[dataIndex]
-          )
-            .toString()
+        ? value
             .toLowerCase()
-            .includes(value.toLowerCase())
+            .split(" ")
+            .every((item) =>
+              (dataIndex == "name"
+                ? record[dataIndex] + " " + record["surname"]
+                : record[dataIndex]
+              )
+                .toString()
+                .toLowerCase()
+                .includes(item)
+            )
         : "",
     onFilterDropdownVisibleChange: (visible) => {
       if (visible) {
@@ -385,6 +432,28 @@ const UsersList: React.FC = () => {
     },
   ];
 
+  const handleGlobalSearch = async () => {
+    if (username !== undefined) {
+      setSearchNui(username);
+    }
+    if (userCreator !== undefined) {
+      setSearchUserCreator(userCreator);
+    }
+    if (district !== undefined) {
+      setSearchDistrict(district);
+    }
+  };
+
+  const loadPreviousPage = () => {
+    if (currentPageIndex > 0) {
+      setCurrentPageIndex(currentPageIndex - 1);
+    }
+  };
+
+  const loadNextPage = () => {
+    setCurrentPageIndex(currentPageIndex + 1);
+  };
+
   return (
     <>
       <Title />
@@ -404,8 +473,44 @@ const UsersList: React.FC = () => {
           </Space>
         }
       >
+        <Row gutter={16}>
+          <Col className="gutter-row">
+            <Form.Item name="username" label="" initialValue={username}>
+              <Input
+                placeholder="Pesquisar por Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+            </Form.Item>
+          </Col>
+
+          <Col className="gutter-row" span={12}>
+            <Button type="primary" onClick={handleGlobalSearch}>
+              Pesquisar
+            </Button>
+          </Col>
+        </Row>
         <ConfigProvider locale={ptPT}>
-          <Table rowKey="id" columns={columns} dataSource={users} bordered />
+          <Table
+            rowKey="id"
+            columns={columns}
+            dataSource={users}
+            bordered
+            scroll={{ x: 1500 }}
+          />
+          <Space>
+            <Button
+              disabled={currentPageIndex === 0}
+              onClick={loadPreviousPage}
+              size="small"
+              style={{ width: 90 }}
+            >
+              {"<<"} {pageSize}
+            </Button>
+            <Button onClick={loadNextPage} size="small" style={{ width: 90 }}>
+              {pageSize} {">>"}
+            </Button>
+          </Space>
         </ConfigProvider>
 
         {<LoadingModal modalVisible={loading} />}

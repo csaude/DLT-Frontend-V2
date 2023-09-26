@@ -3,9 +3,16 @@ import {
   edit as editRef,
   Reference,
   pagedQueryByUser,
+  queryCountByFilters,
 } from "@app/utils/reference";
-import { allDistrict } from "@app/utils/district";
-import { allUsersByProfilesAndUser, query as query1 } from "@app/utils/users";
+import { allDistrict, allDistrictsByIds } from "@app/utils/district";
+import {
+  allUsersByProfilesAndUser,
+  allUsesByDistricts,
+  allUsesByProvinces,
+  query as query1,
+} from "@app/utils/users";
+import { queryDistrictsByProvinces } from "@app/utils/locality";
 import { query as beneficiaryQuery } from "@app/utils/beneficiary";
 import {
   Card,
@@ -20,6 +27,7 @@ import {
   Row,
   Col,
   Select,
+  Tag,
 } from "antd";
 import ptPT from "antd/lib/locale-provider/pt_PT";
 import "antd/dist/antd.css";
@@ -42,6 +50,9 @@ import LoadingModal from "@app/components/modal/LoadingModal";
 import { useDispatch, useSelector } from "react-redux";
 import { loadReferers } from "@app/store/actions/users";
 import { FilterObject } from "@app/models/FilterObject";
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
+import { toast } from "react-toastify";
 
 const { Text } = Typography;
 
@@ -60,13 +71,17 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
   const [referredPartners, setReferredPartners] = useState<any[]>([]);
   const [referrers, setReferrers] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
+  const [listUsers, setListUsers] = useState<any[]>([]);
+  const [visibleDistrict, setVisibleDistrict] = useState<any>(true);
   const [district, setDistrict] = useState<any>();
   const [us, setUs] = useState<any[]>([]);
   const [loggedUser, setLoggedUser] = useState<any>(undefined);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const pageSize = 100;
   let data;
+  let countByFilter;
   const [dataLoading, setDataLoading] = useState(false);
+  const [searchCounter, setSearchCounter] = useState<any>();
 
   const [searchNui, setSearchNui] = useState<any>("");
   const [searchDistrict, setSearchDistrict] = useState<any>("");
@@ -77,7 +92,7 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
   const [districts, setDistricts] = useState<any[]>([]);
 
   const userSelector = useSelector((state: any) => state?.user);
-  const convertedUserData: FilterObject[] = userSelector?.users?.map(
+  const convertedUserData: FilterObject[] = listUsers?.map(
     ([value, label]) => ({
       value: value.toString(),
       label: label.charAt(0).toUpperCase() + label.slice(1),
@@ -92,6 +107,7 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
 
   const userId = localStorage.getItem("user");
   const dispatch = useDispatch();
+  const referencesTotal = useSelector((state: any) => state.reference.total);
 
   let searchInput;
   useEffect(() => {
@@ -105,8 +121,64 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
         searchUserCreator,
         searchDistrict
       );
-      const districts = await allDistrict();
+
+      countByFilter = await queryCountByFilters(
+        localStorage.user,
+        searchNui,
+        searchUserCreator,
+        searchDistrict
+      );
+      setSearchCounter(countByFilter);
+
       const loggedUser = await query1(localStorage.user);
+      if (loggedUser && loggedUser?.districts.length > 0) {
+        loggedUser?.districts?.length === 1
+          ? setVisibleDistrict(false)
+          : setVisibleDistrict(true);
+        const dIds = loggedUser?.districts.map((item) => {
+          return item.id + "";
+        });
+        const dataDistricts = await allDistrictsByIds({ districts: dIds });
+
+        const sortedDistricts = dataDistricts.sort((dist1, dist2) =>
+          dist1.name.localeCompare(dist2.name)
+        );
+
+        setDistricts(sortedDistricts);
+
+        const dataUsers = await allUsesByDistricts({ districts: dIds });
+        const sortedUsers = dataUsers.sort((user1, user2) =>
+          user1[1].localeCompare(user2[1])
+        );
+        setListUsers(sortedUsers);
+      } else if (loggedUser && loggedUser.provinces.length > 0) {
+        const pIds = loggedUser?.provinces.map((item) => {
+          return item.id + "";
+        });
+
+        const dataUsers = await allUsesByProvinces({ provinces: pIds });
+        const dataDistrict = await queryDistrictsByProvinces({
+          provinces: pIds,
+        });
+
+        setDistricts(dataDistrict);
+        setListUsers(dataUsers);
+      } else {
+        const allUser = userSelector?.users;
+
+        const sortedUsers = allUser.sort((user1, user2) =>
+          user1[1].localeCompare(user2[1])
+        );
+        setListUsers(sortedUsers);
+
+        const dataDistricts = await allDistrict();
+
+        const sortedDistricts = dataDistricts.sort((dist1, dist2) =>
+          dist1.name.localeCompare(dist2.name)
+        );
+
+        setDistricts(sortedDistricts);
+      }
 
       const existingUs = data
         .map((reference) => reference.us)
@@ -156,7 +228,6 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
       setReferrers(referrers);
       setUsers(referreds);
       setUs(existingUs);
-      setDistricts(districts);
       setLoggedUser(loggedUser);
     };
 
@@ -707,6 +778,164 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
     }
   }
 
+  const ClickableTag = () => {
+    return (
+      <a onClick={handleExportarXLS}>
+        <Tag color={"geekblue"}>{"Exportar XLS"}</Tag>
+      </a>
+    );
+  };
+
+  const pageElements = 1000;
+  const lastPage = Math.ceil(referencesTotal / pageElements);
+
+  const handleExportarXLS = async () => {
+    console.log("On Export XLS");
+
+    try {
+      setDataLoading(true);
+
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet("Lista_Referencias");
+
+      const headers = [
+        "#",
+        "Distrito",
+        "Organização Referente",
+        "Referido em",
+        "Nota Referência",
+        "Código do Beneficiário",
+        "Referente",
+        "Contacto",
+        "Notificar ao",
+        "Ref. Para",
+        "Organização Referida",
+        "Ponto de Entrada para Referência",
+        "Criado em",
+        "Estado",
+      ];
+
+      const headerRow = worksheet.getRow(1);
+      headers.forEach((header, index) => {
+        const cell = headerRow.getCell(index + 1);
+        cell.alignment = { vertical: "middle", horizontal: "center" };
+        cell.value = header;
+        cell.font = { bold: true };
+      });
+
+      const user = await query1(localStorage.user);
+
+      let sequence = 1;
+
+      for (let i = 0; i <= lastPage; i++) {
+        data = await pagedQueryByUser(
+          localStorage.user,
+          i,
+          pageElements,
+          searchNui,
+          searchUserCreator,
+          searchDistrict
+        );
+
+        const sortedReferences = data.sort((benf1, benf2) =>
+          moment(benf2.dateCreated)
+            .format("YYYY-MM-DD HH:mm:ss")
+            .localeCompare(
+              moment(benf1.dateCreated).format("YYYY-MM-DD HH:mm:ss")
+            )
+        );
+
+        if (sortedReferences.length === 0) {
+          break;
+        }
+
+        sortedReferences.forEach((reference) => {
+          const values = [
+            sequence,
+            reference.beneficiaries?.district?.name,
+            reference.beneficiaries?.partners?.name,
+            moment(reference.date).format("YYYY-MM-DD"),
+            reference.referenceNote,
+            reference.beneficiaries.district.code +
+              "/" +
+              reference.beneficiaries?.nui,
+            reference.referredBy?.name + " " + reference.referredBy?.surname,
+            reference.beneficiaries?.phoneNumber,
+            reference.notifyTo?.name + " " + reference.notifyTo?.surname,
+            reference.beneficiaries?.entryPoint === "1"
+              ? "US"
+              : reference.beneficiaries?.entryPoint === "2"
+              ? "CM"
+              : "ES",
+            reference.notifyTo?.partners?.name,
+            reference.us?.name,
+            moment(reference.dateCreated).format("YYYY-MM-DD"),
+            reference.status === 0
+              ? "Pendente"
+              : reference.status === 1
+              ? "Atendido Parcialmente"
+              : reference.status === 2
+              ? "Atendido"
+              : reference.status === 3
+              ? "Cancelado"
+              : reference.status === 4
+              ? "Sync"
+              : "Status Desconhecido",
+          ];
+          sequence++;
+          worksheet.addRow(values);
+
+          const textStyling = {
+            fontSimple: { color: { argb: "FF800000" } },
+            font: { bold: true, color: { argb: "FF800000" } },
+          };
+
+          worksheet.eachRow((row, rowNumber) => {
+            const cell5 = row.getCell(5);
+            cell5.font = textStyling.fontSimple;
+            const cell6 = row.getCell(6);
+            cell6.font = textStyling.font;
+            const cell7 = row.getCell(7);
+            cell7.font = textStyling.font;
+            const cell8 = row.getCell(8);
+            cell8.font = textStyling.font;
+
+            const cellStatus = row.getCell("N");
+            if (cellStatus.value === "Pendente") {
+              cellStatus.font = { bold: true, color: { argb: "FF800000" } }; // Red color
+            } else if (cellStatus.value === "Atendido") {
+              cellStatus.font = { bold: true, color: { argb: "004000" } }; // Green color
+            } else {
+              cellStatus.font = { bold: true };
+            }
+          });
+        });
+      }
+
+      headers.forEach((header, index) => {
+        const cell = headerRow.getCell(index + 1);
+        cell.alignment = { vertical: "middle", horizontal: "center" };
+        cell.value = header;
+        cell.font = { bold: true };
+      });
+
+      const created = moment().format("YYYYMMDD_hhmmss");
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      saveAs(blob, `Lista_Referencias_${created}.xlsx`);
+
+      setDataLoading(false);
+    } catch (error) {
+      // Handle any errors that occur during report generation
+      console.error("Error generating XLSX report:", error);
+      setDataLoading(false);
+      // Display an error message using your preferred method (e.g., toast.error)
+      toast.error("An error occurred during report generation.");
+    }
+  };
+
   return (
     <>
       <Title />
@@ -746,7 +975,7 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
             />
           </Col>
 
-          <Col className="gutter-row">
+          <Col className="gutter-row" hidden={visibleDistrict === false}>
             <Select
               showSearch
               allowClear
@@ -777,6 +1006,14 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
           <Table
             rowKey={(record?) => `${record.id}${record.id.date}`}
             columns={columnsRef}
+            title={(references) => (
+              <span style={{ display: "flex", justifyContent: "flex-end" }}>
+                <Tag color={"geekblue"}>
+                  {references.length + "/" + searchCounter}
+                </Tag>
+                <ClickableTag />
+              </span>
+            )}
             dataSource={references}
             bordered
             scroll={{ x: 1500 }}

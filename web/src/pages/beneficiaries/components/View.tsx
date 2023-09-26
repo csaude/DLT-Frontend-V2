@@ -475,7 +475,7 @@ const ViewBenefiaryPanel = ({
               >
                 <span>MZ</span>
                 <br />
-                <span>{`${beneficiary?.neighborhood?.locality?.name}${
+                <span>{`${beneficiary?.locality?.name}${
                   beneficiary?.address == null
                     ? ""
                     : ", " + beneficiary?.address
@@ -548,7 +548,7 @@ const ViewBenefiaryPanel = ({
           placement="top"
           closable={false}
           onClose={showCloseConfirm}
-          open={visible}
+          visible={visible}
           maskClosable={false}
           getContainer={false}
           style={{ position: "absolute" }}
@@ -560,6 +560,7 @@ const ViewBenefiaryPanel = ({
                 htmlType="submit"
                 onClick={() => onSubmit()}
                 type="primary"
+                hidden={!isAdd}
               >
                 Salvar
               </Button>
@@ -630,7 +631,7 @@ const ViewBeneficiary = ({
       centered
       destroyOnClose
       title={" Dados de Registo do Beneficiário"}
-      open={modalVisible}
+      visible={modalVisible}
       maskClosable={false}
       onOk={okHandle}
       onCancel={() => showCloseConfirm()}

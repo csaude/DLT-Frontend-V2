@@ -54,8 +54,15 @@ export async function edit(payload: any) {
   return res;
 }
 
-export async function queryCount(payload?: any) {
-  const url = "/api/beneficiaries/count?".concat(stringify(payload));
+export async function queryCountByFilters(
+  payload?: any,
+  searchNui?: any,
+  searchUserCreator?: number,
+  searchDistrict?: number
+) {
+  const url = `/api/beneficiaries/countByFilters?${stringify(
+    payload
+  )}&searchNui=${searchNui}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`;
 
   const res = await select(url);
   return res;

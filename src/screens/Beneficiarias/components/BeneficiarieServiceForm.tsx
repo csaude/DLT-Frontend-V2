@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext, useCallback } from "react";
+import React, { useEffect, useState, useContext, useCallback, memo } from "react";
 import { View, KeyboardAvoidingView, ScrollView } from "react-native";
 import {
   Center,
@@ -118,9 +118,7 @@ const BeneficiarieServiceForm: React.FC = ({
   const onChangeEntryPoint = async (value: any) => {
     const uss = await database
       .get("us")
-      .query(
-        Q.where("entry_point", parseInt(value))
-      )
+      .query(Q.where("entry_point", parseInt(value)))
       .fetch();
     const ussSerialied = uss.map((item) => item._raw);
     setUss(ussSerialied);
@@ -152,9 +150,11 @@ const BeneficiarieServiceForm: React.FC = ({
     setChecked(value);
   };
 
+  const activeServices = services.filter(item =>item.status == 1);
+
   useEffect(() => {
     if (mounted) {
-      setServicesState(services);
+      setServicesState(activeServices);
       getPartner();
 
       const age = calculateAge(beneficiarie.date_of_birth);
@@ -173,7 +173,7 @@ const BeneficiarieServiceForm: React.FC = ({
       }
 
       const disableRapariga = (hasFacilitacao) =>
-        services.filter((service) => {
+        activeServices.filter((service) => {
           if (hasFacilitacao)
             return !avanteRaparigaOnlineIds.includes(service._raw.online_id);
           else
@@ -184,7 +184,7 @@ const BeneficiarieServiceForm: React.FC = ({
         });
 
       const disableEstudante = (hasFacilitacao) =>
-        services.filter((service) => {
+      activeServices.filter((service) => {
           if (hasFacilitacao)
             return !avanteEstudanteOnlineIds.includes(service._raw.online_id);
           else
@@ -194,7 +194,7 @@ const BeneficiarieServiceForm: React.FC = ({
             );
         });
 
-      const disableEstudanteAndRapariga = services.filter((service) => {
+      const disableEstudanteAndRapariga = activeServices.filter((service) => {
         return (
           !avanteRaparigaOnlineIds.includes(service._raw.online_id) &&
           !avanteEstudanteOnlineIds.includes(service._raw.online_id) &&
@@ -238,7 +238,7 @@ const BeneficiarieServiceForm: React.FC = ({
         })[0];
 
         const selService = services.filter((e) => {
-          return e._raw.online_id == selSubService._raw.service_id;
+          return e._raw.online_id == selSubService?._raw.service_id;
         })[0];
 
         const selUs = us.filter((e) => {
@@ -249,8 +249,8 @@ const BeneficiarieServiceForm: React.FC = ({
         onChangeUs(intervention.us_id);
 
         initValues = {
-          areaServicos_id: selService._raw.service_type,
-          service_id: selService._raw.online_id,
+          areaServicos_id: selService?._raw.service_type,
+          service_id: selService?._raw.online_id,
           beneficiary_id: beneficiarie.online_id,
           sub_service_id: intervention.sub_service_id,
           result: intervention.result,
@@ -357,6 +357,7 @@ const BeneficiarieServiceForm: React.FC = ({
   };
 
   const validateBeneficiaryIntervention = async (values: any) => {
+    setLoading(true);
     const benefInterv = await database
       .get("beneficiaries_interventions")
       .query(
@@ -368,13 +369,24 @@ const BeneficiarieServiceForm: React.FC = ({
 
     const benefIntervSerialied = benefInterv.map((item) => item._raw);
 
-    if (benefIntervSerialied.length > 0) {
+    const isEdit = intervention && intervention.id; // new record if it has id
+
+    let recordAlreadyExists = false;
+
+    if (isEdit && benefIntervSerialied.length > 0) {
+      const interv: any = benefIntervSerialied[0];
+      if (interv.sub_service_id != intervention.sub_service_id || interv.date != intervention.date) {
+        recordAlreadyExists = true;
+      }
+    }
+
+    if (benefIntervSerialied.length > 0 && (recordAlreadyExists || !isEdit)) {
       toast.show({
         placement: "top",
         title: "Beneficiária já tem esta intervenção para esta data!",
       });
     } else {
-      onSubmit(values);
+      onSubmit(values, isEdit);
     }
   };
 
@@ -389,17 +401,14 @@ const BeneficiarieServiceForm: React.FC = ({
       : "";
   }, [isSync]);
 
-  const onSubmit = async (values: any) => {
-    setLoading(true);
-
-    const isEdit = intervention && intervention.id; // new record if it has id
+  const onSubmit = async (values: any, isEdit: boolean) => {
 
     const newObject = await database.write(async () => {
       if (isEdit) {
         const interventionToUpdate = await database
           .get("beneficiaries_interventions")
           .find(intervention.id);
-        const updatedIntervention = await interventionToUpdate.update(() => {
+        const updatedIntervention = await interventionToUpdate.update((intervention:any) => {
           intervention.sub_service_id = values.sub_service_id;
           intervention.remarks = values.remarks;
           intervention.result = values.result;
@@ -663,7 +672,7 @@ const BeneficiarieServiceForm: React.FC = ({
                       <FormControl.Label>Área de Serviços</FormControl.Label>
                       <Picker
                         enabled={
-                          isNewIntervention && !isClinicalOrCommunityPartner
+                          isNewIntervention && !isClinicalOrCommunityPartner || initialValues.areaServicos_id == undefined
                         }
                         style={styles.dropDownPickerDisabled}
                         selectedValue={values.areaServicos_id}
@@ -739,8 +748,8 @@ const BeneficiarieServiceForm: React.FC = ({
                         }}
                       >
                         <Picker.Item
-                          label="-- Seleccione o Serviço --"
-                          value="0"
+                          label="-- Seleccione o Sub-Serviço --"
+                          value={0}
                         />
                         {subServices
                           .filter((e) => {
@@ -933,8 +942,8 @@ const BeneficiarieServiceForm: React.FC = ({
 };
 const enhance = withObservables([], () => ({
   services: database.collections.get("services").query(),
-  subServices: database.collections.get("sub_services").query().observe(),
-  us: database.collections.get("us").query().observe(),
+  subServices: database.collections.get("sub_services").query(),
+  us: database.collections.get("us").query(),
 }));
 
 BeneficiarieServiceForm.propTypes = {
@@ -944,4 +953,4 @@ BeneficiarieServiceForm.propTypes = {
   subServices: PropTypes.array.isRequired,
 };
 
-export default enhance(BeneficiarieServiceForm);
+export default memo(enhance(BeneficiarieServiceForm));

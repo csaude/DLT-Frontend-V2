@@ -75,12 +75,12 @@ const PartnerForm: React.FC = ({ route, services, subServices }: any) => {
         })[0];
 
         const selService = services.filter((e) => {
-          return e._raw.online_id == selSubService._raw.service_id;
+          return e._raw.online_id == selSubService?._raw.service_id;
         })[0];
 
         initValues = {
-          areaServicos_id: selService._raw.service_type,
-          service_id: selService._raw.online_id,
+          areaServicos_id: selService?._raw.service_type,
+          service_id: selService?._raw.online_id,
           beneficiary_id: beneficiarie.online_id,
           sub_service_id: intervention.sub_service_id,
           result: intervention.result,
@@ -1581,11 +1581,11 @@ const PartnerForm: React.FC = ({ route, services, subServices }: any) => {
   );
 };
 const enhance = withObservables([], () => ({
-  localities: database.collections.get("localities").query().observe(),
-  profiles: database.collections.get("profiles").query().observe(),
+  localities: database.collections.get("localities").query(),
+  profiles: database.collections.get("profiles").query(),
   services: database.collections.get("services").query(),
-  subServices: database.collections.get("sub_services").query().observe(),
-  partners: database.collections.get("partners").query().observe(),
-  us: database.collections.get("us").query().observe(),
+  subServices: database.collections.get("sub_services").query(),
+  partners: database.collections.get("partners").query(),
+  us: database.collections.get("us").query(),
 }));
 export default memo(enhance(PartnerForm));
