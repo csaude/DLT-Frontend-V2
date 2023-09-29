@@ -74,6 +74,7 @@ const BeneficiarieServiceForm: React.FC = ({
   const [organization, setOrganization] = useState<any>([]);
   const [currentInformedProvider, setCurrentInformedProvider] = useState("");
   const [servicesState, setServicesState] = useState<any>([]);
+  const [subServicesState, setSubServicesState] = useState<any>([]);
   const [initialValues, setInitialValues] = useState<any>({});
   const [isOffline, setIsOffline] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -151,10 +152,12 @@ const BeneficiarieServiceForm: React.FC = ({
   };
 
   const activeServices = services.filter(item =>item.status == 1);
+  const activeSubServices = subServices.filter(item =>item.status == 1);
 
   useEffect(() => {
     if (mounted) {
       setServicesState(activeServices);
+      setSubServicesState(activeSubServices);
       getPartner();
 
       const age = calculateAge(beneficiarie.date_of_birth);
@@ -751,7 +754,7 @@ const BeneficiarieServiceForm: React.FC = ({
                           label="-- Seleccione o Sub-Serviço --"
                           value={0}
                         />
-                        {subServices
+                        {subServicesState
                           .filter((e) => {
                             return e.service_id == values.service_id;
                           })
