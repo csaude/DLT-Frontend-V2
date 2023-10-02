@@ -67,8 +67,8 @@ const UsersList: React.FC = () => {
   let searchInput;
 
   useEffect(() => {
-    setPartners(partnerSelector?.partners);
-    setProfiles(profileSelector?.profiles);
+    setPartners(partnerSelector);
+    setProfiles(profileSelector);
     const fetchData = async () => {
       const user = await queryByUserId(localStorage.user);
       const data = await pagedQueryByFilters(
@@ -82,9 +82,6 @@ const UsersList: React.FC = () => {
     };
 
     fetchData().catch((error) => console.log(error));
-
-    console.log(districtsSelector, "--districtsSelector--");
-    console.log(usersSelector, "--usersSelector--");
 
     const sortedDistricts = districtsSelector?.sort((dist1, dist2) =>
       dist1?.name.localeCompare(dist2.name)
