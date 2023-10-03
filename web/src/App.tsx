@@ -37,6 +37,7 @@ import ReportAgyw from "./pages/report/agyw/ReportAgyw";
 import ReportPreview from "./pages/report/agyw/ReportPreview";
 import ReportView from "./pages/report/agyw/ReportView";
 import AppInfo from "./pages/appInfo";
+import DataExtraction from "./pages/report/data-extraction/DataExtraction";
 
 const App = () => {
   const windowSize = useWindowSize();
@@ -153,6 +154,7 @@ const App = () => {
             <Route path="/reportAgyw" element={<ReportAgyw />} />
             <Route path="/previewAgyw" element={<ReportPreview />} />
             <Route path="/viewAgyw" element={<ReportView />} />
+            <Route path="/dataExtraction" element={<DataExtraction />} />
             {/* App Inforation */}
             <Route path="/appInfo" element={<AppInfo />} />
           </Route>

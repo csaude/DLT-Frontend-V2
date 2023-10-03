@@ -15,3 +15,13 @@ export async function serviceAgesBandsQuery() {
   const res = await select(url);
   return res;
 }
+
+export async function getNewlyEnrolledAgywAndServices(
+  districts?: any,
+  startDate?: any,
+  endDate?: any
+) {
+  const url = `/api/agyw-prev/getNewlyEnrolledAgywAndServices?districts=${districts}&startDate=${startDate}&endDate=${endDate}`;
+  const res = await select(url);
+  return res;
+}
