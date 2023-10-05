@@ -30,6 +30,7 @@ import {
 } from "@app/utils/contants";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
+import { allUsByType } from "@app/utils/uSanitaria";
 
 const { Option } = Select;
 const { confirm } = Modal;
@@ -117,15 +118,20 @@ const UsersForm = ({
           return item.id + "";
         });
         const dataUs = await queryUsByLocalities({ localities: lIds });
-        setUs(dataUs);
+        if (user.entryPoint) {
+          const filteredUs = dataUs.filter(
+            (us) => us.usType.entryPoint == user.entryPoint
+          );
+          setUs(filteredUs);
+        } else {
+          setUs(dataUs);
+        }
       }
     };
 
     fetchDistricts().catch((error) => console.log(error));
     fetchLocalities().catch((error) => console.log(error));
     fetchUs().catch((error) => console.log(error));
-
-    // fetchData().catch(error => console.log(error));
   }, [user, modalVisible]);
 
   const onChangeProvinces = async (values: any) => {
@@ -254,6 +260,19 @@ const UsersForm = ({
     setDataSelection({ ...dataSelection, [name]: value });
   };
 
+  const onChangeEntryPoint = async (e: any) => {
+    form.setFieldsValue({ us: undefined });
+    const locality = form.getFieldValue("localities");
+    if (locality !== "" && locality !== undefined) {
+      const payload = {
+        typeId: e?.target?.value === undefined ? e : e?.target?.value,
+        localitiesIds: locality,
+      };
+      const data = await allUsByType(payload);
+      setUs(data);
+    }
+  };
+
   const showCloseConfirm = () => {
     confirm({
       title: "Deseja fechar este formulário?",
@@ -275,7 +294,6 @@ const UsersForm = ({
       dataSelection.profile !== undefined &&
       dataSelection.locality !== undefined
     ) {
-      form.setFieldsValue({ us: [] });
       let entryPoints = ["1", "2", "3"];
 
       if (dataSelection.profile == MENTOR) {
@@ -302,8 +320,6 @@ const UsersForm = ({
       setEntryPointRequired(false);
     }
   }, [dataSelection]);
-
-  // const role = useSelector((state: any) => state.auth?.currentUser.role);
 
   return (
     <Modal
@@ -540,7 +556,7 @@ const UsersForm = ({
               <Select
                 placeholder="Seleccione o Ponto de Entrada"
                 onChange={(value) => {
-                  onChangeDataSelection("entryPoint", value);
+                  onChangeEntryPoint(value);
                 }}
               >
                 {isUsVisible && <Option key="1">{"Unidade Sanitária"}</Option>}
