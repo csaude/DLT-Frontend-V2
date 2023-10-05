@@ -251,6 +251,7 @@ const UsersList: React.FC = () => {
         user.us = values.us?.map((item) => ({ id: item }));
 
         if (selectedUser === undefined) {
+          user.createdBy = localStorage.user;
           const { data } = await add(user);
           setUsers((users) => [...users, data]);
 
@@ -262,6 +263,7 @@ const UsersList: React.FC = () => {
             },
           });
         } else {
+          user.updatedBy = localStorage.user;
           const { data } = await edit(user);
           setUsers((existingItems) => {
             return existingItems.map((item) => {
