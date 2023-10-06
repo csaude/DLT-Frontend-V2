@@ -8,6 +8,7 @@ import { Button } from "@components";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Form, InputGroup } from "react-bootstrap";
+import * as AuthService from "../../services/auth";
 import { useDispatch } from "react-redux";
 import { logoutUser } from "@app/store/reducers/auth";
 
@@ -19,9 +20,10 @@ const PasswordTab = ({ isActive }: { isActive: boolean }) => {
 
   const navigate = useNavigate();
 
-  const setNewPassword = async () => {
+  const setNewPassword = async (username: string, newPassword: string) => {
     try {
       setAuthLoading(true);
+      await AuthService.newPassword(username, newPassword);
       toast.success("Password alterado com sucesso!");
       setAuthLoading(false);
       dispatch(logoutUser());
@@ -52,8 +54,8 @@ const PasswordTab = ({ isActive }: { isActive: boolean }) => {
         .oneOf([Yup.ref("password"), null], "As senhas devem corresponder")
         .required("Obrigatório"),
     }),
-    onSubmit: async () => {
-      setNewPassword();
+    onSubmit: async (values: any) => {
+      setNewPassword(values.userName, values.password);
     },
   });
 
