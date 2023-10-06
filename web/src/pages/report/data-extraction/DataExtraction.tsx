@@ -147,6 +147,41 @@ const DataExtraction = () => {
         "DLT2.0_NOVAS_RAMJ_ VULNERABILIDADES_E_SERVICOS"
       );
 
+      worksheet.mergeCells("A1:AN1");
+      worksheet.mergeCells("A6:AN6");
+
+      worksheet.getCell("A1").value =
+        "LISTA DE RAMJ REGISTADAS NO DLT NO PERÍODO EM CONSIDERAÇÃO, SUAS VULNERABILIDADES E SERVIÇOS QUE RECEBERAM ";
+
+      worksheet.getCell("A3").value = "Data de Início";
+      worksheet.getCell("A4").value = "Data de Fim";
+      worksheet.getCell("B3").value = moment(initialDate).format("YYYY-MM-DD");
+      worksheet.getCell("B4").value = moment(finalDate).format("YYYY-MM-DD");
+      worksheet.getCell("A6").value = "Informação Demográfica ";
+
+      worksheet.getCell("A1").font = {
+        family: 4,
+        size: 11,
+        underline: true,
+        bold: true,
+      };
+      worksheet.getCell("A3").font = {
+        family: 4,
+        size: 11,
+        underline: true,
+        bold: true,
+      };
+      worksheet.getCell("A4").font = {
+        family: 4,
+        size: 11,
+        underline: true,
+        bold: true,
+      };
+      worksheet.getCell("A6").alignment = {
+        vertical: "middle",
+        horizontal: "center",
+      };
+
       const headers = [
         "#",
         "Província",
@@ -190,7 +225,7 @@ const DataExtraction = () => {
         "Status",
       ];
 
-      const headerRow = worksheet.getRow(1);
+      const headerRow = worksheet.getRow(7);
       headers.forEach((header, index) => {
         const cell = headerRow.getCell(index + 1);
         cell.alignment = { vertical: "middle", horizontal: "center" };
