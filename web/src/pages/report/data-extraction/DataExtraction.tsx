@@ -18,7 +18,10 @@ import { queryDistrictsByProvinces } from "@app/utils/locality";
 import moment from "moment";
 import dreams from "../../../assets/dreams.png";
 
-import { getNewlyEnrolledAgywAndServices } from "@app/utils/report";
+import {
+  getNewlyEnrolledAgywAndServices,
+  countNewlyEnrolledAgywAndServices,
+} from "@app/utils/report";
 import { Title as AppTitle } from "@app/components";
 import LoadingModal from "@app/components/modal/LoadingModal";
 import ExcelJS from "exceljs";
@@ -36,7 +39,40 @@ const DataExtraction = () => {
   const [finalDate, setFinalDate] = useState<any>();
   const [form] = Form.useForm();
   const [dataLoading, setDataLoading] = useState(false);
+  const [lastPage, setLastPage] = useState<number>(0);
   const RequiredFieldMessage = "Obrigatório!";
+  const pageSize = 1000;
+  const districtsIds = selectedDistricts.map((district) => {
+    return district.id;
+  });
+
+  useEffect(() => {
+    if (
+      initialDate != undefined &&
+      finalDate != undefined &&
+      districts != undefined
+    ) {
+      setDataLoading(true);
+
+      const getNewErrolmentsTotal = async () => {
+        const totalNewlyEnrolledAgywAndServices =
+          await countNewlyEnrolledAgywAndServices(
+            districtsIds,
+            initialDate,
+            finalDate
+          );
+        const lastPage = Math.ceil(
+          totalNewlyEnrolledAgywAndServices[0] / pageSize
+        );
+        setLastPage(lastPage);
+        setDataLoading(false);
+      };
+      getNewErrolmentsTotal().catch((error) => {
+        setDataLoading(false);
+        console.log(error);
+      });
+    }
+  }, [initialDate, finalDate, selectedDistricts]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -96,23 +132,11 @@ const DataExtraction = () => {
     ) {
       toast.error("Por favor selecione os filtros para relatorio");
     } else {
-      setDataLoading(true);
       generateXlsReport();
-      setDataLoading(false);
     }
   };
 
   const generateXlsReport = async () => {
-    const districtsIds = selectedDistricts.map((district) => {
-      return district.id;
-    });
-    const startDate = moment(initialDate).format("YYYY-MM-DD");
-    const endDate = moment(finalDate).format("YYYY-MM-DD");
-    const responseData = await getNewlyEnrolledAgywAndServices(
-      districtsIds,
-      startDate,
-      endDate
-    );
     console.log("On Export XLS");
 
     try {
@@ -176,53 +200,62 @@ const DataExtraction = () => {
 
       let sequence = 1;
 
-      responseData.forEach((report) => {
-        const values = [
-          sequence,
-          report[0],
-          report[1],
-          report[2],
-          report[3],
-          report[4],
-          report[5],
-          report[6],
-          report[7],
-          report[8],
-          report[9],
-          report[10],
-          report[11],
-          report[12],
-          report[13],
-          report[14],
-          report[15],
-          report[16],
-          report[17],
-          report[18],
-          report[19],
-          report[20],
-          report[21],
-          report[22],
-          report[23],
-          report[24],
-          report[25],
-          report[26],
-          report[27],
-          report[28],
-          report[29],
-          report[30],
-          report[31],
-          report[32],
-          report[33],
-          report[34],
-          report[35],
-          report[36],
-          report[37],
-          report[38],
-          report[39],
-        ];
-        sequence++;
-        worksheet.addRow(values);
-      });
+      for (let i = 0; i < lastPage; i++) {
+        const responseData = await getNewlyEnrolledAgywAndServices(
+          districtsIds,
+          initialDate,
+          finalDate,
+          i,
+          pageSize
+        );
+        responseData.forEach((report) => {
+          const values = [
+            sequence,
+            report[0],
+            report[1],
+            report[2],
+            report[3],
+            report[4],
+            report[5],
+            report[6],
+            report[7],
+            report[8],
+            report[9],
+            report[10],
+            report[11],
+            report[12],
+            report[13],
+            report[14],
+            report[15],
+            report[16],
+            report[17],
+            report[18],
+            report[19],
+            report[20],
+            report[21],
+            report[22],
+            report[23],
+            report[24],
+            report[25],
+            report[26],
+            report[27],
+            report[28],
+            report[29],
+            report[30],
+            report[31],
+            report[32],
+            report[33],
+            report[34],
+            report[35],
+            report[36],
+            report[37],
+            report[38],
+            report[39],
+          ];
+          sequence++;
+          worksheet.addRow(values);
+        });
+      }
 
       const created = moment().format("YYYYMMDD_hhmmss");
       const buffer = await workbook.xlsx.writeBuffer();
@@ -282,7 +315,6 @@ const DataExtraction = () => {
                     rules={[{ required: true, message: RequiredFieldMessage }]}
                   >
                     <Select
-                      mode="multiple"
                       placeholder="Seleccione as Províncias"
                       onChange={onChangeProvinces}
                     >
@@ -312,7 +344,7 @@ const DataExtraction = () => {
                     <Space direction="vertical">
                       <DatePicker
                         onChange={(e) => {
-                          setInitialDate(e);
+                          setInitialDate(e?.toDate().getTime());
                         }}
                       />
                     </Space>
@@ -322,7 +354,7 @@ const DataExtraction = () => {
                     <Space direction="vertical">
                       <DatePicker
                         onChange={(e) => {
-                          setFinalDate(e);
+                          setFinalDate(e?.toDate().getTime());
                         }}
                       />
                     </Space>
@@ -334,7 +366,7 @@ const DataExtraction = () => {
                       htmlType="submit"
                       onClick={handleGenerateXLSXReport}
                     >
-                      Extrair novas ramj vulnerabilidades e servicos
+                      Extrair novas RAMJ vulnerabilidades e servicos
                     </Button>
                   </Form.Item>
                 </Col>
