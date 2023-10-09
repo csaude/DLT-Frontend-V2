@@ -51,10 +51,10 @@ const DataExtraction = () => {
   });
 
   const extraOptions = [
-    { id: 1, name: "Extrair Novas RAMJ, Vulnerabilidades e Serviços" },
+    { id: 1, name: "Novas RAMJ, Vulnerabilidades e Serviços" },
     {
       id: 2,
-      name: "Extrair Sumário de Novas RAMJ, Vulnerabilidades e Serviços",
+      name: "Sumário de Novas RAMJ, Vulnerabilidades e Serviços",
     },
   ];
 
@@ -369,7 +369,6 @@ const DataExtraction = () => {
       );
 
       worksheet.mergeCells("A1:AN1");
-      worksheet.mergeCells("A6:AN6");
 
       worksheet.getCell("A1").value =
         "SUMARIO DE Novas RAMJ, Vulnerabilidades e Serviços ";
@@ -378,7 +377,6 @@ const DataExtraction = () => {
       worksheet.getCell("A4").value = "Data de Fim";
       worksheet.getCell("B3").value = moment(initialDate).format("YYYY-MM-DD");
       worksheet.getCell("B4").value = moment(finalDate).format("YYYY-MM-DD");
-      worksheet.getCell("A6").value = "Informação Demográfica ";
 
       worksheet.getCell("A1").font = {
         family: 4,
@@ -397,10 +395,6 @@ const DataExtraction = () => {
         size: 11,
         underline: true,
         bold: true,
-      };
-      worksheet.getCell("A6").alignment = {
-        vertical: "middle",
-        horizontal: "center",
       };
 
       const headers = [
@@ -444,7 +438,7 @@ const DataExtraction = () => {
         "Data Prep",
       ];
 
-      const headerRow = worksheet.getRow(7);
+      const headerRow = worksheet.getRow(6);
       headers.forEach((header, index) => {
         const cell = headerRow.getCell(index + 1);
         cell.alignment = { vertical: "middle", horizontal: "center" };
@@ -562,8 +556,8 @@ const DataExtraction = () => {
               <Row gutter={24}>
                 <Col span={12}>
                   <Form.Item
-                    name="provinces"
-                    label="Provincias"
+                    name="province"
+                    label="Provincia"
                     rules={[{ required: true, message: RequiredFieldMessage }]}
                   >
                     <Select
