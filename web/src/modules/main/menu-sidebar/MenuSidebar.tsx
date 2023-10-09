@@ -142,7 +142,7 @@ export const MENU: IMenuItem[] = [
         path: "/reportAgyw",
       },
       {
-        name: ">> DATA EXTRACTION",
+        name: ">> Extracção de Dados",
         path: "/dataExtraction",
       },
       // {

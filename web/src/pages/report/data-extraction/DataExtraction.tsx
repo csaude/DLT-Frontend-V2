@@ -51,10 +51,10 @@ const DataExtraction = () => {
   });
 
   const extraOptions = [
-    { id: 1, name: "Extrair Lista de novas RAMJ vulnerabilidades e servicos" },
+    { id: 1, name: "Extrair Novas RAMJ, Vulnerabilidades e Serviços" },
     {
       id: 2,
-      name: "Extrair Sumário de novas RAMJ vulnerabilidades e servicos",
+      name: "Extrair Sumário de Novas RAMJ, Vulnerabilidades e Serviços",
     },
   ];
 
@@ -179,16 +179,20 @@ const DataExtraction = () => {
       );
 
       worksheet.mergeCells("A1:AN1");
-      worksheet.mergeCells("A6:AN6");
 
-      worksheet.getCell("A1").value =
-        "LISTA DE RAMJ REGISTADAS NO DLT NO PERÍODO EM CONSIDERAÇÃO, SUAS VULNERABILIDADES E SERVIÇOS QUE RECEBERAM ";
+      worksheet.mergeCells("A6:Q6");
+      worksheet.mergeCells("R6:AD6");
+      worksheet.mergeCells("AE6:AN6");
+
+      worksheet.getCell("A1").value = "Novas RAMJ, Vulnerabilidades e Serviços";
 
       worksheet.getCell("A3").value = "Data de Início";
       worksheet.getCell("A4").value = "Data de Fim";
       worksheet.getCell("B3").value = moment(initialDate).format("YYYY-MM-DD");
       worksheet.getCell("B4").value = moment(finalDate).format("YYYY-MM-DD");
       worksheet.getCell("A6").value = "Informação Demográfica ";
+      worksheet.getCell("S6").value = "Vulnerabilidades ";
+      worksheet.getCell("AE6").value = "Serviços e Sub-Serviços ";
 
       worksheet.getCell("A1").font = {
         family: 4,
@@ -209,6 +213,16 @@ const DataExtraction = () => {
         bold: true,
       };
       worksheet.getCell("A6").alignment = {
+        vertical: "middle",
+        horizontal: "center",
+      };
+
+      worksheet.getCell("S6").alignment = {
+        vertical: "middle",
+        horizontal: "center",
+      };
+
+      worksheet.getCell("AE6").alignment = {
         vertical: "middle",
         horizontal: "center",
       };
@@ -358,7 +372,7 @@ const DataExtraction = () => {
       worksheet.mergeCells("A6:AN6");
 
       worksheet.getCell("A1").value =
-        "SUMARIO DE RAMJ REGISTADAS NO DLT NO PERÍODO EM CONSIDERAÇÃO, SUAS VULNERABILIDADES E SERVIÇOS QUE RECEBERAM ";
+        "SUMARIO DE Novas RAMJ, Vulnerabilidades e Serviços ";
 
       worksheet.getCell("A3").value = "Data de Início";
       worksheet.getCell("A4").value = "Data de Fim";
@@ -553,7 +567,7 @@ const DataExtraction = () => {
                     rules={[{ required: true, message: RequiredFieldMessage }]}
                   >
                     <Select
-                      placeholder="Seleccione as Províncias"
+                      placeholder="Seleccione a Província"
                       onChange={onChangeProvinces}
                     >
                       {provinces?.map((item) => (
@@ -619,7 +633,7 @@ const DataExtraction = () => {
                       htmlType="submit"
                       onClick={handleGenerateXLSXReport}
                     >
-                      Exeutar Extração
+                      Extrair
                     </Button>
                   </Form.Item>
                 </Col>
