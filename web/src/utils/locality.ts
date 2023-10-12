@@ -119,3 +119,9 @@ export async function queryUsByLocalities(payload?: NeighborhoodsFilter) {
   const res = await select(url);
   return res;
 }
+
+export async function getLocalitiesQuery() {
+  const url = "/api/localities/get-localities";
+  const res = await select(url);
+  return res;
+}

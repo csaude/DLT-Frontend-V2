@@ -21,6 +21,7 @@ import NeighborhoodForm from "./components/NeighborhoodForm";
 const NeighborhoodsList: React.FC = () => {
   const [neighborhoods, setNeighborhoods] = useState<any[]>([]);
   const [districts, setDistricts] = useState<any[]>([]);
+  const [localities, setLocalities] = useState<any[]>([]);
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const [modalVisible, setModalVisible] = useState<boolean>(false);
@@ -30,6 +31,9 @@ const NeighborhoodsList: React.FC = () => {
 
   const districtsSelector = useSelector(
     (state: any) => state?.district.loadedDistricts
+  );
+  const localitiesSelector = useSelector(
+    (state: any) => state?.locality?.loadedLocalities
   );
 
   let searchInput;
@@ -45,8 +49,12 @@ const NeighborhoodsList: React.FC = () => {
     const sortedDistricts = districtsSelector?.sort((dist1, dist2) =>
       dist1?.name.localeCompare(dist2.name)
     );
+    const sortedLocalities = localitiesSelector?.sort((loc1, loc2) =>
+      loc1?.name.localeCompare(loc2.name)
+    );
 
     setDistricts(sortedDistricts);
+    setLocalities(sortedLocalities);
   }, []);
 
   const neighborhoodsSort = (data: any) => {
@@ -262,6 +270,9 @@ const NeighborhoodsList: React.FC = () => {
       dataIndex: "locality",
       key: "locality",
       render: (text, record) => record?.locality?.name,
+      filters: filterObjects(localities)((i) => i?.name),
+      onFilter: (value, record) => record.locality?.name == value,
+      filterSearch: true,
     },
     {
       title: "Nome do Bairro",
