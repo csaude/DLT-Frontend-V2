@@ -6,5 +6,6 @@ export const GET_PROFILES = "GET_PROFILES";
 export const GET_PARTNERS = "GET_PARTNERS";
 export const GET_PROVINCES = "GET_PROVINCES";
 export const GET_DISTRICTS = "GET_DISTRICTS";
+export const GET_LOCALITIES = "GET_LOCALITIES";
 export const LOAD_REFERERS = "LOAD_REFERERS";
 export const ERROR = "ERROR";
