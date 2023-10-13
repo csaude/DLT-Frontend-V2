@@ -37,6 +37,7 @@ import ReportAgyw from "./pages/report/agyw/ReportAgyw";
 import ReportPreview from "./pages/report/agyw/ReportPreview";
 import ReportView from "./pages/report/agyw/ReportView";
 import AppInfo from "./pages/appInfo";
+import NeighborhoodsList from "./pages/neighborhoods";
 
 const App = () => {
   const windowSize = useWindowSize();
@@ -145,6 +146,7 @@ const App = () => {
             <Route path="/provinceList" element={<ProvinceList />} />
             <Route path="/districtList" element={<DistrictList />} />
             <Route path="/localityList" element={<LocalityList />} />
+            <Route path="/neighbourhoodsList" element={<NeighborhoodsList />} />
             <Route path="/servicesList" element={<ServicesList />} />
             <Route path="/subServicesList" element={<SubServicesList />} />
             <Route path="/organizationsList" element={<OrganizationList />} />

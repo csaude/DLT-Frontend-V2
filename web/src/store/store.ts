@@ -13,6 +13,7 @@ import profileReducer from "./reducers/profile";
 import partnerReducer from "./reducers/partner";
 import provinceReducer from "./reducers/province";
 import districtReducer from "./reducers/district";
+import localityReducer from "./reducers/locality";
 
 const store = configureStore({
   reducer: {
@@ -26,6 +27,7 @@ const store = configureStore({
     partner: partnerReducer,
     province: provinceReducer,
     district: districtReducer,
+    locality: localityReducer,
     report: reportSlice.reducer,
     referenceIntervention: referenceInterventionSlice.reducer,
   },
