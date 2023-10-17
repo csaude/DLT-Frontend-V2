@@ -1,4 +1,4 @@
-import { select } from "./crud";
+import { download, select } from "./crud";
 
 export async function agywPrevQuery(
   districts?: any,
@@ -57,5 +57,15 @@ export async function countNewlyEnrolledAgywAndServicesSummary(
 ) {
   const url = `/api/agyw-prev/countNewlyEnrolledAgywAndServicesSummary?districts=${districts}&startDate=${startDate}&endDate=${endDate}`;
   const res = await select(url);
+  return res;
+}
+
+export async function getGeneratedNewlyEnrolledAgywAndServices(
+  districts?: any,
+  startDate?: any,
+  endDate?: any
+) {
+  const url = `/api/agyw-prev/getGeneratedNewlyEnrolledAgywAndServices?districts=${districts}&startDate=${startDate}&endDate=${endDate}`;
+  const res = await download(url);
   return res;
 }
