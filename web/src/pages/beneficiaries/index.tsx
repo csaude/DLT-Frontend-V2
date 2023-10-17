@@ -121,12 +121,14 @@ const BeneficiariesList: React.FC = () => {
   }));
 
   const [searchNui, setSearchNui] = useState<any>("");
+  const [searchName, setSearchName] = useState<any>("");
   const [searchDistrict, setSearchDistrict] = useState<any>("");
   const [searchUserCreator, setSearchUserCreator] = useState<any>("");
 
   const [district, setDistrict] = useState<any>();
   const [userCreator, setUserCreator] = useState<any>();
   const [nui, setNui] = useState<any>();
+  const [name, setName] = useState<any>();
 
   let data;
   let countByFilter;
@@ -170,6 +172,7 @@ const BeneficiariesList: React.FC = () => {
         currentPageIndex,
         pageSize,
         searchNui,
+        searchName,
         searchUserCreator,
         searchDistrict
       );
@@ -177,6 +180,7 @@ const BeneficiariesList: React.FC = () => {
       countByFilter = await queryCountByFilters(
         getUserParams(user),
         searchNui,
+        searchName,
         searchUserCreator,
         searchDistrict
       );
@@ -292,6 +296,7 @@ const BeneficiariesList: React.FC = () => {
   }, [
     currentPageIndex,
     searchNui,
+    searchName,
     searchUserCreator,
     searchDistrict,
     beneficiary,
@@ -778,6 +783,10 @@ const BeneficiariesList: React.FC = () => {
     if (nui !== undefined) {
       setSearchNui(nui);
     }
+    if (name !== undefined) {
+      console.log(name);
+      setSearchName(name);
+    }
     if (userCreator !== undefined) {
       setSearchUserCreator(userCreator);
     }
@@ -860,6 +869,7 @@ const BeneficiariesList: React.FC = () => {
           i,
           pageElements,
           searchNui,
+          searchName,
           searchUserCreator,
           searchDistrict
         );
@@ -963,6 +973,15 @@ const BeneficiariesList: React.FC = () => {
                 placeholder="Pesquisar por NUI"
                 value={nui}
                 onChange={(e) => setNui(e.target.value)}
+              />
+            </Form.Item>
+          </Col>
+          <Col className="gutter-row">
+            <Form.Item name="name" label="" initialValue={name}>
+              <Input
+                placeholder="Pesquisar por nome"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
             </Form.Item>
           </Col>

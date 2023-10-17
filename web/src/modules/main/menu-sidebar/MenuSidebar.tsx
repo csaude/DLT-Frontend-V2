@@ -182,6 +182,7 @@ const MenuSidebar = () => {
   const dispatch = useDispatch();
 
   const [searchNui, setSearchNui] = useState<any>("");
+  const [searchName, setSearchName] = useState<any>("");
   const [searchDistrict, setSearchDistrict] = useState<any>("");
   const [searchUserCreator, setSearchUserCreator] = useState<any>("");
 
@@ -190,6 +191,7 @@ const MenuSidebar = () => {
     const beneficiaryTotal = await beneficiaryQueryCount(
       getUserParams(user),
       searchNui,
+      searchName,
       searchUserCreator,
       searchDistrict
     );
