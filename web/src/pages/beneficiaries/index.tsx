@@ -28,6 +28,7 @@ import {
   Select,
   Modal,
   Tag,
+  TableProps,
 } from "antd";
 import { queryDistrictsByProvinces } from "@app/utils/locality";
 import ptPT from "antd/lib/locale-provider/pt_PT";
@@ -100,6 +101,7 @@ const BeneficiariesList: React.FC = () => {
   const [partners, setPartners] = useState<any[]>([]);
   const [visibleName, setVisibleName] = useState<any>(true);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
+  const [filters, setFilters] = useState<any>(null);
   const pageSize = 100;
 
   const interventionSelector = useSelector((state: any) => state?.intervention);
@@ -784,7 +786,6 @@ const BeneficiariesList: React.FC = () => {
       setSearchNui(nui);
     }
     if (name !== undefined) {
-      console.log(name);
       setSearchName(name);
     }
     if (userCreator !== undefined) {
@@ -874,6 +875,56 @@ const BeneficiariesList: React.FC = () => {
           searchDistrict
         );
 
+        if (filters) {
+          if (filters.nui != null) {
+            data = data.filter((d) => d.nui.includes(filters.nui[0]));
+          }
+          if (filters.name != null) {
+            data = data.filter((d) =>
+              (d.name + " " + d.surname).match(filters.name)
+            );
+          }
+          if (filters.gender != null) {
+            data = data.filter((d) => filters.gender.includes(d.gender));
+          }
+          if (filters.entryPoint != null) {
+            data = data.filter((d) =>
+              filters.entryPoint.includes(d.entryPoint)
+            );
+          }
+          if (filters.district != null) {
+            data = data.filter((d) =>
+              filters.district.includes(d.district.name)
+            );
+          }
+          if (filters.age != null) {
+            data = data.filter((d) => filters.age.includes(d.age));
+          }
+          if (filters.partner != null) {
+            data = data.filter((d) => filters.partner.includes(d.partner.name));
+          }
+          if (filters.dateCreated != null) {
+            data = data.filter((d) =>
+              d.dateCreated.includes(filters.dateCreated)
+            );
+          }
+          if (filters.dateUpdated != null) {
+            data = data.filter((d) =>
+              d.dateUpdated.includes(filters.dateUpdated)
+            );
+          }
+          if (filters.createdBy != null) {
+            data = data.filter((d) =>
+              filters.createddBy.includes(getUsernames(d.createdBy))
+            );
+          }
+          if (filters.updatedBy != null) {
+            data = data.filter((d) =>
+              filters.updatedBy.includes(getUsernames(d.updatedBy))
+            );
+          }
+        }
+
         const sortedBeneficiaries = data.sort((benf1, benf2) =>
           moment(benf2.dateCreated)
             .format("YYYY-MM-DD HH:mm:ss")
@@ -928,6 +979,15 @@ const BeneficiariesList: React.FC = () => {
       // Display an error message using your preferred method (e.g., toast.error)
       toast.error("An error occurred during report generation.");
     }
+  };
+
+  const handleChange: TableProps<any>["onChange"] = (
+    pagination,
+    _filters,
+    _sorter,
+    extra
+  ) => {
+    setFilters(_filters);
   };
 
   return (
@@ -1067,6 +1127,7 @@ const BeneficiariesList: React.FC = () => {
             dataSource={beneficiaries}
             bordered
             scroll={{ x: 1500 }}
+            onChange={handleChange}
           />
           <Space>
             <Button
