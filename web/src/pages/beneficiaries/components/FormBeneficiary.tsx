@@ -50,8 +50,10 @@ const BeneficiaryForm = ({
     setCurrent(inc);
   };
 
-  const onSubmit = async () => {
+  const onSubmit = async (e) => {
+    e.currentTarget.disabled = true;
     handleAdd(firstStepValues);
+    e.currentTarget.disabled = false;
   };
 
   const handleAdd = (values: any) => {
@@ -287,7 +289,7 @@ const BeneficiaryForm = ({
               </Button>
             )}
             {current === steps.length - 2 && beneficiary === undefined && (
-              <Button type="primary" onClick={() => onSubmit()}>
+              <Button type="primary" onClick={(e) => onSubmit(e)}>
                 Salvar
               </Button>
             )}

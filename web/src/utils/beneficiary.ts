@@ -18,6 +18,7 @@ export async function pagedQueryByFilters(
   pageIndex?: any,
   pageSize?: any,
   searchNui?: any,
+  searchName?: any,
   searchUserCreator?: number,
   searchDistrict?: number
 ) {
@@ -25,7 +26,7 @@ export async function pagedQueryByFilters(
   if (payload.userId) {
     url = `/api/beneficiaries?${stringify(
       payload
-    )}&pageIndex=${pageIndex}&pageSize=${pageSize}&searchNui=${searchNui}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`;
+    )}&pageIndex=${pageIndex}&pageSize=${pageSize}&searchNui=${searchNui}&searchName=${searchName}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`;
   } else {
     url = "/api/beneficiaries/" + payload;
   }
@@ -57,12 +58,13 @@ export async function edit(payload: any) {
 export async function queryCountByFilters(
   payload?: any,
   searchNui?: any,
+  searchName?: any,
   searchUserCreator?: number,
   searchDistrict?: number
 ) {
   const url = `/api/beneficiaries/countByFilters?${stringify(
     payload
-  )}&searchNui=${searchNui}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`;
+  )}&searchNui=${searchNui}&searchName=${searchName}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`;
 
   const res = await select(url);
   return res;

@@ -28,6 +28,7 @@ import {
   Col,
   Select,
   Tag,
+  TableProps,
 } from "antd";
 import ptPT from "antd/lib/locale-provider/pt_PT";
 import "antd/dist/antd.css";
@@ -90,6 +91,7 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
   const [nui, setNui] = useState<any>();
   const [userCreator, setUserCreator] = useState<any>();
   const [districts, setDistricts] = useState<any[]>([]);
+  const [filters, setFilters] = useState<any>(null);
 
   const userSelector = useSelector((state: any) => state?.user);
   const convertedUserData: FilterObject[] = listUsers?.map(
@@ -541,8 +543,8 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
   const columnsRef = [
     {
       title: "Distrito",
-      dataIndex: "",
-      key: "type",
+      dataIndex: "district",
+      key: "district",
       render: (text, record) => record?.beneficiaries?.district?.name,
       filters: filterItem(districts)((i) => i.name),
       onFilter: (value, record) =>
@@ -551,8 +553,8 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
     },
     {
       title: "Organização Referente",
-      dataIndex: "",
-      key: "type",
+      dataIndex: "partner",
+      key: "partner",
       render: (text, record) => record?.referredBy?.partners?.name,
       filters: filterItem(partners)((i) => i.name),
       onFilter: (value, record) => record?.referredBy?.partners?.name == value,
@@ -569,19 +571,19 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
     {
       title: "Nota Referência",
       dataIndex: "referenceNote",
-      key: "",
+      key: "referenceNote",
       ...getColumnSearchProps("referenceNote"),
     },
     {
       title: "Código do Beneficiário",
-      dataIndex: "beneficiaries.nui",
-      key: "",
+      dataIndex: "nui",
+      key: "nui",
       ...getColumnSearchBenProps("beneficiaries.nui"),
     },
     {
       title: "Referente",
-      dataIndex: "createdBy",
-      key: "createdBy",
+      dataIndex: "referredBy",
+      key: "referredBy",
       render: (text, record) =>
         record?.referredBy?.name + " " + record?.referredBy?.surname,
       filters: filterItem(referrers)((i) => i.name + " " + i.surname),
@@ -609,7 +611,7 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
     {
       title: "Notificar ao",
       dataIndex: "record.notifyTo.name",
-      key: "",
+      key: "notifyTo",
       render: (text, record) =>
         record?.notifyTo?.name + " " + record?.notifyTo?.surname,
       filters: filterItem(users)((i) => i?.name + " " + i?.surname),
@@ -624,8 +626,8 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
     },
     {
       title: "Ref. Para",
-      dataIndex: "record.notifyTo.entryPoint",
-      key: "record.notifyTo.entryPoint",
+      dataIndex: "entryPoint",
+      key: "entryPoint",
       filters: [
         {
           text: "US",
@@ -653,8 +655,8 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
     },
     {
       title: "Organização Referida",
-      dataIndex: "",
-      key: "",
+      dataIndex: "referredPartner",
+      key: "referredPartner",
       render: (text, record) => record?.notifyTo?.partners?.name,
       filters: filterItem(referredPartners)((i) => i?.name),
       onFilter: (value, record) => record?.notifyTo?.partners?.name == value,
@@ -837,6 +839,59 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
           searchDistrict
         );
 
+        if (filters) {
+          if (filters.district != null) {
+            data = data.filter((d) =>
+              filters.district.includes(d.beneficiaries.district.name)
+            );
+          }
+          if (filters.partner != null) {
+            data = data.filter((d) =>
+              filters.partner.includes(d.referredBy.partners.name)
+            );
+          }
+          if (filters.referenceNote != null) {
+            data = data.filter((d) =>
+              d.referenceNote.match(filters.referenceNote)
+            );
+          }
+          if (filters.nui != null) {
+            data = data.filter((d) =>
+              d.beneficiaries.nui.includes(filters.nui[0])
+            );
+          }
+          if (filters.referredBy != null) {
+            data = data.filter((d) =>
+              filters.referredBy.includes(
+                d.referredBy.name + " " + d.referredBy.surname
+              )
+            );
+          }
+          if (filters.notifyTo != null) {
+            data = data.filter((d) =>
+              filters.notifyTo.includes(
+                d.notifyTo.name + " " + d.notifyTo.surname
+              )
+            );
+          }
+          if (filters.entryPoint != null) {
+            data = data.filter((d) =>
+              filters.entryPoint.includes(Number(d.notifyTo?.entryPoint))
+            );
+          }
+          if (filters.referredPartner != null) {
+            data = data.filter((d) =>
+              filters.referredPartner.includes(d.notifyTo.partners.name)
+            );
+          }
+          if (filters.us != null) {
+            data = data.filter((d) => filters.us.includes(d.us.name));
+          }
+          if (filters.status != null) {
+            data = data.filter((d) => filters.status.includes(d.status));
+          }
+        }
+
         const sortedReferences = data.sort((benf1, benf2) =>
           moment(benf2.dateCreated)
             .format("YYYY-MM-DD HH:mm:ss")
@@ -862,9 +917,9 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
             reference.referredBy?.name + " " + reference.referredBy?.surname,
             reference.beneficiaries?.phoneNumber,
             reference.notifyTo?.name + " " + reference.notifyTo?.surname,
-            reference.beneficiaries?.entryPoint === "1"
+            reference.notifyTo?.entryPoint === "1"
               ? "US"
-              : reference.beneficiaries?.entryPoint === "2"
+              : reference.notifyTo?.entryPoint === "2"
               ? "CM"
               : "ES",
             reference.notifyTo?.partners?.name,
@@ -934,6 +989,15 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
       // Display an error message using your preferred method (e.g., toast.error)
       toast.error("An error occurred during report generation.");
     }
+  };
+
+  const handleChange: TableProps<any>["onChange"] = (
+    pagination,
+    _filters,
+    _sorter,
+    extra
+  ) => {
+    setFilters(_filters);
   };
 
   return (
@@ -1017,6 +1081,7 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
             dataSource={references}
             bordered
             scroll={{ x: 1500 }}
+            onChange={handleChange}
           ></Table>
           <Space>
             <Button
