@@ -18,7 +18,11 @@ import { queryDistrictsByProvinces } from "@app/utils/locality";
 import moment from "moment";
 import dreams from "../../../assets/dreams.png";
 
-import { getGeneratedNewlyEnrolledAgywAndServices } from "@app/utils/report";
+import {
+  countNewlyEnrolledAgywAndServices,
+  countNewlyEnrolledAgywAndServicesSummary,
+  getNewlyEnrolledAgywAndServices,
+} from "@app/utils/report";
 import { Title as AppTitle } from "@app/components";
 import LoadingModal from "@app/components/modal/LoadingModal";
 const { Option } = Select;
@@ -34,8 +38,11 @@ const DataExtraction = () => {
   const [finalDate, setFinalDate] = useState<any>();
   const [form] = Form.useForm();
   const [dataLoading, setDataLoading] = useState(false);
+  const [lastPage, setLastPage] = useState<number>(0);
+  const [lastPageSummary, setLastPageSummary] = useState<number>(0);
   const [extraOption, setExtraOption] = useState(0);
   const RequiredFieldMessage = "Obrigatório!";
+  const pageSize = 250000;
   const created = moment().format("YYYYMMDD_hhmmss");
 
   const districtsIds = selectedDistricts.map((district) => {
@@ -99,6 +106,45 @@ const DataExtraction = () => {
     }
   };
 
+  const getTotalNewlyEnrolledAgywAndServices = async () => {
+    const totalNewlyEnrolledAgywAndServices =
+      await countNewlyEnrolledAgywAndServices(
+        districtsIds,
+        initialDate,
+        finalDate
+      );
+    const lastPage = Math.ceil(totalNewlyEnrolledAgywAndServices[0] / pageSize);
+    setLastPage(lastPage);
+  };
+
+  const getTotalNewlyEnrolledAgywAndServicesSummary = async () => {
+    const totalNewlyEnrolledAgywAndServicesSummary =
+      await countNewlyEnrolledAgywAndServicesSummary(
+        districtsIds,
+        initialDate,
+        finalDate
+      );
+    const lastPageSummary = Math.ceil(
+      totalNewlyEnrolledAgywAndServicesSummary[0] / pageSize
+    );
+    setLastPageSummary(lastPageSummary);
+  };
+
+  const onChangeExtraOption = async (option) => {
+    setDataLoading(true);
+    setExtraOption(option);
+    if (option == 1) {
+      getTotalNewlyEnrolledAgywAndServices().then(() => setDataLoading(false));
+    } else if (option == 2) {
+      getTotalNewlyEnrolledAgywAndServicesSummary().then(() =>
+        setDataLoading(false)
+      );
+    } else {
+      toast.error("Por favor selecione o tipo de extração");
+      setDataLoading(false);
+    }
+  };
+
   const handleGenerateXLSXReport = () => {
     if (
       selectedProvinces.length < 1 ||
@@ -110,7 +156,9 @@ const DataExtraction = () => {
     } else {
       setDataLoading(true);
       if (extraOption == 1) {
-        downloadGeneratedExcelReport();
+        for (let i = 0; i < lastPage; i++) {
+          downloadGeneratedExcelReport(i); // Iterar
+        }
       } else if (extraOption == 2) {
         generateSummaryXlsReport();
       } else {
@@ -124,12 +172,14 @@ const DataExtraction = () => {
     console.log("On Export XLS");
   };
 
-  const downloadGeneratedExcelReport = async () => {
+  const downloadGeneratedExcelReport = async (pageIndex) => {
     try {
-      const response = await getGeneratedNewlyEnrolledAgywAndServices(
+      const response = await getNewlyEnrolledAgywAndServices(
         districtsIds,
         initialDate,
-        finalDate
+        finalDate,
+        pageIndex,
+        pageSize
       );
 
       const blob = new Blob([response.data], {
@@ -237,7 +287,7 @@ const DataExtraction = () => {
                   >
                     <Select
                       placeholder="Seleccione a Extração Que Pretende"
-                      onChange={(e) => setExtraOption(e)}
+                      onChange={onChangeExtraOption}
                     >
                       {extraOptions?.map((item) => (
                         <Option key={item.id}>{item.name}</Option>
