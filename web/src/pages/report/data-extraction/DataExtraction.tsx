@@ -38,6 +38,7 @@ const DataExtraction = () => {
   const [finalDate, setFinalDate] = useState<any>();
   const [form] = Form.useForm();
   const [dataLoading, setDataLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState<number>(0);
   const [lastPage, setLastPage] = useState<number>(0);
   const [lastPageSummary, setLastPageSummary] = useState<number>(0);
   const [extraOption, setExtraOption] = useState(0);
@@ -145,7 +146,13 @@ const DataExtraction = () => {
     }
   };
 
-  const handleGenerateXLSXReport = () => {
+  useEffect(() => {
+    if (currentPage <= lastPage) {
+      handleGenerateXLSXReport(currentPage);
+    }
+  }, [currentPage]);
+
+  const handleGenerateXLSXReport = (i) => {
     if (
       selectedProvinces.length < 1 ||
       selectedDistricts.length < 1 ||
@@ -156,9 +163,7 @@ const DataExtraction = () => {
     } else {
       setDataLoading(true);
       if (extraOption == 1) {
-        for (let i = 0; i < lastPage; i++) {
-          downloadGeneratedExcelReport(i); // Iterar
-        }
+        downloadGeneratedExcelReport(i); // Iterar
       } else if (extraOption == 2) {
         generateSummaryXlsReport();
       } else {
@@ -191,6 +196,7 @@ const DataExtraction = () => {
       a.download = `DLT2.0_SUMARIO_NOVAS_RAMJ_ VULNERABILIDADES_E_SERVICOS_${created}.xlsx`;
       a.click();
       window.URL.revokeObjectURL(url);
+      setCurrentPage(currentPage + 1);
       setDataLoading(false);
     } catch (error) {
       console.error("Error downloading the Excel report", error);
@@ -299,7 +305,7 @@ const DataExtraction = () => {
                     <Button
                       type="primary"
                       htmlType="submit"
-                      onClick={handleGenerateXLSXReport}
+                      onClick={() => handleGenerateXLSXReport(0)}
                     >
                       Extrair
                     </Button>
