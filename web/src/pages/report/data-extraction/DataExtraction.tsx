@@ -46,6 +46,7 @@ const DataExtraction = () => {
   const RequiredFieldMessage = "Obrigatório!";
   const pageSize = 250000;
   const created = moment().format("YYYYMMDD_hhmmss");
+  const username = localStorage.getItem("username");
 
   const districtsIds = selectedDistricts.map((district) => {
     return district.id;
@@ -185,7 +186,8 @@ const DataExtraction = () => {
         initialDate,
         finalDate,
         pageIndex,
-        pageSize
+        pageSize,
+        username
       );
       await downloadFile(response);
       setCurrentPage(currentPage + 1);

@@ -53,9 +53,10 @@ export async function getNewlyEnrolledAgywAndServicesReportGenerated(
   startDate?: any,
   endDate?: any,
   pageIndex?: any,
-  pageSize?: any
+  pageSize?: any,
+  username?: any
 ) {
-  const url = `/api/agyw-prev/getNewlyEnrolledAgywAndServices?districts=${districts}&startDate=${startDate}&endDate=${endDate}&pageIndex=${pageIndex}&pageSize=${pageSize}`;
+  const url = `/api/agyw-prev/getNewlyEnrolledAgywAndServices?districts=${districts}&startDate=${startDate}&endDate=${endDate}&pageIndex=${pageIndex}&pageSize=${pageSize}&username=${username}`;
   const res = await select(url);
   return res;
 }
