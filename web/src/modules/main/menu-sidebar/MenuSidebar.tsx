@@ -15,6 +15,7 @@ import { getProfiles } from "@app/store/actions/profile";
 import { getPartners } from "@app/store/actions/partner";
 import { getProvinces } from "@app/store/actions/province";
 import { getDistricts } from "@app/store/actions/district";
+import { getLocalities } from "@app/store/actions/locality";
 
 const StyledUserImage = styled.img`
   height: 4.6rem !important;
@@ -88,6 +89,10 @@ export const MENU: IMenuItem[] = [
       {
         name: "Postos Administrativos",
         path: "/localityList",
+      },
+      {
+        name: "Bairros Residenciais",
+        path: "/neighbourhoodsList",
       },
       {
         name: "Unidades Sanitárias ",
@@ -181,6 +186,7 @@ const MenuSidebar = () => {
   const dispatch = useDispatch();
 
   const [searchNui, setSearchNui] = useState<any>("");
+  const [searchName, setSearchName] = useState<any>("");
   const [searchDistrict, setSearchDistrict] = useState<any>("");
   const [searchUserCreator, setSearchUserCreator] = useState<any>("");
 
@@ -189,6 +195,7 @@ const MenuSidebar = () => {
     const beneficiaryTotal = await beneficiaryQueryCount(
       getUserParams(user),
       searchNui,
+      searchName,
       searchUserCreator,
       searchDistrict
     );
@@ -206,6 +213,7 @@ const MenuSidebar = () => {
     dispatch(getPartners());
     dispatch(getProvinces());
     dispatch(getDistricts());
+    dispatch(getLocalities());
   };
 
   useEffect(() => {

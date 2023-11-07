@@ -129,13 +129,14 @@ export async function pagedQueryByFilters(
   pageIndex?: any,
   pageSize?: any,
   searchUsername?: any,
-  searchUserCreator?: number
+  searchUserCreator?: number,
+  searchDistrict?: number
 ) {
   let url: string;
   if (payload.userId) {
     url = `/api/users/paged?${stringify(
       payload
-    )}&pageIndex=${pageIndex}&pageSize=${pageSize}&searchUsername=${searchUsername}&searchUserCreator=${searchUserCreator}`;
+    )}&pageIndex=${pageIndex}&pageSize=${pageSize}&searchUsername=${searchUsername}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`;
   } else {
     url = "/api/users/" + payload;
   }

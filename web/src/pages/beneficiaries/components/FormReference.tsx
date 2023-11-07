@@ -77,7 +77,8 @@ const FormReference = ({
     dispatch(getInterventionsCount());
   };
 
-  const onSubmit = async () => {
+  const onSubmit = async (e) => {
+    e.currentTarget.disabled = true;
     handleAdd(firstStepValues);
 
     if (addStatus) {
@@ -85,6 +86,8 @@ const FormReference = ({
       setCurrent(inc);
       form.resetFields();
       handleModalRefVisible(false);
+    } else {
+      e.currentTarget.disabled = true;
     }
 
     getTotals().catch((err) => console.log(err));
@@ -171,7 +174,7 @@ const FormReference = ({
                   Actualizar
                 </Button>
               ) : (
-                <Button type="primary" onClick={() => onSubmit()}>
+                <Button type="primary" onClick={(e) => onSubmit(e)}>
                   Salvar
                 </Button>
               ))}

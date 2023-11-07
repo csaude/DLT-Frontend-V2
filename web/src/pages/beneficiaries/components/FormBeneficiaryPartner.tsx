@@ -46,8 +46,10 @@ const BeneficiaryPartnerForm = ({
     setCurrent(inc);
   };
 
-  const onSubmit = async () => {
+  const onSubmit = async (e) => {
+    e.currentTarget.disabled = true;
     handleAdd(firstStepValues);
+    e.currentTarget.disabled = false;
   };
 
   const handleAdd = (values: any) => {
@@ -242,7 +244,7 @@ const BeneficiaryPartnerForm = ({
             {current === 1 && (
               <Button
                 type="primary"
-                onClick={() => (beneficiary ? onUpdate() : onSubmit())}
+                onClick={(e) => (beneficiary ? onUpdate() : onSubmit(e))}
               >
                 {beneficiary ? "Actualizar" : "Salvar"}
               </Button>
