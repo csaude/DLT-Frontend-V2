@@ -29,11 +29,11 @@ const UserProfile: React.FC = ({
   })[0]?._raw;
 
   const userLocalities = localities.filter((e) => {
-    return loggedUser.localities_ids.includes(e?._raw.online_id);
+    return loggedUser.localities_ids?.includes(e?._raw.online_id);
   });
 
   const userUs = us.filter((e) => {
-    return loggedUser.localities_ids.includes(e?.locality_id);
+    return loggedUser.localities_ids?.includes(e?.locality_id);
   });
 
   return (
