@@ -48,7 +48,7 @@ export async function countNewlyEnrolledAgywAndServicesSummary(
   return res;
 }
 
-export async function getNewlyEnrolledAgywAndServices(
+export async function getNewlyEnrolledAgywAndServicesReportGenerated(
   districts?: any,
   startDate?: any,
   endDate?: any,
@@ -56,6 +56,12 @@ export async function getNewlyEnrolledAgywAndServices(
   pageSize?: any
 ) {
   const url = `/api/agyw-prev/getNewlyEnrolledAgywAndServices?districts=${districts}&startDate=${startDate}&endDate=${endDate}&pageIndex=${pageIndex}&pageSize=${pageSize}`;
+  const res = await select(url);
+  return res;
+}
+
+export async function getFileDownloaded(filePath?: any) {
+  const url = `/api/agyw-prev/downloadFile?filePath=${filePath}`;
   const res = await download(url);
   return res;
 }

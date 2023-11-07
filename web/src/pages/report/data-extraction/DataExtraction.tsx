@@ -21,7 +21,8 @@ import dreams from "../../../assets/dreams.png";
 import {
   countNewlyEnrolledAgywAndServices,
   countNewlyEnrolledAgywAndServicesSummary,
-  getNewlyEnrolledAgywAndServices,
+  getNewlyEnrolledAgywAndServicesReportGenerated,
+  getFileDownloaded,
 } from "@app/utils/report";
 import { Title as AppTitle } from "@app/components";
 import LoadingModal from "@app/components/modal/LoadingModal";
@@ -163,7 +164,7 @@ const DataExtraction = () => {
     } else {
       setDataLoading(true);
       if (extraOption == 1) {
-        downloadGeneratedExcelReport(i); // Iterar
+        generateExcelReport(i); // Iterar
       } else if (extraOption == 2) {
         generateSummaryXlsReport();
       } else {
@@ -177,30 +178,37 @@ const DataExtraction = () => {
     console.log("On Export XLS");
   };
 
-  const downloadGeneratedExcelReport = async (pageIndex) => {
+  const generateExcelReport = async (pageIndex) => {
     try {
-      const response = await getNewlyEnrolledAgywAndServices(
+      const response = await getNewlyEnrolledAgywAndServicesReportGenerated(
         districtsIds,
         initialDate,
         finalDate,
         pageIndex,
         pageSize
       );
-
-      const blob = new Blob([response.data], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `DLT2.0_SUMARIO_NOVAS_RAMJ_ VULNERABILIDADES_E_SERVICOS_${created}.xlsx`;
-      a.click();
-      window.URL.revokeObjectURL(url);
+      await downloadFile(response);
       setCurrentPage(currentPage + 1);
       setDataLoading(false);
     } catch (error) {
       console.error("Error downloading the Excel report", error);
     }
+  };
+
+  const downloadFile = async (filePath) => {
+    await getFileDownloaded(filePath)
+      .then((response) => {
+        const filename = filePath.substring(filePath.lastIndexOf("/") + 1);
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      })
+      .catch((error) => {
+        console.error("Error downloading file: ", error);
+      });
   };
 
   return (
