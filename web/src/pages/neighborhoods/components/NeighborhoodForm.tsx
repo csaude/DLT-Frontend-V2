@@ -71,10 +71,7 @@ const NeighborhoodForm = ({
 
   const fetchUs = (locality_id) => {
     const usByLocality = us.filter((item) => {
-      return (
-        item?.locality?.id.toString() === locality_id &&
-        item.usType?.entryPoint === "1"
-      );
+      return item?.locality?.id.toString() === locality_id;
     });
     setLocalityUs(usByLocality);
   };
@@ -118,11 +115,11 @@ const NeighborhoodForm = ({
           <Col span={7}>
             <Form.Item
               name="name"
-              label="Nome da US"
+              label="Nome do Bairro"
               rules={[{ required: true, message: RequiredFieldMessage }]}
               initialValue={neighborhood?.name}
             >
-              <Input placeholder="Insira o Nome da US" />
+              <Input placeholder="Insira o Nome do Bairro" />
             </Form.Item>
           </Col>
           <Col className="gutter-row" span={7}>

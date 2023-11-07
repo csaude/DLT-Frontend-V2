@@ -40,7 +40,7 @@ import Spinner from "react-native-loading-spinner-overlay";
 import styles from "./style";
 import { loadUser } from "../../store/authSlice";
 import moment from "moment";
-import { COUNSELOR, MENTOR, NURSE } from "../../utils/constants";
+import { COUNSELOR, MENTOR, NURSE, SUPERVISOR } from "../../utils/constants";
 import axios from "axios";
 import { beneficiariesFetchCount } from "../../services/beneficiaryService";
 import { getBeneficiariesTotal } from "../../store/beneficiarySlice";
@@ -317,11 +317,11 @@ const Login: React.FC = ({ route }: any) => {
         if (response.data) {
           const profileId = response.data?.profiles.id;
 
-          if (![MENTOR, NURSE, COUNSELOR].includes(profileId)) {
+          if (![MENTOR, NURSE, COUNSELOR, SUPERVISOR].includes(profileId)) {
             setLoading(false);
             return showToast(
               "Restrição de Acesso",
-              "Apenas Enfermeiras, Conselheiras e Mentoras Podem Aceder a Aplicativo Móvel!"
+              "Apenas Enfermeiras, Conselheiras, Mentoras e Supervisores Podem Aceder ao Aplicativo Móvel!"
             );
           }
         }

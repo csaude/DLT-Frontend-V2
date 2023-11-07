@@ -28,6 +28,7 @@ import {
   Select,
   Modal,
   Tag,
+  TableProps,
 } from "antd";
 import { queryDistrictsByProvinces } from "@app/utils/locality";
 import ptPT from "antd/lib/locale-provider/pt_PT";
@@ -100,6 +101,7 @@ const BeneficiariesList: React.FC = () => {
   const [partners, setPartners] = useState<any[]>([]);
   const [visibleName, setVisibleName] = useState<any>(true);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
+  const [filters, setFilters] = useState<any>(null);
   const pageSize = 100;
 
   const interventionSelector = useSelector((state: any) => state?.intervention);
@@ -121,12 +123,14 @@ const BeneficiariesList: React.FC = () => {
   }));
 
   const [searchNui, setSearchNui] = useState<any>("");
+  const [searchName, setSearchName] = useState<any>("");
   const [searchDistrict, setSearchDistrict] = useState<any>("");
   const [searchUserCreator, setSearchUserCreator] = useState<any>("");
 
   const [district, setDistrict] = useState<any>();
   const [userCreator, setUserCreator] = useState<any>();
   const [nui, setNui] = useState<any>();
+  const [name, setName] = useState<any>();
 
   let data;
   let countByFilter;
@@ -170,6 +174,7 @@ const BeneficiariesList: React.FC = () => {
         currentPageIndex,
         pageSize,
         searchNui,
+        searchName,
         searchUserCreator,
         searchDistrict
       );
@@ -177,6 +182,7 @@ const BeneficiariesList: React.FC = () => {
       countByFilter = await queryCountByFilters(
         getUserParams(user),
         searchNui,
+        searchName,
         searchUserCreator,
         searchDistrict
       );
@@ -292,6 +298,7 @@ const BeneficiariesList: React.FC = () => {
   }, [
     currentPageIndex,
     searchNui,
+    searchName,
     searchUserCreator,
     searchDistrict,
     beneficiary,
@@ -778,6 +785,9 @@ const BeneficiariesList: React.FC = () => {
     if (nui !== undefined) {
       setSearchNui(nui);
     }
+    if (name !== undefined) {
+      setSearchName(name);
+    }
     if (userCreator !== undefined) {
       setSearchUserCreator(userCreator);
     }
@@ -860,9 +870,60 @@ const BeneficiariesList: React.FC = () => {
           i,
           pageElements,
           searchNui,
+          searchName,
           searchUserCreator,
           searchDistrict
         );
+
+        if (filters) {
+          if (filters.nui != null) {
+            data = data.filter((d) => d.nui.includes(filters.nui[0]));
+          }
+          if (filters.name != null) {
+            data = data.filter((d) =>
+              (d.name + " " + d.surname).match(filters.name)
+            );
+          }
+          if (filters.gender != null) {
+            data = data.filter((d) => filters.gender.includes(d.gender));
+          }
+          if (filters.entryPoint != null) {
+            data = data.filter((d) =>
+              filters.entryPoint.includes(d.entryPoint)
+            );
+          }
+          if (filters.district != null) {
+            data = data.filter((d) =>
+              filters.district.includes(d.district.name)
+            );
+          }
+          if (filters.age != null) {
+            data = data.filter((d) => filters.age.includes(d.age));
+          }
+          if (filters.partner != null) {
+            data = data.filter((d) => filters.partner.includes(d.partner.name));
+          }
+          if (filters.dateCreated != null) {
+            data = data.filter((d) =>
+              d.dateCreated.includes(filters.dateCreated)
+            );
+          }
+          if (filters.dateUpdated != null) {
+            data = data.filter((d) =>
+              d.dateUpdated.includes(filters.dateUpdated)
+            );
+          }
+          if (filters.createdBy != null) {
+            data = data.filter((d) =>
+              filters.createddBy.includes(getUsernames(d.createdBy))
+            );
+          }
+          if (filters.updatedBy != null) {
+            data = data.filter((d) =>
+              filters.updatedBy.includes(getUsernames(d.updatedBy))
+            );
+          }
+        }
 
         const sortedBeneficiaries = data.sort((benf1, benf2) =>
           moment(benf2.dateCreated)
@@ -920,6 +981,15 @@ const BeneficiariesList: React.FC = () => {
     }
   };
 
+  const handleChange: TableProps<any>["onChange"] = (
+    pagination,
+    _filters,
+    _sorter,
+    extra
+  ) => {
+    setFilters(_filters);
+  };
+
   return (
     <>
       <Title />
@@ -963,6 +1033,15 @@ const BeneficiariesList: React.FC = () => {
                 placeholder="Pesquisar por NUI"
                 value={nui}
                 onChange={(e) => setNui(e.target.value)}
+              />
+            </Form.Item>
+          </Col>
+          <Col className="gutter-row">
+            <Form.Item name="name" label="" initialValue={name}>
+              <Input
+                placeholder="Pesquisar por nome"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
             </Form.Item>
           </Col>
@@ -1048,6 +1127,7 @@ const BeneficiariesList: React.FC = () => {
             dataSource={beneficiaries}
             bordered
             scroll={{ x: 1500 }}
+            onChange={handleChange}
           />
           <Space>
             <Button
