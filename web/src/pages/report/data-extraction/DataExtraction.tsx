@@ -182,6 +182,7 @@ const DataExtraction = () => {
   const generateExcelReport = async (pageIndex) => {
     try {
       const response = await getNewlyEnrolledAgywAndServicesReportGenerated(
+        selectedProvinces[0].name,
         districtsIds,
         initialDate,
         finalDate,
