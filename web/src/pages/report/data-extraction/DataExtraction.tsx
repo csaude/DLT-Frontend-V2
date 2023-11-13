@@ -149,7 +149,7 @@ const DataExtraction = () => {
   };
 
   useEffect(() => {
-    if (currentPage != 0 && lastPage != 0 && currentPage <= lastPage) {
+    if (currentPage != 0 && lastPage != 0 && currentPage < lastPage) {
       handleGenerateXLSXReport(currentPage);
     }
   }, [currentPage]);
