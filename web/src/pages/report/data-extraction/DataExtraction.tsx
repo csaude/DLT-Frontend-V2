@@ -20,9 +20,9 @@ import dreams from "../../../assets/dreams.png";
 
 import {
   countNewlyEnrolledAgywAndServices,
-  countNewlyEnrolledAgywAndServicesSummary,
   getNewlyEnrolledAgywAndServicesReportGenerated,
   getFileDownloaded,
+  geNewlyEnrolledAgywAndServicesSummaryReportGenerated,
 } from "@app/utils/report";
 import { Title as AppTitle } from "@app/components";
 import LoadingModal from "@app/components/modal/LoadingModal";
@@ -120,28 +120,13 @@ const DataExtraction = () => {
     setLastPage(lastPage);
   };
 
-  const getTotalNewlyEnrolledAgywAndServicesSummary = async () => {
-    const totalNewlyEnrolledAgywAndServicesSummary =
-      await countNewlyEnrolledAgywAndServicesSummary(
-        districtsIds,
-        initialDate,
-        finalDate
-      );
-    const lastPageSummary = Math.ceil(
-      totalNewlyEnrolledAgywAndServicesSummary[0] / pageSize
-    );
-    setLastPageSummary(lastPageSummary);
-  };
-
   const onChangeExtraOption = async (option) => {
     setDataLoading(true);
     setExtraOption(option);
     if (option == 1) {
       getTotalNewlyEnrolledAgywAndServices().then(() => setDataLoading(false));
     } else if (option == 2) {
-      getTotalNewlyEnrolledAgywAndServicesSummary().then(() =>
-        setDataLoading(false)
-      );
+      setDataLoading(false);
     } else {
       toast.error("Por favor selecione o tipo de extração");
       setDataLoading(false);
@@ -165,7 +150,28 @@ const DataExtraction = () => {
     } else {
       setDataLoading(true);
       if (extraOption == 1) {
-        generateExcelReport(i); // Iterar
+        generateExcelNewlyEnrolledAgywAndServicesReport(i); // Iterar
+      } else if (extraOption == 2) {
+        generateExcelNewlyEnrolledAgywAndServicesSummaryReport();
+      } else {
+        setDataLoading(false);
+        toast.error("Por favor selecione o tipo de extração");
+      }
+    }
+  };
+
+  const generateSummaryXlsReport = async () => {
+    if (
+      selectedProvinces.length < 1 ||
+      selectedDistricts.length < 1 ||
+      initialDate === undefined ||
+      finalDate === undefined
+    ) {
+      toast.error("Por favor selecione os filtros para relatorio");
+    } else {
+      setDataLoading(true);
+      if (extraOption == 1) {
+        generateExcelNewlyEnrolledAgywAndServicesSummaryReport();
       } else if (extraOption == 2) {
         generateSummaryXlsReport();
       } else {
@@ -175,11 +181,7 @@ const DataExtraction = () => {
     }
   };
 
-  const generateSummaryXlsReport = async () => {
-    console.log("On Export XLS");
-  };
-
-  const generateExcelReport = async (pageIndex) => {
+  const generateExcelNewlyEnrolledAgywAndServicesReport = async (pageIndex) => {
     try {
       const response = await getNewlyEnrolledAgywAndServicesReportGenerated(
         selectedProvinces[0].name,
@@ -212,6 +214,23 @@ const DataExtraction = () => {
       .catch((error) => {
         console.error("Error downloading file: ", error);
       });
+  };
+
+  const generateExcelNewlyEnrolledAgywAndServicesSummaryReport = async () => {
+    try {
+      const response =
+        await geNewlyEnrolledAgywAndServicesSummaryReportGenerated(
+          selectedProvinces[0].name,
+          districtsIds,
+          initialDate,
+          finalDate,
+          username
+        );
+      await downloadFile(response);
+      setDataLoading(false);
+    } catch (error) {
+      console.error("Error downloading the Excel report", error);
+    }
   };
 
   return (
