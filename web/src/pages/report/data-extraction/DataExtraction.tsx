@@ -20,9 +20,10 @@ import dreams from "../../../assets/dreams.png";
 
 import {
   countNewlyEnrolledAgywAndServices,
-  countNewlyEnrolledAgywAndServicesSummary,
   getNewlyEnrolledAgywAndServicesReportGenerated,
   getFileDownloaded,
+  geNewlyEnrolledAgywAndServicesSummaryReportGenerated,
+  countNewlyEnrolledAgywAndServicesSummary,
 } from "@app/utils/report";
 import { Title as AppTitle } from "@app/components";
 import LoadingModal from "@app/components/modal/LoadingModal";
@@ -41,7 +42,6 @@ const DataExtraction = () => {
   const [dataLoading, setDataLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [lastPage, setLastPage] = useState<number>(0);
-  const [lastPageSummary, setLastPageSummary] = useState<number>(0);
   const [extraOption, setExtraOption] = useState(0);
   const RequiredFieldMessage = "Obrigatório!";
   const pageSize = 250000;
@@ -120,21 +120,9 @@ const DataExtraction = () => {
     setLastPage(lastPage);
   };
 
-  const getTotalNewlyEnrolledAgywAndServicesSummary = async () => {
-    const totalNewlyEnrolledAgywAndServicesSummary =
-      await countNewlyEnrolledAgywAndServicesSummary(
-        districtsIds,
-        initialDate,
-        finalDate
-      );
-    const lastPageSummary = Math.ceil(
-      totalNewlyEnrolledAgywAndServicesSummary[0] / pageSize
-    );
-    setLastPageSummary(lastPageSummary);
-  };
-
   const onChangeExtraOption = async (option) => {
     setDataLoading(true);
+    setCurrentPage(0);
     setExtraOption(option);
     if (option == 1) {
       getTotalNewlyEnrolledAgywAndServices().then(() => setDataLoading(false));
@@ -165,9 +153,9 @@ const DataExtraction = () => {
     } else {
       setDataLoading(true);
       if (extraOption == 1) {
-        generateExcelReport(i); // Iterar
+        generateExcelNewlyEnrolledAgywAndServicesReport(i); // Iterar
       } else if (extraOption == 2) {
-        generateSummaryXlsReport();
+        generateExcelNewlyEnrolledAgywAndServicesSummaryReport(i);
       } else {
         setDataLoading(false);
         toast.error("Por favor selecione o tipo de extração");
@@ -175,11 +163,7 @@ const DataExtraction = () => {
     }
   };
 
-  const generateSummaryXlsReport = async () => {
-    console.log("On Export XLS");
-  };
-
-  const generateExcelReport = async (pageIndex) => {
+  const generateExcelNewlyEnrolledAgywAndServicesReport = async (pageIndex) => {
     try {
       const response = await getNewlyEnrolledAgywAndServicesReportGenerated(
         selectedProvinces[0].name,
@@ -212,6 +196,41 @@ const DataExtraction = () => {
       .catch((error) => {
         console.error("Error downloading file: ", error);
       });
+  };
+
+  const getTotalNewlyEnrolledAgywAndServicesSummary = async () => {
+    const totalNewlyEnrolledAgywAndServicesSummary =
+      await countNewlyEnrolledAgywAndServicesSummary(
+        districtsIds,
+        initialDate,
+        finalDate
+      );
+    const lastPage = Math.ceil(
+      totalNewlyEnrolledAgywAndServicesSummary[0] / pageSize
+    );
+    setLastPage(lastPage);
+  };
+
+  const generateExcelNewlyEnrolledAgywAndServicesSummaryReport = async (
+    pageIndex
+  ) => {
+    try {
+      const response =
+        await geNewlyEnrolledAgywAndServicesSummaryReportGenerated(
+          selectedProvinces[0].name,
+          districtsIds,
+          initialDate,
+          finalDate,
+          pageIndex,
+          pageSize,
+          username
+        );
+      await downloadFile(response);
+      setCurrentPage(currentPage + 1);
+      setDataLoading(false);
+    } catch (error) {
+      console.error("Error downloading the Excel report", error);
+    }
   };
 
   return (
