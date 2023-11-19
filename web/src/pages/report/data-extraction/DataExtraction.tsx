@@ -241,7 +241,7 @@ const DataExtraction = () => {
           username
         );
       await downloadFile(response);
-      setCurrentDistrict(currentDistrict + 1);
+      setCurrentDistrict(currentDistrictIndex + 1);
       setDataLoading(false);
     } catch (error) {
       console.error("Error downloading the Excel report", error);
