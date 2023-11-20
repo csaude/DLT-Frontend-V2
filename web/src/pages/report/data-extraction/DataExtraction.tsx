@@ -78,7 +78,7 @@ const DataExtraction = () => {
       setProvinces(provinces);
     };
 
-    fetchData().catch((error) => console.log(error));
+    fetchData().catch((error) => console.error(error));
   }, []);
 
   const onChangeProvinces = async (values: any) => {
@@ -176,7 +176,6 @@ const DataExtraction = () => {
     ) {
       toast.error("Por favor selecione os filtros para relatorio");
     } else {
-      setDataLoading(true);
       if (extraOption == 1) {
         generateExcelNewlyEnrolledAgywAndServicesReport(i); // Iterar
       } else if (extraOption == 2) {
@@ -193,6 +192,7 @@ const DataExtraction = () => {
   };
 
   const generateExcelNewlyEnrolledAgywAndServicesReport = async (pageIndex) => {
+    setDataLoading(true);
     try {
       const response = await getNewlyEnrolledAgywAndServicesReportGenerated(
         selectedProvinces[0].name,
@@ -230,6 +230,7 @@ const DataExtraction = () => {
   const generateExcelNewlyEnrolledAgywAndServicesSummaryReport = async (
     currentDistrictIndex
   ) => {
+    setDataLoading(true);
     try {
       const response =
         await geNewlyEnrolledAgywAndServicesSummaryReportGenerated(
@@ -237,10 +238,13 @@ const DataExtraction = () => {
           districtsIds[currentDistrictIndex],
           initialDate,
           finalDate,
-          currentDistrictIndex,
+          currentPage,
           username
         );
-      await downloadFile(response);
+      if (response.fileSize > 0) {
+        await downloadFile(response.fileName);
+        setCurrentPage(currentPage + 1);
+      }
       setCurrentDistrict(currentDistrictIndex + 1);
       setDataLoading(false);
     } catch (error) {
