@@ -251,6 +251,7 @@ const DataExtraction = () => {
       setCurrentDistrict(currentDistrictIndex + 1);
       setDataLoading(false);
     } catch (error) {
+      setDataLoading(false);
       console.error("Error downloading the Excel report", error);
     }
   };
