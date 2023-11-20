@@ -43,6 +43,7 @@ const DataExtraction = () => {
   const [lastPage, setLastPage] = useState<number>(0);
   const [extraOption, setExtraOption] = useState(0);
   const [currentDistrict, setCurrentDistrict] = useState<any>();
+  const [nextIndex, setNextIndex] = useState(1);
   const RequiredFieldMessage = "Obrigatório!";
   const pageSize = 250000;
   const created = moment().format("YYYYMMDD_hhmmss");
@@ -239,11 +240,13 @@ const DataExtraction = () => {
           initialDate,
           finalDate,
           currentPage,
+          nextIndex,
           username
         );
       if (response.fileSize > 0) {
         await downloadFile(response.fileName);
         setCurrentPage(currentPage + 1);
+        setNextIndex(response.nextIndex);
       }
       setCurrentDistrict(currentDistrictIndex + 1);
       setDataLoading(false);
