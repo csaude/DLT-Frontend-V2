@@ -20,9 +20,9 @@ import dreams from "../../../assets/dreams.png";
 
 import {
   countNewlyEnrolledAgywAndServices,
-  countNewlyEnrolledAgywAndServicesSummary,
   getNewlyEnrolledAgywAndServicesReportGenerated,
   getFileDownloaded,
+  geNewlyEnrolledAgywAndServicesSummaryReportGenerated,
 } from "@app/utils/report";
 import { Title as AppTitle } from "@app/components";
 import LoadingModal from "@app/components/modal/LoadingModal";
@@ -41,8 +41,9 @@ const DataExtraction = () => {
   const [dataLoading, setDataLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [lastPage, setLastPage] = useState<number>(0);
-  const [lastPageSummary, setLastPageSummary] = useState<number>(0);
   const [extraOption, setExtraOption] = useState(0);
+  const [currentDistrict, setCurrentDistrict] = useState<any>();
+  const [nextIndex, setNextIndex] = useState(1);
   const RequiredFieldMessage = "Obrigatório!";
   const pageSize = 250000;
   const created = moment().format("YYYYMMDD_hhmmss");
@@ -58,6 +59,11 @@ const DataExtraction = () => {
       id: 2,
       name: "Sumário de Novas RAMJ, Vulnerabilidades e Serviços",
     },
+    // { id: 3, name: "To be IMplemented" },
+    // {
+    //   id: 4,
+    //   name: "Sumário To Bem Implemeted",
+    // },
   ];
 
   useEffect(() => {
@@ -73,7 +79,7 @@ const DataExtraction = () => {
       setProvinces(provinces);
     };
 
-    fetchData().catch((error) => console.log(error));
+    fetchData().catch((error) => console.error(error));
   }, []);
 
   const onChangeProvinces = async (values: any) => {
@@ -120,28 +126,16 @@ const DataExtraction = () => {
     setLastPage(lastPage);
   };
 
-  const getTotalNewlyEnrolledAgywAndServicesSummary = async () => {
-    const totalNewlyEnrolledAgywAndServicesSummary =
-      await countNewlyEnrolledAgywAndServicesSummary(
-        districtsIds,
-        initialDate,
-        finalDate
-      );
-    const lastPageSummary = Math.ceil(
-      totalNewlyEnrolledAgywAndServicesSummary[0] / pageSize
-    );
-    setLastPageSummary(lastPageSummary);
-  };
-
   const onChangeExtraOption = async (option) => {
     setDataLoading(true);
+    setCurrentPage(0);
     setExtraOption(option);
     if (option == 1) {
       getTotalNewlyEnrolledAgywAndServices().then(() => setDataLoading(false));
-    } else if (option == 2) {
-      getTotalNewlyEnrolledAgywAndServicesSummary().then(() =>
-        setDataLoading(false)
-      );
+    } else if (option == 3) {
+      console.log("to Be Implemented, for another report");
+    } else if (option == 2 || option != 4) {
+      setDataLoading(false);
     } else {
       toast.error("Por favor selecione o tipo de extração");
       setDataLoading(false);
@@ -149,10 +143,30 @@ const DataExtraction = () => {
   };
 
   useEffect(() => {
+    if (selectedDistricts && initialDate && finalDate && extraOption !== 0) {
+      onChangeExtraOption(extraOption);
+    }
+  }, [selectedDistricts, initialDate, finalDate, extraOption]);
+
+  useEffect(() => {
     if (currentPage != 0 && lastPage != 0 && currentPage < lastPage) {
-      handleGenerateXLSXReport(currentPage);
+      if (extraOption == 1) {
+        generateExcelNewlyEnrolledAgywAndServicesReport(currentPage); // Iterar
+      } else if (extraOption == 3) {
+        console.log("3. To Be Implemented");
+      }
     }
   }, [currentPage]);
+
+  useEffect(() => {
+    if (currentDistrict != undefined) {
+      if (extraOption == 2) {
+        generateExcelNewlyEnrolledAgywAndServicesSummaryReport(currentDistrict); // Iterar
+      } else if (extraOption == 4) {
+        console.log("3. Other Summary, To Be Implemented");
+      }
+    }
+  }, [currentDistrict]);
 
   const handleGenerateXLSXReport = (i) => {
     if (
@@ -163,11 +177,14 @@ const DataExtraction = () => {
     ) {
       toast.error("Por favor selecione os filtros para relatorio");
     } else {
-      setDataLoading(true);
       if (extraOption == 1) {
-        generateExcelReport(i); // Iterar
+        generateExcelNewlyEnrolledAgywAndServicesReport(i); // Iterar
       } else if (extraOption == 2) {
-        generateSummaryXlsReport();
+        generateExcelNewlyEnrolledAgywAndServicesSummaryReport(i);
+      } else if (extraOption == 3) {
+        console.log("3. To Be Implemented");
+      } else if (extraOption == 4) {
+        console.log("4. Summary To Be Implemented");
       } else {
         setDataLoading(false);
         toast.error("Por favor selecione o tipo de extração");
@@ -175,11 +192,8 @@ const DataExtraction = () => {
     }
   };
 
-  const generateSummaryXlsReport = async () => {
-    console.log("On Export XLS");
-  };
-
-  const generateExcelReport = async (pageIndex) => {
+  const generateExcelNewlyEnrolledAgywAndServicesReport = async (pageIndex) => {
+    setDataLoading(true);
     try {
       const response = await getNewlyEnrolledAgywAndServicesReportGenerated(
         selectedProvinces[0].name,
@@ -194,6 +208,7 @@ const DataExtraction = () => {
       setCurrentPage(currentPage + 1);
       setDataLoading(false);
     } catch (error) {
+      setDataLoading(false);
       console.error("Error downloading the Excel report", error);
     }
   };
@@ -212,6 +227,34 @@ const DataExtraction = () => {
       .catch((error) => {
         console.error("Error downloading file: ", error);
       });
+  };
+
+  const generateExcelNewlyEnrolledAgywAndServicesSummaryReport = async (
+    currentDistrictIndex
+  ) => {
+    setDataLoading(true);
+    try {
+      const response =
+        await geNewlyEnrolledAgywAndServicesSummaryReportGenerated(
+          selectedProvinces[0].name,
+          districtsIds[currentDistrictIndex],
+          initialDate,
+          finalDate,
+          currentPage,
+          nextIndex,
+          username
+        );
+      if (response.fileSize > 0) {
+        await downloadFile(response.fileName);
+        setCurrentPage(currentPage + 1);
+        setNextIndex(response.nextIndex);
+      }
+      setCurrentDistrict(currentDistrictIndex + 1);
+      setDataLoading(false);
+    } catch (error) {
+      setDataLoading(false);
+      console.error("Error downloading the Excel report", error);
+    }
   };
 
   return (
