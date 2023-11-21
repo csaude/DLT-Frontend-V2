@@ -837,6 +837,7 @@ const BeneficiariesList: React.FC = () => {
       const headers = [
         "#",
         "Código do Beneficiário",
+        "Nome do Beneficiário",
         "Sexo",
         "PE",
         "Distrito",
@@ -915,7 +916,7 @@ const BeneficiariesList: React.FC = () => {
           }
           if (filters.createdBy != null) {
             data = data.filter((d) =>
-              filters.createddBy.includes(getUsernames(d.createdBy))
+              filters.createdBy.includes(getUsernames(d.createdBy))
             );
           }
           if (filters.updatedBy != null) {
@@ -941,6 +942,7 @@ const BeneficiariesList: React.FC = () => {
           const values = [
             sequence,
             beneficiary.district.code + "/" + beneficiary?.nui,
+            getName(beneficiary),
             beneficiary?.gender === "1" ? "M" : "F",
             beneficiary?.entryPoint === "1"
               ? "US"
