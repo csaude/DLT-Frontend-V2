@@ -146,6 +146,10 @@ export const MENU: IMenuItem[] = [
         name: ">> PEPFAR MER 2.6.1 AGYW_PREV",
         path: "/reportAgyw",
       },
+      {
+        name: ">> Extracção de Dados",
+        path: "/dataExtraction",
+      },
       // {
       //   name: '>> FY19',
       //   path: '#',
