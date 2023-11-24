@@ -108,7 +108,7 @@ const BeneficiariesMain: React.FC = ({
     const beneficiaryIntervsCont = await beneficiariesInterventionsFetchCount();
     dispatch(loadBeneficiariesInterventionsCounts(beneficiaryIntervsCont));
   }, []);
-
+  
   const totals = useSelector(
     (state: any) => state.beneficiaryIntervention.totals
   );
@@ -1066,8 +1066,7 @@ const BeneficiariesMain: React.FC = ({
 
 const enhance = withObservables([], () => ({
   beneficiaries_interventions: database.collections
-    .get("beneficiaries_interventions")
-    .query(Q.where("status", 1)),
+    .get("beneficiaries_interventions").query(),
   subServices: database.collections.get("sub_services").query(),
 }));
 export default memo(enhance(BeneficiariesMain));
