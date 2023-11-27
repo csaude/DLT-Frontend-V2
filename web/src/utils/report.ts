@@ -1,4 +1,4 @@
-import { select } from "./crud";
+import { download, select } from "./crud";
 
 export async function agywPrevQuery(
   districts?: any,
@@ -26,36 +26,36 @@ export async function countNewlyEnrolledAgywAndServices(
   return res;
 }
 
-export async function getNewlyEnrolledAgywAndServices(
+export async function getNewlyEnrolledAgywAndServicesReportGenerated(
+  province?: string,
   districts?: any,
   startDate?: any,
   endDate?: any,
   pageIndex?: any,
-  pageSize?: any
+  pageSize?: any,
+  username?: any
 ) {
-  const url = `/api/agyw-prev/getNewlyEnrolledAgywAndServices?districts=${districts}&startDate=${startDate}&endDate=${endDate}&pageIndex=${pageIndex}&pageSize=${pageSize}`;
+  const url = `/api/agyw-prev/getNewlyEnrolledAgywAndServices?province=${province}&districts=${districts}&startDate=${startDate}&endDate=${endDate}&pageIndex=${pageIndex}&pageSize=${pageSize}&username=${username}`;
   const res = await select(url);
   return res;
 }
 
-export async function getNewlyEnrolledAgywAndServicesSummary(
+export async function getFileDownloaded(filePath?: any) {
+  const url = `/api/agyw-prev/downloadFile?filePath=${filePath}`;
+  const res = await download(url);
+  return res;
+}
+
+export async function geNewlyEnrolledAgywAndServicesSummaryReportGenerated(
+  province?: string,
   districts?: any,
   startDate?: any,
   endDate?: any,
-  pageIndex?: any,
-  pageSize?: any
+  pageNumber?: any,
+  nextIndex?: any,
+  username?: any
 ) {
-  const url = `/api/agyw-prev/getNewlyEnrolledAgywAndServicesSummary?districts=${districts}&startDate=${startDate}&endDate=${endDate}&pageIndex=${pageIndex}&pageSize=${pageSize}`;
-  const res = await select(url);
-  return res;
-}
-
-export async function countNewlyEnrolledAgywAndServicesSummary(
-  districts?: any,
-  startDate?: any,
-  endDate?: any
-) {
-  const url = `/api/agyw-prev/countNewlyEnrolledAgywAndServicesSummary?districts=${districts}&startDate=${startDate}&endDate=${endDate}`;
+  const url = `/api/agyw-prev/getNewlyEnrolledAgywAndServicesSummary?province=${province}&districts=${districts}&startDate=${startDate}&endDate=${endDate}&pageNumber=${pageNumber}&nextIndex=${nextIndex}&username=${username}`;
   const res = await select(url);
   return res;
 }

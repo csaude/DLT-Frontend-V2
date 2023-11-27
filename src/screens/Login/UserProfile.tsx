@@ -6,7 +6,6 @@ import { database } from "../../database";
 import styles from "./styles";
 import { Context } from "../../routes/DrawerNavigator";
 import withObservables from "@nozbe/with-observables";
-import { useSelector } from "react-redux";
 
 const UserProfile: React.FC = ({
   profiles,
@@ -29,7 +28,13 @@ const UserProfile: React.FC = ({
     return e?._raw.online_id == user?.profile_id;
   })[0]?._raw;
 
-  const usState = useSelector((state:any) => state?.auth.userDetails.uss)
+  const userLocalities = localities.filter((e) => {
+    return loggedUser.localities_ids?.includes(e?._raw.online_id);
+  });
+
+  const userUs = us.filter((e) => {
+    return loggedUser.localities_ids?.includes(e?.locality_id);
+  });
 
   return (
     <KeyboardAvoidingView style={styles.background}>
@@ -104,11 +109,11 @@ const UserProfile: React.FC = ({
                 <Text style={styles.txtLabel}>
                   Posto(s) Administrativo(s):{" "}
                 </Text>{" "}
-                {localities?.map((d) => d.name + ", ")}{" "}
+                {userLocalities?.map((d) => d.name + ", ")}{" "}
               </Text>
               <Text>
                 {" "}
-                <Text style={styles.txtLabel}>Alocação: </Text> {usState?.map((u) => u.name + ", ")} 
+                <Text style={styles.txtLabel}>Alocação: </Text> {userUs?.map((u) => u.name + ", ")} 
               </Text>
             </Flex>
             <Divider />

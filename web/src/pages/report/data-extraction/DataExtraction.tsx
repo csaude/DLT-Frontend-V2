@@ -19,15 +19,13 @@ import moment from "moment";
 import dreams from "../../../assets/dreams.png";
 
 import {
-  getNewlyEnrolledAgywAndServices,
   countNewlyEnrolledAgywAndServices,
-  getNewlyEnrolledAgywAndServicesSummary,
-  countNewlyEnrolledAgywAndServicesSummary,
+  getNewlyEnrolledAgywAndServicesReportGenerated,
+  getFileDownloaded,
+  geNewlyEnrolledAgywAndServicesSummaryReportGenerated,
 } from "@app/utils/report";
 import { Title as AppTitle } from "@app/components";
 import LoadingModal from "@app/components/modal/LoadingModal";
-import ExcelJS from "exceljs";
-import { saveAs } from "file-saver";
 const { Option } = Select;
 const { Title } = Typography;
 
@@ -41,11 +39,16 @@ const DataExtraction = () => {
   const [finalDate, setFinalDate] = useState<any>();
   const [form] = Form.useForm();
   const [dataLoading, setDataLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState<number>(0);
   const [lastPage, setLastPage] = useState<number>(0);
-  const [lastPageSummary, setLastPageSummary] = useState<number>(0);
   const [extraOption, setExtraOption] = useState(0);
+  const [currentDistrict, setCurrentDistrict] = useState<any>();
+  const [nextIndex, setNextIndex] = useState(1);
   const RequiredFieldMessage = "Obrigatório!";
-  const pageSize = 1000;
+  const pageSize = 250000;
+  const created = moment().format("YYYYMMDD_hhmmss");
+  const username = localStorage.getItem("username");
+
   const districtsIds = selectedDistricts.map((district) => {
     return district.id;
   });
@@ -56,6 +59,11 @@ const DataExtraction = () => {
       id: 2,
       name: "Sumário de Novas RAMJ, Vulnerabilidades e Serviços",
     },
+    // { id: 3, name: "To be IMplemented" },
+    // {
+    //   id: 4,
+    //   name: "Sumário To Bem Implemeted",
+    // },
   ];
 
   useEffect(() => {
@@ -71,7 +79,7 @@ const DataExtraction = () => {
       setProvinces(provinces);
     };
 
-    fetchData().catch((error) => console.log(error));
+    fetchData().catch((error) => console.error(error));
   }, []);
 
   const onChangeProvinces = async (values: any) => {
@@ -118,35 +126,49 @@ const DataExtraction = () => {
     setLastPage(lastPage);
   };
 
-  const getTotalNewlyEnrolledAgywAndServicesSummary = async () => {
-    const totalNewlyEnrolledAgywAndServicesSummary =
-      await countNewlyEnrolledAgywAndServicesSummary(
-        districtsIds,
-        initialDate,
-        finalDate
-      );
-    const lastPageSummary = Math.ceil(
-      totalNewlyEnrolledAgywAndServicesSummary[0] / pageSize
-    );
-    setLastPageSummary(lastPageSummary);
-  };
-
   const onChangeExtraOption = async (option) => {
     setDataLoading(true);
+    setCurrentPage(0);
     setExtraOption(option);
     if (option == 1) {
       getTotalNewlyEnrolledAgywAndServices().then(() => setDataLoading(false));
-    } else if (option == 2) {
-      getTotalNewlyEnrolledAgywAndServicesSummary().then(() =>
-        setDataLoading(false)
-      );
+    } else if (option == 3) {
+      console.log("to Be Implemented, for another report");
+    } else if (option == 2 || option != 4) {
+      setDataLoading(false);
     } else {
       toast.error("Por favor selecione o tipo de extração");
       setDataLoading(false);
     }
   };
 
-  const handleGenerateXLSXReport = () => {
+  useEffect(() => {
+    if (selectedDistricts && initialDate && finalDate && extraOption !== 0) {
+      onChangeExtraOption(extraOption);
+    }
+  }, [selectedDistricts, initialDate, finalDate, extraOption]);
+
+  useEffect(() => {
+    if (currentPage != 0 && lastPage != 0 && currentPage < lastPage) {
+      if (extraOption == 1) {
+        generateExcelNewlyEnrolledAgywAndServicesReport(currentPage); // Iterar
+      } else if (extraOption == 3) {
+        console.log("3. To Be Implemented");
+      }
+    }
+  }, [currentPage]);
+
+  useEffect(() => {
+    if (currentDistrict != undefined) {
+      if (extraOption == 2) {
+        generateExcelNewlyEnrolledAgywAndServicesSummaryReport(currentDistrict); // Iterar
+      } else if (extraOption == 4) {
+        console.log("3. Other Summary, To Be Implemented");
+      }
+    }
+  }, [currentDistrict]);
+
+  const handleGenerateXLSXReport = (i) => {
     if (
       selectedProvinces.length < 1 ||
       selectedDistricts.length < 1 ||
@@ -155,11 +177,14 @@ const DataExtraction = () => {
     ) {
       toast.error("Por favor selecione os filtros para relatorio");
     } else {
-      setDataLoading(true);
       if (extraOption == 1) {
-        generateXlsReport();
+        generateExcelNewlyEnrolledAgywAndServicesReport(i); // Iterar
       } else if (extraOption == 2) {
-        generateSummaryXlsReport();
+        generateExcelNewlyEnrolledAgywAndServicesSummaryReport(i);
+      } else if (extraOption == 3) {
+        console.log("3. To Be Implemented");
+      } else if (extraOption == 4) {
+        console.log("4. Summary To Be Implemented");
       } else {
         setDataLoading(false);
         toast.error("Por favor selecione o tipo de extração");
@@ -167,359 +192,68 @@ const DataExtraction = () => {
     }
   };
 
-  const generateXlsReport = async () => {
-    console.log("On Export XLS");
-
+  const generateExcelNewlyEnrolledAgywAndServicesReport = async (pageIndex) => {
+    setDataLoading(true);
     try {
-      setDataLoading(true);
-
-      const workbook = new ExcelJS.Workbook();
-      const worksheet = workbook.addWorksheet(
-        "DLT2.0_NOVAS_RAMJ_ VULNERABILIDADES_E_SERVICOS"
+      const response = await getNewlyEnrolledAgywAndServicesReportGenerated(
+        selectedProvinces[0].name,
+        districtsIds,
+        initialDate,
+        finalDate,
+        pageIndex,
+        pageSize,
+        username
       );
-
-      worksheet.mergeCells("A1:AN1");
-
-      worksheet.mergeCells("A6:Q6");
-      worksheet.mergeCells("R6:AD6");
-      worksheet.mergeCells("AE6:AN6");
-
-      worksheet.getCell("A1").value = "Novas RAMJ, Vulnerabilidades e Serviços";
-
-      worksheet.getCell("A3").value = "Data de Início";
-      worksheet.getCell("A4").value = "Data de Fim";
-      worksheet.getCell("B3").value = moment(initialDate).format("YYYY-MM-DD");
-      worksheet.getCell("B4").value = moment(finalDate).format("YYYY-MM-DD");
-      worksheet.getCell("A6").value = "Informação Demográfica ";
-      worksheet.getCell("S6").value = "Vulnerabilidades ";
-      worksheet.getCell("AE6").value = "Serviços e Sub-Serviços ";
-
-      worksheet.getCell("A1").font = {
-        family: 4,
-        size: 11,
-        underline: true,
-        bold: true,
-      };
-      worksheet.getCell("A3").font = {
-        family: 4,
-        size: 11,
-        underline: true,
-        bold: true,
-      };
-      worksheet.getCell("A4").font = {
-        family: 4,
-        size: 11,
-        underline: true,
-        bold: true,
-      };
-      worksheet.getCell("A6").alignment = {
-        vertical: "middle",
-        horizontal: "center",
-      };
-
-      worksheet.getCell("S6").alignment = {
-        vertical: "middle",
-        horizontal: "center",
-      };
-
-      worksheet.getCell("AE6").alignment = {
-        vertical: "middle",
-        horizontal: "center",
-      };
-
-      const headers = [
-        "#",
-        "Província",
-        "Distrito",
-        "Onde Mora",
-        "Ponto de Entrada",
-        "Organização",
-        "Data de Registo",
-        "Registado Por",
-        "Data da Última Actualização",
-        "Actualizado Por",
-        "NUI",
-        "Sexo",
-        "Idade (Registo)",
-        "Idade (Actual)",
-        "Faixa Etária (Registo)",
-        "Faixa Etária (Actual)",
-        "Data de Nascimento",
-        "Beneficiaria DREAMS ?",
-        "Com quem Mora",
-        "Sustenta a Casa",
-        "É Orfã",
-        "Vai à escola",
-        "Tem Deficiência",
-        "Tipo de Deficiência",
-        "Já foi casada",
-        "Já esteve grávida",
-        "Tem filhos",
-        "Está Grávida ou a Amamentar",
-        "Trabalha",
-        "Já fez teste de HIV",
-        "Área de Serviço",
-        "Serviço",
-        "Sub-Serviço",
-        "Pacote de Serviço",
-        "Ponto de Entrada de Serviço",
-        "Localização do Serviço",
-        "Data do Serviço",
-        "Provedor do Serviço",
-        "Outras Observações",
-        "Status",
-      ];
-
-      const headerRow = worksheet.getRow(7);
-      headers.forEach((header, index) => {
-        const cell = headerRow.getCell(index + 1);
-        cell.alignment = { vertical: "middle", horizontal: "center" };
-        cell.value = header;
-        cell.font = { bold: true };
-      });
-
-      let sequence = 1;
-
-      for (let i = 0; i < lastPage; i++) {
-        const responseData = await getNewlyEnrolledAgywAndServices(
-          districtsIds,
-          initialDate,
-          finalDate,
-          i,
-          pageSize
-        );
-        responseData.forEach((report) => {
-          const values = [
-            sequence,
-            report[0],
-            report[1],
-            report[2],
-            report[3],
-            report[4],
-            report[5],
-            report[6],
-            report[7],
-            report[8],
-            report[9],
-            report[10],
-            report[11],
-            report[12],
-            report[13],
-            report[14],
-            report[15],
-            report[16],
-            report[17],
-            report[18],
-            report[19],
-            report[20],
-            report[21],
-            report[22],
-            report[23],
-            report[24],
-            report[25],
-            report[26],
-            report[27],
-            report[28],
-            report[29],
-            report[30],
-            report[31],
-            report[32],
-            report[33],
-            report[34],
-            report[35],
-            report[36],
-            report[37],
-            report[38],
-            report[39],
-          ];
-          sequence++;
-          worksheet.addRow(values);
-        });
-      }
-
-      const created = moment().format("YYYYMMDD_hhmmss");
-      const buffer = await workbook.xlsx.writeBuffer();
-      const blob = new Blob([buffer], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      saveAs(
-        blob,
-        `DLT2.0_NOVAS_RAMJ_ VULNERABILIDADES_E_SERVICOS_${created}.xlsx`
-      );
-
+      await downloadFile(response);
+      setCurrentPage(currentPage + 1);
       setDataLoading(false);
     } catch (error) {
-      // Handle any errors that occur during report generation
-      console.error("Error generating XLSX report:", error);
       setDataLoading(false);
-      // Display an error message using your preferred method (e.g., toast.error)
-      toast.error("An error occurred during report generation.");
+      console.error("Error downloading the Excel report", error);
     }
   };
 
-  const generateSummaryXlsReport = async () => {
-    console.log("On Export XLS");
-
-    try {
-      setDataLoading(true);
-
-      const workbook = new ExcelJS.Workbook();
-      const worksheet = workbook.addWorksheet(
-        "DLT2.0_SUMARIO_NOVAS_RAMJ_ VULNERABILIDADES_E_SERVICOS"
-      );
-
-      worksheet.mergeCells("A1:AN1");
-
-      worksheet.getCell("A1").value =
-        "SUMARIO DE Novas RAMJ, Vulnerabilidades e Serviços ";
-
-      worksheet.getCell("A3").value = "Data de Início";
-      worksheet.getCell("A4").value = "Data de Fim";
-      worksheet.getCell("B3").value = moment(initialDate).format("YYYY-MM-DD");
-      worksheet.getCell("B4").value = moment(finalDate).format("YYYY-MM-DD");
-
-      worksheet.getCell("A1").font = {
-        family: 4,
-        size: 11,
-        underline: true,
-        bold: true,
-      };
-      worksheet.getCell("A3").font = {
-        family: 4,
-        size: 11,
-        underline: true,
-        bold: true,
-      };
-      worksheet.getCell("A4").font = {
-        family: 4,
-        size: 11,
-        underline: true,
-        bold: true,
-      };
-
-      const headers = [
-        "#",
-        "Província",
-        "Distrito",
-        "NUI",
-        "Idade Actual",
-        "Faixa Actual",
-        "Vulnerabilidades",
-        "Agyw Prev",
-        "Referencias Clinico",
-        "Referencias Comunitario",
-        "Recursos Sociais",
-        "Data Recursos Sociais",
-        "Prevencao HIV",
-        "Data Prevencao HIV",
-        "Prevencao VGB",
-        "Data Prevencao VGB",
-        "Educativas",
-        "Data Educativas",
-        "Literacia Financeira",
-        "Data Literacia Financeira",
-        "ATS",
-        "Data ATS",
-        "Preservativos",
-        "Data Preservativos",
-        "Contracepcao",
-        "Data Contracepcao",
-        "Abordagens Socio-Economicas",
-        "Data Abordagens Socio-Economicas",
-        "Subsidio Escolar",
-        "Data Subsidio Escolar",
-        "Cuidados Pos Violencia Comunitario",
-        "Data Cuidados Pos Violencia Comunitarios",
-        "Cuidados Pos Violencia Clinicos",
-        "Data Cuidados Pos Violencia Clinicos",
-        "Outros Saa",
-        "Data Outros Saa",
-        "Prep",
-        "Data Prep",
-      ];
-
-      const headerRow = worksheet.getRow(6);
-      headers.forEach((header, index) => {
-        const cell = headerRow.getCell(index + 1);
-        cell.alignment = { vertical: "middle", horizontal: "center" };
-        cell.value = header;
-        cell.font = { bold: true };
+  const downloadFile = async (filePath) => {
+    await getFileDownloaded(filePath)
+      .then((response) => {
+        const filename = filePath.substring(filePath.lastIndexOf("/") + 1);
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      })
+      .catch((error) => {
+        console.error("Error downloading file: ", error);
       });
+  };
 
-      let sequence = 1;
-
-      for (let i = 0; i < lastPageSummary; i++) {
-        const responseData = await getNewlyEnrolledAgywAndServicesSummary(
-          districtsIds,
+  const generateExcelNewlyEnrolledAgywAndServicesSummaryReport = async (
+    currentDistrictIndex
+  ) => {
+    setDataLoading(true);
+    try {
+      const response =
+        await geNewlyEnrolledAgywAndServicesSummaryReportGenerated(
+          selectedProvinces[0].name,
+          districtsIds[currentDistrictIndex],
           initialDate,
           finalDate,
-          i,
-          pageSize
+          currentPage,
+          nextIndex,
+          username
         );
-        responseData.forEach((report) => {
-          const values = [
-            sequence,
-            report[0],
-            report[1],
-            report[2],
-            report[3],
-            report[4],
-            report[5],
-            report[6],
-            report[7],
-            report[8],
-            report[9],
-            report[10],
-            report[11],
-            report[12],
-            report[13],
-            report[14],
-            report[15],
-            report[16],
-            report[17],
-            report[18],
-            report[19],
-            report[20],
-            report[21],
-            report[22],
-            report[23],
-            report[24],
-            report[25],
-            report[26],
-            report[27],
-            report[28],
-            report[29],
-            report[30],
-            report[31],
-            report[32],
-            report[33],
-            report[34],
-            report[35],
-            report[36],
-            report[37],
-          ];
-          sequence++;
-          worksheet.addRow(values);
-        });
+      if (response.fileSize > 0) {
+        await downloadFile(response.fileName);
+        setCurrentPage(currentPage + 1);
+        setNextIndex(response.nextIndex);
       }
-
-      const created = moment().format("YYYYMMDD_hhmmss");
-      const buffer = await workbook.xlsx.writeBuffer();
-      const blob = new Blob([buffer], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      saveAs(
-        blob,
-        `DLT2.0_SUMARIO_NOVAS_RAMJ_ VULNERABILIDADES_E_SERVICOS_${created}.xlsx`
-      );
-
+      setCurrentDistrict(currentDistrictIndex + 1);
       setDataLoading(false);
     } catch (error) {
-      // Handle any errors that occur during report generation
-      console.error("Error generating XLSX report:", error);
       setDataLoading(false);
-      // Display an error message using your preferred method (e.g., toast.error)
-      toast.error("An error occurred during report generation.");
+      console.error("Error downloading the Excel report", error);
     }
   };
 
@@ -625,7 +359,7 @@ const DataExtraction = () => {
                     <Button
                       type="primary"
                       htmlType="submit"
-                      onClick={handleGenerateXLSXReport}
+                      onClick={() => handleGenerateXLSXReport(0)}
                     >
                       Extrair
                     </Button>
