@@ -272,7 +272,7 @@ const ReferenceInterventionForm = ({ form, reference, refServices }: any) => {
                     />
                     <Button
                       type="text"
-                      icon={<PlusOutlined />}
+                      icon={<PlusOutlined rev={undefined} />}
                       onClick={addItem}
                     >
                       Outro

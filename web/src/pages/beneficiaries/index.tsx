@@ -444,7 +444,7 @@ const BeneficiariesList: React.FC = () => {
   const showConfirmVoid = (data: any) => {
     confirm({
       title: "Deseja Excluir a Beneficiária com o NUI " + data.nui + "?",
-      icon: <ExclamationCircleFilled />,
+      icon: <ExclamationCircleFilled rev={undefined} />,
       okText: "Sim",
       okType: "danger",
       cancelText: "Não",
@@ -512,7 +512,7 @@ const BeneficiariesList: React.FC = () => {
           <Button
             type="primary"
             onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-            icon={<SearchOutlined />}
+            icon={<SearchOutlined rev={undefined} />}
             size="small"
             style={{ width: 90 }}
           >
@@ -531,7 +531,10 @@ const BeneficiariesList: React.FC = () => {
       </div>
     ),
     filterIcon: (filtered) => (
-      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
+      <SearchOutlined
+        style={{ color: filtered ? "#1890ff" : undefined }}
+        rev={undefined}
+      />
     ),
     onFilter: (value, record) =>
       record[dataIndex]
@@ -739,18 +742,18 @@ const BeneficiariesList: React.FC = () => {
         <Space>
           <Button
             type="primary"
-            icon={<EyeOutlined />}
+            icon={<EyeOutlined rev={undefined} />}
             onClick={() => handleViewModalVisible(true, record)}
           ></Button>
           <Button
             type="primary"
-            icon={<EditOutlined />}
+            icon={<EditOutlined rev={undefined} />}
             onClick={() => onEditBeneficiary(record)}
           ></Button>
           <Button
             type="primary"
             hidden={visibleName === true}
-            icon={<DeleteOutlined />}
+            icon={<DeleteOutlined rev={undefined} />}
             onClick={() => showConfirmVoid(record)}
           ></Button>
         </Space>
@@ -1004,7 +1007,7 @@ const BeneficiariesList: React.FC = () => {
             <Button
               type="primary"
               onClick={() => handleBeneficiaryModalVisible(true)}
-              icon={<PlusOutlined />}
+              icon={<PlusOutlined rev={undefined} />}
               style={{
                 background: "#00a65a",
                 borderColor: "#00a65a",
@@ -1016,7 +1019,7 @@ const BeneficiariesList: React.FC = () => {
             <Button
               type="primary"
               onClick={() => handleBeneficiaryPartnerModalVisible(true)}
-              icon={<PlusOutlined />}
+              icon={<PlusOutlined rev={undefined} />}
               style={{
                 background: "#a69e00",
                 borderColor: "#a69e00",

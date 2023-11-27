@@ -347,7 +347,7 @@ const InterventionForm = ({ record, beneficiary }: any) => {
                     />
                     <Button
                       type="text"
-                      icon={<PlusOutlined />}
+                      icon={<PlusOutlined rev={undefined} />}
                       onClick={addItem}
                     >
                       Outro

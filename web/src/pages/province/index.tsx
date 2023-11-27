@@ -118,7 +118,7 @@ const ProvinceList: React.FC = () => {
           <Button
             type="primary"
             onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-            icon={<SearchOutlined />}
+            icon={<SearchOutlined rev={undefined} />}
             size="small"
             style={{ width: 90 }}
           >
@@ -148,7 +148,10 @@ const ProvinceList: React.FC = () => {
       </div>
     ),
     filterIcon: (filtered) => (
-      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
+      <SearchOutlined
+        style={{ color: filtered ? "#1890ff" : undefined }}
+        rev={undefined}
+      />
     ),
     onFilter: (value, record) =>
       record[dataIndex]
@@ -237,7 +240,7 @@ const ProvinceList: React.FC = () => {
         <Space>
           <Button
             type="primary"
-            icon={<EditOutlined />}
+            icon={<EditOutlined rev={undefined} />}
             onClick={() => onEditProvincia(record)}
           />
         </Space>

@@ -139,7 +139,7 @@ const LocalityList: React.FC = () => {
           <Button
             type="primary"
             onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-            icon={<SearchOutlined />}
+            icon={<SearchOutlined rev={undefined} />}
             size="small"
             style={{ width: 90 }}
           >
@@ -169,7 +169,10 @@ const LocalityList: React.FC = () => {
       </div>
     ),
     filterIcon: (filtered) => (
-      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
+      <SearchOutlined
+        style={{ color: filtered ? "#1890ff" : undefined }}
+        rev={undefined}
+      />
     ),
     onFilter: (value, record) =>
       record[dataIndex]
@@ -265,7 +268,7 @@ const LocalityList: React.FC = () => {
         <Space>
           <Button
             type="primary"
-            icon={<EditOutlined />}
+            icon={<EditOutlined rev={undefined} />}
             onClick={() => onEditLocality(record)}
           />
         </Space>
@@ -284,7 +287,7 @@ const LocalityList: React.FC = () => {
           <Space>
             <Button
               type="primary"
-              icon={<PlusOutlined />}
+              icon={<PlusOutlined rev={undefined} />}
               onClick={() => handleLocalityModalVisible(true)}
             >
               Adicionar Postos Administrativos
