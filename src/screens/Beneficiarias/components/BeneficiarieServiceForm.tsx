@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useContext, useCallback, memo } from "react";
+import React, {
+  useEffect,
+  useState,
+  useContext,
+  useCallback,
+  memo,
+} from "react";
 import { View, KeyboardAvoidingView, ScrollView } from "react-native";
 import {
   Center,
@@ -151,17 +157,20 @@ const BeneficiarieServiceForm: React.FC = ({
     setChecked(value);
   };
 
-  const activeServices = services.filter(item =>item.status == 1);
-  const activeSubServices = subServices.filter(item =>item.status == 1);
+  const activeServices = services.filter((item) => item.status == 1);
+  const activeSubServices = subServices.filter((item) => item.status == 1);
 
   useEffect(() => {
     if (mounted) {
-      setServicesState(activeServices);
-      setSubServicesState(activeSubServices);
-      getPartner();
 
       const age = calculateAge(beneficiarie.date_of_birth);
       let is15AndStartedAvante = false;
+
+      setServicesState(activeServices);
+      const subServicesListItems = activeSubServices.map((item) => item._raw);
+      const subServicesList = age <= 14 || age >= 20 ? subServicesListItems.filter((item) => item.online_id !== 235): subServicesListItems;
+      setSubServicesState(subServicesList);
+      getPartner();
 
       if (age == 15) {
         const interventionsIds = intervs.map(
@@ -187,7 +196,7 @@ const BeneficiarieServiceForm: React.FC = ({
         });
 
       const disableEstudante = (hasFacilitacao) =>
-      activeServices.filter((service) => {
+        activeServices.filter((service) => {
           if (hasFacilitacao)
             return !avanteEstudanteOnlineIds.includes(service._raw.online_id);
           else
@@ -378,7 +387,10 @@ const BeneficiarieServiceForm: React.FC = ({
 
     if (isEdit && benefIntervSerialied.length > 0) {
       const interv: any = benefIntervSerialied[0];
-      if (interv.sub_service_id != intervention.sub_service_id || interv.date != intervention.date) {
+      if (
+        interv.sub_service_id != intervention.sub_service_id ||
+        interv.date != intervention.date
+      ) {
         recordAlreadyExists = true;
       }
     }
@@ -405,25 +417,26 @@ const BeneficiarieServiceForm: React.FC = ({
   }, [isSync]);
 
   const onSubmit = async (values: any, isEdit: boolean) => {
-
     const newObject = await database.write(async () => {
       if (isEdit) {
         const interventionToUpdate = await database
           .get("beneficiaries_interventions")
           .find(intervention.id);
-        const updatedIntervention = await interventionToUpdate.update((intervention:any) => {
-          intervention.sub_service_id = values.sub_service_id;
-          intervention.remarks = values.remarks;
-          intervention.result = values.result;
-          intervention.date = "" + text;
-          intervention.us_id = values.us_id;
-          intervention.activist_id = userId;
-          intervention.entry_point = values.entry_point;
-          intervention.provider = "" + values.provider;
-          intervention.remarks = values.remarks;
-          intervention.status = 1;
-          intervention._status = "updated";
-        });
+        const updatedIntervention = await interventionToUpdate.update(
+          (intervention: any) => {
+            intervention.sub_service_id = values.sub_service_id;
+            intervention.remarks = values.remarks;
+            intervention.result = values.result;
+            intervention.date = "" + text;
+            intervention.us_id = values.us_id;
+            intervention.activist_id = userId;
+            intervention.entry_point = values.entry_point;
+            intervention.provider = "" + values.provider;
+            intervention.remarks = values.remarks;
+            intervention.status = 1;
+            intervention._status = "updated";
+          }
+        );
         showToast("success", "Actualizado", "Serviço actualizado com sucesso!");
         return updatedIntervention;
       } else {
@@ -675,7 +688,9 @@ const BeneficiarieServiceForm: React.FC = ({
                       <FormControl.Label>Área de Serviços</FormControl.Label>
                       <Picker
                         enabled={
-                          isNewIntervention && !isClinicalOrCommunityPartner || initialValues.areaServicos_id == undefined
+                          (isNewIntervention &&
+                            !isClinicalOrCommunityPartner) ||
+                          initialValues.areaServicos_id == undefined
                         }
                         style={styles.dropDownPickerDisabled}
                         selectedValue={values.areaServicos_id}
@@ -760,9 +775,9 @@ const BeneficiarieServiceForm: React.FC = ({
                           })
                           .map((item) => (
                             <Picker.Item
-                              key={item._raw.online_id}
-                              label={item._raw.name}
-                              value={parseInt(item._raw.online_id)}
+                              key={item.online_id}
+                              label={item.name}
+                              value={parseInt(item.online_id)}
                             />
                           ))}
                       </Picker>
