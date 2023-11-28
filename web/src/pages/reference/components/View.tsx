@@ -66,7 +66,7 @@ const ViewReferencePanel = ({ selectedReference }) => {
   const showSelectServices = () => {
     confirm({
       title: "Nenhum serviço Selecionado, Selecione os serviços a atender",
-      icon: <ExclamationCircleFilled />,
+      icon: <ExclamationCircleFilled rev={undefined} />,
     });
   };
 
@@ -219,7 +219,7 @@ const ViewReferencePanel = ({ selectedReference }) => {
   const showCloseConfirm = () => {
     confirm({
       title: "Deseja fechar este formulário?",
-      icon: <ExclamationCircleFilled />,
+      icon: <ExclamationCircleFilled rev={undefined} />,
       okText: "Sim",
       okType: "danger",
       cancelText: "Não",
@@ -545,7 +545,7 @@ const ViewReferral = ({ reference, modalVisible, handleModalVisible }) => {
   const showCloseConfirm = () => {
     confirm({
       title: "Deseja fechar este formulário?",
-      icon: <ExclamationCircleFilled />,
+      icon: <ExclamationCircleFilled rev={undefined} />,
       okText: "Sim",
       okType: "danger",
       cancelText: "Não",
