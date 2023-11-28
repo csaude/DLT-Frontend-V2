@@ -397,7 +397,7 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
           <Button
             type="primary"
             onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-            icon={<SearchOutlined rev={undefined} />}
+            icon={<SearchOutlined />}
             size="small"
             style={{ width: 90 }}
           >
@@ -416,10 +416,7 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
       </div>
     ),
     filterIcon: (filtered) => (
-      <SearchOutlined
-        style={{ color: filtered ? "#1890ff" : undefined }}
-        rev={undefined}
-      />
+      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
     ),
     onFilter: (value, record) =>
       record[dataIndex]
@@ -481,7 +478,7 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
           <Button
             type="primary"
             onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-            icon={<SearchOutlined rev={undefined} />}
+            icon={<SearchOutlined />}
             size="small"
             style={{ width: 90 }}
           >
@@ -500,10 +497,7 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
       </div>
     ),
     filterIcon: (filtered) => (
-      <SearchOutlined
-        style={{ color: filtered ? "#1890ff" : undefined }}
-        rev={undefined}
-      />
+      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
     ),
     onFilter: (value, record) =>
       record.beneficiaries?.nui
@@ -716,7 +710,7 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
         <Space>
           <Button
             type="primary"
-            icon={<EyeOutlined rev={undefined} />}
+            icon={<EyeOutlined />}
             onClick={() => handleViewModalVisible(true, record)}
           ></Button>
           <Button
@@ -726,7 +720,7 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
               record.referredBy?.partners?.partnerType !==
                 loggedUser?.partners?.partnerType
             }
-            icon={<EditOutlined rev={undefined} />}
+            icon={<EditOutlined />}
             onClick={() =>
               record.status == 0
                 ? onEditRefence(record)

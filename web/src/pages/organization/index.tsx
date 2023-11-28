@@ -162,7 +162,7 @@ const OrganizationList: React.FC = () => {
           <Button
             type="primary"
             onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-            icon={<SearchOutlined rev={undefined} />}
+            icon={<SearchOutlined />}
             size="small"
             style={{ width: 90 }}
           >
@@ -181,10 +181,7 @@ const OrganizationList: React.FC = () => {
       </div>
     ),
     filterIcon: (filtered) => (
-      <SearchOutlined
-        style={{ color: filtered ? "#1890ff" : undefined }}
-        rev={undefined}
-      />
+      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
     ),
     onFilter: (value, record) =>
       record[dataIndex]
@@ -290,7 +287,7 @@ const OrganizationList: React.FC = () => {
         <Space>
           <Button
             type="primary"
-            icon={<EditOutlined rev={undefined} />}
+            icon={<EditOutlined />}
             onClick={() => onEditOrganization(record)}
           />
         </Space>
@@ -309,7 +306,7 @@ const OrganizationList: React.FC = () => {
           <Space>
             <Button
               type="primary"
-              icon={<PlusOutlined rev={undefined} />}
+              icon={<PlusOutlined />}
               onClick={() => handleOrganizationModalVisible(true)}
             >
               Adicionar Organização

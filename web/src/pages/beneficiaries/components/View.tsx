@@ -136,7 +136,7 @@ const ViewBenefiaryPanel = ({
   const showCloseConfirm = () => {
     confirm({
       title: "Deseja fechar este formulário?",
-      icon: <ExclamationCircleFilled rev={undefined} />,
+      icon: <ExclamationCircleFilled />,
       okText: "Sim",
       okType: "danger",
       cancelText: "Não",
@@ -153,7 +153,7 @@ const ViewBenefiaryPanel = ({
   const showConfirmVoid = (data: any) => {
     confirm({
       title: "Deseja Excluir a Intervenção?",
-      icon: <ExclamationCircleFilled rev={undefined} />,
+      icon: <ExclamationCircleFilled />,
       okText: "Sim",
       okType: "danger",
       cancelText: "Não",
@@ -304,18 +304,18 @@ const ViewBenefiaryPanel = ({
         <Space>
           <Button
             type="primary"
-            icon={<EyeOutlined rev={undefined} />}
+            icon={<EyeOutlined />}
             onClick={() => showDrawer(record)}
           ></Button>
           <Button
             type="primary"
-            icon={<EditOutlined rev={undefined} />}
+            icon={<EditOutlined />}
             onClick={() => onEditIntervention(record)}
           ></Button>
           <Button
             type="primary"
             hidden={visibleName === true}
-            icon={<DeleteOutlined rev={undefined} />}
+            icon={<DeleteOutlined />}
             onClick={() => showConfirmVoid(record)}
           ></Button>
         </Space>
@@ -520,7 +520,7 @@ const ViewBenefiaryPanel = ({
               <Button
                 onClick={() => onAddReference(true, beneficiary)}
                 type="primary"
-                icon={<ArrowUpOutlined rev={undefined} />}
+                icon={<ArrowUpOutlined />}
                 danger
               >
                 Referir Beneficiária
@@ -528,7 +528,7 @@ const ViewBenefiaryPanel = ({
               <Button
                 onClick={onAddIntervention}
                 type="primary"
-                icon={<PlusOutlined rev={undefined} />}
+                icon={<PlusOutlined />}
               >
                 Adicionar Serviço Dreams
               </Button>
@@ -612,7 +612,7 @@ const ViewBeneficiary = ({
   const showCloseConfirm = () => {
     confirm({
       title: "Deseja fechar este formulário?",
-      icon: <ExclamationCircleFilled rev={undefined} />,
+      icon: <ExclamationCircleFilled />,
       okText: "Sim",
       okType: "danger",
       cancelText: "Não",

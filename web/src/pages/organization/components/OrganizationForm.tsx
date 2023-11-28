@@ -65,7 +65,7 @@ const OrganizationForm = ({
   const showCloseConfirm = () => {
     confirm({
       title: "Deseja fechar este formulário?",
-      icon: <ExclamationCircleFilled rev={undefined} />,
+      icon: <ExclamationCircleFilled />,
       okText: "Sim",
       okType: "danger",
       cancelText: "Não",

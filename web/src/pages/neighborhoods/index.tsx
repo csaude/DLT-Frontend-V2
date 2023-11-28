@@ -186,7 +186,7 @@ const NeighborhoodsList: React.FC = () => {
           <Button
             type="primary"
             onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-            icon={<SearchOutlined rev={undefined} />}
+            icon={<SearchOutlined />}
             size="small"
             style={{ width: 90 }}
           >
@@ -216,10 +216,7 @@ const NeighborhoodsList: React.FC = () => {
       </div>
     ),
     filterIcon: (filtered) => (
-      <SearchOutlined
-        style={{ color: filtered ? "#1890ff" : undefined }}
-        rev={undefined}
-      />
+      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
     ),
     onFilter: (value, record) =>
       record[dataIndex]
@@ -332,7 +329,7 @@ const NeighborhoodsList: React.FC = () => {
         <Space>
           <Button
             type="primary"
-            icon={<EditOutlined rev={undefined} />}
+            icon={<EditOutlined />}
             onClick={() => onEditNeighborhood(record)}
           />
         </Space>
@@ -351,7 +348,7 @@ const NeighborhoodsList: React.FC = () => {
           <Space>
             <Button
               type="primary"
-              icon={<PlusOutlined rev={undefined} />}
+              icon={<PlusOutlined />}
               onClick={() => handleModalVisible(true)}
             >
               Adicionar Bairro Residencial

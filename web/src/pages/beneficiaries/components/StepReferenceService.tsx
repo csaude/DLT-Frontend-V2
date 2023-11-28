@@ -224,7 +224,7 @@ const StepReferenceService = ({
       render: (text, record) => (
         <Button
           type="primary"
-          icon={<DeleteFilled rev={undefined} />}
+          icon={<DeleteFilled />}
           onClick={() => onRemoveServico(record)}
           danger
         ></Button>
@@ -369,7 +369,7 @@ const StepReferenceService = ({
                   <Button
                     type="primary"
                     onClick={() => showDrawer()}
-                    icon={<PlusOutlined rev={undefined} />}
+                    icon={<PlusOutlined />}
                     style={{
                       background: "#00a65a",
                       borderColor: "#00a65a",

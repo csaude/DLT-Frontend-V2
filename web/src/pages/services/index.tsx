@@ -150,7 +150,7 @@ const ServicesList: React.FC = () => {
           <Button
             type="primary"
             onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-            icon={<SearchOutlined rev={undefined} />}
+            icon={<SearchOutlined />}
             size="small"
             style={{ width: 90 }}
           >
@@ -178,10 +178,7 @@ const ServicesList: React.FC = () => {
       </div>
     ),
     filterIcon: (filtered) => (
-      <SearchOutlined
-        style={{ color: filtered ? "#1890ff" : undefined }}
-        rev={undefined}
-      />
+      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
     ),
     onFilter: (value, record) =>
       record[dataIndex]
@@ -298,7 +295,7 @@ const ServicesList: React.FC = () => {
         <Space>
           <Button
             type="primary"
-            icon={<EditOutlined rev={undefined} />}
+            icon={<EditOutlined />}
             onClick={() => onEditService(record)}
           />
         </Space>
@@ -317,7 +314,7 @@ const ServicesList: React.FC = () => {
           <Space>
             <Button
               type="primary"
-              icon={<PlusOutlined rev={undefined} />}
+              icon={<PlusOutlined />}
               onClick={() => handleServiceModalVisible(true)}
             >
               Adicionar Serviço

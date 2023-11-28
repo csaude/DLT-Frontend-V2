@@ -331,7 +331,7 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
           <Button
             type="primary"
             onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-            icon={<SearchOutlined rev={undefined} />}
+            icon={<SearchOutlined />}
             size="small"
             style={{ width: 90 }}
           >
@@ -350,10 +350,7 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
       </div>
     ),
     filterIcon: (filtered) => (
-      <SearchOutlined
-        style={{ color: filtered ? "#1890ff" : undefined }}
-        rev={undefined}
-      />
+      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
     ),
     onFilter: (value, record) =>
       record[dataIndex]
@@ -410,7 +407,7 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
           <Button
             type="primary"
             onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-            icon={<SearchOutlined rev={undefined} />}
+            icon={<SearchOutlined />}
             size="small"
             style={{ width: 90 }}
           >
@@ -429,10 +426,7 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
       </div>
     ),
     filterIcon: (filtered) => (
-      <SearchOutlined
-        style={{ color: filtered ? "#1890ff" : undefined }}
-        rev={undefined}
-      />
+      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
     ),
     onFilter: (value, record) =>
       record.beneficiaries?.nui
