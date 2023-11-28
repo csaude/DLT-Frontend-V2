@@ -15,6 +15,7 @@ import {
   queryByTypeAndBeneficiary,
   querySubServiceByService,
 } from "@app/utils/service";
+import { calculateAge } from "@app/models/Utils";
 import { allUsByUser } from "@app/utils/uSanitaria";
 import moment from "moment";
 import { query } from "@app/utils/users";
@@ -59,6 +60,7 @@ const InterventionForm = ({ record, beneficiary }: any) => {
   const isUsVisible = role !== "MENTORA" ? true : false;
 
   const options = isUsVisible ? options3 : options2;
+  const Age = calculateAge(beneficiary?.dateOfBirth);
 
   const selectedOption = options
     ?.filter((o) => o.value === selectedIntervention?.entryPoint + "")
@@ -146,7 +148,9 @@ const InterventionForm = ({ record, beneficiary }: any) => {
   const onChangeServices = async (value: any) => {
     form.setFieldsValue({ subservice: undefined });
     const data = await querySubServiceByService(value);
-    setInterventions(data);
+    const subServiceList =
+      Age <= 14 || Age >= 20 ? data.filter((item) => item.id !== 235) : data;
+    setInterventions(subServiceList);
   };
 
   const onNameChange = (event) => {
