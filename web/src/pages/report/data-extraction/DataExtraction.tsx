@@ -60,11 +60,11 @@ const DataExtraction = () => {
   const extraOptions = [
     {
       id: 1,
-      name: "Lista De RAMJ Registadas No Dreams No Período Em Consideração, Suas Vulnerabilidades E Serviços Recebidos ",
+      name: "Lista De RAMJ Registadas No DLT No Período Em Consideração, Suas Vulnerabilidades E Serviços Recebidos ",
     },
     {
       id: 2,
-      name: "Relatório Resumo De RAMJ Registadas No Dreams No Período Em Consideração, Suas Vulnerabilidades E Serviços Recebidos ",
+      name: "Relatório Resumo De RAMJ Registadas No DLT No Período Em Consideração, Suas Vulnerabilidades E Serviços Recebidos ",
     },
     {
       id: 3,
@@ -389,7 +389,7 @@ const DataExtraction = () => {
                       placeholder="Seleccione a Província"
                       onChange={onChangeProvinces}
                     >
-                      {provinces?.map((item) => (
+                                            {provinces?.map((item) => (
                         <Option key={item.id}>{item.name}</Option>
                       ))}
                     </Select>
