@@ -226,7 +226,7 @@ const UsersList: React.FC = () => {
     }
   };
 
-  const handleAdd = () => {
+  const handleAdd = (buttonRef: React.RefObject<HTMLButtonElement>) => {
     form
       .validateFields()
       .then(async (values) => {
@@ -308,6 +308,9 @@ const UsersList: React.FC = () => {
             marginTop: "10vh",
           },
         });
+        if (buttonRef.current) {
+          buttonRef.current.disabled = false;
+        }
       });
   };
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import {
   Modal,
   Form,
@@ -63,6 +63,8 @@ const UsersForm = ({
   const [isNeighborhoodVisible, setNeighborhoodVisible] = useState(true);
 
   const RequiredFieldMessage = "Obrigatório!";
+
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const profilesSelector = useSelector(
     (state: any) => state?.profile.loadedProfiles
@@ -321,6 +323,13 @@ const UsersForm = ({
     }
   }, [dataSelection]);
 
+  const onSubmit = async () => {
+    if (buttonRef.current && !buttonRef.current.disabled) {
+      buttonRef.current.disabled = true;
+      handleAdd(buttonRef);
+    }
+  };
+
   return (
     <Modal
       width={1200}
@@ -334,7 +343,7 @@ const UsersForm = ({
         <Button key="Cancel" onClick={() => showCloseConfirm()}>
           Cancelar
         </Button>,
-        <Button key="OK" onClick={handleAdd} type="primary">
+        <Button key="OK" ref={buttonRef} onClick={onSubmit} type="primary">
           Salvar
         </Button>,
       ]}
