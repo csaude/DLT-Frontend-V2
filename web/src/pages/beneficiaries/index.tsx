@@ -304,7 +304,10 @@ const BeneficiariesList: React.FC = () => {
     beneficiary,
   ]);
 
-  const handleAddRef = async (values: any) => {
+  const handleAddRef = async (
+    values: any,
+    buttonRef: React.RefObject<HTMLButtonElement>
+  ) => {
     if (values !== undefined) {
       const servicesObjects = services.map((e: any) => {
         const listServices: any = {
@@ -355,6 +358,9 @@ const BeneficiariesList: React.FC = () => {
             marginTop: "10vh",
           },
         });
+        if (buttonRef.current) {
+          buttonRef.current.disabled = false;
+        }
       } else {
         setAddStatus(true);
         const { data } = await addRef(payload);

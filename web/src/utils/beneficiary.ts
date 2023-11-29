@@ -64,8 +64,16 @@ export async function queryCountByFilters(
 ) {
   const url = `/api/beneficiaries/countByFilters?${stringify(
     payload
-  )}&searchNui=${searchNui}&searchName=${searchName}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`;
+  )}&searchNui=${undefinedToEmpty(searchNui)}&searchName=${undefinedToEmpty(
+    searchName
+  )}&searchUserCreator=${undefinedToEmpty(
+    searchUserCreator
+  )}&searchDistrict=${undefinedToEmpty(searchDistrict)}`;
 
   const res = await select(url);
   return res;
+}
+
+function undefinedToEmpty(value: any) {
+  return value == undefined ? "" : value;
 }
