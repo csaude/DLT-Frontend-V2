@@ -42,6 +42,7 @@ const DataExtraction = () => {
   const [finalDate, setFinalDate] = useState<any>();
   const [form] = Form.useForm();
   const [dataLoading, setDataLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState("");
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [lastPage, setLastPage] = useState<number>(0);
   const [extraOption, setExtraOption] = useState(0);
@@ -59,25 +60,20 @@ const DataExtraction = () => {
   const extraOptions = [
     {
       id: 1,
-      name: "Lista De RAMJ Registadas No Dlt No Período Em Consideração, Suas Vulnerabilidades E Serviços Recebidos ",
+      name: "Lista De RAMJ Registadas No Dreams No Período Em Consideração, Suas Vulnerabilidades E Serviços Recebidos ",
     },
     {
       id: 2,
-      name: "Relatório Resumo De RAMJ Registadas No Dlt No Período Em Consideração, Suas Vulnerabilidades E Serviços Recebidos ",
+      name: "Relatório Resumo De RAMJ Registadas No Dreams No Período Em Consideração, Suas Vulnerabilidades E Serviços Recebidos ",
     },
     {
       id: 3,
-      name: "Lista De Beneficiárias Dlt, Suas Vulnerabilidades E Serviços Recebidos",
+      name: "Lista De Beneficiárias Dreams, Suas Vulnerabilidades E Serviços Recebidos",
     },
     {
       id: 4,
-      name: "Resumo Da Lista De Beneficiárias Dlt, Suas Vulnerabilidades E Serviços Recebidos",
+      name: "Resumo Da Lista De Beneficiárias Dreams, Suas Vulnerabilidades E Serviços Recebidos",
     },
-    // { id: 3, name: "To be IMplemented" },
-    // {
-    //   id: 4,
-    //   name: "Sumário To Bem Implemeted",
-    // },
   ];
 
   useEffect(() => {
@@ -152,7 +148,7 @@ const DataExtraction = () => {
   };
 
   const onChangeExtraOption = async (option) => {
-    console.log("-------option--------", option);
+    setLoadingMessage("Processando os parâmetros da Extração...");
     if (option != extraOption) {
       setDataLoading(true);
       setCurrentPage(0);
@@ -201,6 +197,7 @@ const DataExtraction = () => {
   }, [currentDistrict]);
 
   const handleGenerateXLSXReport = (i) => {
+    setLoadingMessage("Extraindo... Por favor aguarde");
     if (
       selectedProvinces.length < 1 ||
       selectedDistricts.length < 1 ||
@@ -272,6 +269,7 @@ const DataExtraction = () => {
   };
 
   const downloadFile = async (filePath) => {
+    setDataLoading(true);
     await getFileDownloaded(filePath)
       .then((response) => {
         const filename = filePath.substring(filePath.lastIndexOf("/") + 1);
@@ -283,6 +281,7 @@ const DataExtraction = () => {
         window.URL.revokeObjectURL(url);
       })
       .catch((error) => {
+        setDataLoading(false);
         console.error("Error downloading file: ", error);
       });
   };
@@ -341,6 +340,13 @@ const DataExtraction = () => {
         console.error("Error downloading the Excel report", error);
       }
     };
+
+  const onChangeInitialDate = (e) => {
+    setInitialDate(e?.toDate().getTime());
+  };
+  const onChangeFInalDate = (e) => {
+    setFinalDate(e?.toDate().getTime());
+  };
 
   return (
     <Fragment>
@@ -405,23 +411,23 @@ const DataExtraction = () => {
                     </Select>
                   </Form.Item>
 
-                  <Form.Item name="initialDate" label="Data Inicial">
+                  <Form.Item
+                    name="initialDate"
+                    label="Data Inicial"
+                    rules={[{ required: true, message: RequiredFieldMessage }]}
+                  >
                     <Space direction="vertical">
-                      <DatePicker
-                        onChange={(e) => {
-                          setInitialDate(e?.toDate().getTime());
-                        }}
-                      />
+                      <DatePicker onChange={onChangeInitialDate} />
                     </Space>
                   </Form.Item>
 
-                  <Form.Item name="finalDate" label="Data Final">
+                  <Form.Item
+                    name="finalDate"
+                    label="Data Final"
+                    rules={[{ required: true, message: RequiredFieldMessage }]}
+                  >
                     <Space direction="vertical">
-                      <DatePicker
-                        onChange={(e) => {
-                          setFinalDate(e?.toDate().getTime());
-                        }}
-                      />
+                      <DatePicker onChange={onChangeFInalDate} />
                     </Space>
                   </Form.Item>
 
@@ -455,7 +461,7 @@ const DataExtraction = () => {
           </div>
         </Card>
       </Card>
-      {<LoadingModal modalVisible={dataLoading} />}
+      {<LoadingModal modalVisible={dataLoading} message={loadingMessage} />}
     </Fragment>
   );
 };

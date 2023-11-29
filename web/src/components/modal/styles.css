@@ -25,3 +25,10 @@
 .steps-action {
   margin-top: 24px;
 }
+
+.content {
+  padding: 50px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
