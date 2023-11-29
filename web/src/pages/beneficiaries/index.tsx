@@ -304,7 +304,10 @@ const BeneficiariesList: React.FC = () => {
     beneficiary,
   ]);
 
-  const handleAddRef = async (values: any) => {
+  const handleAddRef = async (
+    values: any,
+    buttonRef: React.RefObject<HTMLButtonElement>
+  ) => {
     if (values !== undefined) {
       const servicesObjects = services.map((e: any) => {
         const listServices: any = {
@@ -355,6 +358,9 @@ const BeneficiariesList: React.FC = () => {
             marginTop: "10vh",
           },
         });
+        if (buttonRef.current) {
+          buttonRef.current.disabled = false;
+        }
       } else {
         setAddStatus(true);
         const { data } = await addRef(payload);
@@ -902,7 +908,9 @@ const BeneficiariesList: React.FC = () => {
             data = data.filter((d) => filters.age.includes(d.age));
           }
           if (filters.partner != null) {
-            data = data.filter((d) => filters.partner.includes(d.partner.name));
+            data = data.filter((d) =>
+              filters.partner.includes(d.partners.name)
+            );
           }
           if (filters.dateCreated != null) {
             data = data.filter((d) =>
@@ -910,8 +918,9 @@ const BeneficiariesList: React.FC = () => {
             );
           }
           if (filters.dateUpdated != null) {
-            data = data.filter((d) =>
-              d.dateUpdated.includes(filters.dateUpdated)
+            data = data.filter(
+              (d) =>
+                d.dateUpdated && d.dateUpdated.includes(filters.dateUpdated)
             );
           }
           if (filters.createdBy != null) {

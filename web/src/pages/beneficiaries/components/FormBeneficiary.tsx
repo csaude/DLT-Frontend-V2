@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, Steps, message, Form, Modal } from "antd";
 import "./index.css";
 import { ExclamationCircleFilled } from "@ant-design/icons";
@@ -23,6 +23,8 @@ const BeneficiaryForm = ({
   const [current, setCurrent] = useState(0);
   const [firstStepValues, setFirstStepValues] = useState();
   const [secondStepValues, setSecondStepValues] = useState();
+
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!modalVisible) {
@@ -50,10 +52,11 @@ const BeneficiaryForm = ({
     setCurrent(inc);
   };
 
-  const onSubmit = async (e) => {
-    e.currentTarget.disabled = true;
-    handleAdd(firstStepValues);
-    e.currentTarget.disabled = false;
+  const onSubmit = async () => {
+    if (buttonRef.current && !buttonRef.current.disabled) {
+      buttonRef.current.disabled = true;
+      handleAdd(firstStepValues);
+    }
   };
 
   const handleAdd = (values: any) => {
@@ -128,6 +131,9 @@ const BeneficiaryForm = ({
             marginTop: "10vh",
           },
         });
+        if (buttonRef.current) {
+          buttonRef.current.disabled = false;
+        }
       });
   };
 
@@ -289,7 +295,7 @@ const BeneficiaryForm = ({
               </Button>
             )}
             {current === steps.length - 2 && beneficiary === undefined && (
-              <Button type="primary" onClick={(e) => onSubmit(e)}>
+              <Button type="primary" ref={buttonRef} onClick={onSubmit}>
                 Salvar
               </Button>
             )}

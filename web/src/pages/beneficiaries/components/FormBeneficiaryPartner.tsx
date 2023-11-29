@@ -112,7 +112,6 @@ const BeneficiaryPartnerForm = ({
         });
       })
       .catch(() => {
-        handleModalVisible(false);
         message.error({
           content: "Não foi possivel Registrar o Parceiro!",
           className: "custom-class",
