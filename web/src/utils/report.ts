@@ -59,3 +59,41 @@ export async function geNewlyEnrolledAgywAndServicesSummaryReportGenerated(
   const res = await select(url);
   return res;
 }
+
+export async function countBeneficiariesVulnerabilitiesAndServices(
+  districts?: any,
+  startDate?: any,
+  endDate?: any
+) {
+  const url = `/api/agyw-prev/countBeneficiariesVulnerabilitiesAndServices?districts=${districts}&startDate=${startDate}&endDate=${endDate}`;
+  const res = await select(url);
+  return res;
+}
+
+export async function getBeneficiariesVulnerabilitiesAndServicesReportGenerated(
+  province?: string,
+  districts?: any,
+  startDate?: any,
+  endDate?: any,
+  pageIndex?: any,
+  pageSize?: any,
+  username?: any
+) {
+  const url = `/api/agyw-prev/getBeneficiariesVulnerabilitiesAndServices?province=${province}&districts=${districts}&startDate=${startDate}&endDate=${endDate}&pageIndex=${pageIndex}&pageSize=${pageSize}&username=${username}`;
+  const res = await select(url);
+  return res;
+}
+
+export async function getBeneficiariesVulnerabilitiesAndServicesSummaryReportGenerated(
+  province?: string,
+  districts?: any,
+  startDate?: any,
+  endDate?: any,
+  pageNumber?: any,
+  nextIndex?: any,
+  username?: any
+) {
+  const url = `/api/agyw-prev/getBeneficiariesVulnerabilitiesAndServicesSummary?province=${province}&districts=${districts}&startDate=${startDate}&endDate=${endDate}&pageNumber=${pageNumber}&nextIndex=${nextIndex}&username=${username}`;
+  const res = await select(url);
+  return res;
+}
