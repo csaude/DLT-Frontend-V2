@@ -902,7 +902,9 @@ const BeneficiariesList: React.FC = () => {
             data = data.filter((d) => filters.age.includes(d.age));
           }
           if (filters.partner != null) {
-            data = data.filter((d) => filters.partner.includes(d.partner.name));
+            data = data.filter((d) =>
+              filters.partner.includes(d.partners.name)
+            );
           }
           if (filters.dateCreated != null) {
             data = data.filter((d) =>
@@ -910,8 +912,9 @@ const BeneficiariesList: React.FC = () => {
             );
           }
           if (filters.dateUpdated != null) {
-            data = data.filter((d) =>
-              d.dateUpdated.includes(filters.dateUpdated)
+            data = data.filter(
+              (d) =>
+                d.dateUpdated && d.dateUpdated.includes(filters.dateUpdated)
             );
           }
           if (filters.createdBy != null) {
