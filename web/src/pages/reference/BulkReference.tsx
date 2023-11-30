@@ -7,7 +7,6 @@ import {
 } from "@app/utils/reference";
 import { allDistrict, allDistrictsByIds } from "@app/utils/district";
 import {
-  allUsersByProfilesAndUser,
   allUsesByDistricts,
   allUsesByProvinces,
   query as query1,
@@ -38,10 +37,8 @@ import type { FormInstance } from "antd/es/form";
 
 import { useNavigate } from "react-router-dom";
 import { Title } from "@app/components";
-import { COUNSELOR, MENTOR, NURSE, SUPERVISOR } from "@app/utils/contants";
 import LoadingModal from "@app/components/modal/LoadingModal";
 import { useDispatch, useSelector } from "react-redux";
-import { loadReferers } from "@app/store/actions/users";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import { toast } from "react-toastify";
@@ -240,18 +237,6 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
     fetchData()
       .then()
       .catch((error) => console.log(error));
-
-    const fetchReferersUsers = async () => {
-      const payload = {
-        profiles: [SUPERVISOR, MENTOR, NURSE, COUNSELOR].toString(),
-        userId: Number(userId),
-      };
-
-      const referers = await allUsersByProfilesAndUser(payload);
-      dispatch(loadReferers(referers));
-    };
-
-    fetchReferersUsers().catch((error) => console.log(error));
   }, [currentPageIndex, searchStartDate, searchEndDate]);
 
   const handleRefUpdate = async (values: any) => {

@@ -7,7 +7,6 @@ import {
 } from "@app/utils/reference";
 import { allDistrict, allDistrictsByIds } from "@app/utils/district";
 import {
-  allUsersByProfilesAndUser,
   allUsesByDistricts,
   allUsesByProvinces,
   query as query1,
@@ -40,16 +39,9 @@ import { useNavigate } from "react-router-dom";
 import ViewReferral from "./components/View";
 import FormReference from "../beneficiaries/components/FormReference";
 import { Title } from "@app/components";
-import {
-  ADMIN,
-  COUNSELOR,
-  MENTOR,
-  NURSE,
-  SUPERVISOR,
-} from "@app/utils/contants";
+import { ADMIN } from "@app/utils/contants";
 import LoadingModal from "@app/components/modal/LoadingModal";
 import { useDispatch, useSelector } from "react-redux";
-import { loadReferers } from "@app/store/actions/users";
 import { FilterObject } from "@app/models/FilterObject";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
@@ -236,18 +228,6 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
     fetchData()
       .then()
       .catch((error) => console.log(error));
-
-    const fetchReferersUsers = async () => {
-      const payload = {
-        profiles: [SUPERVISOR, MENTOR, NURSE, COUNSELOR].toString(),
-        userId: Number(userId),
-      };
-
-      const referers = await allUsersByProfilesAndUser(payload);
-      dispatch(loadReferers(referers));
-    };
-
-    fetchReferersUsers().catch((error) => console.log(error));
   }, [
     modalVisible,
     currentPageIndex,

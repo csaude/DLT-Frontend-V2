@@ -4,18 +4,22 @@ import { Link } from "react-router-dom";
 import { MenuItem } from "@components";
 import { queryCountByFilters as beneficiaryQueryCount } from "../../../utils/beneficiary";
 import { queryCountByFilters as referenceQueryCount } from "../../../utils/reference";
-import { query as queryUser } from "../../../utils/users";
+import {
+  allUsersByProfilesAndUser,
+  query as queryUser,
+} from "../../../utils/users";
 import { getUserParams } from "@app/models/Utils";
 import { getReferencesTotal } from "../../../store/actions/reference";
 import { getBeneficiariesTotal } from "../../../store/actions/beneficiary";
 import styled from "styled-components";
 import { getInterventionsCount } from "@app/store/actions/interventions";
-import { getUsernames } from "@app/store/actions/users";
+import { getUsernames, loadReferers } from "@app/store/actions/users";
 import { getProfiles } from "@app/store/actions/profile";
 import { getPartners } from "@app/store/actions/partner";
 import { getProvinces } from "@app/store/actions/province";
 import { getDistricts } from "@app/store/actions/district";
 import { getLocalities } from "@app/store/actions/locality";
+import { COUNSELOR, MENTOR, NURSE, SUPERVISOR } from "@app/utils/contants";
 
 const StyledUserImage = styled.img`
   height: 4.6rem !important;
@@ -205,10 +209,17 @@ const MenuSidebar = () => {
       searchUserCreator,
       searchDistrict
     );
+    const payload = {
+      profiles: [SUPERVISOR, MENTOR, NURSE, COUNSELOR].toString(),
+      userId: Number(user.id),
+    };
+    const referers = await allUsersByProfilesAndUser(payload);
+
     dispatch(getBeneficiariesTotal(beneficiaryTotal));
     dispatch(getReferencesTotal(referenceTotal));
     dispatch(getInterventionsCount());
     dispatch(getUsernames());
+    dispatch(loadReferers(referers));
     dispatch(getProfiles());
     dispatch(getPartners());
     dispatch(getProvinces());
