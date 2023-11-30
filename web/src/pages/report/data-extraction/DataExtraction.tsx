@@ -389,7 +389,7 @@ const DataExtraction = () => {
                       placeholder="Seleccione a Província"
                       onChange={onChangeProvinces}
                     >
-                                            {provinces?.map((item) => (
+                      {provinces?.map((item) => (
                         <Option key={item.id}>{item.name}</Option>
                       ))}
                     </Select>

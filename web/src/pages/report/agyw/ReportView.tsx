@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { pagedQueryByIds } from "../../../utils/beneficiary";
-import {
-  allUsersByProfilesAndUser,
-  query as queryUser,
-} from "../../../utils/users";
+import { query as queryUser } from "../../../utils/users";
 import {
   Badge,
   Button,
@@ -24,17 +21,9 @@ import { getEntryPoint, UserModel } from "@app/models/User";
 import { calculateAge } from "@app/models/Utils";
 import { allDistrict } from "@app/utils/district";
 import { Title } from "@app/components";
-import {
-  ADMIN,
-  COUNSELOR,
-  MENTOR,
-  MNE,
-  NURSE,
-  SUPERVISOR,
-} from "@app/utils/contants";
+import { ADMIN, MNE, SUPERVISOR } from "@app/utils/contants";
 import { useDispatch, useSelector } from "react-redux";
 import LoadingModal from "@app/components/modal/LoadingModal";
-import { loadReferers } from "@app/store/actions/users";
 import { getInterventionsCount } from "@app/store/actions/interventions";
 import { pagedQueryByBeneficiariesIds } from "@app/utils/beneficiaryIntervention";
 import {
@@ -163,18 +152,6 @@ const ReportView: React.FC = () => {
     };
 
     fetchData().catch((error) => console.log(error));
-
-    const fetchReferersUsers = async () => {
-      const payload = {
-        profiles: [SUPERVISOR, MENTOR, NURSE, COUNSELOR].toString(),
-        userId: Number(userId),
-      };
-
-      const referers = await allUsersByProfilesAndUser(payload);
-      dispatch(loadReferers(referers));
-    };
-
-    fetchReferersUsers().catch((error) => console.log(error));
   }, [currentBeneficiariesIds]);
 
   const getName = (record: any) => {

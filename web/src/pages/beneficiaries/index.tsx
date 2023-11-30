@@ -7,7 +7,6 @@ import {
   queryCountByFilters,
 } from "../../utils/beneficiary";
 import {
-  allUsersByProfilesAndUser,
   allUsesByDistricts,
   allUsesByProvinces,
   query as queryUser,
@@ -51,17 +50,9 @@ import FormBeneficiaryPartner from "./components/FormBeneficiaryPartner";
 import { add as addRef, Reference } from "../../utils/reference";
 import FormReference from "./components/FormReference";
 import { Title } from "@app/components";
-import {
-  ADMIN,
-  COUNSELOR,
-  MENTOR,
-  MNE,
-  NURSE,
-  SUPERVISOR,
-} from "@app/utils/contants";
+import { ADMIN, MNE, SUPERVISOR } from "@app/utils/contants";
 import { useDispatch, useSelector } from "react-redux";
 import LoadingModal from "@app/components/modal/LoadingModal";
-import { loadReferers } from "@app/store/actions/users";
 import { FilterObject } from "@app/models/FilterObject";
 import { allDistrict, allDistrictsByIds } from "@app/utils/district";
 import ExcelJS from "exceljs";
@@ -283,18 +274,6 @@ const BeneficiariesList: React.FC = () => {
     };
 
     fetchData().catch((error) => console.log(error));
-
-    const fetchReferersUsers = async () => {
-      const payload = {
-        profiles: [SUPERVISOR, MENTOR, NURSE, COUNSELOR].toString(),
-        userId: Number(userId),
-      };
-
-      const referers = await allUsersByProfilesAndUser(payload);
-      dispatch(loadReferers(referers));
-    };
-
-    fetchReferersUsers().catch((error) => console.log(error));
   }, [
     currentPageIndex,
     searchNui,
