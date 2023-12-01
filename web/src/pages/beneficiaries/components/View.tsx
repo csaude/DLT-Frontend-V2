@@ -284,7 +284,7 @@ const ViewBenefiaryPanel = ({
       dataIndex: "",
       key: "intervention",
       render: (text, record) =>
-        user.profiles.id == MENTOR &&
+        [MENTOR, SUPERVISOR].includes(user.profiles.id) &&
         user.partners.partnerType == 2 &&
         record.subServices.service.id == 9
           ? ""
