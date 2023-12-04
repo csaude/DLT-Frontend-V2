@@ -144,3 +144,9 @@ export async function pagedQueryByFilters(
   const res = await select(url);
   return res;
 }
+
+export async function getUsersLastSync() {
+  const url = "/sync/usersLastSync";
+  const res = await select(url);
+  return res;
+}

@@ -1,9 +1,14 @@
-import { GET_USERNAMES, LOAD_REFERERS } from "../actions/types";
+import {
+  GET_USERNAMES,
+  GET_USERS_LAST_SYNC,
+  LOAD_REFERERS,
+} from "../actions/types";
 
 const initialState = {
   users: [],
   loadedUsers: [],
   referers: [],
+  usersLastSync: [],
 };
 
 function userReducer(state = initialState, action) {
@@ -28,6 +33,11 @@ function userReducer(state = initialState, action) {
       return {
         ...state,
         referers: payload,
+      };
+    case GET_USERS_LAST_SYNC:
+      return {
+        ...state,
+        usersLastSync: payload,
       };
     default:
       return state;
