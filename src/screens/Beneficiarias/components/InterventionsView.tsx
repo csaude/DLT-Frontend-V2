@@ -23,6 +23,7 @@ import { Context } from "../../../routes/DrawerNavigator";
 import { sync } from "../../../database/sync";
 import NetInfo from "@react-native-community/netinfo";
 import Spinner from "react-native-loading-spinner-overlay/lib";
+import { MENTOR, SUPERVISOR } from "../../../utils/constants";
 
 const InterventionsView: React.FC = ({ route }: any) => {
   const [loading, setLoading] = useState(false);
@@ -97,7 +98,7 @@ const InterventionsView: React.FC = ({ route }: any) => {
             }}
             color="darkBlue.800"
           >
-            {loggedUser.profile_id == 4 &&
+            {[MENTOR, SUPERVISOR].includes(loggedUser.profile_id) &&
             [26, 67, 68].includes(data.item.intervention.sub_service_id)
               ? "Aconselhamento e Testagem em Saúde"
               : data.item.name}

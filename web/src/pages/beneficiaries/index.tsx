@@ -884,7 +884,9 @@ const BeneficiariesList: React.FC = () => {
             );
           }
           if (filters.age != null) {
-            data = data.filter((d) => filters.age.includes(d.age));
+            data = data.filter((d) =>
+              filters.age.includes(calculateAge(d.dateOfBirth))
+            );
           }
           if (filters.partner != null) {
             data = data.filter((d) =>
