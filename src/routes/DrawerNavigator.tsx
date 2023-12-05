@@ -29,6 +29,7 @@ import UsersNavigator from "./UsersNavigator";
 import PropTypes from "prop-types";
 import Spinner from "react-native-loading-spinner-overlay";
 import AppInfoScreen from "../screens/AppInfo/AppInfoScreen";
+import SyncReportScreen from "../screens/SyncReport/SyncReportReport";
 
 function HomeScreen() {
   useEffect(() => {
@@ -276,6 +277,17 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
             title: "",
             headerTitle: "",
             drawerIcon: () => <ItemBadge label="Perfil" total={-1} />,
+          }}
+        />
+        <Drawer.Screen
+          name="SyncReport"
+          component={SyncReportScreen}
+          options={{
+            title: "",
+            headerTitle: "",
+            drawerIcon: () => (
+              <ItemBadge label="Relatório de Sincronização" total={-1} />
+            ),
           }}
         />
         <Drawer.Screen

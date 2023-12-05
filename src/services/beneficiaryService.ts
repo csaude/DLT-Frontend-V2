@@ -25,3 +25,11 @@ export const resolveBeneficiaryOfflineIds = async () => {
     }
   });
 };
+
+export const pendingSyncBeneficiaries = async () => {
+  const count = await database.collections
+    .get("beneficiaries")
+    .query(Q.where("_status", Q.notEq("synced")))
+    .fetchCount();
+  return count;
+};

@@ -32,3 +32,11 @@ export const beneficiariesInterventionsFetchCount = async () => {
 
   return totals;
 };
+
+export const pendingSyncBeneficiariesInterventions = async () => {
+  const count = await database.collections
+    .get("beneficiaries_interventions")
+    .query(Q.where("_status", Q.notEq("synced")))
+    .fetchCount();
+  return count;
+};
