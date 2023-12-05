@@ -26,6 +26,7 @@ import {
   countBeneficiariesVulnerabilitiesAndServices,
   getBeneficiariesVulnerabilitiesAndServicesSummaryReportGenerated,
   getBeneficiariesVulnerabilitiesAndServicesReportGenerated,
+  getExcelDocumentFormated,
 } from "@app/utils/report";
 import { Title as AppTitle } from "@app/components";
 import LoadingModal from "@app/components/modal/LoadingModal";
@@ -269,21 +270,22 @@ const DataExtraction = () => {
   };
 
   const downloadFile = async (filePath) => {
-    setDataLoading(true);
-    await getFileDownloaded(filePath)
-      .then((response) => {
-        const filename = filePath.substring(filePath.lastIndexOf("/") + 1);
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = filename;
-        a.click();
-        window.URL.revokeObjectURL(url);
-      })
-      .catch((error) => {
-        setDataLoading(false);
-        console.error("Error downloading file: ", error);
-      });
+    try {
+      setDataLoading(true);
+      await getExcelDocumentFormated(filePath);
+      const response = await getFileDownloaded(filePath);
+
+      const filename = filePath.substring(filePath.lastIndexOf("/") + 1);
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      setDataLoading(false);
+      console.error("Error downloading file: ", error);
+    }
   };
 
   const generateExcelNewlyEnrolledAgywAndServicesSummaryReport = async (
