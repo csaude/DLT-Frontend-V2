@@ -580,6 +580,7 @@ const ViewBenefiaryPanel = ({
             <ViewIntervention
               record={selectedBeneficiary}
               beneficiary={beneficiary}
+              user={user}
             />
           )}
         </Drawer>
