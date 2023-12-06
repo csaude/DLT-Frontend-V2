@@ -150,3 +150,24 @@ export async function getUsersLastSync() {
   const res = await select(url);
   return res;
 }
+
+export async function getPagedUsersLastSync(
+  payload?: any,
+  pageIndex?: any,
+  pageSize?: any,
+  searchUsername?: any,
+  searchUserCreator?: number,
+  searchDistrict?: number
+) {
+  let url: string;
+  if (payload.userId) {
+    url = `/sync/usersLastSync/paged?${stringify(
+      payload
+    )}&pageIndex=${pageIndex}&pageSize=${pageSize}&searchUsername=${searchUsername}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`;
+  } else {
+    url = "/sync/usersLastSync" + payload;
+  }
+
+  const res = await select(url);
+  return res;
+}
