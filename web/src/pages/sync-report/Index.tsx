@@ -296,7 +296,7 @@ const UsersLastSync: React.FC = () => {
       dataIndex: "",
       key: "type",
       render: (text, record) =>
-        moment(record.lastSyncDate).format("YYYY-MM-DD HH:MM"),
+        moment(record.lastSyncDate).format("YYYY-MM-DD HH:mm"),
     },
   ];
 
