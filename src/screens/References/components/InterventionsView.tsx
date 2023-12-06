@@ -5,6 +5,7 @@ import { Ionicons } from "@native-base/icons";
 import styles from "./styles";
 import { SwipeListView } from "react-native-swipe-list-view";
 import { Context } from "../../../routes/DrawerNavigator";
+import { MENTOR, SUPERVISOR } from "../../../utils/constants";
 
 const InterventionsView: React.FC = ({ route }: any) => {
   const { interventions } = route.params;
@@ -22,7 +23,7 @@ const InterventionsView: React.FC = ({ route }: any) => {
               }}
               color="darkBlue.800"
             >
-              {loggedUser.profile_id == 4 &&
+              {[MENTOR, SUPERVISOR].includes(loggedUser.profile_id) &&
               [26, 67, 68].includes(data.item.intervention.sub_service_id)
                 ? "Aconselhamento e Testagem em Saúde"
                 : data.item.name}

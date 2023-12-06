@@ -1,10 +1,12 @@
+/* eslint-disable react/prop-types */
 import { Card, Col, Row } from "antd";
 import moment from "moment";
 import React from "react";
 import { useSelector } from "react-redux";
 import PropTypes from "prop-types";
+import { MENTOR, SUPERVISOR } from "@app/utils/contants";
 
-const ViewBenefiaryPanel = ({ record, beneficiary }) => {
+const ViewBenefiaryPanel = ({ record, beneficiary, user }) => {
   const userSelector = useSelector((state: any) => state?.user);
 
   const getUsernames = (userId) => {
@@ -77,7 +79,11 @@ const ViewBenefiaryPanel = ({ record, beneficiary }) => {
                 style={{ background: "#f3f4f5" }}
                 span={12}
               >
-                {record?.subServices?.name}
+                {[MENTOR, SUPERVISOR].includes(user.profiles.id) &&
+                user.partners.partnerType == 2 &&
+                record.subServices.service.id == 9
+                  ? ""
+                  : record.subServices.name}
               </Col>
             </Row>
             <Row gutter={8}>

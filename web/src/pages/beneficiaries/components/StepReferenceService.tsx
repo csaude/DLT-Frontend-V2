@@ -18,7 +18,7 @@ import { DeleteFilled, PlusOutlined } from "@ant-design/icons";
 import { query as queryUser } from "@app/utils/users";
 import { query as beneficiaryInterventionQuery } from "../../../utils/beneficiaryIntervention";
 import { queryByTypeAndBeneficiary } from "@app/utils/service";
-import { MENTOR } from "@app/utils/contants";
+import { MENTOR, SUPERVISOR } from "@app/utils/contants";
 import PropTypes from "prop-types";
 
 const { Option } = Select;
@@ -255,7 +255,7 @@ const StepReferenceService = ({
       dataIndex: "",
       key: "intervention",
       render: (text, record) =>
-        user?.profiles.id == MENTOR &&
+        [MENTOR, SUPERVISOR].includes(user?.profiles.id) &&
         user?.partners.partnerType == 2 &&
         record.subServices.service.id == 9
           ? ""
