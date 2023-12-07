@@ -40,7 +40,7 @@ import AppInfo from "./pages/appInfo";
 import DataExtraction from "./pages/report/data-extraction/DataExtraction";
 import NeighborhoodsList from "./pages/neighborhoods";
 
-// import SyncReport from "@pages/sync-report/Index";
+import SyncReport from "@pages/sync-report/Index";
 
 const App = () => {
   const windowSize = useWindowSize();
@@ -161,7 +161,7 @@ const App = () => {
             <Route path="/dataExtraction" element={<DataExtraction />} />
             {/* App Inforation */}
             <Route path="/appInfo" element={<AppInfo />} />
-            {/* <Route path="/syncReport" element={<SyncReport />} /> */}
+            <Route path="/syncReport" element={<SyncReport />} />
           </Route>
         </Route>
       </Routes>

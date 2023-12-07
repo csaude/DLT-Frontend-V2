@@ -13,11 +13,7 @@ import { getReferencesTotal } from "../../../store/actions/reference";
 import { getBeneficiariesTotal } from "../../../store/actions/beneficiary";
 import styled from "styled-components";
 import { getInterventionsCount } from "@app/store/actions/interventions";
-import {
-  getUsernames,
-  getUsersLastSynchronization,
-  loadReferers,
-} from "@app/store/actions/users";
+import { getUsernames, loadReferers } from "@app/store/actions/users";
 import { getProfiles } from "@app/store/actions/profile";
 import { getPartners } from "@app/store/actions/partner";
 import { getProvinces } from "@app/store/actions/province";
@@ -154,27 +150,27 @@ export const MENU: IMenuItem[] = [
         name: ">> PEPFAR MER 2.6.1 AGYW_PREV",
         path: "/reportAgyw",
       },
+      {
+        name: ">> Extracção de Dados",
+        path: "/dataExtraction",
+      },
       // {
-      //   name: ">> Extracção de Dados",
-      //   path: "/dataExtraction",
+      //   name: ">> FY19",
+      //   path: "#",
       // },
       // {
-      //   name: '>> FY19',
-      //   path: '#',
-      // },
-      // {
-      //   name: '>> FY20',
-      //   path: '#',
+      //   name: ">> FY20",
+      //   path: "#",
       // },
     ],
   },
-  // {
-  //   name: "menusidebar.label.syncReport",
-  //   path: "/syncReport",
-  //   roles: ["ADMIN"],
-  //   icon: "fas fa-sync",
-  //   level: [0],
-  // },
+  {
+    name: "menusidebar.label.syncReport",
+    path: "/syncReport",
+    roles: ["ADMIN"],
+    icon: "fas fa-sync",
+    level: [0],
+  },
   {
     name: "menusidebar.label.appInfo",
     path: "/appInfo",
@@ -230,7 +226,6 @@ const MenuSidebar = () => {
     dispatch(getReferencesTotal(referenceTotal));
     dispatch(getInterventionsCount());
     dispatch(getUsernames());
-    dispatch(getUsersLastSynchronization());
     dispatch(loadReferers(referers));
     dispatch(getProfiles());
     dispatch(getPartners());

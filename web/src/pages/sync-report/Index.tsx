@@ -15,17 +15,16 @@ import ptPT from "antd/lib/locale-provider/pt_PT";
 import { UserModel, getEntryPoint } from "../../models/User";
 import { SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
-import { queryByUserId } from "@app/utils/users";
+import { getPagedUsersLastSync, queryByUserId } from "@app/utils/users";
 import { Title } from "@app/components";
 import LoadingModal from "@app/components/modal/LoadingModal";
 import { useSelector } from "react-redux";
-import { pagedQueryByFilters } from "@app/utils/users";
 import { getUserParams } from "@app/models/Utils";
 import { FilterObject } from "@app/models/FilterObject";
 import moment from "moment";
 
 const UsersLastSync: React.FC = () => {
-  const [users, setUsers] = useState<UserModel[]>([]);
+  const [usersLastSync, setUsersLastSync] = useState<UserModel[]>([]);
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const [partners, setPartners] = useState<any[]>([]);
@@ -41,10 +40,6 @@ const UsersLastSync: React.FC = () => {
   const [username, setUsername] = useState<any>();
   const [districts, setDistricts] = useState<any[]>([]);
   const [provinces, setProvinces] = useState<any[]>([]);
-
-  const usersLastSyncSelector = useSelector(
-    (state: any) => state?.user.usersLastSync
-  );
 
   const profileSelector = useSelector(
     (state: any) => state?.profile.loadedProfiles
@@ -65,10 +60,10 @@ const UsersLastSync: React.FC = () => {
   }));
 
   useEffect(() => {
-    if (users?.length > 0) {
+    if (usersLastSync?.length > 0) {
       setLoading(false);
     }
-  }, [users]);
+  }, [usersLastSync]);
 
   let searchInput;
 
@@ -77,7 +72,7 @@ const UsersLastSync: React.FC = () => {
     setProfiles(profileSelector);
     const fetchData = async () => {
       const user = await queryByUserId(localStorage.user);
-      const data = await pagedQueryByFilters(
+      const data = await getPagedUsersLastSync(
         getUserParams(user),
         currentPageIndex,
         pageSize,
@@ -85,7 +80,7 @@ const UsersLastSync: React.FC = () => {
         searchUserCreator,
         searchDistrict
       );
-      setUsers(data);
+      setUsersLastSync(data);
     };
 
     fetchData().catch((error) => console.log(error));
@@ -202,7 +197,7 @@ const UsersLastSync: React.FC = () => {
       title: "#",
       dataIndex: "",
       key: "order",
-      render: (text, record) => users.indexOf(record) + 1,
+      render: (text, record) => usersLastSync.indexOf(record) + 1,
     },
     {
       title: "Nome do Utilizador",
@@ -211,7 +206,7 @@ const UsersLastSync: React.FC = () => {
       ...getColumnSearchProps("name"),
       render: (text, record) => (
         <div>
-          {record.name} {record.surname}
+          {record.user?.name} {record.user?.surname}
         </div>
       ),
     },
@@ -225,42 +220,45 @@ const UsersLastSync: React.FC = () => {
       title: "Perfil",
       dataIndex: "",
       key: "type",
-      render: (text, record) => record.profiles.description,
+      render: (text, record) => record.user?.profiles.description,
       filters: filterObjects(profiles)((i) => i.description),
-      onFilter: (value, record) => record.profiles.description == value,
+      onFilter: (value, record) => record.user?.profiles.description == value,
       filterSearch: true,
     },
     {
       title: "Províncias",
       dataIndex: "",
       key: "provinces",
-      render: (text, record) => record.provinces.map((p) => p.name + ", "),
+      render: (text, record) =>
+        record.user?.provinces.map((p) => p.name + ", "),
       filters: filterObjects(provinces)((i) => i.name),
       onFilter: (value, record) =>
-        record.provinces.map((p) => p.name).includes(value),
+        record.user?.provinces.map((p) => p.name).includes(value),
       filterSearch: true,
     },
     {
       title: "Distritos",
       dataIndex: "",
       key: "districts",
-      render: (text, record) => record.districts.map((d) => d.name + ", "),
+      render: (text, record) =>
+        record.user?.districts.map((d) => d.name + ", "),
       filters: filterObjects(districts)((i) => i?.name),
       onFilter: (value, record) =>
-        record?.districts.map((d) => d.name).includes(value),
+        record?.user?.districts.map((d) => d.name).includes(value),
       filterSearch: true,
     },
     {
       title: "Postos Administrativos",
       dataIndex: "",
       key: "localities",
-      render: (text, record) => record.localities.map((l) => l.name + ", "),
+      render: (text, record) =>
+        record.user?.localities.map((l) => l.name + ", "),
     },
     {
       title: "Locais",
       dataIndex: "",
       key: "us",
-      render: (text, record) => record.us.map((u) => u.name + " "),
+      render: (text, record) => record.user?.us.map((u) => u.name + " "),
     },
     {
       title: "Ponto de Entrada",
@@ -280,17 +278,17 @@ const UsersLastSync: React.FC = () => {
           value: 3,
         },
       ],
-      onFilter: (value, record) => record.entryPoint == value,
+      onFilter: (value, record) => record.user?.entryPoint == value,
       filterSearch: true,
-      render: (text, record) => getEntryPoint(record.entryPoint),
+      render: (text, record) => getEntryPoint(record.user?.entryPoint),
     },
     {
       title: "Organização",
       dataIndex: "",
       key: "type",
-      render: (text, record) => record.partners?.name,
+      render: (text, record) => record.user?.partners?.name,
       filters: filterObjects(partners)((i) => i.name),
-      onFilter: (value, record) => record.partners?.name == value,
+      onFilter: (value, record) => record.user?.partners?.name == value,
       filterSearch: true,
     },
     {
@@ -298,11 +296,7 @@ const UsersLastSync: React.FC = () => {
       dataIndex: "",
       key: "type",
       render: (text, record) =>
-        moment(
-          usersLastSyncSelector.find(
-            (item) => item.username === record.username
-          )?.lastSyncDate
-        ).format("YYYY-MM-DD HH:MM"),
+        moment(record.lastSyncDate).format("YYYY-MM-DD HH:mm"),
     },
   ];
 
@@ -388,7 +382,7 @@ const UsersLastSync: React.FC = () => {
           <Table
             rowKey="id"
             columns={columns}
-            dataSource={users}
+            dataSource={usersLastSync}
             bordered
             scroll={{ x: 1500 }}
           />
