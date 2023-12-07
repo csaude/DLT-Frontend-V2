@@ -53,10 +53,8 @@ const DataExtraction = () => {
   const pageSize = 250000;
   const created = moment().format("YYYYMMDD_hhmmss");
   const username = localStorage.getItem("username");
-  // Calculate the maximum date allowed (12 months from today)
   const maxDate = moment(initialDate).add(12, "months");
 
-  // Function to disable dates outside the allowed range
   const disabledDate = (current) => {
     return current && current > maxDate;
   };
