@@ -53,6 +53,13 @@ const DataExtraction = () => {
   const pageSize = 250000;
   const created = moment().format("YYYYMMDD_hhmmss");
   const username = localStorage.getItem("username");
+  // Calculate the maximum date allowed (12 months from today)
+  const maxDate = moment(initialDate).add(12, "months");
+
+  // Function to disable dates outside the allowed range
+  const disabledDate = (current) => {
+    return current && current > maxDate;
+  };
 
   const districtsIds = selectedDistricts.map((district) => {
     return district.id;
@@ -419,7 +426,10 @@ const DataExtraction = () => {
                     rules={[{ required: true, message: RequiredFieldMessage }]}
                   >
                     <Space direction="vertical">
-                      <DatePicker onChange={onChangeInitialDate} />
+                      <DatePicker
+                        inputReadOnly
+                        onChange={onChangeInitialDate}
+                      />
                     </Space>
                   </Form.Item>
 
@@ -429,7 +439,12 @@ const DataExtraction = () => {
                     rules={[{ required: true, message: RequiredFieldMessage }]}
                   >
                     <Space direction="vertical">
-                      <DatePicker onChange={onChangeFInalDate} />
+                      <DatePicker
+                        inputReadOnly
+                        disabledDate={disabledDate}
+                        disabled={initialDate == undefined}
+                        onChange={onChangeFInalDate}
+                      />
                     </Space>
                   </Form.Item>
 
