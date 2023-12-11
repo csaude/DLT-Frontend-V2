@@ -33,7 +33,7 @@ const UserProfile: React.FC = ({
   });
 
   const userUs = us.filter((e) => {
-    return loggedUser.localities_ids?.includes(e?.locality_id);
+    return loggedUser.us_ids?.includes(e?._raw.online_id);
   });
 
   return (
@@ -73,7 +73,7 @@ const UserProfile: React.FC = ({
 
               <Text>
                 {" "}
-                <Text style={styles.txtLabel}>Parceiro: </Text>{" "}
+                <Text style={styles.txtLabel}>Organização: </Text>{" "}
                 {user?.organization_name}{" "}
               </Text>
 
