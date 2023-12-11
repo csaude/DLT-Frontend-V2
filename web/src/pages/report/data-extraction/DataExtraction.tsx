@@ -311,7 +311,7 @@ const DataExtraction = () => {
       if (response.fileSize > 0) {
         await downloadFile(response.fileName);
         setCurrentPage(currentPage + 1);
-        setNextIndex(response.nextIndex);
+        // setNextIndex(response.nextIndex);
       }
       setCurrentDistrict(currentDistrictIndex + 1);
       setDataLoading(false);
@@ -338,7 +338,7 @@ const DataExtraction = () => {
         if (response.fileSize > 0) {
           await downloadFile(response.fileName);
           setCurrentPage(currentPage + 1);
-          setNextIndex(response.nextIndex);
+          // setNextIndex(response.nextIndex);
         }
         setCurrentDistrict(currentDistrictIndex + 1);
         setDataLoading(false);
