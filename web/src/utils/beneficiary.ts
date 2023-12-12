@@ -77,3 +77,9 @@ export async function queryCountByFilters(
 function undefinedToEmpty(value: any) {
   return value == undefined ? "" : value;
 }
+
+export async function queryByPartnerId(partnerId?: number) {
+  const url = `/api/beneficiaries/findByPartnerId?partnerId=${partnerId}`;
+  const res = await select(url);
+  return res;
+}

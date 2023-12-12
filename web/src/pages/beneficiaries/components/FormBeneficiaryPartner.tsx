@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, Steps, message, Form, Modal } from "antd";
 import "./index.css";
 import { ExclamationCircleFilled } from "@ant-design/icons";
@@ -21,6 +21,8 @@ const BeneficiaryPartnerForm = ({
 }: any) => {
   const [current, setCurrent] = useState(0);
   const [firstStepValues, setFirstStepValues] = useState();
+
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!modalVisible) {
@@ -46,10 +48,11 @@ const BeneficiaryPartnerForm = ({
     setCurrent(inc);
   };
 
-  const onSubmit = async (e) => {
-    e.currentTarget.disabled = true;
-    handleAdd(firstStepValues);
-    e.currentTarget.disabled = false;
+  const onSubmit = async () => {
+    if (buttonRef.current && !buttonRef.current.disabled) {
+      buttonRef.current.disabled = true;
+      handleAdd(firstStepValues);
+    }
   };
 
   const handleAdd = (values: any) => {
@@ -119,6 +122,9 @@ const BeneficiaryPartnerForm = ({
             marginTop: "10vh",
           },
         });
+        if (buttonRef.current) {
+          buttonRef.current.disabled = false;
+        }
       });
   };
 
@@ -243,7 +249,8 @@ const BeneficiaryPartnerForm = ({
             {current === 1 && (
               <Button
                 type="primary"
-                onClick={(e) => (beneficiary ? onUpdate() : onSubmit(e))}
+                ref={buttonRef}
+                onClick={() => (beneficiary ? onUpdate() : onSubmit())}
               >
                 {beneficiary ? "Actualizar" : "Salvar"}
               </Button>
