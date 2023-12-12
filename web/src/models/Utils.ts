@@ -22,6 +22,15 @@ export function getMinDate() {
   return new Date(year - 24 + "/" + month + "/" + day);
 }
 
+export function getMaleMinDate() {
+  const today = new Date();
+  const day = today.getDate();
+  const month = today.getMonth() + 1;
+  const year = today.getFullYear();
+
+  return new Date(year - 40 + "/" + month + "/" + day);
+}
+
 export function getMaxDate() {
   const today = new Date();
   const day = today.getDate();
