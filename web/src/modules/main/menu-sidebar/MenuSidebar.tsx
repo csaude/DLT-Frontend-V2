@@ -154,6 +154,13 @@ export const MENU: IMenuItem[] = [
         name: ">> Extracção de Dados",
         path: "/dataExtraction",
       },
+      {
+        name: "menusidebar.label.syncReport",
+        path: "/syncReport",
+        roles: ["ADMIN"],
+        icon: "fas fa-sync",
+        level: [0],
+      },
       // {
       //   name: ">> FY19",
       //   path: "#",
@@ -163,13 +170,6 @@ export const MENU: IMenuItem[] = [
       //   path: "#",
       // },
     ],
-  },
-  {
-    name: "menusidebar.label.syncReport",
-    path: "/syncReport",
-    roles: ["ADMIN"],
-    icon: "fas fa-sync",
-    level: [0],
   },
   {
     name: "menusidebar.label.appInfo",

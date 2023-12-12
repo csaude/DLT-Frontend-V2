@@ -53,6 +53,11 @@ const DataExtraction = () => {
   const pageSize = 250000;
   const created = moment().format("YYYYMMDD_hhmmss");
   const username = localStorage.getItem("username");
+  const maxDate = moment(initialDate).add(12, "months");
+
+  const disabledDate = (current) => {
+    return current && current > maxDate;
+  };
 
   const districtsIds = selectedDistricts.map((district) => {
     return district.id;
@@ -306,7 +311,7 @@ const DataExtraction = () => {
       if (response.fileSize > 0) {
         await downloadFile(response.fileName);
         setCurrentPage(currentPage + 1);
-        setNextIndex(response.nextIndex);
+        // setNextIndex(response.nextIndex);
       }
       setCurrentDistrict(currentDistrictIndex + 1);
       setDataLoading(false);
@@ -333,7 +338,7 @@ const DataExtraction = () => {
         if (response.fileSize > 0) {
           await downloadFile(response.fileName);
           setCurrentPage(currentPage + 1);
-          setNextIndex(response.nextIndex);
+          // setNextIndex(response.nextIndex);
         }
         setCurrentDistrict(currentDistrictIndex + 1);
         setDataLoading(false);
@@ -419,7 +424,10 @@ const DataExtraction = () => {
                     rules={[{ required: true, message: RequiredFieldMessage }]}
                   >
                     <Space direction="vertical">
-                      <DatePicker onChange={onChangeInitialDate} />
+                      <DatePicker
+                        inputReadOnly
+                        onChange={onChangeInitialDate}
+                      />
                     </Space>
                   </Form.Item>
 
@@ -429,7 +437,12 @@ const DataExtraction = () => {
                     rules={[{ required: true, message: RequiredFieldMessage }]}
                   >
                     <Space direction="vertical">
-                      <DatePicker onChange={onChangeFInalDate} />
+                      <DatePicker
+                        inputReadOnly
+                        disabledDate={disabledDate}
+                        disabled={initialDate == undefined}
+                        onChange={onChangeFInalDate}
+                      />
                     </Space>
                   </Form.Item>
 
