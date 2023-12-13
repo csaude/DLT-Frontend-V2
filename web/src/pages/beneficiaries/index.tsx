@@ -5,6 +5,7 @@ import {
   pagedQueryByFilters,
   query,
   queryCountByFilters,
+  queryByPartnerId,
 } from "../../utils/beneficiary";
 import {
   allUsesByDistricts,
@@ -426,20 +427,35 @@ const BeneficiariesList: React.FC = () => {
     setModalVisible(!!flag);
   };
 
-  const showConfirmVoid = (data: any) => {
-    confirm({
-      title: "Deseja Excluir a Beneficiária com o NUI " + data.nui + "?",
-      icon: <ExclamationCircleFilled />,
-      okText: "Sim",
-      okType: "danger",
-      cancelText: "Não",
-      onOk() {
-        handleVoidBeneficiary(data);
-      },
-      onCancel() {
-        /**Its OK */
-      },
-    });
+  const showConfirmVoid = async (data: any) => {
+    const beneficiaries = await queryByPartnerId(data.id);
+    console.log("----beneficiaries---", beneficiaries);
+    if (beneficiaries.length > 0) {
+      confirm({
+        title:
+          "Não é possível excluir o NUI " +
+          data.nui +
+          ", este está associado a uma beneficiária",
+        icon: <ExclamationCircleFilled />,
+        okText: "Fechar",
+        okType: "primary",
+        cancelButtonProps: { style: { display: "none" } },
+      });
+    } else {
+      confirm({
+        title: "Deseja Excluir a Beneficiária com o NUI " + data.nui + "?",
+        icon: <ExclamationCircleFilled />,
+        okText: "Sim",
+        okType: "danger",
+        cancelText: "Não",
+        onOk() {
+          handleVoidBeneficiary(data);
+        },
+        onCancel() {
+          /**Its OK */
+        },
+      });
+    }
   };
 
   const fetchPartner = async (record: any) => {

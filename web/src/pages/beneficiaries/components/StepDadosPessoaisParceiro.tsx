@@ -21,7 +21,7 @@ import {
 import "./index.css";
 import moment from "moment";
 import { query } from "@app/utils/users";
-import { calculateAge, getMaxDate, getMinDate } from "@app/models/Utils";
+import { calculateAge, getMaxDate, getMaleMinDate } from "@app/models/Utils";
 import { allUsByType } from "@app/utils/uSanitaria";
 import { ADMIN, MNE, SUPERVISOR } from "@app/utils/contants";
 import { useSelector } from "react-redux";
@@ -64,6 +64,22 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
     "22",
     "23",
     "24",
+    "25",
+    "26",
+    "27",
+    "28",
+    "29",
+    "30",
+    "31",
+    "32",
+    "33",
+    "34",
+    "35",
+    "36",
+    "37",
+    "38",
+    "39",
+    "40",
   ];
 
   useEffect(() => {
@@ -394,7 +410,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                   disabledDate={(d) =>
                     !d ||
                     d.isAfter(getMaxDate()) ||
-                    d.isSameOrBefore(getMinDate())
+                    d.isSameOrBefore(getMaleMinDate())
                   }
                 />
               </Form.Item>
