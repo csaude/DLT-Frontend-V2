@@ -57,7 +57,7 @@ const ReportView: React.FC = () => {
   const [searchedColumn, setSearchedColumn] = useState("");
   const [districts, setDistricts] = useState<any[]>([]);
   const [partners, setPartners] = useState<any[]>([]);
-  const [visibleName, setVisibleName] = useState<any>(true);
+  const [visibleName, setVisibleName] = useState<any>(false);
   const [currentPageStart, setCurrentPageStart] = useState(0);
   const [currentPageEnd, setCurrentPageEnd] = useState(99);
   const pageSize = 100;
@@ -146,8 +146,8 @@ const ReportView: React.FC = () => {
       setUsers(creators);
       setUpdaters(updaters);
 
-      if ([ADMIN, MNE, SUPERVISOR].includes(user.profiles.id)) {
-        setVisibleName(false);
+      if ([ADMIN, MNE, SUPERVISOR].includes(user.profiles?.id)) {
+        setVisibleName(true);
       }
     };
 
@@ -155,7 +155,7 @@ const ReportView: React.FC = () => {
   }, [currentBeneficiariesIds]);
 
   const getName = (record: any) => {
-    return visibleName === false
+    return visibleName
       ? record?.name + " " + record?.surname
       : "DREAMS" + record?.nui;
   };
