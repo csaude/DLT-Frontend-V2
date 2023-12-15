@@ -690,6 +690,13 @@ const BeneficiariesList: React.FC = () => {
       filterSearch: true,
     },
     {
+      title: "Inscrito Em",
+      dataIndex: "enrollmentDate",
+      key: "enrollmentDate",
+      ...getColumnSearchProps("enrollmentDate"),
+      render: (val: string) => <span>{moment(val).format("YYYY-MM-DD")}</span>,
+    },
+    {
       title: "Criado Em",
       dataIndex: "dateCreated",
       key: "dateCreated",
