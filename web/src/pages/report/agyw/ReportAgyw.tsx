@@ -70,7 +70,7 @@ const ReportAgyw = () => {
       let dataDistricts;
       if (loggedUser.districts.length > 0) {
         dataDistricts = loggedUser.districts.filter((d) =>
-          values.includes(d.province.id.toString())
+          values.includes(d.province.id)
         );
       } else {
         dataDistricts = await queryDistrictsByProvinces({
