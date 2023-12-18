@@ -30,6 +30,7 @@ import {
 } from "@app/utils/report";
 import { Title as AppTitle } from "@app/components";
 import LoadingModal from "@app/components/modal/LoadingModal";
+import { useSelectAll } from "@app/hooks/useSelectAll";
 const { Option } = Select;
 const { Title } = Typography;
 
@@ -124,12 +125,22 @@ const DataExtraction = () => {
 
   const onChangeDistricts = async (values: any) => {
     if (values.length > 0) {
-      const distrs = districts.filter((item) =>
-        values.includes(item.id.toString())
-      );
+      const distrs = districts.filter((item) => values.includes(item.id));
       setSelectedDistricts(distrs);
+      form.setFieldsValue({ districts: values });
     }
   };
+
+  const selectDistricts = useSelectAll({
+    showSelectAll: true,
+    onChange: onChangeDistricts,
+    options: districts?.map((district) => {
+      return {
+        label: district.name,
+        value: district.id,
+      };
+    }),
+  });
 
   const getTotalNewlyEnrolledAgywAndServices = async () => {
     const totalNewlyEnrolledAgywAndServices =
@@ -410,12 +421,10 @@ const DataExtraction = () => {
                     <Select
                       mode="multiple"
                       disabled={districts == undefined}
-                      onChange={onChangeDistricts}
-                    >
-                      {districts?.map((item) => (
-                        <Option key={item.id}>{item.name}</Option>
-                      ))}
-                    </Select>
+                      placeholder="Seleccione os Distritos"
+                      {...selectDistricts}
+                      allowClear
+                    />
                   </Form.Item>
 
                   <Form.Item
