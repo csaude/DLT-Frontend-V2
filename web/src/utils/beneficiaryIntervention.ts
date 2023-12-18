@@ -13,8 +13,8 @@ export async function query(payload?: any) {
   return res;
 }
 
-export async function interventionCountQuery() {
-  const url = "/api/beneficiary-intervention/countByBeneficiary";
+export async function interventionCountByServiceTypeQuery() {
+  const url = "/api/beneficiary-intervention/countByBeneficiaryAndServiceType";
 
   const res = await select(url);
   return res;

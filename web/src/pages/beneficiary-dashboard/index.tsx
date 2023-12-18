@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  edit,
   pagedQueryByFilters,
-  query,
   queryCountByFilters,
-  queryByPartnerId,
 } from "../../utils/beneficiary";
 import {
   allUsesByDistricts,
@@ -34,22 +31,12 @@ import { queryDistrictsByProvinces } from "@app/utils/locality";
 import ptPT from "antd/lib/locale-provider/pt_PT";
 import Highlighter from "react-highlight-words";
 import "antd/dist/antd.css";
-import {
-  SearchOutlined,
-  EditOutlined,
-  PlusOutlined,
-  EyeOutlined,
-  DeleteOutlined,
-  ExclamationCircleFilled,
-} from "@ant-design/icons";
+import { SearchOutlined, EyeOutlined } from "@ant-design/icons";
 import moment from "moment";
 import ViewBeneficiary, { ViewBenefiaryPanel } from "./components/View";
 import { getEntryPoint, UserModel } from "@app/models/User";
 import { calculateAge, getUserParams } from "@app/models/Utils";
-import FormBeneficiary from "./components/FormBeneficiary";
-import FormBeneficiaryPartner from "./components/FormBeneficiaryPartner";
 import { add as addRef, Reference } from "../../utils/reference";
-import FormReference from "./components/FormReference";
 import { Title } from "@app/components";
 import { ADMIN, MNE, SUPERVISOR } from "@app/utils/contants";
 import { useDispatch, useSelector } from "react-redux";
@@ -68,7 +55,7 @@ const ages = [
   9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
 ];
 
-const BeneficiariesList: React.FC = () => {
+const BeneficiaryDashboard: React.FC = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const [users, setUsers] = useState<UserModel[]>([]);
@@ -99,6 +86,7 @@ const BeneficiariesList: React.FC = () => {
   const interventionSelector = useSelector(
     (state: any) => state?.intervention.loadedInterventions
   );
+
   const userSelector = useSelector((state: any) => state?.user);
   const beneficiariesTotal = useSelector(
     (state: any) => state.beneficiary.total
@@ -138,7 +126,7 @@ const BeneficiariesList: React.FC = () => {
     const element = interventionSelector?.find(
       (item) => item.beneficiaryId === beneficiaryId
     );
-    return element?.total;
+    return element;
   };
 
   const getUsernames = (userId) => {
@@ -378,21 +366,6 @@ const BeneficiariesList: React.FC = () => {
     setBeneficiaryPartnerModalVisible(false);
   };
 
-  const handleVoidBeneficiary = async (beneficiary: any) => {
-    beneficiary.status = 0;
-    beneficiary.updatedBy = localStorage.user;
-    beneficiary.dateUpdated = new Date();
-    const { data } = await edit(beneficiary);
-    setBeneficiary(data);
-    message.success({
-      content: "Excluída com Sucesso!",
-      className: "custom-class",
-      style: {
-        marginTop: "10vh",
-      },
-    });
-  };
-
   const handleViewModalVisible = (flag?: boolean, record?: any) => {
     setBeneficiary(record);
     setModalVisible(!!flag);
@@ -420,56 +393,6 @@ const BeneficiariesList: React.FC = () => {
 
   const handleModalVisible = (flag?: boolean) => {
     setModalVisible(!!flag);
-  };
-
-  const showConfirmVoid = async (data: any) => {
-    const beneficiaries = await queryByPartnerId(data.id);
-    console.log("----beneficiaries---", beneficiaries);
-    if (beneficiaries.length > 0) {
-      confirm({
-        title:
-          "Não é possível excluir o NUI " +
-          data.nui +
-          ", este está associado a uma beneficiária",
-        icon: <ExclamationCircleFilled />,
-        okText: "Fechar",
-        okType: "primary",
-        cancelButtonProps: { style: { display: "none" } },
-      });
-    } else {
-      confirm({
-        title: "Deseja Excluir a Beneficiária com o NUI " + data.nui + "?",
-        icon: <ExclamationCircleFilled />,
-        okText: "Sim",
-        okType: "danger",
-        cancelText: "Não",
-        onOk() {
-          handleVoidBeneficiary(data);
-        },
-        onCancel() {
-          /**Its OK */
-        },
-      });
-    }
-  };
-
-  const fetchPartner = async (record: any) => {
-    const data = await query(record.partnerId);
-    record.partnerNUI = data.nui;
-  };
-
-  const onEditBeneficiary = async (record: any) => {
-    form.resetFields();
-
-    if (record.gender === "2") {
-      if (record.partnerId != null) {
-        await fetchPartner(record).catch((error) => console.log(error));
-      }
-      setBeneficiaryModalVisible(true);
-    } else {
-      setBeneficiaryPartnerModalVisible(true);
-    }
-    setBeneficiary(record);
   };
 
   const getName = (record: any) => {
@@ -655,11 +578,35 @@ const BeneficiariesList: React.FC = () => {
       filterSearch: true,
     },
     {
-      title: "#Interv",
+      title: "Total de Sub-Serviços",
       dataIndex: "beneficiariesInterventionses",
       key: "beneficiariesInterventionses",
       render(val: any, record) {
-        return <Badge count={getBeneficiaryIntervention(record.id)} />;
+        return <Badge count={getBeneficiaryIntervention(record.id)?.total} />;
+      },
+      width: 60,
+    },
+    {
+      title: "Total de Subserviços Clínicos",
+      dataIndex: "clinicalInterventions",
+      key: "clinicalInterventions",
+      render(val: any, record) {
+        return (
+          <Badge count={getBeneficiaryIntervention(record.id)?.clinicalTotal} />
+        );
+      },
+      width: 60,
+    },
+    {
+      title: "Total de subserviços comunitários",
+      dataIndex: "communityInterventions",
+      key: "communityInterventions",
+      render(val: any, record) {
+        return (
+          <Badge
+            count={getBeneficiaryIntervention(record.id)?.communityTotal}
+          />
+        );
       },
       width: 60,
     },
@@ -737,17 +684,6 @@ const BeneficiariesList: React.FC = () => {
             type="primary"
             icon={<EyeOutlined />}
             onClick={() => handleViewModalVisible(true, record)}
-          ></Button>
-          <Button
-            type="primary"
-            icon={<EditOutlined />}
-            onClick={() => onEditBeneficiary(record)}
-          ></Button>
-          <Button
-            type="primary"
-            hidden={visibleName === true}
-            icon={<DeleteOutlined />}
-            onClick={() => showConfirmVoid(record)}
           ></Button>
         </Space>
       ),
@@ -952,7 +888,9 @@ const BeneficiariesList: React.FC = () => {
               : "ES",
             beneficiary?.district?.name,
             getAgeByDate(beneficiary.dateOfBirth) + " anos",
-            getBeneficiaryIntervention(beneficiary.id),
+            getBeneficiaryIntervention(beneficiary.id)?.total,
+            getBeneficiaryIntervention(beneficiary.id)?.clinicalTotal,
+            getBeneficiaryIntervention(beneficiary.id)?.communityTotal,
             beneficiary?.partners?.name,
             getUsernames(beneficiary.createdBy),
             getUsernames(beneficiary.updatedBy),
@@ -997,37 +935,9 @@ const BeneficiariesList: React.FC = () => {
     <>
       <Title />
       <Card
-        title="Lista de Adolescentes e Jovens"
+        title="Painel da Beneficiário"
         bordered={false}
         headStyle={{ color: "#17a2b8" }}
-        extra={
-          <Space>
-            <Button
-              type="primary"
-              onClick={() => handleBeneficiaryModalVisible(true)}
-              icon={<PlusOutlined />}
-              style={{
-                background: "#00a65a",
-                borderColor: "#00a65a",
-                borderRadius: "4px",
-              }}
-            >
-              Adicionar Nova Beneficiária
-            </Button>
-            <Button
-              type="primary"
-              onClick={() => handleBeneficiaryPartnerModalVisible(true)}
-              icon={<PlusOutlined />}
-              style={{
-                background: "#a69e00",
-                borderColor: "#a69e00",
-                borderRadius: "4px",
-              }}
-            >
-              Adicionar Novo Parceiro
-            </Button>
-          </Space>
-        }
       >
         <Row gutter={16}>
           <Col className="gutter-row">
@@ -1156,35 +1066,8 @@ const BeneficiariesList: React.FC = () => {
         handleModalRefVisible={handleModalRefVisible}
         user={user}
       />
-      <FormBeneficiary
-        form={form}
-        beneficiary={beneficiary}
-        beneficiaries={beneficiaries}
-        modalVisible={beneficiaryModalVisible}
-        handleAddBeneficiary={handleAddBeneficiary}
-        handleUpdateBeneficiary={handleUpdateBeneficiary}
-        handleModalVisible={handleBeneficiaryModalVisible}
-      />
-      <FormBeneficiaryPartner
-        form={form}
-        beneficiary={beneficiary}
-        modalVisible={beneficiaryPartnerModalVisible}
-        handleAddBeneficiary={handleAddBeneficiary}
-        handleUpdateBeneficiary={handleUpdateBeneficiary}
-        handleModalVisible={handleBeneficiaryPartnerModalVisible}
-        handleViewModalVisible={handleViewModalVisible}
-      />
-      <FormReference
-        form={form}
-        beneficiary={beneficiary}
-        modalVisible={referenceModalVisible}
-        addStatus={addStatus}
-        handleAdd={handleAddRef}
-        handleModalRefVisible={handleModalRefVisible}
-        handleRefServicesList={handleRefServicesList}
-      />
     </>
   );
 };
 
-export default BeneficiariesList;
+export default BeneficiaryDashboard;
