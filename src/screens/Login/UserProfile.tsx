@@ -28,12 +28,15 @@ const UserProfile: React.FC = ({
     return e?._raw.online_id == user?.profile_id;
   })[0]?._raw;
 
-  const userLocalities = localities.filter((e) => {
-    return loggedUser.localities_ids?.includes(e?._raw.online_id);
+  const logguedUserLocalities = loggedUser.localities_ids? loggedUser.localities_ids.split(",") : loggedUser.localities.map((l) => l.id+"");
+  const logguedUserUs = loggedUser.us_ids? loggedUser.us_ids.split(",") : loggedUser.us.map((u) => u.id+""); 
+
+  const userLocalities = localities.filter((e) => {    
+    return logguedUserLocalities.includes(e?._raw.online_id.toString());
   });
 
   const userUs = us.filter((e) => {
-    return loggedUser.us_ids?.includes(e?._raw.online_id);
+    return logguedUserUs.includes(e?._raw.online_id.toString());
   });
 
   return (

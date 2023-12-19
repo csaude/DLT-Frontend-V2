@@ -26,6 +26,7 @@ import { serviceAgesBandsQuery } from "@app/utils/report";
 import { loadAgywData, loadServiceAgebands } from "@app/store/reducers/report";
 import { Title as AppTitle } from "@app/components";
 import LoadingModal from "@app/components/modal/LoadingModal";
+import { useSelectAll } from "@app/hooks/useSelectAll";
 const { Option } = Select;
 const { Title } = Typography;
 
@@ -63,14 +64,13 @@ const ReportAgyw = () => {
 
   const onChangeProvinces = async (values: any) => {
     if (values.length > 0) {
-      const provs = provinces.filter((item) =>
-        values.includes(item.id.toString())
-      );
+      const provs = provinces.filter((item) => values.includes(item.id));
       setSelectedProvinces(provs);
+      form.setFieldsValue({ provinces: values });
       let dataDistricts;
       if (loggedUser.districts.length > 0) {
         dataDistricts = loggedUser.districts.filter((d) =>
-          values.includes(d.province.id.toString())
+          values.includes(d.province.id)
         );
       } else {
         dataDistricts = await queryDistrictsByProvinces({
@@ -87,12 +87,33 @@ const ReportAgyw = () => {
 
   const onChangeDistricts = async (values: any) => {
     if (values.length > 0) {
-      const distrs = districts.filter((item) =>
-        values.includes(item.id.toString())
-      );
+      const distrs = districts.filter((item) => values.includes(item.id));
       setSelectedDistricts(distrs);
+      form.setFieldsValue({ districts: values });
     }
   };
+
+  const selectProvinces = useSelectAll({
+    showSelectAll: true,
+    onChange: onChangeProvinces,
+    options: provinces.map((province) => {
+      return {
+        label: province.name,
+        value: province.id,
+      };
+    }),
+  });
+
+  const selectDistricts = useSelectAll({
+    showSelectAll: true,
+    onChange: onChangeDistricts,
+    options: districts?.map((district) => {
+      return {
+        label: district.name,
+        value: district.id,
+      };
+    }),
+  });
 
   const handleFetchData = async () => {
     if (
@@ -199,12 +220,9 @@ const ReportAgyw = () => {
                     <Select
                       mode="multiple"
                       placeholder="Seleccione as Províncias"
-                      onChange={onChangeProvinces}
-                    >
-                      {provinces?.map((item) => (
-                        <Option key={item.id}>{item.name}</Option>
-                      ))}
-                    </Select>
+                      {...selectProvinces}
+                      allowClear
+                    />
                   </Form.Item>
 
                   <Form.Item
@@ -215,12 +233,10 @@ const ReportAgyw = () => {
                     <Select
                       mode="multiple"
                       disabled={districts == undefined}
-                      onChange={onChangeDistricts}
-                    >
-                      {districts?.map((item) => (
-                        <Option key={item.id}>{item.name}</Option>
-                      ))}
-                    </Select>
+                      placeholder="Seleccione os Distritos"
+                      {...selectDistricts}
+                      allowClear
+                    />
                   </Form.Item>
 
                   <Form.Item name="initialDate" label="Data Inicial">
