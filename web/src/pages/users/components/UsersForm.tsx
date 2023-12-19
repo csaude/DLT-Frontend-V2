@@ -219,7 +219,12 @@ const UsersForm = ({
       setSelectMode("multiple");
       setLocalityMode("multiple");
       setRequired(false);
-    } else if (values == SUPERVISOR) {
+    } else if (
+      values == SUPERVISOR ||
+      values == MENTOR ||
+      values == NURSE ||
+      values == COUNSELOR
+    ) {
       setSelectMode("");
       setLocalityMode("multiple");
       setRequired(true);
