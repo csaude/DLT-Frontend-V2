@@ -88,7 +88,12 @@ const ReportAgyw = () => {
   const onChangeDistricts = async (values: any) => {
     if (values.length > 0) {
       const distrs = districts.filter((item) => values.includes(item.id));
-      setSelectedDistricts(distrs);
+      const sortedDistricts = distrs.sort(
+        (dist1, dist2) =>
+          dist1.province.id - dist2.province.id ||
+          dist1.name.localeCompare(dist2.name)
+      );
+      setSelectedDistricts(sortedDistricts);
       form.setFieldsValue({ districts: values });
     }
   };
