@@ -153,6 +153,7 @@ export const MENU: IMenuItem[] = [
       {
         name: ">> Extracção de Dados",
         path: "/dataExtraction",
+        roles: ["M&E"],
       },
       {
         name: "menusidebar.label.syncReport",
