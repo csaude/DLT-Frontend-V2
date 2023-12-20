@@ -159,7 +159,7 @@ const ReportAgyw = () => {
     }
   };
 
-  const handleGenerateXLSXReport = () => {
+  const handleGenerateXLSXReport = async () => {
     if (
       selectedProvinces.length < 1 ||
       selectedDistricts.length < 1 ||
@@ -174,7 +174,7 @@ const ReportAgyw = () => {
       });
       const startDate = moment(initialDate).format("YYYY-MM-DD");
       const endDate = moment(finalDate).format("YYYY-MM-DD");
-      generateXlsReport(
+      await generateXlsReport(
         currentUserName,
         districtsIds,
         startDate,
