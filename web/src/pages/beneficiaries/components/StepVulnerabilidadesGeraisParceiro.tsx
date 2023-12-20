@@ -174,6 +174,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
                 "Não Vê",
                 "Não Ouve",
                 "Tem Algum Membro Amputado ou Deformado",
+                "Tem Algum Atraso Mental",
               ].map((item) => (
                 <Option key={item}>{item}</Option>
               ))}
