@@ -121,7 +121,9 @@ const InterventionForm = ({ record, beneficiary }: any) => {
 
     const fetchSubServices = async () => {
       const data = await querySubServiceByService(service.id);
-      setInterventions(data);
+      const subServiceList =
+        Age <= 14 || Age >= 20 ? data.filter((item) => item.id !== 235) : data;
+      setInterventions(subServiceList);
     };
 
     if (selectedIntervention !== undefined) {
