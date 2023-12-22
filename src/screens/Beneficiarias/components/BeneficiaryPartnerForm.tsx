@@ -64,6 +64,22 @@ const BeneficiaryPartnerForm: React.FC = ({
     "22",
     "23",
     "24",
+    "25",
+    "26",
+    "27",
+    "28",
+    "29",
+    "30",
+    "31",
+    "32",
+    "33",
+    "34",
+    "35",
+    "36",
+    "37",
+    "38",
+    "39",
+    "40",
   ];
 
   const { beneficiary } = route.params;
@@ -105,7 +121,7 @@ const BeneficiaryPartnerForm: React.FC = ({
   const [isUsVisible, setUsVisible] = useState(false);
 
   const minBirthYear = new Date();
-  minBirthYear.setFullYear(new Date().getFullYear() - 24);
+  minBirthYear.setFullYear(new Date().getFullYear() - 40);
 
   const maxBirthYear = new Date();
   maxBirthYear.setFullYear(new Date().getFullYear() - 9);
@@ -1528,6 +1544,7 @@ const BeneficiaryPartnerForm: React.FC = ({
                       "Não Vê",
                       "Não Ouve",
                       "Membro Amputado ou Deformado",
+                      "Tem Algum Atraso Mental",
                     ].map((item) => (
                       <Picker.Item key={item} label={"" + item} value={item} />
                     ))}
