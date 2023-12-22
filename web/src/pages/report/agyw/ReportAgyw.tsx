@@ -88,7 +88,12 @@ const ReportAgyw = () => {
   const onChangeDistricts = async (values: any) => {
     if (values.length > 0) {
       const distrs = districts.filter((item) => values.includes(item.id));
-      setSelectedDistricts(distrs);
+      const sortedDistricts = distrs.sort(
+        (dist1, dist2) =>
+          dist1.province.id - dist2.province.id ||
+          dist1.name.localeCompare(dist2.name)
+      );
+      setSelectedDistricts(sortedDistricts);
       form.setFieldsValue({ districts: values });
     }
   };
@@ -154,7 +159,7 @@ const ReportAgyw = () => {
     }
   };
 
-  const handleGenerateXLSXReport = () => {
+  const handleGenerateXLSXReport = async () => {
     if (
       selectedProvinces.length < 1 ||
       selectedDistricts.length < 1 ||
@@ -169,7 +174,7 @@ const ReportAgyw = () => {
       });
       const startDate = moment(initialDate).format("YYYY-MM-DD");
       const endDate = moment(finalDate).format("YYYY-MM-DD");
-      generateXlsReport(
+      await generateXlsReport(
         currentUserName,
         districtsIds,
         startDate,
@@ -200,7 +205,7 @@ const ReportAgyw = () => {
             color: "#17a2b8",
           }}
         >
-          PEPFAR MER 2.6.1 Indicador Semi-Annual AGYW_PREV
+          PEPFAR MER 2.7 Indicador Semi-Annual AGYW_PREV
         </Title>
         <Card
           title="Parâmetros do Indicador AGYW_PREV "

@@ -1832,6 +1832,7 @@ const BeneficiaryForm: React.FC = ({
                       "Não Vê",
                       "Não Ouve",
                       "Membro Amputado ou Deformado",
+                      "Tem Algum Atraso Mental",
                     ].map((item) => (
                       <Picker.Item key={item} label={"" + item} value={item} />
                     ))}
