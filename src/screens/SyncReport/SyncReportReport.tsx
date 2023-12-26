@@ -6,7 +6,7 @@ import { pendingSyncBeneficiaries } from "../../services/beneficiaryService";
 import { pendingSyncBeneficiariesInterventions } from "../../services/beneficiaryInterventionService";
 import { pendingSyncReferences } from "../../services/referenceService";
 
-const SyncReportReport: React.FC = () => {
+const SyncReportScreen: React.FC = () => {
   const [beneficiariesNotSynced, setBeneficiariesNotSynced] = useState<any>();
   const [referencesNotSynced, setReferencesNotSynced] = useState<any>();
   const [
@@ -174,4 +174,4 @@ const SyncReportReport: React.FC = () => {
   );
 };
 
-export default SyncReportReport;
+export default SyncReportScreen;

@@ -16,3 +16,15 @@ export const pendingSyncReferences = async () => {
     .fetchCount();
   return count;
 };
+
+export const getAllReferences = async () => {
+  const resultQ = await database.collections.get("references").query().fetch();
+  const resultRaws = resultQ.map(item => item._raw)
+  return resultRaws;
+};
+
+export const getAllReferenceServices = async () => {
+  const resultQ = await database.collections.get("references_services").query().fetch();
+  const resultRaws = resultQ.map(item => item._raw)
+  return resultRaws;
+};

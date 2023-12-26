@@ -40,3 +40,12 @@ export const pendingSyncBeneficiariesInterventions = async () => {
     .fetchCount();
   return count;
 };
+
+export const getAllBeneficiariesInterventions = async () => {
+  const resultQ = await database.collections
+    .get("beneficiaries_interventions")
+    .query()
+    .fetch();
+    const resultRaws = resultQ.map(item => item._raw)
+    return resultRaws
+};
