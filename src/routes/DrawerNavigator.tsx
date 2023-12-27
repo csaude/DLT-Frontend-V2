@@ -298,7 +298,7 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
             title: "",
             headerTitle: "",
             drawerIcon: () => (
-              <ItemBadge label="Exportar Dados" total={-1} />
+              <ItemBadge label="Exportar Dados do Dispositivo" total={-1} />
             ),
           }}
         />
