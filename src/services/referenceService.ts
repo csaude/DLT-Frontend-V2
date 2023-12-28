@@ -17,14 +17,10 @@ export const pendingSyncReferences = async () => {
   return count;
 };
 
-export const getAllReferences = async () => {
-  const resultQ = await database.collections.get("references").query().fetch();
-  const resultRaws = resultQ.map(item => item._raw)
-  return resultRaws;
-};
-
-export const getAllReferenceServices = async () => {
-  const resultQ = await database.collections.get("references_services").query().fetch();
+export const getReferencesBy_status = async (status) => {
+  const resultQ = await database.collections.get("references")
+  .query(Q.where("_status", Q.eq(status)))
+  .fetch();
   const resultRaws = resultQ.map(item => item._raw)
   return resultRaws;
 };

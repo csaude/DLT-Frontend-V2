@@ -1,49 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View, KeyboardAvoidingView, ScrollView, Text } from "react-native";
 import { Button, Divider, Flex } from "native-base";
 import styles from "./styles";
-import { getAllBeneficiaries } from "../../services/beneficiaryService";
-import { getAllBeneficiariesInterventions } from "../../services/beneficiaryInterventionService";
-import {
-  getAllReferenceServices,
-  getAllReferences,
-} from "../../services/referenceService";
+import { getBeneficiariesBy_status } from "../../services/beneficiaryService";
+import { getBeneficiariesInterventionsBy_status } from "../../services/beneficiaryInterventionService";
+import { getReferencesBy_status } from "../../services/referenceService";
 import RNFS from "react-native-fs";
 import Share from "react-native-share";
-
+import { getSequencesBy_status } from "../../services/sequenceService";
 const SyncReportScreen: React.FC = () => {
   const [loading, setLoading] = useState(false);
-  const [beneficiaries, setBeneficiaries] = useState<any[]>([]);
-  const [references, setReferences] = useState<any[]>([]);
-  const [beneficiariesInterventions, setBeneficiariesInterventions] = useState<
-    any[]
-  >([]);
-  const [referenceServices, setReferenceServices] = useState<any[]>([]);
-
-  const fetchData = async () => {
-    try {
-      const benef = await getAllBeneficiaries();
-      const benInterv = await getAllBeneficiariesInterventions();
-      const refs = await getAllReferences();
-      const refServs = await getAllReferenceServices();
-
-      setBeneficiaries(benef);
-      setReferences(refs);
-      setBeneficiariesInterventions(benInterv);
-      setReferenceServices(refServs);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   const handleExportData = async () => {
     try {
       setLoading(true);
-      fetchData();
       writeFileOnDevice();
       shareFileViaWhatsApp();
       setLoading(false);
@@ -53,15 +23,46 @@ const SyncReportScreen: React.FC = () => {
   };
 
   const writeFileOnDevice = async () => {
-    // write the file
+    const createdBeneficiaries = await getBeneficiariesBy_status("created");
+    const createdBeneficiariesInterventions =
+      await getBeneficiariesInterventionsBy_status("created");
+    const createdReferences = await getReferencesBy_status("created");
+    const createdSequences = await getSequencesBy_status("created");
+
+    const updatedBeneficiaries = await getBeneficiariesBy_status("updated");
+    const updatedBeneficiariesInterventions =
+      await getBeneficiariesInterventionsBy_status("updated");
+    const updatedReferences = await getReferencesBy_status("updated");
+    const updatedSequences = await getSequencesBy_status("updated");
+
     const data = {
-      beneficiaries: beneficiaries,
-      beneficiariesInterventions: beneficiariesInterventions,
-      references: references,
-      referenceServices: referenceServices,
+      changes: {
+        beneficiaries: {
+          created: createdBeneficiaries,
+          updated: updatedBeneficiaries,
+          deleted: [],
+        },
+        beneficiaries_interventions: {
+          created: createdBeneficiariesInterventions,
+          updated: updatedBeneficiariesInterventions,
+          deleted: [],
+        },
+        references: {
+          created: createdReferences,
+          updated: updatedReferences,
+          deleted: [],
+        },
+        sequences: {
+          created: createdSequences,
+          updated: updatedSequences,
+          deleted: [],
+        },
+      },
+      lastPulledAt: 1703754901279,
     };
-    const path = `${RNFS.ExternalDirectoryPath}/dlt2.json`;
     try {
+      // console.log("-----------------", data);
+      const path = `${RNFS.ExternalDirectoryPath}/dlt2.json`;
       await RNFS.writeFile(path, JSON.stringify(data), "utf8");
     } catch (err) {
       console.error("ERROR IN FILE WRITTEN!", err);

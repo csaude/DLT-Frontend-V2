@@ -34,8 +34,10 @@ export const pendingSyncBeneficiaries = async () => {
   return count;
 };
 
-export const getAllBeneficiaries = async () => {
-  const resultQ = await database.collections.get("beneficiaries").query().fetch();
+export const getBeneficiariesBy_status = async (status) => {
+  const resultQ = await database.collections.get("beneficiaries")
+  .query(Q.where("_status", Q.notEq(status)))
+  .fetch();
   const resultRaws = resultQ.map(item => item._raw)
   return resultRaws;
 };
