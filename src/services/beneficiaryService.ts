@@ -36,7 +36,7 @@ export const pendingSyncBeneficiaries = async () => {
 
 export const getBeneficiariesBy_status = async (status) => {
   const resultQ = await database.collections.get("beneficiaries")
-  .query(Q.where("_status", Q.notEq(status)))
+  .query(Q.where("_status", Q.eq(status)))
   .fetch();
   const resultRaws = resultQ.map(item => item._raw)
   return resultRaws;

@@ -4,12 +4,17 @@ import { Button, Divider, Flex } from "native-base";
 import styles from "./styles";
 import { getBeneficiariesBy_status } from "../../services/beneficiaryService";
 import { getBeneficiariesInterventionsBy_status } from "../../services/beneficiaryInterventionService";
-import { getReferencesBy_status } from "../../services/referenceService";
+import {
+  getReferencesBy_status,
+  getReferenceServicesBy_status,
+} from "../../services/referenceService";
 import RNFS from "react-native-fs";
 import Share from "react-native-share";
 import { getSequencesBy_status } from "../../services/sequenceService";
 const SyncReportScreen: React.FC = () => {
   const [loading, setLoading] = useState(false);
+  const now = new Date();
+  const currentTimeInMilliseconds = now.getTime();
 
   const handleExportData = async () => {
     try {
@@ -27,12 +32,18 @@ const SyncReportScreen: React.FC = () => {
     const createdBeneficiariesInterventions =
       await getBeneficiariesInterventionsBy_status("created");
     const createdReferences = await getReferencesBy_status("created");
+    const createdReferenceServices = await getReferenceServicesBy_status(
+      "created"
+    );
     const createdSequences = await getSequencesBy_status("created");
 
     const updatedBeneficiaries = await getBeneficiariesBy_status("updated");
     const updatedBeneficiariesInterventions =
       await getBeneficiariesInterventionsBy_status("updated");
     const updatedReferences = await getReferencesBy_status("updated");
+    const updatedReferenceServices = await getReferenceServicesBy_status(
+      "updated"
+    );
     const updatedSequences = await getSequencesBy_status("updated");
 
     const data = {
@@ -52,13 +63,18 @@ const SyncReportScreen: React.FC = () => {
           updated: updatedReferences,
           deleted: [],
         },
+        references_services: {
+          created: createdReferenceServices,
+          updated: updatedReferenceServices,
+          deleted: [],
+        },
         sequences: {
           created: createdSequences,
           updated: updatedSequences,
           deleted: [],
         },
       },
-      lastPulledAt: 1703754901279,
+      lastPulledAt: currentTimeInMilliseconds,
     };
     try {
       // console.log("-----------------", data);
