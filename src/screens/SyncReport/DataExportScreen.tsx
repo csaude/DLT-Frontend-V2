@@ -14,7 +14,6 @@ import { getSequencesBy_status } from "../../services/sequenceService";
 const SyncReportScreen: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const now = new Date();
-  const currentTimeInMilliseconds = now.getTime();
 
   const handleExportData = async () => {
     try {
@@ -74,7 +73,7 @@ const SyncReportScreen: React.FC = () => {
           deleted: [],
         },
       },
-      lastPulledAt: currentTimeInMilliseconds,
+      lastPulledAt: now.getTime(),
     };
     try {
       // console.log("-----------------", data);
