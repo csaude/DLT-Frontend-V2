@@ -2,15 +2,25 @@ import React, { useContext, useEffect, useState } from "react";
 import { View, KeyboardAvoidingView, ScrollView, Text } from "react-native";
 import { Button, Divider, Flex } from "native-base";
 import styles from "./styles";
-import { getBeneficiariesBy_status } from "../../services/beneficiaryService";
-import { getBeneficiariesInterventionsBy_status } from "../../services/beneficiaryInterventionService";
+import {
+  getBeneficiariesByNot_status,
+  getBeneficiariesBy_status,
+} from "../../services/beneficiaryService";
+import {
+  getBeneficiariesInterventionsByNot_status,
+  getBeneficiariesInterventionsBy_status,
+} from "../../services/beneficiaryInterventionService";
 import {
   getReferencesBy_status,
   getReferenceServicesBy_status,
+  getReferenceServicesByNot_status,
 } from "../../services/referenceService";
 import RNFS from "react-native-fs";
 import Share from "react-native-share";
-import { getSequencesBy_status } from "../../services/sequenceService";
+import {
+  getSequencesByNot_status,
+  getSequencesBy_status,
+} from "../../services/sequenceService";
 const SyncReportScreen: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const now = new Date();
@@ -36,14 +46,14 @@ const SyncReportScreen: React.FC = () => {
     );
     const createdSequences = await getSequencesBy_status("created");
 
-    const updatedBeneficiaries = await getBeneficiariesBy_status("updated");
+    const updatedBeneficiaries = await getBeneficiariesByNot_status("created");
     const updatedBeneficiariesInterventions =
-      await getBeneficiariesInterventionsBy_status("updated");
-    const updatedReferences = await getReferencesBy_status("updated");
-    const updatedReferenceServices = await getReferenceServicesBy_status(
-      "updated"
+      await getBeneficiariesInterventionsByNot_status("created");
+    const updatedReferences = await getReferenceServicesByNot_status("created");
+    const updatedReferenceServices = await getReferenceServicesByNot_status(
+      "created"
     );
-    const updatedSequences = await getSequencesBy_status("updated");
+    const updatedSequences = await getSequencesByNot_status("created");
 
     const data = {
       changes: {
@@ -76,7 +86,6 @@ const SyncReportScreen: React.FC = () => {
       lastPulledAt: now.getTime(),
     };
     try {
-      // console.log("-----------------", data);
       const path = `${RNFS.ExternalDirectoryPath}/dlt2.json`;
       await RNFS.writeFile(path, JSON.stringify(data), "utf8");
     } catch (err) {
