@@ -46,7 +46,7 @@ const DataImport: React.FC = () => {
               <Input
                 type="file"
                 accept=".json,application/json"
-                placeholder="Pesquisar por Username"
+                placeholder="Seleciona o ficheiro json"
                 onChange={handleChange}
               />
             </Form.Item>
@@ -54,7 +54,7 @@ const DataImport: React.FC = () => {
 
           <Col className="gutter-row" span={12}>
             <Button type="primary" onClick={handleSaveData}>
-              Pesquisar
+              Executar Importação
             </Button>
           </Col>
         </Row>
