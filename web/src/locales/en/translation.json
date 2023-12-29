@@ -90,7 +90,8 @@
       "bulkCancellationReference": "Cancelamento de Referências Pendentes",
       "reports": "Relatórios DREAMS",
       "appInfo": "Detalhes da Aplicação",
-      "syncReport": "Relatório de sincronização"
+      "syncReport": "Relatório de Sincronização",
+      "dataExtraction": "Extracção de Dados"
     }
   },
   "footer": {
