@@ -24,7 +24,7 @@ const DataImport: React.FC = () => {
   };
 
   const synchronize = async () => {
-    await addFromDevice(data?.changes, username);
+    await addFromDevice(data, username);
   };
 
   const handleSaveData = (e) => {
