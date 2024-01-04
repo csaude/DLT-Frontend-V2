@@ -1,7 +1,7 @@
 {
   "homepage": "http://localhost:8081/dreams",
   "name": "adminlte-3-react",
-  "version": "0.1.0",
+  "version": "1.1.0",
   "private": true,
   "scripts": {
     "start": "craco start",

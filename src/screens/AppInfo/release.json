@@ -1,7 +1,7 @@
 {
   "release": {
-    "version": "1.0.0",
-    "date": "20/09/2023",
+    "version": "1.1.0",
+    "date": "20/12/2023",
     "changelogs": [
       {
         "id": 1,
@@ -9,195 +9,131 @@
       },
       {
         "id": 2,
-        "changelog": "Beneficiary Registration / Registo de Beneficiária"
+        "changelog": "Beneficiary Registration / Registo de Beneficiária:"
       },
       {
         "id": 3,
-        "changelog": "Registration of new beneficiary / Registo de Nova Beneficiária"
+        "changelog": "Inclusion of beneficiaries List export option / Inclusão da opção para exportação de lista de beneficiárias"
       },
       {
         "id": 4,
-        "changelog": "Beneficiaries List Export / Exportar Lista de Beneficiários"
+        "changelog": "Enable search by name to de-identified names, / Permitir a pesquisa por nome para nomes de-identificados"
       },
       {
         "id": 5,
-        "changelog": "Beneficiaries List Export / Exportar Lista de Beneficiários"
+        "changelog": "Inclusion of enrollment date on beneficiaries list and personal information / Inclusão da data de inscrição na listagem de beneficiários a na informação pessoal"
       },
       {
         "id": 6,
-        "changelog": "Beneficiaries List Export by Filtered Information / Exportar Lista de Beneficiários por Informação Filtrada"
-      },
-      {
-        "id": 7,
-        "changelog": "Update Beneficiary / Actualizar Beneficiária"
-      },
-      {
-        "id": 8,
-        "changelog": "Beneficiary Sexual Partner Association / Associação de Parceiro Sexual da Beneficiária"
-      },
-      {
-        "id": 9,
-        "changelog": "Delete Beneficiary / Excluir Beneficiária"
-      },
-      {
-        "id": 10,
         "changelog": "Beneficiary Partner Registration / Registo de Parceiro de Beneficiária:"
       },
       {
+        "id": 7,
+        "changelog": "24 years age restriction removal on beneficiary partner registration /  Remoção da restrição de 24 anos de idade no registo de parceiros das beneficiárias"
+      },
+      {
+        "id": 8,
+        "changelog": "Inclusion of business rule to only allow partner removal if no beneficiaries are associated with them / Inclusão da regra de negócio para só permitir a remoção de parceiros que não estejam associados a uma beneficiárias"
+      },
+      {
+        "id": 9,
+        "changelog": "Beneficiary Service Provision / Provisão de Serviços aos Beneficiários:"
+      },
+      {
+        "id": 10,
+        "changelog": "“Iniciativas de Aumento da Empregabilidade e Empreendedorismo” sub-service  renamed “to Siyakha Comprehensive” / Sub-servico “Iniciativas de Aumento da Empregabilidade e Empreendedorismo” renomeado para “Siyakha Comprehensive”"
+      },
+      {
         "id": 11,
-        "changelog": "Partner Registration / Registo de Parceiro"
+        "changelog": "Inclusion of new sub-service “Siyakha Light” for age band “15-19” / Inclusão de novo sub-serviço Siyakha Light para a faixa etária “15-19”"
       },
       {
         "id": 12,
-        "changelog": "Update Partner Information / Actualizar Informação do Parceiro"
-      },
-      {
-        "id": 13,
-        "changelog": "Delete Partner / Excluir Parceiro"
-      },
-      {
-        "id": 14,
-        "changelog": "Beneficiary Service Provision / Provisão de Serviços aos Beneficiários"
-      },
-      {
-        "id": 15,
-        "changelog": "Register Beneficiary Service / Registar Serviço"
-      },
-      {
-        "id": 16,
-        "changelog": "Delete Service / Excluir Serviço"
-      },
-      {
-        "id": 17,
-        "changelog": "List Services / Listar Serviços"
-      },
-      {
-        "id": 18,
         "changelog": "Referral Management Module / Módulo de Gestão de Referências:"
       },
       {
-        "id": 19,
-        "changelog": "Manage Service Referral / Gestão de Referência de Serviço"
+        "id": 13,
+        "changelog": "Manage Service Referral / Gestão de Referência de Serviço:"
       },
       {
-        "id": 20,
-        "changelog": "Create Beneficiary Service Referral / Criar Referência de Serviço para Beneficiária"
+        "id": 14,
+        "changelog": "Inclusion of Referral List Export option / Inclusão de opção para exportação de lista de referências"
       },
       {
-        "id": 21,
-        "changelog": "Update Referral / Actualizar Referência"
-      },
-      {
-        "id": 22,
-        "changelog": "Cancel Referral / Cancelar Referência"
-      },
-      {
-        "id": 23,
-        "changelog": "Bulk Cancellation Service Referral / Cancelamento Massivo de Referências"
-      },
-      {
-        "id": 24,
-        "changelog": "List Referrals / Listar Referências"
-      },
-      {
-        "id": 25,
-        "changelog": "Referrals List Export / Exportar Lista de Referências"
-      },
-      {
-        "id": 26,
-        "changelog": "Referrals List Export by Filtered Information / Exportar Lista de Referências por Informação Filtrada"
-      },
-      {
-        "id": 27,
-        "changelog": "Attend Service / Atender Serviço"
-      },
-      {
-        "id": 28,
-        "changelog": "List of  Requested  Services / Listar Serviços Requisitados"
-      },
-      {
-        "id": 29,
-        "changelog": "List of Received Services / Listar Serviços Recebidos"
-      },
-      {
-        "id": 30,
+        "id": 15,
         "changelog": "Configuration Module / Módulo de Configuração:"
       },
       {
-        "id": 31,
+        "id": 16,
         "changelog": "Metadata Management / Gestão de Metadados"
       },
       {
-        "id": 32,
-        "changelog": "Provinces / Províncias"
+        "id": 17,
+        "changelog": "Inclusion of neighborhood configuration feature / Inclusão da funcionalidade de configuração de bairros residenciais."
       },
       {
-        "id": 33,
-        "changelog": "Districts / Distritos"
-      },
-      {
-        "id": 34,
-        "changelog": "Administrative Posts / Postos Administrativos"
-      },
-      {
-        "id": 35,
-        "changelog": "Location / Localização"
-      },
-      {
-        "id": 36,
-        "changelog": "Services / Serviços"
-      },
-      {
-        "id": 37,
-        "changelog": "Sub services / Sub-serviços"
-      },
-      {
-        "id": 38,
-        "changelog": "Organizations / Organizações"
-      },
-      {
-        "id": 39,
+        "id": 18,
         "changelog": "User Management Module / Módulo de Gestão do Utilizador:"
       },
       {
-        "id": 40,
+        "id": 19,
         "changelog": "User Registration / Registo do Utilizador"
       },
       {
-        "id": 41,
-        "changelog": "Create, Update and  Inactivate Users / Criar.Actualizar e Inactivar Utilizadores"
+        "id": 20,
+        "changelog": "Included Filters and Pagination in User Listing / Inclusão de Filtros e Paginação na listagem de utilizadores"
       },
       {
-        "id": 42,
-        "changelog": "List Existing Users / Listar Utilizadores Existentes"
+        "id": 21,
+        "changelog": "Included the option to activate an inactive user /Inclusão de opção para activar um utilizador inactivo"
       },
       {
-        "id": 43,
-        "changelog": "User Login / Login do Utilizador"
+        "id": 22,
+        "changelog": "Updated to associate the users profiles (mentora,enfermeira and conselheira) to more than one administrative post / Actualização para permitir a associação de mais de um posto administrativo para os perfis de utilizadores (mentora, enfermeira e conselheira)"
       },
       {
-        "id": 44,
-        "changelog": "Login / Login"
+        "id": 23,
+        "changelog": "User Synchronization Report (New functionality) / Relatório de Sincronização de utilizadores ( Nova funcionalidade)"
       },
       {
-        "id": 45,
-        "changelog": "Initial Login / Login Inicial"
+        "id": 24,
+        "changelog": "Report on last synchronization date by a user / Relatório sobre a data de última sincronização de um utilizador"
       },
       {
-        "id": 46,
-        "changelog": "Periodic Password Renewal / Renovação Periódica de Senha"
+        "id": 25,
+        "changelog": "Report of items pending synchronization on mobile devices / Relatório de itens pendentes de sincronização no dispositivo móvel"
       },
       {
-        "id": 47,
-        "changelog": "Password Reset / Redefinição de Senha"
-      },
-      {
-        "id": 48,
+        "id": 26,
         "changelog": "Reports Module:"
       },
       {
-        "id": 49,
-        "changelog": "PEPFAR MER 2.6.1 AGYW_PREV Indicator / Relatório do indicador MER 2.6.1 AGYW_PREV"
+        "id": 27,
+        "changelog": "List of Beneficiaries and Services (New functionality) / Lista de Beneficiários e Serviços (Nova funcionalidade)"
+      },
+      {
+        "id": 28,
+        "changelog": "Feature to extract the list of beneficiaries and services received / Funcionalidade de extração de listas de beneficiárias e serviços recebidos"
+      },
+      {
+        "id": 29,
+        "changelog": "List of Newly Enrolled AGYW and Services (New functionality) / Lista de Novas RAMJ e Serviços (Nova funcionalidade)"
+      },
+      {
+        "id": 30,
+        "changelog": "Feature to extract the list of newly enrolled beneficiaries and services received / Funcionalidade de extração de listas de novas beneficiárias inscritas e serviços recebidos"
+      },
+      {
+        "id": 31,
+        "changelog": "PEPFAR MER AGYW_PREV Indicator"
+      },
+      {
+        "id": 32,
+        "changelog": "“Iniciativas de Aumento da Empregabilidade e Empreendedorismo” renamed to “Siyakha Comprehensive” / “Iniciativas de Aumento da Empregabilidade e Empreendedorismo” renomeado para “Siyakha Comprehensive”"
+      },
+      {
+        "id": 33,
+        "changelog": "Inclusion of new sub-service Siyakha Light for age band “15-19” secondary package completion rules / Inclusão do novo sub-serviço Siyakha Light para regras de completude  de pacote secundário da faixa etária “15-19”"
       }
     ]
   }
