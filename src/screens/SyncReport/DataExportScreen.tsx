@@ -14,6 +14,7 @@ import {
   getReferencesBy_status,
   getReferenceServicesBy_status,
   getReferenceServicesByNot_status,
+  getReferencesByNot_status,
 } from "../../services/referenceService";
 import RNFS from "react-native-fs";
 import Share from "react-native-share";
@@ -49,7 +50,7 @@ const SyncReportScreen: React.FC = () => {
     const updatedBeneficiaries = await getBeneficiariesByNot_status("created");
     const updatedBeneficiariesInterventions =
       await getBeneficiariesInterventionsByNot_status("created");
-    const updatedReferences = await getReferenceServicesByNot_status("created");
+    const updatedReferences = await getReferencesByNot_status("created");
     const updatedReferenceServices = await getReferenceServicesByNot_status(
       "created"
     );
@@ -80,6 +81,11 @@ const SyncReportScreen: React.FC = () => {
         sequences: {
           created: createdSequences,
           updated: updatedSequences,
+          deleted: [],
+        },
+        users: {
+          created: [],
+          updated: [],
           deleted: [],
         },
       },
