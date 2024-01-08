@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import cl.json.RNSharePackage;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -13,9 +14,15 @@ import java.util.List;
 import com.nozbe.watermelondb.WatermelonDBPackage;
 import com.facebook.react.bridge.JSIModulePackage; 
 import com.swmansion.reanimated.ReanimatedJSIModulePackage; 
+import cl.json.ShareApplication;
 
-public class MainApplication extends Application implements ReactApplication {
+public class MainApplication extends Application implements ShareApplication, ReactApplication {
 
+  @Override
+  public String getFileProviderAuthority() {
+    return BuildConfig.APPLICATION_ID + ".provider";
+  }
+  
   private final ReactNativeHost mReactNativeHost =
       new ReactNativeHost(this) {
         @Override

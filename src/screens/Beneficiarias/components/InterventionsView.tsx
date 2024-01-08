@@ -24,16 +24,32 @@ import { sync } from "../../../database/sync";
 import NetInfo from "@react-native-community/netinfo";
 import Spinner from "react-native-loading-spinner-overlay/lib";
 import { MENTOR, SUPERVISOR } from "../../../utils/constants";
+import { database } from "../../../database";
+import { Q } from "@nozbe/watermelondb";
 
 const InterventionsView: React.FC = ({ route }: any) => {
   const [loading, setLoading] = useState(false);
   const [isOffline, setIsOffline] = useState(false);
+  const [partnerType, setPartnerType] = useState(undefined);
 
   const { beneficiary, interventions } = route.params;
   const loggedUser: any = useContext(Context);
+  const profileId = loggedUser.profile_id? loggedUser.profile_id : loggedUser.profiles.id;
   const toast = useToast();
 
+  const getPartner = async () => {
+    const partner_id =
+      loggedUser.partner_id ? loggedUser.partner_id : loggedUser.partners.id;
+    const partners = await database
+      .get("partners")
+      .query(Q.where("online_id", parseInt(partner_id)))
+      .fetch();
+    const partnerSerialied: any = partners.map((item) => item._raw)[0];
+    setPartnerType(partnerSerialied.partner_type);
+  };
+
   useEffect(() => {
+    getPartner();
     const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
       const status = !(state.isConnected && state.isInternetReachable);
       setIsOffline(status);
@@ -98,7 +114,7 @@ const InterventionsView: React.FC = ({ route }: any) => {
             }}
             color="darkBlue.800"
           >
-            {[MENTOR, SUPERVISOR].includes(loggedUser.profile_id) &&
+            {[MENTOR, SUPERVISOR].includes(profileId) && partnerType == "2" &&
             [26, 67, 68].includes(data.item.intervention.sub_service_id)
               ? "Aconselhamento e Testagem em Saúde"
               : data.item.name}

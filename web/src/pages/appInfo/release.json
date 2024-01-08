@@ -1,35 +1,139 @@
 {
   "release": {
     "version": "1.1.0",
-    "date": "13/10/2023",
+    "date": "20/12/2023",
     "changelogs": [
       {
         "id": 1,
-        "changelog": "User Registration: Add filters to the table: province, district, organization / Registo de Utilizador: Adicionado filtros na tabela: província, distrito, organização"
+        "changelog": "Beneficiary Management Module / Módulo de Gestão de Beneficiários:"
       },
       {
         "id": 2,
-        "changelog": "Update Password: Fixed issue of not persisting / Actualização de Passaword: Corrigida anomalia da não persistência"
+        "changelog": "Beneficiary Registration / Registo de Beneficiária:"
       },
       {
         "id": 3,
-        "changelog": "Users List: Performance improvement and inclusion of global filter / Lista de Utilizadores: Melhoria de performance e inclusão de filtros globais"
+        "changelog": "Inclusion of beneficiaries List export option / Inclusão da opção para exportação de lista de beneficiárias"
       },
       {
         "id": 4,
-        "changelog": "User Registration: Show only locations related to selected entry point / Registo de Utilizador: Mostrar apenas localizaçõs relacionadas com o ponto de entrada seleccionado"
+        "changelog": "Enable search by name to de-identified names, / Permitir a pesquisa por nome para nomes de-identificados"
       },
       {
         "id": 5,
-        "changelog": "Metadata Management: Manage Naighborhood / Gestão de Metadados: Gestão de Bairros Resideciais"
+        "changelog": "Inclusion of enrollment date on beneficiaries list and personal information / Inclusão da data de inscrição na listagem de beneficiários a na informação pessoal"
       },
       {
         "id": 6,
-        "changelog": "US List: Add filters to table: province, district, administrative post / Lista de US: Adicionar filtros à tabela: província, distrito, posto administrativo"
+        "changelog": "Beneficiary Partner Registration / Registo de Parceiro de Beneficiária:"
       },
       {
         "id": 7,
-        "changelog": "Confirm Reset Password: Show friendly message when token expired / Confirmação de Actualização de Password: Apresentar mensagem amigável para token expirado"
+        "changelog": "24 years age restriction removal on beneficiary partner registration /  Remoção da restrição de 24 anos de idade no registo de parceiros das beneficiárias"
+      },
+      {
+        "id": 8,
+        "changelog": "Inclusion of business rule to only allow partner removal if no beneficiaries are associated with them / Inclusão da regra de negócio para só permitir a remoção de parceiros que não estejam associados a uma beneficiárias"
+      },
+      {
+        "id": 9,
+        "changelog": "Beneficiary Service Provision / Provisão de Serviços aos Beneficiários:"
+      },
+      {
+        "id": 10,
+        "changelog": "“Iniciativas de Aumento da Empregabilidade e Empreendedorismo” sub-service  renamed “to Siyakha Comprehensive” / Sub-servico “Iniciativas de Aumento da Empregabilidade e Empreendedorismo” renomeado para “Siyakha Comprehensive”"
+      },
+      {
+        "id": 11,
+        "changelog": "Inclusion of new sub-service “Siyakha Light” for age band “15-19” / Inclusão de novo sub-serviço Siyakha Light para a faixa etária “15-19”"
+      },
+      {
+        "id": 12,
+        "changelog": "Referral Management Module / Módulo de Gestão de Referências:"
+      },
+      {
+        "id": 13,
+        "changelog": "Manage Service Referral / Gestão de Referência de Serviço:"
+      },
+      {
+        "id": 14,
+        "changelog": "Inclusion of Referral List Export option / Inclusão de opção para exportação de lista de referências"
+      },
+      {
+        "id": 15,
+        "changelog": "Configuration Module / Módulo de Configuração:"
+      },
+      {
+        "id": 16,
+        "changelog": "Metadata Management / Gestão de Metadados"
+      },
+      {
+        "id": 17,
+        "changelog": "Inclusion of neighborhood configuration feature / Inclusão da funcionalidade de configuração de bairros residenciais."
+      },
+      {
+        "id": 18,
+        "changelog": "User Management Module / Módulo de Gestão do Utilizador:"
+      },
+      {
+        "id": 19,
+        "changelog": "User Registration / Registo do Utilizador"
+      },
+      {
+        "id": 20,
+        "changelog": "Included Filters and Pagination in User Listing / Inclusão de Filtros e Paginação na listagem de utilizadores"
+      },
+      {
+        "id": 21,
+        "changelog": "Included the option to activate an inactive user /Inclusão de opção para activar um utilizador inactivo"
+      },
+      {
+        "id": 22,
+        "changelog": "Updated to associate the users profiles (mentora,enfermeira and conselheira) to more than one administrative post / Actualização para permitir a associação de mais de um posto administrativo para os perfis de utilizadores (mentora, enfermeira e conselheira)"
+      },
+      {
+        "id": 23,
+        "changelog": "User Synchronization Report (New functionality) / Relatório de Sincronização de utilizadores ( Nova funcionalidade)"
+      },
+      {
+        "id": 24,
+        "changelog": "Report on last synchronization date by a user / Relatório sobre a data de última sincronização de um utilizador"
+      },
+      {
+        "id": 25,
+        "changelog": "Report of items pending synchronization on mobile devices / Relatório de itens pendentes de sincronização no dispositivo móvel"
+      },
+      {
+        "id": 26,
+        "changelog": "Reports Module:"
+      },
+      {
+        "id": 27,
+        "changelog": "List of Beneficiaries and Services (New functionality) / Lista de Beneficiários e Serviços (Nova funcionalidade)"
+      },
+      {
+        "id": 28,
+        "changelog": "Feature to extract the list of beneficiaries and services received / Funcionalidade de extração de listas de beneficiárias e serviços recebidos"
+      },
+      {
+        "id": 29,
+        "changelog": "List of Newly Enrolled AGYW and Services (New functionality) / Lista de Novas RAMJ e Serviços (Nova funcionalidade)"
+      },
+      {
+        "id": 30,
+        "changelog": "Feature to extract the list of newly enrolled beneficiaries and services received / Funcionalidade de extração de listas de novas beneficiárias inscritas e serviços recebidos"
+      },
+      {
+        "id": 31,
+        "changelog": "PEPFAR MER AGYW_PREV Indicator"
+      },
+      {
+        "id": 32,
+        "changelog": "“Iniciativas de Aumento da Empregabilidade e Empreendedorismo” renamed to “Siyakha Comprehensive” / “Iniciativas de Aumento da Empregabilidade e Empreendedorismo” renomeado para “Siyakha Comprehensive”"
+      },
+      {
+        "id": 33,
+        "changelog": "Inclusion of new sub-service Siyakha Light for age band “15-19” secondary package completion rules / Inclusão do novo sub-serviço Siyakha Light para regras de completude  de pacote secundário da faixa etária “15-19”"
       }
     ]
   }

@@ -90,8 +90,10 @@
       "bulkCancellationReference": "Cancelamento de Referências Pendentes",
       "reports": "Relatórios DREAMS",
       "appInfo": "Detalhes da Aplicação",
-      "syncReport": "Relatório de sincronização",
-      "beneficiaryDashboard": "Painel da Beneficiário"
+      "syncReport": "Relatório de Sincronização",
+      "beneficiaryDashboard": "Painel da Beneficiário",
+      "dataImport": "Importação de dados do dispositivo",
+      "dataExtraction": "Extracção de Dados"
     }
   },
   "footer": {

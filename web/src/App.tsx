@@ -42,6 +42,7 @@ import NeighborhoodsList from "./pages/neighborhoods";
 
 import SyncReport from "@pages/sync-report/Index";
 import BeneficiaryDashboard from "./pages/beneficiary-dashboard";
+import DataImport from "@pages/data-import/index";
 
 const App = () => {
   const windowSize = useWindowSize();
@@ -167,6 +168,7 @@ const App = () => {
               path="/beneficiaryDashboard"
               element={<BeneficiaryDashboard />}
             />
+            <Route path="/dataImport" element={<DataImport />} />
           </Route>
         </Route>
       </Routes>

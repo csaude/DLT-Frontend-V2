@@ -130,30 +130,9 @@ export const MENU: IMenuItem[] = [
     level: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
     roles: ["ADMIN", "M&E", "SUPERVISOR", "DOADOR"],
     children: [
-      // {
-      //   name: '>> GERAL',
-      //   path: '#',
-      // },
-      // {
-      //   name: '>> FILTROS DREAMS',
-      //   path: '#',
-      // },
-      // {
-      //   name: '>> FILTROS MENSAL',
-      //   path: '#',
-      // },
-      // {
-      //   name: '>> FILTROS UTILIZADORES',
-      //   path: '#',
-      // },
       {
-        name: ">> PEPFAR MER 2.6.1 AGYW_PREV",
+        name: "PEPFAR MER 2.7 AGYW_PREV",
         path: "/reportAgyw",
-      },
-      {
-        name: ">> Extracção de Dados",
-        path: "/dataExtraction",
-        roles: ["M&E"],
       },
       {
         name: "menusidebar.label.syncReport",
@@ -175,15 +154,21 @@ export const MENU: IMenuItem[] = [
           "CONSELHEIRA",
         ],
       },
-      // {
-      //   name: ">> FY19",
-      //   path: "#",
-      // },
-      // {
-      //   name: ">> FY20",
-      //   path: "#",
-      // },
     ],
+  },
+  {
+    name: "menusidebar.label.dataExtraction",
+    path: "/dataExtraction",
+    roles: ["ADMIN", "M&E"],
+    icon: "fas fa-list-ul",
+    level: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  },
+  {
+    name: "menusidebar.label.dataImport",
+    path: "/dataImport",
+    icon: "fas fa-info-circle", // icon set: https://fontawesome.com/v5/search
+    level: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    roles: ["ADMIN", "M&E", "SUPERVISOR"],
   },
   {
     name: "menusidebar.label.appInfo",
