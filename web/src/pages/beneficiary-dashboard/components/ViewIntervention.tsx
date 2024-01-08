@@ -80,10 +80,10 @@ const ViewBenefiaryPanel = ({ record, beneficiary, user }) => {
                 span={12}
               >
                 {[MENTOR, SUPERVISOR].includes(user.profiles.id) &&
-                user.partners.partnerType == 2 &&
-                record.subServices.service.id == 9
+                user.partners?.partnerType == 2 &&
+                record.subServices?.service.id == 9
                   ? ""
-                  : record.subServices.name}
+                  : record.subServices?.name}
               </Col>
             </Row>
             <Row gutter={8}>

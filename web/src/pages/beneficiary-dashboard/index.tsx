@@ -47,6 +47,7 @@ import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import { toast } from "react-toastify";
 import { getAgeByDate } from "@app/utils/ageRange";
+import FormReference from "../beneficiaries/components/FormReference";
 
 const { Text } = Typography;
 const { confirm } = Modal;
@@ -675,6 +676,13 @@ const BeneficiaryDashboard: React.FC = () => {
           ),
     },
     {
+      title: "Status",
+      dataIndex: "",
+      key: "status",
+      render: (text, record) => <Text type="danger">{record.status}</Text>,
+      width: 120,
+    },
+    {
       title: "Acção",
       dataIndex: "",
       key: "x",
@@ -1065,6 +1073,15 @@ const BeneficiaryDashboard: React.FC = () => {
         handleViewModalVisible={handleViewModalVisible}
         handleModalRefVisible={handleModalRefVisible}
         user={user}
+      />
+      <FormReference
+        form={form}
+        beneficiary={beneficiary}
+        modalVisible={referenceModalVisible}
+        addStatus={addStatus}
+        handleAdd={handleAddRef}
+        handleModalRefVisible={handleModalRefVisible}
+        handleRefServicesList={handleRefServicesList}
       />
     </>
   );
