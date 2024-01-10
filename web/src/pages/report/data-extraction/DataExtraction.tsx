@@ -51,7 +51,7 @@ const DataExtraction = () => {
   const [currentDistrict, setCurrentDistrict] = useState<any>();
   const [nextIndex, setNextIndex] = useState(1);
   const RequiredFieldMessage = "Obrigatório!";
-  const pageSize = 250000;
+  const pageSize = 125000;
   const created = moment().format("YYYYMMDD_hhmmss");
   const username = localStorage.getItem("username");
   const maxDate = moment(initialDate).add(12, "months");

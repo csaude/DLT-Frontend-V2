@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useContext } from "react";
+import React, { memo, useCallback, useContext, useEffect, useState } from "react";
 import { View, TouchableHighlight } from "react-native";
 import { HStack, Text, VStack } from "native-base";
 import { Ionicons } from "@native-base/icons";
@@ -6,10 +6,30 @@ import styles from "./styles";
 import { SwipeListView } from "react-native-swipe-list-view";
 import { Context } from "../../../routes/DrawerNavigator";
 import { MENTOR, SUPERVISOR } from "../../../utils/constants";
+import { database } from "../../../database";
+import { Q } from "@nozbe/watermelondb";
 
 const InterventionsView: React.FC = ({ route }: any) => {
+  const [partnerType, setPartnerType] = useState(undefined);
+  
   const { interventions } = route.params;
   const loggedUser: any = useContext(Context);
+  const profileId = loggedUser.profile_id? loggedUser.profile_id : loggedUser.profiles.id;
+
+  useEffect(() => {
+    getPartner();
+  }, []);
+
+  const getPartner = async () => {
+    const partner_id =
+      loggedUser.partner_id ? loggedUser.partner_id : loggedUser.partners.id;
+    const partners = await database
+      .get("partners")
+      .query(Q.where("online_id", parseInt(partner_id)))
+      .fetch();
+    const partnerSerialied: any = partners.map((item) => item._raw)[0];
+    setPartnerType(partnerSerialied.partner_type);
+  };
 
   const renderItem = useCallback(
     (data: any) => (
@@ -23,7 +43,7 @@ const InterventionsView: React.FC = ({ route }: any) => {
               }}
               color="darkBlue.800"
             >
-              {[MENTOR, SUPERVISOR].includes(loggedUser.profile_id) &&
+              {[MENTOR, SUPERVISOR].includes(profileId) && (partnerType == undefined || partnerType == "2") &&
               [26, 67, 68].includes(data.item.intervention.sub_service_id)
                 ? "Aconselhamento e Testagem em Saúde"
                 : data.item.name}

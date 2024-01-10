@@ -130,29 +130,9 @@ export const MENU: IMenuItem[] = [
     level: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
     roles: ["ADMIN", "M&E", "SUPERVISOR", "DOADOR"],
     children: [
-      // {
-      //   name: '>> GERAL',
-      //   path: '#',
-      // },
-      // {
-      //   name: '>> FILTROS DREAMS',
-      //   path: '#',
-      // },
-      // {
-      //   name: '>> FILTROS MENSAL',
-      //   path: '#',
-      // },
-      // {
-      //   name: '>> FILTROS UTILIZADORES',
-      //   path: '#',
-      // },
       {
-        name: ">> PEPFAR MER 2.6.1 AGYW_PREV",
+        name: "PEPFAR MER 2.7 AGYW_PREV",
         path: "/reportAgyw",
-      },
-      {
-        name: ">> Extracção de Dados",
-        path: "/dataExtraction",
       },
       {
         name: "menusidebar.label.syncReport",
@@ -161,15 +141,14 @@ export const MENU: IMenuItem[] = [
         icon: "fas fa-sync",
         level: [0],
       },
-      // {
-      //   name: ">> FY19",
-      //   path: "#",
-      // },
-      // {
-      //   name: ">> FY20",
-      //   path: "#",
-      // },
     ],
+  },
+  {
+    name: "menusidebar.label.dataExtraction",
+    path: "/dataExtraction",
+    roles: ["ADMIN", "M&E"],
+    icon: "fas fa-list-ul",
+    level: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
   },
   {
     name: "menusidebar.label.appInfo",
