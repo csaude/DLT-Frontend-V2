@@ -1,8 +1,9 @@
 import { GET_INTERVENTIONS_COUNT } from "./types";
-import { interventionCountByServiceTypeQuery } from "@app/utils/beneficiaryIntervention";
+import { getInterventionCountAllInterventionsAndbByServiceTypeQuery } from "@app/utils/beneficiaryIntervention";
 
 export const getInterventionsCount = () => async (dispatch) => {
-  const interventionsCount = await interventionCountByServiceTypeQuery();
+  const interventionsCount =
+    await getInterventionCountAllInterventionsAndbByServiceTypeQuery();
   dispatch({
     type: GET_INTERVENTIONS_COUNT,
     payload: interventionsCount,

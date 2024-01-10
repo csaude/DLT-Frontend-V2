@@ -13,8 +13,9 @@ export async function query(payload?: any) {
   return res;
 }
 
-export async function interventionCountByServiceTypeQuery() {
-  const url = "/api/beneficiary-intervention/countByBeneficiaryAndServiceType";
+export async function getInterventionCountAllInterventionsAndbByServiceTypeQuery() {
+  const url =
+    "/api/beneficiary-intervention/countAllInterventionsAndbByServiceType";
 
   const res = await select(url);
   return res;
@@ -22,6 +23,26 @@ export async function interventionCountByServiceTypeQuery() {
 
 export async function pagedQueryByBeneficiariesIds(ids?: number[]) {
   const url = `/api/beneficiary-intervention/byBeneficiariesIds?&params=${ids}`;
+  const res = await select(url);
+  return res;
+}
+
+export async function getInterventionCountByBeneficiaryAndServiceTypeQuery(
+  beneficiaryId: number
+) {
+  const url = `/api/beneficiary-intervention/countByBeneficiaryAndServiceType/${beneficiaryId}`;
+
+  const res = await select(url);
+  return res;
+}
+
+export async function getInterventionCountByBeneficiaryIdAndAgeBandAndLevelQuery(
+  beneficiaryId: number,
+  ageBand: number,
+  level: number
+) {
+  const url = `/api/beneficiary-intervention/countByBeneficiaryAndAgeBandAndLevel/${beneficiaryId}/${ageBand}/${level}`;
+
   const res = await select(url);
   return res;
 }

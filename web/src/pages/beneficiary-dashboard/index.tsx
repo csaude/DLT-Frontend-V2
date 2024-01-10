@@ -36,7 +36,11 @@ import moment from "moment";
 import ViewBeneficiary, { ViewBenefiaryPanel } from "./components/View";
 import { getEntryPoint, UserModel } from "@app/models/User";
 import { calculateAge, getUserParams } from "@app/models/Utils";
-import { add as addRef, Reference } from "../../utils/reference";
+import {
+  add as addRef,
+  getReferencesCountByBeneficiaryQuery,
+  Reference,
+} from "../../utils/reference";
 import { Title } from "@app/components";
 import { ADMIN, MNE, SUPERVISOR } from "@app/utils/contants";
 import { useDispatch, useSelector } from "react-redux";
@@ -46,8 +50,13 @@ import { allDistrict, allDistrictsByIds } from "@app/utils/district";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import { toast } from "react-toastify";
-import { getAgeByDate } from "@app/utils/ageRange";
+import { getAgeBandByDate, getAgeByDate } from "@app/utils/ageRange";
 import FormReference from "../beneficiaries/components/FormReference";
+import {
+  getInterventionCountByBeneficiaryAndServiceTypeQuery,
+  getInterventionCountByBeneficiaryIdAndAgeBandAndLevelQuery,
+} from "@app/utils/beneficiaryIntervention";
+import { loadGeneralIndicators } from "@app/store/reducers/beneficiaryDashboard";
 
 const { Text } = Typography;
 const { confirm } = Modal;
@@ -83,6 +92,9 @@ const BeneficiaryDashboard: React.FC = () => {
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [filters, setFilters] = useState<any>(null);
   const pageSize = 100;
+  const beneficiaryDashboardSelector = useSelector(
+    (state: any) => state.beneficiaryDashboard
+  );
 
   const interventionSelector = useSelector(
     (state: any) => state?.intervention.loadedInterventions
@@ -367,9 +379,64 @@ const BeneficiaryDashboard: React.FC = () => {
     setBeneficiaryPartnerModalVisible(false);
   };
 
+  const getInterventionsCount = async (beneficiary) => {
+    const ageBand: any = getAgeBandByDate(beneficiary.dateOfBirth);
+
+    const interventionsCount =
+      await getInterventionCountByBeneficiaryAndServiceTypeQuery(
+        beneficiary.id
+      );
+    const getPrimaryInterventionsCOunt =
+      await getInterventionCountByBeneficiaryIdAndAgeBandAndLevelQuery(
+        beneficiary.id,
+        ageBand,
+        1
+      );
+    const getSecondaryInterventionsCOunt =
+      await getInterventionCountByBeneficiaryIdAndAgeBandAndLevelQuery(
+        beneficiary.id,
+        ageBand,
+        2
+      );
+    const getContextualInterventionsCOunt =
+      await getInterventionCountByBeneficiaryIdAndAgeBandAndLevelQuery(
+        beneficiary.id,
+        ageBand,
+        3
+      );
+
+    const getReferencesCOunt = await getReferencesCountByBeneficiaryQuery(
+      beneficiary.id
+    );
+
+    dispatch(
+      loadGeneralIndicators({
+        totalOfClinicalInterventions:
+          interventionsCount.length > 0 ? interventionsCount[0][2] : 0,
+        totalOfCommunityInterventions:
+          interventionsCount.length > 0 ? interventionsCount[0][3] : 0,
+        totalOfPrimaryInterventions:
+          getPrimaryInterventionsCOunt.length > 0
+            ? getPrimaryInterventionsCOunt[0][1]
+            : 0,
+        totalOfSecondaryInterventions:
+          getSecondaryInterventionsCOunt.length > 0
+            ? getSecondaryInterventionsCOunt[0][1]
+            : 0,
+        totalOfContextualInterventions:
+          getContextualInterventionsCOunt.length > 0
+            ? getContextualInterventionsCOunt[0][1]
+            : 0,
+        totalReferences:
+          getReferencesCOunt.length > 0 ? getReferencesCOunt[0][1] : 0,
+      })
+    );
+  };
+
   const handleViewModalVisible = (flag?: boolean, record?: any) => {
     setBeneficiary(record);
     setModalVisible(!!flag);
+    getInterventionsCount(record);
   };
 
   const handleModalRefVisible = (flag?: boolean, record?: any) => {
@@ -679,7 +746,12 @@ const BeneficiaryDashboard: React.FC = () => {
       title: "Status",
       dataIndex: "",
       key: "status",
-      render: (text, record) => <Text type="danger">{record.status}</Text>,
+      render: (text, record) =>
+        record.status == 1 ? (
+          <Text type="success">{"activo"}</Text>
+        ) : (
+          <Text type="danger">{"inactivo"}</Text>
+        ),
       width: 120,
     },
     {

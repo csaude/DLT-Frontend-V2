@@ -34,7 +34,7 @@ import "antd/dist/antd.css";
 
 import "../styles.css";
 import { ADMIN, MENTOR, MNE, SUPERVISOR } from "@app/utils/contants";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getInterventionsCount } from "@app/store/actions/interventions";
 import PropTypes from "prop-types";
 import InterventionForm from "@app/pages/beneficiaries/components/InterventionForm";
@@ -61,6 +61,9 @@ const ViewBenefiaryPanel = ({
 
   const [form] = Form.useForm();
   const dispatch = useDispatch();
+  const beneficiaryDashboardSelector = useSelector(
+    (state: any) => state.beneficiaryDashboard
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -512,7 +515,7 @@ const ViewBenefiaryPanel = ({
                 style={{ background: "#f3f4f5" }}
                 span={12}
               >
-                123
+                {beneficiaryDashboardSelector.totalOfClinicalInterventions}
               </Col>
             </Row>
             <Row gutter={8}>
@@ -524,7 +527,7 @@ const ViewBenefiaryPanel = ({
                 Total de Intervenções Comunitárias
               </Col>
               <Col className="gutter-row" span={12}>
-                {45}
+                {beneficiaryDashboardSelector.totalOfCommunityInterventions}
               </Col>
             </Row>
             <Row gutter={8}>
@@ -540,7 +543,7 @@ const ViewBenefiaryPanel = ({
                 style={{ background: "#f3f4f5" }}
                 span={12}
               >
-                {455}
+                {beneficiaryDashboardSelector.totalOfPrimaryInterventions}
               </Col>
             </Row>
             <Row gutter={8}>
@@ -552,7 +555,7 @@ const ViewBenefiaryPanel = ({
                 Total de Intervenções Secundárias
               </Col>
               <Col className="gutter-row" span={12}>
-                {4456}
+                {beneficiaryDashboardSelector.totalOfSecondaryInterventions}
               </Col>
             </Row>
             <Row gutter={8}>
@@ -568,7 +571,7 @@ const ViewBenefiaryPanel = ({
                 style={{ background: "#f3f4f5" }}
                 span={12}
               >
-                {456}
+                {beneficiaryDashboardSelector.totalOfContextualInterventions}
               </Col>
             </Row>
             <Row gutter={8}>
@@ -580,7 +583,7 @@ const ViewBenefiaryPanel = ({
                 Total de Referências
               </Col>
               <Col className="gutter-row" span={12}>
-                {45}
+                {beneficiaryDashboardSelector.totalReferences}
               </Col>
             </Row>
           </Card>
