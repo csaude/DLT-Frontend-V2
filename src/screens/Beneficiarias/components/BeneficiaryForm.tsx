@@ -1962,7 +1962,6 @@ const BeneficiaryForm: React.FC = ({
                     name="rg7"
                     accessibilityLabel="pick a size"
                   >
-                  { console.log(haveChildrenEnabled)}
                     <Stack
                       direction={{ base: "row", md: "row" }}
                       alignItems={{
