@@ -22,6 +22,7 @@ import {
   getSequencesByNot_status,
   getSequencesBy_status,
 } from "../../services/sequenceService";
+import { getUserDetail, getUsersById } from "../../services/userService";
 const SyncReportScreen: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const now = new Date();
@@ -56,6 +57,9 @@ const SyncReportScreen: React.FC = () => {
     );
     const updatedSequences = await getSequencesByNot_status("created");
 
+    const userDetail = await getUserDetail();
+    const updatedUsers = await getUsersById(userDetail['user_id']);
+
     const data = {
       changes: {
         beneficiaries: {
@@ -85,7 +89,7 @@ const SyncReportScreen: React.FC = () => {
         },
         users: {
           created: [],
-          updated: [],
+          updated: updatedUsers,
           deleted: [],
         },
       },

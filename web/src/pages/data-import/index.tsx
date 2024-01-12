@@ -2,29 +2,26 @@ import React, { useState } from "react";
 import { Card, Button, Form, Input, Row, Col } from "antd";
 import { Title } from "@app/components";
 import { addFromDevice } from "@app/utils/sync";
+import LoadingModal from "@app/components/modal/LoadingModal";
 
 const DataImport: React.FC = () => {
   const [data, setData] = useState<any>();
-  const [completed, setCompleted] = useState<any>({
-    beneficiaries: false,
-    beneficiariesInterventions: false,
-    references: false,
-    referenceServices: false,
-  });
-  const username = localStorage.getItem("username");
+  const [completed, setCompleted] = useState(true);
 
   const handleChange = (e) => {
     const fileReader = new FileReader();
     fileReader.readAsText(e.target.files[0], "UTF-8");
 
     fileReader.onload = (e: any) => {
-      console.log("----file result---", e?.target?.result);
+      // console.log("----file result---", e?.target?.result);
       setData(JSON.parse(e?.target?.result));
     };
   };
 
   const synchronize = async () => {
-    await addFromDevice(data, username);
+    setCompleted(false);
+    await addFromDevice(data, data?.changes.users.updated[0].username);
+    setCompleted(true);
   };
 
   const handleSaveData = (e) => {
@@ -59,7 +56,7 @@ const DataImport: React.FC = () => {
           </Col>
         </Row>
 
-        {/* {<LoadingModal modalVisible={completed} />} */}
+        {<LoadingModal modalVisible={!completed} />}
       </Card>
     </>
   );
