@@ -130,6 +130,7 @@ const BeneficiaryForm: React.FC = ({
   const [isUsVisible, setUsVisible] = useState(false);
   const [isOffline, setIsOffline] = useState(false);
   const [isGoToSpecificVblt, setGoToSpecificVblt] = useState(false);
+  const [haveChildrenEnabled, setHaveChildrenEnabled] = useState<any>();
 
   const minBirthYear = new Date();
   minBirthYear.setFullYear(new Date().getFullYear() - 24);
@@ -948,6 +949,9 @@ const BeneficiaryForm: React.FC = ({
 
   const isStudentChange = useCallback(async (value: any) => {
     setSchoolInfoEnabled(value == 1);
+    if (value == 0){
+      formik.setFieldValue("vblt_school_grade", null);
+    }
   }, []);
 
   const onIsDeficientChange = useCallback(async (value: any) => {
@@ -957,6 +961,11 @@ const BeneficiaryForm: React.FC = ({
 
   const onPregnantBeforeChane = useCallback(async (value: any) => {
     setChildrenEnabled(value == 1);
+    if (value == 0){
+      setHaveChildrenEnabled(true);
+    } else {
+      setHaveChildrenEnabled(false);
+    }
     formik.setFieldValue("vblt_children", null);
   }, []);
 
@@ -1949,6 +1958,7 @@ const BeneficiaryForm: React.FC = ({
                     onChange={(itemValue) => {
                       formik.setFieldValue("vblt_children", itemValue);
                     }}
+                    isDisabled={haveChildrenEnabled}
                     name="rg7"
                     accessibilityLabel="pick a size"
                   >
