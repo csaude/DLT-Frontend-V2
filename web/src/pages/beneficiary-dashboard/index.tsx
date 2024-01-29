@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  pagedQueryByFilters,
+  pagedQueryAnyByFilters,
   queryCountByFilters,
 } from "../../utils/beneficiary";
 import {
@@ -157,7 +157,7 @@ const BeneficiaryDashboard: React.FC = () => {
     const fetchData = async () => {
       setDataLoading(true);
       const user = await queryUser(localStorage.user);
-      data = await pagedQueryByFilters(
+      data = await pagedQueryAnyByFilters(
         getUserParams(user),
         currentPageIndex,
         pageSize,
@@ -746,6 +746,18 @@ const BeneficiaryDashboard: React.FC = () => {
       title: "Status",
       dataIndex: "",
       key: "status",
+      filters: [
+        {
+          text: "activo",
+          value: 1,
+        },
+        {
+          text: "inactivo",
+          value: 0,
+        },
+      ],
+      onFilter: (value, record) => record.status == value,
+      filterSearch: true,
       render: (text, record) =>
         record.status == 1 ? (
           <Text type="success">{"activo"}</Text>
@@ -878,7 +890,7 @@ const BeneficiaryDashboard: React.FC = () => {
       let sequence = 1;
 
       for (let i = 0; i < lastPage; i++) {
-        data = await pagedQueryByFilters(
+        data = await pagedQueryAnyByFilters(
           getUserParams(user),
           i,
           pageElements,
