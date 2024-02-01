@@ -34,12 +34,15 @@ const InterventionsView: React.FC = ({ route }: any) => {
 
   const { beneficiary, interventions } = route.params;
   const loggedUser: any = useContext(Context);
-  const profileId = loggedUser.profile_id? loggedUser.profile_id : loggedUser.profiles.id;
+  const profileId = loggedUser.profile_id
+    ? loggedUser.profile_id
+    : loggedUser.profiles.id;
   const toast = useToast();
 
   const getPartner = async () => {
-    const partner_id =
-      loggedUser.partner_id ? loggedUser.partner_id : loggedUser.partners.id;
+    const partner_id = loggedUser.partner_id
+      ? loggedUser.partner_id
+      : loggedUser.partners.id;
     const partners = await database
       .get("partners")
       .query(Q.where("online_id", parseInt(partner_id)))
@@ -89,24 +92,24 @@ const InterventionsView: React.FC = ({ route }: any) => {
     }
   };
 
-  const blockEdit = (data: any) => (
-    [MENTOR, SUPERVISOR].includes(profileId) && partnerType == "2" &&
-    (data.item.intervention.entry_point) == "1" ? ""
-      :navigate({
-        name: "BeneficiarieServiceForm",
-        params: {
-          beneficiarie: beneficiary,
-          intervs: interventions,
-          intervention: data.item.intervention,
-          isNewIntervention: false,
-        },
-      })
-  );
+  const blockEdit = (data: any) =>
+    [MENTOR, SUPERVISOR].includes(profileId) &&
+    partnerType == "2" &&
+    data.item.intervention.entry_point == "1"
+      ? ""
+      : navigate({
+          name: "BeneficiarieServiceForm",
+          params: {
+            beneficiarie: beneficiary,
+            intervs: interventions,
+            intervention: data.item.intervention,
+            isNewIntervention: false,
+          },
+        });
 
   const renderItem = (data: any) => (
     <TouchableHighlight
-      onPress={() => blockEdit(data)
-    }
+      onPress={() => blockEdit(data)}
       style={styles.rowFront}
       underlayColor={"#AAA"}
     >
@@ -119,7 +122,8 @@ const InterventionsView: React.FC = ({ route }: any) => {
             }}
             color="darkBlue.800"
           >
-            {[MENTOR, SUPERVISOR].includes(profileId) && partnerType == "2" &&
+            {[MENTOR, SUPERVISOR].includes(profileId) &&
+            partnerType == "2" &&
             [26, 67, 68].includes(data.item.intervention.sub_service_id)
               ? "Aconselhamento e Testagem em Saúde"
               : data.item.name}
@@ -145,7 +149,7 @@ const InterventionsView: React.FC = ({ route }: any) => {
       </HStack>
     </TouchableHighlight>
   );
- 
+
   const renderHiddenItem = (data: any) => (
     <HStack flex={1} pl={2}>
       <Pressable

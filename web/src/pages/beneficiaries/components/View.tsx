@@ -309,7 +309,6 @@ const ViewBenefiaryPanel = ({
           ></Button>
           <Button
             type="primary"
-            // hidden={true}
             hidden={
               [MENTOR, SUPERVISOR].includes(user.profiles.id) &&
               user.partners.partnerType == 2 &&
