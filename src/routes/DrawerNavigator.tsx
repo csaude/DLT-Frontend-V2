@@ -19,9 +19,10 @@ import styles1 from "../screens/Login/style";
 import { Badge, Box, VStack } from "native-base";
 import {
   beneficiariesFetchCount,
+  pendingSyncBeneficiaries,
   resolveBeneficiaryOfflineIds,
 } from "../services/beneficiaryService";
-import { referencesFetchCount } from "../services/referenceService";
+import { pendingSyncReferences, referencesFetchCount } from "../services/referenceService";
 import { getBeneficiariesTotal } from "../store/beneficiarySlice";
 import { getReferencesTotal } from "../store/referenceSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -31,6 +32,8 @@ import Spinner from "react-native-loading-spinner-overlay";
 import AppInfoScreen from "../screens/AppInfo/AppInfoScreen";
 import SyncReportScreen from "../screens/SyncReport/SyncReportReport";
 import DataExportScreen from "../screens/SyncReport/DataExportScreen";
+import { loadPendingsBeneficiariesInterventionsTotals, loadPendingsBeneficiariesTotals, loadPendingsReferencesTotals } from "../store/syncSlice";
+import { pendingSyncBeneficiariesInterventions } from "../services/beneficiaryInterventionService";
 
 function HomeScreen() {
   useEffect(() => {
@@ -214,6 +217,30 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
     const countRef = await referencesFetchCount();
     dispatch(getReferencesTotal(countRef));
   };
+
+  const fetchCounts = async () => {
+    const benefNotSynced = await pendingSyncBeneficiaries();
+    dispatch(
+      loadPendingsBeneficiariesTotals({
+        pendingSyncBeneficiaries: benefNotSynced,
+      })
+    );
+
+    const benefIntervNotSynced = await pendingSyncBeneficiariesInterventions();
+    dispatch(
+      loadPendingsBeneficiariesInterventionsTotals({
+        pendingSyncBeneficiariesInterventions: benefIntervNotSynced,
+      })
+    );
+
+    const refNotSynced = await pendingSyncReferences();
+    dispatch(
+      loadPendingsReferencesTotals({ pendingSyncReferences: refNotSynced })
+    );
+  };
+  useEffect(() => {
+    fetchCounts();
+  }, [isLoading]);
 
   return (
     <Context.Provider value={loggedUser}>

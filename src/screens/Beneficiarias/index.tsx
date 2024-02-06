@@ -58,6 +58,7 @@ import NetInfo from "@react-native-community/netinfo";
 import Spinner from "react-native-loading-spinner-overlay/lib";
 import {
   beneficiariesFetchCount,
+  pendingSyncBeneficiaries,
   resolveBeneficiaryOfflineIds,
 } from "../../services/beneficiaryService";
 import {
@@ -65,10 +66,11 @@ import {
   loadViewedBeneficiaryGender,
 } from "../../store/beneficiarySlice";
 import { loadBeneficiariesInterventionsCounts } from "../../store/beneficiaryInterventionSlice";
-import { referencesFetchCount } from "../../services/referenceService";
+import { pendingSyncReferences, referencesFetchCount } from "../../services/referenceService";
 import { getReferencesTotal } from "../../store/referenceSlice";
-import { beneficiariesInterventionsFetchCount } from "../../services/beneficiaryInterventionService";
+import { beneficiariesInterventionsFetchCount, pendingSyncBeneficiariesInterventions } from "../../services/beneficiaryInterventionService";
 import SpinnerModal from "../../components/Modal/SpinnerModal";
+import { loadPendingsBeneficiariesInterventionsTotals, loadPendingsBeneficiariesTotals, loadPendingsReferencesTotals } from "../../store/syncSlice";
 
 const BeneficiariesMain: React.FC = ({
   subServices,
@@ -780,6 +782,30 @@ const BeneficiariesMain: React.FC = ({
       </HStack>
     );
   };
+
+  const fetchCounts = async () => {
+    const benefNotSynced = await pendingSyncBeneficiaries();
+    dispatch(
+      loadPendingsBeneficiariesTotals({
+        pendingSyncBeneficiaries: benefNotSynced,
+      })
+    );
+
+    const benefIntervNotSynced = await pendingSyncBeneficiariesInterventions();
+    dispatch(
+      loadPendingsBeneficiariesInterventionsTotals({
+        pendingSyncBeneficiariesInterventions: benefIntervNotSynced,
+      })
+    );
+
+    const refNotSynced = await pendingSyncReferences();
+    dispatch(
+      loadPendingsReferencesTotals({ pendingSyncReferences: refNotSynced })
+    );
+  };
+  useEffect(() => {
+    fetchCounts();
+  }, [loading]);
 
   return (
     <>

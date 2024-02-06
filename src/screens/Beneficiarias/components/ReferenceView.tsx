@@ -16,6 +16,11 @@ import { Context } from "../../../routes/DrawerNavigator";
 import { sync } from "../../../database/sync";
 import NetInfo from "@react-native-community/netinfo";
 import Spinner from "react-native-loading-spinner-overlay/lib";
+import { pendingSyncBeneficiaries } from "../../../services/beneficiaryService";
+import { loadPendingsBeneficiariesInterventionsTotals, loadPendingsBeneficiariesTotals, loadPendingsReferencesTotals } from "../../../store/syncSlice";
+import { pendingSyncBeneficiariesInterventions } from "../../../services/beneficiaryInterventionService";
+import { pendingSyncReferences } from "../../../services/referenceService";
+import { useDispatch } from "react-redux";
 
 const ReferenceView: React.FC = ({ route }: any) => {
   const [loading, setLoading] = useState(false);
@@ -24,6 +29,7 @@ const ReferenceView: React.FC = ({ route }: any) => {
   //const [references, setReferences] = useState<any>([]);
   const loggedUser: any = useContext(Context);
   const toast = useToast();
+  const dispatch = useDispatch()
 
   const syncronize = () => {
     setLoading(true);
@@ -123,6 +129,30 @@ const ReferenceView: React.FC = ({ route }: any) => {
       </TouchableHighlight>
     );
   };
+
+  const fetchCounts = async () => {
+    const benefNotSynced = await pendingSyncBeneficiaries();
+    dispatch(
+      loadPendingsBeneficiariesTotals({
+        pendingSyncBeneficiaries: benefNotSynced,
+      })
+    );
+
+    const benefIntervNotSynced = await pendingSyncBeneficiariesInterventions();
+    dispatch(
+      loadPendingsBeneficiariesInterventionsTotals({
+        pendingSyncBeneficiariesInterventions: benefIntervNotSynced,
+      })
+    );
+
+    const refNotSynced = await pendingSyncReferences();
+    dispatch(
+      loadPendingsReferencesTotals({ pendingSyncReferences: refNotSynced })
+    );
+  };
+  useEffect(() => {
+    fetchCounts();
+  }, [loading]);
 
   return (
     <>
