@@ -46,6 +46,9 @@ import Spinner from "react-native-loading-spinner-overlay/lib";
 import MyDatePicker from "../../../components/DatePicker";
 import NetInfo from "@react-native-community/netinfo";
 import PropTypes from "prop-types";
+import { pendingSyncBeneficiariesInterventions } from "../../../services/beneficiaryInterventionService";
+import { loadPendingsBeneficiariesInterventionsTotals } from "../../../store/syncSlice";
+import { useDispatch } from "react-redux";
 
 const BeneficiarieServiceForm: React.FC = ({
   route,
@@ -84,6 +87,7 @@ const BeneficiarieServiceForm: React.FC = ({
   const [initialValues, setInitialValues] = useState<any>({});
   const [isOffline, setIsOffline] = useState(false);
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   let mounted = true;
   const loggedUser: any = useContext(Context);
@@ -403,6 +407,9 @@ const BeneficiarieServiceForm: React.FC = ({
     } else {
       onSubmit(values, isEdit);
     }
+
+    const benIntervNotSynced = await pendingSyncBeneficiariesInterventions();
+    dispatch(loadPendingsBeneficiariesInterventionsTotals({pendingSyncBeneficiariesInterventions:benIntervNotSynced}))
   };
 
   useEffect(() => {
