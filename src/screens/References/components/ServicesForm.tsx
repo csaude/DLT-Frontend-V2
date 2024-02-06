@@ -35,6 +35,9 @@ import { MENTOR } from "../../../utils/constants";
 import Spinner from "react-native-loading-spinner-overlay/lib";
 import MyDatePicker from "../../../components/DatePicker";
 import NetInfo from "@react-native-community/netinfo";
+import { pendingSyncBeneficiariesInterventions } from "../../../services/beneficiaryInterventionService";
+import { loadPendingsBeneficiariesInterventionsTotals } from "../../../store/syncSlice";
+import { useDispatch } from "react-redux";
 
 const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
   const { reference, beneficiarie, intervention } = route.params;
@@ -60,6 +63,8 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
   const [isClinicalOrCommunityPartner, setClinicalOrCommunityPartner] =
     useState(false);
   const [currentInformedProvider, setCurrentInformedProvider] = useState("");
+  const dispatch = useDispatch()
+
   const service = services.filter(
     (item) => item._raw.online_id === intervention?.service.service_id
   )[0]?._raw;
@@ -271,6 +276,9 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     });
 
     setLoading(false);
+
+    const benIntervNotSynced = await pendingSyncBeneficiariesInterventions();
+    dispatch(loadPendingsBeneficiariesInterventionsTotals({pendingSyncBeneficiariesInterventions:benIntervNotSynced}))
   };
 
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
