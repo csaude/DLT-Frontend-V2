@@ -655,7 +655,7 @@ const BeneficiaryDashboard: React.FC = () => {
       width: 60,
     },
     {
-      title: "Total de Subserviços Clínicos",
+      title: "Total de Sub-Serviços Clínicos",
       dataIndex: "clinicalInterventions",
       key: "clinicalInterventions",
       render(val: any, record) {
@@ -666,7 +666,7 @@ const BeneficiaryDashboard: React.FC = () => {
       width: 60,
     },
     {
-      title: "Total de subserviços comunitários",
+      title: "Total de Sub-Serviços comunitários",
       dataIndex: "communityInterventions",
       key: "communityInterventions",
       render(val: any, record) {
