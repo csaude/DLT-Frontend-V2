@@ -35,6 +35,28 @@ export async function pagedQueryByFilters(
   return res;
 }
 
+export async function pagedQueryAnyByFilters(
+  payload?: any,
+  pageIndex?: any,
+  pageSize?: any,
+  searchNui?: any,
+  searchName?: any,
+  searchUserCreator?: number,
+  searchDistrict?: number
+) {
+  let url: string;
+  if (payload.userId) {
+    url = `/api/beneficiaries/any?${stringify(
+      payload
+    )}&pageIndex=${pageIndex}&pageSize=${pageSize}&searchNui=${searchNui}&searchName=${searchName}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`;
+  } else {
+    url = "/api/beneficiaries/any/" + payload;
+  }
+
+  const res = await select(url);
+  return res;
+}
+
 export async function pagedQueryByIds(
   pageIndex?: any,
   pageSize?: any,

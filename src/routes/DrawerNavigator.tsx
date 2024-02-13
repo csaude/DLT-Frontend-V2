@@ -30,6 +30,7 @@ import PropTypes from "prop-types";
 import Spinner from "react-native-loading-spinner-overlay";
 import AppInfoScreen from "../screens/AppInfo/AppInfoScreen";
 import SyncReportScreen from "../screens/SyncReport/SyncReportReport";
+import DataExportScreen from "../screens/SyncReport/DataExportScreen";
 
 function HomeScreen() {
   useEffect(() => {
@@ -290,6 +291,17 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
             ),
           }}
         />
+        {/* <Drawer.Screen
+          name="DataExport"
+          component={DataExportScreen}
+          options={{
+            title: "",
+            headerTitle: "",
+            drawerIcon: () => (
+              <ItemBadge label="Exportar Dados do Dispositivo" total={-1} />
+            ),
+          }}
+        /> */}
         <Drawer.Screen
           name="Info"
           component={AppInfoScreen}
