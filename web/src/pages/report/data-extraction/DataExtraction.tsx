@@ -26,7 +26,6 @@ import {
   countBeneficiariesVulnerabilitiesAndServices,
   getBeneficiariesVulnerabilitiesAndServicesSummaryReportGenerated,
   getBeneficiariesVulnerabilitiesAndServicesReportGenerated,
-  getExcelDocumentFormated,
 } from "@app/utils/report";
 import { Title as AppTitle } from "@app/components";
 import LoadingModal from "@app/components/modal/LoadingModal";
@@ -51,7 +50,7 @@ const DataExtraction = () => {
   const [currentDistrict, setCurrentDistrict] = useState<any>();
   const [nextIndex, setNextIndex] = useState(1);
   const RequiredFieldMessage = "Obrigatório!";
-  const pageSize = 125000;
+  const pageSize = 1000000;
   const created = moment().format("YYYYMMDD_hhmmss");
   const username = localStorage.getItem("username");
   const maxDate = moment(initialDate).add(12, "months");
@@ -288,7 +287,6 @@ const DataExtraction = () => {
   const downloadFile = async (filePath) => {
     try {
       setDataLoading(true);
-      await getExcelDocumentFormated(filePath);
       const response = await getFileDownloaded(filePath);
 
       const filename = filePath.substring(filePath.lastIndexOf("/") + 1);

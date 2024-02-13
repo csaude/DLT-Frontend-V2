@@ -40,12 +40,6 @@ export async function getNewlyEnrolledAgywAndServicesReportGenerated(
   return res;
 }
 
-export async function getExcelDocumentFormated(filePath?: any) {
-  const url = `/api/agyw-prev/excelDocumentFormat?filePath=${filePath}`;
-  const res = await select(url);
-  return res;
-}
-
 export async function getFileDownloaded(filePath?: any) {
   const url = `/api/agyw-prev/downloadFile?filePath=${filePath}`;
   const res = await download(url);
