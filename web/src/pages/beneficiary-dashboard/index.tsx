@@ -666,7 +666,7 @@ const BeneficiaryDashboard: React.FC = () => {
       width: 60,
     },
     {
-      title: "Total de Sub-Serviços comunitários",
+      title: "Total de Sub-Serviços Comunitários",
       dataIndex: "communityInterventions",
       key: "communityInterventions",
       render(val: any, record) {
@@ -1027,7 +1027,7 @@ const BeneficiaryDashboard: React.FC = () => {
     <>
       <Title />
       <Card
-        title="Painel da Beneficiário"
+        title="Painel da Beneficiária"
         bordered={false}
         headStyle={{ color: "#17a2b8" }}
       >
