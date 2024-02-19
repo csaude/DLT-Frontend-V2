@@ -93,7 +93,6 @@ const InterventionsView: React.FC = ({ route }: any) => {
   };
 
   const blockEdit = (data: any) =>
-    // [MENTOR, SUPERVISOR].includes(profileId) &&
     partnerType == "2" &&
     data.item.intervention.entry_point == "1"
       ? ""
