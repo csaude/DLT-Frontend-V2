@@ -307,12 +307,15 @@ const ViewBenefiaryPanel = ({
             icon={<EyeOutlined />}
             onClick={() => showDrawer(record)}
           ></Button>
+          {console.log(record.subServices.service)}
           <Button
             type="primary"
             hidden={
-              [MENTOR, SUPERVISOR].includes(user.profiles.id) &&
-              user.partners.partnerType == 2 &&
-              record.subServices.service.id == 9
+              user?.partners?.partnerType == 2 &&
+              record?.subServices.service.serviceType == 1
+                ? true
+                : user?.partners?.partnerType == 1 &&
+                  record?.subServices.service.serviceType == 2
                 ? true
                 : false
             }

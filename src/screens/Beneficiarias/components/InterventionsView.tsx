@@ -93,11 +93,14 @@ const InterventionsView: React.FC = ({ route }: any) => {
   };
 
   const blockEdit = (data: any) =>
-    [MENTOR, SUPERVISOR].includes(profileId) &&
+    // [MENTOR, SUPERVISOR].includes(profileId) &&
     partnerType == "2" &&
     data.item.intervention.entry_point == "1"
       ? ""
-      : navigate({
+      : partnerType == "1" &&
+        data.item.intervention.entry_point == "2"
+        ? ""
+        :navigate({
           name: "BeneficiarieServiceForm",
           params: {
             beneficiarie: beneficiary,
