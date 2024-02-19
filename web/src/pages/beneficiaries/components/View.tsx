@@ -307,7 +307,6 @@ const ViewBenefiaryPanel = ({
             icon={<EyeOutlined />}
             onClick={() => showDrawer(record)}
           ></Button>
-          {console.log(record.subServices.service)}
           <Button
             type="primary"
             hidden={
