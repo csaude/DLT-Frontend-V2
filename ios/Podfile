@@ -12,6 +12,8 @@ target 'DLTFrontend_V2' do
     :hermes_enabled => false
   )
 
+  pod 'RNShare', :path => '../node_modules/react-native-share'
+
   target 'DLTFrontend_V2Tests' do
     inherit! :complete
     # Pods for testing
