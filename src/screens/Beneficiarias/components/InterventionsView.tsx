@@ -75,13 +75,15 @@ const InterventionsView: React.FC = ({ route }: any) => {
       setLoading(false);
     } else {
       sync({ username: loggedUser.username })
-        .then(() =>
+        .then(() =>{
           toast.show({
             placement: "top",
             render: () => {
               return <SuccessHandler />;
             },
           })
+          fetchCounts();
+        }
         )
         .catch(() =>
           toast.show({

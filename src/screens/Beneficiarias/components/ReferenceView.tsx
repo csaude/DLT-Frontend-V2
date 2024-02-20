@@ -17,7 +17,11 @@ import { sync } from "../../../database/sync";
 import NetInfo from "@react-native-community/netinfo";
 import Spinner from "react-native-loading-spinner-overlay/lib";
 import { pendingSyncBeneficiaries } from "../../../services/beneficiaryService";
-import { loadPendingsBeneficiariesInterventionsTotals, loadPendingsBeneficiariesTotals, loadPendingsReferencesTotals } from "../../../store/syncSlice";
+import {
+  loadPendingsBeneficiariesInterventionsTotals,
+  loadPendingsBeneficiariesTotals,
+  loadPendingsReferencesTotals,
+} from "../../../store/syncSlice";
 import { pendingSyncBeneficiariesInterventions } from "../../../services/beneficiaryInterventionService";
 import { pendingSyncReferences } from "../../../services/referenceService";
 import { useDispatch } from "react-redux";
@@ -29,7 +33,7 @@ const ReferenceView: React.FC = ({ route }: any) => {
   //const [references, setReferences] = useState<any>([]);
   const loggedUser: any = useContext(Context);
   const toast = useToast();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const syncronize = () => {
     setLoading(true);
@@ -43,14 +47,15 @@ const ReferenceView: React.FC = ({ route }: any) => {
       setLoading(false);
     } else {
       sync({ username: loggedUser.username })
-        .then(() =>
+        .then(() => {
           toast.show({
             placement: "top",
             render: () => {
               return <SuccessHandler />;
             },
-          })
-        )
+          });
+          fetchCounts();
+        })
         .catch(() =>
           toast.show({
             placement: "top",

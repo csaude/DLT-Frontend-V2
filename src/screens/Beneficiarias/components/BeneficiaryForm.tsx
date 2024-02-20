@@ -52,13 +52,24 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import { MENTOR } from "../../../utils/constants";
 import MyDatePicker from "../../../components/DatePicker";
-import { beneficiariesFetchCount, pendingSyncBeneficiaries } from "../../../services/beneficiaryService";
+import {
+  beneficiariesFetchCount,
+  pendingSyncBeneficiaries,
+} from "../../../services/beneficiaryService";
 import { getBeneficiariesTotal } from "../../../store/beneficiarySlice";
-import { referencesFetchCount } from "../../../services/referenceService";
+import {
+  pendingSyncReferences,
+  referencesFetchCount,
+} from "../../../services/referenceService";
 import NetInfo from "@react-native-community/netinfo";
 import { getReferencesTotal } from "../../../store/referenceSlice";
 import PropTypes from "prop-types";
-import { loadPendingsBeneficiariesTotals } from "../../../store/syncSlice";
+import {
+  loadPendingsBeneficiariesInterventionsTotals,
+  loadPendingsBeneficiariesTotals,
+  loadPendingsReferencesTotals,
+} from "../../../store/syncSlice";
+import { pendingSyncBeneficiariesInterventions } from "../../../services/beneficiaryInterventionService";
 
 const BeneficiaryForm: React.FC = ({
   route,
@@ -790,17 +801,40 @@ const BeneficiaryForm: React.FC = ({
       }
     });
 
+    const fetchCounts = async () => {
+      const benefNotSynced = await pendingSyncBeneficiaries();
+      dispatch(
+        loadPendingsBeneficiariesTotals({
+          pendingSyncBeneficiaries: benefNotSynced,
+        })
+      );
+
+      const benefIntervNotSynced =
+        await pendingSyncBeneficiariesInterventions();
+      dispatch(
+        loadPendingsBeneficiariesInterventionsTotals({
+          pendingSyncBeneficiariesInterventions: benefIntervNotSynced,
+        })
+      );
+
+      const refNotSynced = await pendingSyncReferences();
+      dispatch(
+        loadPendingsReferencesTotals({ pendingSyncReferences: refNotSynced })
+      );
+    };
+
     setLoading(true);
     if (!isOffline) {
       sync({ username: loggedUser.username })
-        .then(() =>
+        .then(() => {
           toast.show({
             placement: "top",
             render: () => {
               return <SuccessHandler />;
             },
-          })
-        )
+          });
+          fetchCounts();
+        })
         .catch(() =>
           toast.show({
             placement: "top",
@@ -881,7 +915,11 @@ const BeneficiaryForm: React.FC = ({
     }
 
     const benNotSynced = await pendingSyncBeneficiaries();
-    dispatch(loadPendingsBeneficiariesTotals({pendingSyncBeneficiaries:benNotSynced}))
+    dispatch(
+      loadPendingsBeneficiariesTotals({
+        pendingSyncBeneficiaries: benNotSynced,
+      })
+    );
   };
 
   const onChangeName = useCallback((name) => {
@@ -953,7 +991,7 @@ const BeneficiaryForm: React.FC = ({
 
   const isStudentChange = useCallback(async (value: any) => {
     setSchoolInfoEnabled(value == 1);
-    if (value == 0){
+    if (value == 0) {
       formik.setFieldValue("vblt_school_grade", null);
     }
   }, []);
@@ -965,7 +1003,7 @@ const BeneficiaryForm: React.FC = ({
 
   const onPregnantBeforeChane = useCallback(async (value: any) => {
     setChildrenEnabled(value == 1);
-    if (value == 0){
+    if (value == 0) {
       setHaveChildrenEnabled(true);
     } else {
       setHaveChildrenEnabled(false);

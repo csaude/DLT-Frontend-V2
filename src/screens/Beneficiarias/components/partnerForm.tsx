@@ -31,6 +31,11 @@ import { sync } from "../../../database/sync";
 import { Context } from "../../../routes/DrawerNavigator";
 
 import styles from "./styles";
+import { pendingSyncBeneficiaries } from "../../../services/beneficiaryService";
+import { pendingSyncBeneficiariesInterventions } from "../../../services/beneficiaryInterventionService";
+import { loadPendingsBeneficiariesInterventionsTotals, loadPendingsBeneficiariesTotals, loadPendingsReferencesTotals } from "../../../store/syncSlice";
+import { pendingSyncReferences } from "../../../services/referenceService";
+import { useDispatch } from "react-redux";
 
 const PartnerForm: React.FC = ({ route, services, subServices }: any) => {
   const { beneficiarie, intervention } = route.params;
@@ -39,6 +44,7 @@ const PartnerForm: React.FC = ({ route, services, subServices }: any) => {
   const [mode, setMode] = useState<any>("date");
   const [show, setShow] = useState(false);
   const [text, setText] = useState("");
+  const dispatch = useDispatch();
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -199,6 +205,28 @@ const PartnerForm: React.FC = ({ route, services, subServices }: any) => {
     return errors;
   };
 
+
+  const fetchCounts = async () => {
+    const benefNotSynced = await pendingSyncBeneficiaries();
+    dispatch(
+      loadPendingsBeneficiariesTotals({
+        pendingSyncBeneficiaries: benefNotSynced,
+      })
+    );
+
+    const benefIntervNotSynced = await pendingSyncBeneficiariesInterventions();
+    dispatch(
+      loadPendingsBeneficiariesInterventionsTotals({
+        pendingSyncBeneficiariesInterventions: benefIntervNotSynced,
+      })
+    );
+
+    const refNotSynced = await pendingSyncReferences();
+    dispatch(
+      loadPendingsReferencesTotals({ pendingSyncReferences: refNotSynced })
+    );
+  };
+
   const onSubmit = async (values: any) => {
     setLoading(true);
 
@@ -261,7 +289,7 @@ const PartnerForm: React.FC = ({ route, services, subServices }: any) => {
     //setLoading(false);
     sync({ username: loggedUser.username })
       .then(() =>
-        toast.show({
+        {toast.show({
           placement: "top",
           render: () => {
             return (
@@ -290,6 +318,8 @@ const PartnerForm: React.FC = ({ route, services, subServices }: any) => {
             );
           },
         })
+        fetchCounts()
+      }
       )
       .catch(() =>
         toast.show({

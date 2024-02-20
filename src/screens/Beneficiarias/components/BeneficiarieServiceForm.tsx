@@ -47,8 +47,14 @@ import MyDatePicker from "../../../components/DatePicker";
 import NetInfo from "@react-native-community/netinfo";
 import PropTypes from "prop-types";
 import { pendingSyncBeneficiariesInterventions } from "../../../services/beneficiaryInterventionService";
-import { loadPendingsBeneficiariesInterventionsTotals } from "../../../store/syncSlice";
+import {
+  loadPendingsBeneficiariesInterventionsTotals,
+  loadPendingsBeneficiariesTotals,
+  loadPendingsReferencesTotals,
+} from "../../../store/syncSlice";
 import { useDispatch } from "react-redux";
+import { pendingSyncBeneficiaries } from "../../../services/beneficiaryService";
+import { pendingSyncReferences } from "../../../services/referenceService";
 
 const BeneficiarieServiceForm: React.FC = ({
   route,
@@ -166,13 +172,15 @@ const BeneficiarieServiceForm: React.FC = ({
 
   useEffect(() => {
     if (mounted) {
-
       const age = calculateAge(beneficiarie.date_of_birth);
       let is15AndStartedAvante = false;
 
       setServicesState(activeServices);
       const subServicesListItems = activeSubServices.map((item) => item._raw);
-      const subServicesList = age <= 14 || age >= 20 ? subServicesListItems.filter((item) => item.online_id !== 235): subServicesListItems;
+      const subServicesList =
+        age <= 14 || age >= 20
+          ? subServicesListItems.filter((item) => item.online_id !== 235)
+          : subServicesListItems;
       setSubServicesState(subServicesList);
       getPartner();
 
@@ -409,7 +417,11 @@ const BeneficiarieServiceForm: React.FC = ({
     }
 
     const benIntervNotSynced = await pendingSyncBeneficiariesInterventions();
-    dispatch(loadPendingsBeneficiariesInterventionsTotals({pendingSyncBeneficiariesInterventions:benIntervNotSynced}))
+    dispatch(
+      loadPendingsBeneficiariesInterventionsTotals({
+        pendingSyncBeneficiariesInterventions: benIntervNotSynced,
+      })
+    );
   };
 
   useEffect(() => {
@@ -556,10 +568,34 @@ const BeneficiarieServiceForm: React.FC = ({
 
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+  const fetchCounts = async () => {
+    const benefNotSynced = await pendingSyncBeneficiaries();
+    dispatch(
+      loadPendingsBeneficiariesTotals({
+        pendingSyncBeneficiaries: benefNotSynced,
+      })
+    );
+
+    const benefIntervNotSynced = await pendingSyncBeneficiariesInterventions();
+    dispatch(
+      loadPendingsBeneficiariesInterventionsTotals({
+        pendingSyncBeneficiariesInterventions: benefIntervNotSynced,
+      })
+    );
+
+    const refNotSynced = await pendingSyncReferences();
+    dispatch(
+      loadPendingsReferencesTotals({ pendingSyncReferences: refNotSynced })
+    );
+  };
+
   const syncronize = () => {
     if (!isOffline) {
       sync({ username: loggedUser.username })
-        .then(() => setIsSync(true))
+        .then(() => {
+          setIsSync(true);
+          fetchCounts();
+        })
         .catch(() =>
           toast.show({
             placement: "top",
@@ -966,8 +1002,10 @@ const BeneficiarieServiceForm: React.FC = ({
   );
 };
 const enhance = withObservables([], () => ({
-  services: database.collections.get("services").query(Q.where("status", 1)), 
-  subServices: database.collections.get("sub_services").query(Q.where("status", 1)), 
+  services: database.collections.get("services").query(Q.where("status", 1)),
+  subServices: database.collections
+    .get("sub_services")
+    .query(Q.where("status", 1)),
   us: database.collections.get("us").query(),
 }));
 

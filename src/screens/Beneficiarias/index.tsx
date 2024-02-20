@@ -135,6 +135,7 @@ const BeneficiariesMain: React.FC = ({
               return <SuccessHandler />;
             },
           });
+          fetchCounts();
         })
         .catch(() => {
           setLoading(false);
