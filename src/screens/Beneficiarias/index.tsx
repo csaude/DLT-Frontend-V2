@@ -66,11 +66,21 @@ import {
   loadViewedBeneficiaryGender,
 } from "../../store/beneficiarySlice";
 import { loadBeneficiariesInterventionsCounts } from "../../store/beneficiaryInterventionSlice";
-import { pendingSyncReferences, referencesFetchCount } from "../../services/referenceService";
+import {
+  pendingSyncReferences,
+  referencesFetchCount,
+} from "../../services/referenceService";
 import { getReferencesTotal } from "../../store/referenceSlice";
-import { beneficiariesInterventionsFetchCount, pendingSyncBeneficiariesInterventions } from "../../services/beneficiaryInterventionService";
+import {
+  beneficiariesInterventionsFetchCount,
+  pendingSyncBeneficiariesInterventions,
+} from "../../services/beneficiaryInterventionService";
 import SpinnerModal from "../../components/Modal/SpinnerModal";
-import { loadPendingsBeneficiariesInterventionsTotals, loadPendingsBeneficiariesTotals, loadPendingsReferencesTotals } from "../../store/syncSlice";
+import {
+  loadPendingsBeneficiariesInterventionsTotals,
+  loadPendingsBeneficiariesTotals,
+  loadPendingsReferencesTotals,
+} from "../../store/syncSlice";
 
 const BeneficiariesMain: React.FC = ({
   subServices,
@@ -110,7 +120,7 @@ const BeneficiariesMain: React.FC = ({
     const beneficiaryIntervsCont = await beneficiariesInterventionsFetchCount();
     dispatch(loadBeneficiariesInterventionsCounts(beneficiaryIntervsCont));
   }, []);
-  
+
   const totals = useSelector(
     (state: any) => state.beneficiaryIntervention.totals
   );
@@ -259,10 +269,10 @@ const BeneficiariesMain: React.FC = ({
   }, []);
 
   // eslint-disable-next-line react/prop-types
-  const ItemBadge = ({ label, beneficiary_id }) => {
+  const ItemBadge = ({ label, beneficiary_offline_id }) => {
     const getCountByBeneficiary = () => {
       const result = totals?.filter(
-        (item) => item.beneficiary_id === beneficiary_id
+        (item) => item.beneficiary_offline_id === beneficiary_offline_id
       );
       return result[0]?.total;
     };
@@ -327,7 +337,7 @@ const BeneficiariesMain: React.FC = ({
             </View>
             <ItemBadge
               label={"Serviços"}
-              beneficiary_id={data.item.online_id}
+              beneficiary_offline_id={data.item.offline_id}
             />
           </HStack>
         </View>
@@ -1093,7 +1103,8 @@ const BeneficiariesMain: React.FC = ({
 
 const enhance = withObservables([], () => ({
   beneficiaries_interventions: database.collections
-    .get("beneficiaries_interventions").query(),
+    .get("beneficiaries_interventions")
+    .query(),
   subServices: database.collections.get("sub_services").query(),
 }));
 export default memo(enhance(BeneficiariesMain));
