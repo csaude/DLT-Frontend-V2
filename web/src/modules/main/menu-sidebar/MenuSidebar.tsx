@@ -161,6 +161,10 @@ export const MENU: IMenuItem[] = [
           "CONSELHEIRA",
         ],
       },
+      {
+        name: "Beneficiárias sem vulnerabilidades específica",
+        path: "/benefWithoutVulnerabilites",
+      },
     ],
   },
   {
