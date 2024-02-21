@@ -835,7 +835,9 @@ const BeneficiariesList: React.FC = () => {
       const pageElements = 1000;
 
       const workbook = new ExcelJS.Workbook();
-      const worksheet = workbook.addWorksheet("Lista_Beneficiarios_");
+      const worksheet = workbook.addWorksheet(
+        "Lista_de_Adolescentes_e_Jovens_"
+      );
 
       const headers = [
         "#",
@@ -979,7 +981,7 @@ const BeneficiariesList: React.FC = () => {
       const blob = new Blob([buffer], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
-      saveAs(blob, `Lista_Beneficiarios_${created}.xlsx`);
+      saveAs(blob, `Lista_de_Adolescentes_e_Jovens_${created}.xlsx`);
 
       setDataLoading(false);
     } catch (error) {

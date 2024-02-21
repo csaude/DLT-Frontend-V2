@@ -309,6 +309,15 @@ const ViewBenefiaryPanel = ({
           ></Button>
           <Button
             type="primary"
+            hidden={
+              user?.partners?.partnerType == 2 &&
+              record?.subServices.service.serviceType == 1
+                ? true
+                : user?.partners?.partnerType == 1 &&
+                  record?.subServices.service.serviceType == 2
+                ? true
+                : false
+            }
             icon={<EditOutlined />}
             onClick={() => onEditIntervention(record)}
           ></Button>

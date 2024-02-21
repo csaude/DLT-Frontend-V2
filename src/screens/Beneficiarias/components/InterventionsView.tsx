@@ -34,12 +34,15 @@ const InterventionsView: React.FC = ({ route }: any) => {
 
   const { beneficiary, interventions } = route.params;
   const loggedUser: any = useContext(Context);
-  const profileId = loggedUser.profile_id? loggedUser.profile_id : loggedUser.profiles.id;
+  const profileId = loggedUser.profile_id
+    ? loggedUser.profile_id
+    : loggedUser.profiles.id;
   const toast = useToast();
 
   const getPartner = async () => {
-    const partner_id =
-      loggedUser.partner_id ? loggedUser.partner_id : loggedUser.partners.id;
+    const partner_id = loggedUser.partner_id
+      ? loggedUser.partner_id
+      : loggedUser.partners.id;
     const partners = await database
       .get("partners")
       .query(Q.where("online_id", parseInt(partner_id)))
@@ -89,10 +92,14 @@ const InterventionsView: React.FC = ({ route }: any) => {
     }
   };
 
-  const renderItem = (data: any) => (
-    <TouchableHighlight
-      onPress={() =>
-        navigate({
+  const blockEdit = (data: any) =>
+    partnerType == "2" &&
+    data.item.intervention.entry_point == "1"
+      ? ""
+      : partnerType == "1" &&
+        data.item.intervention.entry_point == "2"
+        ? ""
+        :navigate({
           name: "BeneficiarieServiceForm",
           params: {
             beneficiarie: beneficiary,
@@ -100,8 +107,11 @@ const InterventionsView: React.FC = ({ route }: any) => {
             intervention: data.item.intervention,
             isNewIntervention: false,
           },
-        })
-      }
+        });
+
+  const renderItem = (data: any) => (
+    <TouchableHighlight
+      onPress={() => blockEdit(data)}
       style={styles.rowFront}
       underlayColor={"#AAA"}
     >
@@ -114,7 +124,8 @@ const InterventionsView: React.FC = ({ route }: any) => {
             }}
             color="darkBlue.800"
           >
-            {[MENTOR, SUPERVISOR].includes(profileId) && partnerType == "2" &&
+            {[MENTOR, SUPERVISOR].includes(profileId) &&
+            partnerType == "2" &&
             [26, 67, 68].includes(data.item.intervention.sub_service_id)
               ? "Aconselhamento e Testagem em Saúde"
               : data.item.name}
@@ -148,17 +159,7 @@ const InterventionsView: React.FC = ({ route }: any) => {
         ml="auto"
         bg="lightBlue.700"
         justifyContent="center"
-        onPress={() =>
-          navigate({
-            name: "BeneficiarieServiceForm",
-            params: {
-              beneficiarie: beneficiary,
-              intervs: interventions,
-              intervention: data.item.intervention,
-              isNewIntervention: false,
-            },
-          })
-        }
+        onPress={() => blockEdit(data)}
         _pressed={{ opacity: 0.5 }}
       >
         <Icon as={MaterialIcons} name="mode-edit" size={6} color="gray.200" />
