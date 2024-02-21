@@ -418,6 +418,7 @@ const BeneficiaryForm: React.FC = ({
     }
 
     getTotals().catch((err) => console.error(err));
+    fetchCounts();
   };
 
   const onPreviousStep = () => {
@@ -560,6 +561,28 @@ const BeneficiaryForm: React.FC = ({
     }
 
     return errors;
+  };
+  
+  const fetchCounts = async () => {
+    const benefNotSynced = await pendingSyncBeneficiaries();
+    dispatch(
+      loadPendingsBeneficiariesTotals({
+        pendingSyncBeneficiaries: benefNotSynced,
+      })
+    );
+
+    const benefIntervNotSynced =
+      await pendingSyncBeneficiariesInterventions();
+    dispatch(
+      loadPendingsBeneficiariesInterventionsTotals({
+        pendingSyncBeneficiariesInterventions: benefIntervNotSynced,
+      })
+    );
+
+    const refNotSynced = await pendingSyncReferences();
+    dispatch(
+      loadPendingsReferencesTotals({ pendingSyncReferences: refNotSynced })
+    );
   };
 
   const handleSaveBeneficiary = async () => {
@@ -800,28 +823,6 @@ const BeneficiaryForm: React.FC = ({
         return newBeneficiary;
       }
     });
-
-    const fetchCounts = async () => {
-      const benefNotSynced = await pendingSyncBeneficiaries();
-      dispatch(
-        loadPendingsBeneficiariesTotals({
-          pendingSyncBeneficiaries: benefNotSynced,
-        })
-      );
-
-      const benefIntervNotSynced =
-        await pendingSyncBeneficiariesInterventions();
-      dispatch(
-        loadPendingsBeneficiariesInterventionsTotals({
-          pendingSyncBeneficiariesInterventions: benefIntervNotSynced,
-        })
-      );
-
-      const refNotSynced = await pendingSyncReferences();
-      dispatch(
-        loadPendingsReferencesTotals({ pendingSyncReferences: refNotSynced })
-      );
-    };
 
     setLoading(true);
     if (!isOffline) {

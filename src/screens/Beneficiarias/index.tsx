@@ -203,7 +203,7 @@ const BeneficiariesMain: React.FC = ({
     });
 
     const interventions = beneficiaries_interventions.filter((e) => {
-      return e._raw.beneficiary_id == beneficiarie.online_id;
+      return e._raw.beneficiary_offline_id == beneficiarie.offline_id;
     });
 
     const interventionObjects = interventions.map((e) => {

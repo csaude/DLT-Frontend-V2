@@ -385,7 +385,7 @@ const BeneficiarieServiceForm: React.FC = ({
     const benefInterv = await database
       .get("beneficiaries_interventions")
       .query(
-        Q.where("beneficiary_id", parseInt(beneficiarie.online_id)),
+        Q.where("beneficiary_offline_id", beneficiarie.offline_id),
         Q.where("sub_service_id", parseInt(values.sub_service_id)),
         Q.where("date", "" + text)
       )

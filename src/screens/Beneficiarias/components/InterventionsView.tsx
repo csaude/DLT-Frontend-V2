@@ -27,7 +27,11 @@ import { MENTOR, SUPERVISOR } from "../../../utils/constants";
 import { database } from "../../../database";
 import { Q } from "@nozbe/watermelondb";
 import { pendingSyncBeneficiaries } from "../../../services/beneficiaryService";
-import { loadPendingsBeneficiariesInterventionsTotals, loadPendingsBeneficiariesTotals, loadPendingsReferencesTotals } from "../../../store/syncSlice";
+import {
+  loadPendingsBeneficiariesInterventionsTotals,
+  loadPendingsBeneficiariesTotals,
+  loadPendingsReferencesTotals,
+} from "../../../store/syncSlice";
 import { pendingSyncBeneficiariesInterventions } from "../../../services/beneficiaryInterventionService";
 import { pendingSyncReferences } from "../../../services/referenceService";
 import { useDispatch } from "react-redux";
@@ -39,13 +43,16 @@ const InterventionsView: React.FC = ({ route }: any) => {
 
   const { beneficiary, interventions } = route.params;
   const loggedUser: any = useContext(Context);
-  const profileId = loggedUser.profile_id? loggedUser.profile_id : loggedUser.profiles.id;
+  const profileId = loggedUser.profile_id
+    ? loggedUser.profile_id
+    : loggedUser.profiles.id;
   const toast = useToast();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const getPartner = async () => {
-    const partner_id =
-      loggedUser.partner_id ? loggedUser.partner_id : loggedUser.partners.id;
+    const partner_id = loggedUser.partner_id
+      ? loggedUser.partner_id
+      : loggedUser.partners.id;
     const partners = await database
       .get("partners")
       .query(Q.where("online_id", parseInt(partner_id)))
@@ -75,16 +82,15 @@ const InterventionsView: React.FC = ({ route }: any) => {
       setLoading(false);
     } else {
       sync({ username: loggedUser.username })
-        .then(() =>{
+        .then(() => {
           toast.show({
             placement: "top",
             render: () => {
               return <SuccessHandler />;
             },
-          })
+          });
           fetchCounts();
-        }
-        )
+        })
         .catch(() =>
           toast.show({
             placement: "top",
@@ -122,7 +128,8 @@ const InterventionsView: React.FC = ({ route }: any) => {
             }}
             color="darkBlue.800"
           >
-            {[MENTOR, SUPERVISOR].includes(profileId) && partnerType == "2" &&
+            {[MENTOR, SUPERVISOR].includes(profileId) &&
+            partnerType == "2" &&
             [26, 67, 68].includes(data.item.intervention.sub_service_id)
               ? "Aconselhamento e Testagem em Saúde"
               : data.item.name}
