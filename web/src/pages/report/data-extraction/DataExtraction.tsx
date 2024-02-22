@@ -47,8 +47,6 @@ const DataExtraction = () => {
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [lastPage, setLastPage] = useState<number>(0);
   const [extraOption, setExtraOption] = useState(0);
-  const [currentDistrict, setCurrentDistrict] = useState<any>();
-  const [nextIndex, setNextIndex] = useState(1);
   const RequiredFieldMessage = "Obrigatório!";
   const pageSize = 1000000;
   const created = moment().format("YYYYMMDD_hhmmss");
@@ -196,21 +194,15 @@ const DataExtraction = () => {
         generateExcelNewlyEnrolledAgywAndServicesReport(currentPage); // Iterar
       } else if (extraOption == 3) {
         generateExcelBeneficiariesVulnerabilitiesAndServicesReport(currentPage); // Iterar
-      }
-    }
-  }, [currentPage]);
-
-  useEffect(() => {
-    if (currentDistrict != undefined) {
-      if (extraOption == 2) {
-        generateExcelNewlyEnrolledAgywAndServicesSummaryReport(currentDistrict);
+      } else if (extraOption == 2) {
+        generateExcelNewlyEnrolledAgywAndServicesSummaryReport(currentPage);
       } else if (extraOption == 4) {
         generateExcelBeneficiariesVulnerabilitiesAndServicesSummaryReport(
-          currentDistrict
+          currentPage
         );
       }
     }
-  }, [currentDistrict]);
+  }, [currentPage]);
 
   const handleGenerateXLSXReport = (i) => {
     setLoadingMessage("Extraindo... Por favor aguarde");
@@ -303,18 +295,18 @@ const DataExtraction = () => {
   };
 
   const generateExcelNewlyEnrolledAgywAndServicesSummaryReport = async (
-    currentDistrictIndex
+    pageIndex
   ) => {
     setDataLoading(true);
     try {
       const response =
         await geNewlyEnrolledAgywAndServicesSummaryReportGenerated(
           selectedProvinces[0].name,
-          districtsIds[currentDistrictIndex],
+          districtsIds,
           initialDate,
           finalDate,
-          currentPage,
-          nextIndex,
+          pageIndex,
+          pageSize,
           username
         );
       if (response.fileSize > 0) {
@@ -322,7 +314,6 @@ const DataExtraction = () => {
         setCurrentPage(currentPage + 1);
         // setNextIndex(response.nextIndex);
       }
-      setCurrentDistrict(currentDistrictIndex + 1);
       setDataLoading(false);
     } catch (error) {
       setDataLoading(false);
@@ -331,17 +322,17 @@ const DataExtraction = () => {
   };
 
   const generateExcelBeneficiariesVulnerabilitiesAndServicesSummaryReport =
-    async (currentDistrictIndex) => {
+    async (pageIndex) => {
       setDataLoading(true);
       try {
         const response =
           await getBeneficiariesVulnerabilitiesAndServicesSummaryReportGenerated(
             selectedProvinces[0].name,
-            districtsIds[currentDistrictIndex],
+            districtsIds,
             initialDate,
             finalDate,
-            currentPage,
-            nextIndex,
+            pageIndex,
+            pageSize,
             username
           );
         if (response.fileSize > 0) {
@@ -349,7 +340,6 @@ const DataExtraction = () => {
           setCurrentPage(currentPage + 1);
           // setNextIndex(response.nextIndex);
         }
-        setCurrentDistrict(currentDistrictIndex + 1);
         setDataLoading(false);
       } catch (error) {
         setDataLoading(false);
