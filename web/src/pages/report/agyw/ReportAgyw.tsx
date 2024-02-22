@@ -36,6 +36,7 @@ const ReportAgyw = () => {
   const [selectedProvinces, setSelectedProvinces] = useState<any[]>([]);
   const [districts, setDistricts] = useState<any>(undefined);
   const [selectedDistricts, setSelectedDistricts] = useState<any[]>([]);
+  const [reportType, setReportType] = useState();
   const [initialDate, setInitialDate] = useState<any>();
   const [finalDate, setFinalDate] = useState<any>();
   const [form] = Form.useForm();
@@ -45,6 +46,17 @@ const ReportAgyw = () => {
   const userSelector = useSelector((state: any) => state?.auth);
   const currentUserName = userSelector.currentUser.name;
   const dispatch = useDispatch();
+
+  const reportOptions = [
+    {
+      id: 1,
+      name: "Completo",
+    },
+    {
+      id: 2,
+      name: "Simplificado",
+    },
+  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -120,6 +132,12 @@ const ReportAgyw = () => {
     }),
   });
 
+  const onChangeReportOption = async (option) => {
+    if (option != reportType) {
+      setReportType(option);
+    }
+  };
+
   const handleFetchData = async () => {
     if (
       selectedProvinces.length < 1 ||
@@ -139,7 +157,8 @@ const ReportAgyw = () => {
       const responseData = await agywPrevQuery(
         districtsIds,
         startDate,
-        endDate
+        endDate,
+        reportType
       );
 
       const responseServiceAgesBands = await serviceAgesBandsQuery();
@@ -179,7 +198,8 @@ const ReportAgyw = () => {
         districtsIds,
         startDate,
         endDate,
-        selectedDistricts
+        selectedDistricts,
+        reportType
       );
       setDataLoading(false);
     }
@@ -242,6 +262,21 @@ const ReportAgyw = () => {
                       {...selectDistricts}
                       allowClear
                     />
+                  </Form.Item>
+
+                  <Form.Item
+                    name="reportType"
+                    label="Tipo de Relatório"
+                    rules={[{ required: true, message: RequiredFieldMessage }]}
+                  >
+                    <Select
+                      placeholder="Seleccione o Tipo de Relatório"
+                      onChange={onChangeReportOption}
+                    >
+                      {reportOptions?.map((item) => (
+                        <Option key={item.id}>{item.name}</Option>
+                      ))}
+                    </Select>
                   </Form.Item>
 
                   <Form.Item name="initialDate" label="Data Inicial">
