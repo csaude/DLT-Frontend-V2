@@ -19,11 +19,9 @@ import moment from "moment";
 import dreams from "../../../assets/dreams.png";
 
 import {
-  countNewlyEnrolledAgywAndServices,
   getNewlyEnrolledAgywAndServicesReportGenerated,
   getFileDownloaded,
   geNewlyEnrolledAgywAndServicesSummaryReportGenerated,
-  countBeneficiariesVulnerabilitiesAndServices,
   getBeneficiariesVulnerabilitiesAndServicesSummaryReportGenerated,
   getBeneficiariesVulnerabilitiesAndServicesReportGenerated,
 } from "@app/utils/report";
@@ -45,11 +43,9 @@ const DataExtraction = () => {
   const [dataLoading, setDataLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("");
   const [currentPage, setCurrentPage] = useState<number>(0);
-  const [lastPage, setLastPage] = useState<number>(0);
   const [extraOption, setExtraOption] = useState(0);
   const RequiredFieldMessage = "Obrigatório!";
   const pageSize = 1000000;
-  const created = moment().format("YYYYMMDD_hhmmss");
   const username = localStorage.getItem("username");
   const maxDate = moment(initialDate).add(12, "months");
 
@@ -139,41 +135,13 @@ const DataExtraction = () => {
     }),
   });
 
-  const getTotalNewlyEnrolledAgywAndServices = async () => {
-    const totalNewlyEnrolledAgywAndServices =
-      await countNewlyEnrolledAgywAndServices(
-        districtsIds,
-        initialDate,
-        finalDate
-      );
-    const lastPage = Math.ceil(totalNewlyEnrolledAgywAndServices[0] / pageSize);
-    setLastPage(lastPage);
-  };
-
-  const getTotalVulnerabilitiesAndServices = async () => {
-    const totalVulnerabilitiesAndServices =
-      await countBeneficiariesVulnerabilitiesAndServices(
-        districtsIds,
-        initialDate,
-        finalDate
-      );
-    const lastPage = Math.ceil(totalVulnerabilitiesAndServices[0] / pageSize);
-    setLastPage(lastPage);
-  };
-
   const onChangeExtraOption = async (option) => {
     setLoadingMessage("Processando os parâmetros da Extração...");
     if (option != extraOption) {
       setDataLoading(true);
       setCurrentPage(0);
       setExtraOption(option);
-      if (option == 1) {
-        getTotalNewlyEnrolledAgywAndServices().then(() =>
-          setDataLoading(false)
-        );
-      } else if (option == 3) {
-        getTotalVulnerabilitiesAndServices().then(() => setDataLoading(false));
-      } else if (option == 2 || option == 4) {
+      if (option !== undefined) {
         setDataLoading(false);
       } else {
         toast.error("Por favor selecione o tipo de extração");
@@ -189,7 +157,7 @@ const DataExtraction = () => {
   }, [selectedDistricts, initialDate, finalDate, extraOption]);
 
   useEffect(() => {
-    if (currentPage != 0 && lastPage != 0 && currentPage < lastPage) {
+    if (currentPage != 0) {
       if (extraOption == 1) {
         generateExcelNewlyEnrolledAgywAndServicesReport(currentPage); // Iterar
       } else if (extraOption == 3) {
