@@ -189,13 +189,9 @@ const BeneficiariesMain: React.FC = ({
             return referenceIdArray.includes("" + e._raw.online_id);
         });*/
 
-    const beneficiaryId = beneficiarie.online_id
-      ? beneficiarie.online_id
-      : beneficiarie.id;
-
     const references = await database
       .get("references")
-      .query(Q.where("beneficiary_id", beneficiaryId))
+      .query(Q.where("beneficiary_offline_id", beneficiarie.offline_id))
       .fetch();
 
     const beneficiaryReferencesSerializable = references.map((e) => {
