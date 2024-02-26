@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 export interface InterventionCount {
-  beneficiary_id: number;
+  beneficiary_offline_id: number;
   total: number;
 }
 

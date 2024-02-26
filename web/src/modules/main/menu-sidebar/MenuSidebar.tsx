@@ -124,11 +124,18 @@ export const MENU: IMenuItem[] = [
     level: [0],
   },
   {
+    name: "PEPFAR MER 2.7 AGYW_PREV",
+    path: "/reportAgyw",
+    roles: ["DOADOR"],
+    icon: "fas fa-file-alt",
+    level: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  },
+  {
     name: "menusidebar.label.reports",
     path: "#",
     icon: "fas fa-file-alt",
     level: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-    roles: ["ADMIN", "M&E", "SUPERVISOR", "DOADOR"],
+    roles: ["ADMIN", "M&E", "SUPERVISOR"],
     children: [
       {
         name: "PEPFAR MER 2.7 AGYW_PREV",
@@ -140,6 +147,19 @@ export const MENU: IMenuItem[] = [
         roles: ["ADMIN"],
         icon: "fas fa-sync",
         level: [0],
+      },
+      {
+        name: "menusidebar.label.beneficiaryDashboard",
+        path: "/beneficiaryDashboard",
+        icon: "fas fa-users", // icon set: https://fontawesome.com/v5/search
+        roles: [
+          "ADMIN",
+          "M&E",
+          "SUPERVISOR",
+          "MENTORA",
+          "ENFERMEIRA",
+          "CONSELHEIRA",
+        ],
       },
     ],
   },

@@ -8,17 +8,17 @@ export const beneficiariesInterventionsFetchCount = async () => {
     .get("beneficiaries")
     .query()
     .fetch();
-  const beneficiariesIds = beneficiaries.map((item) => item?.["online_id"]);
+  const beneficiariesOfflineIds = beneficiaries.map((item) => item?.["offline_id"]);
 
   await Promise.all(
-    beneficiariesIds.map(async (beneficiary_id) => {
+    beneficiariesOfflineIds.map(async (beneficiary_offline_id) => {
       const count = await database.collections
         .get("beneficiaries_interventions")
-        .query(Q.where("beneficiary_id", beneficiary_id))
+        .query(Q.where("beneficiary_offline_id", beneficiary_offline_id))
         .fetchCount();
 
       const beneficiaryCount: InterventionCount = {
-        beneficiary_id: beneficiary_id,
+        beneficiary_offline_id: beneficiary_offline_id,
         total: count,
       };
 

@@ -41,15 +41,17 @@ import styles from "./styles";
 import moment from "moment";
 import {
   beneficiariesFetchCount,
+  pendingSyncBeneficiaries,
   resolveBeneficiaryOfflineIds,
 } from "../../services/beneficiaryService";
 import { getBeneficiariesTotal } from "../../store/beneficiarySlice";
-import { beneficiariesInterventionsFetchCount } from "../../services/beneficiaryInterventionService";
-import { referencesFetchCount } from "../../services/referenceService";
+import { beneficiariesInterventionsFetchCount, pendingSyncBeneficiariesInterventions } from "../../services/beneficiaryInterventionService";
+import { pendingSyncReferences, referencesFetchCount } from "../../services/referenceService";
 import { loadBeneficiariesInterventionsCounts } from "../../store/beneficiaryInterventionSlice";
 import { getReferencesTotal } from "../../store/referenceSlice";
 import { useDispatch } from "react-redux";
 import SpinnerModal from "../../components/Modal/SpinnerModal";
+import { loadPendingsBeneficiariesInterventionsTotals, loadPendingsBeneficiariesTotals, loadPendingsReferencesTotals } from "../../store/syncSlice";
 
 const ReferencesMain: React.FC = ({
   beneficiaries,
@@ -194,6 +196,27 @@ const ReferencesMain: React.FC = ({
     [getBeneficiary, getUser, loggedUserPartner, services, subServices]
   );
 
+  const fetchCounts = async () => {
+    const benefNotSynced = await pendingSyncBeneficiaries();
+    dispatch(
+      loadPendingsBeneficiariesTotals({
+        pendingSyncBeneficiaries: benefNotSynced,
+      })
+    );
+
+    const benefIntervNotSynced = await pendingSyncBeneficiariesInterventions();
+    dispatch(
+      loadPendingsBeneficiariesInterventionsTotals({
+        pendingSyncBeneficiariesInterventions: benefIntervNotSynced,
+      })
+    );
+
+    const refNotSynced = await pendingSyncReferences();
+    dispatch(
+      loadPendingsReferencesTotals({ pendingSyncReferences: refNotSynced })
+    );
+  };
+
   const syncronize = useCallback(() => {
     if (isOffline) {
       toast.show({
@@ -205,12 +228,14 @@ const ReferencesMain: React.FC = ({
     } else {
       sync({ username: loggedUser.username })
         .then(() =>
-          toast.show({
+          {toast.show({
             placement: "top",
             render: () => {
               return <SuccessHandler />;
             },
           })
+          fetchCounts();
+        }
         )
         .catch(() =>
           toast.show({
@@ -251,7 +276,7 @@ const ReferencesMain: React.FC = ({
           getUser(data.item?._raw.referred_by)?.partner_id ? (
             <Ionicons name="exit" size={40} color="#0d9488" />
           ) : (
-            <Ionicons name="enter" size={40} color="#0d9488" />
+            <Ionicons name="enter" size={40} color="#e63939" />
           )}
           <VStack width="200px">
             <HStack>

@@ -41,6 +41,7 @@ import DataExtraction from "./pages/report/data-extraction/DataExtraction";
 import NeighborhoodsList from "./pages/neighborhoods";
 
 import SyncReport from "@pages/sync-report/Index";
+import BeneficiaryDashboard from "./pages/beneficiary-dashboard";
 import DataImport from "@pages/data-import/index";
 
 const App = () => {
@@ -163,6 +164,10 @@ const App = () => {
             {/* App Inforation */}
             <Route path="/appInfo" element={<AppInfo />} />
             <Route path="/syncReport" element={<SyncReport />} />
+            <Route
+              path="/beneficiaryDashboard"
+              element={<BeneficiaryDashboard />}
+            />
             <Route path="/dataImport" element={<DataImport />} />
           </Route>
         </Route>
