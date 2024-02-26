@@ -52,12 +52,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import { MENTOR } from "../../../utils/constants";
 import MyDatePicker from "../../../components/DatePicker";
-import { beneficiariesFetchCount } from "../../../services/beneficiaryService";
+import { beneficiariesFetchCount, pendingSyncBeneficiaries } from "../../../services/beneficiaryService";
 import { getBeneficiariesTotal } from "../../../store/beneficiarySlice";
 import { referencesFetchCount } from "../../../services/referenceService";
 import NetInfo from "@react-native-community/netinfo";
 import { getReferencesTotal } from "../../../store/referenceSlice";
 import PropTypes from "prop-types";
+import { loadPendingsBeneficiariesTotals } from "../../../store/syncSlice";
 
 const BeneficiaryForm: React.FC = ({
   route,
@@ -878,6 +879,9 @@ const BeneficiaryForm: React.FC = ({
 
       setErrors(false);
     }
+
+    const benNotSynced = await pendingSyncBeneficiaries();
+    dispatch(loadPendingsBeneficiariesTotals({pendingSyncBeneficiaries:benNotSynced}))
   };
 
   const onChangeName = useCallback((name) => {
