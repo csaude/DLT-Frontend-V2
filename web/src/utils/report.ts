@@ -16,16 +16,6 @@ export async function serviceAgesBandsQuery() {
   return res;
 }
 
-export async function countNewlyEnrolledAgywAndServices(
-  districts?: any,
-  startDate?: any,
-  endDate?: any
-) {
-  const url = `/api/agyw-prev/countNewlyEnrolledAgywAndServices?districts=${districts}&startDate=${startDate}&endDate=${endDate}`;
-  const res = await select(url);
-  return res;
-}
-
 export async function getNewlyEnrolledAgywAndServicesReportGenerated(
   province?: string,
   districts?: any,
@@ -56,16 +46,6 @@ export async function geNewlyEnrolledAgywAndServicesSummaryReportGenerated(
   username?: any
 ) {
   const url = `/api/agyw-prev/getNewlyEnrolledAgywAndServicesSummary?province=${province}&districts=${districts}&startDate=${startDate}&endDate=${endDate}&pageIndex=${pageIndex}&pageSize=${pageSize}&username=${username}`;
-  const res = await select(url);
-  return res;
-}
-
-export async function countBeneficiariesVulnerabilitiesAndServices(
-  districts?: any,
-  startDate?: any,
-  endDate?: any
-) {
-  const url = `/api/agyw-prev/countBeneficiariesVulnerabilitiesAndServices?districts=${districts}&startDate=${startDate}&endDate=${endDate}`;
   const res = await select(url);
   return res;
 }
