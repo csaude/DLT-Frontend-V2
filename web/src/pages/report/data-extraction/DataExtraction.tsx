@@ -215,6 +215,7 @@ const DataExtraction = () => {
       setCurrentPage(currentPage + 1);
       setDataLoading(false);
     } catch (error) {
+      setCurrentPage(0);
       setDataLoading(false);
       console.error("Error downloading the Excel report", error);
     }
@@ -239,6 +240,7 @@ const DataExtraction = () => {
       setCurrentPage(currentPage + 1);
       setDataLoading(false);
     } catch (error) {
+      setCurrentPage(0);
       setDataLoading(false);
       console.error("Error downloading the Excel report", error);
     }
@@ -278,12 +280,12 @@ const DataExtraction = () => {
           username
         );
       if (response.fileSize > 0) {
-        await downloadFile(response.fileName);
+        await downloadFile(response);
         setCurrentPage(currentPage + 1);
-        // setNextIndex(response.nextIndex);
       }
       setDataLoading(false);
     } catch (error) {
+      setCurrentPage(0);
       setDataLoading(false);
       console.error("Error downloading the Excel report", error);
     }
@@ -306,10 +308,10 @@ const DataExtraction = () => {
         if (response.fileSize > 0) {
           await downloadFile(response.fileName);
           setCurrentPage(currentPage + 1);
-          // setNextIndex(response.nextIndex);
         }
         setDataLoading(false);
       } catch (error) {
+        setCurrentPage(0);
         setDataLoading(false);
         console.error("Error downloading the Excel report", error);
       }
