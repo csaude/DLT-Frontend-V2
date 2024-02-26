@@ -23,6 +23,7 @@ import {
   getSequencesBy_status,
 } from "../../services/sequenceService";
 import { getUserDetail, getUsersById } from "../../services/userService";
+
 const SyncReportScreen: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const now = new Date();
@@ -90,6 +91,7 @@ const SyncReportScreen: React.FC = () => {
         users: {
           created: [],
           updated: updatedUsers,
+          updated: [],
           deleted: [],
         },
       },

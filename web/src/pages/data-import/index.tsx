@@ -8,12 +8,22 @@ const DataImport: React.FC = () => {
   const [data, setData] = useState<any>();
   const [completed, setCompleted] = useState(true);
 
+const DataImport: React.FC = () => {
+  const [data, setData] = useState<any>();
+  const [completed, setCompleted] = useState<any>({
+    beneficiaries: false,
+    beneficiariesInterventions: false,
+    references: false,
+    referenceServices: false,
+  });
+  const username = localStorage.getItem("username");
+
   const handleChange = (e) => {
     const fileReader = new FileReader();
     fileReader.readAsText(e.target.files[0], "UTF-8");
 
     fileReader.onload = (e: any) => {
-      // console.log("----file result---", e?.target?.result);
+      console.log("----file result---", e?.target?.result);
       setData(JSON.parse(e?.target?.result));
     };
   };
@@ -22,6 +32,7 @@ const DataImport: React.FC = () => {
     setCompleted(false);
     await addFromDevice(data, data?.changes.users.updated[0].username);
     setCompleted(true);
+    await addFromDevice(data, username);
   };
 
   const handleSaveData = (e) => {
@@ -57,6 +68,7 @@ const DataImport: React.FC = () => {
         </Row>
 
         {<LoadingModal modalVisible={!completed} />}
+
       </Card>
     </>
   );

@@ -103,10 +103,14 @@ const InterventionsView: React.FC = ({ route }: any) => {
     }
   };
 
-  const renderItem = (data: any) => (
-    <TouchableHighlight
-      onPress={() =>
-        navigate({
+  const blockEdit = (data: any) =>
+    partnerType == "2" &&
+    data.item.intervention.entry_point == "1"
+      ? ""
+      : partnerType == "1" &&
+        data.item.intervention.entry_point == "2"
+        ? ""
+        :navigate({
           name: "BeneficiarieServiceForm",
           params: {
             beneficiarie: beneficiary,
@@ -114,8 +118,11 @@ const InterventionsView: React.FC = ({ route }: any) => {
             intervention: data.item.intervention,
             isNewIntervention: false,
           },
-        })
-      }
+        });
+
+  const renderItem = (data: any) => (
+    <TouchableHighlight
+      onPress={() => blockEdit(data)}
       style={styles.rowFront}
       underlayColor={"#AAA"}
     >
@@ -163,17 +170,7 @@ const InterventionsView: React.FC = ({ route }: any) => {
         ml="auto"
         bg="lightBlue.700"
         justifyContent="center"
-        onPress={() =>
-          navigate({
-            name: "BeneficiarieServiceForm",
-            params: {
-              beneficiarie: beneficiary,
-              intervs: interventions,
-              intervention: data.item.intervention,
-              isNewIntervention: false,
-            },
-          })
-        }
+        onPress={() => blockEdit(data)}
         _pressed={{ opacity: 0.5 }}
       >
         <Icon as={MaterialIcons} name="mode-edit" size={6} color="gray.200" />

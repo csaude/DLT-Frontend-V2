@@ -35,6 +35,7 @@ import DataExportScreen from "../screens/SyncReport/DataExportScreen";
 import { loadPendingsBeneficiariesInterventionsTotals, loadPendingsBeneficiariesTotals, loadPendingsReferencesTotals } from "../store/syncSlice";
 import { pendingSyncBeneficiariesInterventions } from "../services/beneficiaryInterventionService";
 
+
 function HomeScreen() {
   useEffect(() => {
     resolveBeneficiaryOfflineIds();

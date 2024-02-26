@@ -276,7 +276,7 @@ const ReferencesMain: React.FC = ({
           getUser(data.item?._raw.referred_by)?.partner_id ? (
             <Ionicons name="exit" size={40} color="#0d9488" />
           ) : (
-            <Ionicons name="enter" size={40} color="#0d9488" />
+            <Ionicons name="enter" size={40} color="#e63939" />
           )}
           <VStack width="200px">
             <HStack>

@@ -5,6 +5,7 @@ import styles from "./styles";
 import { pendingSyncBeneficiaries } from "../../services/beneficiaryService";
 import { pendingSyncBeneficiariesInterventions } from "../../services/beneficiaryInterventionService";
 import { pendingSyncReferences } from "../../services/referenceService";
+
 import { useDispatch, useSelector } from "react-redux";
 import {
   loadPendingsBeneficiariesInterventionsTotals,
@@ -23,6 +24,16 @@ const SyncReportScreen: React.FC = () => {
     (state: any) => state.sync.pendingSyncReferences
   );
   const dispatch = useDispatch();
+
+
+const SyncReportScreen: React.FC = () => {
+  const [beneficiariesNotSynced, setBeneficiariesNotSynced] = useState<any>();
+  const [referencesNotSynced, setReferencesNotSynced] = useState<any>();
+  const [
+    beneficiariesInterventionsNotSynced,
+    setBeneficiariesInterventionsNotSynced,
+  ] = useState<any>();
+
 
   const fetchCounts = async () => {
     const benefNotSynced = await pendingSyncBeneficiaries();
