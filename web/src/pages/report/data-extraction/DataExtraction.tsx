@@ -279,10 +279,9 @@ const DataExtraction = () => {
           pageSize,
           username
         );
-      if (response.fileSize > 0) {
-        await downloadFile(response);
-        setCurrentPage(currentPage + 1);
-      }
+
+      await downloadFile(response);
+      setCurrentPage(currentPage + 1);
       setDataLoading(false);
     } catch (error) {
       setCurrentPage(0);
@@ -305,10 +304,8 @@ const DataExtraction = () => {
             pageSize,
             username
           );
-        if (response.fileSize > 0) {
-          await downloadFile(response.fileName);
-          setCurrentPage(currentPage + 1);
-        }
+        await downloadFile(response);
+        setCurrentPage(currentPage + 1);
         setDataLoading(false);
       } catch (error) {
         setCurrentPage(0);
