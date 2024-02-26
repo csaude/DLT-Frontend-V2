@@ -288,7 +288,7 @@ const Login: React.FC = ({ route }: any) => {
     if (
       checkSynced == 0 ||
       resetPassword === "1" ||
-      logguedUser._raw.is_awaiting_sync == 1
+      logguedUser?._raw.is_awaiting_sync == 1
     ) {
       // checkSynced=0 when db have not synced yet
 
@@ -372,18 +372,18 @@ const Login: React.FC = ({ route }: any) => {
         if (!authenticated) {
           setIsInvalidCredentials(true);
         } else if (
-          logguedUser._raw.online_id !== userDetailsQ[0]._raw?.["user_id"]
+          logguedUser?._raw.online_id !== userDetailsQ[0]?._raw?.["user_id"]
         ) {
           setLoggedUserDifferentFromSyncedUser(true);
         } else {
           setIsInvalidCredentials(false);
-          setLoggedUser(logguedUser._raw);
-          dispatch(loadUser(logguedUser._raw));
-          isVeryOldPassword(logguedUser._raw);
+          setLoggedUser(logguedUser?._raw);
+          dispatch(loadUser(logguedUser?._raw));
+          isVeryOldPassword(logguedUser?._raw);
           navigate({
             name: "Main",
             params: {
-              loggedUser: logguedUser._raw,
+              loggedUser: logguedUser?._raw,
               loading: loggedUser === undefined,
             },
           });

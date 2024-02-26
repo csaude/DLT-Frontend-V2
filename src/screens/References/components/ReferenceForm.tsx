@@ -43,11 +43,13 @@ import { calculateAge } from "../../../models/Utils";
 import { COMMUNITY, SCHOOL, US } from "../../../utils/constants";
 import Spinner from "react-native-loading-spinner-overlay/lib";
 import { useDispatch } from "react-redux";
-import { beneficiariesFetchCount } from "../../../services/beneficiaryService";
+import { beneficiariesFetchCount, pendingSyncBeneficiaries } from "../../../services/beneficiaryService";
 import { getBeneficiariesTotal } from "../../../store/beneficiarySlice";
-import { referencesFetchCount } from "../../../services/referenceService";
+import { pendingSyncReferences, referencesFetchCount } from "../../../services/referenceService";
 import { getReferencesTotal } from "../../../store/referenceSlice";
 import NetInfo from "@react-native-community/netinfo";
+import { loadPendingsBeneficiariesInterventionsTotals, loadPendingsBeneficiariesTotals, loadPendingsReferencesTotals } from "../../../store/syncSlice";
+import { pendingSyncBeneficiariesInterventions } from "../../../services/beneficiaryInterventionService";
 
 const ReferenceForm: React.FC = ({ route }: any) => {
   const { beneficiary, intervs, userId, refs } = route.params;
@@ -428,14 +430,41 @@ const ReferenceForm: React.FC = ({ route }: any) => {
     });
 
     setLoading(false);
+
+    const benIntervNotSynced = await pendingSyncReferences();
+    dispatch(loadPendingsReferencesTotals({pendingSyncReferences:benIntervNotSynced}))
   };
 
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+  const fetchCounts = async () => {
+    const benefNotSynced = await pendingSyncBeneficiaries();
+    dispatch(
+      loadPendingsBeneficiariesTotals({
+        pendingSyncBeneficiaries: benefNotSynced,
+      })
+    );
+
+    const benefIntervNotSynced =
+      await pendingSyncBeneficiariesInterventions();
+    dispatch(
+      loadPendingsBeneficiariesInterventionsTotals({
+        pendingSyncBeneficiariesInterventions: benefIntervNotSynced,
+      })
+    );
+
+    const refNotSynced = await pendingSyncReferences();
+    dispatch(
+      loadPendingsReferencesTotals({ pendingSyncReferences: refNotSynced })
+    );
+  };
+  
   const syncronize = () => {
     if (!isOffline) {
       sync({ username: loggedUser.username })
-        .then(() => setIsSync(true))
+        .then(() => {setIsSync(true)
+          fetchCounts()
+        })
         .catch(() =>
           toast.show({
             placement: "top",
