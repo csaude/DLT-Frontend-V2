@@ -91,7 +91,6 @@ const SyncReportScreen: React.FC = () => {
         users: {
           created: [],
           updated: updatedUsers,
-          updated: [],
           deleted: [],
         },
       },
