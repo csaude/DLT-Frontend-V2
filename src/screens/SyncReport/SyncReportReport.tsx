@@ -25,16 +25,6 @@ const SyncReportScreen: React.FC = () => {
   );
   const dispatch = useDispatch();
 
-
-const SyncReportScreen: React.FC = () => {
-  const [beneficiariesNotSynced, setBeneficiariesNotSynced] = useState<any>();
-  const [referencesNotSynced, setReferencesNotSynced] = useState<any>();
-  const [
-    beneficiariesInterventionsNotSynced,
-    setBeneficiariesInterventionsNotSynced,
-  ] = useState<any>();
-
-
   const fetchCounts = async () => {
     const benefNotSynced = await pendingSyncBeneficiaries();
     dispatch(
