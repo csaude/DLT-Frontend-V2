@@ -6,28 +6,48 @@ import { pendingSyncBeneficiaries } from "../../services/beneficiaryService";
 import { pendingSyncBeneficiariesInterventions } from "../../services/beneficiaryInterventionService";
 import { pendingSyncReferences } from "../../services/referenceService";
 
+import { useDispatch, useSelector } from "react-redux";
+import {
+  loadPendingsBeneficiariesInterventionsTotals,
+  loadPendingsBeneficiariesTotals,
+  loadPendingsReferencesTotals,
+} from "../../store/syncSlice";
+
 const SyncReportScreen: React.FC = () => {
-  const [beneficiariesNotSynced, setBeneficiariesNotSynced] = useState<any>();
-  const [referencesNotSynced, setReferencesNotSynced] = useState<any>();
-  const [
-    beneficiariesInterventionsNotSynced,
-    setBeneficiariesInterventionsNotSynced,
-  ] = useState<any>();
+  const beneficiariesNotSynced = useSelector(
+    (state: any) => state.sync.pendingSyncBeneficiaries
+  );
+  const beneficiariesInterventionsNotSynced = useSelector(
+    (state: any) => state.sync.pendingSyncBeneficiariesInterventions
+  );
+  const referencesNotSynced = useSelector(
+    (state: any) => state.sync.pendingSyncReferences
+  );
+  const dispatch = useDispatch();
 
   const fetchCounts = async () => {
-    const benNotSynced = await pendingSyncBeneficiaries();
-    const benIntervNotSynced = await pendingSyncBeneficiariesInterventions();
+    const benefNotSynced = await pendingSyncBeneficiaries();
+    dispatch(
+      loadPendingsBeneficiariesTotals({
+        pendingSyncBeneficiaries: benefNotSynced,
+      })
+    );
+
+    const benefIntervNotSynced = await pendingSyncBeneficiariesInterventions();
+    dispatch(
+      loadPendingsBeneficiariesInterventionsTotals({
+        pendingSyncBeneficiariesInterventions: benefIntervNotSynced,
+      })
+    );
+
     const refNotSynced = await pendingSyncReferences();
-
-    setBeneficiariesNotSynced(benNotSynced);
-    setReferencesNotSynced(refNotSynced);
-    setBeneficiariesInterventionsNotSynced(benIntervNotSynced);
+    dispatch(
+      loadPendingsReferencesTotals({ pendingSyncReferences: refNotSynced })
+    );
   };
-
   useEffect(() => {
     fetchCounts();
-  }, []);
-
+  }, [dispatch]);
   return (
     <KeyboardAvoidingView style={styles.background}>
       <ScrollView>

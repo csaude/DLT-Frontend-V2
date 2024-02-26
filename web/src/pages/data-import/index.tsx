@@ -2,6 +2,11 @@ import React, { useState } from "react";
 import { Card, Button, Form, Input, Row, Col } from "antd";
 import { Title } from "@app/components";
 import { addFromDevice } from "@app/utils/sync";
+import LoadingModal from "@app/components/modal/LoadingModal";
+
+const DataImport: React.FC = () => {
+  const [data, setData] = useState<any>();
+  const [completed, setCompleted] = useState(true);
 
 const DataImport: React.FC = () => {
   const [data, setData] = useState<any>();
@@ -24,6 +29,9 @@ const DataImport: React.FC = () => {
   };
 
   const synchronize = async () => {
+    setCompleted(false);
+    await addFromDevice(data, data?.changes.users.updated[0].username);
+    setCompleted(true);
     await addFromDevice(data, username);
   };
 
@@ -59,7 +67,8 @@ const DataImport: React.FC = () => {
           </Col>
         </Row>
 
-        {/* {<LoadingModal modalVisible={completed} />} */}
+        {<LoadingModal modalVisible={!completed} />}
+
       </Card>
     </>
   );
