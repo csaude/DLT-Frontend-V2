@@ -42,7 +42,6 @@ const DataExtraction = () => {
   const [form] = Form.useForm();
   const [dataLoading, setDataLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("");
-  const [currentPage, setCurrentPage] = useState<number>(0);
   const [extraOption, setExtraOption] = useState(0);
   const RequiredFieldMessage = "Obrigatório!";
   const pageSize = 1000000;
@@ -139,7 +138,6 @@ const DataExtraction = () => {
     setLoadingMessage("Processando os parâmetros da Extração...");
     if (option != extraOption) {
       setDataLoading(true);
-      setCurrentPage(0);
       setExtraOption(option);
       if (option !== undefined) {
         setDataLoading(false);
@@ -156,18 +154,6 @@ const DataExtraction = () => {
     }
   }, [selectedDistricts, initialDate, finalDate, extraOption]);
 
-  useEffect(() => {
-    if (currentPage != 0) {
-      if (extraOption == 1) {
-        generateExcelNewlyEnrolledAgywAndServicesReport(currentPage); // Iterar
-      } else if (extraOption == 3) {
-        generateExcelBeneficiariesVulnerabilitiesAndServicesReport(currentPage); // Iterar
-      } else if (extraOption == 2) {
-        generateExcelNewlyEnrolledAgywAndServicesSummaryReport(currentPage);
-      }
-    }
-  }, [currentPage]);
-
   const handleGenerateXLSXReport = (i) => {
     setLoadingMessage("Extraindo... Por favor aguarde");
     if (
@@ -181,11 +167,11 @@ const DataExtraction = () => {
       );
     } else {
       if (extraOption == 1) {
-        generateExcelNewlyEnrolledAgywAndServicesReport(i);
+        generateExcelNewlyEnrolledAgywAndServicesReport();
       } else if (extraOption == 2) {
-        generateExcelNewlyEnrolledAgywAndServicesSummaryReport(i);
+        generateExcelNewlyEnrolledAgywAndServicesSummaryReport();
       } else if (extraOption == 3) {
-        generateExcelBeneficiariesVulnerabilitiesAndServicesReport(i);
+        generateExcelBeneficiariesVulnerabilitiesAndServicesReport();
       } else if (extraOption == 4) {
         generateExcelBeneficiariesVulnerabilitiesAndServicesSummaryReport();
       } else {
@@ -195,7 +181,7 @@ const DataExtraction = () => {
     }
   };
 
-  const generateExcelNewlyEnrolledAgywAndServicesReport = async (pageIndex) => {
+  const generateExcelNewlyEnrolledAgywAndServicesReport = async () => {
     setDataLoading(true);
     try {
       const response = await getNewlyEnrolledAgywAndServicesReportGenerated(
@@ -203,44 +189,37 @@ const DataExtraction = () => {
         districtsIds,
         initialDate,
         finalDate,
-        pageIndex,
         pageSize,
         username
       );
       await downloadFile(response);
-      setCurrentPage(currentPage + 1);
       setDataLoading(false);
     } catch (error) {
-      setCurrentPage(0);
       setDataLoading(false);
       console.error("Error downloading the Excel report", error);
     }
   };
 
-  const generateExcelBeneficiariesVulnerabilitiesAndServicesReport = async (
-    pageIndex
-  ) => {
-    setDataLoading(true);
-    try {
-      const response =
-        await getBeneficiariesVulnerabilitiesAndServicesReportGenerated(
-          selectedProvinces[0].name,
-          districtsIds,
-          initialDate,
-          finalDate,
-          pageIndex,
-          pageSize,
-          username
-        );
-      await downloadFile(response);
-      setCurrentPage(currentPage + 1);
-      setDataLoading(false);
-    } catch (error) {
-      setCurrentPage(0);
-      setDataLoading(false);
-      console.error("Error downloading the Excel report", error);
-    }
-  };
+  const generateExcelBeneficiariesVulnerabilitiesAndServicesReport =
+    async () => {
+      setDataLoading(true);
+      try {
+        const response =
+          await getBeneficiariesVulnerabilitiesAndServicesReportGenerated(
+            selectedProvinces[0].name,
+            districtsIds,
+            initialDate,
+            finalDate,
+            pageSize,
+            username
+          );
+        await downloadFile(response);
+        setDataLoading(false);
+      } catch (error) {
+        setDataLoading(false);
+        console.error("Error downloading the Excel report", error);
+      }
+    };
 
   const downloadFile = async (filePath) => {
     try {
@@ -260,9 +239,7 @@ const DataExtraction = () => {
     }
   };
 
-  const generateExcelNewlyEnrolledAgywAndServicesSummaryReport = async (
-    pageIndex
-  ) => {
+  const generateExcelNewlyEnrolledAgywAndServicesSummaryReport = async () => {
     setDataLoading(true);
     try {
       const response =
@@ -271,16 +248,13 @@ const DataExtraction = () => {
           districtsIds,
           initialDate,
           finalDate,
-          pageIndex,
           pageSize,
           username
         );
 
       await downloadFile(response);
-      setCurrentPage(currentPage + 1);
       setDataLoading(false);
     } catch (error) {
-      setCurrentPage(0);
       setDataLoading(false);
       console.error("Error downloading the Excel report", error);
     }
@@ -299,10 +273,8 @@ const DataExtraction = () => {
             username
           );
         await downloadFile(response);
-        setCurrentPage(currentPage + 1);
         setDataLoading(false);
       } catch (error) {
-        setCurrentPage(0);
         setDataLoading(false);
         console.error("Error downloading the Excel report", error);
       }
