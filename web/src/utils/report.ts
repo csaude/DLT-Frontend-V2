@@ -69,11 +69,9 @@ export async function getBeneficiariesVulnerabilitiesAndServicesSummaryReportGen
   districts?: any,
   startDate?: any,
   endDate?: any,
-  pageIndex?: any,
-  pageSize?: any,
   username?: any
 ) {
-  const url = `/api/agyw-prev/getBeneficiariesVulnerabilitiesAndServicesSummary?province=${province}&districts=${districts}&startDate=${startDate}&endDate=${endDate}&pageIndex=${pageIndex}&pageSize=${pageSize}&username=${username}`;
+  const url = `/api/agyw-prev/getBeneficiariesVulnerabilitiesAndServicesSummary?province=${province}&districts=${districts}&startDate=${startDate}&endDate=${endDate}&username=${username}`;
   const res = await select(url);
   return res;
 }

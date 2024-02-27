@@ -164,10 +164,6 @@ const DataExtraction = () => {
         generateExcelBeneficiariesVulnerabilitiesAndServicesReport(currentPage); // Iterar
       } else if (extraOption == 2) {
         generateExcelNewlyEnrolledAgywAndServicesSummaryReport(currentPage);
-      } else if (extraOption == 4) {
-        generateExcelBeneficiariesVulnerabilitiesAndServicesSummaryReport(
-          currentPage
-        );
       }
     }
   }, [currentPage]);
@@ -191,7 +187,7 @@ const DataExtraction = () => {
       } else if (extraOption == 3) {
         generateExcelBeneficiariesVulnerabilitiesAndServicesReport(i);
       } else if (extraOption == 4) {
-        generateExcelBeneficiariesVulnerabilitiesAndServicesSummaryReport(i);
+        generateExcelBeneficiariesVulnerabilitiesAndServicesSummaryReport();
       } else {
         setDataLoading(false);
         toast.error("Para extrair por favor selecione o tipo de extração");
@@ -291,7 +287,7 @@ const DataExtraction = () => {
   };
 
   const generateExcelBeneficiariesVulnerabilitiesAndServicesSummaryReport =
-    async (pageIndex) => {
+    async () => {
       setDataLoading(true);
       try {
         const response =
@@ -300,8 +296,6 @@ const DataExtraction = () => {
             districtsIds,
             initialDate,
             finalDate,
-            pageIndex,
-            pageSize,
             username
           );
         await downloadFile(response);
