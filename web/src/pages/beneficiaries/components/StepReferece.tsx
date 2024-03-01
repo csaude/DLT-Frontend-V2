@@ -22,6 +22,7 @@ const StepReference = ({
   const [partners, setPartners] = React.useState<any>();
   const [users, setUsers] = React.useState<any>([]);
   const [us, setUs] = React.useState<any>();
+  const [loggedUser, setLoggedUser] = useState<any>(undefined);
   const [entryPoint, setEntryPoint] = useState<any>([]);
   const [entryPoints, setEntryPoints] = useState<any>([]);
   const [serviceTypes, setServiceTypes] = useState<any>([]);
@@ -44,6 +45,8 @@ const StepReference = ({
   useEffect(() => {
     const fetchData = async () => {
       const loggedUser = await queryByUserId(localStorage.user);
+
+      setLoggedUser(loggedUser);
 
       setStatus([
         { value: "0", label: "Activo" },
@@ -154,7 +157,7 @@ const StepReference = ({
       localitiesIds:
         reference !== undefined
           ? reference.notifyTo?.localities.map((i) => i.id)
-          : beneficiary?.locality?.id,
+          : loggedUser?.localities?.map((i) => i.id),
     };
     const data = await allUsByType(payload);
     setUs(data);
