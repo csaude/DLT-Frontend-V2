@@ -148,19 +148,6 @@ export const MENU: IMenuItem[] = [
         icon: "fas fa-sync",
         level: [0],
       },
-      {
-        name: "menusidebar.label.beneficiaryDashboard",
-        path: "/beneficiaryDashboard",
-        icon: "fas fa-users", // icon set: https://fontawesome.com/v5/search
-        roles: [
-          "ADMIN",
-          "M&E",
-          "SUPERVISOR",
-          "MENTORA",
-          "ENFERMEIRA",
-          "CONSELHEIRA",
-        ],
-      },
     ],
   },
   {
