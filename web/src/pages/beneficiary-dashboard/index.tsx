@@ -92,9 +92,6 @@ const BeneficiaryDashboard: React.FC = () => {
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [filters, setFilters] = useState<any>(null);
   const pageSize = 100;
-  const beneficiaryDashboardSelector = useSelector(
-    (state: any) => state.beneficiaryDashboard
-  );
 
   const interventionSelector = useSelector(
     (state: any) => state?.intervention.loadedInterventions

@@ -48,7 +48,11 @@ import { getEntryPoint, UserModel } from "@app/models/User";
 import { calculateAge, getUserParams } from "@app/models/Utils";
 import FormBeneficiary from "./components/FormBeneficiary";
 import FormBeneficiaryPartner from "./components/FormBeneficiaryPartner";
-import { add as addRef, Reference } from "../../utils/reference";
+import {
+  add as addRef,
+  getReferencesCountByBeneficiaryQuery,
+  Reference,
+} from "../../utils/reference";
 import FormReference from "./components/FormReference";
 import { Title } from "@app/components";
 import { ADMIN, MNE, SUPERVISOR } from "@app/utils/contants";
@@ -59,7 +63,12 @@ import { allDistrict, allDistrictsByIds } from "@app/utils/district";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import { toast } from "react-toastify";
-import { getAgeByDate } from "@app/utils/ageRange";
+import { getAgeBandByDate, getAgeByDate } from "@app/utils/ageRange";
+import { loadGeneralIndicators } from "@app/store/reducers/beneficiaryDashboard";
+import {
+  getInterventionCountByBeneficiaryAndServiceTypeQuery,
+  getInterventionCountByBeneficiaryIdAndAgeBandAndLevelQuery,
+} from "@app/utils/beneficiaryIntervention";
 
 const { Text } = Typography;
 const { confirm } = Modal;
@@ -138,7 +147,7 @@ const BeneficiariesList: React.FC = () => {
     const element = interventionSelector?.find(
       (item) => item.beneficiaryId === beneficiaryId
     );
-    return element?.total;
+    return element;
   };
 
   const getUsernames = (userId) => {
@@ -393,9 +402,64 @@ const BeneficiariesList: React.FC = () => {
     });
   };
 
+  const getInterventionsCount = async (beneficiary) => {
+    const ageBand: any = getAgeBandByDate(beneficiary.dateOfBirth);
+
+    const interventionsCount =
+      await getInterventionCountByBeneficiaryAndServiceTypeQuery(
+        beneficiary.id
+      );
+    const getPrimaryInterventionsCOunt =
+      await getInterventionCountByBeneficiaryIdAndAgeBandAndLevelQuery(
+        beneficiary.id,
+        ageBand,
+        1
+      );
+    const getSecondaryInterventionsCOunt =
+      await getInterventionCountByBeneficiaryIdAndAgeBandAndLevelQuery(
+        beneficiary.id,
+        ageBand,
+        2
+      );
+    const getContextualInterventionsCOunt =
+      await getInterventionCountByBeneficiaryIdAndAgeBandAndLevelQuery(
+        beneficiary.id,
+        ageBand,
+        3
+      );
+
+    const getReferencesCOunt = await getReferencesCountByBeneficiaryQuery(
+      beneficiary.id
+    );
+
+    dispatch(
+      loadGeneralIndicators({
+        totalOfClinicalInterventions:
+          interventionsCount.length > 0 ? interventionsCount[0][2] : 0,
+        totalOfCommunityInterventions:
+          interventionsCount.length > 0 ? interventionsCount[0][3] : 0,
+        totalOfPrimaryInterventions:
+          getPrimaryInterventionsCOunt.length > 0
+            ? getPrimaryInterventionsCOunt[0][1]
+            : 0,
+        totalOfSecondaryInterventions:
+          getSecondaryInterventionsCOunt.length > 0
+            ? getSecondaryInterventionsCOunt[0][1]
+            : 0,
+        totalOfContextualInterventions:
+          getContextualInterventionsCOunt.length > 0
+            ? getContextualInterventionsCOunt[0][1]
+            : 0,
+        totalReferences:
+          getReferencesCOunt.length > 0 ? getReferencesCOunt[0][1] : 0,
+      })
+    );
+  };
+
   const handleViewModalVisible = (flag?: boolean, record?: any) => {
     setBeneficiary(record);
     setModalVisible(!!flag);
+    getInterventionsCount(record);
   };
 
   const handleModalRefVisible = (flag?: boolean, record?: any) => {
@@ -659,7 +723,31 @@ const BeneficiariesList: React.FC = () => {
       dataIndex: "beneficiariesInterventionses",
       key: "beneficiariesInterventionses",
       render(val: any, record) {
-        return <Badge count={getBeneficiaryIntervention(record.id)} />;
+        return <Badge count={getBeneficiaryIntervention(record.id)?.total} />;
+      },
+      width: 60,
+    },
+    {
+      title: "Total de Sub-Serviços Clínicos",
+      dataIndex: "clinicalInterventions",
+      key: "clinicalInterventions",
+      render(val: any, record) {
+        return (
+          <Badge count={getBeneficiaryIntervention(record.id)?.clinicalTotal} />
+        );
+      },
+      width: 60,
+    },
+    {
+      title: "Total de Sub-Serviços Comunitários",
+      dataIndex: "communityInterventions",
+      key: "communityInterventions",
+      render(val: any, record) {
+        return (
+          <Badge
+            count={getBeneficiaryIntervention(record.id)?.communityTotal}
+          />
+        );
       },
       width: 60,
     },
