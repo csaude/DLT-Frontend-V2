@@ -8,9 +8,15 @@ export async function generateXlsReport(
   districtsIds: any[],
   startDate: moment.MomentInput,
   endDate: moment.MomentInput,
-  districts: any[]
+  districts: any[],
+  reportType: any
 ) {
-  const responseData = await agywPrevQuery(districtsIds, startDate, endDate);
+  const responseData = await agywPrevQuery(
+    districtsIds,
+    startDate,
+    endDate,
+    reportType
+  );
 
   const ages_10_14 = "9-14";
   const ages_15_19 = "15-19";
