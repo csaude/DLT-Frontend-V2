@@ -823,6 +823,30 @@ const BeneficiariesList: React.FC = () => {
           ),
     },
     {
+      title: "Status",
+      dataIndex: "",
+      key: "status",
+      filters: [
+        {
+          text: "activo",
+          value: 1,
+        },
+        {
+          text: "inactivo",
+          value: 0,
+        },
+      ],
+      onFilter: (value, record) => record.status == value,
+      filterSearch: true,
+      render: (text, record) =>
+        record.status == 1 ? (
+          <Text type="success">{"activo"}</Text>
+        ) : (
+          <Text type="danger">{"inactivo"}</Text>
+        ),
+      width: 120,
+    },
+    {
       title: "Acção",
       dataIndex: "",
       key: "x",
