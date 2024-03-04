@@ -59,7 +59,6 @@ const DataImport: React.FC = () => {
         </Row>
 
         {<LoadingModal modalVisible={!completed} />}
-
       </Card>
     </>
   );
