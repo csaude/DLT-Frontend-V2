@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Row, Col, Input, Form, DatePicker, Select, Radio } from "antd";
 import "./index.css";
 import { allPartnersByTypeDistrict } from "@app/utils/partners";
-import { allUsersByUs, queryByUserId } from "@app/utils/users";
+import { allUsersByUsAndOrganization, queryByUserId } from "@app/utils/users";
 import { allUsByType } from "@app/utils/uSanitaria";
 import { queryByCreated } from "@app/utils/reference";
 import { COUNSELOR, MENTOR, NURSE, SUPERVISOR } from "@app/utils/contants";
 import { useSelector } from "react-redux";
 import moment from "moment";
 import { getEntryPoint } from "@app/models/User";
+import { queryLocalitiesByDistricts } from "@app/utils/locality";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -22,9 +23,9 @@ const StepReference = ({
   const [partners, setPartners] = React.useState<any>();
   const [users, setUsers] = React.useState<any>([]);
   const [us, setUs] = React.useState<any>();
-  const [loggedUser, setLoggedUser] = useState<any>(undefined);
   const [entryPoint, setEntryPoint] = useState<any>([]);
   const [entryPoints, setEntryPoints] = useState<any>([]);
+  const [localities, setLocalities] = useState<any>([]);
   const [serviceTypes, setServiceTypes] = useState<any>([]);
   const [serviceTypeEnabled, setServiceTypeEnabled] = useState(false);
   const [status, setStatus] = useState<any>([]);
@@ -45,8 +46,16 @@ const StepReference = ({
   useEffect(() => {
     const fetchData = async () => {
       const loggedUser = await queryByUserId(localStorage.user);
+      const payload = {
+        districts: [beneficiary?.locality?.district?.id],
+      };
 
-      setLoggedUser(loggedUser);
+      const localities =
+        loggedUser?.localities.length > 0
+          ? loggedUser?.localities
+          : await queryLocalitiesByDistricts(payload);
+
+      setLocalities(localities);
 
       setStatus([
         { value: "0", label: "Activo" },
@@ -151,13 +160,14 @@ const StepReference = ({
   };
 
   const onChangeEntryPoint = async (e: any) => {
+    console.log(localities);
     const type = e?.target?.value === undefined ? e : e?.target?.value;
     const payload = {
       typeId: type,
       localitiesIds:
         reference !== undefined
           ? reference.notifyTo?.localities.map((i) => i.id)
-          : loggedUser?.localities?.map((i) => i.id),
+          : localities.map((i) => i.id),
     };
     const data = await allUsByType(payload);
     setUs(data);
@@ -196,7 +206,12 @@ const StepReference = ({
   };
 
   const onChangeUs = async (value: any) => {
-    const data = await allUsersByUs(value);
+    const organization = form.getFieldValue("partner_id");
+    const payload = {
+      usId: Number(value),
+      organizationId: Number(organization),
+    };
+    const data = await allUsersByUsAndOrganization(payload);
     const sortedUsers = data.sort((u1, u2) =>
       (u1.name + u1.surname).localeCompare(u2.name + u2.surname)
     );

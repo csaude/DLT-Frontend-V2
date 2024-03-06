@@ -50,6 +50,16 @@ export async function allUsersByUs(payload?: any) {
   return res;
 }
 
+export async function allUsersByUsAndOrganization(payload?: any) {
+  const url =
+    "/api/users/usAndOrganization/" +
+    payload?.usId +
+    "/" +
+    payload?.organizationId;
+  const res = await select(url);
+  return res;
+}
+
 export async function allUsesByLocalities(payload?: any) {
   const url = "/api/users/locality/".concat(payload);
   const res = await select(url);
