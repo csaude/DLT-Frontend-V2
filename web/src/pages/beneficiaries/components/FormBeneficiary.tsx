@@ -308,7 +308,7 @@ const BeneficiaryForm = ({
         }
       >
         <div>
-          <Form form={form} layout="vertical">
+          <Form id="steps-content-control" form={form} layout="vertical">
             <Steps current={current}>
               {steps.map((item) => (
                 <Step key={item.title} title={item.title} />

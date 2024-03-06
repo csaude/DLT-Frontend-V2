@@ -80,7 +80,7 @@ const Login = () => {
   setWindowClass("hold-transition login-page");
 
   return (
-    <div className="login-box">
+    <div id="login-panel" className="login-box">
       <div className="card card-outline card-primary" style={{}}>
         <div style={{ alignItems: "center", width: "50%" }}>
           <img
@@ -101,9 +101,9 @@ const Login = () => {
           <p className="login-box-msg"></p>
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
-              <InputGroup className="mb-3">
+              <InputGroup id="email-group" className="mb-3">
                 <Form.Control
-                  id="email"
+                  id="email-fom"
                   name="email"
                   placeholder="Insira o Utilizador"
                   onChange={handleChange}
@@ -125,9 +125,9 @@ const Login = () => {
               </InputGroup>
             </div>
             <div className="mb-3">
-              <InputGroup className="mb-3">
+              <InputGroup id="password-group" className="mb-3">
                 <Form.Control
-                  id="password"
+                  id="password-control"
                   name="password"
                   type={passwordType}
                   placeholder="Insira a Senha"
@@ -163,6 +163,7 @@ const Login = () => {
             <div className="row">
               <div className="col-12">
                 <Button
+                  id="submit-button"
                   block
                   type="submit"
                   isLoading={isAuthLoading}
