@@ -6,12 +6,7 @@ import LoadingModal from "@app/components/modal/LoadingModal";
 
 const DataImport: React.FC = () => {
   const [data, setData] = useState<any>();
-  const [completed, setCompleted] = useState<any>({
-    beneficiaries: false,
-    beneficiariesInterventions: false,
-    references: false,
-    referenceServices: false,
-  });
+  const [completed, setCompleted] = useState(true);
   const username = localStorage.getItem("username");
 
   const handleChange = (e) => {
