@@ -40,7 +40,7 @@ import { SuccessHandler } from "../../../components/SyncIndicator";
 import { Context } from "../../../routes/DrawerNavigator";
 import MyDatePicker from "../../../components/DatePicker";
 import { calculateAge } from "../../../models/Utils";
-import { COMMUNITY, SCHOOL, US } from "../../../utils/constants";
+import { COMMUNITY, SCHOOL, SUPERVISOR, US } from "../../../utils/constants";
 import Spinner from "react-native-loading-spinner-overlay/lib";
 import { useDispatch } from "react-redux";
 import { beneficiariesFetchCount, pendingSyncBeneficiaries } from "../../../services/beneficiaryService";
@@ -335,7 +335,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
         Q.where("status", 1),
         Q.or(
           Q.where("us_ids", Q.like(`%${value}%`)),
-          Q.where("profile_id", 18),
+          Q.where("profile_id", SUPERVISOR),
         )
       )
       .fetch();
