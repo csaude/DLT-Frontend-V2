@@ -408,10 +408,15 @@ const ReferencesMain: React.FC = ({
       filteredReferences.sort(
         (ref1, ref2) =>
           ref1._raw.status - ref2._raw.status ||
-          moment(ref2._raw.date_created)
-            .format("YYYY-MM-DD HH:mm:ss")
+          moment(ref2._raw.date)
+            .format("YYYY-MM-DD")
             .localeCompare(
-              moment(ref1._raw.date_created).format("YYYY-MM-DD HH:mm:ss")
+              moment(ref1._raw.date).format("YYYY-MM-DD")
+            ) ||
+            moment(ref2._raw.date_created)
+              .format("YYYY-MM-DD HH:mm:ss")
+              .localeCompare(
+                moment(ref1._raw.date_created).format("YYYY-MM-DD HH:mm:ss")
             )
       ),
     [filteredReferences]
