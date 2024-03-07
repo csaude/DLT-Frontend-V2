@@ -331,9 +331,12 @@ const ReferenceForm: React.FC = ({ route }: any) => {
     const getUsersList = await database
       .get("users")
       .query(
-        Q.where("us_ids", Q.like(`%${value}%`)),
         Q.where("partner_id", formik.values.partner_id),
-        Q.where("status", 1)
+        Q.where("status", 1),
+        Q.or(
+          Q.where("us_ids", Q.like(`%${value}%`)),
+          Q.where("profile_id", 18),
+        )
       )
       .fetch();
     const usersSerialized = getUsersList.map((item) => item._raw);
