@@ -65,6 +65,8 @@ const ReferenceForm: React.FC = ({ route }: any) => {
   const [services, setServices] = useState<any>([]);
   const [referServices, setReferServices] = useState<any>([]);
   const [entryPoint, setEntryPoint] = useState<any>(undefined);
+  const [referralCode, setReferralCode] = useState<any>(undefined);
+  const [currentYear, setCurrentYear] = useState<any>(undefined);
   const [entryPoints, setEntryPoints] = useState<any>([]);
   const [entryPointEnabled] = useState(true);
   const [serviceTypes, setServiceTypes] = useState<any>([]);
@@ -87,6 +89,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
       .query(Q.where("online_id", userId))
       .fetch();
     const userSerialized = user.map((item) => item._raw);
+    const userEntryPoint = (userSerialized[0] as any).entry_point;
 
     const partner = await database
       .get("partners")
@@ -96,7 +99,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
 
     const partnerType = (partnerSerialized[0] as any).partner_type;
 
-    if ((userSerialized[0] as any).entry_point === "3") {
+    if (userEntryPoint === "3") {
       setEntryPoints([US, COMMUNITY, SCHOOL]);
     } else if (partnerType === "1") {
       setEntryPoints([COMMUNITY, SCHOOL]);
@@ -106,13 +109,11 @@ const ReferenceForm: React.FC = ({ route }: any) => {
       setEntryPoints([US, COMMUNITY, SCHOOL]);
     }
 
-    setEntryPoint(
-      (userSerialized[0] as any).entry_point == "1"
-        ? "US"
-        : (userSerialized[0] as any).entry_point == "2"
-        ? "CM"
-        : "ES"
-    );
+    const entryPoint = userEntryPoint == "1" ? "US" : userEntryPoint == "2" ? "CM" : "ES"
+
+    setEntryPoint(entryPoint);
+    setReferralCode(entryPoint + "-PP-MM-");
+    formik.setFieldValue('reference_code', entryPoint + "-PP-MM-" + moment(new Date()).format("YY"));
   }, []);
 
   const getRefNote = useCallback(async () => {
@@ -126,6 +127,8 @@ const ReferenceForm: React.FC = ({ route }: any) => {
   useEffect(() => {
     fetchEntryPoints().catch((error) => console.log(error));
     getRefNote().catch((error) => console.log(error));
+
+    setCurrentYear(moment(new Date()).format("YY"))
 
     const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
       const status = !(state.isConnected && state.isInternetReachable);
@@ -192,6 +195,20 @@ const ReferenceForm: React.FC = ({ route }: any) => {
 
     if (!values.reference_code) {
       errors.reference_code = "Obrigatório";
+    } else {
+      const refCode = values.reference_code;
+      const splittedRefCode = refCode.split("-");
+      if (splittedRefCode.length != 4) {
+        errors.reference_code = "Formato incorrecto";
+      } else if (!["US", "CM", "ES"].includes(splittedRefCode[0])) {
+        errors.reference_code = "Ponto de entrada incorrecto";
+      } else if (splittedRefCode[1].localeCompare("01") < 0 || splittedRefCode[1].localeCompare("99") > 0) {
+        errors.reference_code = "Número de página incorrecto";
+      } else if (splittedRefCode[2].localeCompare("01") < 0 || splittedRefCode[2].localeCompare("12") > 0) {
+        errors.reference_code = "Mês incorrecto";
+      } else if (splittedRefCode[3].localeCompare(Number(currentYear) - 1) < 0 || splittedRefCode[3].localeCompare(currentYear) > 0) {
+        errors.reference_code = "Ano incorrecto";
+      }
     }
 
     if (!values.service_type) {
@@ -267,7 +284,8 @@ const ReferenceForm: React.FC = ({ route }: any) => {
   const fetchServices = async (value: any) => {
     const getServicesList = await database
       .get("services")
-      .query(Q.where("service_type", value))
+      .query(Q.where("service_type", value),
+             Q.where("status", 1))
       .fetch();
     let servicesSerialized = getServicesList.map((item) => item._raw);
     const age = calculateAge(beneficiary.date_of_birth);
@@ -627,7 +645,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                   <FormControl.Label>
                     {"Cód. Ref. Livro (PE:" +
                       entryPoint +
-                      "; Pág.; Mês:1-12; Ano:23-99)"}
+                      "; Pág.:01-99; Mês:01-12; Ano:" + (currentYear -1) +"-" + currentYear + ")"}
                   </FormControl.Label>
                   <Input
                     onBlur={formik.handleBlur("reference_code")}
