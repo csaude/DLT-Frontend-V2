@@ -24,6 +24,7 @@ const StepReference = ({
   const [users, setUsers] = React.useState<any>([]);
   const [us, setUs] = React.useState<any>();
   const [entryPoint, setEntryPoint] = useState<any>([]);
+  const [currentYear, setCurrentYear] = useState<any>(undefined);
   const [entryPoints, setEntryPoints] = useState<any>([]);
   const [localities, setLocalities] = useState<any>([]);
   const [serviceTypes, setServiceTypes] = useState<any>([]);
@@ -36,7 +37,6 @@ const StepReference = ({
   const [stepValues, setStepValues] = useState(
     reference ? reference : firstStepValues
   );
-  const selectedReference = beneficiary;
   const userId = localStorage.getItem("user");
   const referers = useSelector((state: any) => state.user.referers);
   const sortedReferes = referers.sort((u1, u2) =>
@@ -49,6 +49,12 @@ const StepReference = ({
       const payload = {
         districts: [beneficiary?.locality?.district?.id],
       };
+
+      const entryPoint = getEntryPoint(loggedUser.entryPoint);
+      const currentYear = moment(new Date()).format("YY");
+
+      setEntryPoint(entryPoint);
+      setCurrentYear(currentYear);
 
       const localities =
         loggedUser?.localities.length > 0
@@ -76,12 +82,19 @@ const StepReference = ({
             ? userId
             : "",
         });
+        const refCode = form.getFieldValue("referenceCode");
+        if (!refCode) {
+          form.setFieldsValue({
+            referenceCode: entryPoint + "-PP-MM-" + currentYear,
+          });
+        }
       } else {
         const regUser = await queryByUserId(reference?.createdBy);
         form.setFieldsValue({
           createdBy: regUser?.name + " " + regUser?.surname,
         });
         form.setFieldsValue({ referenceNote: reference.referenceNote });
+        form.setFieldsValue({ referenceCode: reference.referenceCode });
 
         setStatusEnabled(
           reference.userCreated === userId ||
@@ -116,8 +129,6 @@ const StepReference = ({
           { value: "3", label: "ES" },
         ]);
       }
-
-      setEntryPoint(getEntryPoint(loggedUser.entryPoint));
     };
 
     fetchData().catch((error) => console.log(error));
@@ -263,7 +274,7 @@ const StepReference = ({
             rules={[{ required: true, message: "Obrigatório" }]}
             initialValue={
               reference === undefined
-                ? selectedReference?.nui
+                ? beneficiary?.nui
                 : reference?.beneficiaries?.nui
             }
           >
@@ -323,9 +334,48 @@ const StepReference = ({
             label={
               "Cód. Ref. Livro (PE:" +
               entryPoint +
-              "; Pág.; Mês:1-12, Ano:23-99)"
+              "; Pág.; Mês:01-12, Ano:" +
+              (currentYear - 1) +
+              "-" +
+              currentYear +
+              ")"
             }
-            rules={[{ required: true, message: "Obrigatório" }]}
+            rules={[
+              { required: true, message: "Obrigatório" },
+              {
+                validator(rule, value) {
+                  return new Promise((resolve, reject) => {
+                    const splittedRefCode = value.split("-");
+                    if (splittedRefCode.length != 4) {
+                      reject("Formato incorrecto");
+                    } else if (
+                      !["US", "CM", "ES"].includes(splittedRefCode[0])
+                    ) {
+                      reject("Ponto de entrada incorrecto");
+                    } else if (
+                      splittedRefCode[1].localeCompare("01") < 0 ||
+                      splittedRefCode[1].localeCompare("99") > 0
+                    ) {
+                      reject("Número de página incorrecto");
+                    } else if (
+                      splittedRefCode[2].localeCompare("01") < 0 ||
+                      splittedRefCode[2].localeCompare("12") > 0
+                    ) {
+                      reject("Mês incorrecto");
+                    } else if (
+                      splittedRefCode[3].localeCompare(
+                        Number(currentYear) - 1
+                      ) < 0 ||
+                      splittedRefCode[3].localeCompare(currentYear) > 0
+                    ) {
+                      reject("Ano incorrecto");
+                    } else {
+                      resolve("");
+                    }
+                  });
+                },
+              },
+            ]}
             initialValue={
               reference === undefined ? "" : reference?.referenceCode
             }
