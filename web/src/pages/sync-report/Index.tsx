@@ -345,6 +345,7 @@ const UsersLastSync: React.FC = () => {
           <Col className="gutter-row">
             <Form.Item name="username" label="" initialValue={username}>
               <Input
+                id="username-input"
                 placeholder="Pesquisar por Username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -354,6 +355,7 @@ const UsersLastSync: React.FC = () => {
 
           <Col className="gutter-row">
             <Select
+              id="district-selection"
               showSearch
               allowClear
               onClear={() => onClear("district")}
@@ -373,13 +375,18 @@ const UsersLastSync: React.FC = () => {
           </Col>
 
           <Col className="gutter-row" span={12}>
-            <Button type="primary" onClick={handleGlobalSearch}>
+            <Button
+              id="search-buttpn"
+              type="primary"
+              onClick={handleGlobalSearch}
+            >
               Pesquisar
             </Button>
           </Col>
         </Row>
         <ConfigProvider locale={ptPT}>
           <Table
+            id="usersLastSync-table"
             rowKey="id"
             columns={columns}
             dataSource={usersLastSync}
@@ -388,6 +395,7 @@ const UsersLastSync: React.FC = () => {
           />
           <Space>
             <Button
+              id="loadPreviousPage-button"
               disabled={currentPageIndex === 0}
               onClick={loadPreviousPage}
               size="small"
@@ -395,7 +403,12 @@ const UsersLastSync: React.FC = () => {
             >
               {"<<"} {pageSize}
             </Button>
-            <Button onClick={loadNextPage} size="small" style={{ width: 90 }}>
+            <Button
+              id="loadNextPage-button"
+              onClick={loadNextPage}
+              size="small"
+              style={{ width: 90 }}
+            >
               {pageSize} {">>"}
             </Button>
           </Space>

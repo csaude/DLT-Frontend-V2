@@ -118,9 +118,9 @@ const ForgotPassword = () => {
           </div>
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
-              <InputGroup className="mb-3">
+              <InputGroup id="username-group" className="mb-3">
                 <Form.Control
-                  id="username"
+                  id="username-control"
                   name="username"
                   type=""
                   placeholder="Insira o Utilizador"
@@ -144,9 +144,9 @@ const ForgotPassword = () => {
               </InputGroup>
             </div>
             <div className="mb-3">
-              <InputGroup className="mb-3">
+              <InputGroup id="password-group" className="mb-3">
                 <Form.Control
-                  id="password"
+                  id="password-control"
                   name="password"
                   type={passwordType}
                   placeholder="Insira a nova Password"
@@ -180,9 +180,9 @@ const ForgotPassword = () => {
             </div>
 
             <div className="mb-3">
-              <InputGroup className="mb-3">
+              <InputGroup id="rePassword-group" className="mb-3">
                 <Form.Control
-                  id="rePassword"
+                  id="rePassword-control"
                   name="rePassword"
                   type={passwordType}
                   placeholder="Repita a nova password"
@@ -225,6 +225,7 @@ const ForgotPassword = () => {
             <div className="row">
               <div className="col-12">
                 <Button
+                  id="submit-button"
                   block
                   type="submit"
                   isLoading={isAuthLoading}
