@@ -65,7 +65,6 @@ const ReferenceForm: React.FC = ({ route }: any) => {
   const [services, setServices] = useState<any>([]);
   const [referServices, setReferServices] = useState<any>([]);
   const [entryPoint, setEntryPoint] = useState<any>(undefined);
-  const [referralCode, setReferralCode] = useState<any>(undefined);
   const [currentYear, setCurrentYear] = useState<any>(undefined);
   const [entryPoints, setEntryPoints] = useState<any>([]);
   const [entryPointEnabled] = useState(true);
@@ -112,8 +111,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
     const entryPoint = userEntryPoint == "1" ? "US" : userEntryPoint == "2" ? "CM" : "ES"
 
     setEntryPoint(entryPoint);
-    setReferralCode(entryPoint + "-PP-MM-");
-    formik.setFieldValue('reference_code', entryPoint + "-PP-MM-" + moment(new Date()).format("YY"));
+    formik.setFieldValue('reference_code', entryPoint + "-PP-MM-" + currentYear);
   }, []);
 
   const getRefNote = useCallback(async () => {
