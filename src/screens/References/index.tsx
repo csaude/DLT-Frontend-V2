@@ -413,11 +413,11 @@ const ReferencesMain: React.FC = ({
             .localeCompare(
               moment(ref1._raw.date).format("YYYY-MM-DD")
             ) ||
-            moment(ref2._raw.date_created)
-              .format("YYYY-MM-DD HH:mm:ss")
-              .localeCompare(
-                moment(ref1._raw.date_created).format("YYYY-MM-DD HH:mm:ss")
-            )
+          Number(loggedUserPartner ===
+            getUser(ref1._raw.referred_by)?.partner_id) 
+            - 
+          Number(loggedUserPartner ===
+            getUser(ref2._raw.referred_by)?.partner_id)
       ),
     [filteredReferences]
   );
