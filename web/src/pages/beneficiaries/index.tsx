@@ -728,7 +728,7 @@ const BeneficiariesList: React.FC = () => {
       width: 60,
     },
     {
-      title: "Total de Sub-Serviços Clínicos",
+      title: "#Interv Clínicas",
       dataIndex: "clinicalInterventions",
       key: "clinicalInterventions",
       render(val: any, record) {
@@ -739,7 +739,7 @@ const BeneficiariesList: React.FC = () => {
       width: 60,
     },
     {
-      title: "Total de Sub-Serviços Comunitários",
+      title: "#Interv Comunitárias",
       dataIndex: "communityInterventions",
       key: "communityInterventions",
       render(val: any, record) {
@@ -960,6 +960,8 @@ const BeneficiariesList: React.FC = () => {
         "Distrito",
         "Idade",
         "#Interv",
+        "#Interv Clínicas",
+        "#Interv Comunitárias",
         "Org",
         "Criado Por",
         "Actualizado Por",
@@ -1061,6 +1063,7 @@ const BeneficiariesList: React.FC = () => {
         }
 
         sortedBeneficiaries.forEach((beneficiary) => {
+          const interventions = getBeneficiaryIntervention(beneficiary.id);
           const values = [
             sequence,
             beneficiary.district.code + "/" + beneficiary?.nui,
@@ -1073,7 +1076,9 @@ const BeneficiariesList: React.FC = () => {
               : "ES",
             beneficiary?.district?.name,
             getAgeByDate(beneficiary.dateOfBirth) + " anos",
-            getBeneficiaryIntervention(beneficiary.id),
+            interventions?.total,
+            interventions?.clinicalTotal,
+            interventions?.communityTotal,
             beneficiary?.partners?.name,
             getUsernames(beneficiary.createdBy),
             getUsernames(beneficiary.updatedBy),
