@@ -339,14 +339,14 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
       <Row gutter={24} hidden={beneficiary === undefined}>
         <Col className="gutter-row" span={8}>
           <Form.Item
-            id="nuit-control"
+            id="nui-control"
             name="nui"
             label="Código da Beneficiária (NUI)"
             style={{ textAlign: "left" }}
             initialValue={beneficiary?.nui}
           >
             <Input
-              id="nuit-input"
+              id="nui-input"
               disabled={true}
               style={{ fontWeight: "bold", color: "#17a2b8" }}
             />
