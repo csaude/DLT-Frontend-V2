@@ -353,10 +353,11 @@ const UsersForm = ({
         </Button>,
       ]}
     >
-      <Form form={form} layout="vertical">
+      <Form id="form" form={form} layout="vertical">
         <Row gutter={8}>
           <Col span={12}>
             <Form.Item
+              id="surname-control"
               name="surname"
               label="Apelido"
               rules={[{ required: true, message: RequiredFieldMessage }]}
@@ -367,6 +368,7 @@ const UsersForm = ({
           </Col>
           <Col span={12}>
             <Form.Item
+              id="name-control"
               name="name"
               label="Nome"
               rules={[{ required: true, message: RequiredFieldMessage }]}
@@ -379,6 +381,7 @@ const UsersForm = ({
         <Row gutter={8}>
           <Col span={8}>
             <Form.Item
+              id="email-control"
               name="email"
               label="Email (Próprio ou do Supervisor)"
               initialValue={user?.email}
@@ -395,6 +398,7 @@ const UsersForm = ({
           </Col>
           <Col span={8}>
             <Form.Item
+              id="username-control"
               name="username"
               label="Username"
               rules={[{ required: true, message: RequiredFieldMessage }]}
@@ -405,12 +409,14 @@ const UsersForm = ({
           </Col>
           <Col span={8}>
             <Form.Item
+              id="profiles-control"
               name="profiles"
               label="Perfil"
               rules={[{ required: true, message: RequiredFieldMessage }]}
               initialValue={user?.profiles.id.toString()}
             >
               <Select
+                id="profiles-selection"
                 onChange={onChangeProfile}
                 placeholder="Seleccione o Perfil"
               >
@@ -424,6 +430,7 @@ const UsersForm = ({
         <Row gutter={8}>
           <Col span={12}>
             <Form.Item
+              id="phoneNumber-control"
               name="phoneNumber"
               label="Número de Telemóvel"
               initialValue={
@@ -441,6 +448,7 @@ const UsersForm = ({
               ]}
             >
               <InputNumber
+                id="phoneNumber-input"
                 prefix="+258  "
                 style={{ width: "100%" }}
                 placeholder="Insira o Telemóvel"
@@ -449,6 +457,7 @@ const UsersForm = ({
           </Col>
           <Col span={12}>
             <Form.Item
+              id="phoneNumber2-control"
               name="phoneNumber2"
               label="Número de Telemóvel (Alternativo)"
               rules={[
@@ -466,6 +475,7 @@ const UsersForm = ({
               }
             >
               <InputNumber
+                id="phoneNumber2-input"
                 prefix="+258  "
                 style={{ width: "100%" }}
                 placeholder="Insira o Telemóvel"
@@ -476,6 +486,7 @@ const UsersForm = ({
         <Row gutter={8}>
           <Col span={8}>
             <Form.Item
+              id="provinces-control"
               name="provinces"
               label="Províncias"
               rules={[{ required: isRequired, message: RequiredFieldMessage }]}
@@ -484,6 +495,7 @@ const UsersForm = ({
               })}
             >
               <Select
+                id="provinces-selection"
                 mode={selectMode}
                 placeholder="Seleccione a(s) Província(s)"
                 onChange={onChangeProvinces}
@@ -496,6 +508,7 @@ const UsersForm = ({
           </Col>
           <Col span={8}>
             <Form.Item
+              id="districts-control"
               name="districts"
               label="Distritos"
               rules={[{ required: isRequired, message: RequiredFieldMessage }]}
@@ -504,6 +517,7 @@ const UsersForm = ({
               })}
             >
               <Select
+                id="districts-selection"
                 mode={selectMode}
                 placeholder="Seleccione  o(s) Distrito(s)"
                 disabled={districts == undefined}
@@ -517,6 +531,7 @@ const UsersForm = ({
           </Col>
           <Col span={8}>
             <Form.Item
+              id="localities-control"
               name="localities"
               label="Postos Administrativos"
               rules={[{ required: isRequired, message: RequiredFieldMessage }]}
@@ -525,6 +540,7 @@ const UsersForm = ({
               })}
             >
               <Select
+                id="localities-selection"
                 mode={localityMode}
                 placeholder="Seleccione a(s) Localidade(s)"
                 disabled={localities == undefined}
@@ -540,12 +556,14 @@ const UsersForm = ({
         <Row gutter={8}>
           <Col span={8}>
             <Form.Item
+              id="partners-control"
               name="partners"
               label="Organização"
               rules={[{ required: true, message: RequiredFieldMessage }]}
               initialValue={user?.partners?.id?.toString()}
             >
               <Select
+                id="partners-selection"
                 placeholder="Seleccione a Organização"
                 onChange={onChangePartner}
               >
@@ -557,6 +575,7 @@ const UsersForm = ({
           </Col>
           <Col span={8}>
             <Form.Item
+              id="entryPoint-control"
               name="entryPoint"
               label="Ponto de Entrada"
               rules={[
@@ -568,6 +587,7 @@ const UsersForm = ({
               initialValue={user?.entryPoint}
             >
               <Select
+                id="entryPoint-selection"
                 placeholder="Seleccione o Ponto de Entrada"
                 onChange={(value) => {
                   onChangeEntryPoint(value);
@@ -583,6 +603,7 @@ const UsersForm = ({
           </Col>
           <Col span={8}>
             <Form.Item
+              id="locais-control"
               name="us"
               label="Locais"
               initialValue={user?.us?.map((item) => {
@@ -590,6 +611,7 @@ const UsersForm = ({
               })}
             >
               <Select
+                id="locais-selection"
                 mode="multiple"
                 showSearch
                 placeholder="Seleccione o(s) Local(is)"
@@ -606,13 +628,14 @@ const UsersForm = ({
         <Row gutter={8}>
           <Col span={8}>
             <Form.Item
+              id="status-control"
               name="status"
               label="Estado"
               rules={[{ required: true, message: RequiredFieldMessage }]}
               style={{ textAlign: "left" }}
               initialValue="1"
             >
-              <Radio.Group buttonStyle="solid">
+              <Radio.Group id="status-selection" buttonStyle="solid">
                 <Radio.Button value="1">Activo</Radio.Button>
                 <Radio.Button value="0">Inactivo</Radio.Button>
               </Radio.Group>

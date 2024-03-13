@@ -58,11 +58,13 @@ const StepVulnerabilidadesEspecificas = ({
       <Row gutter={24}>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="nui-control"
             name="nui"
             label="Código da Beneficiária (NUI)"
             style={{ textAlign: "left" }}
           >
             <Input
+              id="nui-input"
               disabled={true}
               style={{ fontWeight: "bold", color: "#17a2b8" }}
             />
@@ -72,13 +74,14 @@ const StepVulnerabilidadesEspecificas = ({
       <Row gutter={24}>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="vblt_sexually_active-control"
             name="vblt_sexually_active"
             label="Sexualmente Activa?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
             initialValue={beneficiary?.vbltSexuallyActive}
           >
-            <Radio.Group>
+            <Radio.Group id="vblt_sexually_active-options">
               <Radio.Button value={1}>SIM</Radio.Button>
               <Radio.Button value={0}>NÃO</Radio.Button>
             </Radio.Group>
@@ -86,13 +89,14 @@ const StepVulnerabilidadesEspecificas = ({
         </Col>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="vblt_multiple_partners-control"
             name="vblt_multiple_partners"
             label="Relações Múltiplas e Concorrentes?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
             initialValue={beneficiary?.vbltMultiplePartners}
           >
-            <Radio.Group>
+            <Radio.Group id="vblt_multiple_partners-options">
               <Radio.Button value={1}>SIM</Radio.Button>
               <Radio.Button value={0}>NÃO</Radio.Button>
             </Radio.Group>
@@ -100,13 +104,14 @@ const StepVulnerabilidadesEspecificas = ({
         </Col>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="vblt_is_migrant-control"
             name="vblt_is_migrant"
             label="Migrante?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
             initialValue={beneficiary?.vbltIsMigrant}
           >
-            <Radio.Group>
+            <Radio.Group id="vblt_is_migrant-options">
               <Radio.Button value={1}>SIM</Radio.Button>
               <Radio.Button value={0}>NÃO</Radio.Button>
             </Radio.Group>
@@ -116,13 +121,14 @@ const StepVulnerabilidadesEspecificas = ({
       <Row gutter={24}>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="vblt_trafficking_victim-control"
             name="vblt_trafficking_victim"
             label="Vítima de Tráfico?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
             initialValue={beneficiary?.vbltTraffickingVictim}
           >
-            <Radio.Group>
+            <Radio.Group id="vblt_trafficking_victim-options">
               <Radio.Button value={1}>SIM</Radio.Button>
               <Radio.Button value={0}>NÃO</Radio.Button>
             </Radio.Group>
@@ -130,13 +136,17 @@ const StepVulnerabilidadesEspecificas = ({
         </Col>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="vblt_sexual_exploitation-control"
             name="vblt_sexual_exploitation"
             label="Vítima de Exploração sexual?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
             initialValue={beneficiary?.vbltSexualExploitation}
           >
-            <Radio.Group onChange={sexExploitationChange}>
+            <Radio.Group
+              id="vblt_sexual_exploitation-options"
+              onChange={sexExploitationChange}
+            >
               <Radio.Button value={1}>SIM</Radio.Button>
               <Radio.Button value={0}>NÃO</Radio.Button>
             </Radio.Group>
@@ -144,6 +154,7 @@ const StepVulnerabilidadesEspecificas = ({
         </Col>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="vblt_sexploitation_time-control"
             name="vblt_sexploitation_time"
             label="Tempo"
             rules={[
@@ -156,6 +167,7 @@ const StepVulnerabilidadesEspecificas = ({
             initialValue={beneficiary?.vbltSexploitationTime}
           >
             <Select
+              id="vblt_sexploitation_time-selection"
               size="middle"
               placeholder="Please select"
               disabled={sexExploitationTimeEnabled}
@@ -173,13 +185,17 @@ const StepVulnerabilidadesEspecificas = ({
       <Row gutter={24}>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="vblt_vbg_victim-control"
             name="vblt_vbg_victim"
             label="Vítima de Violéncia Baseada no Gênero?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
             initialValue={beneficiary?.vbltVbgVictim}
           >
-            <Radio.Group onChange={gbvVictimChange}>
+            <Radio.Group
+              id="vblt_vbg_victim-options"
+              onChange={gbvVictimChange}
+            >
               <Radio.Button value={1}>SIM</Radio.Button>
               <Radio.Button value={0}>NÃO</Radio.Button>
             </Radio.Group>
@@ -187,6 +203,7 @@ const StepVulnerabilidadesEspecificas = ({
         </Col>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="vblt_vbg_type-control"
             name="vblt_vbg_type"
             label="Tipo de Violéncia"
             rules={[
@@ -196,6 +213,7 @@ const StepVulnerabilidadesEspecificas = ({
             initialValue={beneficiary?.vbltVbgType}
           >
             <Select
+              id="vblt_vbg_type-selection"
               size="middle"
               placeholder="Please select"
               disabled={gbvTypeEnabled}
@@ -211,6 +229,7 @@ const StepVulnerabilidadesEspecificas = ({
         </Col>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="vblt_vbg_time-control"
             name="vblt_vbg_time"
             label="Tempo"
             rules={[
@@ -220,6 +239,7 @@ const StepVulnerabilidadesEspecificas = ({
             initialValue={beneficiary?.vbltVbgTime}
           >
             <Select
+              id="vblt_vbg_time-selection"
               size="middle"
               placeholder="Please select"
               disabled={gbvTimeEnabled}
@@ -237,13 +257,14 @@ const StepVulnerabilidadesEspecificas = ({
       <Row gutter={24}>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="vblt_alcohol_drugs_use-control"
             name="vblt_alcohol_drugs_use"
             label="Uso de Álcool e Drogas?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
             initialValue={beneficiary?.vbltAlcoholDrugsUse}
           >
-            <Radio.Group>
+            <Radio.Group id="vblt_alcohol_drugs_use-options">
               <Radio.Button value={1}>SIM</Radio.Button>
               <Radio.Button value={0}>NÃO</Radio.Button>
             </Radio.Group>
@@ -251,13 +272,14 @@ const StepVulnerabilidadesEspecificas = ({
         </Col>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="vblt_sti_history-control"
             name="vblt_sti_history"
             label="Histórico de ITS?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
             initialValue={beneficiary?.vbltStiHistory}
           >
-            <Radio.Group>
+            <Radio.Group id="vblt_sti_history-options">
               <Radio.Button value={1}>SIM</Radio.Button>
               <Radio.Button value={0}>NÃO</Radio.Button>
             </Radio.Group>
@@ -265,12 +287,13 @@ const StepVulnerabilidadesEspecificas = ({
         </Col>
         <Col className="gutter-row" span={8} hidden={minAge}>
           <Form.Item
+            id="vblt_sex_worker-control"
             name="vblt_sex_worker"
             label="Trabalhadora do Sexo"
             style={{ textAlign: "left" }}
             initialValue={beneficiary?.vbltSexWorker}
           >
-            <Radio.Group>
+            <Radio.Group id="vblt_sex_worker-options">
               <Radio.Button value={1}>SIM</Radio.Button>
               <Radio.Button value={0}>NÃO</Radio.Button>
             </Radio.Group>
