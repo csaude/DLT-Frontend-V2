@@ -65,7 +65,6 @@ const ReferenceForm: React.FC = ({ route }: any) => {
   const [services, setServices] = useState<any>([]);
   const [referServices, setReferServices] = useState<any>([]);
   const [entryPoint, setEntryPoint] = useState<any>(undefined);
-  const [currentYear, setCurrentYear] = useState<any>(undefined);
   const [entryPoints, setEntryPoints] = useState<any>([]);
   const [entryPointEnabled] = useState(true);
   const [serviceTypes, setServiceTypes] = useState<any>([]);
@@ -81,6 +80,8 @@ const ReferenceForm: React.FC = ({ route }: any) => {
     189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 207, 208, 209,
   ];
   const aflatounIds = [218, 218, 219, 220, 221, 222, 223];
+
+  const currentYear = moment(new Date()).format("YY");
 
   const fetchEntryPoints = useCallback(async () => {
     const user = await database
@@ -124,8 +125,6 @@ const ReferenceForm: React.FC = ({ route }: any) => {
   useEffect(() => {
     fetchEntryPoints().catch((error) => console.log(error));
     getRefNote().catch((error) => console.log(error));
-
-    setCurrentYear(moment(new Date()).format("YY")); 
 
     const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
       const status = !(state.isConnected && state.isInternetReachable);
