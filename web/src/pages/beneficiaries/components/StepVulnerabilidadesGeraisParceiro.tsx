@@ -48,7 +48,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
             name="vblt_lives_with"
             label="Com quem mora?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
-            initialValue={beneficiary?.vbltLivesWith.split(",")}
+            initialValue={beneficiary?.vbltLivesWith?.split(",")}
           >
             <Select
               mode="multiple"

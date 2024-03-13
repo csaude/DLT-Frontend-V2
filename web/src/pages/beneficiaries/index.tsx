@@ -69,6 +69,7 @@ import {
   getInterventionCountByBeneficiaryAndServiceTypeQuery,
   getInterventionCountByBeneficiaryIdAndAgeBandAndLevelQuery,
 } from "@app/utils/beneficiaryIntervention";
+import { loadBeneficiary } from "@app/store/actions/beneficiary";
 
 const { Text } = Typography;
 const { confirm } = Modal;
@@ -111,6 +112,9 @@ const BeneficiariesList: React.FC = () => {
   const userSelector = useSelector((state: any) => state?.user);
   const beneficiariesTotal = useSelector(
     (state: any) => state.beneficiary.total
+  );
+  const validatedBeneficiaryNui = useSelector(
+    (state: any) => state.beneficiary.validatedBeneficiaryNui
   );
 
   const convertedUserData: FilterObject[] = listUsers?.map(
@@ -488,7 +492,6 @@ const BeneficiariesList: React.FC = () => {
 
   const showConfirmVoid = async (data: any) => {
     const beneficiaries = await queryByPartnerId(data.id);
-    console.log("----beneficiaries---", beneficiaries);
     if (beneficiaries.length > 0) {
       confirm({
         title:
@@ -525,7 +528,7 @@ const BeneficiariesList: React.FC = () => {
   const onEditBeneficiary = async (record: any) => {
     form.resetFields();
 
-    if (record.gender === "2") {
+    if (record?.gender === "2") {
       if (record.partnerId != null) {
         await fetchPartner(record).catch((error) => console.log(error));
       }
@@ -534,7 +537,28 @@ const BeneficiariesList: React.FC = () => {
       setBeneficiaryPartnerModalVisible(true);
     }
     setBeneficiary(record);
+    dispatch(loadBeneficiary(record));
   };
+
+  const fechBeneficiaty = async () => {
+    const user = await queryUser(localStorage.user);
+    data = await pagedQueryByFilters(
+      getUserParams(user),
+      currentPageIndex,
+      pageSize,
+      validatedBeneficiaryNui,
+      searchName,
+      searchUserCreator,
+      searchDistrict
+    );
+    if (data.length > 0) {
+      onEditBeneficiary(data[0]);
+    }
+  };
+
+  useEffect(() => {
+    fechBeneficiaty();
+  }, [validatedBeneficiaryNui]);
 
   const getName = (record: any) => {
     return visibleName === false

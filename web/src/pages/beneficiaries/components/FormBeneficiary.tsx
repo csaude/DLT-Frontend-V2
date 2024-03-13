@@ -1,12 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button, Steps, message, Form, Modal } from "antd";
+import { Button, Steps, message, Form, Modal, Space } from "antd";
 import "./index.css";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import StepDadosPessoais from "./StepDadosPessoais";
 import StepVulnerabilidadesGerais from "./StepVulnerabilidadesGerais";
 import StepVulnerabilidadesEspecificas from "./StepVulnerabilidadesEspecificas";
-import { add, edit } from "@app/utils/beneficiary";
+import {
+  add,
+  edit,
+  findByNameAndDateOfBirthAndLocality,
+} from "@app/utils/beneficiary";
 import moment from "moment";
+import { loadValidatedBeneficiaryNui } from "@app/store/actions/beneficiary";
+import { useDispatch, useSelector } from "react-redux";
 
 const { Step } = Steps;
 const { confirm } = Modal;
@@ -23,6 +29,11 @@ const BeneficiaryForm = ({
   const [current, setCurrent] = useState(0);
   const [firstStepValues, setFirstStepValues] = useState();
   const [secondStepValues, setSecondStepValues] = useState();
+  const [showBeneficiaryExists, setShowBeneficiaryExists] = useState(false);
+  const dispatch = useDispatch();
+  const validatedBeneficiaryNui = useSelector(
+    (state: any) => state.beneficiary.validatedBeneficiaryNui
+  );
 
   const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -41,6 +52,18 @@ const BeneficiaryForm = ({
         current === 0
           ? setFirstStepValues(values)
           : setSecondStepValues(values);
+
+        const myMoment: any = values?.["date_of_birth"];
+        const beneficiaries = await findByNameAndDateOfBirthAndLocality(
+          values?.["name"],
+          myMoment?.valueOf(),
+          values?.["locality"]
+        );
+
+        if (beneficiaries.length > 0 && !values.nui) {
+          setShowBeneficiaryExists(true);
+          dispatch(loadValidatedBeneficiaryNui(beneficiaries[0]?.nui));
+        }
       })
       .catch((error) => {
         console.error(error);
@@ -231,6 +254,7 @@ const BeneficiaryForm = ({
       cancelText: "Não",
       onOk() {
         handleModalVisible(false);
+        dispatch(loadValidatedBeneficiaryNui(undefined));
       },
       onCancel() {
         /**Its OK */
@@ -267,8 +291,55 @@ const BeneficiaryForm = ({
     },
   ];
 
+  const handleGobackToList = () => {
+    setShowBeneficiaryExists(false);
+    handleModalVisible(false);
+    dispatch(loadValidatedBeneficiaryNui(undefined));
+  };
+
+  const handleSwitchToEditMode = () => {
+    setShowBeneficiaryExists(false);
+  };
+
+  const ConfirmationModal = () => {
+    return (
+      <>
+        <Modal
+          width={250}
+          centered
+          destroyOnClose
+          visible={showBeneficiaryExists}
+          maskClosable={false}
+          footer={null}
+          closable={false}
+        >
+          <div>
+            <Space direction="vertical" style={{ width: "100%" }}>
+              <b>
+                {`Esta Beneficiaria ja foi registada com o nui ${validatedBeneficiaryNui}`}
+              </b>
+              <Space>
+                <Button key="Cancel" onClick={handleGobackToList}>
+                  Cancelar
+                </Button>
+                <Button
+                  type="primary"
+                  ref={buttonRef}
+                  onClick={handleSwitchToEditMode}
+                >
+                  Continuar
+                </Button>
+              </Space>
+            </Space>
+          </div>
+        </Modal>
+      </>
+    );
+  };
+
   return (
     <>
+      {<ConfirmationModal />}
       <Modal
         width={1100}
         bodyStyle={{ overflowY: "auto", maxHeight: "calc(100vh - 300px)" }}

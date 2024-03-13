@@ -649,7 +649,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
             name="neighbourhood_id"
             label="Bairro"
             rules={[{ required: true, message: RequiredFieldMessage }]}
-            initialValue={beneficiary?.neighborhood.id.toString()}
+            initialValue={beneficiary?.neighborhood?.id.toString()}
           >
             <Select
               placeholder="Seleccione o Bairro"

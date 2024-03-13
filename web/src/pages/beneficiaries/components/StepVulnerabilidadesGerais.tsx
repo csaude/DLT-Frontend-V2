@@ -1,12 +1,14 @@
 import React, { Fragment, useState } from "react";
 import { Row, Col, Input, Form, Select, Radio } from "antd";
 import "./index.css";
+import { useSelector } from "react-redux";
 const { Option } = Select;
 
 const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
   const [schoolInfoEnabled, setSchoolInfoEnabled] = useState<any>(true);
   const [deficiencyTypeEnabled, setDeficiencyTypeEnabled] = useState<any>(true);
   const [childrenEnabled, setChildrenEnabled] = useState<any>(true);
+  const values = useSelector((state: any) => state.beneficiary.beneficiary);
 
   const isStudentChange = async (values: any) => {
     setSchoolInfoEnabled(values.target.value != 1);
@@ -33,13 +35,13 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
 
   return (
     <>
-      <Row gutter={8} hidden={beneficiary === undefined}>
+      <Row gutter={8} hidden={values === undefined}>
         <Col className="gutter-row" span={8}>
           <Form.Item
             name="nui"
             label="Código da Beneficiária (NUI)"
             style={{ textAlign: "left" }}
-            initialValue={beneficiary?.nui}
+            initialValue={values?.nui}
           >
             <Input
               disabled={true}
@@ -54,7 +56,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
             name="vblt_lives_with"
             label="Com quem mora?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
-            initialValue={beneficiary?.vbltLivesWith.split(",")}
+            initialValue={values?.vbltLivesWith?.split(",")}
           >
             <Select
               mode="multiple"
@@ -76,7 +78,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
             label="Sustenta a Casa?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
-            initialValue={beneficiary?.vbltHouseSustainer}
+            initialValue={values?.vbltHouseSustainer}
           >
             <Radio.Group>
               <Radio.Button value={1}>SIM</Radio.Button>
@@ -90,7 +92,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
             label="É Orfã?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
-            initialValue={beneficiary?.vbltIsOrphan}
+            initialValue={values?.vbltIsOrphan}
           >
             <Radio.Group>
               <Radio.Button value={1}>SIM</Radio.Button>
@@ -106,7 +108,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
             label="Vai a Escola?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
-            initialValue={beneficiary?.vbltIsStudent}
+            initialValue={values?.vbltIsStudent}
           >
             <Radio.Group onChange={isStudentChange}>
               <Radio.Button value={1}>SIM</Radio.Button>
@@ -122,7 +124,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
               { required: !schoolInfoEnabled, message: RequiredFieldMessage },
             ]}
             style={{ textAlign: "left" }}
-            initialValue={beneficiary?.vbltSchoolGrade}
+            initialValue={values?.vbltSchoolGrade}
           >
             <Select
               size="middle"
@@ -147,7 +149,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
               { required: !schoolInfoEnabled, message: RequiredFieldMessage },
             ]}
             style={{ textAlign: "left" }}
-            initialValue={beneficiary?.vbltSchoolName}
+            initialValue={values?.vbltSchoolName}
           >
             <Input
               /*disabled={schoolInfoEnabled}*/ placeholder="Insira o nome da instituição de ensino"
@@ -162,7 +164,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
             label="Tem Deficiência?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
-            initialValue={beneficiary?.vbltIsDeficient}
+            initialValue={values?.vbltIsDeficient}
           >
             <Radio.Group onChange={onIsDeficientChange}>
               <Radio.Button value={1}>SIM</Radio.Button>
@@ -181,7 +183,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
               },
             ]}
             style={{ textAlign: "left" }}
-            initialValue={beneficiary?.vbltDeficiencyType}
+            initialValue={values?.vbltDeficiencyType}
           >
             <Select
               size="middle"
@@ -212,7 +214,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
             label="Já foi Casada?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
-            initialValue={beneficiary?.vbltMarriedBefore}
+            initialValue={values?.vbltMarriedBefore}
           >
             <Radio.Group>
               <Radio.Button value={1}>SIM</Radio.Button>
@@ -226,7 +228,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
             label="Já esteve Gravida?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
-            initialValue={beneficiary?.vbltPregnantBefore}
+            initialValue={values?.vbltPregnantBefore}
           >
             <Radio.Group onChange={onPregnantBeforeChane}>
               <Radio.Button value={1}>SIM</Radio.Button>
@@ -242,7 +244,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
               { required: !childrenEnabled, message: RequiredFieldMessage },
             ]}
             style={{ textAlign: "left" }}
-            initialValue={beneficiary?.vbltChildren}
+            initialValue={values?.vbltChildren}
           >
             <Radio.Group disabled={childrenEnabled}>
               <Radio.Button value={1}>SIM</Radio.Button>
@@ -258,7 +260,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
             label="Está Grávida ou a amamentar?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
-            initialValue={beneficiary?.vbltPregnantOrBreastfeeding}
+            initialValue={values?.vbltPregnantOrBreastfeeding}
           >
             <Radio.Group>
               <Radio.Button value={1}>SIM</Radio.Button>
@@ -272,7 +274,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
             label="Trabalha?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
-            initialValue={beneficiary?.vbltIsEmployed}
+            initialValue={values?.vbltIsEmployed}
           >
             <Select
               size="middle"
@@ -298,7 +300,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
             label="Já fez Teste de HIV?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
-            initialValue={beneficiary?.vbltTestedHiv}
+            initialValue={values?.vbltTestedHiv}
           >
             <Select
               size="middle"
