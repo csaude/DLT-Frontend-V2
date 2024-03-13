@@ -110,10 +110,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
 
     const entryPoint = userEntryPoint == "1" ? "US" : userEntryPoint == "2" ? "CM" : "ES"
     setEntryPoint(entryPoint);
-
-    const currentYear = moment(new Date()).format("YY");
-    setCurrentYear(currentYear); 
-    formik.setFieldValue('reference_code', entryPoint + "-PP-MM-" + currentYear);
+    formik.setFieldValue('reference_code', entryPoint + "-PP-MM-" + moment(new Date()).format("YY"));
   }, []);
 
   const getRefNote = useCallback(async () => {
@@ -127,6 +124,8 @@ const ReferenceForm: React.FC = ({ route }: any) => {
   useEffect(() => {
     fetchEntryPoints().catch((error) => console.log(error));
     getRefNote().catch((error) => console.log(error));
+
+    setCurrentYear(moment(new Date()).format("YY")); 
 
     const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
       const status = !(state.isConnected && state.isInternetReachable);
