@@ -254,7 +254,6 @@ const BeneficiaryForm = ({
       cancelText: "Não",
       onOk() {
         handleModalVisible(false);
-        dispatch(loadValidatedBeneficiaryNui(undefined));
       },
       onCancel() {
         /**Its OK */
@@ -294,7 +293,6 @@ const BeneficiaryForm = ({
   const handleGobackToList = () => {
     setShowBeneficiaryExists(false);
     handleModalVisible(false);
-    dispatch(loadValidatedBeneficiaryNui(undefined));
   };
 
   const handleSwitchToEditMode = () => {

@@ -69,7 +69,10 @@ import {
   getInterventionCountByBeneficiaryAndServiceTypeQuery,
   getInterventionCountByBeneficiaryIdAndAgeBandAndLevelQuery,
 } from "@app/utils/beneficiaryIntervention";
-import { loadBeneficiary } from "@app/store/actions/beneficiary";
+import {
+  loadBeneficiary,
+  loadValidatedBeneficiaryNui,
+} from "@app/store/actions/beneficiary";
 
 const { Text } = Typography;
 const { confirm } = Modal;
@@ -475,6 +478,8 @@ const BeneficiariesList: React.FC = () => {
   };
 
   const handleBeneficiaryModalVisible = (flag?: boolean) => {
+    dispatch(loadBeneficiary(undefined));
+    dispatch(loadValidatedBeneficiaryNui(undefined));
     form.resetFields();
     setBeneficiary(undefined);
     setBeneficiaryModalVisible(!!flag);
