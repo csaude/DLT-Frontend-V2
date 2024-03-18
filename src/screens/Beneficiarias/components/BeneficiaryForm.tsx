@@ -949,7 +949,7 @@ const BeneficiaryForm: React.FC = ({
 
   const isStudentChange = useCallback(async (value: any) => {
     setSchoolInfoEnabled(value == 1);
-    if (value == 0){
+    if (value == 0) {
       formik.setFieldValue("vblt_school_grade", null);
     }
   }, []);
@@ -961,7 +961,7 @@ const BeneficiaryForm: React.FC = ({
 
   const onPregnantBeforeChane = useCallback(async (value: any) => {
     setChildrenEnabled(value == 1);
-    if (value == 0){
+    if (value == 0) {
       setHaveChildrenEnabled(true);
     } else {
       setHaveChildrenEnabled(false);

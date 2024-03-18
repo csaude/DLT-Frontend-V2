@@ -162,13 +162,15 @@ const BeneficiarieServiceForm: React.FC = ({
 
   useEffect(() => {
     if (mounted) {
-
       const age = calculateAge(beneficiarie.date_of_birth);
       let is15AndStartedAvante = false;
 
       setServicesState(activeServices);
       const subServicesListItems = activeSubServices.map((item) => item._raw);
-      const subServicesList = age <= 14 || age >= 20 ? subServicesListItems.filter((item) => item.online_id !== 235): subServicesListItems;
+      const subServicesList =
+        age <= 14 || age >= 20
+          ? subServicesListItems.filter((item) => item.online_id !== 235)
+          : subServicesListItems;
       setSubServicesState(subServicesList);
       getPartner();
 
@@ -959,8 +961,10 @@ const BeneficiarieServiceForm: React.FC = ({
   );
 };
 const enhance = withObservables([], () => ({
-  services: database.collections.get("services").query(Q.where("status", 1)), 
-  subServices: database.collections.get("sub_services").query(Q.where("status", 1)), 
+  services: database.collections.get("services").query(Q.where("status", 1)),
+  subServices: database.collections
+    .get("sub_services")
+    .query(Q.where("status", 1)),
   us: database.collections.get("us").query(),
 }));
 
