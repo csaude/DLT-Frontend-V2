@@ -8,6 +8,7 @@ import provinceSlice from "./provinceSlice";
 import districtSlice from "./districtSlice ";
 import localitySlice from "./localitySlice";
 import neighborhoodsSlice from "./neighborhoodsSlice";
+import syncSlice from "./syncSlice";
 
 const rootReducer = combineReducers({
   auth: authSlice,
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
   district: districtSlice,
   locality: localitySlice,
   neighborhood: neighborhoodsSlice,
+  sync: syncSlice
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

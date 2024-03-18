@@ -52,12 +52,24 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import { MENTOR } from "../../../utils/constants";
 import MyDatePicker from "../../../components/DatePicker";
-import { beneficiariesFetchCount } from "../../../services/beneficiaryService";
+import {
+  beneficiariesFetchCount,
+  pendingSyncBeneficiaries,
+} from "../../../services/beneficiaryService";
 import { getBeneficiariesTotal } from "../../../store/beneficiarySlice";
-import { referencesFetchCount } from "../../../services/referenceService";
+import {
+  pendingSyncReferences,
+  referencesFetchCount,
+} from "../../../services/referenceService";
 import NetInfo from "@react-native-community/netinfo";
 import { getReferencesTotal } from "../../../store/referenceSlice";
 import PropTypes from "prop-types";
+import {
+  loadPendingsBeneficiariesInterventionsTotals,
+  loadPendingsBeneficiariesTotals,
+  loadPendingsReferencesTotals,
+} from "../../../store/syncSlice";
+import { pendingSyncBeneficiariesInterventions } from "../../../services/beneficiaryInterventionService";
 
 const BeneficiaryForm: React.FC = ({
   route,
@@ -406,6 +418,7 @@ const BeneficiaryForm: React.FC = ({
     }
 
     getTotals().catch((err) => console.error(err));
+    fetchCounts();
   };
 
   const onPreviousStep = () => {
@@ -548,6 +561,28 @@ const BeneficiaryForm: React.FC = ({
     }
 
     return errors;
+  };
+  
+  const fetchCounts = async () => {
+    const benefNotSynced = await pendingSyncBeneficiaries();
+    dispatch(
+      loadPendingsBeneficiariesTotals({
+        pendingSyncBeneficiaries: benefNotSynced,
+      })
+    );
+
+    const benefIntervNotSynced =
+      await pendingSyncBeneficiariesInterventions();
+    dispatch(
+      loadPendingsBeneficiariesInterventionsTotals({
+        pendingSyncBeneficiariesInterventions: benefIntervNotSynced,
+      })
+    );
+
+    const refNotSynced = await pendingSyncReferences();
+    dispatch(
+      loadPendingsReferencesTotals({ pendingSyncReferences: refNotSynced })
+    );
   };
 
   const handleSaveBeneficiary = async () => {
@@ -792,14 +827,15 @@ const BeneficiaryForm: React.FC = ({
     setLoading(true);
     if (!isOffline) {
       sync({ username: loggedUser.username })
-        .then(() =>
+        .then(() => {
           toast.show({
             placement: "top",
             render: () => {
               return <SuccessHandler />;
             },
-          })
-        )
+          });
+          fetchCounts();
+        })
         .catch(() =>
           toast.show({
             placement: "top",
@@ -878,6 +914,13 @@ const BeneficiaryForm: React.FC = ({
 
       setErrors(false);
     }
+
+    const benNotSynced = await pendingSyncBeneficiaries();
+    dispatch(
+      loadPendingsBeneficiariesTotals({
+        pendingSyncBeneficiaries: benNotSynced,
+      })
+    );
   };
 
   const onChangeName = useCallback((name) => {

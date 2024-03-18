@@ -26,6 +26,15 @@ import Spinner from "react-native-loading-spinner-overlay/lib";
 import { MENTOR, SUPERVISOR } from "../../../utils/constants";
 import { database } from "../../../database";
 import { Q } from "@nozbe/watermelondb";
+import { pendingSyncBeneficiaries } from "../../../services/beneficiaryService";
+import {
+  loadPendingsBeneficiariesInterventionsTotals,
+  loadPendingsBeneficiariesTotals,
+  loadPendingsReferencesTotals,
+} from "../../../store/syncSlice";
+import { pendingSyncBeneficiariesInterventions } from "../../../services/beneficiaryInterventionService";
+import { pendingSyncReferences } from "../../../services/referenceService";
+import { useDispatch } from "react-redux";
 
 const InterventionsView: React.FC = ({ route }: any) => {
   const [loading, setLoading] = useState(false);
@@ -38,6 +47,7 @@ const InterventionsView: React.FC = ({ route }: any) => {
     ? loggedUser.profile_id
     : loggedUser.profiles.id;
   const toast = useToast();
+  const dispatch = useDispatch();
 
   const getPartner = async () => {
     const partner_id = loggedUser.partner_id
@@ -72,14 +82,15 @@ const InterventionsView: React.FC = ({ route }: any) => {
       setLoading(false);
     } else {
       sync({ username: loggedUser.username })
-        .then(() =>
+        .then(() => {
           toast.show({
             placement: "top",
             render: () => {
               return <SuccessHandler />;
             },
-          })
-        )
+          });
+          fetchCounts();
+        })
         .catch(() =>
           toast.show({
             placement: "top",
@@ -166,6 +177,30 @@ const InterventionsView: React.FC = ({ route }: any) => {
       </Pressable>
     </HStack>
   );
+
+  const fetchCounts = async () => {
+    const benefNotSynced = await pendingSyncBeneficiaries();
+    dispatch(
+      loadPendingsBeneficiariesTotals({
+        pendingSyncBeneficiaries: benefNotSynced,
+      })
+    );
+
+    const benefIntervNotSynced = await pendingSyncBeneficiariesInterventions();
+    dispatch(
+      loadPendingsBeneficiariesInterventionsTotals({
+        pendingSyncBeneficiariesInterventions: benefIntervNotSynced,
+      })
+    );
+
+    const refNotSynced = await pendingSyncReferences();
+    dispatch(
+      loadPendingsReferencesTotals({ pendingSyncReferences: refNotSynced })
+    );
+  };
+  useEffect(() => {
+    fetchCounts();
+  }, [loading]);
 
   return (
     <>

@@ -324,12 +324,14 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
       <Row gutter={24} hidden={beneficiary === undefined}>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="nui-control"
             name="nui"
             label="Código do Pareceiro (NUI)"
             style={{ textAlign: "left" }}
             initialValue={beneficiary?.nui}
           >
             <Input
+              id="nui-input"
               disabled={true}
               style={{ fontWeight: "bold", color: "#17a2b8" }}
             />
@@ -337,13 +339,14 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
         </Col>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="gender-control"
             name="gender"
             label="Sexo"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
             initialValue={beneficiary ? beneficiary?.gender : "1"}
           >
-            <Radio.Group>
+            <Radio.Group id="gender-options">
               <Radio.Button value={"1"}>M</Radio.Button>
               <Radio.Button value={"2"}>F</Radio.Button>
             </Radio.Group>
@@ -353,12 +356,14 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
       <Row gutter={16} hidden={beneficiary !== undefined && visibleName}>
         <Col className="gutter-row" span={12}>
           <Form.Item
+            id="surname-control"
             name="surname"
             label="Apelido"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             initialValue={beneficiary?.surname}
           >
             <Input
+              id="surname-input"
               placeholder="Insira o apelido"
               onChange={(e) => {
                 onChangeSurname(e);
@@ -368,12 +373,14 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
         </Col>
         <Col className="gutter-row" span={12}>
           <Form.Item
+            id="name-control"
             name="name"
             label="Nome"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             initialValue={beneficiary?.name}
           >
             <Input
+              id="name-input"
               placeholder="Insira o nome"
               onChange={(e) => {
                 onChangeName(e);
@@ -387,6 +394,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
           <Row>
             <Col span={10}>
               <Form.Item
+                id="date_of_birth-control"
                 name="date_of_birth"
                 label="Data Nascimento"
                 rules={[
@@ -401,6 +409,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
                 }
               >
                 <DatePicker
+                  id="date_of_birth-date-picker"
                   defaultPickerValue={moment(getMaxDate(), "YYYY-MM-DD")}
                   inputReadOnly={true}
                   disabled={!isDateRequired}
@@ -417,6 +426,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
             </Col>
             <Col span={14}>
               <Checkbox
+                id="date_of_birth-known-check"
                 style={{ marginTop: "30px" }}
                 onChange={onChangeCheckbox}
                 disabled={isDateSet}
@@ -430,6 +440,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
         </Col>
         <Col className="gutter-row" span={12}>
           <Form.Item
+            id="age-control"
             name="age"
             label="Idade (em anos)"
             rules={[
@@ -443,17 +454,22 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
       <Row gutter={16}>
         <Col className="gutter-row" span={12}>
           <Form.Item
+            id="nationality-control"
             name="nationality"
             label="Nacionalidade"
             initialValue={beneficiary ? beneficiary?.nationality + "" : "1"}
           >
-            <Select placeholder="Seleccione a Nacionalidade">
+            <Select
+              id="nationality-selection"
+              placeholder="Seleccione a Nacionalidade"
+            >
               <Option key="1">{"Moçambicana"}</Option>
             </Select>
           </Form.Item>
         </Col>
         <Col className="gutter-row" span={6}>
           <Form.Item
+            id="enrollment_date-control"
             name="enrollment_date"
             label="Data Inscrição"
             rules={[{ required: true, message: RequiredFieldMessage }]}
@@ -464,6 +480,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
             }
           >
             <DatePicker
+              id="enrollment_date-date-picker"
               inputReadOnly={true}
               style={{ width: "100%" }}
               placeholder="Selecione a data"
@@ -477,6 +494,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
       <Row gutter={16} hidden={localities.length === 1}>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="province-control"
             name="province"
             label="Provincia"
             rules={[
@@ -488,6 +506,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
             initialValue={beneficiary?.district.province.id.toString()}
           >
             <Select
+              id="province-selection"
               placeholder="Seleccione a Provincia"
               onChange={onChangeProvinces}
             >
@@ -499,6 +518,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
         </Col>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="district-control"
             name="district"
             label="Distrito"
             rules={[
@@ -510,6 +530,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
             initialValue={beneficiary?.district.id.toString()}
           >
             <Select
+              id="district-selection"
               placeholder="Seleccione o Distrito"
               disabled={districts.length == 0 && beneficiary == undefined}
               onChange={onChangeDistricts}
@@ -522,6 +543,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
         </Col>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="locality-control"
             name="locality"
             label="Posto Administrativo"
             rules={[
@@ -533,6 +555,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
             initialValue={beneficiary?.locality?.id.toString()}
           >
             <Select
+              id="locality-selection"
               placeholder="Seleccione o Posto Administrativo"
               disabled={localities.length == 0 && beneficiary == undefined}
               onChange={onChangeLocality}
@@ -547,13 +570,18 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
       <Row gutter={16}>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="entry_point-control"
             name="entry_point"
             label="Ponto de Entrada"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
             initialValue={beneficiary?.entryPoint}
           >
-            <Radio.Group buttonStyle="solid" onChange={onChangeEntryPoint}>
+            <Radio.Group
+              id="entry_point-options"
+              buttonStyle="solid"
+              onChange={onChangeEntryPoint}
+            >
               {isUsVisible && <Radio.Button value="1">US</Radio.Button>}
               <Radio.Button value="2">CM</Radio.Button>
               <Radio.Button value="3">ES</Radio.Button>
@@ -562,6 +590,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
         </Col>
         <Col span={8}>
           <Form.Item
+            id="us-control"
             name="us"
             label="Local de Registo"
             rules={[
@@ -573,6 +602,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
             initialValue={beneficiary?.us.id.toString()}
           >
             <Select
+              id="us-selection"
               placeholder="Seleccione o Local"
               disabled={us.length == 0 && beneficiary == undefined}
             >
@@ -587,6 +617,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
       <Row gutter={16}>
         <Col className="gutter-row" span={12}>
           <Form.Item
+            id="nick_name-input"
             name="nick_name"
             label="Alcunha"
             initialValue={beneficiary?.nickName}
@@ -596,17 +627,19 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
         </Col>
         <Col className="gutter-row" span={12}>
           <Form.Item
+            id="address-control"
             name="address"
             label="Endereço (Ponto de Referência)"
             initialValue={beneficiary?.address}
           >
-            <Input placeholder="Insira a morada" />
+            <Input id="address-input" placeholder="Insira a morada" />
           </Form.Item>
         </Col>
       </Row>
       <Row gutter={16}>
         <Col className="gutter-row" span={12}>
           <Form.Item
+            id="phone_number-control"
             name="phone_number"
             label="Telemóvel"
             initialValue={
@@ -624,6 +657,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
             ]}
           >
             <InputNumber
+              id="phone_number-input"
               prefix="+258  "
               style={{ width: "100%" }}
               placeholder="Insira o Telemóvel"
@@ -632,6 +666,7 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
         </Col>
         <Col className="gutter-row" span={12}>
           <Form.Item
+            id="e_mail-control"
             name="e_mail"
             label="E-mail"
             initialValue={beneficiary?.email}
@@ -639,19 +674,21 @@ const StepDadosPessoais = ({ form, beneficiary }: any) => {
               { type: "email", message: "O email inserido não é válido!" },
             ]}
           >
-            <Input placeholder="Insira o E-mail" />
+            <Input id="e_mail-input" placeholder="Insira o E-mail" />
           </Form.Item>
         </Col>
       </Row>
       <Row gutter={16}>
         <Col className="gutter-row" span={12}>
           <Form.Item
+            id="neighbourhood_id-control"
             name="neighbourhood_id"
             label="Bairro"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             initialValue={beneficiary?.neighborhood.id.toString()}
           >
             <Select
+              id="neighbourhood_id-selection"
               placeholder="Seleccione o Bairro"
               disabled={neighborhoods == undefined && beneficiary == undefined}
             >

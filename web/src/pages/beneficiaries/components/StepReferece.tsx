@@ -80,10 +80,18 @@ const StepReference = ({
       const partnerType = loggedUser.partners.partnerType;
 
       if (partnerType === "1") {
-        setEntryPoints([
-          { value: "2", label: "CM" },
-          { value: "3", label: "ES" },
-        ]);
+        if (loggedUser.entryPoint === "1") {
+          setEntryPoints([
+            { value: "2", label: "CM" },
+            { value: "3", label: "ES" },
+          ]);
+        } else {
+          setEntryPoints([
+            { value: "1", label: "US" },
+            { value: "2", label: "CM" },
+            { value: "3", label: "ES" },
+          ]);
+        }
       } else if (partnerType === "2") {
         setEntryPoints([
           { value: "1", label: "US" },

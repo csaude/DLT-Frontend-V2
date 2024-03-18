@@ -46,6 +46,15 @@ import Spinner from "react-native-loading-spinner-overlay/lib";
 import MyDatePicker from "../../../components/DatePicker";
 import NetInfo from "@react-native-community/netinfo";
 import PropTypes from "prop-types";
+import { pendingSyncBeneficiariesInterventions } from "../../../services/beneficiaryInterventionService";
+import {
+  loadPendingsBeneficiariesInterventionsTotals,
+  loadPendingsBeneficiariesTotals,
+  loadPendingsReferencesTotals,
+} from "../../../store/syncSlice";
+import { useDispatch } from "react-redux";
+import { pendingSyncBeneficiaries } from "../../../services/beneficiaryService";
+import { pendingSyncReferences } from "../../../services/referenceService";
 
 const BeneficiarieServiceForm: React.FC = ({
   route,
@@ -84,6 +93,7 @@ const BeneficiarieServiceForm: React.FC = ({
   const [initialValues, setInitialValues] = useState<any>({});
   const [isOffline, setIsOffline] = useState(false);
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   let mounted = true;
   const loggedUser: any = useContext(Context);
@@ -375,7 +385,7 @@ const BeneficiarieServiceForm: React.FC = ({
     const benefInterv = await database
       .get("beneficiaries_interventions")
       .query(
-        Q.where("beneficiary_id", parseInt(beneficiarie.online_id)),
+        Q.where("beneficiary_offline_id", beneficiarie.offline_id),
         Q.where("sub_service_id", parseInt(values.sub_service_id)),
         Q.where("date", "" + text)
       )
@@ -405,6 +415,13 @@ const BeneficiarieServiceForm: React.FC = ({
     } else {
       onSubmit(values, isEdit);
     }
+
+    const benIntervNotSynced = await pendingSyncBeneficiariesInterventions();
+    dispatch(
+      loadPendingsBeneficiariesInterventionsTotals({
+        pendingSyncBeneficiariesInterventions: benIntervNotSynced,
+      })
+    );
   };
 
   useEffect(() => {
@@ -551,10 +568,34 @@ const BeneficiarieServiceForm: React.FC = ({
 
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+  const fetchCounts = async () => {
+    const benefNotSynced = await pendingSyncBeneficiaries();
+    dispatch(
+      loadPendingsBeneficiariesTotals({
+        pendingSyncBeneficiaries: benefNotSynced,
+      })
+    );
+
+    const benefIntervNotSynced = await pendingSyncBeneficiariesInterventions();
+    dispatch(
+      loadPendingsBeneficiariesInterventionsTotals({
+        pendingSyncBeneficiariesInterventions: benefIntervNotSynced,
+      })
+    );
+
+    const refNotSynced = await pendingSyncReferences();
+    dispatch(
+      loadPendingsReferencesTotals({ pendingSyncReferences: refNotSynced })
+    );
+  };
+
   const syncronize = () => {
     if (!isOffline) {
       sync({ username: loggedUser.username })
-        .then(() => setIsSync(true))
+        .then(() => {
+          setIsSync(true);
+          fetchCounts();
+        })
         .catch(() =>
           toast.show({
             placement: "top",

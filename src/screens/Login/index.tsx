@@ -34,7 +34,7 @@ import {
 } from "../../services/api";
 import { MaterialIcons } from "@native-base/icons";
 import { sync } from "../../database/sync";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import bcrypt from "bcryptjs";
 import Spinner from "react-native-loading-spinner-overlay";
 import styles from "./style";
@@ -48,6 +48,7 @@ import { referencesFetchCount } from "../../services/referenceService";
 import { getReferencesTotal } from "../../store/referenceSlice";
 import { loadBeneficiariesInterventionsCounts } from "../../store/beneficiaryInterventionSlice";
 import { beneficiariesInterventionsFetchCount } from "../../services/beneficiaryInterventionService";
+import { updateSyncInProgress } from "../../store/syncSlice";
 
 interface LoginData {
   email?: string | undefined;
@@ -78,6 +79,7 @@ const Login: React.FC = ({ route }: any) => {
     isLoggedUserDifferentFromSyncedUser,
     setLoggedUserDifferentFromSyncedUser,
   ] = useState(false);
+  const syncInProgress = useSelector((state: any) => state.sync.syncInProgress);
 
   const showToast = (message, description) => {
     return toasty.show({
@@ -143,40 +145,11 @@ const Login: React.FC = ({ route }: any) => {
   // watch changes to loggedUser, sync
   useEffect(() => {
     if (loggedUser) {
+      dispatch(updateSyncInProgress(true));
       sync({ username: loggedUser.username })
-        .then(() =>
-          toasty.show({
-            placement: "top",
-            render: () => {
-              return (
-                <Alert
-                  w="100%"
-                  variant="left-accent"
-                  colorScheme="success"
-                  status="success"
-                >
-                  <VStack space={2} flexShrink={1} w="100%">
-                    <HStack
-                      flexShrink={1}
-                      space={2}
-                      alignItems="center"
-                      justifyContent="space-between"
-                    >
-                      <HStack space={2} flexShrink={1} alignItems="center">
-                        <Alert.Icon />
-                        <Text color="coolGray.800">
-                          Sincronização efectuada com sucesso!
-                        </Text>
-                      </HStack>
-                    </HStack>
-                  </VStack>
-                </Alert>
-              );
-            },
-          })
-        )
         .then(() => getTotals().catch((err) => console.log(err)))
-        .catch(() =>
+        .catch(() => {
+          dispatch(updateSyncInProgress(false));
           toasty.show({
             placement: "top",
             render: () => {
@@ -205,8 +178,8 @@ const Login: React.FC = ({ route }: any) => {
                 </Alert>
               );
             },
-          })
-        );
+          });
+        });
       if (loggedUser.newPassword == "1") {
         navigate({
           name: "ChangePassword",
@@ -235,6 +208,8 @@ const Login: React.FC = ({ route }: any) => {
 
     const beneficiaryIntervsCont = await beneficiariesInterventionsFetchCount();
     dispatch(loadBeneficiariesInterventionsCounts(beneficiaryIntervsCont));
+
+    dispatch(updateSyncInProgress(false));
   }, []);
 
   const validate = useCallback((values: any) => {
@@ -288,7 +263,7 @@ const Login: React.FC = ({ route }: any) => {
     if (
       checkSynced == 0 ||
       resetPassword === "1" ||
-      logguedUser._raw.is_awaiting_sync == 1
+      logguedUser?._raw.is_awaiting_sync == 1
     ) {
       // checkSynced=0 when db have not synced yet
 
@@ -375,18 +350,18 @@ const Login: React.FC = ({ route }: any) => {
         if (!authenticated) {
           setIsInvalidCredentials(true);
         } else if (
-          logguedUser._raw.online_id !== userDetailsQ[0]._raw?.["user_id"]
+          logguedUser?._raw.online_id !== userDetailsQ[0]?._raw?.["user_id"]
         ) {
           setLoggedUserDifferentFromSyncedUser(true);
         } else {
           setIsInvalidCredentials(false);
-          setLoggedUser(logguedUser._raw);
-          dispatch(loadUser(logguedUser._raw));
-          isVeryOldPassword(logguedUser._raw);
+          setLoggedUser(logguedUser?._raw);
+          dispatch(loadUser(logguedUser?._raw));
+          isVeryOldPassword(logguedUser?._raw);
           navigate({
             name: "Main",
             params: {
-              loggedUser: logguedUser._raw,
+              loggedUser: logguedUser?._raw,
               loading: loggedUser === undefined,
             },
           });
