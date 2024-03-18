@@ -1,11 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button, Steps, message, Form, Modal } from "antd";
+import { Button, Steps, message, Form, Modal, Space } from "antd";
 import "./index.css";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import StepDadosPessoais from "./StepDadosPessoais";
 import StepVulnerabilidadesGerais from "./StepVulnerabilidadesGerais";
 import StepVulnerabilidadesEspecificas from "./StepVulnerabilidadesEspecificas";
-import { add, edit } from "@app/utils/beneficiary";
+import {
+  add,
+  edit,
+  findByNameAndDateOfBirthAndLocality,
+} from "@app/utils/beneficiary";
 import moment from "moment";
 
 const { Step } = Steps;
@@ -19,12 +23,24 @@ const BeneficiaryForm = ({
   handleAddBeneficiary,
   handleUpdateBeneficiary,
   handleModalVisible,
+  handleRegisterAnExistingBeneficiary,
+  isEditMode,
 }: any) => {
   const [current, setCurrent] = useState(0);
   const [firstStepValues, setFirstStepValues] = useState();
   const [secondStepValues, setSecondStepValues] = useState();
+  const [isExistingBeneficiary, setExistingBeneficiary] = useState(false);
+  const [beneficiaryState, setBeneficiaryState] = useState<any>();
 
   const buttonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!beneficiary) {
+      setBeneficiaryState(undefined);
+    } else {
+      setBeneficiaryState(beneficiary);
+    }
+  }, []);
 
   useEffect(() => {
     if (!modalVisible) {
@@ -36,11 +52,27 @@ const BeneficiaryForm = ({
     form
       .validateFields()
       .then(async (values) => {
-        const inc = current + 1;
-        setCurrent(inc);
-        current === 0
-          ? setFirstStepValues(values)
-          : setSecondStepValues(values);
+        let beneficiaries = [];
+
+        if (values?.["name"]) {
+          const myMoment: any = values?.["date_of_birth"];
+          beneficiaries = await findByNameAndDateOfBirthAndLocality(
+            values?.["name"],
+            myMoment?.valueOf(),
+            values?.["locality"]
+          );
+        }
+
+        if (beneficiaries.length > 0 && !beneficiaryState?.nui && !isEditMode) {
+          setExistingBeneficiary(true);
+          setBeneficiaryState(beneficiaries[0]);
+        } else {
+          const inc = current + 1;
+          setCurrent(inc);
+          current === 0
+            ? setFirstStepValues(values)
+            : setSecondStepValues(values);
+        }
       })
       .catch((error) => {
         console.error(error);
@@ -231,6 +263,7 @@ const BeneficiaryForm = ({
       cancelText: "Não",
       onOk() {
         handleModalVisible(false);
+        setBeneficiaryState(undefined);
       },
       onCancel() {
         /**Its OK */
@@ -244,7 +277,7 @@ const BeneficiaryForm = ({
       content: (
         <StepDadosPessoais
           form={form}
-          beneficiary={beneficiary}
+          beneficiary={beneficiaryState ? beneficiaryState : beneficiary}
           beneficiaries={beneficiaries}
         />
       ),
@@ -252,7 +285,10 @@ const BeneficiaryForm = ({
     {
       title: "Critérios de Eligibilidade Gerais",
       content: (
-        <StepVulnerabilidadesGerais form={form} beneficiary={beneficiary} />
+        <StepVulnerabilidadesGerais
+          form={form}
+          beneficiary={beneficiaryState ? beneficiaryState : beneficiary}
+        />
       ),
     },
     {
@@ -260,15 +296,67 @@ const BeneficiaryForm = ({
       content: (
         <StepVulnerabilidadesEspecificas
           form={form}
-          beneficiary={beneficiary}
+          beneficiary={beneficiaryState ? beneficiaryState : beneficiary}
           firstStepValues={firstStepValues}
         />
       ),
     },
   ];
 
+  const onCancelEditingExistingBeneficiary = () => {
+    setExistingBeneficiary(false);
+    handleModalVisible(false);
+    setBeneficiaryState(undefined);
+  };
+
+  const onRegisterAnExistingBeneficiary = () => {
+    setExistingBeneficiary(false);
+    handleModalVisible(false);
+    handleRegisterAnExistingBeneficiary(beneficiaryState);
+  };
+
+  const ConfirmationModal = () => {
+    return (
+      <>
+        <Modal
+          width={250}
+          centered
+          destroyOnClose
+          visible={isExistingBeneficiary && !isEditMode}
+          maskClosable={false}
+          footer={null}
+          closable={false}
+        >
+          <div>
+            <Space direction="vertical" style={{ width: "100%" }}>
+              <b>
+                {`Esta Beneficiaria ja foi registada com o nui ${beneficiaryState?.nui}`}
+              </b>
+              <Space>
+                <Button
+                  key="Cancel"
+                  onClick={onCancelEditingExistingBeneficiary}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  type="primary"
+                  ref={buttonRef}
+                  onClick={onRegisterAnExistingBeneficiary}
+                >
+                  Continuar
+                </Button>
+              </Space>
+            </Space>
+          </div>
+        </Modal>
+      </>
+    );
+  };
+
   return (
     <>
+      {<ConfirmationModal />}
       <Modal
         width={1100}
         bodyStyle={{ overflowY: "auto", maxHeight: "calc(100vh - 300px)" }}
