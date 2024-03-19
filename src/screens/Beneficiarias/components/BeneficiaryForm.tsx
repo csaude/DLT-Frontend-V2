@@ -142,7 +142,7 @@ const BeneficiaryForm: React.FC = ({
   const [isUsVisible, setUsVisible] = useState(false);
   const [isOffline, setIsOffline] = useState(false);
   const [isGoToSpecificVblt, setGoToSpecificVblt] = useState(false);
-  const [haveChildrenEnabled, setHaveChildrenEnabled] = useState<any>();
+  const [haveChildrenEnabled, setHaveChildrenEnabled] = useState<any>(true);
 
   const minBirthYear = new Date();
   minBirthYear.setFullYear(new Date().getFullYear() - 24);
@@ -562,7 +562,7 @@ const BeneficiaryForm: React.FC = ({
 
     return errors;
   };
-  
+
   const fetchCounts = async () => {
     const benefNotSynced = await pendingSyncBeneficiaries();
     dispatch(
@@ -571,8 +571,7 @@ const BeneficiaryForm: React.FC = ({
       })
     );
 
-    const benefIntervNotSynced =
-      await pendingSyncBeneficiariesInterventions();
+    const benefIntervNotSynced = await pendingSyncBeneficiariesInterventions();
     dispatch(
       loadPendingsBeneficiariesInterventionsTotals({
         pendingSyncBeneficiariesInterventions: benefIntervNotSynced,
@@ -1994,6 +1993,7 @@ const BeneficiaryForm: React.FC = ({
                   key="vblt_children"
                   isRequired={childrenEnabled}
                   isInvalid={"vblt_children" in formik.errors}
+                  isDisabled={haveChildrenEnabled}
                 >
                   <FormControl.Label>Tem Filhos?</FormControl.Label>
                   <Radio.Group
@@ -2001,7 +2001,6 @@ const BeneficiaryForm: React.FC = ({
                     onChange={(itemValue) => {
                       formik.setFieldValue("vblt_children", itemValue);
                     }}
-                    isDisabled={haveChildrenEnabled}
                     name="rg7"
                     accessibilityLabel="pick a size"
                   >
