@@ -41,12 +41,9 @@ const BenefWithoutVulnerabilites = () => {
   const [loadingMessage, setLoadingMessage] = useState("");
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [lastPage, setLastPage] = useState<number>(0);
-  const [extraOption, setExtraOption] = useState(0);
   const [currentDistrict, setCurrentDistrict] = useState<any>();
-  const [nextIndex, setNextIndex] = useState(1);
   const RequiredFieldMessage = "Obrigatório!";
-  const pageSize = 125000;
-  const created = moment().format("YYYYMMDD_hhmmss");
+  const pageSize = 1000000;
   const username = localStorage.getItem("username");
   const maxDate = moment(initialDate).add(12, "months");
 
@@ -168,9 +165,8 @@ const BenefWithoutVulnerabilites = () => {
         districtsIds,
         initialDate,
         finalDate,
-        pageIndex,
-        pageSize
-        // username
+        pageSize,
+        username
       );
       await downloadFile(response);
       setCurrentPage(currentPage + 1);
@@ -184,7 +180,6 @@ const BenefWithoutVulnerabilites = () => {
   const downloadFile = async (filePath) => {
     try {
       setDataLoading(true);
-      // await getExcelDocumentFormated(filePath);
       const response = await getFileDownloaded(filePath);
 
       const filename = filePath.substring(filePath.lastIndexOf("/") + 1);
