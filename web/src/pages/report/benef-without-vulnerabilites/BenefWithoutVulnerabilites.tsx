@@ -114,20 +114,20 @@ const BenefWithoutVulnerabilites = () => {
     }),
   });
 
-  const onChangeExtra = async () => {
-    setLoadingMessage(
-      "Processando as Beneficiárias sem vulnerabilidades específicas registadas..."
-    );
-    setDataLoading(true);
-    setCurrentPage(0);
-    getBenefWithoutVulnerabilites().then(() => setDataLoading(false));
-  };
+  // const onChangeExtra = async () => {
+  //   setLoadingMessage(
+  //     "Processando as Beneficiárias sem vulnerabilidades específicas registadas..."
+  //   );
+  //   setDataLoading(true);
+  //   setCurrentPage(0);
+  //   // getBenefWithoutVulnerabilites().then(() => setDataLoading(false)); // Nao e necessario
+  // };
 
-  useEffect(() => {
-    if (selectedDistricts && initialDate && finalDate) {
-      onChangeExtra();
-    }
-  }, [selectedDistricts, initialDate, finalDate]);
+  // useEffect(() => {
+  //   if (selectedDistricts && initialDate && finalDate) {
+  //     // onChangeExtra();
+  //   }
+  // }, [selectedDistricts, initialDate, finalDate]);
 
   useEffect(() => {
     if (currentPage != 0 && lastPage != 0 && currentPage < lastPage) {
@@ -135,11 +135,11 @@ const BenefWithoutVulnerabilites = () => {
     }
   }, [selectedDistricts]);
 
-  useEffect(() => {
-    if (currentDistrict != undefined) {
-      generateExcelBenefWithoutVulnerabilites(currentDistrict);
-    }
-  }, [currentDistrict]);
+  // useEffect(() => {
+  //   if (currentDistrict != undefined) {
+  //     generateExcelBenefWithoutVulnerabilites(currentDistrict);
+  //   }
+  // }, [currentDistrict]);
 
   const handleGenerateXLSXReport = (i) => {
     setLoadingMessage("Extraindo... Por favor aguarde");
@@ -157,7 +157,7 @@ const BenefWithoutVulnerabilites = () => {
     }
   };
 
-  const generateExcelBenefWithoutVulnerabilites = async (pageIndex) => {
+  const generateExcelBenefWithoutVulnerabilites = async (i: any) => {
     setDataLoading(true);
     try {
       const response = await getBenefWithoutVulnerabilites(
@@ -201,9 +201,9 @@ const BenefWithoutVulnerabilites = () => {
   const onChangeFInalDate = (e) => {
     setFinalDate(e?.toDate().getTime());
 
-    setDataLoading(true);
+    // setDataLoading(true);
     setCurrentPage(0);
-    getBenefWithoutVulnerabilites().then(() => setDataLoading(false));
+    // getBenefWithoutVulnerabilites().then(() => setDataLoading(false));
   };
 
   return (
