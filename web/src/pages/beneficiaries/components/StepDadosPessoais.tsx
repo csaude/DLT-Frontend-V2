@@ -503,7 +503,7 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
                 message: RequiredFieldMessage,
               },
             ]}
-            initialValue={beneficiary?.district.province.id.toString()}
+            initialValue={beneficiary?.district.province?.id.toString()}
           >
             <Select
               id="province-selection"
@@ -527,7 +527,7 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
                 message: RequiredFieldMessage,
               },
             ]}
-            initialValue={beneficiary?.district.id.toString()}
+            initialValue={beneficiary?.district.id?.toString()}
           >
             <Select
               id="district-selection"
@@ -552,7 +552,7 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
                 message: RequiredFieldMessage,
               },
             ]}
-            initialValue={beneficiary?.locality?.id.toString()}
+            initialValue={beneficiary?.locality?.id?.toString()}
           >
             <Select
               id="localities-selection"
@@ -685,7 +685,7 @@ const StepDadosPessoais = ({ form, beneficiary, beneficiaries }: any) => {
             name="neighbourhood_id"
             label="Bairro"
             rules={[{ required: true, message: RequiredFieldMessage }]}
-            initialValue={beneficiary?.neighborhood.id.toString()}
+            initialValue={beneficiary?.neighborhood?.id.toString()}
           >
             <Select
               id="neighborhood-selection"

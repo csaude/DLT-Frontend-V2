@@ -104,6 +104,7 @@ const BeneficiariesList: React.FC = () => {
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [filters, setFilters] = useState<any>(null);
   const pageSize = 100;
+  const [isEditMode, setIsEditMode] = useState(false);
 
   const interventionSelector = useSelector(
     (state: any) => state?.intervention.loadedInterventions
@@ -474,6 +475,7 @@ const BeneficiariesList: React.FC = () => {
     form.resetFields();
     setBeneficiary(undefined);
     setBeneficiaryModalVisible(!!flag);
+    setIsEditMode(false);
   };
 
   const handleBeneficiaryPartnerModalVisible = (flag?: boolean) => {
@@ -488,7 +490,6 @@ const BeneficiariesList: React.FC = () => {
 
   const showConfirmVoid = async (data: any) => {
     const beneficiaries = await queryByPartnerId(data.id);
-    console.log("----beneficiaries---", beneficiaries);
     if (beneficiaries.length > 0) {
       confirm({
         title:
@@ -525,7 +526,7 @@ const BeneficiariesList: React.FC = () => {
   const onEditBeneficiary = async (record: any) => {
     form.resetFields();
 
-    if (record.gender === "2") {
+    if (record?.gender === "2") {
       if (record.partnerId != null) {
         await fetchPartner(record).catch((error) => console.log(error));
       }
@@ -860,7 +861,10 @@ const BeneficiariesList: React.FC = () => {
           <Button
             type="primary"
             icon={<EditOutlined />}
-            onClick={() => onEditBeneficiary(record)}
+            onClick={() => {
+              onEditBeneficiary(record);
+              setIsEditMode(true);
+            }}
           ></Button>
           <Button
             type="primary"
@@ -1119,6 +1123,10 @@ const BeneficiariesList: React.FC = () => {
     setFilters(_filters);
   };
 
+  const handleRegisterAnExistingBeneficiary = (data) => {
+    onEditBeneficiary(data);
+  };
+
   return (
     <>
       <Title />
@@ -1290,6 +1298,10 @@ const BeneficiariesList: React.FC = () => {
         handleAddBeneficiary={handleAddBeneficiary}
         handleUpdateBeneficiary={handleUpdateBeneficiary}
         handleModalVisible={handleBeneficiaryModalVisible}
+        handleRegisterAnExistingBeneficiary={
+          handleRegisterAnExistingBeneficiary
+        }
+        isEditMode={isEditMode}
       />
       <FormBeneficiaryPartner
         form={form}

@@ -105,3 +105,13 @@ export async function queryByPartnerId(partnerId?: number) {
   const res = await select(url);
   return res;
 }
+
+export async function findByNameAndDateOfBirthAndLocality(
+  name?: any,
+  dateOfBirth?: any,
+  locality?: any
+) {
+  const url = `/api/beneficiaries/findByNameAndDateOfBirthAndLocality?name=${name}&dateOfBirth=${dateOfBirth}&locality=${locality}`;
+  const res = await select(url);
+  return res;
+}
