@@ -30,6 +30,19 @@ export async function getNewlyEnrolledAgywAndServicesReportGenerated(
   return res;
 }
 
+export async function getBenefWithoutVulnerabilites(
+  province?: string,
+  districts?: any,
+  startDate?: any,
+  endDate?: any,
+  pageSize?: any,
+  username?: any
+) {
+  const url = `/api/agyw-prev/getBeneficiariesNoVulnerabilities?province=${province}&districts=${districts}&startDate=${startDate}&endDate=${endDate}&pageSize=${pageSize}&username=${username}`;
+  const res = await select(url);
+  return res;
+}
+
 export async function getFileDownloaded(filePath?: any) {
   const url = `/api/agyw-prev/downloadFile?filePath=${filePath}`;
   const res = await download(url);
