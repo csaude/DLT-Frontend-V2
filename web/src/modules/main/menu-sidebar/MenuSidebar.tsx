@@ -148,6 +148,10 @@ export const MENU: IMenuItem[] = [
         icon: "fas fa-sync",
         level: [0],
       },
+      {
+        name: "Beneficiárias sem vulnerabilidades específica",
+        path: "/benefWithoutVulnerabilites",
+      },
     ],
   },
   {

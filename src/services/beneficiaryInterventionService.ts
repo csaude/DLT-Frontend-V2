@@ -46,8 +46,8 @@ export const getBeneficiariesInterventionsBy_status = async (status) => {
     .get("beneficiaries_interventions")
     .query(Q.where("_status", Q.eq(status)))
     .fetch();
-    const resultRaws = resultQ.map(item => item._raw)
-    return resultRaws
+  const resultRaws = resultQ.map((item) => item._raw);
+  return resultRaws;
 };
 
 export const getBeneficiariesInterventionsByNot_status = async (status) => {
@@ -55,6 +55,6 @@ export const getBeneficiariesInterventionsByNot_status = async (status) => {
     .get("beneficiaries_interventions")
     .query(Q.where("_status", Q.notEq(status)))
     .fetch();
-    const resultRaws = resultQ.map(item => item._raw)
-    return resultRaws
+  const resultRaws = resultQ.map((item) => item._raw);
+  return resultRaws;
 };
