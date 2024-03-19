@@ -41,7 +41,6 @@ const BenefWithoutVulnerabilites = () => {
   const [loadingMessage, setLoadingMessage] = useState("");
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [lastPage, setLastPage] = useState<number>(0);
-  const [currentDistrict, setCurrentDistrict] = useState<any>();
   const RequiredFieldMessage = "Obrigatório!";
   const pageSize = 1000000;
   const username = localStorage.getItem("username");
@@ -114,32 +113,11 @@ const BenefWithoutVulnerabilites = () => {
     }),
   });
 
-  // const onChangeExtra = async () => {
-  //   setLoadingMessage(
-  //     "Processando as Beneficiárias sem vulnerabilidades específicas registadas..."
-  //   );
-  //   setDataLoading(true);
-  //   setCurrentPage(0);
-  //   // getBenefWithoutVulnerabilites().then(() => setDataLoading(false)); // Nao e necessario
-  // };
-
-  // useEffect(() => {
-  //   if (selectedDistricts && initialDate && finalDate) {
-  //     // onChangeExtra();
-  //   }
-  // }, [selectedDistricts, initialDate, finalDate]);
-
   useEffect(() => {
     if (currentPage != 0 && lastPage != 0 && currentPage < lastPage) {
       generateExcelBenefWithoutVulnerabilites(currentPage); // Iterar
     }
   }, [selectedDistricts]);
-
-  // useEffect(() => {
-  //   if (currentDistrict != undefined) {
-  //     generateExcelBenefWithoutVulnerabilites(currentDistrict);
-  //   }
-  // }, [currentDistrict]);
 
   const handleGenerateXLSXReport = (i) => {
     setLoadingMessage("Extraindo... Por favor aguarde");
@@ -198,12 +176,10 @@ const BenefWithoutVulnerabilites = () => {
   const onChangeInitialDate = (e) => {
     setInitialDate(e?.toDate().getTime());
   };
+
   const onChangeFInalDate = (e) => {
     setFinalDate(e?.toDate().getTime());
-
-    // setDataLoading(true);
     setCurrentPage(0);
-    // getBenefWithoutVulnerabilites().then(() => setDataLoading(false));
   };
 
   return (
