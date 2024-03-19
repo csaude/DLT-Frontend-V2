@@ -32,6 +32,7 @@ const { Title } = Typography;
 
 const ReportAgyw = () => {
   const [loggedUser, setLogguedUser] = useState<any>(undefined);
+  const [allProvinces, setAllProvinces] = useState<any[]>([]);
   const [provinces, setProvinces] = useState<any[]>([]);
   const [selectedProvinces, setSelectedProvinces] = useState<any[]>([]);
   const [districts, setDistricts] = useState<any>(undefined);
@@ -68,11 +69,28 @@ const ReportAgyw = () => {
         provinces = await queryAll();
       }
       setLogguedUser(loggedUser);
-      setProvinces(provinces);
+      setAllProvinces(provinces);
     };
 
     fetchData().catch((error) => console.log(error));
   }, []);
+
+  const onChangeReportOption = async (option) => {
+    if (option != reportType) {
+      if (option == 1) {
+        setProvinces(allProvinces);
+      } else if (option == 2) {
+        setProvinces(allProvinces.filter((p) => p.id == 10));
+      } else {
+        setProvinces([]);
+      }
+      setReportType(option);
+
+      form.setFieldsValue({ provinces: [] });
+      form.setFieldsValue({ districts: [] });
+      setDistricts(undefined);
+    }
+  };
 
   const onChangeProvinces = async (values: any) => {
     if (values.length > 0) {
@@ -88,6 +106,9 @@ const ReportAgyw = () => {
         dataDistricts = await queryDistrictsByProvinces({
           provinces: Array.isArray(values) ? values : [values],
         });
+      }
+      if (reportType == 2) {
+        dataDistricts = dataDistricts.filter((d) => [44, 45].includes(d.id));
       }
       setDistricts(dataDistricts);
     } else {
@@ -131,12 +152,6 @@ const ReportAgyw = () => {
       };
     }),
   });
-
-  const onChangeReportOption = async (option) => {
-    if (option != reportType) {
-      setReportType(option);
-    }
-  };
 
   const handleFetchData = async () => {
     if (
@@ -238,12 +253,28 @@ const ReportAgyw = () => {
               <Row gutter={24}>
                 <Col span={12}>
                   <Form.Item
+                    name="reportType"
+                    label="Tipo de Relatório"
+                    rules={[{ required: true, message: RequiredFieldMessage }]}
+                  >
+                    <Select
+                      placeholder="Seleccione o Tipo de Relatório"
+                      onChange={onChangeReportOption}
+                      allowClear
+                    >
+                      {reportOptions?.map((item) => (
+                        <Option key={item.id}>{item.name}</Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                  <Form.Item
                     name="provinces"
                     label="Provincias"
                     rules={[{ required: true, message: RequiredFieldMessage }]}
                   >
                     <Select
                       mode="multiple"
+                      disabled={provinces.length == 0}
                       placeholder="Seleccione as Províncias"
                       {...selectProvinces}
                       allowClear
@@ -262,21 +293,6 @@ const ReportAgyw = () => {
                       {...selectDistricts}
                       allowClear
                     />
-                  </Form.Item>
-
-                  <Form.Item
-                    name="reportType"
-                    label="Tipo de Relatório"
-                    rules={[{ required: true, message: RequiredFieldMessage }]}
-                  >
-                    <Select
-                      placeholder="Seleccione o Tipo de Relatório"
-                      onChange={onChangeReportOption}
-                    >
-                      {reportOptions?.map((item) => (
-                        <Option key={item.id}>{item.name}</Option>
-                      ))}
-                    </Select>
                   </Form.Item>
 
                   <Form.Item name="initialDate" label="Data Inicial">
