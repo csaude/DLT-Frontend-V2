@@ -1260,6 +1260,10 @@ const BeneficiariesList: React.FC = () => {
                 </div>
               ),
               rowExpandable: (record) => record.name !== "Not Expandable",
+              onExpand: (expanded, record) =>
+                expanded == true
+                  ? handleViewModalVisible(false, record)
+                  : "Do nothing.",
             }}
             dataSource={beneficiaries}
             bordered
