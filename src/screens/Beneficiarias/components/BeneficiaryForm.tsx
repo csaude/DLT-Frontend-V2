@@ -369,6 +369,7 @@ const BeneficiaryForm: React.FC = ({
   };
 
   const onNextStep = async () => {
+    setLoadingData(true);
     const beneficiaries = await database
       .get("beneficiaries")
       .query(
@@ -397,6 +398,7 @@ const BeneficiaryForm: React.FC = ({
     if (partnerHasErrors) {
       setErrors(true);
     }
+    setLoadingData(false);
   };
 
   const onNextStep2 = async () => {
