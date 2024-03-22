@@ -1144,7 +1144,7 @@ const BeneficiaryForm: React.FC = ({
                       <HStack>
                         <InfoIcon mt="1" />
                         <Text fontSize="sm" color="coolGray.800">
-                          {`Esta Beneficiaria ja foi registada com o nui ${beneficiaryState?.nui}`}
+                          {`Esta Beneficiaria já foi registada com o nui ${beneficiaryState?.nui}`}
                         </Text>
                       </HStack>
 

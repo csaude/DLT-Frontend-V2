@@ -330,7 +330,7 @@ const BeneficiaryForm = ({
           <div>
             <Space direction="vertical" style={{ width: "100%" }}>
               <b>
-                {`Esta Beneficiaria ja foi registada com o nui ${beneficiaryState?.nui}`}
+                {`Esta Beneficiaria já foi registada com o nui ${beneficiaryState?.nui}`}
               </b>
               <Space>
                 <Button
