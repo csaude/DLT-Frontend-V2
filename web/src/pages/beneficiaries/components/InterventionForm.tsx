@@ -15,6 +15,7 @@ import {
   queryByTypeAndBeneficiary,
   querySubServiceByService,
 } from "@app/utils/service";
+import { calculateAge } from "@app/models/Utils";
 import { allUsByUser } from "@app/utils/uSanitaria";
 import moment from "moment";
 import { query } from "@app/utils/users";
@@ -59,6 +60,7 @@ const InterventionForm = ({ record, beneficiary }: any) => {
   const isUsVisible = role !== "MENTORA" ? true : false;
 
   const options = isUsVisible ? options3 : options2;
+  const Age = calculateAge(beneficiary?.dateOfBirth);
 
   const selectedOption = options
     ?.filter((o) => o.value === selectedIntervention?.entryPoint + "")
@@ -119,7 +121,9 @@ const InterventionForm = ({ record, beneficiary }: any) => {
 
     const fetchSubServices = async () => {
       const data = await querySubServiceByService(service.id);
-      setInterventions(data);
+      const subServiceList =
+        Age <= 14 || Age >= 20 ? data.filter((item) => item.id !== 235) : data;
+      setInterventions(subServiceList);
     };
 
     if (selectedIntervention !== undefined) {
@@ -146,7 +150,9 @@ const InterventionForm = ({ record, beneficiary }: any) => {
   const onChangeServices = async (value: any) => {
     form.setFieldsValue({ subservice: undefined });
     const data = await querySubServiceByService(value);
-    setInterventions(data);
+    const subServiceList =
+      Age <= 14 || Age >= 20 ? data.filter((item) => item.id !== 235) : data;
+    setInterventions(subServiceList);
   };
 
   const onNameChange = (event) => {
@@ -185,6 +191,7 @@ const InterventionForm = ({ record, beneficiary }: any) => {
       <Row gutter={8}>
         <Col span={8}>
           <Form.Item
+            id="areaServicos-control"
             name="areaServicos"
             label="Área de Serviços"
             rules={[{ required: true, message: RequiredFieldMessage }]}
@@ -197,6 +204,7 @@ const InterventionForm = ({ record, beneficiary }: any) => {
             }
           >
             <Select
+              id="areaServicos-selection"
               placeholder="Select Area Serviço"
               onChange={onChangeAreaServiço}
               disabled={user?.profiles?.name != "ADMIN"}
@@ -209,6 +217,7 @@ const InterventionForm = ({ record, beneficiary }: any) => {
         </Col>
         <Col span={8}>
           <Form.Item
+            id="service-control"
             name="service"
             label="Serviço"
             rules={[{ required: true, message: RequiredFieldMessage }]}
@@ -219,6 +228,7 @@ const InterventionForm = ({ record, beneficiary }: any) => {
             }
           >
             <Select
+              id="service-options"
               placeholder="Select Serviço"
               onChange={onChangeServices}
               disabled={services === undefined}
@@ -231,6 +241,7 @@ const InterventionForm = ({ record, beneficiary }: any) => {
         </Col>
         <Col span={8}>
           <Form.Item
+            id="subservice-control"
             name="subservice"
             label="Sub-Serviço/Intervenção"
             rules={[{ required: true, message: RequiredFieldMessage }]}
@@ -241,6 +252,7 @@ const InterventionForm = ({ record, beneficiary }: any) => {
             }
           >
             <Select
+              id="subservice-options"
               placeholder="Select Sub Serviço"
               disabled={interventions === undefined}
               value={undefined}
@@ -255,12 +267,14 @@ const InterventionForm = ({ record, beneficiary }: any) => {
       <Row gutter={8}>
         <Col span={8}>
           <Form.Item
+            id="entryPoint-control"
             name="entryPoint"
             label="Ponto de Entrada"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             initialValue={selectedOption}
           >
             <Radio.Group
+              id="entryPoint-options"
               onChange={onChangeEntryPoint}
               options={options}
               optionType="button"
@@ -269,6 +283,7 @@ const InterventionForm = ({ record, beneficiary }: any) => {
         </Col>
         <Col span={8}>
           <Form.Item
+            id="location-control"
             name="location"
             label="Localização"
             rules={[{ required: true, message: RequiredFieldMessage }]}
@@ -278,7 +293,7 @@ const InterventionForm = ({ record, beneficiary }: any) => {
                 : selectedIntervention?.us?.id + ""
             }
           >
-            <Select placeholder="Selecione Localização">
+            <Select id="location-selection" placeholder="Selecione Localização">
               {us?.map((item) => (
                 <Option key={item.id}>{item.name}</Option>
               ))}
@@ -287,6 +302,7 @@ const InterventionForm = ({ record, beneficiary }: any) => {
         </Col>
         <Col span={8}>
           <Form.Item
+            id="dataBeneficio-control"
             name="dataBeneficio"
             label="Data de Provisão do Serviço"
             rules={[{ required: true, message: RequiredFieldMessage }]}
@@ -297,6 +313,7 @@ const InterventionForm = ({ record, beneficiary }: any) => {
             }
           >
             <DatePicker
+              id="dataBeneficio-date-picker"
               style={{ width: "100%" }}
               disabledDate={(d) => !d || d.isAfter(moment(new Date()))}
             />
@@ -306,12 +323,14 @@ const InterventionForm = ({ record, beneficiary }: any) => {
       <Row gutter={8}>
         <Col span={8}>
           <Form.Item
+            id="provider-control"
             name="provider"
             label="Provedor do Serviço"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             initialValue={selectedIntervention?.provider}
           >
             <Select
+              id="provider-selection"
               showSearch
               style={{
                 width: 300,
@@ -340,12 +359,14 @@ const InterventionForm = ({ record, beneficiary }: any) => {
                     }}
                   >
                     <Input
+                      id="provedor-input"
                       placeholder="Provedor"
                       ref={inputRef}
                       value={name}
                       onChange={onNameChange}
                     />
                     <Button
+                      id="submit-button"
                       type="text"
                       icon={<PlusOutlined />}
                       onClick={addItem}
@@ -365,11 +386,13 @@ const InterventionForm = ({ record, beneficiary }: any) => {
         <Col />
         <Col span={8}>
           <Form.Item
+            id="remarks-control"
             name="outros"
             label="Outras Observações"
             initialValue={selectedIntervention?.remarks}
           >
             <TextArea
+              id="remarks-input"
               rows={2}
               placeholder="Insira as Observações"
               maxLength={50}

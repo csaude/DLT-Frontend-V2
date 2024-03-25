@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, Steps, Form, Modal } from "antd";
 import "./index.css";
 import { ExclamationCircleFilled } from "@ant-design/icons";
@@ -32,6 +32,8 @@ const FormReference = ({
   const [current, setCurrent] = useState(0);
   const [firstStepValues, setFirstStepValues] = useState<any>();
   const dispatch = useDispatch();
+
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!modalVisible) {
@@ -78,16 +80,18 @@ const FormReference = ({
   };
 
   const onSubmit = async () => {
-    handleAdd(firstStepValues);
+    if (buttonRef.current && !buttonRef.current.disabled) {
+      buttonRef.current.disabled = true;
+      handleAdd(firstStepValues, buttonRef);
 
-    if (addStatus) {
-      const inc = current - 1;
-      setCurrent(inc);
-      form.resetFields();
-      handleModalRefVisible(false);
+      if (addStatus) {
+        const inc = current - 1;
+        setCurrent(inc);
+        form.resetFields();
+        handleModalRefVisible(false);
+      }
+      getTotals().catch((err) => console.log(err));
     }
-
-    getTotals().catch((err) => console.log(err));
   };
 
   const showCloseConfirm = () => {
@@ -171,7 +175,7 @@ const FormReference = ({
                   Actualizar
                 </Button>
               ) : (
-                <Button type="primary" onClick={() => onSubmit()}>
+                <Button type="primary" ref={buttonRef} onClick={onSubmit}>
                   Salvar
                 </Button>
               ))}

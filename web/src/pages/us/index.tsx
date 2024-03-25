@@ -1,18 +1,43 @@
 import React, { useEffect, useState } from "react";
 import { Title } from "@app/components";
-import { Badge, Button, Card, Form, Input, message, Space, Table } from "antd";
+import {
+  Badge,
+  Button,
+  Card,
+  ConfigProvider,
+  Form,
+  Input,
+  message,
+  Space,
+  Table,
+} from "antd";
 import Highlighter from "react-highlight-words";
 import { SearchOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import UsForm from "./components/UsForm";
 import { allUs, add, edit } from "@app/utils/uSanitaria";
+import { useSelector } from "react-redux";
+import ptPT from "antd/lib/locale-provider/pt_PT";
 
 const UsList: React.FC = () => {
   const [uss, setUss] = useState<any[]>([]);
+  const [provinces, setProvinces] = useState<any[]>([]);
+  const [districts, setDistricts] = useState<any[]>([]);
+  const [localities, setLocalities] = useState<any[]>([]);
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const [usModalVisible, setUsModalVisible] = useState<boolean>(false);
   const [selectedUs, setSelectedUs] = useState<any>(undefined);
   const [form] = Form.useForm();
+
+  const provincesSelector = useSelector(
+    (state: any) => state?.province.loadedProvinces
+  );
+  const districtsSelector = useSelector(
+    (state: any) => state?.district.loadedDistricts
+  );
+  const localitiesSelector = useSelector(
+    (state: any) => state?.locality?.loadedLocalities
+  );
 
   let searchInput;
   useEffect(() => {
@@ -23,6 +48,22 @@ const UsList: React.FC = () => {
     };
 
     fetchData().catch((error) => console.log(error));
+
+    const sortedProvinces = provincesSelector?.sort((prov1, prov2) =>
+      prov1?.name.localeCompare(prov2.name)
+    );
+    const sortedDistricts = districtsSelector?.sort((dist1, dist2) =>
+      dist1?.name.localeCompare(dist2.name)
+    );
+    const sortedLocalities = localitiesSelector?.sort((loc1, loc2) =>
+      loc1?.name.localeCompare(loc2.name)
+    );
+
+    console.log(sortedLocalities);
+
+    setProvinces(sortedProvinces);
+    setDistricts(sortedDistricts);
+    setLocalities(sortedLocalities);
   }, []);
 
   const usSort = (data: any) => {
@@ -42,6 +83,12 @@ const UsList: React.FC = () => {
     setSelectedUs(record);
     setUsModalVisible(true);
   };
+
+  const filterObjects = (data) => (formatter) =>
+    data?.map((item) => ({
+      text: formatter(item),
+      value: formatter(item),
+    }));
 
   const handleAdd = () => {
     form
@@ -238,18 +285,28 @@ const UsList: React.FC = () => {
       dataIndex: "province",
       key: "province",
       render: (text, record) => record?.locality?.district?.province?.name,
+      filters: filterObjects(provinces)((i) => i?.name),
+      onFilter: (value, record) =>
+        record.locality?.district?.province?.name == value,
+      filterSearch: true,
     },
     {
       title: "Nome do Distrito",
       dataIndex: "district",
       key: "district",
       render: (text, record) => record?.locality?.district?.name,
+      filters: filterObjects(districts)((i) => i?.name),
+      onFilter: (value, record) => record.locality?.district.name == value,
+      filterSearch: true,
     },
     {
       title: "Posto Administrativo",
       dataIndex: "locality",
       key: "locality",
       render: (text, record) => record?.locality?.name,
+      filters: filterObjects(localities)((i) => i?.name),
+      onFilter: (value, record) => record.locality?.name == value,
+      filterSearch: true,
     },
     {
       title: "Estado",
@@ -314,7 +371,14 @@ const UsList: React.FC = () => {
           </Space>
         }
       >
-        <Table rowKey="id" columns={columns} dataSource={uss} bordered></Table>
+        <ConfigProvider locale={ptPT}>
+          <Table
+            rowKey="id"
+            columns={columns}
+            dataSource={uss}
+            bordered
+          ></Table>
+        </ConfigProvider>
       </Card>
       <UsForm
         form={form}

@@ -89,7 +89,10 @@
       "referenceManagement": "Gestão de Referências",
       "bulkCancellationReference": "Cancelamento de Referências Pendentes",
       "reports": "Relatórios DREAMS",
-      "appInfo": "Detalhes da Aplicação"
+      "appInfo": "Detalhes da Aplicação",
+      "syncReport": "Relatório de Sincronização",   
+      "dataImport": "Importação de dados do dispositivo",
+      "dataExtraction": "Extracção de Dados"
     }
   },
   "footer": {

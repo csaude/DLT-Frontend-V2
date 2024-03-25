@@ -135,7 +135,11 @@ export async function queryCountByFilters(
   searchDistrict?: number
 ) {
   const res = await select(
-    `/api/references/byUser/${id}/countByFilters?searchNui=${searchNui}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`
+    `/api/references/byUser/${id}/countByFilters?searchNui=${undefinedToEmpty(
+      searchNui
+    )}&searchUserCreator=${undefinedToEmpty(
+      searchUserCreator
+    )}&searchDistrict=${undefinedToEmpty(searchDistrict)}`
   );
   return res;
 }
@@ -160,4 +164,13 @@ export async function queryCountByPendingFilters(
 
 function undefinedToEmpty(value: any) {
   return value == undefined ? "" : value;
+}
+
+export async function getReferencesCountByBeneficiaryQuery(
+  beneficiaryId: number
+) {
+  const res = await select(
+    `/api/references/countByBeneficiary/${beneficiaryId}`
+  );
+  return res;
 }

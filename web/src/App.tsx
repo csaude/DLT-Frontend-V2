@@ -37,6 +37,12 @@ import ReportAgyw from "./pages/report/agyw/ReportAgyw";
 import ReportPreview from "./pages/report/agyw/ReportPreview";
 import ReportView from "./pages/report/agyw/ReportView";
 import AppInfo from "./pages/appInfo";
+import DataExtraction from "./pages/report/data-extraction/DataExtraction";
+import NeighborhoodsList from "./pages/neighborhoods";
+
+import SyncReport from "@pages/sync-report/Index";
+import DataImport from "@pages/data-import/index";
+import BenefWithoutVulnerabilites from "./pages/report/benef-without-vulnerabilites/BenefWithoutVulnerabilites";
 
 const App = () => {
   const windowSize = useWindowSize();
@@ -145,6 +151,7 @@ const App = () => {
             <Route path="/provinceList" element={<ProvinceList />} />
             <Route path="/districtList" element={<DistrictList />} />
             <Route path="/localityList" element={<LocalityList />} />
+            <Route path="/neighbourhoodsList" element={<NeighborhoodsList />} />
             <Route path="/servicesList" element={<ServicesList />} />
             <Route path="/subServicesList" element={<SubServicesList />} />
             <Route path="/organizationsList" element={<OrganizationList />} />
@@ -153,8 +160,15 @@ const App = () => {
             <Route path="/reportAgyw" element={<ReportAgyw />} />
             <Route path="/previewAgyw" element={<ReportPreview />} />
             <Route path="/viewAgyw" element={<ReportView />} />
+            <Route path="/dataExtraction" element={<DataExtraction />} />
+            <Route
+              path="/benefWithoutVulnerabilites"
+              element={<BenefWithoutVulnerabilites />}
+            />
             {/* App Inforation */}
             <Route path="/appInfo" element={<AppInfo />} />
+            <Route path="/syncReport" element={<SyncReport />} />
+            <Route path="/dataImport" element={<DataImport />} />
           </Route>
         </Route>
       </Routes>

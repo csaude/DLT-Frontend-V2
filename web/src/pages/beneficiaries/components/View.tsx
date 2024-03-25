@@ -37,7 +37,7 @@ import "antd/dist/antd.css";
 import "../styles.css";
 import InterventionForm from "./InterventionForm";
 import { ADMIN, MENTOR, MNE, SUPERVISOR } from "@app/utils/contants";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getInterventionsCount } from "@app/store/actions/interventions";
 import PropTypes from "prop-types";
 
@@ -59,6 +59,9 @@ const ViewBenefiaryPanel = ({
   );
   const [partner, setPartner] = useState<any>();
   const [visibleName, setVisibleName] = useState<any>(true);
+  const beneficiaryDashboardSelector = useSelector(
+    (state: any) => state.beneficiaryDashboard
+  );
 
   const [form] = Form.useForm();
   const dispatch = useDispatch();
@@ -284,7 +287,7 @@ const ViewBenefiaryPanel = ({
       dataIndex: "",
       key: "intervention",
       render: (text, record) =>
-        user.profiles.id == MENTOR &&
+        [MENTOR, SUPERVISOR].includes(user.profiles.id) &&
         user.partners.partnerType == 2 &&
         record.subServices.service.id == 9
           ? ""
@@ -309,6 +312,15 @@ const ViewBenefiaryPanel = ({
           ></Button>
           <Button
             type="primary"
+            hidden={
+              user?.partners?.partnerType == 2 &&
+              record?.subServices.service.serviceType == 1
+                ? true
+                : user?.partners?.partnerType == 1 &&
+                  record?.subServices.service.serviceType == 2
+                ? true
+                : false
+            }
             icon={<EditOutlined />}
             onClick={() => onEditIntervention(record)}
           ></Button>
@@ -513,6 +525,104 @@ const ViewBenefiaryPanel = ({
             </Col>
           </Row>
         </Card>
+        <Col className="gutter-row">
+          <Card
+            title="Indicadores Gerais"
+            bordered={true}
+            headStyle={{ background: "#17a2b8" }}
+            bodyStyle={{
+              paddingLeft: "10px",
+              paddingRight: "10px",
+              height: "244px",
+              textAlign: "left",
+            }}
+          >
+            <Row gutter={8}>
+              <Col
+                className="gutter-row"
+                style={{ fontWeight: "bold", background: "#f3f4f5" }}
+                span={12}
+              >
+                Total de Intervenções Clínicas
+              </Col>
+              <Col
+                className="gutter-row"
+                style={{ background: "#f3f4f5" }}
+                span={12}
+              >
+                {beneficiaryDashboardSelector.totalOfClinicalInterventions}
+              </Col>
+            </Row>
+            <Row gutter={8}>
+              <Col
+                className="gutter-row"
+                style={{ fontWeight: "bold" }}
+                span={12}
+              >
+                Total de Intervenções Comunitárias
+              </Col>
+              <Col className="gutter-row" span={12}>
+                {beneficiaryDashboardSelector.totalOfCommunityInterventions}
+              </Col>
+            </Row>
+            <Row gutter={8}>
+              <Col
+                className="gutter-row"
+                style={{ fontWeight: "bold", background: "#f3f4f5" }}
+                span={12}
+              >
+                Total de Intervenções Primárias
+              </Col>
+              <Col
+                className="gutter-row"
+                style={{ background: "#f3f4f5" }}
+                span={12}
+              >
+                {beneficiaryDashboardSelector.totalOfPrimaryInterventions}
+              </Col>
+            </Row>
+            <Row gutter={8}>
+              <Col
+                className="gutter-row"
+                style={{ fontWeight: "bold" }}
+                span={12}
+              >
+                Total de Intervenções Secundárias
+              </Col>
+              <Col className="gutter-row" span={12}>
+                {beneficiaryDashboardSelector.totalOfSecondaryInterventions}
+              </Col>
+            </Row>
+            <Row gutter={8}>
+              <Col
+                className="gutter-row"
+                style={{ fontWeight: "bold", background: "#f3f4f5" }}
+                span={12}
+              >
+                Total de Intervenções Contextuais
+              </Col>
+              <Col
+                className="gutter-row"
+                style={{ background: "#f3f4f5" }}
+                span={12}
+              >
+                {beneficiaryDashboardSelector.totalOfContextualInterventions}
+              </Col>
+            </Row>
+            <Row gutter={8}>
+              <Col
+                className="gutter-row"
+                style={{ fontWeight: "bold" }}
+                span={12}
+              >
+                Total de Referências
+              </Col>
+              <Col className="gutter-row" span={12}>
+                {beneficiaryDashboardSelector.totalReferences}
+              </Col>
+            </Row>
+          </Card>
+        </Col>
         <Card
           title="Lista de Intervenções DREAMS"
           extra={
@@ -580,6 +690,7 @@ const ViewBenefiaryPanel = ({
             <ViewIntervention
               record={selectedBeneficiary}
               beneficiary={beneficiary}
+              user={user}
             />
           )}
         </Drawer>

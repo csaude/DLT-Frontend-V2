@@ -1,7 +1,7 @@
 {
   "release": {
-    "version": "1.0.0",
-    "date": "20/09/2023",
+    "version": "1.2.0",
+    "date": "20/03/2024",
     "changelogs": [
       {
         "id": 1,
@@ -9,195 +9,119 @@
       },
       {
         "id": 2,
-        "changelog": "Beneficiary Registration / Registo de Beneficiária"
+        "changelog": "Beneficiary Registration / Registo de Beneficiária:"
       },
       {
         "id": 3,
-        "changelog": "Registration of new beneficiary / Registo de Nova Beneficiária"
+        "changelog": "Feature to identify possible matches with existing beneficiaries to avoid beneficiary duplication / Funcionalidade para identificar possíveis correspondências com beneficiários existentes para evitar a duplicação de beneficiários"
       },
       {
         "id": 4,
-        "changelog": "Beneficiaries List Export / Exportar Lista de Beneficiários"
+        "changelog": "Beneficiary Service Provision / Provisão de Serviços aos Beneficiários:"
       },
       {
         "id": 5,
-        "changelog": "Beneficiaries List Export / Exportar Lista de Beneficiários"
+        "changelog": "Enhancement to restrict service editing by partner type; clinical services can only be edited by clinical partners, and community services by community partners / Melhoria para restringir a edição de serviços por tipo de parceiro; serviços clínicos só podem ser editados por parceiros clínicos e serviços comunitários por parceiros comunitários"
       },
       {
         "id": 6,
-        "changelog": "Beneficiaries List Export by Filtered Information / Exportar Lista de Beneficiários por Informação Filtrada"
+        "changelog": "Disable Sub-service Consulta Pós Parto (CPP) from Outros Serviços SAAJ sub-services list / Desabilitar o sub-serviço Consulta Pós Parto (CPP) da lista de sub-serviços Outros Serviços SAAJ"
       },
       {
         "id": 7,
-        "changelog": "Update Beneficiary / Actualizar Beneficiária"
-      },
-      {
-        "id": 8,
-        "changelog": "Beneficiary Sexual Partner Association / Associação de Parceiro Sexual da Beneficiária"
-      },
-      {
-        "id": 9,
-        "changelog": "Delete Beneficiary / Excluir Beneficiária"
-      },
-      {
-        "id": 10,
-        "changelog": "Beneficiary Partner Registration / Registo de Parceiro de Beneficiária:"
-      },
-      {
-        "id": 11,
-        "changelog": "Partner Registration / Registo de Parceiro"
-      },
-      {
-        "id": 12,
-        "changelog": "Update Partner Information / Actualizar Informação do Parceiro"
-      },
-      {
-        "id": 13,
-        "changelog": "Delete Partner / Excluir Parceiro"
-      },
-      {
-        "id": 14,
-        "changelog": "Beneficiary Service Provision / Provisão de Serviços aos Beneficiários"
-      },
-      {
-        "id": 15,
-        "changelog": "Register Beneficiary Service / Registar Serviço"
-      },
-      {
-        "id": 16,
-        "changelog": "Delete Service / Excluir Serviço"
-      },
-      {
-        "id": 17,
-        "changelog": "List Services / Listar Serviços"
-      },
-      {
-        "id": 18,
         "changelog": "Referral Management Module / Módulo de Gestão de Referências:"
       },
       {
-        "id": 19,
-        "changelog": "Manage Service Referral / Gestão de Referência de Serviço"
+        "id": 8,
+        "changelog": "Manage Service Referral / Gestão de Referência de Serviço:"
       },
       {
-        "id": 20,
-        "changelog": "Create Beneficiary Service Referral / Criar Referência de Serviço para Beneficiária"
+        "id": 9,
+        "changelog": "Inclusion of validation for the referral code field to ensure adherence to the defined format / Inclusão de validação para o campo de código de referência para garantir conformidade com o formato definido"
       },
       {
-        "id": 21,
-        "changelog": "Update Referral / Actualizar Referência"
+        "id": 10,
+        "changelog": "Change in the 'Notify To' field: enable the issuance of referrals to supervisors with access to the administrative post linked to the selected location. / Alteração no campo 'Notificar Ao': habilitar a emissão  de referências para supervisores com acesso ao posto administrativo vinculado à localização selecionada"
       },
       {
-        "id": 22,
-        "changelog": "Cancel Referral / Cancelar Referência"
+        "id": 11,
+        "changelog": "Change in the location field to list the user 's administrative post instead of the beneficiary /  Alteração no campo de localização para listar o posto administrativo do usuário em vez do beneficiário"
       },
       {
-        "id": 23,
-        "changelog": "Bulk Cancellation Service Referral / Cancelamento Massivo de Referências"
+        "id": 12,
+        "changelog": "Update the sorting order to display referrals by status first, followed by referral date (in descending order), and then received date (most recent first) / Atualização na ordem de classificação para exibir as referências por status primeiro, seguido pela data de emissão da referência (em ordem decrescente), e depois pela data de registo (mais recente primeiro)"
       },
       {
-        "id": 24,
-        "changelog": "List Referrals / Listar Referências"
+        "id": 13,
+        "changelog": "Enhancement in referrals list on mobile devices: received and issued referrals are differentiated by color / Melhoria na listagem de referências em dispositivos móveis: as referências recebidas e emitidas são diferenciadas por cor"
       },
       {
-        "id": 25,
-        "changelog": "Referrals List Export / Exportar Lista de Referências"
-      },
-      {
-        "id": 26,
-        "changelog": "Referrals List Export by Filtered Information / Exportar Lista de Referências por Informação Filtrada"
-      },
-      {
-        "id": 27,
-        "changelog": "Attend Service / Atender Serviço"
-      },
-      {
-        "id": 28,
-        "changelog": "List of  Requested  Services / Listar Serviços Requisitados"
-      },
-      {
-        "id": 29,
-        "changelog": "List of Received Services / Listar Serviços Recebidos"
-      },
-      {
-        "id": 30,
-        "changelog": "Configuration Module / Módulo de Configuração:"
-      },
-      {
-        "id": 31,
-        "changelog": "Metadata Management / Gestão de Metadados"
-      },
-      {
-        "id": 32,
-        "changelog": "Provinces / Províncias"
-      },
-      {
-        "id": 33,
-        "changelog": "Districts / Distritos"
-      },
-      {
-        "id": 34,
-        "changelog": "Administrative Posts / Postos Administrativos"
-      },
-      {
-        "id": 35,
-        "changelog": "Location / Localização"
-      },
-      {
-        "id": 36,
-        "changelog": "Services / Serviços"
-      },
-      {
-        "id": 37,
-        "changelog": "Sub services / Sub-serviços"
-      },
-      {
-        "id": 38,
-        "changelog": "Organizations / Organizações"
-      },
-      {
-        "id": 39,
-        "changelog": "User Management Module / Módulo de Gestão do Utilizador:"
-      },
-      {
-        "id": 40,
-        "changelog": "User Registration / Registo do Utilizador"
-      },
-      {
-        "id": 41,
-        "changelog": "Create, Update and  Inactivate Users / Criar.Actualizar e Inactivar Utilizadores"
-      },
-      {
-        "id": 42,
-        "changelog": "List Existing Users / Listar Utilizadores Existentes"
-      },
-      {
-        "id": 43,
-        "changelog": "User Login / Login do Utilizador"
-      },
-      {
-        "id": 44,
-        "changelog": "Login / Login"
-      },
-      {
-        "id": 45,
-        "changelog": "Initial Login / Login Inicial"
-      },
-      {
-        "id": 46,
-        "changelog": "Periodic Password Renewal / Renovação Periódica de Senha"
-      },
-      {
-        "id": 47,
-        "changelog": "Password Reset / Redefinição de Senha"
-      },
-      {
-        "id": 48,
+        "id": 14,
         "changelog": "Reports Module:"
       },
       {
-        "id": 49,
-        "changelog": "PEPFAR MER 2.6.1 AGYW_PREV Indicator / Relatório do indicador MER 2.6.1 AGYW_PREV"
+        "id": 15,
+        "changelog": "List of Beneficiaries and Services  / Lista de Beneficiários e Serviços"
+      },
+      {
+        "id": 16,
+        "changelog": "Inclusion of access to the Administrator Profile / Inclusão de acesso ao Perfil de Administrador"
+      },
+      {
+        "id": 17,
+        "changelog": "Update in the filename to include the DG (Report creation date) / Atualização no nome do arquivo para incluir a DG (Data de Criação do Relatório)"
+      },
+      {
+        "id": 18,
+        "changelog": "Code enhancement for report performance improvement / Optimização de código para melhoria de desempenho do relatório"
+      },
+      {
+        "id": 19,
+        "changelog": "List of Newly Enrolled AGYW and Services/ Lista de Novas RAMJ e Serviços"
+      },
+      {
+        "id": 20,
+        "changelog": "Inclusion of access to the Administrator Profile / Inclusão de acesso ao Perfil de Administrador"
+      },
+      {
+        "id": 21,
+        "changelog": "Update in the filename to include the DG (Report creation date) / Atualização no nome do arquivo para incluir a DG (Data de Criação do Relatório)"
+      },
+      {
+        "id": 22,
+        "changelog": "Code enhancement for report performance improvement / Optimização de código para melhoria de desempenho do relatório"
+      },
+      {
+        "id": 23,
+        "changelog": "List of Beneficiaries Without Specific Vulnerabilities (New Report)/ Lista de Beneficiárias sem Vulnerabilidades Específicas (Novo Relatório)"
+      },
+      {
+        "id": 24,
+        "changelog": "Report on Beneficiaries without specific vulnerabilities registered in the system / Relatório sobre Beneficiários sem vulnerabilidades específicas registadas no sistema"
+      },
+      {
+        "id": 25,
+        "changelog": "Simplified AGYW_PREV Indicator Report (New Report) / Relatório Simplificado do Indicador AGYW_PREV (Novo Relatório)"
+      },
+      {
+        "id": 26,
+        "changelog": "Simplified report for Partners implementing a customized version of DREAMS (Mothers to Mothers) / Relatório simplificado para Parceiros que implementam uma versão customizada do DREAMS (Mothers to Mothers)"
+      },
+      {
+        "id": 27,
+        "changelog": "Others / Outros"
+      },
+      {
+        "id": 28,
+        "changelog": "Performance Improvement: inclusion of an initial load screen on mobile app launch / Melhoria de desempenho: inclusão de uma tela de carregamento inicial na inicialização do aplicativo móvel."
+      },
+      {
+        "id": 29,
+        "changelog": "Bugfix (Ticket #3451): Allow referral issuance to Health Facility (US) for Clinical Partners where the Entry Point is Escola(ES) / Correção de bug: Permitir emissão de referência para Unidade Sanitária para Parceiros Clínicos com Escola (ES) como ponto de entrada."
+      },
+      {
+        "id": 30,
+        "changelog": "Bugfix (Ticket #3448): Beneficiaries listed as included in the AGYW_PREV in the List of Beneficiaries and Services must be aligned with the Beneficiaries in the AGYW_PREV Indicator Report / Correcção de bug:Beneficiárias listadas como incluídas no AGYW_PREV na Lista de Beneficiários e Serviços devem estar alinhadas às Beneficiárias no Relatório do Indicador AGYW_PREV"
       }
     ]
   }

@@ -36,12 +36,14 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
       <Row gutter={8} hidden={beneficiary === undefined}>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="nui-control"
             name="nui"
             label="Código da Beneficiária (NUI)"
             style={{ textAlign: "left" }}
             initialValue={beneficiary?.nui}
           >
             <Input
+              id="nui-input"
               disabled={true}
               style={{ fontWeight: "bold", color: "#17a2b8" }}
             />
@@ -51,12 +53,14 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
       <Row gutter={24}>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="vblt_lives_with-control"
             name="vblt_lives_with"
             label="Com quem mora?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             initialValue={beneficiary?.vbltLivesWith.split(",")}
           >
             <Select
+              id="multiple-selection"
               mode="multiple"
               size="middle"
               placeholder="Please select"
@@ -72,13 +76,14 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
         </Col>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="vblt_house_sustainer-control"
             name="vblt_house_sustainer"
             label="Sustenta a Casa?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
             initialValue={beneficiary?.vbltHouseSustainer}
           >
-            <Radio.Group>
+            <Radio.Group id="vblt_house_sustainer-options">
               <Radio.Button value={1}>SIM</Radio.Button>
               <Radio.Button value={0}>NÃO</Radio.Button>
             </Radio.Group>
@@ -86,13 +91,14 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
         </Col>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="vblt_is_orphan-control"
             name="vblt_is_orphan"
             label="É Orfã?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
             initialValue={beneficiary?.vbltIsOrphan}
           >
-            <Radio.Group>
+            <Radio.Group id="vblt_is_orphan-options">
               <Radio.Button value={1}>SIM</Radio.Button>
               <Radio.Button value={0}>NÃO</Radio.Button>
             </Radio.Group>
@@ -102,13 +108,17 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
       <Row gutter={24}>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="vblt_is_student-control"
             name="vblt_is_student"
             label="Vai a Escola?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
             initialValue={beneficiary?.vbltIsStudent}
           >
-            <Radio.Group onChange={isStudentChange}>
+            <Radio.Group
+              id="vblt_is_student-options"
+              onChange={isStudentChange}
+            >
               <Radio.Button value={1}>SIM</Radio.Button>
               <Radio.Button value={0}>NÃO</Radio.Button>
             </Radio.Group>
@@ -116,6 +126,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
         </Col>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="vblt_school_grade-control"
             name="vblt_school_grade"
             label="Classe"
             rules={[
@@ -125,6 +136,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
             initialValue={beneficiary?.vbltSchoolGrade}
           >
             <Select
+              id="vblt_school_grade-selection"
               size="middle"
               allowClear
               placeholder="Please select"
@@ -141,6 +153,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
         </Col>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="vblt_school_name-control"
             name="vblt_school_name"
             label="Nome da Instituição de Ensino"
             rules={[
@@ -150,6 +163,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
             initialValue={beneficiary?.vbltSchoolName}
           >
             <Input
+              id="vblt_school_name-input"
               /*disabled={schoolInfoEnabled}*/ placeholder="Insira o nome da instituição de ensino"
             />
           </Form.Item>
@@ -158,13 +172,17 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
       <Row gutter={24}>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="vblt_is_deficient-control"
             name="vblt_is_deficient"
             label="Tem Deficiência?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
             initialValue={beneficiary?.vbltIsDeficient}
           >
-            <Radio.Group onChange={onIsDeficientChange}>
+            <Radio.Group
+              id="vblt_is_deficient-options"
+              onChange={onIsDeficientChange}
+            >
               <Radio.Button value={1}>SIM</Radio.Button>
               <Radio.Button value={0}>NÃO</Radio.Button>
             </Radio.Group>
@@ -172,6 +190,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
         </Col>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="vblt_deficiency_type-control"
             name="vblt_deficiency_type"
             label="Tipo de Deficiência"
             rules={[
@@ -184,6 +203,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
             initialValue={beneficiary?.vbltDeficiencyType}
           >
             <Select
+              id="vblt_deficiency_type-selection"
               size="middle"
               placeholder="Please select"
               disabled={deficiencyTypeEnabled}
@@ -197,6 +217,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
                 "Não Vê",
                 "Não Ouve",
                 "Tem Algum Membro Amputado ou Deformado",
+                "Tem Algum Atraso Mental",
               ].map((item) => (
                 <Option key={item}>{item}</Option>
               ))}
@@ -207,13 +228,14 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
       <Row gutter={24}>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="vblt_married_before-control"
             name="vblt_married_before"
             label="Já foi Casada?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
             initialValue={beneficiary?.vbltMarriedBefore}
           >
-            <Radio.Group>
+            <Radio.Group id="vblt_married_before-options">
               <Radio.Button value={1}>SIM</Radio.Button>
               <Radio.Button value={0}>NÃO</Radio.Button>
             </Radio.Group>
@@ -221,13 +243,17 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
         </Col>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="vblt_pregnant_before-control"
             name="vblt_pregnant_before"
             label="Já esteve Gravida?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
             initialValue={beneficiary?.vbltPregnantBefore}
           >
-            <Radio.Group onChange={onPregnantBeforeChane}>
+            <Radio.Group
+              id="vblt_pregnant_before-options"
+              onChange={onPregnantBeforeChane}
+            >
               <Radio.Button value={1}>SIM</Radio.Button>
               <Radio.Button value={0}>NÃO</Radio.Button>
             </Radio.Group>
@@ -235,6 +261,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
         </Col>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="vblt_children-control"
             name="vblt_children"
             label="Tem Filhos?"
             rules={[
@@ -243,7 +270,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
             style={{ textAlign: "left" }}
             initialValue={beneficiary?.vbltChildren}
           >
-            <Radio.Group disabled={childrenEnabled}>
+            <Radio.Group id="vblt_children-options" disabled={childrenEnabled}>
               <Radio.Button value={1}>SIM</Radio.Button>
               <Radio.Button value={0}>NÃO</Radio.Button>
             </Radio.Group>
@@ -253,13 +280,14 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
       <Row gutter={24}>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="vblt_pregnant_or_breastfeeding-control"
             name="vblt_pregnant_or_breastfeeding"
             label="Está Grávida ou a amamentar?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
             initialValue={beneficiary?.vbltPregnantOrBreastfeeding}
           >
-            <Radio.Group>
+            <Radio.Group id="vblt_pregnant_or_breastfeeding-options">
               <Radio.Button value={1}>SIM</Radio.Button>
               <Radio.Button value={0}>NÃO</Radio.Button>
             </Radio.Group>
@@ -267,6 +295,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
         </Col>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="vblt_is_employed-control"
             name="vblt_is_employed"
             label="Trabalha?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
@@ -274,6 +303,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
             initialValue={beneficiary?.vbltIsEmployed}
           >
             <Select
+              id="vblt_is_employed-selection"
               size="middle"
               placeholder="Please select"
               //defaultValue={['a10', 'c12']}
@@ -293,6 +323,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
         </Col>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="vblt_tested_hiv-control"
             name="vblt_tested_hiv"
             label="Já fez Teste de HIV?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
@@ -300,6 +331,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
             initialValue={beneficiary?.vbltTestedHiv}
           >
             <Select
+              id="vblt_tested_hiv-selection"
               size="middle"
               placeholder="Please select"
               //defaultValue={['a10', 'c12']}

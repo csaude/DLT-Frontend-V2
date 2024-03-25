@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Row, Col, Input, Form, DatePicker, Select, Radio } from "antd";
 import "./index.css";
 import { allPartnersByTypeDistrict } from "@app/utils/partners";
-import { allUsersByUs, queryByUserId } from "@app/utils/users";
+import { allUsersByUsAndOrganization, queryByUserId } from "@app/utils/users";
 import { allUsByType } from "@app/utils/uSanitaria";
 import { queryByCreated } from "@app/utils/reference";
 import { COUNSELOR, MENTOR, NURSE, SUPERVISOR } from "@app/utils/contants";
 import { useSelector } from "react-redux";
 import moment from "moment";
 import { getEntryPoint } from "@app/models/User";
+import { queryLocalitiesByDistricts } from "@app/utils/locality";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -23,7 +24,9 @@ const StepReference = ({
   const [users, setUsers] = React.useState<any>([]);
   const [us, setUs] = React.useState<any>();
   const [entryPoint, setEntryPoint] = useState<any>([]);
+  const [currentYear, setCurrentYear] = useState<any>(undefined);
   const [entryPoints, setEntryPoints] = useState<any>([]);
+  const [localities, setLocalities] = useState<any>([]);
   const [serviceTypes, setServiceTypes] = useState<any>([]);
   const [serviceTypeEnabled, setServiceTypeEnabled] = useState(false);
   const [status, setStatus] = useState<any>([]);
@@ -34,7 +37,6 @@ const StepReference = ({
   const [stepValues, setStepValues] = useState(
     reference ? reference : firstStepValues
   );
-  const selectedReference = beneficiary;
   const userId = localStorage.getItem("user");
   const referers = useSelector((state: any) => state.user.referers);
   const sortedReferes = referers.sort((u1, u2) =>
@@ -44,6 +46,22 @@ const StepReference = ({
   useEffect(() => {
     const fetchData = async () => {
       const loggedUser = await queryByUserId(localStorage.user);
+      const payload = {
+        districts: [beneficiary?.locality?.district?.id],
+      };
+
+      const entryPoint = getEntryPoint(loggedUser.entryPoint);
+      const currentYear = moment(new Date()).format("YY");
+
+      setEntryPoint(entryPoint);
+      setCurrentYear(currentYear);
+
+      const localities =
+        loggedUser?.localities.length > 0
+          ? loggedUser?.localities
+          : await queryLocalitiesByDistricts(payload);
+
+      setLocalities(localities);
 
       setStatus([
         { value: "0", label: "Activo" },
@@ -64,12 +82,19 @@ const StepReference = ({
             ? userId
             : "",
         });
+        const refCode = form.getFieldValue("referenceCode");
+        if (!refCode) {
+          form.setFieldsValue({
+            referenceCode: entryPoint + "-PP-MM-" + currentYear,
+          });
+        }
       } else {
         const regUser = await queryByUserId(reference?.createdBy);
         form.setFieldsValue({
           createdBy: regUser?.name + " " + regUser?.surname,
         });
         form.setFieldsValue({ referenceNote: reference.referenceNote });
+        form.setFieldsValue({ referenceCode: reference.referenceCode });
 
         setStatusEnabled(
           reference.userCreated === userId ||
@@ -80,10 +105,18 @@ const StepReference = ({
       const partnerType = loggedUser.partners.partnerType;
 
       if (partnerType === "1") {
-        setEntryPoints([
-          { value: "2", label: "CM" },
-          { value: "3", label: "ES" },
-        ]);
+        if (loggedUser.entryPoint === "1") {
+          setEntryPoints([
+            { value: "2", label: "CM" },
+            { value: "3", label: "ES" },
+          ]);
+        } else {
+          setEntryPoints([
+            { value: "1", label: "US" },
+            { value: "2", label: "CM" },
+            { value: "3", label: "ES" },
+          ]);
+        }
       } else if (partnerType === "2") {
         setEntryPoints([
           { value: "1", label: "US" },
@@ -96,8 +129,6 @@ const StepReference = ({
           { value: "3", label: "ES" },
         ]);
       }
-
-      setEntryPoint(getEntryPoint(loggedUser.entryPoint));
     };
 
     fetchData().catch((error) => console.log(error));
@@ -140,13 +171,14 @@ const StepReference = ({
   };
 
   const onChangeEntryPoint = async (e: any) => {
+    console.log(localities);
     const type = e?.target?.value === undefined ? e : e?.target?.value;
     const payload = {
       typeId: type,
       localitiesIds:
         reference !== undefined
           ? reference.notifyTo?.localities.map((i) => i.id)
-          : beneficiary?.locality?.id,
+          : localities.map((i) => i.id),
     };
     const data = await allUsByType(payload);
     setUs(data);
@@ -185,7 +217,12 @@ const StepReference = ({
   };
 
   const onChangeUs = async (value: any) => {
-    const data = await allUsersByUs(value);
+    const organization = form.getFieldValue("partner_id");
+    const payload = {
+      usId: Number(value),
+      organizationId: Number(organization),
+    };
+    const data = await allUsersByUsAndOrganization(payload);
     const sortedUsers = data.sort((u1, u2) =>
       (u1.name + u1.surname).localeCompare(u2.name + u2.surname)
     );
@@ -237,7 +274,7 @@ const StepReference = ({
             rules={[{ required: true, message: "Obrigatório" }]}
             initialValue={
               reference === undefined
-                ? selectedReference?.nui
+                ? beneficiary?.nui
                 : reference?.beneficiaries?.nui
             }
           >
@@ -297,9 +334,48 @@ const StepReference = ({
             label={
               "Cód. Ref. Livro (PE:" +
               entryPoint +
-              "; Pág.; Mês:1-12, Ano:23-99)"
+              "; Pág.; Mês:01-12, Ano:" +
+              (currentYear - 1) +
+              "-" +
+              currentYear +
+              ")"
             }
-            rules={[{ required: true, message: "Obrigatório" }]}
+            rules={[
+              { required: true, message: "Obrigatório" },
+              {
+                validator(rule, value) {
+                  return new Promise((resolve, reject) => {
+                    const splittedRefCode = value.split("-");
+                    if (splittedRefCode.length != 4) {
+                      reject("Formato incorrecto");
+                    } else if (
+                      !["US", "CM", "ES"].includes(splittedRefCode[0])
+                    ) {
+                      reject("Ponto de entrada incorrecto");
+                    } else if (
+                      splittedRefCode[1].localeCompare("01") < 0 ||
+                      splittedRefCode[1].localeCompare("99") > 0
+                    ) {
+                      reject("Número de página incorrecto");
+                    } else if (
+                      splittedRefCode[2].localeCompare("01") < 0 ||
+                      splittedRefCode[2].localeCompare("12") > 0
+                    ) {
+                      reject("Mês incorrecto");
+                    } else if (
+                      splittedRefCode[3].localeCompare(
+                        Number(currentYear) - 1
+                      ) < 0 ||
+                      splittedRefCode[3].localeCompare(currentYear) > 0
+                    ) {
+                      reject("Ano incorrecto");
+                    } else {
+                      resolve("");
+                    }
+                  });
+                },
+              },
+            ]}
             initialValue={
               reference === undefined ? "" : reference?.referenceCode
             }

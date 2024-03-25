@@ -8,17 +8,17 @@ export const beneficiariesInterventionsFetchCount = async () => {
     .get("beneficiaries")
     .query()
     .fetch();
-  const beneficiariesIds = beneficiaries.map((item) => item?.["online_id"]);
+  const beneficiariesOfflineIds = beneficiaries.map((item) => item?.["offline_id"]);
 
   await Promise.all(
-    beneficiariesIds.map(async (beneficiary_id) => {
+    beneficiariesOfflineIds.map(async (beneficiary_offline_id) => {
       const count = await database.collections
         .get("beneficiaries_interventions")
-        .query(Q.where("beneficiary_id", beneficiary_id), Q.where("status", 1))
+        .query(Q.where("beneficiary_offline_id", beneficiary_offline_id))
         .fetchCount();
 
       const beneficiaryCount: InterventionCount = {
-        beneficiary_id: beneficiary_id,
+        beneficiary_offline_id: beneficiary_offline_id,
         total: count,
       };
 
@@ -31,4 +31,30 @@ export const beneficiariesInterventionsFetchCount = async () => {
   );
 
   return totals;
+};
+
+export const pendingSyncBeneficiariesInterventions = async () => {
+  const count = await database.collections
+    .get("beneficiaries_interventions")
+    .query(Q.where("_status", Q.notEq("synced")))
+    .fetchCount();
+  return count;
+};
+
+export const getBeneficiariesInterventionsBy_status = async (status) => {
+  const resultQ = await database.collections
+    .get("beneficiaries_interventions")
+    .query(Q.where("_status", Q.eq(status)))
+    .fetch();
+  const resultRaws = resultQ.map((item) => item._raw);
+  return resultRaws;
+};
+
+export const getBeneficiariesInterventionsByNot_status = async (status) => {
+  const resultQ = await database.collections
+    .get("beneficiaries_interventions")
+    .query(Q.where("_status", Q.notEq(status)))
+    .fetch();
+  const resultRaws = resultQ.map((item) => item._raw);
+  return resultRaws;
 };

@@ -5,9 +5,9 @@ import {
   pagedQueryByFilters,
   query,
   queryCountByFilters,
+  queryByPartnerId,
 } from "../../utils/beneficiary";
 import {
-  allUsersByProfilesAndUser,
   allUsesByDistricts,
   allUsesByProvinces,
   query as queryUser,
@@ -28,6 +28,7 @@ import {
   Select,
   Modal,
   Tag,
+  TableProps,
 } from "antd";
 import { queryDistrictsByProvinces } from "@app/utils/locality";
 import ptPT from "antd/lib/locale-provider/pt_PT";
@@ -47,26 +48,27 @@ import { getEntryPoint, UserModel } from "@app/models/User";
 import { calculateAge, getUserParams } from "@app/models/Utils";
 import FormBeneficiary from "./components/FormBeneficiary";
 import FormBeneficiaryPartner from "./components/FormBeneficiaryPartner";
-import { add as addRef, Reference } from "../../utils/reference";
+import {
+  add as addRef,
+  getReferencesCountByBeneficiaryQuery,
+  Reference,
+} from "../../utils/reference";
 import FormReference from "./components/FormReference";
 import { Title } from "@app/components";
-import {
-  ADMIN,
-  COUNSELOR,
-  MENTOR,
-  MNE,
-  NURSE,
-  SUPERVISOR,
-} from "@app/utils/contants";
+import { ADMIN, MNE, SUPERVISOR } from "@app/utils/contants";
 import { useDispatch, useSelector } from "react-redux";
 import LoadingModal from "@app/components/modal/LoadingModal";
-import { loadReferers } from "@app/store/actions/users";
 import { FilterObject } from "@app/models/FilterObject";
 import { allDistrict, allDistrictsByIds } from "@app/utils/district";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import { toast } from "react-toastify";
-import { getAgeByDate } from "@app/utils/ageRange";
+import { getAgeBandByDate, getAgeByDate } from "@app/utils/ageRange";
+import { loadGeneralIndicators } from "@app/store/reducers/beneficiaryDashboard";
+import {
+  getInterventionCountByBeneficiaryAndServiceTypeQuery,
+  getInterventionCountByBeneficiaryIdAndAgeBandAndLevelQuery,
+} from "@app/utils/beneficiaryIntervention";
 
 const { Text } = Typography;
 const { confirm } = Modal;
@@ -100,9 +102,13 @@ const BeneficiariesList: React.FC = () => {
   const [partners, setPartners] = useState<any[]>([]);
   const [visibleName, setVisibleName] = useState<any>(true);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
+  const [filters, setFilters] = useState<any>(null);
   const pageSize = 100;
+  const [isEditMode, setIsEditMode] = useState(false);
 
-  const interventionSelector = useSelector((state: any) => state?.intervention);
+  const interventionSelector = useSelector(
+    (state: any) => state?.intervention.loadedInterventions
+  );
   const userSelector = useSelector((state: any) => state?.user);
   const beneficiariesTotal = useSelector(
     (state: any) => state.beneficiary.total
@@ -121,12 +127,14 @@ const BeneficiariesList: React.FC = () => {
   }));
 
   const [searchNui, setSearchNui] = useState<any>("");
+  const [searchName, setSearchName] = useState<any>("");
   const [searchDistrict, setSearchDistrict] = useState<any>("");
   const [searchUserCreator, setSearchUserCreator] = useState<any>("");
 
   const [district, setDistrict] = useState<any>();
   const [userCreator, setUserCreator] = useState<any>();
   const [nui, setNui] = useState<any>();
+  const [name, setName] = useState<any>();
 
   let data;
   let countByFilter;
@@ -137,17 +145,10 @@ const BeneficiariesList: React.FC = () => {
   const dispatch = useDispatch();
 
   const getBeneficiaryIntervention = (beneficiaryId) => {
-    const currentInterventin = interventionSelector?.interventions?.map(
-      (item) => {
-        if (item[1] == beneficiaryId) {
-          return item[0];
-        }
-      }
+    const element = interventionSelector?.find(
+      (item) => item.beneficiaryId === beneficiaryId
     );
-    const filteredInterventions = currentInterventin.filter(
-      (intervention) => intervention
-    );
-    return filteredInterventions[0];
+    return element;
   };
 
   const getUsernames = (userId) => {
@@ -170,6 +171,7 @@ const BeneficiariesList: React.FC = () => {
         currentPageIndex,
         pageSize,
         searchNui,
+        searchName,
         searchUserCreator,
         searchDistrict
       );
@@ -177,6 +179,7 @@ const BeneficiariesList: React.FC = () => {
       countByFilter = await queryCountByFilters(
         getUserParams(user),
         searchNui,
+        searchName,
         searchUserCreator,
         searchDistrict
       );
@@ -277,27 +280,19 @@ const BeneficiariesList: React.FC = () => {
     };
 
     fetchData().catch((error) => console.log(error));
-
-    const fetchReferersUsers = async () => {
-      const payload = {
-        profiles: [SUPERVISOR, MENTOR, NURSE, COUNSELOR].toString(),
-        userId: Number(userId),
-      };
-
-      const referers = await allUsersByProfilesAndUser(payload);
-      dispatch(loadReferers(referers));
-    };
-
-    fetchReferersUsers().catch((error) => console.log(error));
   }, [
     currentPageIndex,
     searchNui,
+    searchName,
     searchUserCreator,
     searchDistrict,
     beneficiary,
   ]);
 
-  const handleAddRef = async (values: any) => {
+  const handleAddRef = async (
+    values: any,
+    buttonRef: React.RefObject<HTMLButtonElement>
+  ) => {
     if (values !== undefined) {
       const servicesObjects = services.map((e: any) => {
         const listServices: any = {
@@ -348,6 +343,9 @@ const BeneficiariesList: React.FC = () => {
             marginTop: "10vh",
           },
         });
+        if (buttonRef.current) {
+          buttonRef.current.disabled = false;
+        }
       } else {
         setAddStatus(true);
         const { data } = await addRef(payload);
@@ -405,9 +403,64 @@ const BeneficiariesList: React.FC = () => {
     });
   };
 
+  const getInterventionsCount = async (beneficiary) => {
+    const ageBand: any = getAgeBandByDate(beneficiary.dateOfBirth);
+
+    const interventionsCount =
+      await getInterventionCountByBeneficiaryAndServiceTypeQuery(
+        beneficiary.id
+      );
+    const getPrimaryInterventionsCOunt =
+      await getInterventionCountByBeneficiaryIdAndAgeBandAndLevelQuery(
+        beneficiary.id,
+        ageBand,
+        1
+      );
+    const getSecondaryInterventionsCOunt =
+      await getInterventionCountByBeneficiaryIdAndAgeBandAndLevelQuery(
+        beneficiary.id,
+        ageBand,
+        2
+      );
+    const getContextualInterventionsCOunt =
+      await getInterventionCountByBeneficiaryIdAndAgeBandAndLevelQuery(
+        beneficiary.id,
+        ageBand,
+        3
+      );
+
+    const getReferencesCOunt = await getReferencesCountByBeneficiaryQuery(
+      beneficiary.id
+    );
+
+    dispatch(
+      loadGeneralIndicators({
+        totalOfClinicalInterventions:
+          interventionsCount.length > 0 ? interventionsCount[0][2] : 0,
+        totalOfCommunityInterventions:
+          interventionsCount.length > 0 ? interventionsCount[0][3] : 0,
+        totalOfPrimaryInterventions:
+          getPrimaryInterventionsCOunt.length > 0
+            ? getPrimaryInterventionsCOunt[0][1]
+            : 0,
+        totalOfSecondaryInterventions:
+          getSecondaryInterventionsCOunt.length > 0
+            ? getSecondaryInterventionsCOunt[0][1]
+            : 0,
+        totalOfContextualInterventions:
+          getContextualInterventionsCOunt.length > 0
+            ? getContextualInterventionsCOunt[0][1]
+            : 0,
+        totalReferences:
+          getReferencesCOunt.length > 0 ? getReferencesCOunt[0][1] : 0,
+      })
+    );
+  };
+
   const handleViewModalVisible = (flag?: boolean, record?: any) => {
     setBeneficiary(record);
     setModalVisible(!!flag);
+    getInterventionsCount(record);
   };
 
   const handleModalRefVisible = (flag?: boolean, record?: any) => {
@@ -422,6 +475,7 @@ const BeneficiariesList: React.FC = () => {
     form.resetFields();
     setBeneficiary(undefined);
     setBeneficiaryModalVisible(!!flag);
+    setIsEditMode(false);
   };
 
   const handleBeneficiaryPartnerModalVisible = (flag?: boolean) => {
@@ -434,20 +488,34 @@ const BeneficiariesList: React.FC = () => {
     setModalVisible(!!flag);
   };
 
-  const showConfirmVoid = (data: any) => {
-    confirm({
-      title: "Deseja Excluir a Beneficiária com o NUI " + data.nui + "?",
-      icon: <ExclamationCircleFilled />,
-      okText: "Sim",
-      okType: "danger",
-      cancelText: "Não",
-      onOk() {
-        handleVoidBeneficiary(data);
-      },
-      onCancel() {
-        /**Its OK */
-      },
-    });
+  const showConfirmVoid = async (data: any) => {
+    const beneficiaries = await queryByPartnerId(data.id);
+    if (beneficiaries.length > 0) {
+      confirm({
+        title:
+          "Não é possível excluir o NUI " +
+          data.nui +
+          ", este está associado a uma beneficiária",
+        icon: <ExclamationCircleFilled />,
+        okText: "Fechar",
+        okType: "primary",
+        cancelButtonProps: { style: { display: "none" } },
+      });
+    } else {
+      confirm({
+        title: "Deseja Excluir a Beneficiária com o NUI " + data.nui + "?",
+        icon: <ExclamationCircleFilled />,
+        okText: "Sim",
+        okType: "danger",
+        cancelText: "Não",
+        onOk() {
+          handleVoidBeneficiary(data);
+        },
+        onCancel() {
+          /**Its OK */
+        },
+      });
+    }
   };
 
   const fetchPartner = async (record: any) => {
@@ -458,7 +526,7 @@ const BeneficiariesList: React.FC = () => {
   const onEditBeneficiary = async (record: any) => {
     form.resetFields();
 
-    if (record.gender === "2") {
+    if (record?.gender === "2") {
       if (record.partnerId != null) {
         await fetchPartner(record).catch((error) => console.log(error));
       }
@@ -656,7 +724,31 @@ const BeneficiariesList: React.FC = () => {
       dataIndex: "beneficiariesInterventionses",
       key: "beneficiariesInterventionses",
       render(val: any, record) {
-        return <Badge count={getBeneficiaryIntervention(record.id)} />;
+        return <Badge count={getBeneficiaryIntervention(record.id)?.total} />;
+      },
+      width: 60,
+    },
+    {
+      title: "#Interv Clínicas",
+      dataIndex: "clinicalInterventions",
+      key: "clinicalInterventions",
+      render(val: any, record) {
+        return (
+          <Badge count={getBeneficiaryIntervention(record.id)?.clinicalTotal} />
+        );
+      },
+      width: 60,
+    },
+    {
+      title: "#Interv Comunitárias",
+      dataIndex: "communityInterventions",
+      key: "communityInterventions",
+      render(val: any, record) {
+        return (
+          <Badge
+            count={getBeneficiaryIntervention(record.id)?.communityTotal}
+          />
+        );
       },
       width: 60,
     },
@@ -680,6 +772,13 @@ const BeneficiariesList: React.FC = () => {
           .filter((user) => record.createdBy == user.id)
           .map((filteredUser) => `${filteredUser.username}`)[0] == value,
       filterSearch: true,
+    },
+    {
+      title: "Inscrito Em",
+      dataIndex: "enrollmentDate",
+      key: "enrollmentDate",
+      ...getColumnSearchProps("enrollmentDate"),
+      render: (val: string) => <span>{moment(val).format("YYYY-MM-DD")}</span>,
     },
     {
       title: "Criado Em",
@@ -725,6 +824,30 @@ const BeneficiariesList: React.FC = () => {
           ),
     },
     {
+      title: "Status",
+      dataIndex: "",
+      key: "status",
+      filters: [
+        {
+          text: "activo",
+          value: 1,
+        },
+        {
+          text: "inactivo",
+          value: 0,
+        },
+      ],
+      onFilter: (value, record) => record.status == value,
+      filterSearch: true,
+      render: (text, record) =>
+        record.status == 1 ? (
+          <Text type="success">{"activo"}</Text>
+        ) : (
+          <Text type="danger">{"inactivo"}</Text>
+        ),
+      width: 120,
+    },
+    {
       title: "Acção",
       dataIndex: "",
       key: "x",
@@ -738,7 +861,10 @@ const BeneficiariesList: React.FC = () => {
           <Button
             type="primary"
             icon={<EditOutlined />}
-            onClick={() => onEditBeneficiary(record)}
+            onClick={() => {
+              onEditBeneficiary(record);
+              setIsEditMode(true);
+            }}
           ></Button>
           <Button
             type="primary"
@@ -777,6 +903,9 @@ const BeneficiariesList: React.FC = () => {
   const handleGlobalSearch = async () => {
     if (nui !== undefined) {
       setSearchNui(nui);
+    }
+    if (name !== undefined) {
+      setSearchName(name);
     }
     if (userCreator !== undefined) {
       setSearchUserCreator(userCreator);
@@ -822,16 +951,21 @@ const BeneficiariesList: React.FC = () => {
       const pageElements = 1000;
 
       const workbook = new ExcelJS.Workbook();
-      const worksheet = workbook.addWorksheet("Lista_Beneficiarios_");
+      const worksheet = workbook.addWorksheet(
+        "Lista_de_Adolescentes_e_Jovens_"
+      );
 
       const headers = [
         "#",
         "Código do Beneficiário",
+        "Nome do Beneficiário",
         "Sexo",
         "PE",
         "Distrito",
         "Idade",
         "#Interv",
+        "#Interv Clínicas",
+        "#Interv Comunitárias",
         "Org",
         "Criado Por",
         "Actualizado Por",
@@ -860,9 +994,65 @@ const BeneficiariesList: React.FC = () => {
           i,
           pageElements,
           searchNui,
+          searchName,
           searchUserCreator,
           searchDistrict
         );
+
+        if (filters) {
+          if (filters.nui != null) {
+            data = data.filter((d) => d.nui.includes(filters.nui[0]));
+          }
+          if (filters.name != null) {
+            data = data.filter((d) =>
+              (d.name + " " + d.surname).match(filters.name)
+            );
+          }
+          if (filters.gender != null) {
+            data = data.filter((d) => filters.gender.includes(d.gender));
+          }
+          if (filters.entryPoint != null) {
+            data = data.filter((d) =>
+              filters.entryPoint.includes(d.entryPoint)
+            );
+          }
+          if (filters.district != null) {
+            data = data.filter((d) =>
+              filters.district.includes(d.district.name)
+            );
+          }
+          if (filters.age != null) {
+            data = data.filter((d) =>
+              filters.age.includes(calculateAge(d.dateOfBirth))
+            );
+          }
+          if (filters.partner != null) {
+            data = data.filter((d) =>
+              filters.partner.includes(d.partners.name)
+            );
+          }
+          if (filters.dateCreated != null) {
+            data = data.filter((d) =>
+              d.dateCreated.includes(filters.dateCreated)
+            );
+          }
+          if (filters.dateUpdated != null) {
+            data = data.filter(
+              (d) =>
+                d.dateUpdated && d.dateUpdated.includes(filters.dateUpdated)
+            );
+          }
+          if (filters.createdBy != null) {
+            data = data.filter((d) =>
+              filters.createdBy.includes(getUsernames(d.createdBy))
+            );
+          }
+          if (filters.updatedBy != null) {
+            data = data.filter((d) =>
+              filters.updatedBy.includes(getUsernames(d.updatedBy))
+            );
+          }
+        }
 
         const sortedBeneficiaries = data.sort((benf1, benf2) =>
           moment(benf2.dateCreated)
@@ -877,9 +1067,11 @@ const BeneficiariesList: React.FC = () => {
         }
 
         sortedBeneficiaries.forEach((beneficiary) => {
+          const interventions = getBeneficiaryIntervention(beneficiary.id);
           const values = [
             sequence,
             beneficiary.district.code + "/" + beneficiary?.nui,
+            getName(beneficiary),
             beneficiary?.gender === "1" ? "M" : "F",
             beneficiary?.entryPoint === "1"
               ? "US"
@@ -888,7 +1080,9 @@ const BeneficiariesList: React.FC = () => {
               : "ES",
             beneficiary?.district?.name,
             getAgeByDate(beneficiary.dateOfBirth) + " anos",
-            getBeneficiaryIntervention(beneficiary.id),
+            interventions?.total,
+            interventions?.clinicalTotal,
+            interventions?.communityTotal,
             beneficiary?.partners?.name,
             getUsernames(beneficiary.createdBy),
             getUsernames(beneficiary.updatedBy),
@@ -908,7 +1102,7 @@ const BeneficiariesList: React.FC = () => {
       const blob = new Blob([buffer], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
-      saveAs(blob, `Lista_Beneficiarios_${created}.xlsx`);
+      saveAs(blob, `Lista_de_Adolescentes_e_Jovens_${created}.xlsx`);
 
       setDataLoading(false);
     } catch (error) {
@@ -918,6 +1112,19 @@ const BeneficiariesList: React.FC = () => {
       // Display an error message using your preferred method (e.g., toast.error)
       toast.error("An error occurred during report generation.");
     }
+  };
+
+  const handleChange: TableProps<any>["onChange"] = (
+    pagination,
+    _filters,
+    _sorter,
+    extra
+  ) => {
+    setFilters(_filters);
+  };
+
+  const handleRegisterAnExistingBeneficiary = (data) => {
+    onEditBeneficiary(data);
   };
 
   return (
@@ -963,6 +1170,15 @@ const BeneficiariesList: React.FC = () => {
                 placeholder="Pesquisar por NUI"
                 value={nui}
                 onChange={(e) => setNui(e.target.value)}
+              />
+            </Form.Item>
+          </Col>
+          <Col className="gutter-row">
+            <Form.Item name="name" label="" initialValue={name}>
+              <Input
+                placeholder="Pesquisar por nome"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
             </Form.Item>
           </Col>
@@ -1044,10 +1260,15 @@ const BeneficiariesList: React.FC = () => {
                 </div>
               ),
               rowExpandable: (record) => record.name !== "Not Expandable",
+              onExpand: (expanded, record) =>
+                expanded == true
+                  ? handleViewModalVisible(false, record)
+                  : "Do nothing.",
             }}
             dataSource={beneficiaries}
             bordered
             scroll={{ x: 1500 }}
+            onChange={handleChange}
           />
           <Space>
             <Button
@@ -1081,6 +1302,10 @@ const BeneficiariesList: React.FC = () => {
         handleAddBeneficiary={handleAddBeneficiary}
         handleUpdateBeneficiary={handleUpdateBeneficiary}
         handleModalVisible={handleBeneficiaryModalVisible}
+        handleRegisterAnExistingBeneficiary={
+          handleRegisterAnExistingBeneficiary
+        }
+        isEditMode={isEditMode}
       />
       <FormBeneficiaryPartner
         form={form}

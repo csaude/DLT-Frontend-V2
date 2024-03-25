@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, Steps, message, Form, Modal } from "antd";
 import "./index.css";
 import { ExclamationCircleFilled } from "@ant-design/icons";
@@ -21,6 +21,8 @@ const BeneficiaryPartnerForm = ({
 }: any) => {
   const [current, setCurrent] = useState(0);
   const [firstStepValues, setFirstStepValues] = useState();
+
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!modalVisible) {
@@ -47,7 +49,10 @@ const BeneficiaryPartnerForm = ({
   };
 
   const onSubmit = async () => {
-    handleAdd(firstStepValues);
+    if (buttonRef.current && !buttonRef.current.disabled) {
+      buttonRef.current.disabled = true;
+      handleAdd(firstStepValues);
+    }
   };
 
   const handleAdd = (values: any) => {
@@ -110,7 +115,6 @@ const BeneficiaryPartnerForm = ({
         });
       })
       .catch(() => {
-        handleModalVisible(false);
         message.error({
           content: "Não foi possivel Registrar o Parceiro!",
           className: "custom-class",
@@ -118,6 +122,9 @@ const BeneficiaryPartnerForm = ({
             marginTop: "10vh",
           },
         });
+        if (buttonRef.current) {
+          buttonRef.current.disabled = false;
+        }
       });
   };
 
@@ -242,6 +249,7 @@ const BeneficiaryPartnerForm = ({
             {current === 1 && (
               <Button
                 type="primary"
+                ref={buttonRef}
                 onClick={() => (beneficiary ? onUpdate() : onSubmit())}
               >
                 {beneficiary ? "Actualizar" : "Salvar"}

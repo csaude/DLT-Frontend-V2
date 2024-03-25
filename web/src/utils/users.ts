@@ -50,6 +50,16 @@ export async function allUsersByUs(payload?: any) {
   return res;
 }
 
+export async function allUsersByUsAndOrganization(payload?: any) {
+  const url =
+    "/api/users/usAndOrganization/" +
+    payload?.usId +
+    "/" +
+    payload?.organizationId;
+  const res = await select(url);
+  return res;
+}
+
 export async function allUsesByLocalities(payload?: any) {
   const url = "/api/users/locality/".concat(payload);
   const res = await select(url);
@@ -129,15 +139,43 @@ export async function pagedQueryByFilters(
   pageIndex?: any,
   pageSize?: any,
   searchUsername?: any,
-  searchUserCreator?: number
+  searchUserCreator?: number,
+  searchDistrict?: number
 ) {
   let url: string;
   if (payload.userId) {
     url = `/api/users/paged?${stringify(
       payload
-    )}&pageIndex=${pageIndex}&pageSize=${pageSize}&searchUsername=${searchUsername}&searchUserCreator=${searchUserCreator}`;
+    )}&pageIndex=${pageIndex}&pageSize=${pageSize}&searchUsername=${searchUsername}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`;
   } else {
     url = "/api/users/" + payload;
+  }
+
+  const res = await select(url);
+  return res;
+}
+
+export async function getUsersLastSync() {
+  const url = "/sync/usersLastSync";
+  const res = await select(url);
+  return res;
+}
+
+export async function getPagedUsersLastSync(
+  payload?: any,
+  pageIndex?: any,
+  pageSize?: any,
+  searchUsername?: any,
+  searchUserCreator?: number,
+  searchDistrict?: number
+) {
+  let url: string;
+  if (payload.userId) {
+    url = `/sync/usersLastSync/paged?${stringify(
+      payload
+    )}&pageIndex=${pageIndex}&pageSize=${pageSize}&searchUsername=${searchUsername}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`;
+  } else {
+    url = "/sync/usersLastSync" + payload;
   }
 
   const res = await select(url);

@@ -16,12 +16,24 @@ import {
 } from "../store/authSlice";
 import styles from "./components/style";
 import styles1 from "../screens/Login/style";
-import { Badge, Box, VStack } from "native-base";
+import {
+  Alert,
+  Badge,
+  Box,
+  HStack,
+  VStack,
+  Text as TextNB,
+  useToast,
+} from "native-base";
 import {
   beneficiariesFetchCount,
+  pendingSyncBeneficiaries,
   resolveBeneficiaryOfflineIds,
 } from "../services/beneficiaryService";
-import { referencesFetchCount } from "../services/referenceService";
+import {
+  pendingSyncReferences,
+  referencesFetchCount,
+} from "../services/referenceService";
 import { getBeneficiariesTotal } from "../store/beneficiarySlice";
 import { getReferencesTotal } from "../store/referenceSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -29,6 +41,15 @@ import UsersNavigator from "./UsersNavigator";
 import PropTypes from "prop-types";
 import Spinner from "react-native-loading-spinner-overlay";
 import AppInfoScreen from "../screens/AppInfo/AppInfoScreen";
+import SyncReportScreen from "../screens/SyncReport/SyncReportReport";
+import DataExportScreen from "../screens/SyncReport/DataExportScreen";
+import {
+  loadPendingsBeneficiariesInterventionsTotals,
+  loadPendingsBeneficiariesTotals,
+  loadPendingsReferencesTotals,
+} from "../store/syncSlice";
+import { pendingSyncBeneficiariesInterventions } from "../services/beneficiaryInterventionService";
+import SpinnerModal from "../components/Modal/SpinnerModal";
 
 function HomeScreen() {
   useEffect(() => {
@@ -58,6 +79,8 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
     (state: any) => state.beneficiary.total
   );
   const referencesTotal = useSelector((state: any) => state.reference.total);
+  const syncInProgress = useSelector((state: any) => state.sync.syncInProgress);
+  const toasty = useToast();
 
   useEffect(() => {
     const getUserDetails = async () => {
@@ -213,15 +236,73 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
     dispatch(getReferencesTotal(countRef));
   };
 
+  const fetchCounts = async () => {
+    const benefNotSynced = await pendingSyncBeneficiaries();
+    dispatch(
+      loadPendingsBeneficiariesTotals({
+        pendingSyncBeneficiaries: benefNotSynced,
+      })
+    );
+
+    const benefIntervNotSynced = await pendingSyncBeneficiariesInterventions();
+    dispatch(
+      loadPendingsBeneficiariesInterventionsTotals({
+        pendingSyncBeneficiariesInterventions: benefIntervNotSynced,
+      })
+    );
+
+    const refNotSynced = await pendingSyncReferences();
+    dispatch(
+      loadPendingsReferencesTotals({ pendingSyncReferences: refNotSynced })
+    );
+  };
+  useEffect(() => {
+    fetchCounts();
+  }, [isLoading]);
+
+  useEffect(() => {
+    if (!syncInProgress) {
+      toasty.show({
+        placement: "top",
+        render: () => {
+          return (
+            <Alert
+              w="100%"
+              variant="left-accent"
+              colorScheme="success"
+              status="success"
+            >
+              <VStack space={2} flexShrink={1} w="100%">
+                <HStack
+                  flexShrink={1}
+                  space={2}
+                  alignItems="center"
+                  justifyContent="space-between"
+                >
+                  <HStack space={2} flexShrink={1} alignItems="center">
+                    <Alert.Icon />
+                    <TextNB color="coolGray.800">
+                      Sincronização efectuada com sucesso!
+                    </TextNB>
+                  </HStack>
+                </HStack>
+              </VStack>
+            </Alert>
+          );
+        },
+      });
+    }
+  }, [syncInProgress]);
+
   return (
     <Context.Provider value={loggedUser}>
-      {isLoading ? (
-        <Spinner
-          visible={true}
-          textContent={"Sincronizando..."}
-          textStyle={styles1.spinnerTextStyle}
-        />
-      ) : undefined}
+      <SpinnerModal
+        open={syncInProgress}
+        title={"Sincronização em Curso"}
+        message={
+          "O dispositivo está atualmente em processo de sincronização. Por favor, aguarde até que a sincronização seja concluída para continuar. Agradecemos sua paciência!"
+        }
+      />
       <Drawer.Navigator
         screenOptions={{
           headerStyle: {
@@ -279,12 +360,36 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
           }}
         />
         <Drawer.Screen
+          name="SyncReport"
+          component={SyncReportScreen}
+          options={{
+            title: "",
+            headerTitle: "",
+            drawerIcon: () => (
+              <ItemBadge label="Relatório de Sincronização" total={-1} />
+            ),
+          }}
+        />
+        {/* <Drawer.Screen
+          name="DataExport"
+          component={DataExportScreen}
+          options={{
+            title: "",
+            headerTitle: "",
+            drawerIcon: () => (
+              <ItemBadge label="Exportar Dados do Dispositivo" total={-1} />
+            ),
+          }}
+        /> */}
+        <Drawer.Screen
           name="Info"
           component={AppInfoScreen}
           options={{
             title: "",
             headerTitle: "",
-            drawerIcon: () => <ItemBadge label="Detalhes da Aplicação" total={-1} />,
+            drawerIcon: () => (
+              <ItemBadge label="Detalhes da Aplicação" total={-1} />
+            ),
           }}
         />
       </Drawer.Navigator>

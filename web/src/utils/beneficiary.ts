@@ -18,6 +18,7 @@ export async function pagedQueryByFilters(
   pageIndex?: any,
   pageSize?: any,
   searchNui?: any,
+  searchName?: any,
   searchUserCreator?: number,
   searchDistrict?: number
 ) {
@@ -25,9 +26,31 @@ export async function pagedQueryByFilters(
   if (payload.userId) {
     url = `/api/beneficiaries?${stringify(
       payload
-    )}&pageIndex=${pageIndex}&pageSize=${pageSize}&searchNui=${searchNui}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`;
+    )}&pageIndex=${pageIndex}&pageSize=${pageSize}&searchNui=${searchNui}&searchName=${searchName}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`;
   } else {
     url = "/api/beneficiaries/" + payload;
+  }
+
+  const res = await select(url);
+  return res;
+}
+
+export async function pagedQueryAnyByFilters(
+  payload?: any,
+  pageIndex?: any,
+  pageSize?: any,
+  searchNui?: any,
+  searchName?: any,
+  searchUserCreator?: number,
+  searchDistrict?: number
+) {
+  let url: string;
+  if (payload.userId) {
+    url = `/api/beneficiaries/any?${stringify(
+      payload
+    )}&pageIndex=${pageIndex}&pageSize=${pageSize}&searchNui=${searchNui}&searchName=${searchName}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`;
+  } else {
+    url = "/api/beneficiaries/any/" + payload;
   }
 
   const res = await select(url);
@@ -57,13 +80,38 @@ export async function edit(payload: any) {
 export async function queryCountByFilters(
   payload?: any,
   searchNui?: any,
+  searchName?: any,
   searchUserCreator?: number,
   searchDistrict?: number
 ) {
   const url = `/api/beneficiaries/countByFilters?${stringify(
     payload
-  )}&searchNui=${searchNui}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`;
+  )}&searchNui=${undefinedToEmpty(searchNui)}&searchName=${undefinedToEmpty(
+    searchName
+  )}&searchUserCreator=${undefinedToEmpty(
+    searchUserCreator
+  )}&searchDistrict=${undefinedToEmpty(searchDistrict)}`;
 
+  const res = await select(url);
+  return res;
+}
+
+function undefinedToEmpty(value: any) {
+  return value == undefined ? "" : value;
+}
+
+export async function queryByPartnerId(partnerId?: number) {
+  const url = `/api/beneficiaries/findByPartnerId?partnerId=${partnerId}`;
+  const res = await select(url);
+  return res;
+}
+
+export async function findByNameAndDateOfBirthAndLocality(
+  name?: any,
+  dateOfBirth?: any,
+  locality?: any
+) {
+  const url = `/api/beneficiaries/findByNameAndDateOfBirthAndLocality?name=${name}&dateOfBirth=${dateOfBirth}&locality=${locality}`;
   const res = await select(url);
   return res;
 }

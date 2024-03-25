@@ -26,15 +26,18 @@ import { serviceAgesBandsQuery } from "@app/utils/report";
 import { loadAgywData, loadServiceAgebands } from "@app/store/reducers/report";
 import { Title as AppTitle } from "@app/components";
 import LoadingModal from "@app/components/modal/LoadingModal";
+import { useSelectAll } from "@app/hooks/useSelectAll";
 const { Option } = Select;
 const { Title } = Typography;
 
 const ReportAgyw = () => {
   const [loggedUser, setLogguedUser] = useState<any>(undefined);
+  const [allProvinces, setAllProvinces] = useState<any[]>([]);
   const [provinces, setProvinces] = useState<any[]>([]);
   const [selectedProvinces, setSelectedProvinces] = useState<any[]>([]);
   const [districts, setDistricts] = useState<any>(undefined);
   const [selectedDistricts, setSelectedDistricts] = useState<any[]>([]);
+  const [reportType, setReportType] = useState();
   const [initialDate, setInitialDate] = useState<any>();
   const [finalDate, setFinalDate] = useState<any>();
   const [form] = Form.useForm();
@@ -44,6 +47,17 @@ const ReportAgyw = () => {
   const userSelector = useSelector((state: any) => state?.auth);
   const currentUserName = userSelector.currentUser.name;
   const dispatch = useDispatch();
+
+  const reportOptions = [
+    {
+      id: 1,
+      name: "Completo",
+    },
+    {
+      id: 2,
+      name: "Simplificado",
+    },
+  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,27 +69,46 @@ const ReportAgyw = () => {
         provinces = await queryAll();
       }
       setLogguedUser(loggedUser);
-      setProvinces(provinces);
+      setAllProvinces(provinces);
     };
 
     fetchData().catch((error) => console.log(error));
   }, []);
 
+  const onChangeReportOption = async (option) => {
+    if (option != reportType) {
+      if (option == 1) {
+        setProvinces(allProvinces);
+      } else if (option == 2) {
+        setProvinces(allProvinces.filter((p) => p.id == 10));
+      } else {
+        setProvinces([]);
+      }
+      setReportType(option);
+
+      form.setFieldsValue({ provinces: [] });
+      form.setFieldsValue({ districts: [] });
+      setDistricts(undefined);
+    }
+  };
+
   const onChangeProvinces = async (values: any) => {
     if (values.length > 0) {
-      const provs = provinces.filter((item) =>
-        values.includes(item.id.toString())
-      );
+      const provs = provinces.filter((item) => values.includes(item.id));
       setSelectedProvinces(provs);
+      form.setFieldsValue({ provinces: values });
       let dataDistricts;
       if (loggedUser.districts.length > 0) {
         dataDistricts = loggedUser.districts.filter((d) =>
-          values.includes(d.province.id.toString())
+          values.includes(d.province.id)
         );
       } else {
         dataDistricts = await queryDistrictsByProvinces({
           provinces: Array.isArray(values) ? values : [values],
         });
+      }
+      if (reportType == 2) {
+        dataDistricts = dataDistricts.filter((d) => [44, 45].includes(d.id));
       }
       setDistricts(dataDistricts);
     } else {
@@ -87,12 +120,38 @@ const ReportAgyw = () => {
 
   const onChangeDistricts = async (values: any) => {
     if (values.length > 0) {
-      const distrs = districts.filter((item) =>
-        values.includes(item.id.toString())
+      const distrs = districts.filter((item) => values.includes(item.id));
+      const sortedDistricts = distrs.sort(
+        (dist1, dist2) =>
+          dist1.province.id - dist2.province.id ||
+          dist1.name.localeCompare(dist2.name)
       );
-      setSelectedDistricts(distrs);
+      setSelectedDistricts(sortedDistricts);
+      form.setFieldsValue({ districts: values });
     }
   };
+
+  const selectProvinces = useSelectAll({
+    showSelectAll: true,
+    onChange: onChangeProvinces,
+    options: provinces.map((province) => {
+      return {
+        label: province.name,
+        value: province.id,
+      };
+    }),
+  });
+
+  const selectDistricts = useSelectAll({
+    showSelectAll: true,
+    onChange: onChangeDistricts,
+    options: districts?.map((district) => {
+      return {
+        label: district.name,
+        value: district.id,
+      };
+    }),
+  });
 
   const handleFetchData = async () => {
     if (
@@ -113,7 +172,8 @@ const ReportAgyw = () => {
       const responseData = await agywPrevQuery(
         districtsIds,
         startDate,
-        endDate
+        endDate,
+        reportType
       );
 
       const responseServiceAgesBands = await serviceAgesBandsQuery();
@@ -133,7 +193,7 @@ const ReportAgyw = () => {
     }
   };
 
-  const handleGenerateXLSXReport = () => {
+  const handleGenerateXLSXReport = async () => {
     if (
       selectedProvinces.length < 1 ||
       selectedDistricts.length < 1 ||
@@ -148,12 +208,13 @@ const ReportAgyw = () => {
       });
       const startDate = moment(initialDate).format("YYYY-MM-DD");
       const endDate = moment(finalDate).format("YYYY-MM-DD");
-      generateXlsReport(
+      await generateXlsReport(
         currentUserName,
         districtsIds,
         startDate,
         endDate,
-        selectedDistricts
+        selectedDistricts,
+        reportType
       );
       setDataLoading(false);
     }
@@ -179,7 +240,7 @@ const ReportAgyw = () => {
             color: "#17a2b8",
           }}
         >
-          PEPFAR MER 2.6.1 Indicador Semi-Annual AGYW_PREV
+          PEPFAR MER 2.7 Indicador Semi-Annual AGYW_PREV
         </Title>
         <Card
           title="Parâmetros do Indicador AGYW_PREV "
@@ -192,19 +253,32 @@ const ReportAgyw = () => {
               <Row gutter={24}>
                 <Col span={12}>
                   <Form.Item
+                    name="reportType"
+                    label="Tipo de Relatório"
+                    rules={[{ required: true, message: RequiredFieldMessage }]}
+                  >
+                    <Select
+                      placeholder="Seleccione o Tipo de Relatório"
+                      onChange={onChangeReportOption}
+                      allowClear
+                    >
+                      {reportOptions?.map((item) => (
+                        <Option key={item.id}>{item.name}</Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                  <Form.Item
                     name="provinces"
                     label="Provincias"
                     rules={[{ required: true, message: RequiredFieldMessage }]}
                   >
                     <Select
                       mode="multiple"
+                      disabled={provinces.length == 0}
                       placeholder="Seleccione as Províncias"
-                      onChange={onChangeProvinces}
-                    >
-                      {provinces?.map((item) => (
-                        <Option key={item.id}>{item.name}</Option>
-                      ))}
-                    </Select>
+                      {...selectProvinces}
+                      allowClear
+                    />
                   </Form.Item>
 
                   <Form.Item
@@ -215,12 +289,10 @@ const ReportAgyw = () => {
                     <Select
                       mode="multiple"
                       disabled={districts == undefined}
-                      onChange={onChangeDistricts}
-                    >
-                      {districts?.map((item) => (
-                        <Option key={item.id}>{item.name}</Option>
-                      ))}
-                    </Select>
+                      placeholder="Seleccione os Distritos"
+                      {...selectDistricts}
+                      allowClear
+                    />
                   </Form.Item>
 
                   <Form.Item name="initialDate" label="Data Inicial">

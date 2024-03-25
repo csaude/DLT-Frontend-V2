@@ -11,6 +11,7 @@ import {
   ConfigProvider,
   Row,
   Col,
+  Select,
 } from "antd";
 import ptPT from "antd/lib/locale-provider/pt_PT";
 import { UserModel, getEntryPoint } from "../../models/User";
@@ -23,6 +24,7 @@ import LoadingModal from "@app/components/modal/LoadingModal";
 import { useSelector } from "react-redux";
 import { pagedQueryByFilters } from "@app/utils/users";
 import { getUserParams } from "@app/models/Utils";
+import { FilterObject } from "@app/models/FilterObject";
 
 const UsersList: React.FC = () => {
   const [users, setUsers] = useState<UserModel[]>([]);
@@ -45,6 +47,7 @@ const UsersList: React.FC = () => {
   const [userCreator, setUserCreator] = useState<any>();
   const [username, setUsername] = useState<any>();
   const [districts, setDistricts] = useState<any[]>([]);
+  const [provinces, setProvinces] = useState<any[]>([]);
   const [creators, setCreators] = useState<any[]>([]);
 
   const profileSelector = useSelector(
@@ -57,6 +60,14 @@ const UsersList: React.FC = () => {
   const districtsSelector = useSelector(
     (state: any) => state?.district.loadedDistricts
   );
+  const provincesSelector = useSelector(
+    (state: any) => state.province.loadedProvinces
+  );
+
+  const convertedDistrictsData: FilterObject[] = districts?.map((item) => ({
+    value: item.id,
+    label: item.name,
+  }));
 
   useEffect(() => {
     if (users?.length > 0) {
@@ -67,8 +78,8 @@ const UsersList: React.FC = () => {
   let searchInput;
 
   useEffect(() => {
-    setPartners(partnerSelector?.partners);
-    setProfiles(profileSelector?.profiles);
+    setPartners(partnerSelector);
+    setProfiles(profileSelector);
     const fetchData = async () => {
       const user = await queryByUserId(localStorage.user);
       const data = await pagedQueryByFilters(
@@ -76,15 +87,13 @@ const UsersList: React.FC = () => {
         currentPageIndex,
         pageSize,
         searchUsername,
-        searchUserCreator
+        searchUserCreator,
+        searchDistrict
       );
       setUsers(data);
     };
 
     fetchData().catch((error) => console.log(error));
-
-    console.log(districtsSelector, "--districtsSelector--");
-    console.log(usersSelector, "--usersSelector--");
 
     const sortedDistricts = districtsSelector?.sort((dist1, dist2) =>
       dist1?.name.localeCompare(dist2.name)
@@ -92,9 +101,13 @@ const UsersList: React.FC = () => {
     const sortedCreators = usersSelector?.sort((dist1, dist2) =>
       dist1?.username.localeCompare(dist2.username)
     );
+    const sortedProvinces = provincesSelector?.sort((prov1, prov2) =>
+      prov1?.name.localeCompare(prov2.name)
+    );
 
     setDistricts(sortedDistricts);
     setCreators(sortedCreators);
+    setProvinces(sortedProvinces);
   }, [currentPageIndex, searchUsername, searchUserCreator, searchDistrict]);
 
   const handleUsersModalVisible = (flag?: boolean) => {
@@ -213,7 +226,7 @@ const UsersList: React.FC = () => {
     }
   };
 
-  const handleAdd = () => {
+  const handleAdd = (buttonRef: React.RefObject<HTMLButtonElement>) => {
     form
       .validateFields()
       .then(async (values) => {
@@ -254,6 +267,7 @@ const UsersList: React.FC = () => {
         user.us = values.us?.map((item) => ({ id: item }));
 
         if (selectedUser === undefined) {
+          user.createdBy = localStorage.user;
           const { data } = await add(user);
           setUsers((users) => [...users, data]);
 
@@ -265,6 +279,7 @@ const UsersList: React.FC = () => {
             },
           });
         } else {
+          user.updatedBy = localStorage.user;
           const { data } = await edit(user);
           setUsers((existingItems) => {
             return existingItems.map((item) => {
@@ -293,6 +308,9 @@ const UsersList: React.FC = () => {
             marginTop: "10vh",
           },
         });
+        if (buttonRef.current) {
+          buttonRef.current.disabled = false;
+        }
       });
   };
 
@@ -334,15 +352,20 @@ const UsersList: React.FC = () => {
       dataIndex: "",
       key: "provinces",
       render: (text, record) => record.provinces.map((p) => p.name + ", "),
-      // filters: filterObjects(provinces)(i => i.name),
-      // onFilter: (value, record) => record.provinces.map(p => p.name+' ').includes(value),
-      // filterSearch: true,
+      filters: filterObjects(provinces)((i) => i.name),
+      onFilter: (value, record) =>
+        record.provinces.map((p) => p.name).includes(value),
+      filterSearch: true,
     },
     {
       title: "Distritos",
       dataIndex: "",
       key: "districts",
       render: (text, record) => record.districts.map((d) => d.name + ", "),
+      filters: filterObjects(districts)((i) => i?.name),
+      onFilter: (value, record) =>
+        record?.districts.map((d) => d.name).includes(value),
+      filterSearch: true,
     },
     {
       title: "Postos Administrativos",
@@ -454,6 +477,17 @@ const UsersList: React.FC = () => {
     setCurrentPageIndex(currentPageIndex + 1);
   };
 
+  function onClear(name) {
+    if (name === "userCreator") {
+      setUserCreator(undefined);
+      setSearchUserCreator("");
+    }
+    if (name === "district") {
+      setDistrict(undefined);
+      setSearchDistrict("");
+    }
+  }
+
   return (
     <>
       <Title />
@@ -482,6 +516,26 @@ const UsersList: React.FC = () => {
                 onChange={(e) => setUsername(e.target.value)}
               />
             </Form.Item>
+          </Col>
+
+          <Col className="gutter-row">
+            <Select
+              showSearch
+              allowClear
+              onClear={() => onClear("district")}
+              placeholder="Selecione o distrito"
+              optionFilterProp="children"
+              onChange={(e) => setDistrict(e)}
+              onSearch={() => {
+                /**Its OK */
+              }}
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={convertedDistrictsData}
+            />
           </Col>
 
           <Col className="gutter-row" span={12}>

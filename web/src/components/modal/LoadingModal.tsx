@@ -1,9 +1,12 @@
 import React from "react";
-import { Modal } from "antd";
-import Spinner from "../spinner";
+import { Space, Spin } from "antd";
 import "./styles.css";
 
-const LoadingModal = ({ modalVisible }: any) => {
+import { Modal } from "antd";
+import "./styles.css";
+
+const LoadingModal = ({ modalVisible, message }: any) => {
+  const tip = message != undefined ? message : "Carregando. Aguarde Por Favor.";
   return (
     <>
       <Modal
@@ -16,7 +19,13 @@ const LoadingModal = ({ modalVisible }: any) => {
         closable={false}
       >
         <div>
-          <Spinner />
+          <Space direction="vertical" style={{ width: "100%" }}>
+            <Space>
+              <Spin tip={message} size="large">
+                <div className="content" />
+              </Spin>
+            </Space>
+          </Space>
         </div>
       </Modal>
     </>

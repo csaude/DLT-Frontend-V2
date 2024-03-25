@@ -58,6 +58,7 @@ import NetInfo from "@react-native-community/netinfo";
 import Spinner from "react-native-loading-spinner-overlay/lib";
 import {
   beneficiariesFetchCount,
+  pendingSyncBeneficiaries,
   resolveBeneficiaryOfflineIds,
 } from "../../services/beneficiaryService";
 import {
@@ -65,10 +66,21 @@ import {
   loadViewedBeneficiaryGender,
 } from "../../store/beneficiarySlice";
 import { loadBeneficiariesInterventionsCounts } from "../../store/beneficiaryInterventionSlice";
-import { referencesFetchCount } from "../../services/referenceService";
+import {
+  pendingSyncReferences,
+  referencesFetchCount,
+} from "../../services/referenceService";
 import { getReferencesTotal } from "../../store/referenceSlice";
-import { beneficiariesInterventionsFetchCount } from "../../services/beneficiaryInterventionService";
+import {
+  beneficiariesInterventionsFetchCount,
+  pendingSyncBeneficiariesInterventions,
+} from "../../services/beneficiaryInterventionService";
 import SpinnerModal from "../../components/Modal/SpinnerModal";
+import {
+  loadPendingsBeneficiariesInterventionsTotals,
+  loadPendingsBeneficiariesTotals,
+  loadPendingsReferencesTotals,
+} from "../../store/syncSlice";
 
 const BeneficiariesMain: React.FC = ({
   subServices,
@@ -133,6 +145,7 @@ const BeneficiariesMain: React.FC = ({
               return <SuccessHandler />;
             },
           });
+          fetchCounts();
         })
         .catch(() => {
           setLoading(false);
@@ -176,13 +189,9 @@ const BeneficiariesMain: React.FC = ({
             return referenceIdArray.includes("" + e._raw.online_id);
         });*/
 
-    const beneficiaryId = beneficiarie.online_id
-      ? beneficiarie.online_id
-      : beneficiarie.id;
-
     const references = await database
       .get("references")
-      .query(Q.where("beneficiary_id", beneficiaryId))
+      .query(Q.where("beneficiary_offline_id", beneficiarie.offline_id))
       .fetch();
 
     const beneficiaryReferencesSerializable = references.map((e) => {
@@ -190,7 +199,7 @@ const BeneficiariesMain: React.FC = ({
     });
 
     const interventions = beneficiaries_interventions.filter((e) => {
-      return e._raw.beneficiary_id == beneficiarie.online_id;
+      return e._raw.beneficiary_offline_id == beneficiarie.offline_id;
     });
 
     const interventionObjects = interventions.map((e) => {
@@ -256,10 +265,10 @@ const BeneficiariesMain: React.FC = ({
   }, []);
 
   // eslint-disable-next-line react/prop-types
-  const ItemBadge = ({ label, beneficiary_id }) => {
+  const ItemBadge = ({ label, beneficiary_offline_id }) => {
     const getCountByBeneficiary = () => {
       const result = totals?.filter(
-        (item) => item.beneficiary_id === beneficiary_id
+        (item) => item.beneficiary_offline_id === beneficiary_offline_id
       );
       return result[0]?.total;
     };
@@ -324,7 +333,7 @@ const BeneficiariesMain: React.FC = ({
             </View>
             <ItemBadge
               label={"Serviços"}
-              beneficiary_id={data.item.online_id}
+              beneficiary_offline_id={data.item.offline_id}
             />
           </HStack>
         </View>
@@ -781,6 +790,30 @@ const BeneficiariesMain: React.FC = ({
     );
   };
 
+  const fetchCounts = async () => {
+    const benefNotSynced = await pendingSyncBeneficiaries();
+    dispatch(
+      loadPendingsBeneficiariesTotals({
+        pendingSyncBeneficiaries: benefNotSynced,
+      })
+    );
+
+    const benefIntervNotSynced = await pendingSyncBeneficiariesInterventions();
+    dispatch(
+      loadPendingsBeneficiariesInterventionsTotals({
+        pendingSyncBeneficiariesInterventions: benefIntervNotSynced,
+      })
+    );
+
+    const refNotSynced = await pendingSyncReferences();
+    dispatch(
+      loadPendingsReferencesTotals({ pendingSyncReferences: refNotSynced })
+    );
+  };
+  useEffect(() => {
+    fetchCounts();
+  }, [loading]);
+
   return (
     <>
       <View style={styles.container}>
@@ -1067,7 +1100,7 @@ const BeneficiariesMain: React.FC = ({
 const enhance = withObservables([], () => ({
   beneficiaries_interventions: database.collections
     .get("beneficiaries_interventions")
-    .query(Q.where("status", 1)),
+    .query(),
   subServices: database.collections.get("sub_services").query(),
 }));
 export default memo(enhance(BeneficiariesMain));

@@ -12,3 +12,10 @@ export async function select(params: any) {
   const res = await api.get(params);
   return res.data;
 }
+
+export async function download(params: any) {
+  const res = await api.get(params, {
+    responseType: "blob",
+  });
+  return res;
+}

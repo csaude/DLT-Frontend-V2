@@ -6,7 +6,6 @@ import { database } from "../../database";
 import styles from "./styles";
 import { Context } from "../../routes/DrawerNavigator";
 import withObservables from "@nozbe/with-observables";
-import { useSelector } from "react-redux";
 
 const UserProfile: React.FC = ({
   profiles,
@@ -29,7 +28,16 @@ const UserProfile: React.FC = ({
     return e?._raw.online_id == user?.profile_id;
   })[0]?._raw;
 
-  const usState = useSelector((state:any) => state?.auth.userDetails.uss)
+  const logguedUserLocalities = loggedUser.localities_ids? loggedUser.localities_ids.split(",") : loggedUser.localities.map((l) => l.id+"");
+  const logguedUserUs = loggedUser.us_ids? loggedUser.us_ids.split(",") : loggedUser.us.map((u) => u.id+""); 
+
+  const userLocalities = localities.filter((e) => {    
+    return logguedUserLocalities.includes(e?._raw.online_id.toString());
+  });
+
+  const userUs = us.filter((e) => {
+    return logguedUserUs.includes(e?._raw.online_id.toString());
+  });
 
   return (
     <KeyboardAvoidingView style={styles.background}>
@@ -68,7 +76,7 @@ const UserProfile: React.FC = ({
 
               <Text>
                 {" "}
-                <Text style={styles.txtLabel}>Parceiro: </Text>{" "}
+                <Text style={styles.txtLabel}>Organização: </Text>{" "}
                 {user?.organization_name}{" "}
               </Text>
 
@@ -104,11 +112,11 @@ const UserProfile: React.FC = ({
                 <Text style={styles.txtLabel}>
                   Posto(s) Administrativo(s):{" "}
                 </Text>{" "}
-                {localities?.map((d) => d.name + ", ")}{" "}
+                {userLocalities?.map((d) => d.name + ", ")}{" "}
               </Text>
               <Text>
                 {" "}
-                <Text style={styles.txtLabel}>Alocação: </Text> {usState?.map((u) => u.name + ", ")} 
+                <Text style={styles.txtLabel}>Alocação: </Text> {userUs?.map((u) => u.name + ", ")} 
               </Text>
             </Flex>
             <Divider />

@@ -4,17 +4,22 @@ import { Link } from "react-router-dom";
 import { MenuItem } from "@components";
 import { queryCountByFilters as beneficiaryQueryCount } from "../../../utils/beneficiary";
 import { queryCountByFilters as referenceQueryCount } from "../../../utils/reference";
-import { query as queryUser } from "../../../utils/users";
+import {
+  allUsersByProfilesAndUser,
+  query as queryUser,
+} from "../../../utils/users";
 import { getUserParams } from "@app/models/Utils";
 import { getReferencesTotal } from "../../../store/actions/reference";
 import { getBeneficiariesTotal } from "../../../store/actions/beneficiary";
 import styled from "styled-components";
 import { getInterventionsCount } from "@app/store/actions/interventions";
-import { getUsernames } from "@app/store/actions/users";
+import { getUsernames, loadReferers } from "@app/store/actions/users";
 import { getProfiles } from "@app/store/actions/profile";
 import { getPartners } from "@app/store/actions/partner";
 import { getProvinces } from "@app/store/actions/province";
 import { getDistricts } from "@app/store/actions/district";
+import { getLocalities } from "@app/store/actions/locality";
+import { COUNSELOR, MENTOR, NURSE, SUPERVISOR } from "@app/utils/contants";
 
 const StyledUserImage = styled.img`
   height: 4.6rem !important;
@@ -90,6 +95,10 @@ export const MENU: IMenuItem[] = [
         path: "/localityList",
       },
       {
+        name: "Bairros Residenciais",
+        path: "/neighbourhoodsList",
+      },
+      {
         name: "Unidades Sanitárias ",
         path: "/usList",
       },
@@ -115,42 +124,50 @@ export const MENU: IMenuItem[] = [
     level: [0],
   },
   {
+    name: "PEPFAR MER 2.7 AGYW_PREV",
+    path: "/reportAgyw",
+    roles: ["DOADOR"],
+    icon: "fas fa-file-alt",
+    level: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  },
+  {
     name: "menusidebar.label.reports",
     path: "#",
     icon: "fas fa-file-alt",
     level: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-    roles: ["ADMIN", "M&E", "SUPERVISOR", "DOADOR"],
+    roles: ["ADMIN", "M&E", "SUPERVISOR"],
     children: [
-      // {
-      //   name: '>> GERAL',
-      //   path: '#',
-      // },
-      // {
-      //   name: '>> FILTROS DREAMS',
-      //   path: '#',
-      // },
-      // {
-      //   name: '>> FILTROS MENSAL',
-      //   path: '#',
-      // },
-      // {
-      //   name: '>> FILTROS UTILIZADORES',
-      //   path: '#',
-      // },
       {
-        name: ">> PEPFAR MER 2.6.1 AGYW_PREV",
+        name: "PEPFAR MER 2.7 AGYW_PREV",
         path: "/reportAgyw",
       },
-      // {
-      //   name: '>> FY19',
-      //   path: '#',
-      // },
-      // {
-      //   name: '>> FY20',
-      //   path: '#',
-      // },
+      {
+        name: "menusidebar.label.syncReport",
+        path: "/syncReport",
+        roles: ["ADMIN"],
+        icon: "fas fa-sync",
+        level: [0],
+      },
+      {
+        name: "Beneficiárias sem vulnerabilidades específica",
+        path: "/benefWithoutVulnerabilites",
+      },
     ],
   },
+  {
+    name: "menusidebar.label.dataExtraction",
+    path: "/dataExtraction",
+    roles: ["ADMIN", "M&E"],
+    icon: "fas fa-list-ul",
+    level: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  },
+  // {
+  //   name: "menusidebar.label.dataImport",
+  //   path: "/dataImport",
+  //   icon: "fas fa-info-circle", // icon set: https://fontawesome.com/v5/search
+  //   level: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  //   roles: ["ADMIN"],
+  // },
   {
     name: "menusidebar.label.appInfo",
     path: "/appInfo",
@@ -177,6 +194,7 @@ const MenuSidebar = () => {
   const dispatch = useDispatch();
 
   const [searchNui, setSearchNui] = useState<any>("");
+  const [searchName, setSearchName] = useState<any>("");
   const [searchDistrict, setSearchDistrict] = useState<any>("");
   const [searchUserCreator, setSearchUserCreator] = useState<any>("");
 
@@ -185,6 +203,7 @@ const MenuSidebar = () => {
     const beneficiaryTotal = await beneficiaryQueryCount(
       getUserParams(user),
       searchNui,
+      searchName,
       searchUserCreator,
       searchDistrict
     );
@@ -194,14 +213,22 @@ const MenuSidebar = () => {
       searchUserCreator,
       searchDistrict
     );
+    const payload = {
+      profiles: [SUPERVISOR, MENTOR, NURSE, COUNSELOR].toString(),
+      userId: Number(user.id),
+    };
+    const referers = await allUsersByProfilesAndUser(payload);
+
     dispatch(getBeneficiariesTotal(beneficiaryTotal));
     dispatch(getReferencesTotal(referenceTotal));
     dispatch(getInterventionsCount());
     dispatch(getUsernames());
+    dispatch(loadReferers(referers));
     dispatch(getProfiles());
     dispatch(getPartners());
     dispatch(getProvinces());
     dispatch(getDistricts());
+    dispatch(getLocalities());
   };
 
   useEffect(() => {

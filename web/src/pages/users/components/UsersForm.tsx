@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import {
   Modal,
   Form,
@@ -30,6 +30,7 @@ import {
 } from "@app/utils/contants";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
+import { allUsByType } from "@app/utils/uSanitaria";
 
 const { Option } = Select;
 const { confirm } = Modal;
@@ -62,6 +63,8 @@ const UsersForm = ({
   const [isNeighborhoodVisible, setNeighborhoodVisible] = useState(true);
 
   const RequiredFieldMessage = "Obrigatório!";
+
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const profilesSelector = useSelector(
     (state: any) => state?.profile.loadedProfiles
@@ -117,15 +120,20 @@ const UsersForm = ({
           return item.id + "";
         });
         const dataUs = await queryUsByLocalities({ localities: lIds });
-        setUs(dataUs);
+        if (user.entryPoint) {
+          const filteredUs = dataUs.filter(
+            (us) => us.usType.entryPoint == user.entryPoint
+          );
+          setUs(filteredUs);
+        } else {
+          setUs(dataUs);
+        }
       }
     };
 
     fetchDistricts().catch((error) => console.log(error));
     fetchLocalities().catch((error) => console.log(error));
     fetchUs().catch((error) => console.log(error));
-
-    // fetchData().catch(error => console.log(error));
   }, [user, modalVisible]);
 
   const onChangeProvinces = async (values: any) => {
@@ -211,7 +219,12 @@ const UsersForm = ({
       setSelectMode("multiple");
       setLocalityMode("multiple");
       setRequired(false);
-    } else if (values == SUPERVISOR) {
+    } else if (
+      values == SUPERVISOR ||
+      values == MENTOR ||
+      values == NURSE ||
+      values == COUNSELOR
+    ) {
       setSelectMode("");
       setLocalityMode("multiple");
       setRequired(true);
@@ -254,6 +267,19 @@ const UsersForm = ({
     setDataSelection({ ...dataSelection, [name]: value });
   };
 
+  const onChangeEntryPoint = async (e: any) => {
+    form.setFieldsValue({ us: undefined });
+    const locality = form.getFieldValue("localities");
+    if (locality !== "" && locality !== undefined) {
+      const payload = {
+        typeId: e?.target?.value === undefined ? e : e?.target?.value,
+        localitiesIds: locality,
+      };
+      const data = await allUsByType(payload);
+      setUs(data);
+    }
+  };
+
   const showCloseConfirm = () => {
     confirm({
       title: "Deseja fechar este formulário?",
@@ -275,7 +301,6 @@ const UsersForm = ({
       dataSelection.profile !== undefined &&
       dataSelection.locality !== undefined
     ) {
-      form.setFieldsValue({ us: [] });
       let entryPoints = ["1", "2", "3"];
 
       if (dataSelection.profile == MENTOR) {
@@ -303,7 +328,12 @@ const UsersForm = ({
     }
   }, [dataSelection]);
 
-  // const role = useSelector((state: any) => state.auth?.currentUser.role);
+  const onSubmit = async () => {
+    if (buttonRef.current && !buttonRef.current.disabled) {
+      buttonRef.current.disabled = true;
+      handleAdd(buttonRef);
+    }
+  };
 
   return (
     <Modal
@@ -318,15 +348,16 @@ const UsersForm = ({
         <Button key="Cancel" onClick={() => showCloseConfirm()}>
           Cancelar
         </Button>,
-        <Button key="OK" onClick={handleAdd} type="primary">
+        <Button key="OK" ref={buttonRef} onClick={onSubmit} type="primary">
           Salvar
         </Button>,
       ]}
     >
-      <Form form={form} layout="vertical">
+      <Form id="form" form={form} layout="vertical">
         <Row gutter={8}>
           <Col span={12}>
             <Form.Item
+              id="surname-control"
               name="surname"
               label="Apelido"
               rules={[{ required: true, message: RequiredFieldMessage }]}
@@ -337,6 +368,7 @@ const UsersForm = ({
           </Col>
           <Col span={12}>
             <Form.Item
+              id="name-control"
               name="name"
               label="Nome"
               rules={[{ required: true, message: RequiredFieldMessage }]}
@@ -349,6 +381,7 @@ const UsersForm = ({
         <Row gutter={8}>
           <Col span={8}>
             <Form.Item
+              id="email-control"
               name="email"
               label="Email (Próprio ou do Supervisor)"
               initialValue={user?.email}
@@ -365,6 +398,7 @@ const UsersForm = ({
           </Col>
           <Col span={8}>
             <Form.Item
+              id="username-control"
               name="username"
               label="Username"
               rules={[{ required: true, message: RequiredFieldMessage }]}
@@ -375,12 +409,14 @@ const UsersForm = ({
           </Col>
           <Col span={8}>
             <Form.Item
+              id="profiles-control"
               name="profiles"
               label="Perfil"
               rules={[{ required: true, message: RequiredFieldMessage }]}
               initialValue={user?.profiles.id.toString()}
             >
               <Select
+                id="profiles-selection"
                 onChange={onChangeProfile}
                 placeholder="Seleccione o Perfil"
               >
@@ -394,6 +430,7 @@ const UsersForm = ({
         <Row gutter={8}>
           <Col span={12}>
             <Form.Item
+              id="phoneNumber-control"
               name="phoneNumber"
               label="Número de Telemóvel"
               initialValue={
@@ -411,6 +448,7 @@ const UsersForm = ({
               ]}
             >
               <InputNumber
+                id="phoneNumber-input"
                 prefix="+258  "
                 style={{ width: "100%" }}
                 placeholder="Insira o Telemóvel"
@@ -419,6 +457,7 @@ const UsersForm = ({
           </Col>
           <Col span={12}>
             <Form.Item
+              id="phoneNumber2-control"
               name="phoneNumber2"
               label="Número de Telemóvel (Alternativo)"
               rules={[
@@ -436,6 +475,7 @@ const UsersForm = ({
               }
             >
               <InputNumber
+                id="phoneNumber2-input"
                 prefix="+258  "
                 style={{ width: "100%" }}
                 placeholder="Insira o Telemóvel"
@@ -446,6 +486,7 @@ const UsersForm = ({
         <Row gutter={8}>
           <Col span={8}>
             <Form.Item
+              id="provinces-control"
               name="provinces"
               label="Províncias"
               rules={[{ required: isRequired, message: RequiredFieldMessage }]}
@@ -454,6 +495,7 @@ const UsersForm = ({
               })}
             >
               <Select
+                id="provinces-selection"
                 mode={selectMode}
                 placeholder="Seleccione a(s) Província(s)"
                 onChange={onChangeProvinces}
@@ -466,6 +508,7 @@ const UsersForm = ({
           </Col>
           <Col span={8}>
             <Form.Item
+              id="districts-control"
               name="districts"
               label="Distritos"
               rules={[{ required: isRequired, message: RequiredFieldMessage }]}
@@ -474,6 +517,7 @@ const UsersForm = ({
               })}
             >
               <Select
+                id="districts-selection"
                 mode={selectMode}
                 placeholder="Seleccione  o(s) Distrito(s)"
                 disabled={districts == undefined}
@@ -487,6 +531,7 @@ const UsersForm = ({
           </Col>
           <Col span={8}>
             <Form.Item
+              id="localities-control"
               name="localities"
               label="Postos Administrativos"
               rules={[{ required: isRequired, message: RequiredFieldMessage }]}
@@ -495,6 +540,7 @@ const UsersForm = ({
               })}
             >
               <Select
+                id="localities-selection"
                 mode={localityMode}
                 placeholder="Seleccione a(s) Localidade(s)"
                 disabled={localities == undefined}
@@ -510,12 +556,14 @@ const UsersForm = ({
         <Row gutter={8}>
           <Col span={8}>
             <Form.Item
+              id="partners-control"
               name="partners"
               label="Organização"
               rules={[{ required: true, message: RequiredFieldMessage }]}
               initialValue={user?.partners?.id?.toString()}
             >
               <Select
+                id="partners-selection"
                 placeholder="Seleccione a Organização"
                 onChange={onChangePartner}
               >
@@ -527,6 +575,7 @@ const UsersForm = ({
           </Col>
           <Col span={8}>
             <Form.Item
+              id="entryPoint-control"
               name="entryPoint"
               label="Ponto de Entrada"
               rules={[
@@ -538,9 +587,10 @@ const UsersForm = ({
               initialValue={user?.entryPoint}
             >
               <Select
+                id="entryPoint-selection"
                 placeholder="Seleccione o Ponto de Entrada"
                 onChange={(value) => {
-                  onChangeDataSelection("entryPoint", value);
+                  onChangeEntryPoint(value);
                 }}
               >
                 {isUsVisible && <Option key="1">{"Unidade Sanitária"}</Option>}
@@ -553,6 +603,7 @@ const UsersForm = ({
           </Col>
           <Col span={8}>
             <Form.Item
+              id="locais-control"
               name="us"
               label="Locais"
               initialValue={user?.us?.map((item) => {
@@ -560,6 +611,7 @@ const UsersForm = ({
               })}
             >
               <Select
+                id="locais-selection"
                 mode="multiple"
                 showSearch
                 placeholder="Seleccione o(s) Local(is)"
@@ -576,13 +628,14 @@ const UsersForm = ({
         <Row gutter={8}>
           <Col span={8}>
             <Form.Item
+              id="status-control"
               name="status"
               label="Estado"
               rules={[{ required: true, message: RequiredFieldMessage }]}
               style={{ textAlign: "left" }}
               initialValue="1"
             >
-              <Radio.Group buttonStyle="solid">
+              <Radio.Group id="status-selection" buttonStyle="solid">
                 <Radio.Button value="1">Activo</Radio.Button>
                 <Radio.Button value="0">Inactivo</Radio.Button>
               </Radio.Group>
