@@ -31,6 +31,7 @@ const BeneficiaryForm = ({
   const [secondStepValues, setSecondStepValues] = useState();
   const [isExistingBeneficiary, setExistingBeneficiary] = useState(false);
   const [beneficiaryState, setBeneficiaryState] = useState<any>();
+  const [ignoreExisting, setIgnoreExisting] = useState(false);
 
   const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -46,6 +47,7 @@ const BeneficiaryForm = ({
     if (!modalVisible) {
       setCurrent(0);
     }
+    setIgnoreExisting(false);
   }, [modalVisible]);
 
   const next = () => {
@@ -54,7 +56,7 @@ const BeneficiaryForm = ({
       .then(async (values) => {
         let beneficiaries = [];
 
-        if (values?.["name"]) {
+        if (values?.["name"] && !ignoreExisting) {
           const myMoment: any = values?.["date_of_birth"];
           beneficiaries = await findByNameAndDateOfBirthAndLocality(
             values?.["name"],
@@ -63,7 +65,12 @@ const BeneficiaryForm = ({
           );
         }
 
-        if (beneficiaries.length > 0 && !beneficiaryState?.nui && !isEditMode) {
+        if (
+          beneficiaries.length > 0 &&
+          !beneficiaryState?.nui &&
+          !isEditMode &&
+          !ignoreExisting
+        ) {
           setExistingBeneficiary(true);
           setBeneficiaryState(beneficiaries[0]);
         } else {
@@ -303,13 +310,14 @@ const BeneficiaryForm = ({
     },
   ];
 
-  const onCancelEditingExistingBeneficiary = () => {
+  const onRegisterNewBeneficiary = () => {
     setExistingBeneficiary(false);
-    handleModalVisible(false);
+    handleModalVisible(true);
     setBeneficiaryState(undefined);
+    setIgnoreExisting(true);
   };
 
-  const onRegisterAnExistingBeneficiary = () => {
+  const onUpdateExistingBeneficiary = () => {
     setExistingBeneficiary(false);
     handleModalVisible(false);
     handleRegisterAnExistingBeneficiary(beneficiaryState);
@@ -319,7 +327,7 @@ const BeneficiaryForm = ({
     return (
       <>
         <Modal
-          width={250}
+          width={340}
           centered
           destroyOnClose
           visible={isExistingBeneficiary && !isEditMode}
@@ -330,21 +338,18 @@ const BeneficiaryForm = ({
           <div>
             <Space direction="vertical" style={{ width: "100%" }}>
               <b>
-                {`Esta Beneficiaria ja foi registada com o nui ${beneficiaryState?.nui}`}
+                {`Já existe uma Beneficiária com as mesmas características, com o nui ${beneficiaryState?.nui}`}
               </b>
               <Space>
-                <Button
-                  key="Cancel"
-                  onClick={onCancelEditingExistingBeneficiary}
-                >
-                  Cancelar
+                <Button key="Cancel" onClick={onRegisterNewBeneficiary}>
+                  Continuar Registo
                 </Button>
                 <Button
                   type="primary"
                   ref={buttonRef}
-                  onClick={onRegisterAnExistingBeneficiary}
+                  onClick={onUpdateExistingBeneficiary}
                 >
-                  Continuar
+                  Actualizar Existente
                 </Button>
               </Space>
             </Space>

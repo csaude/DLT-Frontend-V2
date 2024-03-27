@@ -40,7 +40,7 @@ import { SuccessHandler } from "../../../components/SyncIndicator";
 import { Context } from "../../../routes/DrawerNavigator";
 import MyDatePicker from "../../../components/DatePicker";
 import { calculateAge } from "../../../models/Utils";
-import { COMMUNITY, SCHOOL, US } from "../../../utils/constants";
+import { COMMUNITY, SCHOOL, SUPERVISOR, US } from "../../../utils/constants";
 import Spinner from "react-native-loading-spinner-overlay/lib";
 import { useDispatch } from "react-redux";
 import { beneficiariesFetchCount, pendingSyncBeneficiaries } from "../../../services/beneficiaryService";
@@ -81,12 +81,15 @@ const ReferenceForm: React.FC = ({ route }: any) => {
   ];
   const aflatounIds = [218, 218, 219, 220, 221, 222, 223];
 
+  const currentYear = moment(new Date()).format("YY");
+
   const fetchEntryPoints = useCallback(async () => {
     const user = await database
       .get("users")
       .query(Q.where("online_id", userId))
       .fetch();
     const userSerialized = user.map((item) => item._raw);
+    const userEntryPoint = (userSerialized[0] as any).entry_point;
 
     const partner = await database
       .get("partners")
@@ -96,7 +99,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
 
     const partnerType = (partnerSerialized[0] as any).partner_type;
 
-    if ((userSerialized[0] as any).entry_point === "3") {
+    if (userEntryPoint === "3") {
       setEntryPoints([US, COMMUNITY, SCHOOL]);
     } else if (partnerType === "1") {
       setEntryPoints([COMMUNITY, SCHOOL]);
@@ -106,13 +109,9 @@ const ReferenceForm: React.FC = ({ route }: any) => {
       setEntryPoints([US, COMMUNITY, SCHOOL]);
     }
 
-    setEntryPoint(
-      (userSerialized[0] as any).entry_point == "1"
-        ? "US"
-        : (userSerialized[0] as any).entry_point == "2"
-        ? "CM"
-        : "ES"
-    );
+    const entryPoint = userEntryPoint == "1" ? "US" : userEntryPoint == "2" ? "CM" : "ES"
+    setEntryPoint(entryPoint);
+    formik.setFieldValue('reference_code', entryPoint + "-PP-MM-" + moment(new Date()).format("YY"));
   }, []);
 
   const getRefNote = useCallback(async () => {
@@ -192,6 +191,20 @@ const ReferenceForm: React.FC = ({ route }: any) => {
 
     if (!values.reference_code) {
       errors.reference_code = "Obrigatório";
+    } else {
+      const refCode = values.reference_code;
+      const splittedRefCode = refCode.split("-");
+      if (splittedRefCode.length != 4) {
+        errors.reference_code = "Formato incorrecto";
+      } else if (!["US", "CM", "ES"].includes(splittedRefCode[0])) {
+        errors.reference_code = "Ponto de entrada incorrecto";
+      } else if (splittedRefCode[1].localeCompare("01") < 0 || splittedRefCode[1].localeCompare("99") > 0) {
+        errors.reference_code = "Número de página incorrecto";
+      } else if (splittedRefCode[2].localeCompare("01") < 0 || splittedRefCode[2].localeCompare("12") > 0) {
+        errors.reference_code = "Mês incorrecto";
+      } else if (splittedRefCode[3].localeCompare(Number(currentYear) - 1) < 0 || splittedRefCode[3].localeCompare(currentYear) > 0) {
+        errors.reference_code = "Ano incorrecto";
+      }
     }
 
     if (!values.service_type) {
@@ -267,7 +280,8 @@ const ReferenceForm: React.FC = ({ route }: any) => {
   const fetchServices = async (value: any) => {
     const getServicesList = await database
       .get("services")
-      .query(Q.where("service_type", value))
+      .query(Q.where("service_type", value),
+             Q.where("status", 1))
       .fetch();
     let servicesSerialized = getServicesList.map((item) => item._raw);
     const age = calculateAge(beneficiary.date_of_birth);
@@ -331,9 +345,12 @@ const ReferenceForm: React.FC = ({ route }: any) => {
     const getUsersList = await database
       .get("users")
       .query(
-        Q.where("us_ids", Q.like(`%${value}%`)),
         Q.where("partner_id", formik.values.partner_id),
-        Q.where("status", 1)
+        Q.where("status", 1),
+        Q.or(
+          Q.where("us_ids", Q.like(`%${value}%`)),
+          Q.where("profile_id", SUPERVISOR),
+        )
       )
       .fetch();
     const usersSerialized = getUsersList.map((item) => item._raw);
@@ -624,7 +641,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                   <FormControl.Label>
                     {"Cód. Ref. Livro (PE:" +
                       entryPoint +
-                      "; Pág.; Mês:1-12; Ano:23-99)"}
+                      "; Pág.:01-99; Mês:01-12; Ano:" + (currentYear -1) +"-" + currentYear + ")"}
                   </FormControl.Label>
                   <Input
                     onBlur={formik.handleBlur("reference_code")}
