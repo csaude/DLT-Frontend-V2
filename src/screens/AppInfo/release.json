@@ -1,7 +1,7 @@
 {
   "release": {
-    "version": "1.1.0",
-    "date": "20/12/2023",
+    "version": "1.2.0",
+    "date": "20/03/2024",
     "changelogs": [
       {
         "id": 1,
@@ -13,127 +13,115 @@
       },
       {
         "id": 3,
-        "changelog": "Inclusion of beneficiaries List export option / Inclusão da opção para exportação de lista de beneficiárias"
+        "changelog": "Feature to identify possible matches with existing beneficiaries to avoid beneficiary duplication / Funcionalidade para identificar possíveis correspondências com beneficiários existentes para evitar a duplicação de beneficiários"
       },
       {
         "id": 4,
-        "changelog": "Enable search by name to de-identified names, / Permitir a pesquisa por nome para nomes de-identificados"
-      },
-      {
-        "id": 5,
-        "changelog": "Inclusion of enrollment date on beneficiaries list and personal information / Inclusão da data de inscrição na listagem de beneficiários a na informação pessoal"
-      },
-      {
-        "id": 6,
-        "changelog": "Beneficiary Partner Registration / Registo de Parceiro de Beneficiária:"
-      },
-      {
-        "id": 7,
-        "changelog": "24 years age restriction removal on beneficiary partner registration /  Remoção da restrição de 24 anos de idade no registo de parceiros das beneficiárias"
-      },
-      {
-        "id": 8,
-        "changelog": "Inclusion of business rule to only allow partner removal if no beneficiaries are associated with them / Inclusão da regra de negócio para só permitir a remoção de parceiros que não estejam associados a uma beneficiárias"
-      },
-      {
-        "id": 9,
         "changelog": "Beneficiary Service Provision / Provisão de Serviços aos Beneficiários:"
       },
       {
-        "id": 10,
-        "changelog": "“Iniciativas de Aumento da Empregabilidade e Empreendedorismo” sub-service  renamed “to Siyakha Comprehensive” / Sub-servico “Iniciativas de Aumento da Empregabilidade e Empreendedorismo” renomeado para “Siyakha Comprehensive”"
+        "id": 5,
+        "changelog": "Enhancement to restrict service editing by partner type; clinical services can only be edited by clinical partners, and community services by community partners / Melhoria para restringir a edição de serviços por tipo de parceiro; serviços clínicos só podem ser editados por parceiros clínicos e serviços comunitários por parceiros comunitários"
       },
       {
-        "id": 11,
-        "changelog": "Inclusion of new sub-service “Siyakha Light” for age band “15-19” / Inclusão de novo sub-serviço Siyakha Light para a faixa etária “15-19”"
+        "id": 6,
+        "changelog": "Disable Sub-service Consulta Pós Parto (CPP) from Outros Serviços SAAJ sub-services list / Desabilitar o sub-serviço Consulta Pós Parto (CPP) da lista de sub-serviços Outros Serviços SAAJ"
       },
       {
-        "id": 12,
+        "id": 7,
         "changelog": "Referral Management Module / Módulo de Gestão de Referências:"
       },
       {
-        "id": 13,
+        "id": 8,
         "changelog": "Manage Service Referral / Gestão de Referência de Serviço:"
       },
       {
+        "id": 9,
+        "changelog": "Inclusion of validation for the referral code field to ensure adherence to the defined format / Inclusão de validação para o campo de código de referência para garantir conformidade com o formato definido"
+      },
+      {
+        "id": 10,
+        "changelog": "Change in the 'Notify To' field: enable the issuance of referrals to supervisors with access to the administrative post linked to the selected location. / Alteração no campo 'Notificar Ao': habilitar a emissão  de referências para supervisores com acesso ao posto administrativo vinculado à localização selecionada"
+      },
+      {
+        "id": 11,
+        "changelog": "Change in the location field to list the user 's administrative post instead of the beneficiary /  Alteração no campo de localização para listar o posto administrativo do usuário em vez do beneficiário"
+      },
+      {
+        "id": 12,
+        "changelog": "Update the sorting order to display referrals by status first, followed by referral date (in descending order), and then received date (most recent first) / Atualização na ordem de classificação para exibir as referências por status primeiro, seguido pela data de emissão da referência (em ordem decrescente), e depois pela data de registo (mais recente primeiro)"
+      },
+      {
+        "id": 13,
+        "changelog": "Enhancement in referrals list on mobile devices: received and issued referrals are differentiated by color / Melhoria na listagem de referências em dispositivos móveis: as referências recebidas e emitidas são diferenciadas por cor"
+      },
+      {
         "id": 14,
-        "changelog": "Inclusion of Referral List Export option / Inclusão de opção para exportação de lista de referências"
-      },
-      {
-        "id": 15,
-        "changelog": "Configuration Module / Módulo de Configuração:"
-      },
-      {
-        "id": 16,
-        "changelog": "Metadata Management / Gestão de Metadados"
-      },
-      {
-        "id": 17,
-        "changelog": "Inclusion of neighborhood configuration feature / Inclusão da funcionalidade de configuração de bairros residenciais."
-      },
-      {
-        "id": 18,
-        "changelog": "User Management Module / Módulo de Gestão do Utilizador:"
-      },
-      {
-        "id": 19,
-        "changelog": "User Registration / Registo do Utilizador"
-      },
-      {
-        "id": 20,
-        "changelog": "Included Filters and Pagination in User Listing / Inclusão de Filtros e Paginação na listagem de utilizadores"
-      },
-      {
-        "id": 21,
-        "changelog": "Included the option to activate an inactive user /Inclusão de opção para activar um utilizador inactivo"
-      },
-      {
-        "id": 22,
-        "changelog": "Updated to associate the users profiles (mentora,enfermeira and conselheira) to more than one administrative post / Actualização para permitir a associação de mais de um posto administrativo para os perfis de utilizadores (mentora, enfermeira e conselheira)"
-      },
-      {
-        "id": 23,
-        "changelog": "User Synchronization Report (New functionality) / Relatório de Sincronização de utilizadores ( Nova funcionalidade)"
-      },
-      {
-        "id": 24,
-        "changelog": "Report on last synchronization date by a user / Relatório sobre a data de última sincronização de um utilizador"
-      },
-      {
-        "id": 25,
-        "changelog": "Report of items pending synchronization on mobile devices / Relatório de itens pendentes de sincronização no dispositivo móvel"
-      },
-      {
-        "id": 26,
         "changelog": "Reports Module:"
       },
       {
+        "id": 15,
+        "changelog": "List of Beneficiaries and Services  / Lista de Beneficiários e Serviços"
+      },
+      {
+        "id": 16,
+        "changelog": "Inclusion of access to the Administrator Profile / Inclusão de acesso ao Perfil de Administrador"
+      },
+      {
+        "id": 17,
+        "changelog": "Update in the filename to include the DG (Report creation date) / Atualização no nome do arquivo para incluir a DG (Data de Criação do Relatório)"
+      },
+      {
+        "id": 18,
+        "changelog": "Code enhancement for report performance improvement / Optimização de código para melhoria de desempenho do relatório"
+      },
+      {
+        "id": 19,
+        "changelog": "List of Newly Enrolled AGYW and Services/ Lista de Novas RAMJ e Serviços"
+      },
+      {
+        "id": 20,
+        "changelog": "Inclusion of access to the Administrator Profile / Inclusão de acesso ao Perfil de Administrador"
+      },
+      {
+        "id": 21,
+        "changelog": "Update in the filename to include the DG (Report creation date) / Atualização no nome do arquivo para incluir a DG (Data de Criação do Relatório)"
+      },
+      {
+        "id": 22,
+        "changelog": "Code enhancement for report performance improvement / Optimização de código para melhoria de desempenho do relatório"
+      },
+      {
+        "id": 23,
+        "changelog": "List of Beneficiaries Without Specific Vulnerabilities (New Report)/ Lista de Beneficiárias sem Vulnerabilidades Específicas (Novo Relatório)"
+      },
+      {
+        "id": 24,
+        "changelog": "Report on Beneficiaries without specific vulnerabilities registered in the system / Relatório sobre Beneficiários sem vulnerabilidades específicas registadas no sistema"
+      },
+      {
+        "id": 25,
+        "changelog": "Simplified AGYW_PREV Indicator Report (New Report) / Relatório Simplificado do Indicador AGYW_PREV (Novo Relatório)"
+      },
+      {
+        "id": 26,
+        "changelog": "Simplified report for Partners implementing a customized version of DREAMS (Mothers to Mothers) / Relatório simplificado para Parceiros que implementam uma versão customizada do DREAMS (Mothers to Mothers)"
+      },
+      {
         "id": 27,
-        "changelog": "List of Beneficiaries and Services (New functionality) / Lista de Beneficiários e Serviços (Nova funcionalidade)"
+        "changelog": "Others / Outros"
       },
       {
         "id": 28,
-        "changelog": "Feature to extract the list of beneficiaries and services received / Funcionalidade de extração de listas de beneficiárias e serviços recebidos"
+        "changelog": "Performance Improvement: inclusion of an initial load screen on mobile app launch / Melhoria de desempenho: inclusão de uma tela de carregamento inicial na inicialização do aplicativo móvel."
       },
       {
         "id": 29,
-        "changelog": "List of Newly Enrolled AGYW and Services (New functionality) / Lista de Novas RAMJ e Serviços (Nova funcionalidade)"
+        "changelog": "Bugfix (Ticket #3451): Allow referral issuance to Health Facility (US) for Clinical Partners where the Entry Point is Escola(ES) / Correção de bug: Permitir emissão de referência para Unidade Sanitária para Parceiros Clínicos com Escola (ES) como ponto de entrada."
       },
       {
         "id": 30,
-        "changelog": "Feature to extract the list of newly enrolled beneficiaries and services received / Funcionalidade de extração de listas de novas beneficiárias inscritas e serviços recebidos"
-      },
-      {
-        "id": 31,
-        "changelog": "PEPFAR MER AGYW_PREV Indicator"
-      },
-      {
-        "id": 32,
-        "changelog": "“Iniciativas de Aumento da Empregabilidade e Empreendedorismo” renamed to “Siyakha Comprehensive” / “Iniciativas de Aumento da Empregabilidade e Empreendedorismo” renomeado para “Siyakha Comprehensive”"
-      },
-      {
-        "id": 33,
-        "changelog": "Inclusion of new sub-service Siyakha Light for age band “15-19” secondary package completion rules / Inclusão do novo sub-serviço Siyakha Light para regras de completude  de pacote secundário da faixa etária “15-19”"
+        "changelog": "Bugfix (Ticket #3448): Beneficiaries listed as included in the AGYW_PREV in the List of Beneficiaries and Services must be aligned with the Beneficiaries in the AGYW_PREV Indicator Report / Correcção de bug:Beneficiárias listadas como incluídas no AGYW_PREV na Lista de Beneficiários e Serviços devem estar alinhadas às Beneficiárias no Relatório do Indicador AGYW_PREV"
       }
     ]
   }
