@@ -34,7 +34,7 @@ import { Ionicons } from "@native-base/icons";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { Picker, PickerProps } from "@react-native-picker/picker";
-import { Q } from "@nozbe/watermelondb";
+import { Model, Q } from "@nozbe/watermelondb";
 import { database } from "../../../database";
 import withObservables from "@nozbe/with-observables";
 import Spinner from "react-native-loading-spinner-overlay";
@@ -146,6 +146,7 @@ const BeneficiaryForm: React.FC = ({
   const [haveChildrenEnabled, setHaveChildrenEnabled] = useState<any>(true);
   const [isExistingBeneficiary, setExistingBeneficiary] = useState(false);
   const [beneficiaryState, setBeneficiaryState] = useState<any>();
+  const [ignoreExisting, setIgnoreExisting] = useState(false);
 
   const minBirthYear = new Date();
   minBirthYear.setFullYear(new Date().getFullYear() - 24);
@@ -370,14 +371,18 @@ const BeneficiaryForm: React.FC = ({
 
   const onNextStep = async () => {
     setLoadingData(true);
-    const beneficiaries = await database
-      .get("beneficiaries")
-      .query(
-        Q.where("name", formik.values?.name),
-        Q.where("locality_id", Number(formik.values?.locality)),
-        Q.where("date_of_birth", formik.values?.date_of_birth)
-      )
-      .fetch();
+    let beneficiaries = ([] as Model[]);
+
+    if (!ignoreExisting && !beneficiarie){
+      beneficiaries = await database
+        .get("beneficiaries")
+        .query(
+          Q.where("name", formik.values?.name),
+          Q.where("locality_id", Number(formik.values?.locality)),
+          Q.where("date_of_birth", formik.values?.date_of_birth)
+        )
+        .fetch();
+    }
 
     if (beneficiaries.length > 0) {
       setExistingBeneficiary(true);
@@ -1146,13 +1151,14 @@ const BeneficiaryForm: React.FC = ({
                       <HStack>
                         <InfoIcon mt="1" />
                         <Text fontSize="sm" color="coolGray.800">
-                          {`Esta Beneficiaria já foi registada com o nui ${beneficiaryState?.nui}`}
+                          {`Já existe uma Beneficiária com as mesmas características, com o nui ${beneficiaryState?.nui}`}
                         </Text>
                       </HStack>
 
                       <Button
                         onPress={() => {
                           setExistingBeneficiary(false);
+                          setBeneficairie(beneficiaryState);
                           navigate({
                             name: "BeneficiariesList",
                           });
@@ -1168,6 +1174,7 @@ const BeneficiaryForm: React.FC = ({
                       <Button
                         onPress={() => {
                           setExistingBeneficiary(false);
+                          setIgnoreExisting(true);
                         }}
                       >
                         Continuar Com Novo Registo
