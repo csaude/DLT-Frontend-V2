@@ -5,7 +5,7 @@ import { uiSlice } from "@app/store/reducers/ui";
 import { createLogger } from "redux-logger";
 import referenceReducer from "./reducers/reference";
 import beneficiaryReducer from "./reducers/beneficiary";
-import interventionReducer from "./reducers/interventions";
+// import interventionReducer from "./reducers/interventions";
 import userReducer from "./reducers/user";
 import { reportSlice } from "./reducers/report";
 import { referenceInterventionSlice } from "./reducers/referenceIntervention";
@@ -22,7 +22,7 @@ const store = configureStore({
     ui: uiSlice.reducer,
     beneficiary: beneficiaryReducer,
     reference: referenceReducer,
-    intervention: interventionReducer,
+    // intervention: interventionReducer,
     user: userReducer,
     profile: profileReducer,
     partner: partnerReducer,

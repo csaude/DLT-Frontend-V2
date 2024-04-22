@@ -24,7 +24,6 @@ import { Title } from "@app/components";
 import { ADMIN, MNE, SUPERVISOR } from "@app/utils/contants";
 import { useDispatch, useSelector } from "react-redux";
 import LoadingModal from "@app/components/modal/LoadingModal";
-import { getInterventionsCount } from "@app/store/actions/interventions";
 import { pagedQueryByBeneficiariesIds } from "@app/utils/beneficiaryIntervention";
 import {
   getAgeAtRegistrationDate,
@@ -436,7 +435,6 @@ const ReportView: React.FC = () => {
 
   useEffect(() => {
     fetchElements(currentPageStart, currentPageEnd);
-    dispatch(getInterventionsCount());
   }, [currentPageStart, currentPageEnd]);
 
   const getServiceBandByServiceIdAndAge = (serviceId, dateOfBirth) => {
