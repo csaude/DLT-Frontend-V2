@@ -117,6 +117,7 @@ const BeneficiaryForm: React.FC = ({
   const [beneficiarie, setBeneficairie] = useState(beneficiary);
   const [provinces, setProvinces] = useState<any>([]);
   const [districts, setDistricts] = useState<any>([]);
+  const [userEntryPoint, setUserEntryPoint] = useState(loggedUser.entry_point);
   const [localities, setLocalities] = useState<any>([]);
   const [uss, setUss] = useState<any>([]);
   const [neighborhoods, setNeighborhoods] = useState<any>([]);
@@ -980,7 +981,8 @@ const BeneficiaryForm: React.FC = ({
     const neiSerialized = getNeiList.map((item) => item._raw);
     setNeighborhoods(neiSerialized);
 
-    const entryPoint = formik.values.entry_point;
+    const entryPoint = formik.values.entry_point ? formik.values.entry_point : userEntryPoint;  
+    
     if (entryPoint) {
       const getUsList = await database
         .get("us")
@@ -996,6 +998,7 @@ const BeneficiaryForm: React.FC = ({
 
   const onChangeEntryPoint = useCallback(async (entryPoint: any) => {
     const locality = formik.values.locality;
+    setUserEntryPoint(entryPoint);
 
     if (locality) {
       const getUsList = await database
