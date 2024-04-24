@@ -38,7 +38,6 @@ import "../styles.css";
 import InterventionForm from "./InterventionForm";
 import { ADMIN, MENTOR, MNE, SUPERVISOR } from "@app/utils/contants";
 import { useDispatch, useSelector } from "react-redux";
-import { getInterventionsCount } from "@app/store/actions/interventions";
 import PropTypes from "prop-types";
 
 const { confirm } = Modal;
@@ -254,7 +253,6 @@ const ViewBenefiaryPanel = ({
         setIsAdd(false);
         form.resetFields();
 
-        dispatch(getInterventionsCount());
       })
       .catch(() => {
         message.error({

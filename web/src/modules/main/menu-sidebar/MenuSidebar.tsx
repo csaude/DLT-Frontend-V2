@@ -12,7 +12,6 @@ import { getUserParams } from "@app/models/Utils";
 import { getReferencesTotal } from "../../../store/actions/reference";
 import { getBeneficiariesTotal } from "../../../store/actions/beneficiary";
 import styled from "styled-components";
-import { getInterventionsCount } from "@app/store/actions/interventions";
 import { getUsernames, loadReferers } from "@app/store/actions/users";
 import { getProfiles } from "@app/store/actions/profile";
 import { getPartners } from "@app/store/actions/partner";
@@ -221,7 +220,6 @@ const MenuSidebar = () => {
 
     dispatch(getBeneficiariesTotal(beneficiaryTotal));
     dispatch(getReferencesTotal(referenceTotal));
-    dispatch(getInterventionsCount());
     dispatch(getUsernames());
     dispatch(loadReferers(referers));
     dispatch(getProfiles());
