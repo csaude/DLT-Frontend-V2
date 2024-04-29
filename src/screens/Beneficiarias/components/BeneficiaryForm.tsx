@@ -288,28 +288,28 @@ const BeneficiaryForm: React.FC = ({
 
   useEffect(() => {
     const locality = formik.values.locality;
-    const entryPoint = formik.values.entry_point ? formik.values.entry_point : loggedUser.entry_point;
+    const entryPoint = formik.values.entry_point
+      ? formik.values.entry_point
+      : loggedUser.entry_point;
 
     const fetchUsList = async () => {
-
       if (locality && entryPoint) {
         const getUsList = await database
-        .get("us")
-        .query(
-          Q.where("locality_id", Number(locality)),
-          Q.where("entry_point", Number(entryPoint))
-        )
-        .fetch();
+          .get("us")
+          .query(
+            Q.where("locality_id", Number(locality)),
+            Q.where("entry_point", Number(entryPoint))
+          )
+          .fetch();
 
         const usSerialized = getUsList.map((item) => item._raw);
         setUss(usSerialized);
-      }      
+      }
     };
-    
+
     fetchUsList().catch((error) => console.log(error));
     setLoadingData(false);
-
-  }, [ userLocality, userEntryPoint ]);
+  }, [userLocality, userEntryPoint]);
 
   const toast = useToast();
   const dispatch = useDispatch();
@@ -397,9 +397,9 @@ const BeneficiaryForm: React.FC = ({
 
   const onNextStep = async () => {
     setLoadingData(true);
-    let beneficiaries = ([] as Model[]);
+    let beneficiaries = [] as Model[];
 
-    if (!ignoreExisting && !beneficiarie){
+    if (!ignoreExisting && !beneficiarie) {
       beneficiaries = await database
         .get("beneficiaries")
         .query(
