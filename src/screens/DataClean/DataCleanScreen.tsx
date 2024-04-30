@@ -87,12 +87,11 @@ const DatacleanScreen: React.FC = () => {
                     accessibilityLabel="pick a size"
                   >
                     <Stack
-                      direction={{ base: "row", md: "row" }}
                       alignItems={{
                         base: "flex-start",
                         md: "center",
                       }}
-                      space={4}
+                      space={1}
                       w="75%"
                       maxW="300px"
                     >
