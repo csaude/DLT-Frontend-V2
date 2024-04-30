@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, KeyboardAvoidingView, ScrollView, Text } from "react-native";
-import { Divider, Flex } from "native-base";
+import { Divider, Flex, FormControl, Radio, Stack } from "native-base";
 import styles from "./styles";
 import { pendingSyncBeneficiaries } from "../../services/beneficiaryService";
 import { pendingSyncBeneficiariesInterventions } from "../../services/beneficiaryInterventionService";
@@ -63,27 +63,78 @@ const DatacleanScreen: React.FC = () => {
               mt="1.5"
               _text={{ color: "coolGray.800" }}
             >
-              <Text>
+              {/* <Text>
                 {" "}
                 <Text style={styles.txtLabel}>
                   Seleccione a opçao
                 </Text>
+              </Text> */}
+
+
+              <FormControl
+                  key="vblt_is_deficient"
+                  isRequired
+                  // isInvalid={"vblt_is_deficient" in formik.errors}
+                >
+                  <FormControl.Label>Seleccione a opçao</FormControl.Label>
+                  <Radio.Group
+                    // value={formik.values.vblt_is_deficient + ""}
+                    // onChange={(itemValue) => {
+                    //   formik.setFieldValue("vblt_is_deficient", itemValue);
+                    //   onIsDeficientChange(itemValue);
+                    // }}
+                    name="rg4"
+                    accessibilityLabel="pick a size"
+                  >
+                    <Stack
+                      direction={{ base: "row", md: "row" }}
+                      alignItems={{
+                        base: "flex-start",
+                        md: "center",
+                      }}
+                      space={4}
+                      w="75%"
+                      maxW="300px"
+                    >
+                      <Radio
+                        key="defi1"
+                        value="1"
+                        colorScheme="green"
+                        size="md"
+                        my={1}
+                      >
+                        Limpeza Regular
+                      </Radio>                      
+                      <Radio
+                        key="defi2"
+                        value="0"
+                        colorScheme="green"
+                        size="md"
+                        my={1}
+                      >
+                        Limpeza do Fim do COP
+                      </Radio>
+                    </Stack>
+                  </Radio.Group>
+                  <FormControl.ErrorMessage>
+                    {/* {formik.errors.vblt_is_deficient} */}
+                  </FormControl.ErrorMessage>
+                </FormControl>
+
+              <Text>
+                {" "}
+                <Text style={styles.txtLabel}>
+                 {" "}
+                </Text>{" "}
+                
               </Text>
 
               <Text>
                 {" "}
                 <Text style={styles.txtLabel}>
-                  Intervenções por sincronizar:{" "}
+                 {" "}
                 </Text>{" "}
-                {beneficiariesInterventionsNotSynced}
-              </Text>
-
-              <Text>
-                {" "}
-                <Text style={styles.txtLabel}>
-                  Referências por sincronizar:{" "}
-                </Text>{" "}
-                {referencesNotSynced}
+                
               </Text>
 
               <Text>
