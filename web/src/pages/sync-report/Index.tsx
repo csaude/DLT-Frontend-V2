@@ -80,7 +80,14 @@ const UsersLastSync: React.FC = () => {
         searchUserCreator,
         searchDistrict
       );
-      setUsersLastSync(data);
+      const sortedData = data.sort((data1, data2) =>
+        moment(data2.lastSyncDate)
+          .format("YYYY-MM-DD HH:mm:ss")
+          .localeCompare(
+            moment(data1.lastSyncDate).format("YYYY-MM-DD HH:mm:ss")
+          )
+      );
+      setUsersLastSync(sortedData);
     };
 
     fetchData().catch((error) => console.log(error));
