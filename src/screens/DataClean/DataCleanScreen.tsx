@@ -1,53 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { View, KeyboardAvoidingView, ScrollView, Text } from "react-native";
-import { Divider, Flex, FormControl, Radio, Stack } from "native-base";
+import { Button, Divider, Flex, FormControl, Radio, Stack } from "native-base";
 import styles from "./styles";
-import { pendingSyncBeneficiaries } from "../../services/beneficiaryService";
-import { pendingSyncBeneficiariesInterventions } from "../../services/beneficiaryInterventionService";
-import { pendingSyncReferences } from "../../services/referenceService";
-
-import { useDispatch, useSelector } from "react-redux";
-import {
-  loadPendingsBeneficiariesInterventionsTotals,
-  loadPendingsBeneficiariesTotals,
-  loadPendingsReferencesTotals,
-} from "../../store/syncSlice";
+import { Formik } from "formik";
 
 const DatacleanScreen: React.FC = () => {
-  const beneficiariesNotSynced = useSelector(
-    (state: any) => state.sync.pendingSyncBeneficiaries
-  );
-  const beneficiariesInterventionsNotSynced = useSelector(
-    (state: any) => state.sync.pendingSyncBeneficiariesInterventions
-  );
-  const referencesNotSynced = useSelector(
-    (state: any) => state.sync.pendingSyncReferences
-  );
-  const dispatch = useDispatch();
+  
+  // function handleSubmit() => {
+  //   throw new Error("Function not implemented.");
+  // }
 
-  const fetchCounts = async () => {
-    const benefNotSynced = await pendingSyncBeneficiaries();
-    dispatch(
-      loadPendingsBeneficiariesTotals({
-        pendingSyncBeneficiaries: benefNotSynced,
-      })
-    );
-
-    const benefIntervNotSynced = await pendingSyncBeneficiariesInterventions();
-    dispatch(
-      loadPendingsBeneficiariesInterventionsTotals({
-        pendingSyncBeneficiariesInterventions: benefIntervNotSynced,
-      })
-    );
-
-    const refNotSynced = await pendingSyncReferences();
-    dispatch(
-      loadPendingsReferencesTotals({ pendingSyncReferences: refNotSynced })
-    );
-  };
-  useEffect(() => {
-    fetchCounts();
-  }, [dispatch]);
   return (
     <KeyboardAvoidingView style={styles.background}>
       <ScrollView>
@@ -120,13 +82,15 @@ const DatacleanScreen: React.FC = () => {
                   </FormControl.ErrorMessage>
                 </FormControl>
 
-              <Text>
-                {" "}
-                <Text style={styles.txtLabel}>
-                 {" "}
-                </Text>{" "}
-                
-              </Text>
+                <Button
+                  // isLoading={loading}
+                  isLoadingText="Cadastrando"
+                  // onPress={handleSubmit}
+                  my="10"
+                  colorScheme="primary"
+                >
+                  Salvar
+                </Button>
 
               <Text>
                 {" "}
@@ -138,32 +102,10 @@ const DatacleanScreen: React.FC = () => {
 
               <Text>
                 {" "}
-                <Text style={styles.txtLabel}> </Text>{" "}
-              </Text>
-
-              <Text>
-                {" "}
-                <Text style={styles.txtLabel}> </Text>{" "}
-              </Text>
-
-              <Text>
-                {" "}
-                <Text style={styles.txtLabel}> </Text>{" "}
-              </Text>
-
-              <Text>
-                {" "}
-                <Text style={styles.txtLabel}> </Text>{" "}
-              </Text>
-
-              <Text>
-                {" "}
-                <Text style={styles.txtLabel}> </Text>{" "}
-              </Text>
-
-              <Text>
-                {" "}
-                <Text style={styles.txtLabel}> </Text>{" "}
+                <Text style={styles.txtLabel}>
+                 {" "}
+                </Text>{" "}
+                
               </Text>
 
               <Text>
