@@ -32,11 +32,13 @@ const UsersLastSync: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const pageSize = 100;
-  const [searchUsername, setSearchNui] = useState<any>("");
+  const [searchName, setSearchName] = useState<any>("");
+  const [searchUsername, setSearchUsername] = useState<any>("");
   const [searchDistrict, setSearchDistrict] = useState<any>("");
   const [searchUserCreator, setSearchUserCreator] = useState<any>("");
   const [district, setDistrict] = useState<any>();
   const [userCreator, setUserCreator] = useState<any>();
+  const [name, setName] = useState<any>();
   const [username, setUsername] = useState<any>();
   const [districts, setDistricts] = useState<any[]>([]);
   const [provinces, setProvinces] = useState<any[]>([]);
@@ -76,6 +78,7 @@ const UsersLastSync: React.FC = () => {
         getUserParams(user),
         currentPageIndex,
         pageSize,
+        searchName,
         searchUsername,
         searchUserCreator,
         searchDistrict
@@ -101,7 +104,13 @@ const UsersLastSync: React.FC = () => {
 
     setDistricts(sortedDistricts);
     setProvinces(sortedProvinces);
-  }, [currentPageIndex, searchUsername, searchUserCreator, searchDistrict]);
+  }, [
+    currentPageIndex,
+    searchName,
+    searchUsername,
+    searchUserCreator,
+    searchDistrict,
+  ]);
 
   const filterObjects = (data) => (formatter) =>
     data?.map((item) => ({
@@ -308,8 +317,11 @@ const UsersLastSync: React.FC = () => {
   ];
 
   const handleGlobalSearch = async () => {
+    if (name !== undefined) {
+      setSearchName(name);
+    }
     if (username !== undefined) {
-      setSearchNui(username);
+      setSearchUsername(username);
     }
     if (userCreator !== undefined) {
       setSearchUserCreator(userCreator);
@@ -349,6 +361,15 @@ const UsersLastSync: React.FC = () => {
         headStyle={{ color: "#17a2b8" }}
       >
         <Row gutter={16}>
+          <Col className="gutter-row">
+            <Form.Item name="name" label="" initialValue={name}>
+              <Input
+                placeholder="Pesquisar por nome"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </Form.Item>
+          </Col>
           <Col className="gutter-row">
             <Form.Item name="username" label="" initialValue={username}>
               <Input

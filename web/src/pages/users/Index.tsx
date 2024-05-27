@@ -40,11 +40,13 @@ const UsersList: React.FC = () => {
 
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const pageSize = 100;
+  const [searchName, setSearchName] = useState<any>("");
   const [searchUsername, setSearchNui] = useState<any>("");
   const [searchDistrict, setSearchDistrict] = useState<any>("");
   const [searchUserCreator, setSearchUserCreator] = useState<any>("");
   const [district, setDistrict] = useState<any>();
   const [userCreator, setUserCreator] = useState<any>();
+  const [name, setName] = useState<any>();
   const [username, setUsername] = useState<any>();
   const [districts, setDistricts] = useState<any[]>([]);
   const [provinces, setProvinces] = useState<any[]>([]);
@@ -86,6 +88,7 @@ const UsersList: React.FC = () => {
         getUserParams(user),
         currentPageIndex,
         pageSize,
+        searchName,
         searchUsername,
         searchUserCreator,
         searchDistrict
@@ -108,7 +111,13 @@ const UsersList: React.FC = () => {
     setDistricts(sortedDistricts);
     setCreators(sortedCreators);
     setProvinces(sortedProvinces);
-  }, [currentPageIndex, searchUsername, searchUserCreator, searchDistrict]);
+  }, [
+    currentPageIndex,
+    searchName,
+    searchUsername,
+    searchUserCreator,
+    searchDistrict,
+  ]);
 
   const handleUsersModalVisible = (flag?: boolean) => {
     form.resetFields();
@@ -456,6 +465,9 @@ const UsersList: React.FC = () => {
   ];
 
   const handleGlobalSearch = async () => {
+    if (name !== undefined) {
+      setSearchName(name);
+    }
     if (username !== undefined) {
       setSearchNui(username);
     }
@@ -508,6 +520,15 @@ const UsersList: React.FC = () => {
         }
       >
         <Row gutter={16}>
+          <Col className="gutter-row">
+            <Form.Item name="name" label="" initialValue={name}>
+              <Input
+                placeholder="Pesquisar por nome"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </Form.Item>
+          </Col>
           <Col className="gutter-row">
             <Form.Item name="username" label="" initialValue={username}>
               <Input
