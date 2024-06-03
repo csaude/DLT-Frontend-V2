@@ -279,7 +279,7 @@ const ErrorHandler: React.FC = () => {
           >
             <HStack space={2} flexShrink={1} alignItems="center">
               <Alert.Icon />
-              <Text1 color="coolGray.800">Nenhuma opçao Solicitado!</Text1>
+              <Text1 color="coolGray.800">Nenhuma opçao Selecionada!</Text1>
             </HStack>
           </HStack>
         </VStack>
