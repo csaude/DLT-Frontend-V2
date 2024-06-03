@@ -1,17 +1,47 @@
-import React, { useEffect, useState } from "react";
-import { View, KeyboardAvoidingView, ScrollView, Text } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import { View, KeyboardAvoidingView, ScrollView, Text, GestureResponderEvent } from "react-native";
 import { Button, Divider, Flex, FormControl, Radio, Stack } from "native-base";
+import Spinner from "react-native-loading-spinner-overlay/lib";
 import styles from "./styles";
-import { Formik } from "formik";
+import { useFormik } from "formik";
 
 const DatacleanScreen: React.FC = () => {
+
+
+  const [loading, setLoading] = useState(false);
   
-  // function handleSubmit() => {
-  //   throw new Error("Function not implemented.");
-  // }
+  const handleSubmit = async () => {
+    console.log("Testando!!!");
+  }
+
+  const formik = useFormik({
+    initialValues: {
+      data_clean: "",
+    },
+    onSubmit: (values) => console.log(values),
+    validate: (values) => validate(values),
+    validateOnBlur: false,
+    validateOnChange: false,
+  });
+
+  const validate = useCallback((values: any) => {
+    const errors: any = {};
+
+    if (!values.data_clean) {
+      errors.data_clean = "Obrigatório";
+    }
+    return errors;
+  }, []);
 
   return (
     <KeyboardAvoidingView style={styles.background}>
+      {loading ? ( 
+        <Spinner
+          visible={true}
+          textContent={"Limpando dados nao usados no ultimos 6 meses..."}
+          textStyle={styles.spinnerTextStyle}
+        />
+      ) : undefined}
       <ScrollView>
         <View>
           <View style={styles.containerForm}>
@@ -25,26 +55,25 @@ const DatacleanScreen: React.FC = () => {
               mt="1.5"
               _text={{ color: "coolGray.800" }}
             >
-              {/* <Text>
+              <Text>
                 {" "}
                 <Text style={styles.txtLabel}>
                   Seleccione a opçao
                 </Text>
-              </Text> */}
+              </Text>
 
 
               <FormControl
-                  key="vblt_is_deficient"
+                  key="data_clean"
                   isRequired
-                  // isInvalid={"vblt_is_deficient" in formik.errors}
+                  isInvalid={"data_clean" in formik.errors}
                 >
-                  <FormControl.Label>Seleccione a opçao</FormControl.Label>
+                  {/* <FormControl.Label>Seleccione a opçao</FormControl.Label> */}
                   <Radio.Group
-                    // value={formik.values.vblt_is_deficient + ""}
-                    // onChange={(itemValue) => {
-                    //   formik.setFieldValue("vblt_is_deficient", itemValue);
-                    //   onIsDeficientChange(itemValue);
-                    // }}
+                    value={formik.values.data_clean + ""}
+                    onChange={(itemValue) => {
+                      formik.setFieldValue("data_clean", itemValue);
+                    }}
                     name="rg4"
                     accessibilityLabel="pick a size"
                   >
@@ -78,14 +107,14 @@ const DatacleanScreen: React.FC = () => {
                     </Stack>
                   </Radio.Group>
                   <FormControl.ErrorMessage>
-                    {/* {formik.errors.vblt_is_deficient} */}
+                    {formik.errors.data_clean}
                   </FormControl.ErrorMessage>
                 </FormControl>
 
                 <Button
-                  // isLoading={loading}
+                  isLoading={loading}
                   isLoadingText="Cadastrando"
-                  // onPress={handleSubmit}
+                  onPress={handleSubmit}
                   my="10"
                   colorScheme="primary"
                 >
