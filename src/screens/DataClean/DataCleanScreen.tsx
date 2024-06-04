@@ -1,12 +1,19 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import { View, KeyboardAvoidingView, ScrollView, Text, GestureResponderEvent } from "react-native";
 import { Alert, Button, Divider, Flex, FormControl, HStack, Radio, Stack, VStack, useToast, Text as Text1 } from "native-base";
 import Spinner from "react-native-loading-spinner-overlay/lib";
 import styles from "./styles";
 import { useFormik } from "formik";
+import withObservables from "@nozbe/with-observables";
+import { database } from "../../database";
+import { Q } from "@nozbe/watermelondb";
+import moment from "moment";
 
-const DatacleanScreen: React.FC = () => {
-
+const DatacleanScreen: React.FC = ({
+  beneficiaries,
+  references,
+  beneficiaries_interventions,
+} : any) => {
 
   const toast = useToast();
   
@@ -15,6 +22,8 @@ const DatacleanScreen: React.FC = () => {
   
   const handleSubmit = async () => {
 
+  // Por Fazer limpeza do codigo;
+  
     console.log(formik.values.data_clean);
 
     const errorsList = validate(formik.values);
@@ -33,6 +42,41 @@ const DatacleanScreen: React.FC = () => {
       
     } else {
       setErrors(false);
+
+      const todayDate = new Date();
+      const sixMonthsAgo = todayDate.setFullYear(todayDate.getFullYear(), todayDate.getMonth() - 6);
+      const beneficiariesCollection = beneficiaries;
+      const referencesCollection = references;
+
+      const interventionsCollection = beneficiaries_interventions;
+      const myArray = [];
+
+
+      // const dateLast = new Date() > interventionsCollection[0].date_created ? new Date() : interventionsCollection[0].date_created;
+
+        const beneficiaryInterventionOutDate = interventionsCollection.filter((e) => {
+          if(new Date(e._raw.date_created) <= new Date(sixMonthsAgo)){
+            return [...myArray, e._raw];
+          }
+          
+        });
+
+
+      const intervs = beneficiaryInterventionOutDate[0];
+      const statusInterv = (new Date(intervs.date_created) <= new Date(sixMonthsAgo) ? true : false);
+
+      const allInterventions = await database
+      .get("beneficiaries_interventions")
+      .query(Q.where("date_created", sixMonthsAgo))
+      .fetch();
+
+      console.log("================================================");
+      console.log(moment(new Date(beneficiaryInterventionOutDate[0].date_created)).format("DD-MM-YYYY"));
+      // console.log(beneficiaryInterventionOutDate);
+      // console.log(moment(new Date()).format("DD-MM-YYYY"));
+      console.log(beneficiaryInterventionOutDate.length);
+      console.log(moment(sixMonthsAgo).format("DD-MM-YYYY"));
+
       toast.show({
         placement: "top",
         render: () => {
@@ -85,18 +129,18 @@ const DatacleanScreen: React.FC = () => {
             >
               <Text>
                 {" "}
-                {/* <Text style={styles.txtLabel}>
+                <Text style={styles.txtLabel}>
                   Seleccione a opçao
-                </Text> */}
+                </Text>
               </Text>
 
 
               <FormControl
                   key="data_clean"
-                  isRequired
+                  // isRequired
                   isInvalid={"data_clean" in formik.errors}
                 >
-                  <FormControl.Label>Seleccione a opçao</FormControl.Label>
+                  {/* <FormControl.Label>Seleccione a opçao</FormControl.Label> */}
                   <Radio.Group
                     value={formik.values.data_clean + ""}
                     onChange={(itemValue) => {
@@ -242,6 +286,14 @@ const DatacleanScreen: React.FC = () => {
   );
 };
 
+const enhance = withObservables([], () => ({
+  beneficiaries: database.collections.get("beneficiaries")
+    .query(Q.where("status", 1)),
+  references: database.collections.get("references").query(),
+  beneficiaries_interventions: database.collections
+    .get("beneficiaries_interventions")
+    .query(),
+}));
 
 const InfoHandler: React.FC = () => {
   return (
@@ -265,7 +317,6 @@ const InfoHandler: React.FC = () => {
   );
 };
 
-
 const ErrorHandler: React.FC = () => {
   return (
     <>
@@ -288,4 +339,4 @@ const ErrorHandler: React.FC = () => {
   );
 };
 
-export default DatacleanScreen;
+export default memo(enhance(DatacleanScreen));
