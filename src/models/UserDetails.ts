@@ -9,6 +9,7 @@ export default class UserDetails extends Model {
   @text("localities") localities;
   @text("uss") uss;
   @field("user_id") user_id;
+  @field("last_login_date") last_login_date;
   @field("password_last_change_date") password_last_change_date;
   @field("profile_id") profile_id;
   @field("entry_point") entry_point;
