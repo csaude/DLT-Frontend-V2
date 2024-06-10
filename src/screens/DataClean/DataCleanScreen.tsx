@@ -19,12 +19,24 @@ const DatacleanScreen: React.FC = ({
   
   const [errors, setErrors] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const destroyBeneficiariesInterventions = async (myArrayIDS: any) => {
+    await database.write(async () => {
+      const interventions = await database.get('beneficiaries_interventions').query(Q.where('beneficiary_id', myArrayIDS)).fetch()
+      for (const intervention of interventions) {
+        await intervention.destroyPermanently()
+      }
+    });
+
+    toast.show({
+      placement: "top",
+      render: () => {
+        return <InfoHandler />;
+      },
+    });
+  }
   
   const handleSubmit = async () => {
-
-  // Por Fazer limpeza do codigo;
-  
-    console.log(formik.values.data_clean);
 
     const errorsList = validate(formik.values);
     const hasErrors = JSON.stringify(errorsList) !== "{}";
@@ -41,6 +53,8 @@ const DatacleanScreen: React.FC = ({
       });
       
     } else {
+      let removeErrorsList = validate(formik.values);
+      formik.setErrors(removeErrorsList);
       setErrors(false);
 
       const todayDate = new Date();
@@ -51,38 +65,18 @@ const DatacleanScreen: React.FC = ({
       const interventionsCollection = beneficiaries_interventions;
       const myArray = [];
 
-
-      // const dateLast = new Date() > interventionsCollection[0].date_created ? new Date() : interventionsCollection[0].date_created;
-
         const beneficiaryInterventionOutDate = interventionsCollection.filter((e) => {
-          if(new Date(e._raw.date_created) <= new Date(sixMonthsAgo)){
+          const seen = new Set<number>();
+          if(new Date(e._raw.date_created) <= new Date(sixMonthsAgo) && (!seen.has(e._raw.beneficiary_id))){            
             return [...myArray, e._raw];
-          }
-          
+          }          
         });
 
-
-      const intervs = beneficiaryInterventionOutDate[0];
-      const statusInterv = (new Date(intervs.date_created) <= new Date(sixMonthsAgo) ? true : false);
-
-      const allInterventions = await database
-      .get("beneficiaries_interventions")
-      .query(Q.where("date_created", sixMonthsAgo))
-      .fetch();
-
-      console.log("================================================");
-      console.log(moment(new Date(beneficiaryInterventionOutDate[0].date_created)).format("DD-MM-YYYY"));
-      // console.log(beneficiaryInterventionOutDate);
-      // console.log(moment(new Date()).format("DD-MM-YYYY"));
-      console.log(beneficiaryInterventionOutDate.length);
-      console.log(moment(sixMonthsAgo).format("DD-MM-YYYY"));
-
-      toast.show({
-        placement: "top",
-        render: () => {
-          return <InfoHandler />;
-        },
+      const myArrayIDS = beneficiaryInterventionOutDate.map((e) => {
+          return [...myArray, e._raw.beneficiary_id];
       });
+     
+      destroyBeneficiariesInterventions(myArrayIDS);
     }
   }
 
