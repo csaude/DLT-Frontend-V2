@@ -43,20 +43,25 @@ const DatacleanScreen: React.FC = ({
   const [errors, setErrors] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const destroyBeneficiariesInterventions = async (myArrayIDS: any) => {
-    await database.write(async () => {
-      const interventions = await database.get('beneficiaries_interventions').query(Q.where('beneficiary_id', myArrayIDS)).fetch()
-      for (const intervention of interventions) {
-        await intervention.destroyPermanently()
-      }
+  const destroyBeneficiariesInterventions = async (beneficiaryIds: any) => {
+    console.log(beneficiaryIds);
+    await database.write(async () => {   
+        for (const beneficiaryId of beneficiaryIds) {     
+            console.log(beneficiaryId);
+            const recordsInterventions = await database.get('beneficiaries_interventions').query(Q.where('beneficiary_id', beneficiaryId)).fetch();
+            for (const record of recordsInterventions) {
+                await record.destroyPermanently();
+            }
+            const recordsReferences = await database.get('references').query(Q.where('beneficiary_id', beneficiaryId)).fetch();
+            for (const record of recordsReferences) {
+                await record.destroyPermanently();
+            }
+            const recordsBeneficiaries = await database.get('beneficiaries').query(Q.where('online_id', beneficiaryId)).fetch();
+            for (const record of recordsBeneficiaries) {
+                await record.destroyPermanently();
+            }
+        }
     });
-
-  toast.show({
-    placement: "top",
-    render: () => {
-      return <InfoHandler />;
-    },
-  });
   }
 
   const cleanData = (myDataIDs: any): any => {
@@ -118,7 +123,7 @@ const DatacleanScreen: React.FC = ({
           return <ErrorHandler />;
         },
       });
-    } else {
+    } else if(formik.values.data_clean === "0"){
       let removeErrorsList = validate(formik.values);
       formik.setErrors(removeErrorsList);
       setErrors(false);
@@ -130,14 +135,44 @@ const DatacleanScreen: React.FC = ({
       const interventionsCollectionIDsList = filterData(interventionsCollection);
 
       const myIDsList = filterData(referencesCollection);
-      const benfIds = [...myIDsList, ...interventionsCollectionIDsList];
 
-      destroyBeneficiariesInterventions(benfIds);
+      const allBenfIds = [...myIDsList, ...interventionsCollectionIDsList];
+  
+      const uniqueBenfIds = cleanData(allBenfIds);
 
-    const ids = [...myIDsList, ...interventionsCollectionIDsList];
+      destroyBeneficiariesInterventions(uniqueBenfIds).then(() => {
+        toast.show({
+            placement: "top",
+            render: () => {
+            return <InfoHandler />;
+            },
+        });
+        console.log('Registros deletados com sucesso');
+      })
+      .catch(error => {
+        toast.show({
+            placement: "top",
+            render: () => {
+              return <ErrorCleanHandler />;
+            },
+          });
+          console.error('Erro ao deletar registros:', error);          
+      });
 
-    const uniqueArray = cleanData(ids);
-
+    } else if(formik.values.data_clean === "0"){
+        toast.show({
+            placement: "top",
+            render: () => {
+              return <InfoHandlerSave />;
+            },
+          });
+     } else{
+        toast.show({
+            placement: "top",
+            render: () => {
+              return <InfoHandlerSave />;
+            },
+          });
     }
   };
 
@@ -372,6 +407,37 @@ const InfoHandler: React.FC = () => {
   );
 };
 
+
+const InfoHandlerSave: React.FC = () => {
+    return (
+      <>
+        <Alert
+          w="100%"
+          variant="left-accent"
+          colorScheme="success"
+          status="success"
+        >
+          <VStack space={2} flexShrink={1} w="100%">
+            <HStack
+              flexShrink={1}
+              space={2}
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              <HStack space={2} flexShrink={1} alignItems="center">
+                <Alert.Icon />
+                <Text1 color="coolGray.800">
+                  Limpeza de dados programado com sucesso!
+                </Text1>
+              </HStack>
+            </HStack>
+          </VStack>
+        </Alert>
+      </>
+    );
+  };
+  
+
 const ErrorHandler: React.FC = () => {
   return (
     <>
@@ -398,5 +464,32 @@ const ErrorHandler: React.FC = () => {
     </>
   );
 };
+
+const ErrorCleanHandler: React.FC = () => {
+    return (
+      <>
+        <Alert
+          w="100%"
+          variant="left-accent"
+          colorScheme="success"
+          status="error"
+        >
+          <VStack space={2} flexShrink={1} w="100%">
+            <HStack
+              flexShrink={1}
+              space={2}
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              <HStack space={2} flexShrink={1} alignItems="center">
+                <Alert.Icon />
+                <Text1 color="coolGray.800">Falha no processo de limpeza de dados!</Text1>
+              </HStack>
+            </HStack>
+          </VStack>
+        </Alert>
+      </>
+    );
+  };
 
 export default memo(enhance(DatacleanScreen));
