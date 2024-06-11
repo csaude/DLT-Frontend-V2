@@ -59,8 +59,17 @@ const DatacleanScreen: React.FC = ({
   });
   }
 
-  const cleanData = (array: any): any => {
+  const cleanData = (myDataIDs: any): any => {
+   
+    const flattenedDataIDs = myDataIDs.flat();
+    const uniqueArray = Array.from(new Set(flattenedDataIDs));
+
+    return uniqueArray;
+  }
+
+  const filterData = (array: any): any => {
     const myArray = [];
+    const benfIdsInCOP =[];
 
     const dataFilter = array.filter(
         (e) => {
@@ -69,19 +78,33 @@ const DatacleanScreen: React.FC = ({
           }
         }
       );
+      const idsFilter = array.filter(
+        (e) => {
+          if (new Date(e._raw?.date_created) > new Date(sixMonthsAgo)) {
+            return [...benfIdsInCOP, e._raw];
+          }
+        }
+      );
 
     const myDataIDs = dataFilter.map((e) => {
       return [...myArray, e._raw?.beneficiary_id];
     });
 
-    const flattenedDataIDs = myDataIDs.flat();
-    const uniqueArray = Array.from(new Set(flattenedDataIDs));
+    const cleanBenfIdsInCOP = idsFilter.map((e) => {
+        return [...benfIdsInCOP, e._raw?.beneficiary_id];
+      });
 
-    return uniqueArray;
+    const data = cleanData(myDataIDs);
+    const bendInCOP = cleanData(cleanBenfIdsInCOP);
+    const itemsToRemoveSet = new Set(bendInCOP);
+
+    const commonItems = data.filter(item => itemsToRemoveSet.has(item));
+    const resultArray = data.filter(item => !commonItems.includes(item));
+
+    return resultArray;
   }
 
   const handleSubmit = async () => {
-
     const errorsList = validate(formik.values);
     const hasErrors = JSON.stringify(errorsList) !== "{}";
 
@@ -102,13 +125,19 @@ const DatacleanScreen: React.FC = ({
       
       const beneficiariesCollection = beneficiaries;
       const referencesCollection = references;
-
       const interventionsCollection = beneficiaries_interventions;
-      const myArray = [];
 
-      const myIDsList = cleanData(interventionsCollection);
+      const interventionsCollectionIDsList = filterData(interventionsCollection);
 
-      destroyBeneficiariesInterventions(myIDsList);
+      const myIDsList = filterData(referencesCollection);
+      const benfIds = [...myIDsList, ...interventionsCollectionIDsList];
+
+      destroyBeneficiariesInterventions(benfIds);
+
+    const ids = [...myIDsList, ...interventionsCollectionIDsList];
+
+    const uniqueArray = cleanData(ids);
+
     }
   };
 
