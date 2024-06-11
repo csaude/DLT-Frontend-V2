@@ -1,6 +1,24 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
-import { View, KeyboardAvoidingView, ScrollView, Text, GestureResponderEvent } from "react-native";
-import { Alert, Button, Divider, Flex, FormControl, HStack, Radio, Stack, VStack, useToast, Text as Text1 } from "native-base";
+import {
+  View,
+  KeyboardAvoidingView,
+  ScrollView,
+  Text,
+  GestureResponderEvent,
+} from "react-native";
+import {
+  Alert,
+  Button,
+  Divider,
+  Flex,
+  FormControl,
+  HStack,
+  Radio,
+  Stack,
+  VStack,
+  useToast,
+  Text as Text1,
+} from "native-base";
 import Spinner from "react-native-loading-spinner-overlay/lib";
 import styles from "./styles";
 import { useFormik } from "formik";
@@ -13,10 +31,15 @@ const DatacleanScreen: React.FC = ({
   beneficiaries,
   references,
   beneficiaries_interventions,
-} : any) => {
-
+}: any) => {
   const toast = useToast();
-  
+
+    const todayDate = new Date();
+    const sixMonthsAgo = todayDate.setFullYear(
+      todayDate.getFullYear(),
+      todayDate.getMonth() - 6
+    );
+
   const [errors, setErrors] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -28,14 +51,35 @@ const DatacleanScreen: React.FC = ({
       }
     });
 
-    toast.show({
-      placement: "top",
-      render: () => {
-        return <InfoHandler />;
-      },
-    });
+  toast.show({
+    placement: "top",
+    render: () => {
+      return <InfoHandler />;
+    },
+  });
   }
-  
+
+  const cleanData = (array: any): any => {
+    const myArray = [];
+
+    const dataFilter = array.filter(
+        (e) => {
+          if (new Date(e._raw?.date_created) <= new Date(sixMonthsAgo)) {
+            return [...myArray, e._raw];
+          }
+        }
+      );
+
+    const myDataIDs = dataFilter.map((e) => {
+      return [...myArray, e._raw?.beneficiary_id];
+    });
+
+    const flattenedDataIDs = myDataIDs.flat();
+    const uniqueArray = Array.from(new Set(flattenedDataIDs));
+
+    return uniqueArray;
+  }
+
   const handleSubmit = async () => {
 
     const errorsList = validate(formik.values);
@@ -51,34 +95,22 @@ const DatacleanScreen: React.FC = ({
           return <ErrorHandler />;
         },
       });
-      
     } else {
       let removeErrorsList = validate(formik.values);
       formik.setErrors(removeErrorsList);
       setErrors(false);
-
-      const todayDate = new Date();
-      const sixMonthsAgo = todayDate.setFullYear(todayDate.getFullYear(), todayDate.getMonth() - 6);
+      
       const beneficiariesCollection = beneficiaries;
       const referencesCollection = references;
 
       const interventionsCollection = beneficiaries_interventions;
       const myArray = [];
 
-        const beneficiaryInterventionOutDate = interventionsCollection.filter((e) => {
-          const seen = new Set<number>();
-          if(new Date(e._raw.date_created) <= new Date(sixMonthsAgo) && (!seen.has(e._raw.beneficiary_id))){            
-            return [...myArray, e._raw];
-          }          
-        });
+      const myIDsList = cleanData(interventionsCollection);
 
-      const myArrayIDS = beneficiaryInterventionOutDate.map((e) => {
-          return [...myArray, e._raw.beneficiary_id];
-      });
-     
-      destroyBeneficiariesInterventions(myArrayIDS);
+      destroyBeneficiariesInterventions(myIDsList);
     }
-  }
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -101,7 +133,7 @@ const DatacleanScreen: React.FC = ({
 
   return (
     <KeyboardAvoidingView style={styles.background}>
-      {loading ? ( 
+      {loading ? (
         <Spinner
           visible={true}
           textContent={"Limpando dados nao usados no ultimos 6 meses..."}
@@ -112,7 +144,8 @@ const DatacleanScreen: React.FC = ({
         <View>
           <View style={styles.containerForm}>
             <Text style={styles.txtLabel}>
-              Limpeza de Dados{"                                                        "}
+              Limpeza de Dados
+              {"                                                        "}
             </Text>
             <Divider />
             <Flex
@@ -123,84 +156,75 @@ const DatacleanScreen: React.FC = ({
             >
               <Text>
                 {" "}
-                <Text style={styles.txtLabel}>
-                  Seleccione a opçao
-                </Text>
+                <Text style={styles.txtLabel}>Seleccione a opçao</Text>
               </Text>
-
 
               <FormControl
-                  key="data_clean"
-                  // isRequired
-                  isInvalid={"data_clean" in formik.errors}
+                key="data_clean"
+                // isRequired
+                isInvalid={"data_clean" in formik.errors}
+              >
+                {/* <FormControl.Label>Seleccione a opçao</FormControl.Label> */}
+                <Radio.Group
+                  value={formik.values.data_clean + ""}
+                  onChange={(itemValue) => {
+                    formik.setFieldValue("data_clean", itemValue);
+                  }}
+                  name="rg4"
+                  accessibilityLabel="pick a size"
                 >
-                  {/* <FormControl.Label>Seleccione a opçao</FormControl.Label> */}
-                  <Radio.Group
-                    value={formik.values.data_clean + ""}
-                    onChange={(itemValue) => {
-                      formik.setFieldValue("data_clean", itemValue);
+                  <Stack
+                    alignItems={{
+                      base: "flex-start",
+                      md: "center",
                     }}
-                    name="rg4"
-                    accessibilityLabel="pick a size"
+                    space={1}
+                    w="75%"
+                    maxW="300px"
                   >
-                    <Stack
-                      alignItems={{
-                        base: "flex-start",
-                        md: "center",
-                      }}
-                      space={1}
-                      w="75%"
-                      maxW="300px"
+                    <Radio
+                      key="defi1"
+                      value="0"
+                      colorScheme="green"
+                      size="md"
+                      my={1}
                     >
-                      <Radio
-                        key="defi1"
-                        value="0"
-                        colorScheme="green"
-                        size="md"
-                        my={1}
-                      >
-                        Limpeza Regular
-                      </Radio>                      
-                      <Radio
-                        key="defi2"
-                        value="1"
-                        colorScheme="green"
-                        size="md"
-                        my={1}
-                      >
-                        Limpeza do Fim do COP
-                      </Radio>
-                    </Stack>
-                  </Radio.Group>
-                  <FormControl.ErrorMessage>
-                    {formik.errors.data_clean}
-                  </FormControl.ErrorMessage>
-                </FormControl>
+                      Limpeza Regular
+                    </Radio>
+                    <Radio
+                      key="defi2"
+                      value="1"
+                      colorScheme="green"
+                      size="md"
+                      my={1}
+                    >
+                      Limpeza do Fim do COP
+                    </Radio>
+                  </Stack>
+                </Radio.Group>
+                <FormControl.ErrorMessage>
+                  {formik.errors.data_clean}
+                </FormControl.ErrorMessage>
+              </FormControl>
 
-                <Button
-                  isLoading={loading}
-                  isLoadingText="Cadastrando"
-                  onPress={handleSubmit}
-                  my="10"
-                  colorScheme="primary"
-                >
-                  Salvar
-                </Button>
+              <Button
+                isLoading={loading}
+                isLoadingText="Cadastrando"
+                onPress={handleSubmit}
+                my="10"
+                colorScheme="primary"
+              >
+                Salvar
+              </Button>
 
               <Text>
                 {" "}
-                <Text style={styles.txtLabel}>
-                 {" "}
-                </Text>{" "}
-                
+                <Text style={styles.txtLabel}> </Text>{" "}
               </Text>
 
               <Text>
                 {" "}
-                <Text style={styles.txtLabel}>
-                 {" "}
-                </Text>{" "}
-                
+                <Text style={styles.txtLabel}> </Text>{" "}
               </Text>
 
               <Text>
@@ -281,7 +305,8 @@ const DatacleanScreen: React.FC = ({
 };
 
 const enhance = withObservables([], () => ({
-  beneficiaries: database.collections.get("beneficiaries")
+  beneficiaries: database.collections
+    .get("beneficiaries")
     .query(Q.where("status", 1)),
   references: database.collections.get("references").query(),
   beneficiaries_interventions: database.collections
@@ -292,7 +317,12 @@ const enhance = withObservables([], () => ({
 const InfoHandler: React.FC = () => {
   return (
     <>
-      <Alert w="100%" variant="left-accent" colorScheme="success" status="success">
+      <Alert
+        w="100%"
+        variant="left-accent"
+        colorScheme="success"
+        status="success"
+      >
         <VStack space={2} flexShrink={1} w="100%">
           <HStack
             flexShrink={1}
@@ -302,7 +332,9 @@ const InfoHandler: React.FC = () => {
           >
             <HStack space={2} flexShrink={1} alignItems="center">
               <Alert.Icon />
-              <Text1 color="coolGray.800">Limpeza de dados terminada com sucesso!</Text1>
+              <Text1 color="coolGray.800">
+                Limpeza de dados terminada com sucesso!
+              </Text1>
             </HStack>
           </HStack>
         </VStack>
@@ -314,7 +346,12 @@ const InfoHandler: React.FC = () => {
 const ErrorHandler: React.FC = () => {
   return (
     <>
-      <Alert w="100%" variant="left-accent" colorScheme="success" status="error">
+      <Alert
+        w="100%"
+        variant="left-accent"
+        colorScheme="success"
+        status="error"
+      >
         <VStack space={2} flexShrink={1} w="100%">
           <HStack
             flexShrink={1}
