@@ -43,8 +43,8 @@ const DatacleanScreen: React.FC = ({
   const [errors, setErrors] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const destroyBeneficiariesInterventions = async (beneficiaryIds: any) => {
-    console.log(beneficiaryIds);
+  const destroyBeneficiariesData = async (beneficiaryIds: any) => {
+    setLoading(true);
     await database.write(async () => {   
         for (const beneficiaryId of beneficiaryIds) {     
             console.log(beneficiaryId);
@@ -64,8 +64,7 @@ const DatacleanScreen: React.FC = ({
     });
   }
 
-  const cleanData = (myDataIDs: any): any => {
-   
+  const cleanData = (myDataIDs: any): any => {   
     const flattenedDataIDs = myDataIDs.flat();
     const uniqueArray = Array.from(new Set(flattenedDataIDs));
 
@@ -91,11 +90,11 @@ const DatacleanScreen: React.FC = ({
         }
       );
 
-    const myDataIDs = dataFilter.map((e) => {
+    const myDataIDs = dataFilter.map((e: any) => {
       return [...myArray, e._raw?.beneficiary_id];
     });
 
-    const cleanBenfIdsInCOP = idsFilter.map((e) => {
+    const cleanBenfIdsInCOP = idsFilter.map((e: any) => {
         return [...benfIdsInCOP, e._raw?.beneficiary_id];
       });
 
@@ -103,8 +102,8 @@ const DatacleanScreen: React.FC = ({
     const bendInCOP = cleanData(cleanBenfIdsInCOP);
     const itemsToRemoveSet = new Set(bendInCOP);
 
-    const commonItems = data.filter(item => itemsToRemoveSet.has(item));
-    const resultArray = data.filter(item => !commonItems.includes(item));
+    const commonItems = data.filter((item: any) => itemsToRemoveSet.has(item));
+    const resultArray = data.filter((item: any) => !commonItems.includes(item));
 
     return resultArray;
   }
@@ -128,26 +127,25 @@ const DatacleanScreen: React.FC = ({
       formik.setErrors(removeErrorsList);
       setErrors(false);
       
-      const beneficiariesCollection = beneficiaries;
       const referencesCollection = references;
       const interventionsCollection = beneficiaries_interventions;
 
       const interventionsCollectionIDsList = filterData(interventionsCollection);
-
       const myIDsList = filterData(referencesCollection);
 
       const allBenfIds = [...myIDsList, ...interventionsCollectionIDsList];
   
       const uniqueBenfIds = cleanData(allBenfIds);
 
-      destroyBeneficiariesInterventions(uniqueBenfIds).then(() => {
+      destroyBeneficiariesData(uniqueBenfIds).then(() => {
         toast.show({
             placement: "top",
             render: () => {
             return <InfoHandler />;
             },
         });
-        console.log('Registros deletados com sucesso');
+        console.log('Registros deletados com sucesso'); 
+        setLoading(false);        
       })
       .catch(error => {
         toast.show({
@@ -156,9 +154,22 @@ const DatacleanScreen: React.FC = ({
               return <ErrorCleanHandler />;
             },
           });
-          console.error('Erro ao deletar registros:', error);          
+          console.error('Erro ao deletar registros:', error);  
+          setLoading(false);        
       });
 
+
+
+    //   console.log("================================================");
+    //   // console.log(moment(new Date()).format("DD-MM-YYYY"));
+    //   console.log("***********************************************");
+    // //   console.log(myIDsList);
+    //   console.log(myIDsList.length);
+    //   console.log(interventionsCollectionIDsList.length);
+    //   console.log(ids.length);
+    //   console.log(uniqueArray.length);
+
+    //   console.log(moment(sixMonthsAgo).format("DD-MM-YYYY"));
     } else if(formik.values.data_clean === "0"){
         toast.show({
             placement: "top",
