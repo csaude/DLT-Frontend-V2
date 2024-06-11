@@ -158,18 +158,6 @@ const DatacleanScreen: React.FC = ({
           setLoading(false);        
       });
 
-
-
-    //   console.log("================================================");
-    //   // console.log(moment(new Date()).format("DD-MM-YYYY"));
-    //   console.log("***********************************************");
-    // //   console.log(myIDsList);
-    //   console.log(myIDsList.length);
-    //   console.log(interventionsCollectionIDsList.length);
-    //   console.log(ids.length);
-    //   console.log(uniqueArray.length);
-
-    //   console.log(moment(sixMonthsAgo).format("DD-MM-YYYY"));
     } else if(formik.values.data_clean === "0"){
         toast.show({
             placement: "top",
