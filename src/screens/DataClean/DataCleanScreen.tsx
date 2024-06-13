@@ -35,7 +35,6 @@ import { pendingSyncBeneficiariesInterventions } from "../../services/beneficiar
 import { pendingSyncReferences } from "../../services/referenceService";
 
 const DatacleanScreen: React.FC = ({
-  cop_cleanup,
   references,
   beneficiaries_interventions,
 }: any) => {
@@ -212,7 +211,10 @@ const DatacleanScreen: React.FC = ({
           setLoading(false);        
       });
 
-    } else if(formik.values.data_clean === "0"){
+    } else if(formik.values.data_clean === "1"){
+      console.log(formik.values.data_clean);
+
+      
         toast.show({
             placement: "top",
             render: () => {
@@ -223,7 +225,7 @@ const DatacleanScreen: React.FC = ({
         toast.show({
             placement: "top",
             render: () => {
-              return <InfoHandlerSave />;
+              return <ErrorCleanHandler />;
             },
           });
     }
@@ -448,7 +450,6 @@ const DatacleanScreen: React.FC = ({
 };
 
 const enhance = withObservables([], () => ({
-  cop_cleanup: database.collections.get("cop_cleanup").query(),
   references: database.collections.get("references").query(),
   beneficiaries_interventions: database.collections
     .get("beneficiaries_interventions")
