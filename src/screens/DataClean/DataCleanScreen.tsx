@@ -1,24 +1,21 @@
-import React, { memo, useCallback, useContext, useEffect, useState } from "react";
+import React, {
+  memo,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { View, KeyboardAvoidingView, ScrollView, Text } from "react-native";
 import {
-  View,
-  KeyboardAvoidingView,
-  ScrollView,
-  Text,
-} from "react-native";
-import {
-  Alert,
   Button,
   Divider,
   Flex,
   FormControl,
-  HStack,
   Radio,
   Stack,
-  VStack,
   useToast,
-  Text as Text1,
 } from "native-base";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Context } from "../../routes/DrawerNavigator";
 import Spinner from "react-native-loading-spinner-overlay/lib";
 import styles from "./styles";
@@ -27,18 +24,39 @@ import withObservables from "@nozbe/with-observables";
 import { database } from "../../database";
 import { Q } from "@nozbe/watermelondb";
 import NetInfo from "@react-native-community/netinfo";
-import { SuccessHandler, WithoutNetwork, ErrorHandler as SyncErrorHandler } from "../../components/SyncIndicator";
+import {
+  SuccessHandler,
+  WithoutNetwork,
+  ErrorHandler as SyncErrorHandler,
+} from "../../components/SyncIndicator";
 import { sync } from "../../database/sync";
 import { pendingSyncBeneficiaries } from "../../services/beneficiaryService";
-import { loadPendingsBeneficiariesInterventionsTotals, loadPendingsBeneficiariesTotals, loadPendingsReferencesTotals } from "../../store/syncSlice";
+import {
+  loadPendingsBeneficiariesInterventionsTotals,
+  loadPendingsBeneficiariesTotals,
+  loadPendingsReferencesTotals,
+} from "../../store/syncSlice";
 import { pendingSyncBeneficiariesInterventions } from "../../services/beneficiaryInterventionService";
 import { pendingSyncReferences } from "../../services/referenceService";
+import moment from "moment";
+import { RootState } from "../../store";
+import {
+  ErrorCleanHandler,
+  ErrorHandler,
+  InfoHandler,
+  InfoHandlerSave,
+  cleanData,
+  destroyBeneficiariesData,
+  filterData,
+  sevenDaysLater,
+} from "../../components/DataClean";
 
 const DatacleanScreen: React.FC = ({
   references,
   beneficiaries_interventions,
 }: any) => {
   const toast = useToast();
+  const userDetail = useSelector((state: RootState) => state.auth.userDetails);
   const dispatch = useDispatch();
   const loggedUser: any = useContext(Context);
   const [errors, setErrors] = useState(false);
@@ -46,11 +64,7 @@ const DatacleanScreen: React.FC = ({
   const [isOffline, setIsOffline] = useState(false);
   const [textMessage, setTextMessage] = useState("");
 
-  const todayDate = new Date();
-  const sixMonthsAgo = todayDate.setFullYear(
-    todayDate.getFullYear(),
-    todayDate.getMonth() - 6
-  );
+  const userDetails = database.collections.get("user_details");
 
   const syncronize = () => {
     setLoading(true);
@@ -65,7 +79,6 @@ const DatacleanScreen: React.FC = ({
     } else {
       sync({ username: loggedUser.username })
         .then(() => {
-          setLoading(false);
           toast.show({
             placement: "top",
             render: () => {
@@ -85,81 +98,16 @@ const DatacleanScreen: React.FC = ({
           });
           setLoading(false);
         });
-      }
-    };
+    }
+  };
 
-    useEffect(() => {      
-      const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
-        const status = !(state.isConnected && state.isInternetReachable);
-        setIsOffline(status);
-      });
-      return () => removeNetInfoSubscription();
-    }, []);
-
-  const destroyBeneficiariesData = async (beneficiaryIds: any) => {
-    setLoading(true);
-    await database.write(async () => {   
-        for (const beneficiaryId of beneficiaryIds) {     
-            // console.log(beneficiaryId);
-            const recordsInterventions = await database.get('beneficiaries_interventions').query(Q.where('beneficiary_id', beneficiaryId)).fetch();
-            for (const record of recordsInterventions) {
-                await record.destroyPermanently();
-            }
-            const recordsReferences = await database.get('references').query(Q.where('beneficiary_id', beneficiaryId)).fetch();
-            for (const record of recordsReferences) {
-                await record.destroyPermanently();
-            }
-            const recordsBeneficiaries = await database.get('beneficiaries').query(Q.where('online_id', beneficiaryId)).fetch();
-            for (const record of recordsBeneficiaries) {
-                await record.destroyPermanently();
-            }
-        }
+  useEffect(() => {
+    const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
+      const status = !(state.isConnected && state.isInternetReachable);
+      setIsOffline(status);
     });
-  }
-
-  const cleanData = (myDataIDs: any): any => {   
-    const flattenedDataIDs = myDataIDs.flat();
-    const uniqueArray = Array.from(new Set(flattenedDataIDs));
-
-    return uniqueArray;
-  }
-
-  const filterData = (array: any): any => {
-    const myArray = [];
-    const benfIdsInCOP =[];
-
-    const dataFilter = array.filter(
-        (e) => {
-          if (new Date(e._raw?.date_created) <= new Date(sixMonthsAgo)) {
-            return [...myArray, e._raw];
-          }
-        }
-      );
-      const idsFilter = array.filter(
-        (e) => {
-          if (new Date(e._raw?.date_created) > new Date(sixMonthsAgo)) {
-            return [...benfIdsInCOP, e._raw];
-          }
-        }
-      );
-
-    const myDataIDs = dataFilter.map((e: any) => {
-      return [...myArray, e._raw?.beneficiary_id];
-    });
-
-    const cleanBenfIdsInCOP = idsFilter.map((e: any) => {
-        return [...benfIdsInCOP, e._raw?.beneficiary_id];
-      });
-
-    const data = cleanData(myDataIDs);
-    const bendInCOP = cleanData(cleanBenfIdsInCOP);
-    const itemsToRemoveSet = new Set(bendInCOP);
-
-    const commonItems = data.filter((item: any) => itemsToRemoveSet.has(item));
-    const resultArray = data.filter((item: any) => !commonItems.includes(item));
-
-    return resultArray;
-  }
+    return () => removeNetInfoSubscription();
+  }, []);
 
   const handleSubmit = async () => {
     const errorsList = validate(formik.values);
@@ -175,59 +123,89 @@ const DatacleanScreen: React.FC = ({
           return <ErrorHandler />;
         },
       });
-    } else if(formik.values.data_clean === "0"){
+
+    } else if (formik.values.data_clean === "0") {
       let removeErrorsList = validate(formik.values);
       formik.setErrors(removeErrorsList);
       setErrors(false);
       syncronize();
-      
+
+      // DataCleanComponents();
+
       const referencesCollection = references;
       const interventionsCollection = beneficiaries_interventions;
 
-      const interventionsCollectionIDsList = filterData(interventionsCollection);
+      const interventionsCollectionIDsList = filterData(
+        interventionsCollection
+      );
       const myIDsList = filterData(referencesCollection);
 
       const allBenfIds = [...myIDsList, ...interventionsCollectionIDsList];
-  
+
       const uniqueBenfIds = cleanData(allBenfIds);
 
-      destroyBeneficiariesData(uniqueBenfIds).then(() => {
-        toast.show({
+      destroyBeneficiariesData(uniqueBenfIds)
+        .then(() => {          
+          toast.show({
             placement: "top",
             render: () => {
-            return <InfoHandler />;
+              return <InfoHandler />;
             },
+          });
+        })
+        .catch((error) => {
+          toast.show({
+            placement: "top",
+            render: () => {
+              return <ErrorCleanHandler />;
+            },
+          });
+
+          console.error("Erro ao deletar registros:", error);
+          setLoading(false);
         });
-        console.log('Registros deletados com sucesso'); 
-      })
-      .catch(error => {
-        toast.show({
-            placement: "top",
-            render: () => {
-              return <ErrorCleanHandler />;
-            },
+    } else if (formik.values.data_clean === "1") {
+      try {
+        const userDetailsQ = await userDetails
+          .query(Q.where("user_id", parseInt(userDetail.user_id)))
+          .fetch();
+
+        await database.write(async () => {
+          const uDetail = await database
+            .get("user_details")
+            .find(userDetailsQ[0]._raw.id);
+          await uDetail.update(() => {
+            uDetail["next_clean_date"] = moment(
+              new Date(sevenDaysLater)
+            ).format("YYYY-MM-DD HH:mm:ss");
+            uDetail["was_cleaned"] = 0;
           });
-          console.error('Erro ao deletar registros:', error);  
-          setLoading(false);        
+        });
+
+        toast.show({
+          placement: "top",
+          render: () => {
+            return <InfoHandlerSave />;
+          },
+        });
+        
+      } catch (error) {
+        console.log(error);
+        
+        toast.show({
+          placement: "top",
+          render: () => {
+            return <ErrorCleanHandler />;
+          },
+        });
+      }
+    } else {
+      toast.show({
+        placement: "top",
+        render: () => {
+          return <ErrorCleanHandler />;
+        },
       });
-
-    } else if(formik.values.data_clean === "1"){
-      console.log(formik.values.data_clean);
-
-      
-        toast.show({
-            placement: "top",
-            render: () => {
-              return <InfoHandlerSave />;
-            },
-          });
-     } else{
-        toast.show({
-            placement: "top",
-            render: () => {
-              return <ErrorCleanHandler />;
-            },
-          });
     }
   };
 
@@ -271,7 +249,7 @@ const DatacleanScreen: React.FC = ({
     );
   };
   useEffect(() => {
-    const message = "Limpando dados nao usados nos ultimos 6 meses...";
+    const message = "Limpando dados não usados nos ultimos 6 meses...";
     setTextMessage(message);
     fetchCounts();
   }, [loading]);
@@ -456,116 +434,8 @@ const enhance = withObservables([], () => ({
     .query(),
 }));
 
-const InfoHandler: React.FC = () => {
-  return (
-    <>
-      <Alert
-        w="100%"
-        variant="left-accent"
-        colorScheme="success"
-        status="success"
-      >
-        <VStack space={2} flexShrink={1} w="100%">
-          <HStack
-            flexShrink={1}
-            space={2}
-            alignItems="center"
-            justifyContent="space-between"
-          >
-            <HStack space={2} flexShrink={1} alignItems="center">
-              <Alert.Icon />
-              <Text1 color="coolGray.800">
-                Limpeza de dados terminada com sucesso!
-              </Text1>
-            </HStack>
-          </HStack>
-        </VStack>
-      </Alert>
-    </>
-  );
-};
-
-const InfoHandlerSave: React.FC = () => {
-    return (
-      <>
-        <Alert
-          w="100%"
-          variant="left-accent"
-          colorScheme="success"
-          status="success"
-        >
-          <VStack space={2} flexShrink={1} w="100%">
-            <HStack
-              flexShrink={1}
-              space={2}
-              alignItems="center"
-              justifyContent="space-between"
-            >
-              <HStack space={2} flexShrink={1} alignItems="center">
-                <Alert.Icon />
-                <Text1 color="coolGray.800">
-                  Limpeza de dados programado com sucesso!
-                </Text1>
-              </HStack>
-            </HStack>
-          </VStack>
-        </Alert>
-      </>
-    );
-  };
-
-const ErrorHandler: React.FC = () => {
-  return (
-    <>
-      <Alert
-        w="100%"
-        variant="left-accent"
-        colorScheme="success"
-        status="error"
-      >
-        <VStack space={2} flexShrink={1} w="100%">
-          <HStack
-            flexShrink={1}
-            space={2}
-            alignItems="center"
-            justifyContent="space-between"
-          >
-            <HStack space={2} flexShrink={1} alignItems="center">
-              <Alert.Icon />
-              <Text1 color="coolGray.800">Nenhuma opção Selecionada!</Text1>
-            </HStack>
-          </HStack>
-        </VStack>
-      </Alert>
-    </>
-  );
-};
-
-const ErrorCleanHandler: React.FC = () => {
-    return (
-      <>
-        <Alert
-          w="100%"
-          variant="left-accent"
-          colorScheme="success"
-          status="error"
-        >
-          <VStack space={2} flexShrink={1} w="100%">
-            <HStack
-              flexShrink={1}
-              space={2}
-              alignItems="center"
-              justifyContent="space-between"
-            >
-              <HStack space={2} flexShrink={1} alignItems="center">
-                <Alert.Icon />
-                <Text1 color="coolGray.800">Falha no processo de limpeza de dados!</Text1>
-              </HStack>
-            </HStack>
-          </VStack>
-        </Alert>
-      </>
-    );
-  };
-
 export default memo(enhance(DatacleanScreen));
+function DataCleanComponents() {
+  throw new Error("Function not implemented.");
+}
+
