@@ -7,8 +7,8 @@ export default appSchema({
       name: "cop_cleanup",
       columns: [
         { name: 'user', type: 'number', isIndexed: true  },
-        { name: "last_date", type: "string" },
         { name: "next_date", type: "string" },
+        { name: "was_cleaned", type: "string" },
       ],
     }),
     tableSchema({
