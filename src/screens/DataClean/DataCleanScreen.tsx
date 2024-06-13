@@ -1,10 +1,9 @@
-import React, { memo, useCallback, useEffect, useState } from "react";
+import React, { memo, useCallback, useContext, useEffect, useState } from "react";
 import {
   View,
   KeyboardAvoidingView,
   ScrollView,
   Text,
-  GestureResponderEvent,
 } from "react-native";
 import {
   Alert,
@@ -19,35 +18,89 @@ import {
   useToast,
   Text as Text1,
 } from "native-base";
+import { useDispatch } from "react-redux";
+import { Context } from "../../routes/DrawerNavigator";
 import Spinner from "react-native-loading-spinner-overlay/lib";
 import styles from "./styles";
 import { useFormik } from "formik";
 import withObservables from "@nozbe/with-observables";
 import { database } from "../../database";
 import { Q } from "@nozbe/watermelondb";
-import moment from "moment";
+import NetInfo from "@react-native-community/netinfo";
+import { SuccessHandler, WithoutNetwork, ErrorHandler as SyncErrorHandler } from "../../components/SyncIndicator";
+import { sync } from "../../database/sync";
+import { pendingSyncBeneficiaries } from "../../services/beneficiaryService";
+import { loadPendingsBeneficiariesInterventionsTotals, loadPendingsBeneficiariesTotals, loadPendingsReferencesTotals } from "../../store/syncSlice";
+import { pendingSyncBeneficiariesInterventions } from "../../services/beneficiaryInterventionService";
+import { pendingSyncReferences } from "../../services/referenceService";
 
 const DatacleanScreen: React.FC = ({
-  beneficiaries,
   references,
   beneficiaries_interventions,
 }: any) => {
   const toast = useToast();
-
-    const todayDate = new Date();
-    const sixMonthsAgo = todayDate.setFullYear(
-      todayDate.getFullYear(),
-      todayDate.getMonth() - 6
-    );
-
+  const dispatch = useDispatch();
+  const loggedUser: any = useContext(Context);
   const [errors, setErrors] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isOffline, setIsOffline] = useState(false);
+  const [textMessage, setTextMessage] = useState("");
+
+  const todayDate = new Date();
+  const sixMonthsAgo = todayDate.setFullYear(
+    todayDate.getFullYear(),
+    todayDate.getMonth() - 6
+  );
+
+  const syncronize = () => {
+    setLoading(true);
+    if (isOffline) {
+      toast.show({
+        placement: "top",
+        render: () => {
+          return <WithoutNetwork />;
+        },
+      });
+      setLoading(false);
+    } else {
+      sync({ username: loggedUser.username })
+        .then(() => {
+          setLoading(false);
+          toast.show({
+            placement: "top",
+            render: () => {
+              return <SuccessHandler />;
+            },
+          });
+          fetchCounts();
+          setLoading(false);
+        })
+        .catch(() => {
+          setLoading(false);
+          toast.show({
+            placement: "top",
+            render: () => {
+              return <SyncErrorHandler />;
+            },
+          });
+          setLoading(false);
+        });
+      }
+    };
+
+    useEffect(() => {      
+      const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
+        const status = !(state.isConnected && state.isInternetReachable);
+        setIsOffline(status);
+      });
+      return () => removeNetInfoSubscription();
+    }, []);
 
   const destroyBeneficiariesData = async (beneficiaryIds: any) => {
     setLoading(true);
     await database.write(async () => {   
         for (const beneficiaryId of beneficiaryIds) {     
-            console.log(beneficiaryId);
+            // console.log(beneficiaryId);
             const recordsInterventions = await database.get('beneficiaries_interventions').query(Q.where('beneficiary_id', beneficiaryId)).fetch();
             for (const record of recordsInterventions) {
                 await record.destroyPermanently();
@@ -126,6 +179,7 @@ const DatacleanScreen: React.FC = ({
       let removeErrorsList = validate(formik.values);
       formik.setErrors(removeErrorsList);
       setErrors(false);
+      syncronize();
       
       const referencesCollection = references;
       const interventionsCollection = beneficiaries_interventions;
@@ -145,7 +199,6 @@ const DatacleanScreen: React.FC = ({
             },
         });
         console.log('Registros deletados com sucesso'); 
-        setLoading(false);        
       })
       .catch(error => {
         toast.show({
@@ -194,12 +247,38 @@ const DatacleanScreen: React.FC = ({
     return errors;
   }, []);
 
+  const fetchCounts = async () => {
+    const benefNotSynced = await pendingSyncBeneficiaries();
+    dispatch(
+      loadPendingsBeneficiariesTotals({
+        pendingSyncBeneficiaries: benefNotSynced,
+      })
+    );
+
+    const benefIntervNotSynced = await pendingSyncBeneficiariesInterventions();
+    dispatch(
+      loadPendingsBeneficiariesInterventionsTotals({
+        pendingSyncBeneficiariesInterventions: benefIntervNotSynced,
+      })
+    );
+
+    const refNotSynced = await pendingSyncReferences();
+    dispatch(
+      loadPendingsReferencesTotals({ pendingSyncReferences: refNotSynced })
+    );
+  };
+  useEffect(() => {
+    const message = "Limpando dados nao usados nos ultimos 6 meses...";
+    setTextMessage(message);
+    fetchCounts();
+  }, [loading]);
+
   return (
     <KeyboardAvoidingView style={styles.background}>
       {loading ? (
         <Spinner
           visible={true}
-          textContent={"Limpando dados nao usados no ultimos 6 meses..."}
+          textContent={textMessage}
           textStyle={styles.spinnerTextStyle}
         />
       ) : undefined}
@@ -219,7 +298,7 @@ const DatacleanScreen: React.FC = ({
             >
               <Text>
                 {" "}
-                <Text style={styles.txtLabel}>Seleccione a opçao</Text>
+                <Text style={styles.txtLabel}>Seleccione a opção</Text>
               </Text>
 
               <FormControl
@@ -227,7 +306,7 @@ const DatacleanScreen: React.FC = ({
                 // isRequired
                 isInvalid={"data_clean" in formik.errors}
               >
-                {/* <FormControl.Label>Seleccione a opçao</FormControl.Label> */}
+                {/* <FormControl.Label>Seleccione a opção</FormControl.Label> */}
                 <Radio.Group
                   value={formik.values.data_clean + ""}
                   onChange={(itemValue) => {
@@ -272,12 +351,12 @@ const DatacleanScreen: React.FC = ({
 
               <Button
                 isLoading={loading}
-                isLoadingText="Cadastrando"
+                isLoadingText="Executando"
                 onPress={handleSubmit}
                 my="10"
                 colorScheme="primary"
               >
-                Salvar
+                Executar
               </Button>
 
               <Text>
@@ -368,9 +447,6 @@ const DatacleanScreen: React.FC = ({
 };
 
 const enhance = withObservables([], () => ({
-  beneficiaries: database.collections
-    .get("beneficiaries")
-    .query(Q.where("status", 1)),
   references: database.collections.get("references").query(),
   beneficiaries_interventions: database.collections
     .get("beneficiaries_interventions")
@@ -406,7 +482,6 @@ const InfoHandler: React.FC = () => {
   );
 };
 
-
 const InfoHandlerSave: React.FC = () => {
     return (
       <>
@@ -435,7 +510,6 @@ const InfoHandlerSave: React.FC = () => {
       </>
     );
   };
-  
 
 const ErrorHandler: React.FC = () => {
   return (
