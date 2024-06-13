@@ -4,6 +4,14 @@ export default appSchema({
   version: 1,
   tables: [
     tableSchema({
+      name: "cop_cleanup",
+      columns: [
+        { name: 'user', type: 'number', isIndexed: true  },
+        { name: "last_date", type: "string" },
+        { name: "next_date", type: "string" },
+      ],
+    }),
+    tableSchema({
       name: "sequences",
       columns: [
         { name: "prefix", type: "string" },

@@ -35,6 +35,7 @@ import { pendingSyncBeneficiariesInterventions } from "../../services/beneficiar
 import { pendingSyncReferences } from "../../services/referenceService";
 
 const DatacleanScreen: React.FC = ({
+  cop_cleanup,
   references,
   beneficiaries_interventions,
 }: any) => {
@@ -447,6 +448,7 @@ const DatacleanScreen: React.FC = ({
 };
 
 const enhance = withObservables([], () => ({
+  cop_cleanup: database.collections.get("cop_cleanup").query(),
   references: database.collections.get("references").query(),
   beneficiaries_interventions: database.collections
     .get("beneficiaries_interventions")
