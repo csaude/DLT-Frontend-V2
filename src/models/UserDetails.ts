@@ -13,4 +13,6 @@ export default class UserDetails extends Model {
   @field("profile_id") profile_id;
   @field("entry_point") entry_point;
   @field("partner_id") partner_id;
+  @field("next_clean_date") next_clean_date;
+  @field("was_cleaned") was_cleaned;
 }

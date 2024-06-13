@@ -4,14 +4,6 @@ export default appSchema({
   version: 1,
   tables: [
     tableSchema({
-      name: "cop_cleanup",
-      columns: [
-        { name: 'user', type: 'number', isIndexed: true  },
-        { name: "next_date", type: "string" },
-        { name: "was_cleaned", type: "string" },
-      ],
-    }),
-    tableSchema({
       name: "sequences",
       columns: [
         { name: "prefix", type: "string" },
@@ -267,6 +259,8 @@ export default appSchema({
         { name: "profile_id", type: "number" },
         { name: "entry_point", type: "string" },
         { name: "partner_id", type: "number" },
+        { name: "next_clean_date", type: "string", isOptional: true  },
+        { name: "was_cleaned", type: "number", isOptional: true  },
       ],
     }),
   ],
