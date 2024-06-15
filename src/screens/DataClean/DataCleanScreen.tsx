@@ -15,7 +15,7 @@ import {
   Stack,
   useToast,
 } from "native-base";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Context } from "../../routes/DrawerNavigator";
 import Spinner from "react-native-loading-spinner-overlay/lib";
 import styles from "./styles";
@@ -38,17 +38,15 @@ import {
 } from "../../store/syncSlice";
 import { pendingSyncBeneficiariesInterventions } from "../../services/beneficiaryInterventionService";
 import { pendingSyncReferences } from "../../services/referenceService";
-import moment from "moment";
-import { RootState } from "../../store";
 import {
   ErrorCleanHandler,
   ErrorHandler,
   InfoHandler,
   InfoHandlerSave,
+  SyncHandlerError,
   cleanData,
   destroyBeneficiariesData,
   filterData,
-  sevenDaysLater,
 } from "../../components/DataClean";
 import { navigate } from "../../routes/NavigationRef";
 
@@ -57,15 +55,13 @@ const DatacleanScreen: React.FC = ({
   beneficiaries_interventions,
 }: any) => {
   const toast = useToast();
-  const userDetail = useSelector((state: RootState) => state.auth.userDetails);
   const dispatch = useDispatch();
   const loggedUser: any = useContext(Context);
   const [errors, setErrors] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isOffline, setIsOffline] = useState(false);
   const [textMessage, setTextMessage] = useState("");
-
-  const userDetails = database.collections.get("user_details");
+  const [isSync, setIsSyn] = useState(false);  
 
   const syncronize = () => {
     setLoading(true);
@@ -86,6 +82,7 @@ const DatacleanScreen: React.FC = ({
               return <SuccessHandler />;
             },
           });
+          setIsSyn(true);
           fetchCounts();
           setLoading(false);
         })
@@ -124,7 +121,6 @@ const DatacleanScreen: React.FC = ({
           return <ErrorHandler />;
         },
       });
-
     } else if (formik.values.data_clean === "0") {
       let removeErrorsList = validate(formik.values);
       formik.setErrors(removeErrorsList);
@@ -144,7 +140,7 @@ const DatacleanScreen: React.FC = ({
       const uniqueBenfIds = cleanData(allBenfIds);
 
       destroyBeneficiariesData(uniqueBenfIds)
-        .then(() => {          
+        .then(() => {
           toast.show({
             placement: "top",
             render: () => {
@@ -166,22 +162,69 @@ const DatacleanScreen: React.FC = ({
     } else if (formik.values.data_clean === "1") {
       try {
 
-          const adapter = database.adapter;
-          await adapter.unsafeResetDatabase();
-          navigate({
-            name: "Login",
-          });
+        // syncronize();
 
+        setLoading(true);
+        if (isOffline) {
           toast.show({
             placement: "top",
             render: () => {
-              return <InfoHandlerSave />;
+              return <SyncHandlerError />;
             },
           });
-        
+          setLoading(false);
+        } else {
+          sync({ username: loggedUser.username })
+            .then(async () => {
+              const adapter = database.adapter;
+
+              await adapter.unsafeResetDatabase();
+              toast.show({
+                placement: "top",
+                render: () => {
+                  return <InfoHandlerSave />;
+                },
+              });
+              setLoading(false);
+
+              navigate({
+                name: "Login",
+              });
+            })
+
+            .catch(() => {
+              setLoading(false);
+              toast.show({
+                placement: "top",
+                render: () => {
+                  return <SyncErrorHandler />;
+                },
+              });
+              setLoading(false);
+            });
+        }
+
+        // if (isSync){
+        //   const adapter = database.adapter;
+
+        //   await adapter.unsafeResetDatabase();
+        //   navigate({
+        //     name: "Login",
+        //   });
+  
+        //   toast.show({
+        //     placement: "top",
+        //     render: () => {
+        //       return <InfoHandlerSave />;
+        //     },
+        //   });
+        // } else{
+        //   console.log("Nao foi possivel sincronizar!!!");
+        // }
+
       } catch (error) {
         console.log(error);
-        
+
         toast.show({
           placement: "top",
           render: () => {
@@ -239,7 +282,7 @@ const DatacleanScreen: React.FC = ({
     );
   };
   useEffect(() => {
-    const message = "Limpando dados não usados nos ultimos 6 meses...";
+    const message = "Sincronizando e limpando dados...";
     setTextMessage(message);
     fetchCounts();
   }, [loading]);
@@ -425,4 +468,3 @@ const enhance = withObservables([], () => ({
 }));
 
 export default memo(enhance(DatacleanScreen));
-
