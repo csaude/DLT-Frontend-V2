@@ -49,6 +49,15 @@ import { getReferencesTotal } from "../../store/referenceSlice";
 import { loadBeneficiariesInterventionsCounts } from "../../store/beneficiaryInterventionSlice";
 import { beneficiariesInterventionsFetchCount } from "../../services/beneficiaryInterventionService";
 import { updateSyncInProgress } from "../../store/syncSlice";
+import {
+  ErrorCleanHandler,
+  InfoHandler,
+  InfoHandlerSave,
+  cleanData,
+  destroyBeneficiariesData,
+  filterData,
+  sevenDaysLater,
+} from "../../components/DataClean";
 
 interface LoginData {
   email?: string | undefined;
@@ -69,10 +78,16 @@ const Login: React.FC = ({ route }: any) => {
   const [token, setToken] = useState();
 
   const toasty = useToast();
+  const toast = useToast();
 
   const users = database.collections.get("users");
   const sequences = database.collections.get("sequences");
   const userDetails = database.collections.get("user_details");
+  const references = database.collections.get("references");
+  const beneficiaries_interventions = database.collections.get(
+    "beneficiaries_interventions"
+  );
+
   const dispatch = useDispatch();
   const [passwordExpired, setPasswordExpired] = useState(false);
   const [
@@ -377,6 +392,7 @@ const Login: React.FC = ({ route }: any) => {
           setLoggedUser(logguedUser?._raw);
           dispatch(loadUser(logguedUser?._raw));
           isVeryOldPassword(logguedUser?._raw);
+          isDateToCleanData(logguedUser?._raw);
           navigate({
             name: "Main",
             params: {
@@ -414,6 +430,73 @@ const Login: React.FC = ({ route }: any) => {
     return diff.asDays() > 182
       ? setPasswordExpired(true)
       : setPasswordExpired(false);
+  }, []);
+
+  const isDateToCleanData = useCallback(async (user) => {
+    let next_clean_date;
+    const today = moment(new Date());
+
+    const userDetailss = await userDetails.query().fetch();
+    next_clean_date = userDetailss[0]["was_cleaned"];
+
+    const lastCleanDate = moment(next_clean_date);
+    const diff = moment.duration(today.diff(lastCleanDate));
+
+    if (diff.asDays() > 7) {
+      const referencesCollection = references;
+      const interventionsCollection = beneficiaries_interventions;
+
+      const interventionsCollectionIDsList = filterData(
+        interventionsCollection
+      );
+      const myIDsList = filterData(referencesCollection);
+
+      const allBenfIds = [...myIDsList, ...interventionsCollectionIDsList];
+
+      const uniqueBenfIds = cleanData(allBenfIds);
+
+      destroyBeneficiariesData(uniqueBenfIds)
+        .then(() => {
+          toast.show({
+            placement: "top",
+            render: () => {
+              return <InfoHandler />;
+            },
+          });
+        })
+        .catch((error) => {
+          toast.show({
+            placement: "top",
+            render: () => {
+              return <ErrorCleanHandler />;
+            },
+          });
+
+          console.error("Erro ao deletar registros:", error);
+          setLoading(false);
+        });
+    }else {
+      try {
+        await database.write(async () => {
+          const uDetail = await database
+            .get("user_details")
+            .find(userDetailss[0]._raw.id);
+          await uDetail.update(() => {
+            uDetail["next_clean_date"] = moment(
+              new Date(sevenDaysLater)
+            ).format("YYYY-MM-DD HH:mm:ss");
+            uDetail["was_cleaned"] = 0;
+          });
+        });
+
+        toast.show({
+          placement: "top",
+          render: () => {
+            return <InfoHandlerSave />;
+          },
+        });
+      }catch (error) {console.log(error)}
+    }
   }, []);
 
   useEffect(() => {
