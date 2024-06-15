@@ -131,7 +131,7 @@ const DatacleanScreen: React.FC = ({
       setErrors(false);
       syncronize();
 
-      // DataCleanComponents();
+      DataCleanComponents();
 
       const referencesCollection = references;
       const interventionsCollection = beneficiaries_interventions;
