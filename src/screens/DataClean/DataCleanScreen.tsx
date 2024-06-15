@@ -50,6 +50,7 @@ import {
   filterData,
   sevenDaysLater,
 } from "../../components/DataClean";
+import { navigate } from "../../routes/NavigationRef";
 
 const DatacleanScreen: React.FC = ({
   references,
@@ -166,28 +167,19 @@ const DatacleanScreen: React.FC = ({
         });
     } else if (formik.values.data_clean === "1") {
       try {
-        const userDetailsQ = await userDetails
-          .query(Q.where("user_id", parseInt(userDetail.user_id)))
-          .fetch();
 
-        await database.write(async () => {
-          const uDetail = await database
-            .get("user_details")
-            .find(userDetailsQ[0]._raw.id);
-          await uDetail.update(() => {
-            uDetail["next_clean_date"] = moment(
-              new Date(sevenDaysLater)
-            ).format("YYYY-MM-DD HH:mm:ss");
-            uDetail["was_cleaned"] = 0;
+          const adapter = database.adapter;
+          await adapter.unsafeResetDatabase();
+          navigate({
+            name: "Login",
           });
-        });
 
-        toast.show({
-          placement: "top",
-          render: () => {
-            return <InfoHandlerSave />;
-          },
-        });
+          toast.show({
+            placement: "top",
+            render: () => {
+              return <InfoHandlerSave />;
+            },
+          });
         
       } catch (error) {
         console.log(error);

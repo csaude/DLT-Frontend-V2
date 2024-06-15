@@ -174,7 +174,7 @@ export const InfoHandlerSave: React.FC = () => {
             <HStack space={2} flexShrink={1} alignItems="center">
               <Alert.Icon />
               <Text color="coolGray.800">
-                Limpeza de dados programado com sucesso!
+                Limpeza ed fim de COP finalizada com sucesso!!!
               </Text>
             </HStack>
           </HStack>
