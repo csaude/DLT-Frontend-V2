@@ -162,8 +162,6 @@ const DatacleanScreen: React.FC = ({
     } else if (formik.values.data_clean === "1") {
       try {
 
-        // syncronize();
-
         setLoading(true);
         if (isOffline) {
           toast.show({
@@ -175,10 +173,10 @@ const DatacleanScreen: React.FC = ({
           setLoading(false);
         } else {
           sync({ username: loggedUser.username })
-            .then( () => {
+            .then( async () => {
               const adapter = database.adapter;
 
-              adapter.unsafeResetDatabase();
+              await adapter.unsafeResetDatabase();
               toast.show({
                 placement: "top",
                 render: () => {
@@ -191,7 +189,6 @@ const DatacleanScreen: React.FC = ({
                 name: "Login",
               });
             })
-
             .catch(() => {
               setLoading(false);
               toast.show({
