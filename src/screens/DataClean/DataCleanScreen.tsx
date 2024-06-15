@@ -131,8 +131,6 @@ const DatacleanScreen: React.FC = ({
       setErrors(false);
       syncronize();
 
-      DataCleanComponents();
-
       const referencesCollection = references;
       const interventionsCollection = beneficiaries_interventions;
 
@@ -427,7 +425,4 @@ const enhance = withObservables([], () => ({
 }));
 
 export default memo(enhance(DatacleanScreen));
-function DataCleanComponents() {
-  throw new Error("Function not implemented.");
-}
 
