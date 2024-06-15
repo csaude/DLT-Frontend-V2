@@ -175,10 +175,10 @@ const DatacleanScreen: React.FC = ({
           setLoading(false);
         } else {
           sync({ username: loggedUser.username })
-            .then(async () => {
+            .then( () => {
               const adapter = database.adapter;
 
-              await adapter.unsafeResetDatabase();
+              adapter.unsafeResetDatabase();
               toast.show({
                 placement: "top",
                 render: () => {
