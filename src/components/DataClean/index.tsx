@@ -98,32 +98,37 @@ export function showToast(status, message, description) {
 
 export const destroyBeneficiariesData = async (beneficiaryIds: any) => {
   // setLoading(true);
-  await database.write(async () => {
-    for (const beneficiaryId of beneficiaryIds) {
-      // console.log(beneficiaryId);
-      const recordsInterventions = await database
-        .get("beneficiaries_interventions")
-        .query(Q.where("beneficiary_id", beneficiaryId))
-        .fetch();
-      for (const record of recordsInterventions) {
-        await record.destroyPermanently();
+  try {
+    await database.write(async () => {
+      for (const beneficiaryId of beneficiaryIds) {
+        // console.log(beneficiaryId);
+        const recordsInterventions = await database
+          .get("beneficiaries_interventions")
+          .query(Q.where("beneficiary_id", beneficiaryId))
+          .fetch();
+        for (const record of recordsInterventions) {
+          await record.destroyPermanently();
+        }
+        const recordsReferences = await database
+          .get("references")
+          .query(Q.where("beneficiary_id", beneficiaryId))
+          .fetch();
+        for (const record of recordsReferences) {
+          await record.destroyPermanently();
+        }
+        const recordsBeneficiaries = await database
+          .get("beneficiaries")
+          .query(Q.where("online_id", beneficiaryId))
+          .fetch();
+        for (const record of recordsBeneficiaries) {
+          await record.destroyPermanently();
+        }
       }
-      const recordsReferences = await database
-        .get("references")
-        .query(Q.where("beneficiary_id", beneficiaryId))
-        .fetch();
-      for (const record of recordsReferences) {
-        await record.destroyPermanently();
-      }
-      const recordsBeneficiaries = await database
-        .get("beneficiaries")
-        .query(Q.where("online_id", beneficiaryId))
-        .fetch();
-      for (const record of recordsBeneficiaries) {
-        await record.destroyPermanently();
-      }
-    }
-  });
+    });
+    console.log("Dados limpados com sucesso!!!")
+  } catch (error){
+    console.log(error);
+  };
 };
 
 export const InfoHandler: React.FC = () => {
