@@ -22,7 +22,6 @@ import styles from "./styles";
 import { useFormik } from "formik";
 import withObservables from "@nozbe/with-observables";
 import { database } from "../../database";
-import { Q } from "@nozbe/watermelondb";
 import NetInfo from "@react-native-community/netinfo";
 import {
   SuccessHandler,
@@ -61,7 +60,6 @@ const DatacleanScreen: React.FC = ({
   const [loading, setLoading] = useState(false);
   const [isOffline, setIsOffline] = useState(false);
   const [textMessage, setTextMessage] = useState("");
-  const [isSync, setIsSyn] = useState(false);  
 
   const syncronize = () => {
     setLoading(true);
@@ -82,7 +80,6 @@ const DatacleanScreen: React.FC = ({
               return <SuccessHandler />;
             },
           });
-          setIsSyn(true);
           fetchCounts();
           setLoading(false);
         })
@@ -134,9 +131,7 @@ const DatacleanScreen: React.FC = ({
         interventionsCollection
       );
       const myIDsList = filterData(referencesCollection);
-
       const allBenfIds = [...myIDsList, ...interventionsCollectionIDsList];
-
       const uniqueBenfIds = cleanData(allBenfIds);
 
       destroyBeneficiariesData(uniqueBenfIds)
