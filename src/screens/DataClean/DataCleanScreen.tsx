@@ -125,6 +125,8 @@ const DatacleanScreen: React.FC = ({
       let removeErrorsList = validate(formik.values);
       formik.setErrors(removeErrorsList);
       setErrors(false);
+
+
       syncronize();
 
       const referencesCollection = references;
@@ -159,9 +161,9 @@ const DatacleanScreen: React.FC = ({
           console.error("Erro ao deletar registros:", error);
           setLoading(false);
         });
-    } else if (formik.values.data_clean === "1") {
-      try {
+    } else if (!isOffline && formik.values.data_clean === "1") {
 
+      try {
         setLoading(true);
         if (isOffline) {
           toast.show({
@@ -171,6 +173,7 @@ const DatacleanScreen: React.FC = ({
             },
           });
           setLoading(false);
+         
         } else {
           sync({ username: loggedUser.username })
             .then( async () => {
@@ -188,6 +191,7 @@ const DatacleanScreen: React.FC = ({
               navigate({
                 name: "Login",
               });
+
             })
             .catch(() => {
               setLoading(false);
