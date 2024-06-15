@@ -259,6 +259,8 @@ export default appSchema({
         { name: "profile_id", type: "number" },
         { name: "entry_point", type: "string" },
         { name: "partner_id", type: "number" },
+        { name: "next_clean_date", type: "string", isOptional: true  },
+        { name: "was_cleaned", type: "number", isOptional: true  },
       ],
     }),
   ],
