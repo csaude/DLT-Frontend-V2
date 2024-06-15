@@ -204,24 +204,6 @@ const DatacleanScreen: React.FC = ({
             });
         }
 
-        // if (isSync){
-        //   const adapter = database.adapter;
-
-        //   await adapter.unsafeResetDatabase();
-        //   navigate({
-        //     name: "Login",
-        //   });
-  
-        //   toast.show({
-        //     placement: "top",
-        //     render: () => {
-        //       return <InfoHandlerSave />;
-        //     },
-        //   });
-        // } else{
-        //   console.log("Nao foi possivel sincronizar!!!");
-        // }
-
       } catch (error) {
         console.log(error);
 
