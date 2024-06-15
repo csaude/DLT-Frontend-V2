@@ -125,8 +125,6 @@ const DatacleanScreen: React.FC = ({
       let removeErrorsList = validate(formik.values);
       formik.setErrors(removeErrorsList);
       setErrors(false);
-
-
       syncronize();
 
       const referencesCollection = references;
@@ -161,7 +159,7 @@ const DatacleanScreen: React.FC = ({
           console.error("Erro ao deletar registros:", error);
           setLoading(false);
         });
-    } else if (!isOffline && formik.values.data_clean === "1") {
+    } else if (formik.values.data_clean === "1") {
 
       try {
         setLoading(true);
