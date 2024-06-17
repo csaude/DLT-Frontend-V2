@@ -424,7 +424,6 @@ const Login: React.FC = ({ route }: any) => {
     const diff = moment.duration(today.diff(lastCleanDate));
 
     if (diff.asDays() >= 7) {
-
       setShowCleanModal(true);
     }
   }, []);
@@ -664,7 +663,7 @@ const Login: React.FC = ({ route }: any) => {
               <Modal.CloseButton />
               <Modal.Header>Limpeza regular de dados</Modal.Header>
               <Modal.Body>
-                <ScrollView >
+                <ScrollView>
                   <Box alignItems="center">
                     {/* <Ionicons name="md-checkmark-circle" size={100} color="#0d9488" /> */}
                     <Alert w="100%" status="success">
@@ -672,7 +671,8 @@ const Login: React.FC = ({ route }: any) => {
                         <HStack>
                           <InfoIcon mt="1" />
                           <Text fontSize="sm" color="coolGray.800">
-                            Faca a limpeza regular de dados o mais breve possivel de modo a melhorar a performace.
+                            Faca a limpeza regular de dados o mais breve
+                            possivel de modo a melhorar a performace.
                             Beneficiario(a)!
                           </Text>
                         </HStack>
