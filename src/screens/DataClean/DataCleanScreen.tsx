@@ -80,6 +80,7 @@ const DatacleanScreen: React.FC = ({
   }, []);
 
   const handleSubmit = async () => {
+    setLoading(true);
     const errorsList = validate(formik.values);
     const hasErrors = JSON.stringify(errorsList) !== "{}";
     const isPendingSync = await checkPendingSync();
@@ -106,16 +107,16 @@ const DatacleanScreen: React.FC = ({
       const referencesCollection = references;
       const interventionsCollection = beneficiaries_interventions;
 
-      const interventionsCollectionIDsList = filterData(
+      const interventionsCollectionIDsList = await filterData(
         interventionsCollection
       );
-      const myIDsList = filterData(referencesCollection);
+      const myIDsList = await filterData(referencesCollection);
 
       const allBenfIds = [...myIDsList, ...interventionsCollectionIDsList];
 
-      const uniqueBenfIds = cleanData(allBenfIds);
+      const uniqueBenfIds = await cleanData(allBenfIds);
 
-      destroyBeneficiariesData(uniqueBenfIds)
+      await destroyBeneficiariesData(uniqueBenfIds)
         .then(() => {
           toast.show({
             placement: "top",
@@ -133,7 +134,7 @@ const DatacleanScreen: React.FC = ({
           });
 
           console.error("Erro ao deletar registros:", error);
-          setLoading(false);
+           setLoading(false);
         });
     } else if (formik.values.data_clean === "1" && !isPendingSync) {
       try {
