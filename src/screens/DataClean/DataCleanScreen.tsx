@@ -177,43 +177,23 @@ const DatacleanScreen: React.FC = ({
 
         setLoading(true);
 
-        if (isOffline) {
-          toast.show({
-            placement: "top",
-            render: () => {
-              return <SyncHandlerError />;
-            },
-          });
-          setLoading(false);
-        } else {
-          sync({ username: loggedUser.username })
-            .then( async () => {
-              const adapter = database.adapter;
+        console.log(isPendingSync);
 
-              await adapter.unsafeResetDatabase();
-              toast.show({
-                placement: "top",
-                render: () => {
-                  return <InfoHandlerSave />;
-                },
-              });
-              setLoading(false);
+        const adapter = database.adapter;
 
-              navigate({
-                name: "Login",
-              });
-            })
-            .catch(() => {
-              setLoading(false);
-              toast.show({
-                placement: "top",
-                render: () => {
-                  return <SyncErrorHandler />;
-                },
-              });
-              setLoading(false);
-            });
-        }
+        await adapter.unsafeResetDatabase();
+        toast.show({
+          placement: "top",
+          render: () => {
+            return <InfoHandlerSave />;
+          },
+        });
+        setLoading(false);
+
+        navigate({
+          name: "Login",
+        });
+        setLoading(false);
 
       } catch (error) {
         console.log(error);
@@ -275,7 +255,7 @@ const DatacleanScreen: React.FC = ({
     );
   };
   useEffect(() => {
-    const message = "Sincronizando e limpando dados...";
+    const message = "Limpando dados...";
     setTextMessage(message);
     fetchCounts();
   }, [loading]);

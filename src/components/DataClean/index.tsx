@@ -101,7 +101,7 @@ export const checkPendingSync= async () => {
   try {
 
     const referenceCollection = database.collections.get('references');
-    const beneficiariesInterventionsCollection = database.collections.get('beneficiaries_interventions');
+    const beneficiariesInterventionsCollection = database.collections.get('references_services');
 
     const pendingSyncReferenceItems = await referenceCollection.query(
       Q.where('is_awaiting_sync', true)
