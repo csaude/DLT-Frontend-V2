@@ -12,6 +12,9 @@ import {
 } from "native-base";
 import { database } from "../../database";
 import { Q } from "@nozbe/watermelondb";
+import { useSelector } from "react-redux";
+import { pendingSyncBeneficiaries } from "../../services/beneficiaryService";
+import { pendingSyncBeneficiariesInterventions } from "../../services/beneficiaryInterventionService";
 
 const todayDate = new Date();
 export const sevenDaysLater = todayDate.setFullYear(
@@ -105,12 +108,15 @@ export const checkPendingSync= async () => {
 
     const pendingSyncReferenceItems = await referenceCollection.query(
       Q.where('is_awaiting_sync', true)
-    ).fetch();
+    ).fetchCount();
     const pendingSyncInterventionsItems = await beneficiariesInterventionsCollection.query(
       Q.where('is_awaiting_sync', true)
-    ).fetch();
+    ).fetchCount();
 
-    return pendingSyncReferenceItems.length > 0 && pendingSyncInterventionsItems.length > 0;
+    const beneficiariesNotSynced = await pendingSyncBeneficiaries();
+    const beneficiariesInterventionsNotSynced = await pendingSyncBeneficiariesInterventions();
+
+    return pendingSyncReferenceItems > 0 && pendingSyncInterventionsItems > 0 && beneficiariesNotSynced > 0 && beneficiariesInterventionsNotSynced > 0;
 
   } catch (error){
     console.log(error);
