@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
-import { KeyboardAvoidingView, ScrollView, View } from "react-native";
+import { KeyboardAvoidingView, ScrollView } from "react-native";
 import {
   Center,
   Box,
@@ -49,15 +49,6 @@ import { getReferencesTotal } from "../../store/referenceSlice";
 import { loadBeneficiariesInterventionsCounts } from "../../store/beneficiaryInterventionSlice";
 import { beneficiariesInterventionsFetchCount } from "../../services/beneficiaryInterventionService";
 import { updateSyncInProgress } from "../../store/syncSlice";
-import {
-  ErrorCleanHandler,
-  InfoHandler,
-  InfoHandlerSave,
-  cleanData,
-  destroyBeneficiariesData,
-  filterData,
-  sevenDaysLater,
-} from "../../components/DataClean";
 
 interface LoginData {
   email?: string | undefined;
@@ -74,20 +65,15 @@ const Login: React.FC = ({ route }: any) => {
   const [loading, setLoading] = useState(false);
   const [isOffline, setIsOffline] = useState(false);
   const [show, setShow] = React.useState(false);
-  const [showCleanModal, setShowCleanModal] = useState(true);
+  const [showCleanModal, setShowCleanModal] = useState(false);
 
   const [token, setToken] = useState();
 
   const toasty = useToast();
-  const toast = useToast();
 
   const users = database.collections.get("users");
   const sequences = database.collections.get("sequences");
   const userDetails = database.collections.get("user_details");
-  const references = database.collections.get("references");
-  const beneficiaries_interventions = database.collections.get(
-    "beneficiaries_interventions"
-  );
 
   const dispatch = useDispatch();
   const [passwordExpired, setPasswordExpired] = useState(false);
