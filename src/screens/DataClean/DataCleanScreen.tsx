@@ -71,41 +71,6 @@ const DatacleanScreen: React.FC = ({
   const [textMessage, setTextMessage] = useState("");
   const [showCleanModal, setShowCleanModal] = useState(false);
 
-  const syncronize = () => {
-    setLoading(true);
-    if (isOffline) {
-      toast.show({
-        placement: "top",
-        render: () => {
-          return <WithoutNetwork />;
-        },
-      });
-      setLoading(false);
-    } else {
-      sync({ username: loggedUser.username })
-        .then(() => {
-          toast.show({
-            placement: "top",
-            render: () => {
-              return <SuccessHandler />;
-            },
-          });
-          fetchCounts();
-          setLoading(false);
-        })
-        .catch(() => {
-          setLoading(false);
-          toast.show({
-            placement: "top",
-            render: () => {
-              return <SyncErrorHandler />;
-            },
-          });
-          setLoading(false);
-        });
-    }
-  };
-
   useEffect(() => {
     const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
       const status = !(state.isConnected && state.isInternetReachable);
@@ -137,7 +102,6 @@ const DatacleanScreen: React.FC = ({
       let removeErrorsList = validate(formik.values);
       formik.setErrors(removeErrorsList);
       setErrors(false);
-      syncronize();
 
       const referencesCollection = references;
       const interventionsCollection = beneficiaries_interventions;
