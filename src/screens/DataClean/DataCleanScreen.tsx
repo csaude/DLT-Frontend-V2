@@ -139,9 +139,6 @@ const DatacleanScreen: React.FC = ({
       try {
 
         setLoading(true);
-
-        console.log(isPendingSync);
-
         const adapter = database.adapter;
 
         await adapter.unsafeResetDatabase();
