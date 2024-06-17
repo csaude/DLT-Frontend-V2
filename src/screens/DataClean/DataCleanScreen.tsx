@@ -7,13 +7,21 @@ import React, {
 } from "react";
 import { View, KeyboardAvoidingView, ScrollView, Text } from "react-native";
 import {
+  Alert,
+  Box,
   Button,
+  Center,
   Divider,
   Flex,
   FormControl,
+  HStack,
+  InfoIcon,
+  Modal,
   Radio,
   Stack,
+  VStack,
   useToast,
+  Text as Text1
 } from "native-base";
 import { useDispatch } from "react-redux";
 import { Context } from "../../routes/DrawerNavigator";
@@ -43,7 +51,7 @@ import {
   ErrorHandler,
   InfoHandler,
   InfoHandlerSave,
-  SyncHandlerError,
+  checkPendingSync,
   cleanData,
   destroyBeneficiariesData,
   filterData,
@@ -61,43 +69,7 @@ const DatacleanScreen: React.FC = ({
   const [loading, setLoading] = useState(false);
   const [isOffline, setIsOffline] = useState(false);
   const [textMessage, setTextMessage] = useState("");
-  const [isSync, setIsSyn] = useState(false);  
-
-  const syncronize = () => {
-    setLoading(true);
-    if (isOffline) {
-      toast.show({
-        placement: "top",
-        render: () => {
-          return <WithoutNetwork />;
-        },
-      });
-      setLoading(false);
-    } else {
-      sync({ username: loggedUser.username })
-        .then(() => {
-          toast.show({
-            placement: "top",
-            render: () => {
-              return <SuccessHandler />;
-            },
-          });
-          setIsSyn(true);
-          fetchCounts();
-          setLoading(false);
-        })
-        .catch(() => {
-          setLoading(false);
-          toast.show({
-            placement: "top",
-            render: () => {
-              return <SyncErrorHandler />;
-            },
-          });
-          setLoading(false);
-        });
-    }
-  };
+  const [showCleanModal, setShowCleanModal] = useState(false);
 
   useEffect(() => {
     const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
@@ -110,6 +82,7 @@ const DatacleanScreen: React.FC = ({
   const handleSubmit = async () => {
     const errorsList = validate(formik.values);
     const hasErrors = JSON.stringify(errorsList) !== "{}";
+    const isPendingSync = await checkPendingSync();
 
     if (hasErrors) {
       setErrors(true);
@@ -121,11 +94,14 @@ const DatacleanScreen: React.FC = ({
           return <ErrorHandler />;
         },
       });
-    } else if (formik.values.data_clean === "0") {
+    } else if (isPendingSync){
+
+        setShowCleanModal(true);
+
+    }else if (formik.values.data_clean === "0" && !isPendingSync) {
       let removeErrorsList = validate(formik.values);
       formik.setErrors(removeErrorsList);
       setErrors(false);
-      syncronize();
 
       const referencesCollection = references;
       const interventionsCollection = beneficiaries_interventions;
@@ -159,47 +135,25 @@ const DatacleanScreen: React.FC = ({
           console.error("Erro ao deletar registros:", error);
           setLoading(false);
         });
-    } else if (formik.values.data_clean === "1") {
+    } else if (formik.values.data_clean === "1" && !isPendingSync) {
       try {
 
         setLoading(true);
-        if (isOffline) {
-          toast.show({
-            placement: "top",
-            render: () => {
-              return <SyncHandlerError />;
-            },
-          });
-          setLoading(false);
-        } else {
-          sync({ username: loggedUser.username })
-            .then( async () => {
-              const adapter = database.adapter;
+        const adapter = database.adapter;
 
-              await adapter.unsafeResetDatabase();
-              toast.show({
-                placement: "top",
-                render: () => {
-                  return <InfoHandlerSave />;
-                },
-              });
-              setLoading(false);
+        await adapter.unsafeResetDatabase();
+        toast.show({
+          placement: "top",
+          render: () => {
+            return <InfoHandlerSave />;
+          },
+        });
+        setLoading(false);
 
-              navigate({
-                name: "Login",
-              });
-            })
-            .catch(() => {
-              setLoading(false);
-              toast.show({
-                placement: "top",
-                render: () => {
-                  return <SyncErrorHandler />;
-                },
-              });
-              setLoading(false);
-            });
-        }
+        navigate({
+          name: "Login",
+        });
+        setLoading(false);
 
       } catch (error) {
         console.log(error);
@@ -261,7 +215,7 @@ const DatacleanScreen: React.FC = ({
     );
   };
   useEffect(() => {
-    const message = "Sincronizando e limpando dados...";
+    const message = "Limpando dados...";
     setTextMessage(message);
     fetchCounts();
   }, [loading]);
@@ -434,6 +388,36 @@ const DatacleanScreen: React.FC = ({
             </Flex>
           </View>
         </View>
+
+        <Center>
+          <Modal
+            isOpen={showCleanModal}
+            onClose={() => setShowCleanModal(false)}
+          >
+            <Modal.Content maxWidth="400px">
+              <Modal.CloseButton />
+              <Modal.Header>Dados Pendentes de sincronização</Modal.Header>
+              <Modal.Body>
+                <ScrollView>
+                  <Box alignItems="center">
+                    <Alert w="100%" status="success">
+                      <VStack space={2} flexShrink={1}>
+                        <HStack>
+                          <InfoIcon mt="1" />
+                          <Text1 fontSize="sm" color="coolGray.800">
+                            Utilizador com dados pendentes de sincronização.
+                            Faça a sincronização dos seus dados antes de fazer a limpeza.
+                          </Text1>
+                        </HStack>
+                      </VStack>
+                    </Alert>
+                    <Text1></Text1>
+                  </Box>
+                </ScrollView>
+              </Modal.Body>
+            </Modal.Content>
+          </Modal>
+        </Center>
       </ScrollView>
     </KeyboardAvoidingView>
   );
