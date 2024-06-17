@@ -51,7 +51,6 @@ import {
   ErrorHandler,
   InfoHandler,
   InfoHandlerSave,
-  SyncHandlerError,
   checkPendingSync,
   cleanData,
   destroyBeneficiariesData,
@@ -179,9 +178,9 @@ const DatacleanScreen: React.FC = ({
 
         console.log(isPendingSync);
 
-        const adapter = database.adapter;
+        // const adapter = database.adapter;
 
-        await adapter.unsafeResetDatabase();
+        // await adapter.unsafeResetDatabase();
         toast.show({
           placement: "top",
           render: () => {
