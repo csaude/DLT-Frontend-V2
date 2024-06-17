@@ -96,6 +96,27 @@ export function showToast(status, message, description) {
   });
 }
 
+
+export const checkPendingSync= async () => {
+  try {
+
+    const referenceCollection = database.collections.get('references');
+    const beneficiariesInterventionsCollection = database.collections.get('beneficiaries_interventions');
+
+    const pendingSyncReferenceItems = await referenceCollection.query(
+      Q.where('is_awaiting_sync', true)
+    ).fetch();
+    const pendingSyncInterventionsItems = await beneficiariesInterventionsCollection.query(
+      Q.where('is_awaiting_sync', true)
+    ).fetch();
+
+    return pendingSyncReferenceItems.length > 0 && pendingSyncInterventionsItems.length > 0;
+
+  } catch (error){
+    console.log(error);
+  };
+};
+
 export const destroyBeneficiariesData = async (beneficiaryIds: any) => {
   // setLoading(true);
   try {

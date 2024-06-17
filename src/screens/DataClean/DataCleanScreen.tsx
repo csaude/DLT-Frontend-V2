@@ -7,13 +7,21 @@ import React, {
 } from "react";
 import { View, KeyboardAvoidingView, ScrollView, Text } from "react-native";
 import {
+  Alert,
+  Box,
   Button,
+  Center,
   Divider,
   Flex,
   FormControl,
+  HStack,
+  InfoIcon,
+  Modal,
   Radio,
   Stack,
+  VStack,
   useToast,
+  Text as Text1
 } from "native-base";
 import { useDispatch } from "react-redux";
 import { Context } from "../../routes/DrawerNavigator";
@@ -44,6 +52,7 @@ import {
   InfoHandler,
   InfoHandlerSave,
   SyncHandlerError,
+  checkPendingSync,
   cleanData,
   destroyBeneficiariesData,
   filterData,
@@ -61,7 +70,7 @@ const DatacleanScreen: React.FC = ({
   const [loading, setLoading] = useState(false);
   const [isOffline, setIsOffline] = useState(false);
   const [textMessage, setTextMessage] = useState("");
-  const [isSync, setIsSyn] = useState(false);  
+  const [showCleanModal, setShowCleanModal] = useState(false);
 
   const syncronize = () => {
     setLoading(true);
@@ -82,7 +91,6 @@ const DatacleanScreen: React.FC = ({
               return <SuccessHandler />;
             },
           });
-          setIsSyn(true);
           fetchCounts();
           setLoading(false);
         })
@@ -110,6 +118,7 @@ const DatacleanScreen: React.FC = ({
   const handleSubmit = async () => {
     const errorsList = validate(formik.values);
     const hasErrors = JSON.stringify(errorsList) !== "{}";
+    const isPendingSync = await checkPendingSync();
 
     if (hasErrors) {
       setErrors(true);
@@ -121,7 +130,11 @@ const DatacleanScreen: React.FC = ({
           return <ErrorHandler />;
         },
       });
-    } else if (formik.values.data_clean === "0") {
+    } else if (isPendingSync){
+
+        setShowCleanModal(true);
+
+    }else if (formik.values.data_clean === "0" && !isPendingSync) {
       let removeErrorsList = validate(formik.values);
       formik.setErrors(removeErrorsList);
       setErrors(false);
@@ -159,10 +172,11 @@ const DatacleanScreen: React.FC = ({
           console.error("Erro ao deletar registros:", error);
           setLoading(false);
         });
-    } else if (formik.values.data_clean === "1") {
+    } else if (formik.values.data_clean === "1" && !isPendingSync) {
       try {
 
         setLoading(true);
+
         if (isOffline) {
           toast.show({
             placement: "top",
@@ -434,6 +448,36 @@ const DatacleanScreen: React.FC = ({
             </Flex>
           </View>
         </View>
+
+        <Center>
+          <Modal
+            isOpen={showCleanModal}
+            onClose={() => setShowCleanModal(false)}
+          >
+            <Modal.Content maxWidth="400px">
+              <Modal.CloseButton />
+              <Modal.Header>Dados Pendentes de sincronização</Modal.Header>
+              <Modal.Body>
+                <ScrollView>
+                  <Box alignItems="center">
+                    <Alert w="100%" status="success">
+                      <VStack space={2} flexShrink={1}>
+                        <HStack>
+                          <InfoIcon mt="1" />
+                          <Text1 fontSize="sm" color="coolGray.800">
+                            Utilizador com dados pendentes de sincronização.
+                            Faça a sincronização dos seus dados antes de fazer a limpeza.
+                          </Text1>
+                        </HStack>
+                      </VStack>
+                    </Alert>
+                    <Text1></Text1>
+                  </Box>
+                </ScrollView>
+              </Modal.Body>
+            </Modal.Content>
+          </Modal>
+        </Center>
       </ScrollView>
     </KeyboardAvoidingView>
   );
