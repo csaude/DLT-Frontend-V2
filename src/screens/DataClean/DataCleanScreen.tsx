@@ -136,8 +136,6 @@ const DatacleanScreen: React.FC = ({
           console.error("Erro ao deletar registros:", error);
            setLoading(false);
         });
-        
-        setLoading(false);
     } else if (formik.values.data_clean === "1" && !isPendingSync) {
       try {
 
