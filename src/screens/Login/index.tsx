@@ -49,15 +49,6 @@ import { getReferencesTotal } from "../../store/referenceSlice";
 import { loadBeneficiariesInterventionsCounts } from "../../store/beneficiaryInterventionSlice";
 import { beneficiariesInterventionsFetchCount } from "../../services/beneficiaryInterventionService";
 import { updateSyncInProgress } from "../../store/syncSlice";
-import {
-  ErrorCleanHandler,
-  InfoHandler,
-  InfoHandlerSave,
-  cleanData,
-  destroyBeneficiariesData,
-  filterData,
-  sevenDaysLater,
-} from "../../components/DataClean";
 
 interface LoginData {
   email?: string | undefined;
@@ -74,19 +65,15 @@ const Login: React.FC = ({ route }: any) => {
   const [loading, setLoading] = useState(false);
   const [isOffline, setIsOffline] = useState(false);
   const [show, setShow] = React.useState(false);
+  const [showCleanModal, setShowCleanModal] = useState(false);
 
   const [token, setToken] = useState();
 
   const toasty = useToast();
-  const toast = useToast();
 
   const users = database.collections.get("users");
   const sequences = database.collections.get("sequences");
   const userDetails = database.collections.get("user_details");
-  const references = database.collections.get("references");
-  const beneficiaries_interventions = database.collections.get(
-    "beneficiaries_interventions"
-  );
 
   const dispatch = useDispatch();
   const [passwordExpired, setPasswordExpired] = useState(false);
@@ -442,60 +429,8 @@ const Login: React.FC = ({ route }: any) => {
     const lastCleanDate = moment(next_clean_date);
     const diff = moment.duration(today.diff(lastCleanDate));
 
-    if (diff.asDays() > 7) {
-      const referencesCollection = references;
-      const interventionsCollection = beneficiaries_interventions;
-
-      const interventionsCollectionIDsList = filterData(
-        interventionsCollection
-      );
-      const myIDsList = filterData(referencesCollection);
-
-      const allBenfIds = [...myIDsList, ...interventionsCollectionIDsList];
-
-      const uniqueBenfIds = cleanData(allBenfIds);
-
-      destroyBeneficiariesData(uniqueBenfIds)
-        .then(() => {
-          toast.show({
-            placement: "top",
-            render: () => {
-              return <InfoHandler />;
-            },
-          });
-        })
-        .catch((error) => {
-          toast.show({
-            placement: "top",
-            render: () => {
-              return <ErrorCleanHandler />;
-            },
-          });
-
-          console.error("Erro ao deletar registros:", error);
-          setLoading(false);
-        });
-    }else {
-      try {
-        await database.write(async () => {
-          const uDetail = await database
-            .get("user_details")
-            .find(userDetailss[0]._raw.id);
-          await uDetail.update(() => {
-            uDetail["next_clean_date"] = moment(
-              new Date(sevenDaysLater)
-            ).format("YYYY-MM-DD HH:mm:ss");
-            uDetail["was_cleaned"] = 0;
-          });
-        });
-
-        toast.show({
-          placement: "top",
-          render: () => {
-            return <InfoHandlerSave />;
-          },
-        });
-      }catch (error) {console.log(error)}
+    if (diff.asDays() >= 7) {
+      setShowCleanModal(true);
     }
   }, []);
 
@@ -724,6 +659,38 @@ const Login: React.FC = ({ route }: any) => {
                   </Alert>
                   <Text></Text>
                 </Box>
+              </Modal.Body>
+            </Modal.Content>
+          </Modal>
+        </Center>
+
+        <Center>
+          <Modal
+            isOpen={showCleanModal}
+            onClose={() => setShowCleanModal(false)}
+          >
+            <Modal.Content maxWidth="400px">
+              <Modal.CloseButton />
+              <Modal.Header>Limpeza regular de dados</Modal.Header>
+              <Modal.Body>
+                <ScrollView>
+                  <Box alignItems="center">
+                    {/* <Ionicons name="md-checkmark-circle" size={100} color="#0d9488" /> */}
+                    <Alert w="100%" status="success">
+                      <VStack space={2} flexShrink={1}>
+                        <HStack>
+                          <InfoIcon mt="1" />
+                          <Text fontSize="sm" color="coolGray.800">
+                            Faca a limpeza regular de dados o mais breve
+                            possivel de modo a melhorar a performace.
+                            Beneficiario(a)!
+                          </Text>
+                        </HStack>
+                      </VStack>
+                    </Alert>
+                    <Text></Text>
+                  </Box>
+                </ScrollView>
               </Modal.Body>
             </Modal.Content>
           </Modal>

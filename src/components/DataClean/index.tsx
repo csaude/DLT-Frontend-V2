@@ -12,6 +12,9 @@ import {
 } from "native-base";
 import { database } from "../../database";
 import { Q } from "@nozbe/watermelondb";
+import { useSelector } from "react-redux";
+import { pendingSyncBeneficiaries } from "../../services/beneficiaryService";
+import { pendingSyncBeneficiariesInterventions } from "../../services/beneficiaryInterventionService";
 
 const todayDate = new Date();
 export const sevenDaysLater = todayDate.setFullYear(
@@ -96,6 +99,38 @@ export function showToast(status, message, description) {
   });
 }
 
+export const checkPendingSync = async () => {
+  try {
+    const referenceCollection = database.collections.get("references");
+    const beneficiariesInterventionsCollection = database.collections.get(
+      "references_services"
+    );
+
+    const pendingSyncReferenceItems = await referenceCollection
+      .query(Q.where("is_awaiting_sync", true))
+      .fetchCount();
+    const pendingSyncInterventionsItems =
+      await beneficiariesInterventionsCollection
+        .query(Q.where("is_awaiting_sync", true))
+        .fetchCount();
+
+    const beneficiariesNotSynced = await pendingSyncBeneficiaries();
+    const beneficiariesInterventionsNotSynced =
+      await pendingSyncBeneficiariesInterventions();
+    const result =
+      pendingSyncReferenceItems > 0 ||
+      pendingSyncInterventionsItems > 0 ||
+      beneficiariesNotSynced > 0 ||
+      beneficiariesInterventionsNotSynced > 0
+        ? true
+        : false;
+        
+    return result;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const destroyBeneficiariesData = async (beneficiaryIds: any) => {
   // setLoading(true);
   try {
@@ -125,10 +160,10 @@ export const destroyBeneficiariesData = async (beneficiaryIds: any) => {
         }
       }
     });
-    console.log("Dados limpados com sucesso!!!")
-  } catch (error){
+    console.log("Dados limpados com sucesso!!!");
+  } catch (error) {
     console.log(error);
-  };
+  }
 };
 
 export const InfoHandler: React.FC = () => {
@@ -160,35 +195,35 @@ export const InfoHandler: React.FC = () => {
   );
 };
 
-
-  export const SyncHandlerError: React.FC = () => {
-    return (
-      <>
-        <Alert
-          w="100%"
-          variant="left-accent"
-          colorScheme="success"
-          status="success"
-        >
-          <VStack space={2} flexShrink={1} w="100%">
-            <HStack
-              flexShrink={1}
-              space={2}
-              alignItems="center"
-              justifyContent="space-between"
-            >
-              <HStack space={2} flexShrink={1} alignItems="center">
-                <Alert.Icon />
-                <Text color="coolGray.800">
-                  Para a Limpeza de fim de COP e necessario estar conectado a internet!!!
-                </Text>
-              </HStack>
+export const SyncHandlerError: React.FC = () => {
+  return (
+    <>
+      <Alert
+        w="100%"
+        variant="left-accent"
+        colorScheme="success"
+        status="success"
+      >
+        <VStack space={2} flexShrink={1} w="100%">
+          <HStack
+            flexShrink={1}
+            space={2}
+            alignItems="center"
+            justifyContent="space-between"
+          >
+            <HStack space={2} flexShrink={1} alignItems="center">
+              <Alert.Icon />
+              <Text color="coolGray.800">
+                Para a Limpeza de fim de COP e necessario estar conectado a
+                internet!!!
+              </Text>
             </HStack>
-          </VStack>
-        </Alert>
-      </>
-    );
-  };
+          </HStack>
+        </VStack>
+      </Alert>
+    </>
+  );
+};
 
 export const InfoHandlerSave: React.FC = () => {
   return (
