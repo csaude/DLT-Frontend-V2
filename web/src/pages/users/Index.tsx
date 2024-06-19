@@ -36,7 +36,7 @@ const UsersList: React.FC = () => {
 
   const [partners, setPartners] = useState<any[]>([]);
   const [profiles, setProfiles] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const pageSize = 100;
@@ -73,8 +73,9 @@ const UsersList: React.FC = () => {
 
   useEffect(() => {
     if (users?.length > 0) {
-      setLoading(false);
+      setLoading(true);
     }
+    setLoading(false);
   }, [users]);
 
   let searchInput;
@@ -83,6 +84,7 @@ const UsersList: React.FC = () => {
     setPartners(partnerSelector);
     setProfiles(profileSelector);
     const fetchData = async () => {
+      setLoading(true);
       const user = await queryByUserId(localStorage.user);
       const data = await pagedQueryByFilters(
         getUserParams(user),
@@ -93,6 +95,7 @@ const UsersList: React.FC = () => {
         searchUserCreator,
         searchDistrict
       );
+      setLoading(false);
       setUsers(data);
     };
 
