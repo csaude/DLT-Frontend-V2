@@ -252,7 +252,6 @@ const ViewBenefiaryPanel = ({
         setVisible(false);
         setIsAdd(false);
         form.resetFields();
-
       })
       .catch(() => {
         message.error({
