@@ -12,7 +12,6 @@ import {
 } from "native-base";
 import { database } from "../../database";
 import { Q } from "@nozbe/watermelondb";
-import { useSelector } from "react-redux";
 import { pendingSyncBeneficiaries } from "../../services/beneficiaryService";
 import { pendingSyncBeneficiariesInterventions } from "../../services/beneficiaryInterventionService";
 
