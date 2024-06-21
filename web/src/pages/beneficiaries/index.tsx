@@ -1055,7 +1055,6 @@ const BeneficiariesList: React.FC = () => {
         }
 
         sortedBeneficiaries.forEach((beneficiary) => {
-          const interventions = getBeneficiaryIntervention(beneficiary.id);
           const values = [
             sequence,
             beneficiary.district.code + "/" + beneficiary?.nui,
