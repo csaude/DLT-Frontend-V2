@@ -356,6 +356,25 @@ const Login: React.FC = ({ route }: any) => {
         ) {
           setLoggedUserDifferentFromSyncedUser(true);
         } else {
+          await database.write(async () => {
+            const now = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+            await logguedUser.update(
+              (record: any) => {
+                (record.last_login_date = now),
+                (record.date_updated = now),
+                record._status = "updated";
+              }
+            );
+            const userDetailss = await userDetails
+              .query(Q.where("user_id", parseInt(logguedUser.online_id)))
+              .fetch();
+            await userDetailss[0].update(
+              (record: any) => {
+                (record.last_login_date = now)
+              }
+            );
+            
+          });
           setIsInvalidCredentials(false);
           setLoggedUser(logguedUser?._raw);
           dispatch(loadUser(logguedUser?._raw));
@@ -370,6 +389,7 @@ const Login: React.FC = ({ route }: any) => {
           });
         }
       } catch (error) {
+        console.log(error);
         setIsInvalidCredentials(true);
       }
       setLoading(false);
@@ -445,7 +465,10 @@ const Login: React.FC = ({ route }: any) => {
         ? user.passwordLastChangeDate
         : user.dateCreated;
     const date = new Date(timestamp);
-    const formattedDate = date.toISOString().slice(0, 10);
+    const formattedDate = date.toISOString().slice(0, 10) + " " + date.toISOString().slice(11, 19);;
+    
+    const lastLoginDate = new Date();
+    const lastLoginFormatted = lastLoginDate.toISOString().slice(0, 10) + " " + lastLoginDate.toISOString().slice(11, 19);;
 
     await database.write(async () => {
       await userDetails.create((userDetail: any) => {
@@ -454,6 +477,7 @@ const Login: React.FC = ({ route }: any) => {
         userDetail.districts = district_ids.toString();
         userDetail.localities = localities_ids.toString();
         userDetail.uss = uss_ids.toString();
+        userDetail.last_login_date = lastLoginFormatted;
         userDetail.password_last_change_date = formattedDate;
         userDetail.profile_id = user.profiles.id;
         userDetail.entry_point = user.entryPoint;

@@ -87,6 +87,7 @@ export default appSchema({
         { name: "us_ids", type: "string", isOptional: true },
         { name: "online_id", type: "number", isOptional: true }, // flag to control if entity is synchronized with the backend
         { name: "organization_name", type: "string" },
+        { name: "last_login_date", type: "string" },
         { name: "password_last_change_date", type: "string" },
         { name: "is_awaiting_sync", type: "number", isOptional: true }, // flag to control if user status is synced
       ],
@@ -255,6 +256,7 @@ export default appSchema({
         { name: "localities", type: "string" },
         { name: "uss", type: "string" },
         { name: "user_id", type: "number", isIndexed: true },
+        { name: "last_login_date", type: "string" },
         { name: "password_last_change_date", type: "string" },
         { name: "profile_id", type: "number" },
         { name: "entry_point", type: "string" },

@@ -47,7 +47,11 @@ const StepReference = ({
     const fetchData = async () => {
       const loggedUser = await queryByUserId(localStorage.user);
       const payload = {
-        districts: [beneficiary?.locality?.district?.id],
+        districts: [
+          beneficiary
+            ? beneficiary?.locality?.district?.id
+            : reference.beneficiaries?.locality?.district?.id,
+        ],
       };
 
       const entryPoint = getEntryPoint(loggedUser.entryPoint);
@@ -171,7 +175,6 @@ const StepReference = ({
   };
 
   const onChangeEntryPoint = async (e: any) => {
-    console.log(localities);
     const type = e?.target?.value === undefined ? e : e?.target?.value;
     const payload = {
       typeId: type,
@@ -417,7 +420,7 @@ const StepReference = ({
             initialValue={
               reference === undefined
                 ? undefined
-                : reference?.notifyTo?.partners?.name
+                : reference?.notifyTo?.partners?.id.toString()
             }
           >
             <Select placeholder="Organização" disabled={partners === undefined}>
