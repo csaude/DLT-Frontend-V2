@@ -175,7 +175,6 @@ const StepReference = ({
   };
 
   const onChangeEntryPoint = async (e: any) => {
-    console.log(localities);
     const type = e?.target?.value === undefined ? e : e?.target?.value;
     const payload = {
       typeId: type,
