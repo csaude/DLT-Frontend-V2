@@ -23,7 +23,6 @@ const DataImport: React.FC = () => {
     setCompleted(false);
     await addFromDevice(data, data?.changes.users.updated[0].username);
     setCompleted(true);
-    await addFromDevice(data, username);
   };
 
   const handleSaveData = (e) => {
