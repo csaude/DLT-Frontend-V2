@@ -35,11 +35,11 @@ const UserProfile: React.FC = ({
     ? loggedUser.us_ids.replace(/\s/g, "").split(",")
     : loggedUser.us.map((u) => u.id + "");
 
-  const userLocalities = localities.filter((e) => {
+  const userLocalities = localities?.filter((e) => {
     return logguedUserLocalities?.includes(e?._raw.online_id.toString());
   });
 
-  const userUs = us.filter((e) => {
+  const userUs = us?.filter((e) => {
     return logguedUserUs.includes(e?._raw.online_id.toString());
   });
 
