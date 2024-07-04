@@ -89,6 +89,7 @@ const DatacleanScreen: React.FC = ({
           return <ErrorHandler />;
         },
       });
+      setLoading(false);
     } else if (isPendingSync){
 
         setShowCleanModal(true);
