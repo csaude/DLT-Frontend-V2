@@ -62,15 +62,15 @@ const UsersLastSync: React.FC = () => {
   const entryPoints = [
     {
       value: 1,
-      text: "US",
+      label: "US",
     },
     {
       value: 2,
-      text: "CM",
+      label: "CM",
     },
     {
       value: 3,
-      text: "ES",
+      label: "ES",
     },
   ];
 
@@ -616,7 +616,9 @@ const UsersLastSync: React.FC = () => {
                 /**Its OK */
               }}
               filterOption={(input, option) =>
-                (option?.text ?? "").toLowerCase().includes(input.toLowerCase())
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
               }
               options={entryPoints}
             />
