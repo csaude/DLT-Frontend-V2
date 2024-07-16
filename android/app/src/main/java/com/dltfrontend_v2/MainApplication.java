@@ -15,6 +15,7 @@ import com.nozbe.watermelondb.WatermelonDBPackage;
 import com.facebook.react.bridge.JSIModulePackage; 
 import com.swmansion.reanimated.ReanimatedJSIModulePackage; 
 import cl.json.ShareApplication;
+import io.xogus.reactnative.versioncheck.RNVersionCheckPackage;
 
 public class MainApplication extends Application implements ShareApplication, ReactApplication {
 
@@ -37,6 +38,7 @@ public class MainApplication extends Application implements ShareApplication, Re
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
           //packages.add(new WatermelonDBPackage());
+          new RNVersionCheckPackage();
           return packages;
         }
 

@@ -364,16 +364,22 @@ const UsersLastSync: React.FC = () => {
     {
       title: "Organização",
       dataIndex: "",
-      key: "type",
+      key: "record.user.partner.id",
       render: (text, record) => record.user?.partners?.name,
       filters: filterObjects(partners)((i) => i.name),
       onFilter: (value, record) => record.user?.partners?.name == value,
       filterSearch: true,
     },
     {
+      title: "Versão do APK",
+      dataIndex: "",
+      key: "record.appVersion",
+      render: (text, record) => record.appVersion,
+    },
+    {
       title: "Ultima Sincronização",
       dataIndex: "",
-      key: "type",
+      key: "record.lastSyncDate",
       render: (text, record) =>
         moment(record.lastSyncDate).format("YYYY-MM-DD"),
     },
@@ -451,6 +457,7 @@ const UsersLastSync: React.FC = () => {
         "Locais",
         "Ponto de Entrada",
         "Organização",
+        "Versão do APK",
         "Última Sincronização",
       ];
 
@@ -541,6 +548,7 @@ const UsersLastSync: React.FC = () => {
               ? "CM"
               : "ES",
             record.user.partners?.name,
+            record.appVersion,
             moment(record.lastSyncDate).format("YYYY-MM-DD"),
           ];
           sequence++;
