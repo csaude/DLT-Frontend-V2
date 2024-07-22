@@ -371,17 +371,17 @@ const UsersLastSync: React.FC = () => {
       filterSearch: true,
     },
     {
-      title: "Versão do APK",
-      dataIndex: "",
-      key: "record.appVersion",
-      render: (text, record) => record.appVersion,
-    },
-    {
       title: "Ultima Sincronização",
       dataIndex: "",
       key: "record.lastSyncDate",
       render: (text, record) =>
         moment(record.lastSyncDate).format("YYYY-MM-DD"),
+    },
+    {
+      title: "Versão APP",
+      dataIndex: "",
+      key: "record.appVersion",
+      render: (text, record) => record.appVersion,
     },
   ];
 
@@ -457,8 +457,8 @@ const UsersLastSync: React.FC = () => {
         "Locais",
         "Ponto de Entrada",
         "Organização",
-        "Versão do APK",
         "Última Sincronização",
+        "Versão APP",
       ];
 
       const headerRow = worksheet.getRow(1);
@@ -548,8 +548,8 @@ const UsersLastSync: React.FC = () => {
               ? "CM"
               : "ES",
             record.user.partners?.name,
-            record.appVersion,
             moment(record.lastSyncDate).format("YYYY-MM-DD"),
+            record.appVersion,
           ];
           sequence++;
           worksheet.addRow(values);
@@ -613,27 +613,6 @@ const UsersLastSync: React.FC = () => {
 
           <Col className="gutter-row">
             <Select
-              id="entryPoint-selection"
-              showSearch
-              allowClear
-              onClear={() => onClear("entryPoint")}
-              placeholder="Selecione o PE"
-              optionFilterProp="children"
-              onChange={(e) => setEntryPoint(e)}
-              onSearch={() => {
-                /**Its OK */
-              }}
-              filterOption={(input, option) =>
-                (option?.label ?? "")
-                  .toLowerCase()
-                  .includes(input.toLowerCase())
-              }
-              options={entryPoints}
-            />
-          </Col>
-
-          <Col className="gutter-row">
-            <Select
               id="district-selection"
               showSearch
               allowClear
@@ -650,6 +629,27 @@ const UsersLastSync: React.FC = () => {
                   .includes(input.toLowerCase())
               }
               options={convertedDistrictsData}
+            />
+          </Col>
+
+          <Col className="gutter-row">
+            <Select
+              id="entryPoint-selection"
+              showSearch
+              allowClear
+              onClear={() => onClear("entryPoint")}
+              placeholder="Selecione o PE"
+              optionFilterProp="children"
+              onChange={(e) => setEntryPoint(e)}
+              onSearch={() => {
+                /**Its OK */
+              }}
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={entryPoints}
             />
           </Col>
 
