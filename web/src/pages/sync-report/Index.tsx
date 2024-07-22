@@ -561,7 +561,7 @@ const UsersLastSync: React.FC = () => {
       const blob = new Blob([buffer], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
-      saveAs(blob, `Relatorio_Suncronizacao_${created}.xlsx`);
+      saveAs(blob, `Relatorio_Sincronizacao_${created}.xlsx`);
 
       setLoading(false);
     } catch (error) {
