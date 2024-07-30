@@ -356,25 +356,27 @@ const Login: React.FC = ({ route }: any) => {
         ) {
           setLoggedUserDifferentFromSyncedUser(true);
         } else {
-          await database.write(async () => {
-            const now = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
-            await logguedUser.update(
-              (record: any) => {
-                (record.last_login_date = now),
-                (record.date_updated = now),
-                record._status = "updated";
-              }
-            );
-            const userDetailss = await userDetails
-              .query(Q.where("user_id", parseInt(logguedUser.online_id)))
-              .fetch();
-            await userDetailss[0].update(
-              (record: any) => {
-                (record.last_login_date = now)
-              }
-            );
-            
-          });
+          if (logguedUser?._raw._status != "updated") {
+            await database.write(async () => {
+              const now = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+              await logguedUser.update(
+                (record: any) => {
+                  (record.last_login_date = now),
+                  (record.date_updated = now),
+                  record._status = "updated";
+                }
+              );
+              const userDetailss = await userDetails
+                .query(Q.where("user_id", parseInt(logguedUser.online_id)))
+                .fetch();
+              await userDetailss[0].update(
+                (record: any) => {
+                  (record.last_login_date = now)
+                }
+              );
+              
+            });
+          }
           setIsInvalidCredentials(false);
           setLoggedUser(logguedUser?._raw);
           dispatch(loadUser(logguedUser?._raw));
@@ -384,7 +386,7 @@ const Login: React.FC = ({ route }: any) => {
             name: "Main",
             params: {
               loggedUser: logguedUser?._raw,
-              loading: loggedUser === undefined,
+              loading: logguedUser === undefined,
             },
           });
         }
