@@ -261,40 +261,6 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
     fetchCounts();
   }, [isLoading]);
 
-  useEffect(() => {
-    if (!syncInProgress) {
-      toasty.show({
-        placement: "top",
-        render: () => {
-          return (
-            <Alert
-              w="100%"
-              variant="left-accent"
-              colorScheme="success"
-              status="success"
-            >
-              <VStack space={2} flexShrink={1} w="100%">
-                <HStack
-                  flexShrink={1}
-                  space={2}
-                  alignItems="center"
-                  justifyContent="space-between"
-                >
-                  <HStack space={2} flexShrink={1} alignItems="center">
-                    <Alert.Icon />
-                    <TextNB color="coolGray.800">
-                      Sincronização efectuada com sucesso!
-                    </TextNB>
-                  </HStack>
-                </HStack>
-              </VStack>
-            </Alert>
-          );
-        },
-      });
-    }
-  }, [syncInProgress]);
-
   return (
     <Context.Provider value={loggedUser}>
       <SpinnerModal
