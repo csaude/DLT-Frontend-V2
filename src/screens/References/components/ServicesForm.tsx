@@ -726,7 +726,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
 };
 const enhance = withObservables([], () => ({
   services: database.collections.get("services").query(),
-  subServices: database.collections.get("sub_services").query(),
+  subServices: database.collections.get("sub_services").query(Q.where("status", 1)),
 }));
 
 export default memo(enhance(ServicesForm));
