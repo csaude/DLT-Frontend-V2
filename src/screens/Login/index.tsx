@@ -49,6 +49,7 @@ import { getReferencesTotal } from "../../store/referenceSlice";
 import { loadBeneficiariesInterventionsCounts } from "../../store/beneficiaryInterventionSlice";
 import { beneficiariesInterventionsFetchCount } from "../../services/beneficiaryInterventionService";
 import { updateSyncInProgress } from "../../store/syncSlice";
+import { ErrorHandler, SuccessHandler } from "../../components/SyncIndicator";
 
 interface LoginData {
   email?: string | undefined;
@@ -149,36 +150,21 @@ const Login: React.FC = ({ route }: any) => {
     if (loggedUser) {
       dispatch(updateSyncInProgress(true));
       sync({ username: loggedUser.username })
-        .then(() => getTotals().catch((err) => console.log(err)))
+        .then(() => {
+          toasty.show({
+            placement: "top",
+            render: () => {
+              return <SuccessHandler />;
+            },
+          });
+          getTotals().catch((err) => console.log(err))
+        })
         .catch(() => {
           dispatch(updateSyncInProgress(false));
           toasty.show({
             placement: "top",
             render: () => {
-              return (
-                <Alert
-                  w="100%"
-                  variant="left-accent"
-                  colorScheme="error"
-                  status="error"
-                >
-                  <VStack space={2} flexShrink={1} w="100%">
-                    <HStack
-                      flexShrink={1}
-                      space={2}
-                      alignItems="center"
-                      justifyContent="space-between"
-                    >
-                      <HStack space={2} flexShrink={1} alignItems="center">
-                        <Alert.Icon />
-                        <Text color="coolGray.800">
-                          Falha na sincronização!
-                        </Text>
-                      </HStack>
-                    </HStack>
-                  </VStack>
-                </Alert>
-              );
+              return <ErrorHandler />;
             },
           });
         });
@@ -198,6 +184,7 @@ const Login: React.FC = ({ route }: any) => {
           },
         });
       }
+      setLoggedUser(undefined);
     }
   }, [loggedUser]);
 
@@ -356,25 +343,27 @@ const Login: React.FC = ({ route }: any) => {
         ) {
           setLoggedUserDifferentFromSyncedUser(true);
         } else {
-          await database.write(async () => {
-            const now = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
-            await logguedUser.update(
-              (record: any) => {
-                (record.last_login_date = now),
-                (record.date_updated = now),
-                record._status = "updated";
-              }
-            );
-            const userDetailss = await userDetails
-              .query(Q.where("user_id", parseInt(logguedUser.online_id)))
-              .fetch();
-            await userDetailss[0].update(
-              (record: any) => {
-                (record.last_login_date = now)
-              }
-            );
-            
-          });
+          if (logguedUser?._raw._status != "updated") {
+            await database.write(async () => {
+              const now = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+              await logguedUser.update(
+                (record: any) => {
+                  (record.last_login_date = now),
+                  (record.date_updated = now),
+                  record._status = "updated";
+                }
+              );
+              const userDetailss = await userDetails
+                .query(Q.where("user_id", parseInt(logguedUser.online_id)))
+                .fetch();
+              await userDetailss[0].update(
+                (record: any) => {
+                  (record.last_login_date = now)
+                }
+              );
+              
+            });
+          }
           setIsInvalidCredentials(false);
           setLoggedUser(logguedUser?._raw);
           dispatch(loadUser(logguedUser?._raw));
