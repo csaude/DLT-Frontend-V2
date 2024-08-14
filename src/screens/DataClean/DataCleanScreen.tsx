@@ -117,6 +117,7 @@ const DatacleanScreen: React.FC = ({
           toast.show({
             placement: "top",
             render: () => {
+              setLoading(false);
               return <InfoHandler />;
             },
           });
@@ -125,6 +126,7 @@ const DatacleanScreen: React.FC = ({
           toast.show({
             placement: "top",
             render: () => {
+              setLoading(false);
               return <ErrorCleanHandler />;
             },
           });
