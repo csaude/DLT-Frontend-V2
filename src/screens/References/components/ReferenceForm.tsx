@@ -577,13 +577,13 @@ const ReferenceForm: React.FC = ({ route }: any) => {
   return (
     <>
       <View style={{ flex: 1, backgroundColor: "white" }}>
-        {loading ? (
+        {/* {loading ? (
           <Spinner
             visible={true}
             textContent={"Registando a referência..."}
             textStyle={styles.spinnerTextStyle}
           />
-        ) : undefined}
+        ) : undefined} */}
         <ProgressSteps>
           <ProgressStep
             label="Dados da Referencia"
@@ -889,6 +889,8 @@ const ReferenceForm: React.FC = ({ route }: any) => {
             label="Concluir"
             onSubmit={handleSubmit}
             previousBtnText="<< Anterior"
+            nextBtnTextStyle={styles.buttonTextSaveStyle}
+            nextBtnStyle={styles.buttonSaveStyle}
             finishBtnText="Salvar"
           >
             <View style={styles.containerForm}>
@@ -897,51 +899,59 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                 mb="2.5"
                 _text={{ color: "coolGray.800" }}
               >
-                <Box p="2" rounded="lg">
-                  <Heading size="md" color="coolGray.800">
-                    Detalhes da Referência
-                  </Heading>
-                  <Divider />
-                  <Text style={styles.txtLabelInfo}>
-                    <Text style={styles.txtLabel}> NUI da Beneficiária : </Text>
-                    {beneficiary?.nui}
-                  </Text>
-                  <Text style={styles.txtLabelInfo}>
-                    <Text style={styles.txtLabel}> Nota da Referência: </Text>
-                    {refNote}
-                  </Text>
-                  <Text style={styles.txtLabelInfo}>
-                    <Text style={styles.txtLabel}>
-                      {" "}
-                      Código da Referência do Livro:{" "}
+                {loading ? (
+                  <Spinner
+                    visible={true}
+                    textContent={"Registando Referência..."}
+                    textStyle={styles.spinnerTextStyle}
+                  />
+                ) : (
+                  <Box p="2" rounded="lg">
+                    <Heading size="md" color="coolGray.800">
+                      Detalhes da Referência
+                    </Heading>
+                    <Divider />
+                    <Text style={styles.txtLabelInfo}>
+                      <Text style={styles.txtLabel}> NUI da Beneficiária : </Text>
+                      {beneficiary?.nui}
                     </Text>
-                    {formik.values.reference_code}
-                  </Text>
-                  <Text style={styles.txtLabelInfo}>
-                    <Text style={styles.txtLabel}> Referência para: </Text>
-                    {formik.values.refer_to === "1"
-                      ? "Unidade Sanitaria"
-                      : formik.values.refer_to === "2"
-                      ? "Comunidade"
-                      : "Escola"}
-                  </Text>
-                  <Text style={styles.txtLabelInfo}>
-                    <Text style={styles.txtLabel}> Local: </Text>
-                    {getUsName(formik.values.us_id)}
-                  </Text>
-                  <Text style={styles.txtLabelInfo}>
-                    <Text style={styles.txtLabel}> Organização: </Text>
-                    {getPartnersName(formik.values.partner_id)}
-                  </Text>
-                  <Text style={styles.txtLabelInfo}>
-                    <Text style={styles.txtLabel}> Notificar a(o): </Text>
-                    {selectedUser}
-                  </Text>
-                  <Text style={styles.txtLabelInfo}>
-                    <Text style={styles.txtLabel}> Serviços: </Text>
-                    {referServices.length}
-                  </Text>
-                </Box>
+                    <Text style={styles.txtLabelInfo}>
+                      <Text style={styles.txtLabel}> Nota da Referência: </Text>
+                      {refNote}
+                    </Text>
+                    <Text style={styles.txtLabelInfo}>
+                      <Text style={styles.txtLabel}>
+                        {" "}
+                        Código da Referência do Livro:{" "}
+                      </Text>
+                      {formik.values.reference_code}
+                    </Text>
+                    <Text style={styles.txtLabelInfo}>
+                      <Text style={styles.txtLabel}> Referência para: </Text>
+                      {formik.values.refer_to === "1"
+                        ? "Unidade Sanitaria"
+                        : formik.values.refer_to === "2"
+                        ? "Comunidade"
+                        : "Escola"}
+                    </Text>
+                    <Text style={styles.txtLabelInfo}>
+                      <Text style={styles.txtLabel}> Local: </Text>
+                      {getUsName(formik.values.us_id)}
+                    </Text>
+                    <Text style={styles.txtLabelInfo}>
+                      <Text style={styles.txtLabel}> Organização: </Text>
+                      {getPartnersName(formik.values.partner_id)}
+                    </Text>
+                    <Text style={styles.txtLabelInfo}>
+                      <Text style={styles.txtLabel}> Notificar a(o): </Text>
+                      {selectedUser}
+                    </Text>
+                    <Text style={styles.txtLabelInfo}>
+                      <Text style={styles.txtLabel}> Serviços: </Text>
+                      {referServices.length}
+                    </Text>
+                  </Box>
+                )}
               </Flex>
             </View>
           </ProgressStep>

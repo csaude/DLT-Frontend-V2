@@ -61,6 +61,7 @@
     "react-native-svg": "12.1.0",
     "react-native-swipe-list-view": "3.2.9",
     "react-native-vector-icons": "9.1.0",
+    "react-native-version-check": "^3.4.7",
     "react-redux": "8.0.5",
     "react-toastify": "9.0.5",
     "stream": "^0.0.2",

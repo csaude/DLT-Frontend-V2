@@ -10,18 +10,28 @@ import {
   Row,
   Col,
   Select,
+  Tag,
+  TableProps,
 } from "antd";
 import ptPT from "antd/lib/locale-provider/pt_PT";
 import { UserModel, getEntryPoint } from "../../models/User";
 import { SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
-import { getPagedUsersLastSync, queryByUserId } from "@app/utils/users";
+import {
+  getPagedUsersLastSync,
+  queryByUserId,
+  queryCountByFilters,
+} from "@app/utils/users";
 import { Title } from "@app/components";
 import LoadingModal from "@app/components/modal/LoadingModal";
 import { useSelector } from "react-redux";
 import { getUserParams } from "@app/models/Utils";
 import { FilterObject } from "@app/models/FilterObject";
 import moment from "moment";
+import { queryDistrictsByProvinces } from "@app/utils/locality";
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
+import { toast } from "react-toastify";
 
 const UsersLastSync: React.FC = () => {
   const [usersLastSync, setUsersLastSync] = useState<UserModel[]>([]);
@@ -30,18 +40,39 @@ const UsersLastSync: React.FC = () => {
   const [partners, setPartners] = useState<any[]>([]);
   const [profiles, setProfiles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchCounter, setSearchCounter] = useState<any>();
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
-  const pageSize = 100;
   const [searchName, setSearchName] = useState<any>("");
   const [searchUsername, setSearchUsername] = useState<any>("");
   const [searchDistrict, setSearchDistrict] = useState<any>("");
+  const [searchEntryPoint, setSearchEntryPoint] = useState<any>("");
   const [searchUserCreator, setSearchUserCreator] = useState<any>("");
   const [district, setDistrict] = useState<any>();
+  const [entryPoint, setEntryPoint] = useState<any>();
   const [userCreator, setUserCreator] = useState<any>();
   const [name, setName] = useState<any>();
   const [username, setUsername] = useState<any>();
   const [districts, setDistricts] = useState<any[]>([]);
   const [provinces, setProvinces] = useState<any[]>([]);
+  const [user, setUser] = useState<any>();
+  const [filters, setFilters] = useState<any>(null);
+
+  const pageSize = 100;
+
+  const entryPoints = [
+    {
+      value: 1,
+      label: "US",
+    },
+    {
+      value: 2,
+      label: "CM",
+    },
+    {
+      value: 3,
+      label: "ES",
+    },
+  ];
 
   const profileSelector = useSelector(
     (state: any) => state?.profile.loadedProfiles
@@ -72,8 +103,9 @@ const UsersLastSync: React.FC = () => {
   useEffect(() => {
     setPartners(partnerSelector);
     setProfiles(profileSelector);
+    const userId = localStorage.user;
     const fetchData = async () => {
-      const user = await queryByUserId(localStorage.user);
+      const user = await queryByUserId(userId);
       const data = await getPagedUsersLastSync(
         getUserParams(user),
         currentPageIndex,
@@ -81,8 +113,21 @@ const UsersLastSync: React.FC = () => {
         searchName,
         searchUsername,
         searchUserCreator,
-        searchDistrict
+        searchDistrict,
+        searchEntryPoint
       );
+
+      const countByFilter = await queryCountByFilters(
+        userId,
+        searchName,
+        searchUsername,
+        searchUserCreator,
+        searchDistrict,
+        searchEntryPoint
+      );
+      setSearchCounter(countByFilter);
+      setUser(user);
+
       const sortedData = data.sort((data1, data2) =>
         moment(data2.lastSyncDate)
           .format("YYYY-MM-DD HH:mm:ss")
@@ -91,25 +136,56 @@ const UsersLastSync: React.FC = () => {
           )
       );
       setUsersLastSync(sortedData);
+
+      let districts;
+
+      if (user && user.districts.length > 0) {
+        const districtsIds = user?.districts.map((item) => {
+          return item.id;
+        });
+
+        districts = districtsSelector.filter((d) =>
+          districtsIds.includes(d.id)
+        );
+      } else if (user && user.provinces.length > 0) {
+        const provincesIds = user?.provinces.map((item) => {
+          return item.id + "";
+        });
+
+        const provincesDistricts = await queryDistrictsByProvinces({
+          provinces: provincesIds,
+        });
+
+        const districtsIds = provincesDistricts.map((item) => {
+          return item.id;
+        });
+
+        districts = districtsSelector.filter((d) =>
+          districtsIds.includes(d.id)
+        );
+      } else {
+        districts = districtsSelector;
+      }
+
+      const sortedDistricts = districts?.sort((dist1, dist2) =>
+        dist1?.name.localeCompare(dist2.name)
+      );
+      const sortedProvinces = provincesSelector?.sort((prov1, prov2) =>
+        prov1?.name.localeCompare(prov2.name)
+      );
+
+      setDistricts(sortedDistricts);
+      setProvinces(sortedProvinces);
     };
 
     fetchData().catch((error) => console.log(error));
-
-    const sortedDistricts = districtsSelector?.sort((dist1, dist2) =>
-      dist1?.name.localeCompare(dist2.name)
-    );
-    const sortedProvinces = provincesSelector?.sort((prov1, prov2) =>
-      prov1?.name.localeCompare(prov2.name)
-    );
-
-    setDistricts(sortedDistricts);
-    setProvinces(sortedProvinces);
   }, [
     currentPageIndex,
     searchName,
     searchUsername,
     searchUserCreator,
     searchDistrict,
+    searchEntryPoint,
   ]);
 
   const filterObjects = (data) => (formatter) =>
@@ -280,20 +356,7 @@ const UsersLastSync: React.FC = () => {
       title: "Ponto de Entrada",
       dataIndex: "record.entryPoint",
       key: "record.entryPoint",
-      filters: [
-        {
-          text: "US",
-          value: 1,
-        },
-        {
-          text: "CM",
-          value: 2,
-        },
-        {
-          text: "ES",
-          value: 3,
-        },
-      ],
+      filters: entryPoints,
       onFilter: (value, record) => record.user?.entryPoint == value,
       filterSearch: true,
       render: (text, record) => getEntryPoint(record.user?.entryPoint),
@@ -301,7 +364,7 @@ const UsersLastSync: React.FC = () => {
     {
       title: "Organização",
       dataIndex: "",
-      key: "type",
+      key: "record.user.partner.id",
       render: (text, record) => record.user?.partners?.name,
       filters: filterObjects(partners)((i) => i.name),
       onFilter: (value, record) => record.user?.partners?.name == value,
@@ -310,9 +373,15 @@ const UsersLastSync: React.FC = () => {
     {
       title: "Ultima Sincronização",
       dataIndex: "",
-      key: "type",
+      key: "record.lastSyncDate",
       render: (text, record) =>
-        moment(record.lastSyncDate).format("YYYY-MM-DD HH:mm"),
+        moment(record.lastSyncDate).format("YYYY-MM-DD"),
+    },
+    {
+      title: "Versão APP",
+      dataIndex: "",
+      key: "record.appVersion",
+      render: (text, record) => record.appVersion,
     },
   ];
 
@@ -328,6 +397,9 @@ const UsersLastSync: React.FC = () => {
     }
     if (district !== undefined) {
       setSearchDistrict(district);
+    }
+    if (entryPoint !== undefined) {
+      setSearchEntryPoint(entryPoint);
     }
   };
 
@@ -350,7 +422,165 @@ const UsersLastSync: React.FC = () => {
       setDistrict(undefined);
       setSearchDistrict("");
     }
+    if (name === "entryPoint") {
+      setEntryPoint(undefined);
+      setSearchEntryPoint("");
+    }
   }
+
+  const ClickableTag = () => {
+    return (
+      <a onClick={handleExportXLS}>
+        <Tag color={"geekblue"}>{"Exportar XLS"}</Tag>
+      </a>
+    );
+  };
+
+  const handleExportXLS = async () => {
+    try {
+      setLoading(true);
+      const pageElements = 1000;
+
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet(
+        "Lista_de_Adolescentes_e_Jovens_"
+      );
+
+      const headers = [
+        "#",
+        "Nome do Utilizador",
+        "Username",
+        "Perfil",
+        "Províncias",
+        "Distritos",
+        "Postos Administrativos",
+        "Locais",
+        "Ponto de Entrada",
+        "Organização",
+        "Última Sincronização",
+        "Versão APP",
+      ];
+
+      const headerRow = worksheet.getRow(1);
+      headers.forEach((header, index) => {
+        const cell = headerRow.getCell(index + 1);
+        cell.alignment = { vertical: "middle", horizontal: "center" };
+        cell.value = header;
+        cell.font = { bold: true };
+      });
+
+      const lastPage = Math.ceil(searchCounter / pageElements);
+
+      let sequence = 1;
+
+      for (let i = 0; i < lastPage; i++) {
+        let data = await getPagedUsersLastSync(
+          getUserParams(user),
+          i,
+          pageElements,
+          searchName,
+          searchUsername,
+          searchUserCreator,
+          searchDistrict,
+          searchEntryPoint
+        );
+
+        if (filters) {
+          if (filters.name != null) {
+            data = data.filter((d) =>
+              (d.name + " " + d.surname).match(filters.name)
+            );
+          }
+          if (filters.username != null) {
+            data = data.filter((d) => d.username.includes(filters.username[0]));
+          }
+          if (filters.profile != null) {
+            data = data.filter((d) => filters.profile.includes(d.profile));
+          }
+          if (filters.province != null) {
+            data = data.filter((d) => filters.province.includes(d.province));
+          }
+          if (filters.district != null) {
+            data = data.filter((d) =>
+              filters.district.includes(d.district.name)
+            );
+          }
+          if (filters.entryPoint != null) {
+            data = data.filter((d) =>
+              filters.entryPoint.includes(d.entryPoint)
+            );
+          }
+          if (filters.partner != null) {
+            data = data.filter((d) =>
+              filters.partner.includes(d.partners.name)
+            );
+          }
+          if (filters.dateCreated != null) {
+            data = data.filter((d) =>
+              d.dateCreated.includes(filters.dateCreated)
+            );
+          }
+        }
+
+        const sortedUsers = data.sort((u1, u2) =>
+          moment(u2.dateCreated)
+            .format("YYYY-MM-DD HH:mm:ss")
+            .localeCompare(moment(u1.dateCreated).format("YYYY-MM-DD HH:mm:ss"))
+        );
+
+        if (sortedUsers.length === 0) {
+          break;
+        }
+
+        sortedUsers.forEach((record) => {
+          const values = [
+            sequence,
+            record.user.name + " " + record.user.surname,
+            record.username,
+            record.user.profiles.description,
+            record.user.provinces.map((p) => p.name + ", ").toString(),
+            record.user.districts.map((d) => d.name + ", ").toString(),
+            record.user.localities.map((l) => l.name + ", ").toString(),
+            record.user.us.map((u) => u.name + ", ").toString(),
+            record.user.entryPoint === "1"
+              ? "US"
+              : record.user.entryPoint === "2"
+              ? "CM"
+              : "ES",
+            record.user.partners?.name,
+            moment(record.lastSyncDate).format("YYYY-MM-DD"),
+            record.appVersion,
+          ];
+          sequence++;
+          worksheet.addRow(values);
+        });
+      }
+
+      const created = moment().format("YYYYMMDD_hhmmss");
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      saveAs(blob, `Relatorio_Sincronizacao_${created}.xlsx`);
+
+      setLoading(false);
+    } catch (error) {
+      // Handle any errors that occur during report generation
+      console.error("Error generating XLSX report:", error);
+      setLoading(false);
+      // Display an error message using your preferred method (e.g., toast.error)
+      toast.error("An error occurred during report generation.");
+    }
+  };
+
+  const handleChange: TableProps<any>["onChange"] = (
+    pagination,
+    _filters,
+    _sorter,
+    extra
+  ) => {
+    setFilters(_filters);
+  };
 
   return (
     <>
@@ -402,6 +632,27 @@ const UsersLastSync: React.FC = () => {
             />
           </Col>
 
+          <Col className="gutter-row">
+            <Select
+              id="entryPoint-selection"
+              showSearch
+              allowClear
+              onClear={() => onClear("entryPoint")}
+              placeholder="Selecione o PE"
+              optionFilterProp="children"
+              onChange={(e) => setEntryPoint(e)}
+              onSearch={() => {
+                /**Its OK */
+              }}
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={entryPoints}
+            />
+          </Col>
+
           <Col className="gutter-row" span={12}>
             <Button
               id="search-buttpn"
@@ -417,6 +668,14 @@ const UsersLastSync: React.FC = () => {
             id="usersLastSync-table"
             rowKey="id"
             columns={columns}
+            title={(users) => (
+              <span style={{ display: "flex", justifyContent: "flex-end" }}>
+                <Tag color={"geekblue"}>
+                  {users.length + "/" + searchCounter}
+                </Tag>
+                <ClickableTag />
+              </span>
+            )}
             dataSource={usersLastSync}
             bordered
             scroll={{ x: 1500 }}
