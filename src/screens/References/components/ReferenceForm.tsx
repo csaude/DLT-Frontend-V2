@@ -270,7 +270,8 @@ const ReferenceForm: React.FC = ({ route }: any) => {
       .get("us")
       .query(
         Q.where("entry_point", value),
-        Q.where("locality_id", Number(beneficiary?.locality_id))
+        Q.where("locality_id", Number(beneficiary?.locality_id)),
+        Q.where("status", "1")
       )
       .fetch();
     const usSerialized = getUsList.map((item) => item._raw);
