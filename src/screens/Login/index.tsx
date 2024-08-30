@@ -427,7 +427,7 @@ const Login: React.FC = ({ route }: any) => {
 
     const diff = moment.duration(today.diff(next_clean_date));
 
-    if (diff.asDays() < 1) {
+    if (diff.asDays() >= 7) {
       // setShowCleanModal(true);
       
       const referencesCollection = await references.query().fetch();
