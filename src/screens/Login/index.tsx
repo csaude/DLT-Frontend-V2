@@ -466,7 +466,7 @@ const Login: React.FC = ({ route }: any) => {
       
     } else if(wasCleaned == null && next_clean_date == null) {
 
-      setShowCleanModal(true);
+      // setShowCleanModal(true);
 
     }else{
 
@@ -733,7 +733,6 @@ const Login: React.FC = ({ route }: any) => {
                           <Text fontSize="sm" color="coolGray.800">
                             Faca a limpeza regular de dados o mais breve
                             possivel de modo a melhorar a performace.
-                            Beneficiario(a)!
                           </Text>
                         </HStack>
                       </VStack>
