@@ -108,6 +108,8 @@ const DatacleanScreen: React.FC = ({
       );
       const myIDsList = await filterData(referencesCollection);
 
+      console.log(references);
+
       const allBenfIds = [...myIDsList, ...interventionsCollectionIDsList];
 
       const uniqueBenfIds = await cleanData(allBenfIds);

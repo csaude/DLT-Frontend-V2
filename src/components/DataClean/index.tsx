@@ -137,11 +137,9 @@ export const destroyBeneficiariesData = async (beneficiaryIds: any) => {
   const userDetailss = await userDetails.query().fetch();
   const userID = userDetailss[0]["user_id"];
 
-  // setLoading(true);
   try {
     await database.write(async () => {
       for (const beneficiaryId of beneficiaryIds) {
-        // console.log(beneficiaryId);
         const recordsInterventions = await database
           .get("beneficiaries_interventions")
           .query(Q.where("beneficiary_id", beneficiaryId))
