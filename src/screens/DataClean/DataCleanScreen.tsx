@@ -52,7 +52,6 @@ import {
 import { navigate } from "../../routes/NavigationRef";
 
 const DatacleanScreen: React.FC = ({
-  beneficiaries,
   references,
   beneficiaries_interventions,
 }: any) => {
@@ -99,7 +98,6 @@ const DatacleanScreen: React.FC = ({
       formik.setErrors(removeErrorsList);
       setErrors(false);
 
-      const beneficiariesCollection = beneficiaries;
       const referencesCollection = references;
       const interventionsCollection = beneficiaries_interventions;
 
@@ -107,8 +105,6 @@ const DatacleanScreen: React.FC = ({
         interventionsCollection
       );
       const myIDsList = await filterData(referencesCollection);
-
-      console.log(references);
 
       const allBenfIds = [...myIDsList, ...interventionsCollectionIDsList];
 
@@ -425,7 +421,6 @@ const DatacleanScreen: React.FC = ({
 };
 
 const enhance = withObservables([], () => ({
-  beneficiaries: database.collections.get("beneficiaries").query(),
   references: database.collections.get("references").query(),
   beneficiaries_interventions: database.collections
     .get("beneficiaries_interventions")
