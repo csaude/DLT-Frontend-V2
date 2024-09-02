@@ -408,11 +408,16 @@ const ReferencesMain: React.FC = ({
       filteredReferences.sort(
         (ref1, ref2) =>
           ref1._raw.status - ref2._raw.status ||
-          moment(ref2._raw.date_created)
-            .format("YYYY-MM-DD HH:mm:ss")
+          moment(ref2._raw.date)
+            .format("YYYY-MM-DD")
             .localeCompare(
-              moment(ref1._raw.date_created).format("YYYY-MM-DD HH:mm:ss")
-            )
+              moment(ref1._raw.date).format("YYYY-MM-DD")
+            ) ||
+          Number(loggedUserPartner ===
+            getUser(ref1._raw.referred_by)?.partner_id) 
+            - 
+          Number(loggedUserPartner ===
+            getUser(ref2._raw.referred_by)?.partner_id)
       ),
     [filteredReferences]
   );

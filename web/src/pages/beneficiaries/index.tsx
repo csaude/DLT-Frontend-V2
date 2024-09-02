@@ -48,7 +48,11 @@ import { getEntryPoint, UserModel } from "@app/models/User";
 import { calculateAge, getUserParams } from "@app/models/Utils";
 import FormBeneficiary from "./components/FormBeneficiary";
 import FormBeneficiaryPartner from "./components/FormBeneficiaryPartner";
-import { add as addRef, Reference } from "../../utils/reference";
+import {
+  add as addRef,
+  getReferencesCountByBeneficiaryQuery,
+  Reference,
+} from "../../utils/reference";
 import FormReference from "./components/FormReference";
 import { Title } from "@app/components";
 import { ADMIN, MNE, SUPERVISOR } from "@app/utils/contants";
@@ -59,7 +63,12 @@ import { allDistrict, allDistrictsByIds } from "@app/utils/district";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import { toast } from "react-toastify";
-import { getAgeByDate } from "@app/utils/ageRange";
+import { getAgeBandByDate, getAgeByDate } from "@app/utils/ageRange";
+import { loadGeneralIndicators } from "@app/store/reducers/beneficiaryDashboard";
+import {
+  getInterventionCountByBeneficiaryAndServiceTypeQuery,
+  getInterventionCountByBeneficiaryIdAndAgeBandAndLevelQuery,
+} from "@app/utils/beneficiaryIntervention";
 
 const { Text } = Typography;
 const { confirm } = Modal;
@@ -95,10 +104,8 @@ const BeneficiariesList: React.FC = () => {
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [filters, setFilters] = useState<any>(null);
   const pageSize = 100;
+  const [isEditMode, setIsEditMode] = useState(false);
 
-  const interventionSelector = useSelector(
-    (state: any) => state?.intervention.loadedInterventions
-  );
   const userSelector = useSelector((state: any) => state?.user);
   const beneficiariesTotal = useSelector(
     (state: any) => state.beneficiary.total
@@ -133,13 +140,6 @@ const BeneficiariesList: React.FC = () => {
 
   const userId = localStorage.getItem("user");
   const dispatch = useDispatch();
-
-  const getBeneficiaryIntervention = (beneficiaryId) => {
-    const element = interventionSelector?.find(
-      (item) => item.beneficiaryId === beneficiaryId
-    );
-    return element?.total;
-  };
 
   const getUsernames = (userId) => {
     const currentNames = userSelector?.users?.map((item) => {
@@ -393,9 +393,64 @@ const BeneficiariesList: React.FC = () => {
     });
   };
 
+  const getInterventionsCount = async (beneficiary) => {
+    const ageBand: any = getAgeBandByDate(beneficiary.dateOfBirth);
+
+    const interventionsCount =
+      await getInterventionCountByBeneficiaryAndServiceTypeQuery(
+        beneficiary.id
+      );
+    const getPrimaryInterventionsCOunt =
+      await getInterventionCountByBeneficiaryIdAndAgeBandAndLevelQuery(
+        beneficiary.id,
+        ageBand,
+        1
+      );
+    const getSecondaryInterventionsCOunt =
+      await getInterventionCountByBeneficiaryIdAndAgeBandAndLevelQuery(
+        beneficiary.id,
+        ageBand,
+        2
+      );
+    const getContextualInterventionsCOunt =
+      await getInterventionCountByBeneficiaryIdAndAgeBandAndLevelQuery(
+        beneficiary.id,
+        ageBand,
+        3
+      );
+
+    const getReferencesCOunt = await getReferencesCountByBeneficiaryQuery(
+      beneficiary.id
+    );
+
+    dispatch(
+      loadGeneralIndicators({
+        totalOfClinicalInterventions:
+          interventionsCount.length > 0 ? interventionsCount[0][2] : 0,
+        totalOfCommunityInterventions:
+          interventionsCount.length > 0 ? interventionsCount[0][3] : 0,
+        totalOfPrimaryInterventions:
+          getPrimaryInterventionsCOunt.length > 0
+            ? getPrimaryInterventionsCOunt[0][1]
+            : 0,
+        totalOfSecondaryInterventions:
+          getSecondaryInterventionsCOunt.length > 0
+            ? getSecondaryInterventionsCOunt[0][1]
+            : 0,
+        totalOfContextualInterventions:
+          getContextualInterventionsCOunt.length > 0
+            ? getContextualInterventionsCOunt[0][1]
+            : 0,
+        totalReferences:
+          getReferencesCOunt.length > 0 ? getReferencesCOunt[0][1] : 0,
+      })
+    );
+  };
+
   const handleViewModalVisible = (flag?: boolean, record?: any) => {
     setBeneficiary(record);
     setModalVisible(!!flag);
+    getInterventionsCount(record);
   };
 
   const handleModalRefVisible = (flag?: boolean, record?: any) => {
@@ -410,6 +465,7 @@ const BeneficiariesList: React.FC = () => {
     form.resetFields();
     setBeneficiary(undefined);
     setBeneficiaryModalVisible(!!flag);
+    setIsEditMode(false);
   };
 
   const handleBeneficiaryPartnerModalVisible = (flag?: boolean) => {
@@ -424,7 +480,6 @@ const BeneficiariesList: React.FC = () => {
 
   const showConfirmVoid = async (data: any) => {
     const beneficiaries = await queryByPartnerId(data.id);
-    console.log("----beneficiaries---", beneficiaries);
     if (beneficiaries.length > 0) {
       confirm({
         title:
@@ -461,7 +516,7 @@ const BeneficiariesList: React.FC = () => {
   const onEditBeneficiary = async (record: any) => {
     form.resetFields();
 
-    if (record.gender === "2") {
+    if (record?.gender === "2") {
       if (record.partnerId != null) {
         await fetchPartner(record).catch((error) => console.log(error));
       }
@@ -659,7 +714,29 @@ const BeneficiariesList: React.FC = () => {
       dataIndex: "beneficiariesInterventionses",
       key: "beneficiariesInterventionses",
       render(val: any, record) {
-        return <Badge count={getBeneficiaryIntervention(record.id)} />;
+        return (
+          <Badge
+            count={record.clinicalInterventions + record.communityInterventions}
+          />
+        );
+      },
+      width: 60,
+    },
+    {
+      title: "#Interv Clínicas",
+      dataIndex: "clinicalInterventions",
+      key: "clinicalInterventions",
+      render(val: any, record) {
+        return <Badge count={record.clinicalInterventions} />;
+      },
+      width: 60,
+    },
+    {
+      title: "#Interv Comunitárias",
+      dataIndex: "communityInterventions",
+      key: "communityInterventions",
+      render(val: any, record) {
+        return <Badge count={record.communityInterventions} />;
       },
       width: 60,
     },
@@ -735,6 +812,30 @@ const BeneficiariesList: React.FC = () => {
           ),
     },
     {
+      title: "Status",
+      dataIndex: "",
+      key: "status",
+      filters: [
+        {
+          text: "activo",
+          value: 1,
+        },
+        {
+          text: "inactivo",
+          value: 0,
+        },
+      ],
+      onFilter: (value, record) => record.status == value,
+      filterSearch: true,
+      render: (text, record) =>
+        record.status == 1 ? (
+          <Text type="success">{"activo"}</Text>
+        ) : (
+          <Text type="danger">{"inactivo"}</Text>
+        ),
+      width: 120,
+    },
+    {
       title: "Acção",
       dataIndex: "",
       key: "x",
@@ -748,7 +849,10 @@ const BeneficiariesList: React.FC = () => {
           <Button
             type="primary"
             icon={<EditOutlined />}
-            onClick={() => onEditBeneficiary(record)}
+            onClick={() => {
+              onEditBeneficiary(record);
+              setIsEditMode(true);
+            }}
           ></Button>
           <Button
             type="primary"
@@ -848,6 +952,8 @@ const BeneficiariesList: React.FC = () => {
         "Distrito",
         "Idade",
         "#Interv",
+        "#Interv Clínicas",
+        "#Interv Comunitárias",
         "Org",
         "Criado Por",
         "Actualizado Por",
@@ -961,7 +1067,10 @@ const BeneficiariesList: React.FC = () => {
               : "ES",
             beneficiary?.district?.name,
             getAgeByDate(beneficiary.dateOfBirth) + " anos",
-            getBeneficiaryIntervention(beneficiary.id),
+            beneficiary?.clinicalInterventions +
+              beneficiary?.communityInterventions,
+            beneficiary?.clinicalInterventions,
+            beneficiary?.communityInterventions,
             beneficiary?.partners?.name,
             getUsernames(beneficiary.createdBy),
             getUsernames(beneficiary.updatedBy),
@@ -1000,6 +1109,10 @@ const BeneficiariesList: React.FC = () => {
     extra
   ) => {
     setFilters(_filters);
+  };
+
+  const handleRegisterAnExistingBeneficiary = (data) => {
+    onEditBeneficiary(data);
   };
 
   return (
@@ -1135,6 +1248,10 @@ const BeneficiariesList: React.FC = () => {
                 </div>
               ),
               rowExpandable: (record) => record.name !== "Not Expandable",
+              onExpand: (expanded, record) =>
+                expanded == true
+                  ? handleViewModalVisible(false, record)
+                  : "Do nothing.",
             }}
             dataSource={beneficiaries}
             bordered
@@ -1173,6 +1290,10 @@ const BeneficiariesList: React.FC = () => {
         handleAddBeneficiary={handleAddBeneficiary}
         handleUpdateBeneficiary={handleUpdateBeneficiary}
         handleModalVisible={handleBeneficiaryModalVisible}
+        handleRegisterAnExistingBeneficiary={
+          handleRegisterAnExistingBeneficiary
+        }
+        isEditMode={isEditMode}
       />
       <FormBeneficiaryPartner
         form={form}

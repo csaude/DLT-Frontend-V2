@@ -16,13 +16,24 @@ import {
 } from "../store/authSlice";
 import styles from "./components/style";
 import styles1 from "../screens/Login/style";
-import { Badge, Box, VStack } from "native-base";
+import {
+  Alert,
+  Badge,
+  Box,
+  HStack,
+  VStack,
+  Text as TextNB,
+  useToast,
+} from "native-base";
 import {
   beneficiariesFetchCount,
   pendingSyncBeneficiaries,
   resolveBeneficiaryOfflineIds,
 } from "../services/beneficiaryService";
-import { pendingSyncReferences, referencesFetchCount } from "../services/referenceService";
+import {
+  pendingSyncReferences,
+  referencesFetchCount,
+} from "../services/referenceService";
 import { getBeneficiariesTotal } from "../store/beneficiarySlice";
 import { getReferencesTotal } from "../store/referenceSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -32,9 +43,14 @@ import Spinner from "react-native-loading-spinner-overlay";
 import AppInfoScreen from "../screens/AppInfo/AppInfoScreen";
 import SyncReportScreen from "../screens/SyncReport/SyncReportReport";
 import DataExportScreen from "../screens/SyncReport/DataExportScreen";
-import { loadPendingsBeneficiariesInterventionsTotals, loadPendingsBeneficiariesTotals, loadPendingsReferencesTotals } from "../store/syncSlice";
+import DatacleanScreen from "../screens/DataClean/DataCleanScreen";
+import {
+  loadPendingsBeneficiariesInterventionsTotals,
+  loadPendingsBeneficiariesTotals,
+  loadPendingsReferencesTotals,
+} from "../store/syncSlice";
 import { pendingSyncBeneficiariesInterventions } from "../services/beneficiaryInterventionService";
-
+import SpinnerModal from "../components/Modal/SpinnerModal";
 
 function HomeScreen() {
   useEffect(() => {
@@ -64,6 +80,8 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
     (state: any) => state.beneficiary.total
   );
   const referencesTotal = useSelector((state: any) => state.reference.total);
+  const syncInProgress = useSelector((state: any) => state.sync.syncInProgress);
+  const toasty = useToast();
 
   useEffect(() => {
     const getUserDetails = async () => {
@@ -245,13 +263,13 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
 
   return (
     <Context.Provider value={loggedUser}>
-      {isLoading ? (
-        <Spinner
-          visible={true}
-          textContent={"Sincronizando..."}
-          textStyle={styles1.spinnerTextStyle}
-        />
-      ) : undefined}
+      <SpinnerModal
+        open={syncInProgress}
+        title={"Sincronização em Curso"}
+        message={
+          "O dispositivo está atualmente em processo de sincronização. Por favor, aguarde até que a sincronização seja concluída para continuar. Agradecemos sua paciência!"
+        }
+      />
       <Drawer.Navigator
         screenOptions={{
           headerStyle: {
@@ -336,7 +354,20 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
           options={{
             title: "",
             headerTitle: "",
-            drawerIcon: () => <ItemBadge label="Detalhes da Aplicação" total={-1} />,
+            drawerIcon: () => (
+              <ItemBadge label="Detalhes da Aplicação" total={-1} />
+            ),
+          }}
+        />
+        <Drawer.Screen
+          name="CleanData"
+          component={DatacleanScreen}
+          options={{
+            title: "",
+            headerTitle: "",
+            drawerIcon: () => (
+              <ItemBadge label="Limpeza de Dados" total={-1} />
+            ),
           }}
         />
       </Drawer.Navigator>

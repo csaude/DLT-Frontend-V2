@@ -7,15 +7,6 @@ import LoadingModal from "@app/components/modal/LoadingModal";
 const DataImport: React.FC = () => {
   const [data, setData] = useState<any>();
   const [completed, setCompleted] = useState(true);
-
-const DataImport: React.FC = () => {
-  const [data, setData] = useState<any>();
-  const [completed, setCompleted] = useState<any>({
-    beneficiaries: false,
-    beneficiariesInterventions: false,
-    references: false,
-    referenceServices: false,
-  });
   const username = localStorage.getItem("username");
 
   const handleChange = (e) => {
@@ -32,7 +23,6 @@ const DataImport: React.FC = () => {
     setCompleted(false);
     await addFromDevice(data, data?.changes.users.updated[0].username);
     setCompleted(true);
-    await addFromDevice(data, username);
   };
 
   const handleSaveData = (e) => {
@@ -68,7 +58,6 @@ const DataImport: React.FC = () => {
         </Row>
 
         {<LoadingModal modalVisible={!completed} />}
-
       </Card>
     </>
   );

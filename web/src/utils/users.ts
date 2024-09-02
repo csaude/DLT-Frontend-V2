@@ -50,6 +50,16 @@ export async function allUsersByUs(payload?: any) {
   return res;
 }
 
+export async function allUsersByUsAndOrganization(payload?: any) {
+  const url =
+    "/api/users/usAndOrganization/" +
+    payload?.usId +
+    "/" +
+    payload?.organizationId;
+  const res = await select(url);
+  return res;
+}
+
 export async function allUsesByLocalities(payload?: any) {
   const url = "/api/users/locality/".concat(payload);
   const res = await select(url);
@@ -128,6 +138,7 @@ export async function pagedQueryByFilters(
   payload?: any,
   pageIndex?: any,
   pageSize?: any,
+  searchName?: any,
   searchUsername?: any,
   searchUserCreator?: number,
   searchDistrict?: number
@@ -136,7 +147,7 @@ export async function pagedQueryByFilters(
   if (payload.userId) {
     url = `/api/users/paged?${stringify(
       payload
-    )}&pageIndex=${pageIndex}&pageSize=${pageSize}&searchUsername=${searchUsername}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`;
+    )}&pageIndex=${pageIndex}&pageSize=${pageSize}&searchName=${searchName}&searchUsername=${searchUsername}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`;
   } else {
     url = "/api/users/" + payload;
   }
@@ -155,19 +166,47 @@ export async function getPagedUsersLastSync(
   payload?: any,
   pageIndex?: any,
   pageSize?: any,
+  searchName?: any,
   searchUsername?: any,
   searchUserCreator?: number,
-  searchDistrict?: number
+  searchDistrict?: number,
+  searchEntryPoint?: number
 ) {
   let url: string;
   if (payload.userId) {
     url = `/sync/usersLastSync/paged?${stringify(
       payload
-    )}&pageIndex=${pageIndex}&pageSize=${pageSize}&searchUsername=${searchUsername}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`;
+    )}&pageIndex=${pageIndex}&pageSize=${pageSize}&searchName=${searchName}&searchUsername=${searchUsername}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}&searchEntryPoint=${searchEntryPoint}`;
   } else {
     url = "/sync/usersLastSync" + payload;
   }
 
   const res = await select(url);
   return res;
+}
+
+export async function queryCountByFilters(
+  userId?: any,
+  searchName?: any,
+  searchUsername?: any,
+  searchUserCreator?: number,
+  searchDistrict?: number,
+  searchEntryPoint?: number
+) {
+  const url = `/sync/usersLastSync/countByFilters?userId=${userId}&searchName=${undefinedToEmpty(
+    searchName
+  )}&searchUsername=${undefinedToEmpty(
+    searchUsername
+  )}&searchUserCreator=${undefinedToEmpty(
+    searchUserCreator
+  )}&searchDistrict=${undefinedToEmpty(
+    searchDistrict
+  )}&searchEntryPoint=${undefinedToEmpty(searchEntryPoint)}`;
+
+  const res = await select(url);
+  return res;
+}
+
+function undefinedToEmpty(value: any) {
+  return value == undefined ? "" : value;
 }

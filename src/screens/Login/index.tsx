@@ -34,7 +34,7 @@ import {
 } from "../../services/api";
 import { MaterialIcons } from "@native-base/icons";
 import { sync } from "../../database/sync";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import bcrypt from "bcryptjs";
 import Spinner from "react-native-loading-spinner-overlay";
 import styles from "./style";
@@ -48,6 +48,8 @@ import { referencesFetchCount } from "../../services/referenceService";
 import { getReferencesTotal } from "../../store/referenceSlice";
 import { loadBeneficiariesInterventionsCounts } from "../../store/beneficiaryInterventionSlice";
 import { beneficiariesInterventionsFetchCount } from "../../services/beneficiaryInterventionService";
+import { updateSyncInProgress } from "../../store/syncSlice";
+import { ErrorHandler, SuccessHandler } from "../../components/SyncIndicator";
 
 interface LoginData {
   email?: string | undefined;
@@ -64,6 +66,7 @@ const Login: React.FC = ({ route }: any) => {
   const [loading, setLoading] = useState(false);
   const [isOffline, setIsOffline] = useState(false);
   const [show, setShow] = React.useState(false);
+  const [showCleanModal, setShowCleanModal] = useState(false);
 
   const [token, setToken] = useState();
 
@@ -72,12 +75,14 @@ const Login: React.FC = ({ route }: any) => {
   const users = database.collections.get("users");
   const sequences = database.collections.get("sequences");
   const userDetails = database.collections.get("user_details");
+
   const dispatch = useDispatch();
   const [passwordExpired, setPasswordExpired] = useState(false);
   const [
     isLoggedUserDifferentFromSyncedUser,
     setLoggedUserDifferentFromSyncedUser,
   ] = useState(false);
+  const syncInProgress = useSelector((state: any) => state.sync.syncInProgress);
 
   const showToast = (message, description) => {
     return toasty.show({
@@ -143,70 +148,26 @@ const Login: React.FC = ({ route }: any) => {
   // watch changes to loggedUser, sync
   useEffect(() => {
     if (loggedUser) {
+      dispatch(updateSyncInProgress(true));
       sync({ username: loggedUser.username })
-        .then(() =>
+        .then(() => {
           toasty.show({
             placement: "top",
             render: () => {
-              return (
-                <Alert
-                  w="100%"
-                  variant="left-accent"
-                  colorScheme="success"
-                  status="success"
-                >
-                  <VStack space={2} flexShrink={1} w="100%">
-                    <HStack
-                      flexShrink={1}
-                      space={2}
-                      alignItems="center"
-                      justifyContent="space-between"
-                    >
-                      <HStack space={2} flexShrink={1} alignItems="center">
-                        <Alert.Icon />
-                        <Text color="coolGray.800">
-                          Sincronização efectuada com sucesso!
-                        </Text>
-                      </HStack>
-                    </HStack>
-                  </VStack>
-                </Alert>
-              );
+              return <SuccessHandler />;
             },
-          })
-        )
-        .then(() => getTotals().catch((err) => console.log(err)))
-        .catch(() =>
+          });
+          getTotals().catch((err) => console.log(err))
+        })
+        .catch(() => {
+          dispatch(updateSyncInProgress(false));
           toasty.show({
             placement: "top",
             render: () => {
-              return (
-                <Alert
-                  w="100%"
-                  variant="left-accent"
-                  colorScheme="error"
-                  status="error"
-                >
-                  <VStack space={2} flexShrink={1} w="100%">
-                    <HStack
-                      flexShrink={1}
-                      space={2}
-                      alignItems="center"
-                      justifyContent="space-between"
-                    >
-                      <HStack space={2} flexShrink={1} alignItems="center">
-                        <Alert.Icon />
-                        <Text color="coolGray.800">
-                          Falha na sincronização!
-                        </Text>
-                      </HStack>
-                    </HStack>
-                  </VStack>
-                </Alert>
-              );
+              return <ErrorHandler />;
             },
-          })
-        );
+          });
+        });
       if (loggedUser.newPassword == "1") {
         navigate({
           name: "ChangePassword",
@@ -223,6 +184,7 @@ const Login: React.FC = ({ route }: any) => {
           },
         });
       }
+      setLoggedUser(undefined);
     }
   }, [loggedUser]);
 
@@ -235,6 +197,8 @@ const Login: React.FC = ({ route }: any) => {
 
     const beneficiaryIntervsCont = await beneficiariesInterventionsFetchCount();
     dispatch(loadBeneficiariesInterventionsCounts(beneficiaryIntervsCont));
+
+    dispatch(updateSyncInProgress(false));
   }, []);
 
   const validate = useCallback((values: any) => {
@@ -340,7 +304,10 @@ const Login: React.FC = ({ route }: any) => {
         const account = loginJson.account;
 
         if (status && status !== 200) {
-          if (resetPassword === "1" || logguedUser?._raw.is_awaiting_sync == 1) {
+          if (
+            resetPassword === "1" ||
+            logguedUser?._raw.is_awaiting_sync == 1
+          ) {
             setLoading(false);
             return showToast(
               "Conta bloqueada",
@@ -376,10 +343,32 @@ const Login: React.FC = ({ route }: any) => {
         ) {
           setLoggedUserDifferentFromSyncedUser(true);
         } else {
+          if (logguedUser?._raw._status != "updated") {
+            await database.write(async () => {
+              const now = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+              await logguedUser.update(
+                (record: any) => {
+                  (record.last_login_date = now),
+                  (record.date_updated = now),
+                  record._status = "updated";
+                }
+              );
+              const userDetailss = await userDetails
+                .query(Q.where("user_id", parseInt(logguedUser.online_id)))
+                .fetch();
+              await userDetailss[0].update(
+                (record: any) => {
+                  (record.last_login_date = now)
+                }
+              );
+              
+            });
+          }
           setIsInvalidCredentials(false);
           setLoggedUser(logguedUser?._raw);
           dispatch(loadUser(logguedUser?._raw));
           isVeryOldPassword(logguedUser?._raw);
+          isDateToCleanData(logguedUser?._raw);
           navigate({
             name: "Main",
             params: {
@@ -389,6 +378,7 @@ const Login: React.FC = ({ route }: any) => {
           });
         }
       } catch (error) {
+        console.log(error);
         setIsInvalidCredentials(true);
       }
       setLoading(false);
@@ -416,6 +406,21 @@ const Login: React.FC = ({ route }: any) => {
     return diff.asDays() > 182
       ? setPasswordExpired(true)
       : setPasswordExpired(false);
+  }, []);
+
+  const isDateToCleanData = useCallback(async (user) => {
+    let next_clean_date;
+    const today = moment(new Date());
+
+    const userDetailss = await userDetails.query().fetch();
+    next_clean_date = userDetailss[0]["was_cleaned"];
+
+    const lastCleanDate = moment(next_clean_date);
+    const diff = moment.duration(today.diff(lastCleanDate));
+
+    if (diff.asDays() >= 7) {
+      setShowCleanModal(true);
+    }
   }, []);
 
   useEffect(() => {
@@ -449,7 +454,10 @@ const Login: React.FC = ({ route }: any) => {
         ? user.passwordLastChangeDate
         : user.dateCreated;
     const date = new Date(timestamp);
-    const formattedDate = date.toISOString().slice(0, 10);
+    const formattedDate = date.toISOString().slice(0, 10) + " " + date.toISOString().slice(11, 19);;
+    
+    const lastLoginDate = new Date();
+    const lastLoginFormatted = lastLoginDate.toISOString().slice(0, 10) + " " + lastLoginDate.toISOString().slice(11, 19);;
 
     await database.write(async () => {
       await userDetails.create((userDetail: any) => {
@@ -458,6 +466,7 @@ const Login: React.FC = ({ route }: any) => {
         userDetail.districts = district_ids.toString();
         userDetail.localities = localities_ids.toString();
         userDetail.uss = uss_ids.toString();
+        userDetail.last_login_date = lastLoginFormatted;
         userDetail.password_last_change_date = formattedDate;
         userDetail.profile_id = user.profiles.id;
         userDetail.entry_point = user.entryPoint;
@@ -639,6 +648,38 @@ const Login: React.FC = ({ route }: any) => {
                   </Alert>
                   <Text></Text>
                 </Box>
+              </Modal.Body>
+            </Modal.Content>
+          </Modal>
+        </Center>
+
+        <Center>
+          <Modal
+            isOpen={showCleanModal}
+            onClose={() => setShowCleanModal(false)}
+          >
+            <Modal.Content maxWidth="400px">
+              <Modal.CloseButton />
+              <Modal.Header>Limpeza regular de dados</Modal.Header>
+              <Modal.Body>
+                <ScrollView>
+                  <Box alignItems="center">
+                    {/* <Ionicons name="md-checkmark-circle" size={100} color="#0d9488" /> */}
+                    <Alert w="100%" status="success">
+                      <VStack space={2} flexShrink={1}>
+                        <HStack>
+                          <InfoIcon mt="1" />
+                          <Text fontSize="sm" color="coolGray.800">
+                            Faca a limpeza regular de dados o mais breve
+                            possivel de modo a melhorar a performace.
+                            Beneficiario(a)!
+                          </Text>
+                        </HStack>
+                      </VStack>
+                    </Alert>
+                    <Text></Text>
+                  </Box>
+                </ScrollView>
               </Modal.Body>
             </Modal.Content>
           </Modal>

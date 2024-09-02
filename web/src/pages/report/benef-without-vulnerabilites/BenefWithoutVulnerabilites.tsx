@@ -19,11 +19,8 @@ import moment from "moment";
 import dreams from "../../../assets/dreams.png";
 
 import {
-  getNewlyEnrolledAgywAndServicesReportGenerated,
+  getBenefWithoutVulnerabilites,
   getFileDownloaded,
-  geNewlyEnrolledAgywAndServicesSummaryReportGenerated,
-  getBeneficiariesVulnerabilitiesAndServicesSummaryReportGenerated,
-  getBeneficiariesVulnerabilitiesAndServicesReportGenerated,
 } from "@app/utils/report";
 import { Title as AppTitle } from "@app/components";
 import LoadingModal from "@app/components/modal/LoadingModal";
@@ -31,7 +28,7 @@ import { useSelectAll } from "@app/hooks/useSelectAll";
 const { Option } = Select;
 const { Title } = Typography;
 
-const DataExtraction = () => {
+const BenefWithoutVulnerabilites = () => {
   const [loggedUser, setLogguedUser] = useState<any>(undefined);
   const [provinces, setProvinces] = useState<any[]>([]);
   const [selectedProvinces, setSelectedProvinces] = useState<any[]>([]);
@@ -42,7 +39,8 @@ const DataExtraction = () => {
   const [form] = Form.useForm();
   const [dataLoading, setDataLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("");
-  const [extraOption, setExtraOption] = useState(0);
+  const [currentPage, setCurrentPage] = useState<number>(0);
+  const [lastPage, setLastPage] = useState<number>(0);
   const RequiredFieldMessage = "Obrigatório!";
   const pageSize = 1000000;
   const username = localStorage.getItem("username");
@@ -55,25 +53,6 @@ const DataExtraction = () => {
   const districtsIds = selectedDistricts.map((district) => {
     return district.id;
   });
-
-  const extraOptions = [
-    {
-      id: 1,
-      name: "Lista De RAMJ Registadas No DLT No Período Em Consideração, Suas Vulnerabilidades E Serviços Recebidos ",
-    },
-    {
-      id: 2,
-      name: "Relatório Resumo De RAMJ Registadas No DLT No Período Em Consideração, Suas Vulnerabilidades E Serviços Recebidos ",
-    },
-    {
-      id: 3,
-      name: "Lista De Beneficiárias Dreams, Suas Vulnerabilidades E Serviços Recebidos",
-    },
-    {
-      id: 4,
-      name: "Resumo Da Lista De Beneficiárias Dreams, Suas Vulnerabilidades E Serviços Recebidos",
-    },
-  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -93,12 +72,14 @@ const DataExtraction = () => {
 
   const onChangeProvinces = async (values: any) => {
     if (values.length > 0) {
-      const provs = provinces.filter((item) => values == item.id.toString());
+      const provs = provinces.filter((item) =>
+        values.includes(item.id.toString())
+      );
       setSelectedProvinces(provs);
       let dataDistricts;
       if (loggedUser.districts.length > 0) {
-        dataDistricts = loggedUser.districts.filter(
-          (d) => values == d.province.id.toString()
+        dataDistricts = loggedUser.districts.filter((d) =>
+          values.includes(d.province.id.toString())
         );
       } else {
         dataDistricts = await queryDistrictsByProvinces({
@@ -132,25 +113,11 @@ const DataExtraction = () => {
     }),
   });
 
-  const onChangeExtraOption = async (option) => {
-    setLoadingMessage("Processando os parâmetros da Extração...");
-    if (option != extraOption) {
-      setDataLoading(true);
-      setExtraOption(option);
-      if (option !== undefined) {
-        setDataLoading(false);
-      } else {
-        toast.error("Por favor selecione o tipo de extração");
-        setDataLoading(false);
-      }
-    }
-  };
-
   useEffect(() => {
-    if (selectedDistricts && initialDate && finalDate && extraOption !== 0) {
-      onChangeExtraOption(extraOption);
+    if (currentPage != 0 && lastPage != 0 && currentPage < lastPage) {
+      generateExcelBenefWithoutVulnerabilites(currentPage); // Iterar
     }
-  }, [selectedDistricts, initialDate, finalDate, extraOption]);
+  }, [selectedDistricts]);
 
   const handleGenerateXLSXReport = (i) => {
     setLoadingMessage("Extraindo... Por favor aguarde");
@@ -164,25 +131,14 @@ const DataExtraction = () => {
         "Para extratir por favor selecione os filtros para relatorio"
       );
     } else {
-      if (extraOption == 1) {
-        generateExcelNewlyEnrolledAgywAndServicesReport();
-      } else if (extraOption == 2) {
-        generateExcelNewlyEnrolledAgywAndServicesSummaryReport();
-      } else if (extraOption == 3) {
-        generateExcelBeneficiariesVulnerabilitiesAndServicesReport();
-      } else if (extraOption == 4) {
-        generateExcelBeneficiariesVulnerabilitiesAndServicesSummaryReport();
-      } else {
-        setDataLoading(false);
-        toast.error("Para extrair por favor selecione o tipo de extração");
-      }
+      generateExcelBenefWithoutVulnerabilites(i);
     }
   };
 
-  const generateExcelNewlyEnrolledAgywAndServicesReport = async () => {
+  const generateExcelBenefWithoutVulnerabilites = async (i: any) => {
     setDataLoading(true);
     try {
-      const response = await getNewlyEnrolledAgywAndServicesReportGenerated(
+      const response = await getBenefWithoutVulnerabilites(
         selectedProvinces[0].name,
         districtsIds,
         initialDate,
@@ -191,33 +147,13 @@ const DataExtraction = () => {
         username
       );
       await downloadFile(response);
+      setCurrentPage(currentPage + 1);
       setDataLoading(false);
     } catch (error) {
       setDataLoading(false);
       console.error("Error downloading the Excel report", error);
     }
   };
-
-  const generateExcelBeneficiariesVulnerabilitiesAndServicesReport =
-    async () => {
-      setDataLoading(true);
-      try {
-        const response =
-          await getBeneficiariesVulnerabilitiesAndServicesReportGenerated(
-            selectedProvinces[0].name,
-            districtsIds,
-            initialDate,
-            finalDate,
-            pageSize,
-            username
-          );
-        await downloadFile(response);
-        setDataLoading(false);
-      } catch (error) {
-        setDataLoading(false);
-        console.error("Error downloading the Excel report", error);
-      }
-    };
 
   const downloadFile = async (filePath) => {
     try {
@@ -237,52 +173,13 @@ const DataExtraction = () => {
     }
   };
 
-  const generateExcelNewlyEnrolledAgywAndServicesSummaryReport = async () => {
-    setDataLoading(true);
-    try {
-      const response =
-        await geNewlyEnrolledAgywAndServicesSummaryReportGenerated(
-          selectedProvinces[0].name,
-          districtsIds,
-          initialDate,
-          finalDate,
-          pageSize,
-          username
-        );
-
-      await downloadFile(response);
-      setDataLoading(false);
-    } catch (error) {
-      setDataLoading(false);
-      console.error("Error downloading the Excel report", error);
-    }
-  };
-
-  const generateExcelBeneficiariesVulnerabilitiesAndServicesSummaryReport =
-    async () => {
-      setDataLoading(true);
-      try {
-        const response =
-          await getBeneficiariesVulnerabilitiesAndServicesSummaryReportGenerated(
-            selectedProvinces[0].name,
-            districtsIds,
-            initialDate,
-            finalDate,
-            username
-          );
-        await downloadFile(response);
-        setDataLoading(false);
-      } catch (error) {
-        setDataLoading(false);
-        console.error("Error downloading the Excel report", error);
-      }
-    };
-
   const onChangeInitialDate = (e) => {
     setInitialDate(e?.toDate().getTime());
   };
+
   const onChangeFInalDate = (e) => {
     setFinalDate(e?.toDate().getTime());
+    setCurrentPage(0);
   };
 
   return (
@@ -305,10 +202,10 @@ const DataExtraction = () => {
             color: "#17a2b8",
           }}
         >
-          EXTRAÇÃO DE DADOS
+          Beneficiárias sem vulnerabilidades específicas registadas
         </Title>
         <Card
-          title="Parâmetros da extração"
+          title="Parâmetros"
           bordered={false}
           headStyle={{ color: "#17a2b8" }}
           style={{ color: "#17a2b8", marginLeft: "35%", marginRight: "20%" }}
@@ -373,22 +270,6 @@ const DataExtraction = () => {
                       />
                     </Space>
                   </Form.Item>
-
-                  <Form.Item
-                    name="Extração"
-                    label="Extração"
-                    rules={[{ required: true, message: RequiredFieldMessage }]}
-                  >
-                    <Select
-                      placeholder="Seleccione a Extração Que Pretende"
-                      onChange={onChangeExtraOption}
-                    >
-                      {extraOptions?.map((item) => (
-                        <Option key={item.id}>{item.name}</Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-
                   <Form.Item>
                     <Button
                       type="primary"
@@ -409,4 +290,4 @@ const DataExtraction = () => {
   );
 };
 
-export default DataExtraction;
+export default BenefWithoutVulnerabilites;
