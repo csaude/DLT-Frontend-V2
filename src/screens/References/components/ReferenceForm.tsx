@@ -380,6 +380,9 @@ const ReferenceForm: React.FC = ({ route }: any) => {
   }, [isSync]);
 
   const handleSubmit = async () => {
+  if(loading){
+      return;
+  }else{
     setLoading(true);
 
     const savedR = await database.write(async () => {
@@ -450,7 +453,8 @@ const ReferenceForm: React.FC = ({ route }: any) => {
 
     const benIntervNotSynced = await pendingSyncReferences();
     dispatch(loadPendingsReferencesTotals({pendingSyncReferences:benIntervNotSynced}))
-  };
+  }
+};
 
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
