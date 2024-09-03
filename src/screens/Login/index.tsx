@@ -188,7 +188,7 @@ const Login: React.FC = ({ route }: any) => {
           },
         });
       }
-      setLoggedUser(undefined);
+      // setLoggedUser(undefined);
     }
   }, [loggedUser]);
 
