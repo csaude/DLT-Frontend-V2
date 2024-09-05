@@ -72,14 +72,12 @@ const BenefWithoutPrimeryPackageCompleted = () => {
 
   const onChangeProvinces = async (values: any) => {
     if (values.length > 0) {
-      const provs = provinces.filter((item) =>
-        values.includes(item.id.toString())
-      );
+      const provs = provinces.filter((item) => values == item.id.toString());
       setSelectedProvinces(provs);
       let dataDistricts;
       if (loggedUser.districts.length > 0) {
-        dataDistricts = loggedUser.districts.filter((d) =>
-          values.includes(d.province.id.toString())
+        dataDistricts = loggedUser.districts.filter(
+          (d) => values == d.province.id.toString()
         );
       } else {
         dataDistricts = await queryDistrictsByProvinces({
