@@ -129,8 +129,13 @@ const ViewReferencePanel = ({ selectedReference }) => {
       setReference(selectedReference);
 
       if (
-        loggedUser.partners.partnerType ==
-        selectedReference.referredBy.partners.partnerType
+        (loggedUser.partners.partnerType ==
+          selectedReference.referredBy.partners.partnerType &&
+          loggedUser.entryPoint == selectedReference.referredBy.entryPoint) ||
+        (loggedUser.partners.partnerType == "2" &&
+          selectedReference.serviceType == 1) ||
+        (loggedUser.partners.partnerType == "1" &&
+          selectedReference.serviceType == 2)
       ) {
         setCanAddress(false);
       }
