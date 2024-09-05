@@ -380,6 +380,9 @@ const ReferenceForm: React.FC = ({ route }: any) => {
   }, [isSync]);
 
   const handleSubmit = async () => {
+  if(loading){
+      return;
+  }else{
     setLoading(true);
 
     const savedR = await database.write(async () => {
@@ -421,9 +424,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
     });
 
     syncronize();
-    await delay(5000);
-    syncronize();
-    await delay(1000);
+    await delay(7000);
 
     const syncedReferences = await database
       .get("references")
@@ -450,7 +451,8 @@ const ReferenceForm: React.FC = ({ route }: any) => {
 
     const benIntervNotSynced = await pendingSyncReferences();
     dispatch(loadPendingsReferencesTotals({pendingSyncReferences:benIntervNotSynced}))
-  };
+  }
+};
 
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -479,6 +481,13 @@ const ReferenceForm: React.FC = ({ route }: any) => {
   const syncronize = () => {
     if (!isOffline) {
       sync({ username: loggedUser.username })
+      .then(()=>{
+        toast.show({
+          placement: "top",
+          render: () => {
+            return <SuccessHandler />;
+          }
+         })})
         .then(() => {setIsSync(true)
           fetchCounts()
         })

@@ -7,8 +7,12 @@ import VersionCheck from "react-native-version-check";
 
 export async function sync({ username }) {
   await doSync({ username });
-  await resolveBeneficiaryOfflineIds();
-  await doSync({ username });
+
+  const foundNewWebBeneficiaries = await resolveBeneficiaryOfflineIds();
+
+  if(foundNewWebBeneficiaries){
+    await doSync({ username });
+  }
 }
 export async function doSync({ username }) {
   await synchronize({
