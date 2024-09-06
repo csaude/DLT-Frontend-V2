@@ -63,6 +63,7 @@ const Login: React.FC = ({ route }: any) => {
   const params: any = route?.params;
   const resetPassword: any = params?.resetPassword;
   const [loggedUser, setLoggedUser] = useState<any>(undefined);
+  const [localLoggedUser, setLocalLoggedUser] = useState<any>(undefined);
   const [isInvalidCredentials, setIsInvalidCredentials] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isOffline, setIsOffline] = useState(false);
@@ -188,7 +189,7 @@ const Login: React.FC = ({ route }: any) => {
           },
         });
       }
-      // setLoggedUser(undefined);
+      setLoggedUser(undefined);
     }
   }, [loggedUser]);
 
@@ -324,6 +325,7 @@ const Login: React.FC = ({ route }: any) => {
           await fetchPrefix(values.username.trim());
           setToken(loginJson.token);
           setLoggedUser(account);
+          setLocalLoggedUser(account);
           dispatch(loadUser(account));
           saveUserDatails(account);
           isVeryOldPassword(account);
@@ -370,6 +372,7 @@ const Login: React.FC = ({ route }: any) => {
           }
           setIsInvalidCredentials(false);
           setLoggedUser(logguedUser?._raw);
+          setLocalLoggedUser(logguedUser?._raw);
           dispatch(loadUser(logguedUser?._raw));
           isVeryOldPassword(logguedUser?._raw);
           navigate({
@@ -489,7 +492,7 @@ const Login: React.FC = ({ route }: any) => {
       navigate({
         name: "ChangePassword",
         params: {
-          loggedUser: loggedUser,
+          loggedUser: localLoggedUser,
           token: token,
           passwordExpired: passwordExpired,
         },
