@@ -1240,7 +1240,7 @@ const BeneficiaryForm: React.FC = ({
                             currentDate={
                               beneficiarie?.date_of_birth
                                 ? new Date(beneficiarie?.date_of_birth)
-                                : new Date()
+                                : minBirthYear
                             }
                           />
                         </InputLeftAddon>
