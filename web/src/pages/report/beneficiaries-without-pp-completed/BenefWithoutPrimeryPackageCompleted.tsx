@@ -19,7 +19,7 @@ import moment from "moment";
 import dreams from "../../../assets/dreams.png";
 
 import {
-  getBenefWithoutVulnerabilites,
+  getBeneficiariesWithoutPrimaryPackageCompletedReportGenerated,
   getFileDownloaded,
 } from "@app/utils/report";
 import { Title as AppTitle } from "@app/components";
@@ -28,7 +28,7 @@ import { useSelectAll } from "@app/hooks/useSelectAll";
 const { Option } = Select;
 const { Title } = Typography;
 
-const BenefWithoutVulnerabilites = () => {
+const BenefWithoutPrimeryPackageCompleted = () => {
   const [loggedUser, setLogguedUser] = useState<any>(undefined);
   const [provinces, setProvinces] = useState<any[]>([]);
   const [selectedProvinces, setSelectedProvinces] = useState<any[]>([]);
@@ -113,7 +113,7 @@ const BenefWithoutVulnerabilites = () => {
 
   useEffect(() => {
     if (currentPage != 0 && lastPage != 0 && currentPage < lastPage) {
-      generateExcelBenefWithoutVulnerabilites(currentPage); // Iterar
+      generateExcelBenefWithoutPPCompleted(currentPage); // Iterar
     }
   }, [selectedDistricts]);
 
@@ -129,21 +129,21 @@ const BenefWithoutVulnerabilites = () => {
         "Para extratir por favor selecione os filtros para relatorio"
       );
     } else {
-      generateExcelBenefWithoutVulnerabilites(i);
+      generateExcelBenefWithoutPPCompleted(i);
     }
   };
 
-  const generateExcelBenefWithoutVulnerabilites = async (i: any) => {
+  const generateExcelBenefWithoutPPCompleted = async (i: any) => {
     setDataLoading(true);
     try {
-      const response = await getBenefWithoutVulnerabilites(
-        selectedProvinces[0].name,
-        districtsIds,
-        initialDate,
-        finalDate,
-        pageSize,
-        username
-      );
+      const response =
+        await getBeneficiariesWithoutPrimaryPackageCompletedReportGenerated(
+          selectedProvinces[0].name,
+          districtsIds,
+          initialDate,
+          finalDate,
+          username
+        );
       await downloadFile(response);
       setCurrentPage(currentPage + 1);
       setDataLoading(false);
@@ -200,7 +200,7 @@ const BenefWithoutVulnerabilites = () => {
             color: "#17a2b8",
           }}
         >
-          Beneficiárias sem vulnerabilidades específicas registadas
+          Lista de Acompanhamento de Completude de Pacote Primário
         </Title>
         <Card
           title="Parâmetros"
@@ -288,4 +288,4 @@ const BenefWithoutVulnerabilites = () => {
   );
 };
 
-export default BenefWithoutVulnerabilites;
+export default BenefWithoutPrimeryPackageCompleted;

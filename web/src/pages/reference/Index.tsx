@@ -635,12 +635,12 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
           value: 3,
         },
       ],
-      onFilter: (value, record) => record?.notifyTo?.entryPoint == value,
+      onFilter: (value, record) => record?.referTo == value,
       filterSearch: true,
       render: (text, record) =>
-        record.notifyTo?.entryPoint == 1 ? (
+        record.referTo == 1 ? (
           <Text>US </Text>
-        ) : record.notifyTo?.entryPoint == 2 ? (
+        ) : record.referTo == 2 ? (
           <Text>CM </Text>
         ) : (
           <Text>ES </Text>

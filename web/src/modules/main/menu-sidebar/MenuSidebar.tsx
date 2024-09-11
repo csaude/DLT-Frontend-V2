@@ -151,6 +151,10 @@ export const MENU: IMenuItem[] = [
         name: "Beneficiárias sem vulnerabilidades específica",
         path: "/benefWithoutVulnerabilites",
       },
+      {
+        name: "Acompanhamento Completude Pacote Primário",
+        path: "/benefWithoutPrimaryPackageCompleted",
+      },
     ],
   },
   {
