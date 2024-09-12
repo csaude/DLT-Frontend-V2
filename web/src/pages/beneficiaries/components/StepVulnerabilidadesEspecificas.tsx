@@ -89,6 +89,21 @@ const StepVulnerabilidadesEspecificas = ({
         </Col>
         <Col className="gutter-row" span={8}>
           <Form.Item
+            id="vblt_pregnant_or_has_children-control"
+            name="vblt_pregnant_or_has_children"
+            label="Está ou Já esteve Grávida ou Tem filhos?"
+            rules={[{ required: true, message: RequiredFieldMessage }]}
+            style={{ textAlign: "left" }}
+            initialValue={beneficiary?.vbltPregnantOrHasChildren}
+          >
+            <Radio.Group id="vblt_pregnant_or_has_children-options">
+              <Radio.Button value={1}>SIM</Radio.Button>
+              <Radio.Button value={0}>NÃO</Radio.Button>
+            </Radio.Group>
+          </Form.Item>
+        </Col>
+        <Col className="gutter-row" span={8}>
+          <Form.Item
             id="vblt_multiple_partners-control"
             name="vblt_multiple_partners"
             label="Relações Múltiplas e Concorrentes?"
@@ -97,21 +112,6 @@ const StepVulnerabilidadesEspecificas = ({
             initialValue={beneficiary?.vbltMultiplePartners}
           >
             <Radio.Group id="vblt_multiple_partners-options">
-              <Radio.Button value={1}>SIM</Radio.Button>
-              <Radio.Button value={0}>NÃO</Radio.Button>
-            </Radio.Group>
-          </Form.Item>
-        </Col>
-        <Col className="gutter-row" span={8}>
-          <Form.Item
-            id="vblt_is_migrant-control"
-            name="vblt_is_migrant"
-            label="Migrante?"
-            rules={[{ required: true, message: RequiredFieldMessage }]}
-            style={{ textAlign: "left" }}
-            initialValue={beneficiary?.vbltIsMigrant}
-          >
-            <Radio.Group id="vblt_is_migrant-options">
               <Radio.Button value={1}>SIM</Radio.Button>
               <Radio.Button value={0}>NÃO</Radio.Button>
             </Radio.Group>

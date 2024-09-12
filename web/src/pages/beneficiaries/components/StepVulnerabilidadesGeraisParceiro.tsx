@@ -68,21 +68,6 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
             </Select>
           </Form.Item>
         </Col>
-        <Col className="gutter-row" span={8}>
-          <Form.Item
-            id="vblt_is_orphan-control"
-            name="vblt_is_orphan"
-            label="É Orfã?"
-            rules={[{ required: true, message: RequiredFieldMessage }]}
-            style={{ textAlign: "left" }}
-            initialValue={beneficiary?.vbltIsOrphan}
-          >
-            <Radio.Group id="vblt_is_orphan-options">
-              <Radio.Button value={1}>SIM</Radio.Button>
-              <Radio.Button value={0}>NÃO</Radio.Button>
-            </Radio.Group>
-          </Form.Item>
-        </Col>
       </Row>
       <Row gutter={24}>
         <Col className="gutter-row" span={8}>
