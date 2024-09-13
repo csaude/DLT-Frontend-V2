@@ -30,14 +30,7 @@ import styles from "./styles";
 import { useFormik } from "formik";
 import withObservables from "@nozbe/with-observables";
 import { database } from "../../database";
-import { Q } from "@nozbe/watermelondb";
 import NetInfo from "@react-native-community/netinfo";
-import {
-  SuccessHandler,
-  WithoutNetwork,
-  ErrorHandler as SyncErrorHandler,
-} from "../../components/SyncIndicator";
-import { sync } from "../../database/sync";
 import { pendingSyncBeneficiaries } from "../../services/beneficiaryService";
 import {
   loadPendingsBeneficiariesInterventionsTotals,
@@ -95,6 +88,7 @@ const DatacleanScreen: React.FC = ({
           return <ErrorHandler />;
         },
       });
+      setLoading(false);
     } else if (isPendingSync){
 
         setShowCleanModal(true);
@@ -121,6 +115,7 @@ const DatacleanScreen: React.FC = ({
           toast.show({
             placement: "top",
             render: () => {
+              setLoading(false);
               return <InfoHandler />;
             },
           });
@@ -129,6 +124,7 @@ const DatacleanScreen: React.FC = ({
           toast.show({
             placement: "top",
             render: () => {
+              setLoading(false);
               return <ErrorCleanHandler />;
             },
           });

@@ -12,9 +12,9 @@ import {
 } from "native-base";
 import { database } from "../../database";
 import { Q } from "@nozbe/watermelondb";
-import { useSelector } from "react-redux";
 import { pendingSyncBeneficiaries } from "../../services/beneficiaryService";
 import { pendingSyncBeneficiariesInterventions } from "../../services/beneficiaryInterventionService";
+import moment from "moment";
 
 const todayDate = new Date();
 export const sevenDaysLater = todayDate.setFullYear(
@@ -132,11 +132,14 @@ export const checkPendingSync = async () => {
 };
 
 export const destroyBeneficiariesData = async (beneficiaryIds: any) => {
-  // setLoading(true);
+  
+  const userDetails = database.collections.get("user_details");
+  const userDetailss = await userDetails.query().fetch();
+  const userID = userDetailss[0]["user_id"];
+
   try {
     await database.write(async () => {
       for (const beneficiaryId of beneficiaryIds) {
-        // console.log(beneficiaryId);
         const recordsInterventions = await database
           .get("beneficiaries_interventions")
           .query(Q.where("beneficiary_id", beneficiaryId))
@@ -159,7 +162,25 @@ export const destroyBeneficiariesData = async (beneficiaryIds: any) => {
           await record.destroyPermanently();
         }
       }
-    });
+    }).then(async ()=>
+    
+      await database.write(async () => {
+          const now = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+          let newDate = new Date(now);
+          newDate.setDate(newDate.getDate() + 7);
+          
+          const findUser = await userDetails
+          .query(Q.where("user_id", parseInt(userID)))
+          .fetch();
+          await findUser[0].update(
+            (record: any) => {
+              (record.next_clean_date = newDate.toISOString().replace('T', ' ').substring(0, 19)),
+              (record.was_cleaned = 1)
+            }
+          );
+        })    
+    );
+      
     console.log("Dados limpados com sucesso!!!");
   } catch (error) {
     console.log(error);

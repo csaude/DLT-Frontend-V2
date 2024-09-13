@@ -50,6 +50,7 @@ import { loadBeneficiariesInterventionsCounts } from "../../store/beneficiaryInt
 import { beneficiariesInterventionsFetchCount } from "../../services/beneficiaryInterventionService";
 import { updateSyncInProgress } from "../../store/syncSlice";
 import { ErrorHandler, SuccessHandler } from "../../components/SyncIndicator";
+import { cleanData, destroyBeneficiariesData, ErrorCleanHandler, filterData, InfoHandler } from "../../components/DataClean";
 
 interface LoginData {
   email?: string | undefined;
@@ -62,6 +63,7 @@ const Login: React.FC = ({ route }: any) => {
   const params: any = route?.params;
   const resetPassword: any = params?.resetPassword;
   const [loggedUser, setLoggedUser] = useState<any>(undefined);
+  const [localLoggedUser, setLocalLoggedUser] = useState<any>(undefined);
   const [isInvalidCredentials, setIsInvalidCredentials] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isOffline, setIsOffline] = useState(false);
@@ -75,6 +77,8 @@ const Login: React.FC = ({ route }: any) => {
   const users = database.collections.get("users");
   const sequences = database.collections.get("sequences");
   const userDetails = database.collections.get("user_details");
+  const references = database.collections.get("references");
+  const beneficiaries_interventions = database.collections.get("beneficiaries_interventions");
 
   const dispatch = useDispatch();
   const [passwordExpired, setPasswordExpired] = useState(false);
@@ -84,7 +88,7 @@ const Login: React.FC = ({ route }: any) => {
   ] = useState(false);
   const syncInProgress = useSelector((state: any) => state.sync.syncInProgress);
 
-  const showToast = (message, description) => {
+  const showToast = (message: {} | null | undefined, description: string | undefined) => {
     return toasty.show({
       placement: "top",
       render: () => {
@@ -157,7 +161,8 @@ const Login: React.FC = ({ route }: any) => {
               return <SuccessHandler />;
             },
           });
-          getTotals().catch((err) => console.log(err))
+          getTotals().catch((err) => console.log(err));
+          isDateToCleanData().catch((err) => console.log(err));
         })
         .catch(() => {
           dispatch(updateSyncInProgress(false));
@@ -320,6 +325,7 @@ const Login: React.FC = ({ route }: any) => {
           await fetchPrefix(values.username.trim());
           setToken(loginJson.token);
           setLoggedUser(account);
+          setLocalLoggedUser(account);
           dispatch(loadUser(account));
           saveUserDatails(account);
           isVeryOldPassword(account);
@@ -366,9 +372,9 @@ const Login: React.FC = ({ route }: any) => {
           }
           setIsInvalidCredentials(false);
           setLoggedUser(logguedUser?._raw);
+          setLocalLoggedUser(logguedUser?._raw);
           dispatch(loadUser(logguedUser?._raw));
           isVeryOldPassword(logguedUser?._raw);
-          isDateToCleanData(logguedUser?._raw);
           navigate({
             name: "Main",
             params: {
@@ -386,7 +392,7 @@ const Login: React.FC = ({ route }: any) => {
   }, []);
 
   const isVeryOldPassword = useCallback(async (user) => {
-    let passwordLastChangeDate;
+    let passwordLastChangeDate: moment.MomentInput;
     const today = moment(new Date());
 
     if (user.online_id) {
@@ -408,18 +414,76 @@ const Login: React.FC = ({ route }: any) => {
       : setPasswordExpired(false);
   }, []);
 
-  const isDateToCleanData = useCallback(async (user) => {
-    let next_clean_date;
+  const isDateToCleanData = useCallback(async () => {
+    let next_clean_date: moment.MomentInput;
+    let userID: string;
+    let wasCleaned: null;
     const today = moment(new Date());
+    const now = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
 
     const userDetailss = await userDetails.query().fetch();
-    next_clean_date = userDetailss[0]["was_cleaned"];
+    next_clean_date = userDetailss[0]["next_clean_date"];
+    userID = userDetailss[0]["user_id"];
+    wasCleaned = userDetailss[0]["was_cleaned"];
+    let newDate = new Date(now);
+    newDate.setDate(newDate.getDate() + 7);
 
-    const lastCleanDate = moment(next_clean_date);
-    const diff = moment.duration(today.diff(lastCleanDate));
+    const diff = moment.duration(today.diff(next_clean_date));
 
     if (diff.asDays() >= 7) {
-      setShowCleanModal(true);
+      // setShowCleanModal(true);
+      
+      const referencesCollection = await references.query().fetch();
+      const interventionsCollection = await beneficiaries_interventions.query().fetch();
+
+      const interventionsCollectionIDsList = await filterData(
+        interventionsCollection
+      );
+      const myIDsList = await filterData(referencesCollection);
+
+      const allBenfIds = [...myIDsList, ...interventionsCollectionIDsList];
+      const uniqueBenfIds = await cleanData(allBenfIds);
+
+      await destroyBeneficiariesData(uniqueBenfIds)
+        .then(() => {
+          toasty.show({
+            placement: "top",
+            render: () => {
+              setLoading(false);
+              return <InfoHandler />;
+            },
+          });
+        })
+        .catch((error) => {
+          toasty.show({
+            placement: "top",
+            render: () => {
+              setLoading(false);
+              return <ErrorCleanHandler />;
+            },
+          });
+
+          console.error("Erro ao deletar registros:", error);
+           setLoading(false);
+        });
+      
+    } else if(wasCleaned == null && next_clean_date == null) {
+
+      // setShowCleanModal(true);
+
+    }else{
+
+      await database.write(async () => {
+        const findUser = await userDetails
+        .query(Q.where("user_id", parseInt(userID)))
+        .fetch();
+        await findUser[0].update(
+          (record: any) => {
+            (record.next_clean_date = newDate.toISOString().replace('T', ' ').substring(0, 19)),
+            (record.was_cleaned = 0)
+          }
+        );
+      });
     }
   }, []);
 
@@ -428,7 +492,7 @@ const Login: React.FC = ({ route }: any) => {
       navigate({
         name: "ChangePassword",
         params: {
-          loggedUser: loggedUser,
+          loggedUser: localLoggedUser,
           token: token,
           passwordExpired: passwordExpired,
         },
@@ -437,16 +501,16 @@ const Login: React.FC = ({ route }: any) => {
   }, [passwordExpired, setPasswordExpired]);
 
   const saveUserDatails = useCallback(async (user) => {
-    const provinces_ids = user.provinces.map((province) => {
+    const provinces_ids = user.provinces.map((province: { id: any; }) => {
       return province.id;
     });
-    const district_ids = user.districts.map((district) => {
+    const district_ids = user.districts.map((district: { id: any; }) => {
       return district.id;
     });
-    const localities_ids = user.localities.map((locality) => {
+    const localities_ids = user.localities.map((locality: { id: any; }) => {
       return locality.id;
     });
-    const uss_ids = user.us.map((us) => {
+    const uss_ids = user.us.map((us: { id: any; }) => {
       return us.id;
     });
     const timestamp =
@@ -672,7 +736,6 @@ const Login: React.FC = ({ route }: any) => {
                           <Text fontSize="sm" color="coolGray.800">
                             Faca a limpeza regular de dados o mais breve
                             possivel de modo a melhorar a performace.
-                            Beneficiario(a)!
                           </Text>
                         </HStack>
                       </VStack>
