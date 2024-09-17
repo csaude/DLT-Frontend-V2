@@ -348,8 +348,7 @@ const BeneficiaryForm = ({
               </Space>
             </Space>
           </div>
-        </Modal>{" "}
-        ben.vbltIsOrphan = vblts.vblt_is_orphan;
+        </Modal>
       </>
     );
   };
