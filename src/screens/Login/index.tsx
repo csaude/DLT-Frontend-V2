@@ -50,7 +50,7 @@ import { loadBeneficiariesInterventionsCounts } from "../../store/beneficiaryInt
 import { beneficiariesInterventionsFetchCount } from "../../services/beneficiaryInterventionService";
 import { updateSyncInProgress } from "../../store/syncSlice";
 import { ErrorHandler, SuccessHandler } from "../../components/SyncIndicator";
-import { cleanData, destroyBeneficiariesData, ErrorCleanHandler, filterData, InfoHandler } from "../../components/DataClean";
+import { benfList, cleanData, destroyBeneficiariesData, ErrorCleanHandler, filterData, InfoHandler } from "../../components/DataClean";
 
 interface LoginData {
   email?: string | undefined;
@@ -443,6 +443,8 @@ const Login: React.FC = ({ route }: any) => {
 
       const allBenfIds = [...myIDsList, ...interventionsCollectionIDsList];
       const uniqueBenfIds = await cleanData(allBenfIds);
+
+      const benfsList = await benfList(uniqueBenfIds);
 
       await destroyBeneficiariesData(uniqueBenfIds)
         .then(() => {

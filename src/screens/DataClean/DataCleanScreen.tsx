@@ -48,6 +48,7 @@ import {
   cleanData,
   destroyBeneficiariesData,
   filterData,
+  benfList,
 } from "../../components/DataClean";
 import { navigate } from "../../routes/NavigationRef";
 
@@ -110,7 +111,9 @@ const DatacleanScreen: React.FC = ({
 
       const uniqueBenfIds = await cleanData(allBenfIds);
 
-      await destroyBeneficiariesData(uniqueBenfIds)
+      const benfsList = await benfList(uniqueBenfIds);
+
+      await destroyBeneficiariesData(benfsList)
         .then(() => {
           toast.show({
             placement: "top",

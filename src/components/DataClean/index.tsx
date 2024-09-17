@@ -34,6 +34,16 @@ export const cleanData = (myDataIDs: any): any => {
   return uniqueArray;
 };
 
+export const benfList = async (myDataIds: any): Promise<any> => {
+    
+  const beneficiaries = database.collections.get("beneficiaries");
+  const beneficiariesCollection = await beneficiaries.query().fetch();
+  const dataFilter = await filterBenfData(beneficiariesCollection, myDataIds);
+
+  return dataFilter;
+
+};
+
 export const filterData = (array: any): any => {
   const myArray = [];
   const benfIdsInCOP = [];
@@ -67,6 +77,28 @@ export const filterData = (array: any): any => {
   return resultArray;
 };
 
+export const filterBenfData = (array: any, ids: any): any => {
+  const myArray = [];
+
+  const dataFilter = array.filter((e) => {
+    if (new Date(e._raw?.date_created) <= new Date(sixMonthsAgo)) {
+      return [...myArray, e._raw];
+    }
+  });
+ 
+  const myDataIDs = dataFilter.map((e: any) => {
+    return [...myArray, e._raw?.online_id];
+  });
+
+  const data = cleanData(myDataIDs);
+  const bendInCOP = ids;
+  const itemsToRemoveSet = new Set(bendInCOP);
+
+  const commonItems = data.filter((item: any) => itemsToRemoveSet.has(item));
+  const resultArray = data.filter((item: any) => !commonItems.includes(item));
+
+  return resultArray;
+};
 export function showToast(status, message, description) {
   const toasty = useToast();
 
