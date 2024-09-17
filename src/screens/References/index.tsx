@@ -69,6 +69,10 @@ const ReferencesMain: React.FC = ({
   const loggedUserPartner = loggedUser?.partners
     ? loggedUser?.partners.id
     : loggedUser?.partner_id;
+  const loggedUserEntryPoint = loggedUser?.entryPoint
+    ? loggedUser?.entryPoint
+    : loggedUser?.entry_point;
+
   const toast = useToast();
   const dispatch = useDispatch();
 
@@ -135,9 +139,18 @@ const ReferencesMain: React.FC = ({
       const organization = getUser(
         data.item?._raw.notify_to
       )?.organization_name;
+
+      const partner: any = (await database
+        .get("partners")
+        .query(Q.where("online_id", loggedUser?.partners? loggedUser?.partners.id : loggedUser.partner_id))
+        .fetch())[0]._raw;
+
+      const referenceUser = getUser(data.item?._raw.referred_by);
+
       const attendDisabled =
-        loggedUserPartner ===
-          getUser(data.item?._raw.referred_by)?.partner_id ||
+        (loggedUserPartner === referenceUser?.partner_id && loggedUserEntryPoint === referenceUser.entry_point) ||
+        (partner.partner_type === "2" && reference.service_type === "1") ||
+        (partner.partner_type === "1" && reference.service_type === "2") ||
         reference.status == 2;
 
       const beneficiaryId = beneficiary?.online_id
@@ -444,12 +457,19 @@ const ReferencesMain: React.FC = ({
     // }
     setLoadingRequest(false);
   }, []);
+  
   useEffect(() => {
+    let isMounted = true;
     const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
       const status = !(state.isConnected && state.isInternetReachable);
-      setIsOffline(status);
+      if (isMounted){
+        setIsOffline(status);
+      }
     });
-    return () => removeNetInfoSubscription();
+    return () => {
+      removeNetInfoSubscription();
+      isMounted = false;
+    };
   }, []);
 
   useEffect(() => {

@@ -86,3 +86,15 @@ export async function getBeneficiariesVulnerabilitiesAndServicesSummaryReportGen
   const res = await select(url);
   return res;
 }
+
+export async function getBeneficiariesWithoutPrimaryPackageCompletedReportGenerated(
+  province?: string,
+  districts?: any,
+  startDate?: any,
+  endDate?: any,
+  username?: any
+) {
+  const url = `/api/agyw-prev/beneficiariesWithoutPrimaryPackageCompleted?province=${province}&districts=${districts}&startDate=${startDate}&endDate=${endDate}&username=${username}`;
+  const res = await select(url);
+  return res;
+}

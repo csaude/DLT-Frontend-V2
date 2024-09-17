@@ -59,21 +59,6 @@ const UsersLastSync: React.FC = () => {
 
   const pageSize = 100;
 
-  const entryPoints = [
-    {
-      value: 1,
-      label: "US",
-    },
-    {
-      value: 2,
-      label: "CM",
-    },
-    {
-      value: 3,
-      label: "ES",
-    },
-  ];
-
   const profileSelector = useSelector(
     (state: any) => state?.profile.loadedProfiles
   );
@@ -356,7 +341,20 @@ const UsersLastSync: React.FC = () => {
       title: "Ponto de Entrada",
       dataIndex: "record.entryPoint",
       key: "record.entryPoint",
-      filters: entryPoints,
+      filters: [
+        {
+          text: "US",
+          value: 1,
+        },
+        {
+          text: "CM",
+          value: 2,
+        },
+        {
+          text: "ES",
+          value: 3,
+        },
+      ],
       onFilter: (value, record) => record.user?.entryPoint == value,
       filterSearch: true,
       render: (text, record) => getEntryPoint(record.user?.entryPoint),
@@ -649,7 +647,20 @@ const UsersLastSync: React.FC = () => {
                   .toLowerCase()
                   .includes(input.toLowerCase())
               }
-              options={entryPoints}
+              options={[
+                {
+                  value: 1,
+                  label: "US",
+                },
+                {
+                  value: 2,
+                  label: "CM",
+                },
+                {
+                  value: 3,
+                  label: "ES",
+                },
+              ]}
             />
           </Col>
 

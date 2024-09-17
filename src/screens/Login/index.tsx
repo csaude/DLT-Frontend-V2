@@ -431,61 +431,7 @@ const Login: React.FC = ({ route }: any) => {
     const diff = moment.duration(today.diff(next_clean_date));
 
     if (diff.asDays() >= 7) {
-      // setShowCleanModal(true);
-      
-      const referencesCollection = await references.query().fetch();
-      const interventionsCollection = await beneficiaries_interventions.query().fetch();
-
-      const interventionsCollectionIDsList = await filterData(
-        interventionsCollection
-      );
-      const myIDsList = await filterData(referencesCollection);
-
-      const allBenfIds = [...myIDsList, ...interventionsCollectionIDsList];
-      const uniqueBenfIds = await cleanData(allBenfIds);
-
-      const benfsList = await benfList(uniqueBenfIds);
-
-      await destroyBeneficiariesData(uniqueBenfIds)
-        .then(() => {
-          toasty.show({
-            placement: "top",
-            render: () => {
-              setLoading(false);
-              return <InfoHandler />;
-            },
-          });
-        })
-        .catch((error) => {
-          toasty.show({
-            placement: "top",
-            render: () => {
-              setLoading(false);
-              return <ErrorCleanHandler />;
-            },
-          });
-
-          console.error("Erro ao deletar registros:", error);
-           setLoading(false);
-        });
-      
-    } else if(wasCleaned == null && next_clean_date == null) {
-
-      // setShowCleanModal(true);
-
-    }else{
-
-      await database.write(async () => {
-        const findUser = await userDetails
-        .query(Q.where("user_id", parseInt(userID)))
-        .fetch();
-        await findUser[0].update(
-          (record: any) => {
-            (record.next_clean_date = newDate.toISOString().replace('T', ' ').substring(0, 19)),
-            (record.was_cleaned = 0)
-          }
-        );
-      });
+      setShowCleanModal(true);
     }
   }, []);
 

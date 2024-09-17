@@ -43,8 +43,10 @@ export interface BeneficiariesModel {
   vblt_children?: any;
   vblt_pregnant_or_breastfeeding?: any;
   vblt_is_employed?: any;
+  vblt_idp?: any;
   vblt_tested_hiv?: any;
   vblt_sexually_active?: any;
+  vblt_pregnant_or_has_children?: any;
   vblt_multiple_partners?: any;
   vblt_is_migrant?: any;
   vblt_trafficking_victim?: any;
@@ -103,8 +105,10 @@ export default class Beneficiarie extends Model {
   @field("vblt_children") vblt_children;
   @field("vblt_pregnant_or_breastfeeding") vblt_pregnant_or_breastfeeding;
   @field("vblt_is_employed") vblt_is_employed;
+  @field("vblt_idp") vblt_idp;
   @field("vblt_tested_hiv") vblt_tested_hiv;
   @field("vblt_sexually_active") vblt_sexually_active;
+  @field("vblt_pregnant_or_has_children") vblt_pregnant_or_has_children;
   @field("vblt_multiple_partners") vblt_multiple_partners;
   @field("vblt_is_migrant") vblt_is_migrant;
   @field("vblt_trafficking_victim") vblt_trafficking_victim;
