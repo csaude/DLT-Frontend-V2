@@ -38,43 +38,11 @@ export const benfList = async (myDataIds: any): Promise<any> => {
     
   const beneficiaries = database.collections.get("beneficiaries");
   const beneficiariesCollection = await beneficiaries.query().fetch();
-  const dataFilter = await filterBenfData(beneficiariesCollection, myDataIds);
 
-  return dataFilter;
+  const result = await filterBenfData(beneficiariesCollection, myDataIds);
 
-};
+  return result;
 
-export const filterData = (array: any): any => {
-  const myArray = [];
-  const benfIdsInCOP = [];
-
-  const dataFilter = array.filter((e) => {
-    if (new Date(e._raw?.date_created) <= new Date(sixMonthsAgo)) {
-      return [...myArray, e._raw];
-    }
-  });
-  const idsFilter = array.filter((e) => {
-    if (new Date(e._raw?.date_created) > new Date(sixMonthsAgo)) {
-      return [...benfIdsInCOP, e._raw];
-    }
-  });
-
-  const myDataIDs = dataFilter.map((e: any) => {
-    return [...myArray, e._raw?.beneficiary_id];
-  });
-
-  const cleanBenfIdsInCOP = idsFilter.map((e: any) => {
-    return [...benfIdsInCOP, e._raw?.beneficiary_id];
-  });
-
-  const data = cleanData(myDataIDs);
-  const bendInCOP = cleanData(cleanBenfIdsInCOP);
-  const itemsToRemoveSet = new Set(bendInCOP);
-
-  const commonItems = data.filter((item: any) => itemsToRemoveSet.has(item));
-  const resultArray = data.filter((item: any) => !commonItems.includes(item));
-
-  return resultArray;
 };
 
 export const filterBenfData = (array: any, ids: any): any => {
@@ -99,6 +67,42 @@ export const filterBenfData = (array: any, ids: any): any => {
 
   return resultArray;
 };
+
+export const filterData = (array: any): any => {
+  const myArray = [];
+  const benfIdsInCOP = [];
+
+  const dataFilter = array.filter((e) => {
+    if (new Date(e._raw?.date_created) <= new Date(sixMonthsAgo)) {
+      return [...myArray, e._raw];
+    }
+  });
+  const idsFilter = array.filter((e) => {
+    if (new Date(e._raw?.date_created) > new Date(sixMonthsAgo)) {
+      return [...benfIdsInCOP, e._raw];
+    }
+  });
+
+  // const myDataIDs = dataFilter.map((e: any) => {
+  //   return [...myArray, e._raw?.beneficiary_id];
+  // });
+
+  const cleanBenfIdsInCOP = idsFilter.map((e: any) => {
+    return [...benfIdsInCOP, e._raw?.beneficiary_id];
+  });
+
+  // const data = cleanData(myDataIDs);
+  const bendInCOP = cleanData(cleanBenfIdsInCOP);
+  // const itemsToRemoveSet = new Set(bendInCOP);
+
+  // const commonItems = data.filter((item: any) => itemsToRemoveSet.has(item));
+  // const resultArray = data.filter((item: any) => !commonItems.includes(item));
+
+  const resultArray = new Set(bendInCOP);
+
+  return resultArray;
+};
+
 export function showToast(status, message, description) {
   const toasty = useToast();
 
