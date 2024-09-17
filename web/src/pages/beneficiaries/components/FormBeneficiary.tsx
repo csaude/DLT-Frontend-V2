@@ -135,8 +135,6 @@ const BeneficiaryForm = ({
         ben.vbltSchoolName = vblts.vblt_school_name;
         ben.vbltIdp = vblts.vblt_idp;
         ben.vbltTestedHiv = vblts.vblt_tested_hiv;
-        ben.clinicalInterventions = 0;
-        ben.communityInterventions = 0;
         ben.status = "1";
 
         const us = values.us;
