@@ -83,21 +83,11 @@ export const filterData = (array: any): any => {
     }
   });
 
-  // const myDataIDs = dataFilter.map((e: any) => {
-  //   return [...myArray, e._raw?.beneficiary_id];
-  // });
-
   const cleanBenfIdsInCOP = idsFilter.map((e: any) => {
     return [...benfIdsInCOP, e._raw?.beneficiary_id];
   });
 
-  // const data = cleanData(myDataIDs);
   const bendInCOP = cleanData(cleanBenfIdsInCOP);
-  // const itemsToRemoveSet = new Set(bendInCOP);
-
-  // const commonItems = data.filter((item: any) => itemsToRemoveSet.has(item));
-  // const resultArray = data.filter((item: any) => !commonItems.includes(item));
-
   const resultArray = new Set(bendInCOP);
 
   return resultArray;
