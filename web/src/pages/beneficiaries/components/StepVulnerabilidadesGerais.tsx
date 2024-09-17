@@ -6,7 +6,6 @@ const { Option } = Select;
 const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
   const [schoolInfoEnabled, setSchoolInfoEnabled] = useState<any>(true);
   const [deficiencyTypeEnabled, setDeficiencyTypeEnabled] = useState<any>(true);
-  const [childrenEnabled, setChildrenEnabled] = useState<any>(true);
 
   const isStudentChange = async (values: any) => {
     setSchoolInfoEnabled(values.target.value != 1);
@@ -15,11 +14,6 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
   const onIsDeficientChange = async (values: any) => {
     form.setFieldsValue({ vblt_deficiency_type: null });
     setDeficiencyTypeEnabled(values.target.value != 1);
-  };
-
-  const onPregnantBeforeChane = async (values: any) => {
-    form.setFieldsValue({ vblt_children: null });
-    setChildrenEnabled(values.target.value != 1);
   };
 
   const RequiredFieldMessage = "Obrigatório!";
@@ -84,21 +78,6 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
             initialValue={beneficiary?.vbltHouseSustainer}
           >
             <Radio.Group id="vblt_house_sustainer-options">
-              <Radio.Button value={1}>SIM</Radio.Button>
-              <Radio.Button value={0}>NÃO</Radio.Button>
-            </Radio.Group>
-          </Form.Item>
-        </Col>
-        <Col className="gutter-row" span={8}>
-          <Form.Item
-            id="vblt_is_orphan-control"
-            name="vblt_is_orphan"
-            label="É Orfã?"
-            rules={[{ required: true, message: RequiredFieldMessage }]}
-            style={{ textAlign: "left" }}
-            initialValue={beneficiary?.vbltIsOrphan}
-          >
-            <Radio.Group id="vblt_is_orphan-options">
               <Radio.Button value={1}>SIM</Radio.Button>
               <Radio.Button value={0}>NÃO</Radio.Button>
             </Radio.Group>
@@ -230,7 +209,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
           <Form.Item
             id="vblt_married_before-control"
             name="vblt_married_before"
-            label="Já foi Casada?"
+            label="É ou Já foi Casada?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
             initialValue={beneficiary?.vbltMarriedBefore}
@@ -243,82 +222,17 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
         </Col>
         <Col className="gutter-row" span={8}>
           <Form.Item
-            id="vblt_pregnant_before-control"
-            name="vblt_pregnant_before"
-            label="Já esteve Gravida?"
+            id="vblt_idp-control"
+            name="vblt_idp"
+            label="Deslocado Interno?/IDP?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
-            initialValue={beneficiary?.vbltPregnantBefore}
+            initialValue={beneficiary?.vbltIdp}
           >
-            <Radio.Group
-              id="vblt_pregnant_before-options"
-              onChange={onPregnantBeforeChane}
-            >
+            <Radio.Group id="vblt_idp-options">
               <Radio.Button value={1}>SIM</Radio.Button>
               <Radio.Button value={0}>NÃO</Radio.Button>
             </Radio.Group>
-          </Form.Item>
-        </Col>
-        <Col className="gutter-row" span={8}>
-          <Form.Item
-            id="vblt_children-control"
-            name="vblt_children"
-            label="Tem Filhos?"
-            rules={[
-              { required: !childrenEnabled, message: RequiredFieldMessage },
-            ]}
-            style={{ textAlign: "left" }}
-            initialValue={beneficiary?.vbltChildren}
-          >
-            <Radio.Group id="vblt_children-options" disabled={childrenEnabled}>
-              <Radio.Button value={1}>SIM</Radio.Button>
-              <Radio.Button value={0}>NÃO</Radio.Button>
-            </Radio.Group>
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row gutter={24}>
-        <Col className="gutter-row" span={8}>
-          <Form.Item
-            id="vblt_pregnant_or_breastfeeding-control"
-            name="vblt_pregnant_or_breastfeeding"
-            label="Está Grávida ou a amamentar?"
-            rules={[{ required: true, message: RequiredFieldMessage }]}
-            style={{ textAlign: "left" }}
-            initialValue={beneficiary?.vbltPregnantOrBreastfeeding}
-          >
-            <Radio.Group id="vblt_pregnant_or_breastfeeding-options">
-              <Radio.Button value={1}>SIM</Radio.Button>
-              <Radio.Button value={0}>NÃO</Radio.Button>
-            </Radio.Group>
-          </Form.Item>
-        </Col>
-        <Col className="gutter-row" span={8}>
-          <Form.Item
-            id="vblt_is_employed-control"
-            name="vblt_is_employed"
-            label="Trabalha?"
-            rules={[{ required: true, message: RequiredFieldMessage }]}
-            style={{ textAlign: "left" }}
-            initialValue={beneficiary?.vbltIsEmployed}
-          >
-            <Select
-              id="vblt_is_employed-selection"
-              size="middle"
-              placeholder="Please select"
-              //defaultValue={['a10', 'c12']}
-              //onChange={handleChange}
-              style={{ width: "100%" }}
-            >
-              {[
-                "Não Trabalha",
-                "Empregada Doméstica",
-                "Babá (Cuida das Crianças)",
-                "Outros",
-              ].map((item) => (
-                <Option key={item}>{item}</Option>
-              ))}
-            </Select>
           </Form.Item>
         </Col>
         <Col className="gutter-row" span={8}>

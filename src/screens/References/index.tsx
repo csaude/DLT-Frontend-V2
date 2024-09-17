@@ -457,12 +457,19 @@ const ReferencesMain: React.FC = ({
     // }
     setLoadingRequest(false);
   }, []);
+  
   useEffect(() => {
+    let isMounted = true;
     const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
       const status = !(state.isConnected && state.isInternetReachable);
-      setIsOffline(status);
+      if (isMounted){
+        setIsOffline(status);
+      }
     });
-    return () => removeNetInfoSubscription();
+    return () => {
+      removeNetInfoSubscription();
+      isMounted = false;
+    };
   }, []);
 
   useEffect(() => {
