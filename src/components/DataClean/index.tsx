@@ -15,6 +15,7 @@ import { Q } from "@nozbe/watermelondb";
 import { pendingSyncBeneficiaries } from "../../services/beneficiaryService";
 import { pendingSyncBeneficiariesInterventions } from "../../services/beneficiaryInterventionService";
 import moment from "moment";
+import { pendingSyncReferences } from "../../services/referenceService";
 
 const todayDate = new Date();
 export const sevenDaysLater = todayDate.setFullYear(
@@ -127,20 +128,13 @@ export const checkPendingSync = async () => {
       "references_services"
     );
 
-    const pendingSyncReferenceItems = await referenceCollection
-      .query(Q.where("is_awaiting_sync", true))
-      .fetchCount();
-    const pendingSyncInterventionsItems =
-      await beneficiariesInterventionsCollection
-        .query(Q.where("is_awaiting_sync", true))
-        .fetchCount();
-
+    const pendingSyncReferenceItems =  await pendingSyncReferences();
     const beneficiariesNotSynced = await pendingSyncBeneficiaries();
     const beneficiariesInterventionsNotSynced =
       await pendingSyncBeneficiariesInterventions();
+
     const result =
       pendingSyncReferenceItems > 0 ||
-      pendingSyncInterventionsItems > 0 ||
       beneficiariesNotSynced > 0 ||
       beneficiariesInterventionsNotSynced > 0
         ? true

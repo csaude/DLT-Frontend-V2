@@ -78,7 +78,7 @@ const DatacleanScreen: React.FC = ({
     const errorsList = validate(formik.values);
     const hasErrors = JSON.stringify(errorsList) !== "{}";
     const isPendingSync = await checkPendingSync();
-
+    
     if (hasErrors) {
       setErrors(true);
       formik.setErrors(errorsList);
