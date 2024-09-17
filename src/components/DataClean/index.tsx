@@ -72,11 +72,6 @@ export const filterData = (array: any): any => {
   const myArray = [];
   const benfIdsInCOP = [];
 
-  const dataFilter = array.filter((e) => {
-    if (new Date(e._raw?.date_created) <= new Date(sixMonthsAgo)) {
-      return [...myArray, e._raw];
-    }
-  });
   const idsFilter = array.filter((e) => {
     if (new Date(e._raw?.date_created) > new Date(sixMonthsAgo)) {
       return [...benfIdsInCOP, e._raw];
