@@ -92,6 +92,7 @@ const DatacleanScreen: React.FC = ({
       setLoading(false);
     } else if (isPendingSync){
 
+        setLoading(false);
         setShowCleanModal(true);
 
     }else if (formik.values.data_clean === "0" && !isPendingSync) {
