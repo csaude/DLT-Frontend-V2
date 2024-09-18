@@ -114,7 +114,7 @@ const ReferencesMain: React.FC = ({
     } else if (status === 2) {
       return "Atendida";
     } else if (status === 4) {
-      return "Sync";
+      return "Pendente de Sincronização";
     }
   };
 
@@ -367,8 +367,8 @@ const ReferencesMain: React.FC = ({
                     color={
                       data.item?._raw.status == 0
                         ? "danger.700"
-                        : data.item?._raw.status == 1
-                        ? "warning.700"
+                        : [1,4].includes(data.item?._raw.status)
+                        ? "warning.700" 
                         : "success.700"
                     }
                     _dark={{ color: "warmGray.200" }}
