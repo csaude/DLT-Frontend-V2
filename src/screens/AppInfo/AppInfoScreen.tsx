@@ -18,13 +18,13 @@ const AppInfoScreen: React.FC = () => {
               mt="1.5"
               _text={{ color: "coolGray.800" }}
             >
-              <Text>
+              <Text style={styles.txtGrey}>
                 {" "}
                 <Text style={styles.txtLabel}>Número da versão : </Text>{" "}
                 {data.release?.version}{" "}
               </Text>
 
-              <Text>
+              <Text style={styles.txtGrey}>
                 {" "}
                 <Text style={styles.txtLabel}>Data da versão: </Text>{" "}
                 {data.release.date}
@@ -33,7 +33,7 @@ const AppInfoScreen: React.FC = () => {
             <Divider />
             <Text style={styles.txtLabel}>Registo de alterações: </Text>
             {data.release.changelogs?.map((item) => (
-              <Text key={item.id}>
+              <Text key={item.id}  style={styles.txtGrey}>
                 {"-"} {item.changelog}{" "}
               </Text>
             ))}
