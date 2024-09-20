@@ -841,8 +841,8 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
           searchNui,
           searchUserCreator,
           searchDistrict,
-          startDate,
-          endDate
+          searchStartDate,
+          searchEndDate
         );
 
         if (filters) {
