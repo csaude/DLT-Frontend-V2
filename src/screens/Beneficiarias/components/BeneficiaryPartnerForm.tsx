@@ -1,10 +1,4 @@
-import React, {
-  useEffect,
-  useState,
-  useContext,
-  useCallback,
-  memo,
-} from "react";
+import React, { useEffect, useState, useContext, useCallback, memo } from "react";
 import {
   View,
   HStack,
@@ -107,8 +101,6 @@ const BeneficiaryPartnerForm: React.FC = ({
   const [beneficiarie, setBeneficairie] = useState(beneficiary);
   const [provinces, setProvinces] = useState<any>([]);
   const [districts, setDistricts] = useState<any>([]);
-  const [userEntryPoint, setUserEntryPoint] = useState<any>();
-  const [userLocality, setUserLocality] = useState<any>();
   const [localities, setLocalities] = useState<any>([]);
   const [uss, setUss] = useState<any>([]);
   const [neighborhoods, setNeighborhoods] = useState<any>([]);
@@ -247,6 +239,7 @@ const BeneficiaryPartnerForm: React.FC = ({
           ? loggedUser.entryPoint
           : loggedUser.entry_point;
       formik.setFieldValue("entry_point", entryPoint);
+      onChangeEntryPoint(entryPoint);
     }
 
     const validateLoggedUser = async () => {
@@ -260,31 +253,6 @@ const BeneficiaryPartnerForm: React.FC = ({
     };
     validateLoggedUser().catch((err) => console.error(err));
   }, []);
-
-  useEffect(() => {
-    const locality = formik.values.locality;
-    const entryPoint = formik.values.entry_point
-      ? formik.values.entry_point
-      : loggedUser.entry_point;
-
-    const fetchUsList = async () => {
-      if (locality && entryPoint) {
-        const getUsList = await database
-          .get("us")
-          .query(
-            Q.where("locality_id", Number(locality)),
-            Q.where("entry_point", Number(entryPoint))
-          )
-          .fetch();
-
-        const usSerialized = getUsList.map((item) => item._raw);
-        setUss(usSerialized);
-      }
-    };
-
-    fetchUsList().catch((error) => console.log(error));
-    setLoadingData(false);
-  }, [userLocality, userEntryPoint]);
 
   const handleSearchPartner = async (e: any) => {
     if (e === undefined || e === "") {
@@ -731,6 +699,36 @@ const BeneficiaryPartnerForm: React.FC = ({
       .fetch();
     const neiSerialized = getNeiList.map((item) => item._raw);
     setNeighborhoods(neiSerialized);
+
+    const entryPoint = formik.values.entry_point;
+    if (entryPoint) {
+      const getUsList = await database
+        .get("us")
+        .query(
+          Q.where("locality_id", Number(locId)),
+          Q.where("entry_point", Number(entryPoint))
+        )
+        .fetch();
+      const usSerialized = getUsList.map((item) => item._raw);
+      setUss(usSerialized);
+    }
+  }, []);
+
+  const onChangeEntryPoint = useCallback(async (entryPoint: any) => {
+    const locality = formik.values.locality;
+    if (locality) {
+      const getUsList = await database
+        .get("us")
+        .query(
+          Q.where("locality_id", Number(locality)),
+          Q.where("entry_point", Number(entryPoint))
+        )
+        .fetch();
+      const usSerialized = getUsList.map((item) => item._raw);
+      setUss(usSerialized);
+    }
+
+    setLoadingData(false);
   }, []);
 
   const isStudentChange = async (value: any) => {
@@ -1098,7 +1096,6 @@ const BeneficiaryPartnerForm: React.FC = ({
                         if (itemIndex !== 0) {
                           formik.setFieldValue("locality", itemValue);
                           onChangeLocalities(itemValue);
-                          setUserLocality(itemValue);
                         }
                       }}
                     >
@@ -1135,7 +1132,7 @@ const BeneficiaryPartnerForm: React.FC = ({
                       onValueChange={(itemValue, itemIndex) => {
                         if (itemIndex !== 0) {
                           formik.setFieldValue("entry_point", itemValue);
-                          setUserEntryPoint(itemValue);
+                          onChangeEntryPoint(itemValue);
                         }
                       }}
                     >

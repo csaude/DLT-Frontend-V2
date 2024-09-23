@@ -43,7 +43,6 @@ import Spinner from "react-native-loading-spinner-overlay";
 import AppInfoScreen from "../screens/AppInfo/AppInfoScreen";
 import SyncReportScreen from "../screens/SyncReport/SyncReportReport";
 import DataExportScreen from "../screens/SyncReport/DataExportScreen";
-import DatacleanScreen from "../screens/DataClean/DataCleanScreen";
 import {
   loadPendingsBeneficiariesInterventionsTotals,
   loadPendingsBeneficiariesTotals,
@@ -356,17 +355,6 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
             headerTitle: "",
             drawerIcon: () => (
               <ItemBadge label="Detalhes da Aplicação" total={-1} />
-            ),
-          }}
-        />
-        <Drawer.Screen
-          name="CleanData"
-          component={DatacleanScreen}
-          options={{
-            title: "",
-            headerTitle: "",
-            drawerIcon: () => (
-              <ItemBadge label="Limpeza de Dados" total={-1} />
             ),
           }}
         />

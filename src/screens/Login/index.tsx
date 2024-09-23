@@ -68,7 +68,6 @@ const Login: React.FC = ({ route }: any) => {
   const [loading, setLoading] = useState(false);
   const [isOffline, setIsOffline] = useState(false);
   const [show, setShow] = React.useState(false);
-  const [showCleanModal, setShowCleanModal] = useState(false);
 
   const [token, setToken] = useState();
 
@@ -384,7 +383,6 @@ const Login: React.FC = ({ route }: any) => {
           });
         }
       } catch (error) {
-        console.log(error);
         setIsInvalidCredentials(true);
       }
       setLoading(false);
@@ -518,10 +516,7 @@ const Login: React.FC = ({ route }: any) => {
         ? user.passwordLastChangeDate
         : user.dateCreated;
     const date = new Date(timestamp);
-    const formattedDate = date.toISOString().slice(0, 10) + " " + date.toISOString().slice(11, 19);;
-    
-    const lastLoginDate = new Date();
-    const lastLoginFormatted = lastLoginDate.toISOString().slice(0, 10) + " " + lastLoginDate.toISOString().slice(11, 19);;
+    const formattedDate = date.toISOString().slice(0, 10);
 
     await database.write(async () => {
       await userDetails.create((userDetail: any) => {
@@ -530,7 +525,6 @@ const Login: React.FC = ({ route }: any) => {
         userDetail.districts = district_ids.toString();
         userDetail.localities = localities_ids.toString();
         userDetail.uss = uss_ids.toString();
-        userDetail.last_login_date = lastLoginFormatted;
         userDetail.password_last_change_date = formattedDate;
         userDetail.profile_id = user.profiles.id;
         userDetail.entry_point = user.entryPoint;

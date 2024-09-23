@@ -106,6 +106,9 @@ const BeneficiariesList: React.FC = () => {
   const pageSize = 100;
   const [isEditMode, setIsEditMode] = useState(false);
 
+  const interventionSelector = useSelector(
+    (state: any) => state?.intervention.loadedInterventions
+  );
   const userSelector = useSelector((state: any) => state?.user);
   const beneficiariesTotal = useSelector(
     (state: any) => state.beneficiary.total
@@ -140,6 +143,13 @@ const BeneficiariesList: React.FC = () => {
 
   const userId = localStorage.getItem("user");
   const dispatch = useDispatch();
+
+  const getBeneficiaryIntervention = (beneficiaryId) => {
+    const element = interventionSelector?.find(
+      (item) => item.beneficiaryId === beneficiaryId
+    );
+    return element;
+  };
 
   const getUsernames = (userId) => {
     const currentNames = userSelector?.users?.map((item) => {
@@ -714,11 +724,7 @@ const BeneficiariesList: React.FC = () => {
       dataIndex: "beneficiariesInterventionses",
       key: "beneficiariesInterventionses",
       render(val: any, record) {
-        return (
-          <Badge
-            count={record.clinicalInterventions + record.communityInterventions}
-          />
-        );
+        return <Badge count={getBeneficiaryIntervention(record.id)?.total} />;
       },
       width: 60,
     },
@@ -727,7 +733,9 @@ const BeneficiariesList: React.FC = () => {
       dataIndex: "clinicalInterventions",
       key: "clinicalInterventions",
       render(val: any, record) {
-        return <Badge count={record.clinicalInterventions} />;
+        return (
+          <Badge count={getBeneficiaryIntervention(record.id)?.clinicalTotal} />
+        );
       },
       width: 60,
     },
@@ -736,7 +744,11 @@ const BeneficiariesList: React.FC = () => {
       dataIndex: "communityInterventions",
       key: "communityInterventions",
       render(val: any, record) {
-        return <Badge count={record.communityInterventions} />;
+        return (
+          <Badge
+            count={getBeneficiaryIntervention(record.id)?.communityTotal}
+          />
+        );
       },
       width: 60,
     },
@@ -1055,6 +1067,7 @@ const BeneficiariesList: React.FC = () => {
         }
 
         sortedBeneficiaries.forEach((beneficiary) => {
+          const interventions = getBeneficiaryIntervention(beneficiary.id);
           const values = [
             sequence,
             beneficiary.district.code + "/" + beneficiary?.nui,
@@ -1067,10 +1080,9 @@ const BeneficiariesList: React.FC = () => {
               : "ES",
             beneficiary?.district?.name,
             getAgeByDate(beneficiary.dateOfBirth) + " anos",
-            beneficiary?.clinicalInterventions +
-              beneficiary?.communityInterventions,
-            beneficiary?.clinicalInterventions,
-            beneficiary?.communityInterventions,
+            interventions?.total,
+            interventions?.clinicalTotal,
+            interventions?.communityTotal,
             beneficiary?.partners?.name,
             getUsernames(beneficiary.createdBy),
             getUsernames(beneficiary.updatedBy),

@@ -12,6 +12,7 @@ import { useDispatch } from "react-redux";
 import { getBeneficiariesTotal } from "@app/store/actions/beneficiary";
 
 import { getReferencesTotal } from "@app/store/actions/reference";
+import { getInterventionsCount } from "@app/store/actions/interventions";
 import { getUserParams } from "@app/models/Utils";
 
 const { Step } = Steps;
@@ -75,6 +76,7 @@ const FormReference = ({
 
     dispatch(getBeneficiariesTotal(beneficiaryTotal));
     dispatch(getReferencesTotal(referenceTotal));
+    dispatch(getInterventionsCount());
   };
 
   const onSubmit = async () => {

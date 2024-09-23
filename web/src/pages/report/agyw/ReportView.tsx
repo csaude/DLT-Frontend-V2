@@ -24,6 +24,7 @@ import { Title } from "@app/components";
 import { ADMIN, MNE, SUPERVISOR } from "@app/utils/contants";
 import { useDispatch, useSelector } from "react-redux";
 import LoadingModal from "@app/components/modal/LoadingModal";
+import { getInterventionsCount } from "@app/store/actions/interventions";
 import { pagedQueryByBeneficiariesIds } from "@app/utils/beneficiaryIntervention";
 import {
   getAgeAtRegistrationDate,
@@ -51,6 +52,7 @@ const ReportView: React.FC = () => {
   const [updaters, setUpdaters] = useState<UserModel[]>([]);
   const [user, setUser] = React.useState<any>();
   const [beneficiaries, setBeneficiaries] = useState<any[]>([]);
+  const [interventions, setInterventions] = useState<any>([]);
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const [districts, setDistricts] = useState<any[]>([]);
@@ -59,6 +61,7 @@ const ReportView: React.FC = () => {
   const [currentPageStart, setCurrentPageStart] = useState(0);
   const [currentPageEnd, setCurrentPageEnd] = useState(99);
   const pageSize = 100;
+  const interventionSelector = useSelector((state: any) => state?.intervention);
   const userSelector = useSelector((state: any) => state?.user);
   const authSelector = useSelector((state: any) => state?.auth.currentUser);
   const beneficiariesIdsSelector: [] = useSelector(
@@ -72,6 +75,17 @@ const ReportView: React.FC = () => {
 
   const userId = localStorage.getItem("user");
   const dispatch = useDispatch();
+
+  const getBeneficiaryIntervention = (beneficiaryId) => {
+    const currentInterventin = interventionSelector?.interventions?.map(
+      (item) => {
+        if (item[1] == beneficiaryId) {
+          return item[0];
+        }
+      }
+    );
+    return currentInterventin;
+  };
 
   const getUsernames = (userId) => {
     const currentNames = userSelector?.users?.map((item) => {
@@ -318,31 +332,7 @@ const ReportView: React.FC = () => {
       dataIndex: "beneficiariesInterventionses",
       key: "beneficiariesInterventionses",
       render(val: any, record) {
-        return (
-          <Badge
-            count={
-              record?.clinicalInterventions + record?.communityInterventions
-            }
-          />
-        );
-      },
-      width: 60,
-    },
-    {
-      title: "#Interv Clínicas",
-      dataIndex: "clinicalInterventions",
-      key: "clinicalInterventions",
-      render(val: any, record) {
-        return <Badge count={record?.clinicalInterventions} />;
-      },
-      width: 60,
-    },
-    {
-      title: "#Interv Comunitárias",
-      dataIndex: "communityInterventions",
-      key: "communityInterventions",
-      render(val: any, record) {
-        return <Badge count={record?.communityInterventions} />;
+        return <Badge count={getBeneficiaryIntervention(record?.id)} />;
       },
       width: 60,
     },
@@ -446,6 +436,7 @@ const ReportView: React.FC = () => {
 
   useEffect(() => {
     fetchElements(currentPageStart, currentPageEnd);
+    dispatch(getInterventionsCount());
   }, [currentPageStart, currentPageEnd]);
 
   const getServiceBandByServiceIdAndAge = (serviceId, dateOfBirth) => {
@@ -469,7 +460,7 @@ const ReportView: React.FC = () => {
       const pageElements = 1000;
 
       const workbook = new ExcelJS.Workbook();
-      const worksheet = workbook.addWorksheet("PEPFAR_MER_2.7_AGYW");
+      const worksheet = workbook.addWorksheet("PEPFAR_MER_2.6_AGYW");
 
       const headers = [
         "PROVINCE",
@@ -577,7 +568,7 @@ const ReportView: React.FC = () => {
       const blob = new Blob([buffer], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
-      saveAs(blob, `PEPFAR_MER_2.7_AGYW_PREV_Beneficiaries_${created}.xlsx`);
+      saveAs(blob, `PEPFAR_MER_2.6_AGYW_PREV_Beneficiaries_${created}.xlsx`);
 
       setDataLoading(false);
     } catch (error) {

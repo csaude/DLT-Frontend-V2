@@ -13,7 +13,6 @@ intance.interceptors.request.use(
       request.headers = {
         ...request.headers,
         Authorization: `Bearer ${token}`,
-        "Content-Encoding": "gzip",
       };
     }
     return request;

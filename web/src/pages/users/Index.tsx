@@ -36,17 +36,15 @@ const UsersList: React.FC = () => {
 
   const [partners, setPartners] = useState<any[]>([]);
   const [profiles, setProfiles] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const pageSize = 100;
-  const [searchName, setSearchName] = useState<any>("");
   const [searchUsername, setSearchNui] = useState<any>("");
   const [searchDistrict, setSearchDistrict] = useState<any>("");
   const [searchUserCreator, setSearchUserCreator] = useState<any>("");
   const [district, setDistrict] = useState<any>();
   const [userCreator, setUserCreator] = useState<any>();
-  const [name, setName] = useState<any>();
   const [username, setUsername] = useState<any>();
   const [districts, setDistricts] = useState<any[]>([]);
   const [provinces, setProvinces] = useState<any[]>([]);
@@ -73,9 +71,8 @@ const UsersList: React.FC = () => {
 
   useEffect(() => {
     if (users?.length > 0) {
-      setLoading(true);
+      setLoading(false);
     }
-    setLoading(false);
   }, [users]);
 
   let searchInput;
@@ -84,18 +81,15 @@ const UsersList: React.FC = () => {
     setPartners(partnerSelector);
     setProfiles(profileSelector);
     const fetchData = async () => {
-      setLoading(true);
       const user = await queryByUserId(localStorage.user);
       const data = await pagedQueryByFilters(
         getUserParams(user),
         currentPageIndex,
         pageSize,
-        searchName,
         searchUsername,
         searchUserCreator,
         searchDistrict
       );
-      setLoading(false);
       setUsers(data);
     };
 
@@ -114,13 +108,7 @@ const UsersList: React.FC = () => {
     setDistricts(sortedDistricts);
     setCreators(sortedCreators);
     setProvinces(sortedProvinces);
-  }, [
-    currentPageIndex,
-    searchName,
-    searchUsername,
-    searchUserCreator,
-    searchDistrict,
-  ]);
+  }, [currentPageIndex, searchUsername, searchUserCreator, searchDistrict]);
 
   const handleUsersModalVisible = (flag?: boolean) => {
     form.resetFields();
@@ -468,9 +456,6 @@ const UsersList: React.FC = () => {
   ];
 
   const handleGlobalSearch = async () => {
-    if (name !== undefined) {
-      setSearchName(name);
-    }
     if (username !== undefined) {
       setSearchNui(username);
     }
@@ -523,15 +508,6 @@ const UsersList: React.FC = () => {
         }
       >
         <Row gutter={16}>
-          <Col className="gutter-row">
-            <Form.Item name="name" label="" initialValue={name}>
-              <Input
-                placeholder="Pesquisar por nome"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </Form.Item>
-          </Col>
           <Col className="gutter-row">
             <Form.Item name="username" label="" initialValue={username}>
               <Input

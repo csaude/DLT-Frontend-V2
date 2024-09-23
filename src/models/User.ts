@@ -18,7 +18,6 @@ export interface UsersModel {
   profile_id?: any;
   us_ids?: any;
   organization_name: any;
-  last_login_date: any;
   password_last_change_date: any;
   is_awaiting_sync?: any;
 }
@@ -40,7 +39,6 @@ export default class User extends Model {
   @field("us_ids") us_ids;
   @field("online_id") online_id;
   @field("organization_name") organization_name;
-  @field("last_login_date") last_login_date;
   @field("password_last_change_date") password_last_change_date;
   @text("is_awaiting_sync") is_awaiting_sync;
 }

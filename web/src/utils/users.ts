@@ -138,7 +138,6 @@ export async function pagedQueryByFilters(
   payload?: any,
   pageIndex?: any,
   pageSize?: any,
-  searchName?: any,
   searchUsername?: any,
   searchUserCreator?: number,
   searchDistrict?: number
@@ -147,7 +146,7 @@ export async function pagedQueryByFilters(
   if (payload.userId) {
     url = `/api/users/paged?${stringify(
       payload
-    )}&pageIndex=${pageIndex}&pageSize=${pageSize}&searchName=${searchName}&searchUsername=${searchUsername}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`;
+    )}&pageIndex=${pageIndex}&pageSize=${pageSize}&searchUsername=${searchUsername}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`;
   } else {
     url = "/api/users/" + payload;
   }
@@ -166,7 +165,6 @@ export async function getPagedUsersLastSync(
   payload?: any,
   pageIndex?: any,
   pageSize?: any,
-  searchName?: any,
   searchUsername?: any,
   searchUserCreator?: number,
   searchDistrict?: number,
