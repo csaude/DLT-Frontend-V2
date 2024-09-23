@@ -27,17 +27,18 @@ import {
   useToast,
   CheckCircleIcon,
   WarningTwoIcon,
+  InfoIcon,
 } from "native-base";
 import { ProgressSteps, ProgressStep } from "react-native-progress-steps";
 import { Ionicons } from "@native-base/icons";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { Picker, PickerProps } from "@react-native-picker/picker";
-import { Q } from "@nozbe/watermelondb";
+import { Model, Q } from "@nozbe/watermelondb";
 import { database } from "../../../database";
 import withObservables from "@nozbe/with-observables";
 import Spinner from "react-native-loading-spinner-overlay";
-import { navigationRef } from "../../../routes/NavigationRef";
+import { navigate, navigationRef } from "../../../routes/NavigationRef";
 import moment from "moment";
 import { getFormatedDate } from "react-native-modern-datepicker";
 import { Context } from "../../../routes/DrawerNavigator";
@@ -116,6 +117,8 @@ const BeneficiaryForm: React.FC = ({
   const [beneficiarie, setBeneficairie] = useState(beneficiary);
   const [provinces, setProvinces] = useState<any>([]);
   const [districts, setDistricts] = useState<any>([]);
+  const [userEntryPoint, setUserEntryPoint] = useState<any>();
+  const [userLocality, setUserLocality] = useState<any>();
   const [localities, setLocalities] = useState<any>([]);
   const [uss, setUss] = useState<any>([]);
   const [neighborhoods, setNeighborhoods] = useState<any>([]);
@@ -143,6 +146,9 @@ const BeneficiaryForm: React.FC = ({
   const [isOffline, setIsOffline] = useState(false);
   const [isGoToSpecificVblt, setGoToSpecificVblt] = useState(false);
   const [haveChildrenEnabled, setHaveChildrenEnabled] = useState<any>(true);
+  const [isExistingBeneficiary, setExistingBeneficiary] = useState(false);
+  const [beneficiaryState, setBeneficiaryState] = useState<any>();
+  const [ignoreExisting, setIgnoreExisting] = useState(false);
 
   const minBirthYear = new Date();
   minBirthYear.setFullYear(new Date().getFullYear() - 24);
@@ -271,7 +277,6 @@ const BeneficiaryForm: React.FC = ({
           ? loggedUser.entryPoint
           : loggedUser.entry_point;
       formik.setFieldValue("entry_point", entryPoint);
-      onChangeEntryPoint(entryPoint);
     }
 
     const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
@@ -280,6 +285,31 @@ const BeneficiaryForm: React.FC = ({
     });
     return () => removeNetInfoSubscription();
   }, []);
+
+  useEffect(() => {
+    const locality = formik.values.locality;
+    const entryPoint = formik.values.entry_point
+      ? formik.values.entry_point
+      : loggedUser.entry_point;
+
+    const fetchUsList = async () => {
+      if (locality && entryPoint) {
+        const getUsList = await database
+          .get("us")
+          .query(
+            Q.where("locality_id", Number(locality)),
+            Q.where("entry_point", Number(entryPoint))
+          )
+          .fetch();
+
+        const usSerialized = getUsList.map((item) => item._raw);
+        setUss(usSerialized);
+      }
+    };
+
+    fetchUsList().catch((error) => console.log(error));
+    setLoadingData(false);
+  }, [userLocality, userEntryPoint]);
 
   const toast = useToast();
   const dispatch = useDispatch();
@@ -367,7 +397,26 @@ const BeneficiaryForm: React.FC = ({
     dispatch(getReferencesTotal(countRef));
   };
 
-  const onNextStep = () => {
+  const onNextStep = async () => {
+    setLoadingData(true);
+    let beneficiaries = [] as Model[];
+
+    if (!ignoreExisting && !beneficiarie) {
+      beneficiaries = await database
+        .get("beneficiaries")
+        .query(
+          Q.where("name", formik.values?.name),
+          Q.where("locality_id", Number(formik.values?.locality)),
+          Q.where("date_of_birth", formik.values?.date_of_birth)
+        )
+        .fetch();
+    }
+
+    if (beneficiaries.length > 0) {
+      setExistingBeneficiary(true);
+      setBeneficiaryState(beneficiaries[0]._raw);
+    }
+
     const errorsList = validate(formik.values);
     const hasErrors = JSON.stringify(errorsList) !== "{}";
 
@@ -382,6 +431,7 @@ const BeneficiaryForm: React.FC = ({
     if (partnerHasErrors) {
       setErrors(true);
     }
+    setLoadingData(false);
   };
 
   const onNextStep2 = async () => {
@@ -927,38 +977,6 @@ const BeneficiaryForm: React.FC = ({
       .fetch();
     const neiSerialized = getNeiList.map((item) => item._raw);
     setNeighborhoods(neiSerialized);
-
-    const entryPoint = formik.values.entry_point;
-    if (entryPoint) {
-      const getUsList = await database
-        .get("us")
-        .query(
-          Q.where("locality_id", Number(locId)),
-          Q.where("entry_point", Number(entryPoint))
-        )
-        .fetch();
-      const usSerialized = getUsList.map((item) => item._raw);
-      setUss(usSerialized);
-    }
-  }, []);
-
-  const onChangeEntryPoint = useCallback(async (entryPoint: any) => {
-    const locality = formik.values.locality;
-
-    if (locality) {
-      const getUsList = await database
-        .get("us")
-        .query(
-          Q.where("locality_id", Number(locality)),
-          Q.where("entry_point", Number(entryPoint))
-        )
-        .fetch();
-
-      const usSerialized = getUsList.map((item) => item._raw);
-      setUss(usSerialized);
-    }
-
-    setLoadingData(false);
   }, []);
 
   const isStudentChange = useCallback(async (value: any) => {
@@ -1083,6 +1101,59 @@ const BeneficiaryForm: React.FC = ({
 
   return (
     <>
+      <Center>
+        <Modal
+          isOpen={isExistingBeneficiary}
+          onClose={() => setExistingBeneficiary(false)}
+        >
+          <Modal.Content maxWidth="400px">
+            <Modal.CloseButton />
+            <Modal.Header>Beneficiaria ja existente</Modal.Header>
+            <Modal.Body>
+              <ScrollView>
+                <Box alignItems="center">
+                  <Alert w="100%" status="success">
+                    <VStack space={2} flexShrink={1}>
+                      <HStack>
+                        <InfoIcon mt="1" />
+                        <Text fontSize="sm" color="coolGray.800">
+                          {`Já existe uma Beneficiária com as mesmas características, com o nui ${beneficiaryState?.nui}`}
+                        </Text>
+                      </HStack>
+
+                      <Button
+                        onPress={() => {
+                          setExistingBeneficiary(false);
+                          setBeneficairie(beneficiaryState);
+                          navigate({
+                            name: "BeneficiariesList",
+                          });
+                          navigate({
+                            name: "BeneficiaryForm",
+                            params: { beneficiary: beneficiaryState },
+                          });
+                        }}
+                      >
+                        Editar Registo Existente
+                      </Button>
+
+                      <Button
+                        onPress={() => {
+                          setExistingBeneficiary(false);
+                          setIgnoreExisting(true);
+                        }}
+                      >
+                        Continuar Com Novo Registo
+                      </Button>
+                    </VStack>
+                  </Alert>
+                  <Text></Text>
+                </Box>
+              </ScrollView>
+            </Modal.Body>
+          </Modal.Content>
+        </Modal>
+      </Center>
       <View style={{ flex: 1, backgroundColor: "white" }}>
         <ProgressSteps>
           <ProgressStep
@@ -1359,6 +1430,7 @@ const BeneficiaryForm: React.FC = ({
                         if (itemIndex !== 0) {
                           formik.setFieldValue("locality", itemValue);
                           onChangeLocalities(itemValue);
+                          setUserLocality(itemValue);
                         }
                       }}
                     >
@@ -1395,7 +1467,7 @@ const BeneficiaryForm: React.FC = ({
                       onValueChange={(itemValue, itemIndex) => {
                         if (itemIndex !== 0) {
                           formik.setFieldValue("entry_point", itemValue);
-                          onChangeEntryPoint(itemValue);
+                          setUserEntryPoint(itemValue);
                         }
                       }}
                     >
