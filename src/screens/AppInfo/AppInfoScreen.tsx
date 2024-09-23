@@ -40,10 +40,10 @@ const AppInfoScreen: React.FC = () => {
                     <Text key={i.id} style={{color: "black"}}>{`\u25CF ${i.item}`}</Text>
                       {i.subitems?.map((si) => (
                         <>
-                          <Text key={si.id}>{`\u25AA ${si.subitem}`}</Text>
+                          <Text key={si.id}  style={styles.txtGrey}>{`\u25AA ${si.subitem}`}</Text>
                             {si.subsubitems?.map((ssi) => (
                               <>
-                                  <Text key={ssi.id}>{`\u2043 ${ssi.subsubitem}`}</Text>
+                                  <Text key={ssi.id}  style={styles.txtGrey}>{`\u2043 ${ssi.subsubitem}`}</Text>
                               </>
                             ))}
                         </>
