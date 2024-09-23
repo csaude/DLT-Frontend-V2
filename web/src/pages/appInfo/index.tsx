@@ -43,11 +43,38 @@ const AppInfo = () => {
                   </Form.Item>
                   <Form.Item name="changelog" label="Registo de alterações">
                     <Space direction="vertical">
-                      {data.release.changelogs?.map((item) => (
-                        <p key={item.id}>
-                          {"-"} {item.changelog}{" "}
-                        </p>
-                      ))}
+                      <ul>
+                        {data.release.changelogs?.map((item) => (
+                          <>
+                            <li key={item.id}>
+                              <b>{item.changelog}</b>
+                            </li>
+                            <ul>
+                              {item.items?.map((i) => (
+                                <>
+                                  <li key={i.id}>{i.item}</li>
+                                  <ul>
+                                    {i.subitems?.map((si) => (
+                                      <>
+                                        <li key={si.id}>{si.subitem}</li>
+                                        <ul>
+                                          {si.subsubitems?.map((ssi) => (
+                                            <>
+                                              <li key={ssi.id}>
+                                                {ssi.subsubitem}
+                                              </li>
+                                            </>
+                                          ))}
+                                        </ul>
+                                      </>
+                                    ))}
+                                  </ul>
+                                </>
+                              ))}
+                            </ul>
+                          </>
+                        ))}
+                      </ul>
                     </Space>
                   </Form.Item>
                 </Col>

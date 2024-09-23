@@ -135,8 +135,8 @@ android {
         applicationId "com.dltfrontend_v2"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 3
-        versionName "1.2"
+        versionCode 214
+        versionName "1.4.0"
         configurations.all {
             resolutionStrategy { 
                 force 'androidx.lifecycle:lifecycle process:2.3.1'

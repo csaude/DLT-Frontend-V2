@@ -43,6 +43,7 @@ import NeighborhoodsList from "./pages/neighborhoods";
 import SyncReport from "@pages/sync-report/Index";
 import DataImport from "@pages/data-import/index";
 import BenefWithoutVulnerabilites from "./pages/report/benef-without-vulnerabilites/BenefWithoutVulnerabilites";
+import BenefWithoutPrimeryPackageCompleted from "./pages/report/beneficiaries-without-pp-completed/BenefWithoutPrimeryPackageCompleted";
 
 const App = () => {
   const windowSize = useWindowSize();
@@ -164,6 +165,10 @@ const App = () => {
             <Route
               path="/benefWithoutVulnerabilites"
               element={<BenefWithoutVulnerabilites />}
+            />
+            <Route
+              path="/benefWithoutPrimaryPackageCompleted"
+              element={<BenefWithoutPrimeryPackageCompleted />}
             />
             {/* App Inforation */}
             <Route path="/appInfo" element={<AppInfo />} />

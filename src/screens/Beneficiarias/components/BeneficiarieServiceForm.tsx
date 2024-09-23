@@ -135,7 +135,7 @@ const BeneficiarieServiceForm: React.FC = ({
   const onChangeEntryPoint = async (value: any) => {
     const uss = await database
       .get("us")
-      .query(Q.where("entry_point", parseInt(value)))
+      .query(Q.where("entry_point", parseInt(value)), Q.where("status", "1"))
       .fetch();
     const ussSerialied = uss.map((item) => item._raw);
     setUss(ussSerialied);

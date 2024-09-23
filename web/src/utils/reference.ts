@@ -86,14 +86,26 @@ export async function pagedQueryByUser(
   pageSize?: any,
   searchNui?: any,
   searchUserCreator?: number,
-  searchDistrict?: number
+  searchDistrict?: number,
+  searchStartDate?: any,
+  searchEndDate?: any
 ) {
+  if (searchStartDate === undefined || searchEndDate === undefined) {
+    searchStartDate = 1483252734; // 01 de Janeiro de 2017 -- Para poder pegar todos dados desde inicio do uso do sistema
+    searchEndDate = dateTotimestamp(new Date());
+  } else {
+    searchStartDate = dateTotimestamp(searchStartDate);
+    searchEndDate = dateTotimestamp(searchEndDate);
+  }
+
   const res = await select(
     `/api/references/byUser/${id}?pageIndex=${pageIndex}&pageSize=${pageSize}&searchNui=${undefinedToEmpty(
       searchNui
     )}&searchUserCreator=${undefinedToEmpty(
       searchUserCreator
-    )}&searchDistrict=${undefinedToEmpty(searchDistrict)}`
+    )}&searchDistrict=${undefinedToEmpty(
+      searchDistrict
+    )}&searchStartDate=${searchStartDate}&searchEndDate=${searchEndDate}`
   );
 
   return res;
@@ -132,14 +144,26 @@ export async function queryCountByFilters(
   id?: any,
   searchNui?: any,
   searchUserCreator?: number,
-  searchDistrict?: number
+  searchDistrict?: number,
+  searchStartDate?: any,
+  searchEndDate?: any
 ) {
+  if (searchStartDate === undefined || searchEndDate === undefined) {
+    searchStartDate = 1483252734;
+    searchEndDate = dateTotimestamp(new Date());
+  } else {
+    searchStartDate = dateTotimestamp(searchStartDate);
+    searchEndDate = dateTotimestamp(searchEndDate);
+  }
+
   const res = await select(
     `/api/references/byUser/${id}/countByFilters?searchNui=${undefinedToEmpty(
       searchNui
     )}&searchUserCreator=${undefinedToEmpty(
       searchUserCreator
-    )}&searchDistrict=${undefinedToEmpty(searchDistrict)}`
+    )}&searchDistrict=${undefinedToEmpty(
+      searchDistrict
+    )}&searchStartDate=${searchStartDate}&searchEndDate=${searchEndDate}`
   );
   return res;
 }

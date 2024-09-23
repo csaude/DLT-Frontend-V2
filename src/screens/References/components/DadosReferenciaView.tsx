@@ -105,6 +105,8 @@ const DadosReferenciaView: React.FC = ({ route }: any) => {
                     ? "Atendida Parcialmente"
                     : reference.status === 2
                     ? "Atendida"
+                    : reference.status === 4
+                    ? "Pendente de Sincronização"
                     : "Cancelada"}
                 </Text>
               </Box>

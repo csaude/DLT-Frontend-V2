@@ -23,7 +23,11 @@ import {
 import emblema from "../../../assets/emblema.png";
 import moment from "moment";
 import { query } from "../../../utils/beneficiary";
-import { query as beneficiaryInterventionQuery } from "../../../utils/beneficiaryIntervention";
+import {
+  query as beneficiaryInterventionQuery,
+  getInterventionCountByBeneficiaryAndServiceTypeQuery,
+  getInterventionCountByBeneficiaryIdAndAgeBandAndLevelQuery,
+} from "../../../utils/beneficiaryIntervention";
 import ViewIntervention from "./ViewIntervention";
 import { calculateAge } from "@app/models/Utils";
 import {
@@ -40,6 +44,9 @@ import { ADMIN, MENTOR, MNE, SUPERVISOR } from "@app/utils/contants";
 import { useDispatch, useSelector } from "react-redux";
 import { getInterventionsCount } from "@app/store/actions/interventions";
 import PropTypes from "prop-types";
+import { getAgeBandByDate } from "@app/utils/ageRange";
+import { getReferencesCountByBeneficiaryQuery } from "@app/utils/reference";
+import { loadGeneralIndicators } from "@app/store/reducers/beneficiaryDashboard";
 
 const { confirm } = Modal;
 
@@ -169,6 +176,60 @@ const ViewBenefiaryPanel = ({
     });
   };
 
+  const getInterventionsCount = async (beneficiary) => {
+    const ageBand: any = getAgeBandByDate(beneficiary.dateOfBirth);
+
+    const interventionsCount =
+      await getInterventionCountByBeneficiaryAndServiceTypeQuery(
+        beneficiary.id
+      );
+    const getPrimaryInterventionsCOunt =
+      await getInterventionCountByBeneficiaryIdAndAgeBandAndLevelQuery(
+        beneficiary.id,
+        ageBand,
+        1
+      );
+    const getSecondaryInterventionsCOunt =
+      await getInterventionCountByBeneficiaryIdAndAgeBandAndLevelQuery(
+        beneficiary.id,
+        ageBand,
+        2
+      );
+    const getContextualInterventionsCOunt =
+      await getInterventionCountByBeneficiaryIdAndAgeBandAndLevelQuery(
+        beneficiary.id,
+        ageBand,
+        3
+      );
+
+    const getReferencesCOunt = await getReferencesCountByBeneficiaryQuery(
+      beneficiary.id
+    );
+
+    dispatch(
+      loadGeneralIndicators({
+        totalOfClinicalInterventions:
+          interventionsCount.length > 0 ? interventionsCount[0][2] : 0,
+        totalOfCommunityInterventions:
+          interventionsCount.length > 0 ? interventionsCount[0][3] : 0,
+        totalOfPrimaryInterventions:
+          getPrimaryInterventionsCOunt.length > 0
+            ? getPrimaryInterventionsCOunt[0][1]
+            : 0,
+        totalOfSecondaryInterventions:
+          getSecondaryInterventionsCOunt.length > 0
+            ? getSecondaryInterventionsCOunt[0][1]
+            : 0,
+        totalOfContextualInterventions:
+          getContextualInterventionsCOunt.length > 0
+            ? getContextualInterventionsCOunt[0][1]
+            : 0,
+        totalReferences:
+          getReferencesCOunt.length > 0 ? getReferencesCOunt[0][1] : 0,
+      })
+    );
+  };
+
   const onSubmit = async () => {
     form
       .validateFields()
@@ -254,7 +315,7 @@ const ViewBenefiaryPanel = ({
         setIsAdd(false);
         form.resetFields();
 
-        dispatch(getInterventionsCount());
+        getInterventionsCount(beneficiary);
       })
       .catch(() => {
         message.error({

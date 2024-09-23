@@ -56,6 +56,30 @@ const styles = StyleSheet.create({
     //marginBottom: '2%',
     color: "#134e4a",
   },
+  buttonStyle: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 6,
+    paddingHorizontal: 32,
+    margin: 0,
+    borderRadius: 4,
+    backgroundColor: "#d1fae5",
+  },
+  buttonSaveStyle: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 6,
+    paddingHorizontal: 25,
+    margin: 0,
+    borderRadius: 4,
+    backgroundColor: "#0e7490",
+  },
+  buttonTextStyle: {
+    color: "#34d399",
+  },
+  buttonTextSaveStyle: {
+    color: "white",
+  },
   spinnerTextStyle: {
     color: "#FFF",
   },
