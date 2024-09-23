@@ -42,7 +42,6 @@ import "../styles.css";
 import InterventionForm from "./InterventionForm";
 import { ADMIN, MENTOR, MNE, SUPERVISOR } from "@app/utils/contants";
 import { useDispatch, useSelector } from "react-redux";
-import { getInterventionsCount } from "@app/store/actions/interventions";
 import PropTypes from "prop-types";
 import { getAgeBandByDate } from "@app/utils/ageRange";
 import { getReferencesCountByBeneficiaryQuery } from "@app/utils/reference";
