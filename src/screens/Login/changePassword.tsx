@@ -119,7 +119,7 @@ const ChangePassword: React.FC = ({ route }: any) => {
         .fetch();
 
       const date = new Date();
-      const formattedDate = date.toISOString().slice(0, 10);
+      const formattedDate = date.toISOString().slice(0, 10) + " " + date.toISOString().slice(11, 19);
 
       await database.write(async () => {
         const uDetail = await database

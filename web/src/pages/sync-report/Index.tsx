@@ -50,6 +50,7 @@ const UsersLastSync: React.FC = () => {
   const [district, setDistrict] = useState<any>();
   const [entryPoint, setEntryPoint] = useState<any>();
   const [userCreator, setUserCreator] = useState<any>();
+  const [name, setName] = useState<any>();
   const [username, setUsername] = useState<any>();
   const [districts, setDistricts] = useState<any[]>([]);
   const [provinces, setProvinces] = useState<any[]>([]);
@@ -94,6 +95,7 @@ const UsersLastSync: React.FC = () => {
         getUserParams(user),
         currentPageIndex,
         pageSize,
+        searchName,
         searchUsername,
         searchUserCreator,
         searchDistrict,
@@ -382,8 +384,11 @@ const UsersLastSync: React.FC = () => {
   ];
 
   const handleGlobalSearch = async () => {
+    if (name !== undefined) {
+      setSearchName(name);
+    }
     if (username !== undefined) {
-      setSearchNui(username);
+      setSearchUsername(username);
     }
     if (userCreator !== undefined) {
       setSearchUserCreator(userCreator);
@@ -584,6 +589,15 @@ const UsersLastSync: React.FC = () => {
         headStyle={{ color: "#17a2b8" }}
       >
         <Row gutter={16}>
+          <Col className="gutter-row">
+            <Form.Item name="name" label="" initialValue={name}>
+              <Input
+                placeholder="Pesquisar por nome"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </Form.Item>
+          </Col>
           <Col className="gutter-row">
             <Form.Item name="username" label="" initialValue={username}>
               <Input
