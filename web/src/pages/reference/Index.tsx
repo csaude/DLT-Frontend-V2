@@ -28,6 +28,7 @@ import {
   Select,
   Tag,
   TableProps,
+  DatePicker,
 } from "antd";
 import ptPT from "antd/lib/locale-provider/pt_PT";
 import "antd/dist/antd.css";
@@ -80,6 +81,12 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
   const [searchDistrict, setSearchDistrict] = useState<any>("");
   const [searchUserCreator, setSearchUserCreator] = useState<any>("");
 
+  const [searchStartDate, setSearchStartDate] = useState<any>(undefined);
+  const [searchEndDate, setSearchEndDate] = useState<any>(undefined);
+
+  const [startDate, setStartDate] = useState<any>("");
+  const [endDate, setEndDate] = useState<any>("");
+
   const [nui, setNui] = useState<any>();
   const [userCreator, setUserCreator] = useState<any>();
   const [districts, setDistricts] = useState<any[]>([]);
@@ -113,14 +120,18 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
         pageSize,
         searchNui,
         searchUserCreator,
-        searchDistrict
+        searchDistrict,
+        searchStartDate,
+        searchEndDate
       );
 
       countByFilter = await queryCountByFilters(
         localStorage.user,
         searchNui,
         searchUserCreator,
-        searchDistrict
+        searchDistrict,
+        searchStartDate,
+        searchEndDate
       );
       setSearchCounter(countByFilter);
 
@@ -234,6 +245,8 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
     searchNui,
     searchUserCreator,
     searchDistrict,
+    searchStartDate,
+    searchEndDate,
   ]);
 
   const handleModalRefVisible = (flag?: boolean) => {
@@ -622,12 +635,12 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
           value: 3,
         },
       ],
-      onFilter: (value, record) => record?.notifyTo?.entryPoint == value,
+      onFilter: (value, record) => record?.referTo == value,
       filterSearch: true,
       render: (text, record) =>
-        record.notifyTo?.entryPoint == 1 ? (
+        record.referTo == 1 ? (
           <Text>US </Text>
-        ) : record.notifyTo?.entryPoint == 2 ? (
+        ) : record.referTo == 2 ? (
           <Text>CM </Text>
         ) : (
           <Text>ES </Text>
@@ -738,6 +751,17 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
     if (district !== undefined) {
       setSearchDistrict(district);
     }
+    if (startDate != "") {
+      setSearchStartDate(startDate);
+    } else {
+      setSearchStartDate(undefined);
+    }
+
+    if (endDate != "") {
+      setSearchEndDate(endDate);
+    } else {
+      setSearchEndDate(undefined);
+    }
   };
 
   const onChange = (e, name) => {
@@ -816,7 +840,9 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
           pageElements,
           searchNui,
           searchUserCreator,
-          searchDistrict
+          searchDistrict,
+          searchStartDate,
+          searchEndDate
         );
 
         if (filters) {
@@ -988,7 +1014,7 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
         bordered={false}
         headStyle={{ color: "#17a2b8" }}
       >
-        <Row gutter={16}>
+        <Row gutter={24}>
           <Col className="gutter-row">
             <Form.Item name="nui" label="" initialValue={searchNui}>
               <Input
@@ -1038,8 +1064,34 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
               options={convertedDistrictsData}
             />
           </Col>
+          <Col className="gutter-row">
+            <Form.Item name="startDate" label="Data Início">
+              <DatePicker
+                inputReadOnly={true}
+                allowClear
+                style={{ width: "100%" }}
+                placeholder="Data Inicio"
+                onChange={(e) =>
+                  e ? setStartDate(moment(e, "YYYY-MM-DD")) : setStartDate("")
+                }
+              />
+            </Form.Item>
+          </Col>
+          <Col className="gutter-row">
+            <Form.Item name="endDate" label="Data Fim">
+              <DatePicker
+                inputReadOnly={true}
+                allowClear
+                style={{ width: "100%" }}
+                placeholder="Data Fim"
+                onChange={(e) =>
+                  e ? setEndDate(moment(e, "YYYY-MM-DD")) : setEndDate("")
+                }
+              />
+            </Form.Item>
+          </Col>
 
-          <Col className="gutter-row" span={12}>
+          <Col className="gutter-row">
             <Button type="primary" onClick={handleGlobalSearch}>
               Pesquisar
             </Button>

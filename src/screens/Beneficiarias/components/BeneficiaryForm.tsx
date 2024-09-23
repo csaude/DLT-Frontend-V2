@@ -326,8 +326,10 @@ const BeneficiaryForm: React.FC = ({
       vblt_pregnant_or_breastfeeding:
         beneficiarie?.vblt_pregnant_or_breastfeeding,
       vblt_is_employed: beneficiarie?.vblt_is_employed,
+      vblt_idp: beneficiarie?.vblt_idp,
       vblt_tested_hiv: beneficiarie?.vblt_tested_hiv,
       vblt_sexually_active: beneficiarie?.vblt_sexually_active,
+      vblt_pregnant_or_has_children: beneficiarie?.vblt_pregnant_or_has_children,
       vblt_multiple_partners: beneficiarie?.vblt_multiple_partners,
       vblt_is_migrant: beneficiarie?.vblt_is_migrant,
       vblt_trafficking_victim: beneficiarie?.vblt_trafficking_victim,
@@ -478,9 +480,6 @@ const BeneficiaryForm: React.FC = ({
       if (values.vblt_house_sustainer == null) {
         errors.vblt_house_sustainer = errorMessage;
       }
-      if (values.vblt_is_orphan == null) {
-        errors.vblt_is_orphan = errorMessage;
-      }
       if (values.vblt_is_student == null) {
         errors.vblt_is_student = errorMessage;
       }
@@ -499,17 +498,8 @@ const BeneficiaryForm: React.FC = ({
       if (values.vblt_married_before == null) {
         errors.vblt_married_before = errorMessage;
       }
-      if (values.vblt_pregnant_before == null) {
-        errors.vblt_pregnant_before = errorMessage;
-      }
-      if (childrenEnabled && values.vblt_children == null) {
-        errors.vblt_children = errorMessage;
-      }
-      if (values.vblt_pregnant_or_breastfeeding == null) {
-        errors.vblt_pregnant_or_breastfeeding = errorMessage;
-      }
-      if (values.vblt_is_employed == null) {
-        errors.vblt_is_employed = errorMessage;
+      if (values.vblt_idp == null) {
+        errors.vblt_idp = errorMessage;
       }
       if (values.vblt_tested_hiv == null) {
         errors.vblt_tested_hiv = errorMessage;
@@ -518,11 +508,11 @@ const BeneficiaryForm: React.FC = ({
       if (values.vblt_sexually_active == null) {
         errors.vblt_sexually_active = errorMessage;
       }
+      if (values.vblt_pregnant_or_has_children == null) {
+        errors.vblt_pregnant_or_has_children = errorMessage;
+      }
       if (values.vblt_multiple_partners == null) {
         errors.vblt_multiple_partners = errorMessage;
-      }
-      if (values.vblt_is_migrant == null) {
-        errors.vblt_is_migrant = errorMessage;
       }
       if (values.vblt_trafficking_victim == null) {
         errors.vblt_trafficking_victim = errorMessage;
@@ -635,7 +625,6 @@ const BeneficiaryForm: React.FC = ({
               (record.vblt_house_sustainer = Number(
                 formik.values.vblt_house_sustainer
               )),
-              (record.vblt_is_orphan = Number(formik.values.vblt_is_orphan)),
               (record.vblt_is_student = Number(formik.values.vblt_is_student)),
               (record.vblt_school_grade = formik.values.vblt_school_grade),
               (record.vblt_school_name = formik.values.vblt_school_name),
@@ -647,22 +636,17 @@ const BeneficiaryForm: React.FC = ({
               (record.vblt_married_before = Number(
                 formik.values.vblt_married_before
               )),
-              (record.vblt_pregnant_before = Number(
-                formik.values.vblt_pregnant_before
-              )),
-              (record.vblt_children = Number(formik.values.vblt_children)),
-              (record.vblt_pregnant_or_breastfeeding = Number(
-                formik.values.vblt_pregnant_or_breastfeeding
-              )),
-              (record.vblt_is_employed = formik.values.vblt_is_employed),
+              (record.vblt_idp = Number(formik.values.vblt_idp)),
               (record.vblt_tested_hiv = formik.values.vblt_tested_hiv),
               (record.vblt_sexually_active = Number(
                 formik.values.vblt_sexually_active
               )),
+              (record.vblt_pregnant_or_has_children = Number(
+                formik.values.vblt_pregnant_or_has_children
+              )),
               (record.vblt_multiple_partners = Number(
                 formik.values.vblt_multiple_partners
               )),
-              (record.vblt_is_migrant = Number(formik.values.vblt_is_migrant)),
               (record.vblt_trafficking_victim = Number(
                 formik.values.vblt_trafficking_victim
               )),
@@ -756,9 +740,6 @@ const BeneficiaryForm: React.FC = ({
               (beneficiary.vblt_house_sustainer = Number(
                 formik.values.vblt_house_sustainer
               )),
-              (beneficiary.vblt_is_orphan = Number(
-                formik.values.vblt_is_orphan
-              )),
               (beneficiary.vblt_is_student = Number(
                 formik.values.vblt_is_student
               )),
@@ -769,17 +750,8 @@ const BeneficiaryForm: React.FC = ({
               )),
               (beneficiary.vblt_deficiency_type =
                 formik.values.vblt_deficiency_type),
-              (beneficiary.vblt_married_before = Number(
-                formik.values.vblt_married_before
-              )),
-              (beneficiary.vblt_pregnant_before = Number(
-                formik.values.vblt_pregnant_before
-              )),
-              (beneficiary.vblt_children = Number(formik.values.vblt_children)),
-              (beneficiary.vblt_pregnant_or_breastfeeding = Number(
-                formik.values.vblt_pregnant_or_breastfeeding
-              )),
               (beneficiary.vblt_is_employed = formik.values.vblt_is_employed),
+              (beneficiary.vblt_idp = Number(formik.values.vblt_idp)),
               (beneficiary.vblt_tested_hiv = formik.values.vblt_tested_hiv);
           });
 
@@ -1197,7 +1169,7 @@ const BeneficiaryForm: React.FC = ({
                             currentDate={
                               beneficiarie?.date_of_birth
                                 ? new Date(beneficiarie?.date_of_birth)
-                                : new Date()
+                                : minBirthYear
                             }
                           />
                         </InputLeftAddon>
@@ -1586,571 +1558,399 @@ const BeneficiaryForm: React.FC = ({
             previousBtnText="<< Anterior"
           >
             <View style={{ alignItems: "center" }}>
-              <VStack space={3} w="90%">
-                <FormControl
-                  style={{
-                    display: beneficiarie === undefined ? "none" : "flex",
-                  }}
-                >
-                  <FormControl.Label>NUI</FormControl.Label>
-                  <Text style={styles.formNUI}>
-                    {beneficiarie === undefined ? "" : beneficiarie.nui}
-                  </Text>
-                </FormControl>
-                <FormControl
-                  key="vblt_lives_with"
-                  isRequired
-                  isInvalid={"vblt_lives_with" in formik.errors}
-                >
-                  <FormControl.Label>Com quem mora?</FormControl.Label>
-                  <Checkbox.Group
-                    focusable={true}
-                    onChange={setValue}
-                    value={value}
-                    accessibilityLabel="choose numbers"
+              {loading ? (
+                <Spinner
+                  visible={true}
+                  textContent={"Registando Beneficiária..."}
+                  textStyle={styles.spinnerTextStyle}
+                />
+              ) : (
+                <VStack space={3} w="90%">
+                  <FormControl
+                    style={{
+                      display: beneficiarie === undefined ? "none" : "flex",
+                    }}
                   >
-                    {items.map((item) => {
-                      return (
-                        <Checkbox
-                          key={item.value}
-                          value={item.value}
+                    <FormControl.Label>NUI</FormControl.Label>
+                    <Text style={styles.formNUI}>
+                      {beneficiarie === undefined ? "" : beneficiarie.nui}
+                    </Text>
+                  </FormControl>
+                  <FormControl
+                    key="vblt_lives_with"
+                    isRequired
+                    isInvalid={"vblt_lives_with" in formik.errors}
+                  >
+                    <FormControl.Label>Com quem mora?</FormControl.Label>
+                    <Checkbox.Group
+                      focusable={true}
+                      onChange={setValue}
+                      value={value}
+                      accessibilityLabel="choose numbers"
+                    >
+                      {items.map((item) => {
+                        return (
+                          <Checkbox
+                            key={item.value}
+                            value={item.value}
+                            colorScheme="green"
+                          >
+                            {item.label}
+                          </Checkbox>
+                        );
+                      })}
+                    </Checkbox.Group>
+                    <FormControl.ErrorMessage>
+                      {formik.errors.vblt_lives_with}
+                    </FormControl.ErrorMessage>
+                  </FormControl>
+                  <FormControl
+                    key="vblt_house_sustainer"
+                    isRequired
+                    isInvalid={"vblt_house_sustainer" in formik.errors}
+                  >
+                    <FormControl.Label>Sustenta a Casa?</FormControl.Label>
+                    <Radio.Group
+                      value={formik.values.vblt_house_sustainer + ""}
+                      onChange={(itemValue) => {
+                        formik.setFieldValue("vblt_house_sustainer", itemValue);
+                      }}
+                      name="rg1"
+                      accessibilityLabel="pick a size"
+                    >
+                      <Stack
+                        direction={{ base: "row", md: "row" }}
+                        alignItems={{
+                          base: "flex-start",
+                          md: "center",
+                        }}
+                        space={4}
+                        w="75%"
+                        maxW="300px"
+                      >
+                        <Radio
+                          key="rd1"
+                          value="1"
                           colorScheme="green"
+                          size="md"
+                          my={1}
                         >
-                          {item.label}
-                        </Checkbox>
-                      );
-                    })}
-                  </Checkbox.Group>
-                  <FormControl.ErrorMessage>
-                    {formik.errors.vblt_lives_with}
-                  </FormControl.ErrorMessage>
-                </FormControl>
-                <FormControl
-                  key="vblt_house_sustainer"
-                  isRequired
-                  isInvalid={"vblt_house_sustainer" in formik.errors}
-                >
-                  <FormControl.Label>Sustenta a Casa?</FormControl.Label>
-                  <Radio.Group
-                    value={formik.values.vblt_house_sustainer + ""}
-                    onChange={(itemValue) => {
-                      formik.setFieldValue("vblt_house_sustainer", itemValue);
-                    }}
-                    name="rg1"
-                    accessibilityLabel="pick a size"
+                          Sim
+                        </Radio>
+                        <Radio
+                          key="rd2"
+                          value="0"
+                          colorScheme="green"
+                          size="md"
+                          my={1}
+                        >
+                          Não
+                        </Radio>
+                      </Stack>
+                    </Radio.Group>
+                    <FormControl.ErrorMessage>
+                      {formik.errors.vblt_house_sustainer}
+                    </FormControl.ErrorMessage>
+                  </FormControl>
+                  <FormControl
+                    key="vblt_is_student"
+                    isRequired
+                    isInvalid={"vblt_is_student" in formik.errors}
                   >
-                    <Stack
-                      direction={{ base: "row", md: "row" }}
-                      alignItems={{
-                        base: "flex-start",
-                        md: "center",
+                    <FormControl.Label>Vai a Escola?</FormControl.Label>
+                    <Radio.Group
+                      value={formik.values.vblt_is_student + ""}
+                      onChange={(itemValue) => {
+                        formik.setFieldValue("vblt_is_student", itemValue);
+                        isStudentChange(itemValue);
                       }}
-                      space={4}
-                      w="75%"
-                      maxW="300px"
+                      name="rg3"
+                      accessibilityLabel="pick a size"
                     >
-                      <Radio
-                        key="rd1"
-                        value="1"
-                        colorScheme="green"
-                        size="md"
-                        my={1}
+                      <Stack
+                        direction={{ base: "row", md: "row" }}
+                        alignItems={{
+                          base: "flex-start",
+                          md: "center",
+                        }}
+                        space={4}
+                        w="75%"
+                        maxW="300px"
                       >
-                        Sim
-                      </Radio>
-                      <Radio
-                        key="rd2"
-                        value="0"
-                        colorScheme="green"
-                        size="md"
-                        my={1}
-                      >
-                        Não
-                      </Radio>
-                    </Stack>
-                  </Radio.Group>
-                  <FormControl.ErrorMessage>
-                    {formik.errors.vblt_house_sustainer}
-                  </FormControl.ErrorMessage>
-                </FormControl>
-                <FormControl
-                  key="vblt_is_orphan"
-                  isRequired
-                  isInvalid={"vblt_is_orphan" in formik.errors}
-                >
-                  <FormControl.Label>É Orfã?</FormControl.Label>
-                  <Radio.Group
-                    value={formik.values.vblt_is_orphan + ""}
-                    onChange={(itemValue) => {
-                      formik.setFieldValue("vblt_is_orphan", itemValue);
-                    }}
-                    name="rg2"
-                    accessibilityLabel="pick a size"
+                        <Radio
+                          key="stu1"
+                          value="1"
+                          colorScheme="green"
+                          size="md"
+                          my={1}
+                        >
+                          Sim
+                        </Radio>
+                        <Radio
+                          key="stu2"
+                          value="0"
+                          colorScheme="green"
+                          size="md"
+                          my={1}
+                        >
+                          Não
+                        </Radio>
+                      </Stack>
+                    </Radio.Group>
+                    <FormControl.ErrorMessage>
+                      {formik.errors.vblt_is_student}
+                    </FormControl.ErrorMessage>
+                  </FormControl>
+                  <FormControl
+                    key="vblt_school_grade"
+                    isRequired={schoolInfoEnabled}
+                    isInvalid={"vblt_school_grade" in formik.errors}
                   >
-                    <Stack
-                      direction={{ base: "row", md: "row" }}
-                      alignItems={{
-                        base: "flex-start",
-                        md: "center",
+                    <FormControl.Label>Classe</FormControl.Label>
+                    <Picker
+                      style={styles.textBlack}
+                      selectedValue={formik.values.vblt_school_grade}
+                      onValueChange={(itemValue, itemIndex) => {
+                        if (itemIndex !== 0) {
+                          formik.setFieldValue("vblt_school_grade", itemValue);
+                        }
                       }}
-                      space={4}
-                      w="75%"
-                      maxW="300px"
                     >
-                      <Radio
-                        key="isorp1"
-                        value="1"
-                        colorScheme="green"
-                        size="md"
-                        my={1}
-                      >
-                        Sim
-                      </Radio>
-                      <Radio
-                        key="isorp2"
-                        value="0"
-                        colorScheme="green"
-                        size="md"
-                        my={1}
-                      >
-                        Não
-                      </Radio>
-                    </Stack>
-                  </Radio.Group>
-                  <FormControl.ErrorMessage>
-                    {formik.errors.vblt_is_orphan}
-                  </FormControl.ErrorMessage>
-                </FormControl>
-                <FormControl
-                  key="vblt_is_student"
-                  isRequired
-                  isInvalid={"vblt_is_student" in formik.errors}
-                >
-                  <FormControl.Label>Vai a Escola?</FormControl.Label>
-                  <Radio.Group
-                    value={formik.values.vblt_is_student + ""}
-                    onChange={(itemValue) => {
-                      formik.setFieldValue("vblt_is_student", itemValue);
-                      isStudentChange(itemValue);
-                    }}
-                    name="rg3"
-                    accessibilityLabel="pick a size"
+                      <Picker.Item label="-- Seleccione --" value="0" />
+                      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((item) => (
+                        <Picker.Item key={item} label={"" + item} value={item} />
+                      ))}
+                    </Picker>
+                    <FormControl.ErrorMessage>
+                      {formik.errors.vblt_school_grade}
+                    </FormControl.ErrorMessage>
+                  </FormControl>
+                  <FormControl
+                    isRequired={schoolInfoEnabled}
+                    isInvalid={"vblt_school_name" in formik.errors}
                   >
-                    <Stack
-                      direction={{ base: "row", md: "row" }}
-                      alignItems={{
-                        base: "flex-start",
-                        md: "center",
+                    <FormControl.Label>
+                      Nome da Instituição de Ensino
+                    </FormControl.Label>
+                    <Input
+                      onBlur={formik.handleBlur("vblt_school_name")}
+                      placeholder="Insira o nome da Instituição"
+                      onChangeText={formik.handleChange("vblt_school_name")}
+                      value={formik.values.vblt_school_name}
+                    />
+                    <FormControl.ErrorMessage>
+                      {formik.errors.vblt_school_name}
+                    </FormControl.ErrorMessage>
+                  </FormControl>
+                  <FormControl
+                    key="vblt_is_deficient"
+                    isRequired
+                    isInvalid={"vblt_is_deficient" in formik.errors}
+                  >
+                    <FormControl.Label>Tem Deficiência?</FormControl.Label>
+                    <Radio.Group
+                      value={formik.values.vblt_is_deficient + ""}
+                      onChange={(itemValue) => {
+                        formik.setFieldValue("vblt_is_deficient", itemValue);
+                        onIsDeficientChange(itemValue);
                       }}
-                      space={4}
-                      w="75%"
-                      maxW="300px"
+                      name="rg4"
+                      accessibilityLabel="pick a size"
                     >
-                      <Radio
-                        key="stu1"
-                        value="1"
-                        colorScheme="green"
-                        size="md"
-                        my={1}
+                      <Stack
+                        direction={{ base: "row", md: "row" }}
+                        alignItems={{
+                          base: "flex-start",
+                          md: "center",
+                        }}
+                        space={4}
+                        w="75%"
+                        maxW="300px"
                       >
-                        Sim
-                      </Radio>
-                      <Radio
-                        key="stu2"
-                        value="0"
-                        colorScheme="green"
-                        size="md"
-                        my={1}
-                      >
-                        Não
-                      </Radio>
-                    </Stack>
-                  </Radio.Group>
-                  <FormControl.ErrorMessage>
-                    {formik.errors.vblt_is_student}
-                  </FormControl.ErrorMessage>
-                </FormControl>
-                <FormControl
-                  key="vblt_school_grade"
-                  isRequired={schoolInfoEnabled}
-                  isInvalid={"vblt_school_grade" in formik.errors}
-                >
-                  <FormControl.Label>Classe</FormControl.Label>
-                  <Picker
-                    style={styles.textBlack}
-                    selectedValue={formik.values.vblt_school_grade}
-                    onValueChange={(itemValue, itemIndex) => {
-                      if (itemIndex !== 0) {
-                        formik.setFieldValue("vblt_school_grade", itemValue);
-                      }
-                    }}
+                        <Radio
+                          key="defi1"
+                          value="1"
+                          colorScheme="green"
+                          size="md"
+                          my={1}
+                        >
+                          Sim
+                        </Radio>
+                        <Radio
+                          key="defi2"
+                          value="0"
+                          colorScheme="green"
+                          size="md"
+                          my={1}
+                        >
+                          Não
+                        </Radio>
+                      </Stack>
+                    </Radio.Group>
+                    <FormControl.ErrorMessage>
+                      {formik.errors.vblt_is_deficient}
+                    </FormControl.ErrorMessage>
+                  </FormControl>
+                  <FormControl
+                    key="vblt_deficiency_type"
+                    isRequired={deficiencyTypeEnabled}
+                    isInvalid={"vblt_deficiency_type" in formik.errors}
                   >
-                    <Picker.Item label="-- Seleccione --" value="0" />
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((item) => (
-                      <Picker.Item key={item} label={"" + item} value={item} />
-                    ))}
-                  </Picker>
-                  <FormControl.ErrorMessage>
-                    {formik.errors.vblt_school_grade}
-                  </FormControl.ErrorMessage>
-                </FormControl>
-                <FormControl
-                  isRequired={schoolInfoEnabled}
-                  isInvalid={"vblt_school_name" in formik.errors}
-                >
-                  <FormControl.Label>
-                    Nome da Instituição de Ensino
-                  </FormControl.Label>
-                  <Input
-                    onBlur={formik.handleBlur("vblt_school_name")}
-                    placeholder="Insira o nome da Instituição"
-                    onChangeText={formik.handleChange("vblt_school_name")}
-                    value={formik.values.vblt_school_name}
-                  />
-                  <FormControl.ErrorMessage>
-                    {formik.errors.vblt_school_name}
-                  </FormControl.ErrorMessage>
-                </FormControl>
-                <FormControl
-                  key="vblt_is_deficient"
-                  isRequired
-                  isInvalid={"vblt_is_deficient" in formik.errors}
-                >
-                  <FormControl.Label>Tem Deficiência?</FormControl.Label>
-                  <Radio.Group
-                    value={formik.values.vblt_is_deficient + ""}
-                    onChange={(itemValue) => {
-                      formik.setFieldValue("vblt_is_deficient", itemValue);
-                      onIsDeficientChange(itemValue);
-                    }}
-                    name="rg4"
-                    accessibilityLabel="pick a size"
-                  >
-                    <Stack
-                      direction={{ base: "row", md: "row" }}
-                      alignItems={{
-                        base: "flex-start",
-                        md: "center",
+                    <FormControl.Label>Tipo de Deficiência</FormControl.Label>
+                    <Picker
+                      style={styles.textBlack}
+                      selectedValue={formik.values.vblt_deficiency_type}
+                      onValueChange={(itemValue, itemIndex) => {
+                        if (itemIndex !== 0) {
+                          formik.setFieldValue("vblt_deficiency_type", itemValue);
+                        }
                       }}
-                      space={4}
-                      w="75%"
-                      maxW="300px"
+                      enabled={deficiencyTypeEnabled}
                     >
-                      <Radio
-                        key="defi1"
-                        value="1"
-                        colorScheme="green"
-                        size="md"
-                        my={1}
-                      >
-                        Sim
-                      </Radio>
-                      <Radio
-                        key="defi2"
-                        value="0"
-                        colorScheme="green"
-                        size="md"
-                        my={1}
-                      >
-                        Não
-                      </Radio>
-                    </Stack>
-                  </Radio.Group>
-                  <FormControl.ErrorMessage>
-                    {formik.errors.vblt_is_deficient}
-                  </FormControl.ErrorMessage>
-                </FormControl>
-                <FormControl
-                  key="vblt_deficiency_type"
-                  isRequired={deficiencyTypeEnabled}
-                  isInvalid={"vblt_deficiency_type" in formik.errors}
-                >
-                  <FormControl.Label>Tipo de Deficiência</FormControl.Label>
-                  <Picker
-                    style={styles.textBlack}
-                    selectedValue={formik.values.vblt_deficiency_type}
-                    onValueChange={(itemValue, itemIndex) => {
-                      if (itemIndex !== 0) {
-                        formik.setFieldValue("vblt_deficiency_type", itemValue);
-                      }
-                    }}
-                    enabled={deficiencyTypeEnabled}
+                      <Picker.Item label="-- Seleccione --" value="0" />
+                      {[
+                        "Não Anda",
+                        "Não Fala",
+                        "Não Vê",
+                        "Não Ouve",
+                        "Membro Amputado ou Deformado",
+                        "Tem Algum Atraso Mental",
+                      ].map((item) => (
+                        <Picker.Item key={item} label={"" + item} value={item} />
+                      ))}
+                    </Picker>
+                    <FormControl.ErrorMessage>
+                      {formik.errors.vblt_deficiency_type}
+                    </FormControl.ErrorMessage>
+                  </FormControl>
+                  <FormControl
+                    key="vblt_married_before"
+                    isRequired
+                    isInvalid={"vblt_married_before" in formik.errors}
                   >
-                    <Picker.Item label="-- Seleccione --" value="0" />
-                    {[
-                      "Não Anda",
-                      "Não Fala",
-                      "Não Vê",
-                      "Não Ouve",
-                      "Membro Amputado ou Deformado",
-                      "Tem Algum Atraso Mental",
-                    ].map((item) => (
-                      <Picker.Item key={item} label={"" + item} value={item} />
-                    ))}
-                  </Picker>
-                  <FormControl.ErrorMessage>
-                    {formik.errors.vblt_deficiency_type}
-                  </FormControl.ErrorMessage>
-                </FormControl>
-                <FormControl
-                  key="vblt_married_before"
-                  isRequired
-                  isInvalid={"vblt_married_before" in formik.errors}
-                >
-                  <FormControl.Label>Já foi Casada?</FormControl.Label>
-                  <Radio.Group
-                    value={formik.values.vblt_married_before + ""}
-                    onChange={(itemValue) => {
-                      formik.setFieldValue("vblt_married_before", itemValue);
-                    }}
-                    name="rg5"
-                    accessibilityLabel="pick a size"
-                  >
-                    <Stack
-                      direction={{ base: "row", md: "row" }}
-                      alignItems={{
-                        base: "flex-start",
-                        md: "center",
+                    <FormControl.Label>É ou Já foi Casada?</FormControl.Label>
+                    <Radio.Group
+                      value={formik.values.vblt_married_before + ""}
+                      onChange={(itemValue) => {
+                        formik.setFieldValue("vblt_married_before", itemValue);
                       }}
-                      space={4}
-                      w="75%"
-                      maxW="300px"
+                      name="rg5"
+                      accessibilityLabel="pick a size"
                     >
-                      <Radio
-                        key="merb1"
-                        value="1"
-                        colorScheme="green"
-                        size="md"
-                        my={1}
+                      <Stack
+                        direction={{ base: "row", md: "row" }}
+                        alignItems={{
+                          base: "flex-start",
+                          md: "center",
+                        }}
+                        space={4}
+                        w="75%"
+                        maxW="300px"
                       >
-                        Sim
-                      </Radio>
-                      <Radio
-                        key="merb2"
-                        value="0"
-                        colorScheme="green"
-                        size="md"
-                        my={1}
-                      >
-                        Não
-                      </Radio>
-                    </Stack>
-                  </Radio.Group>
-                  <FormControl.ErrorMessage>
-                    {formik.errors.vblt_married_before}
-                  </FormControl.ErrorMessage>
-                </FormControl>
-                <FormControl
-                  key="vblt_pregnant_before"
-                  isRequired
-                  isInvalid={"vblt_pregnant_before" in formik.errors}
-                >
-                  <FormControl.Label>Já esteve Gravida?</FormControl.Label>
-                  <Radio.Group
-                    value={formik.values.vblt_pregnant_before + ""}
-                    onChange={(itemValue) => {
-                      formik.setFieldValue("vblt_pregnant_before", itemValue);
-                      onPregnantBeforeChane(itemValue);
-                    }}
-                    name="rg6"
-                    accessibilityLabel="pick a size"
+                        <Radio
+                          key="merb1"
+                          value="1"
+                          colorScheme="green"
+                          size="md"
+                          my={1}
+                        >
+                          Sim
+                        </Radio>
+                        <Radio
+                          key="merb2"
+                          value="0"
+                          colorScheme="green"
+                          size="md"
+                          my={1}
+                        >
+                          Não
+                        </Radio>
+                      </Stack>
+                    </Radio.Group>
+                    <FormControl.ErrorMessage>
+                      {formik.errors.vblt_married_before}
+                    </FormControl.ErrorMessage>
+                  </FormControl>
+                  <FormControl
+                    key="vblt_idp"
+                    isRequired
+                    isInvalid={"vblt_idp" in formik.errors}
                   >
-                    <Stack
-                      direction={{ base: "row", md: "row" }}
-                      alignItems={{
-                        base: "flex-start",
-                        md: "center",
+                    <FormControl.Label>Deslocado Interno?/IDP?</FormControl.Label>
+                    <Radio.Group
+                      value={formik.values.vblt_idp + ""}
+                      onChange={(itemValue) => {
+                        formik.setFieldValue("vblt_idp", itemValue);
                       }}
-                      space={4}
-                      w="75%"
-                      maxW="300px"
+                      name="rg5"
+                      accessibilityLabel="pick a size"
                     >
-                      <Radio
-                        key="prebf1"
-                        value="1"
-                        colorScheme="green"
-                        size="md"
-                        my={1}
+                      <Stack
+                        direction={{ base: "row", md: "row" }}
+                        alignItems={{
+                          base: "flex-start",
+                          md: "center",
+                        }}
+                        space={4}
+                        w="75%"
+                        maxW="300px"
                       >
-                        Sim
-                      </Radio>
-                      <Radio
-                        key="prebf2"
-                        value="0"
-                        colorScheme="green"
-                        size="md"
-                        my={1}
-                      >
-                        Não
-                      </Radio>
-                    </Stack>
-                  </Radio.Group>
-                  <FormControl.ErrorMessage>
-                    {formik.errors.vblt_pregnant_before}
-                  </FormControl.ErrorMessage>
-                </FormControl>
-                <FormControl
-                  key="vblt_children"
-                  isRequired={childrenEnabled}
-                  isInvalid={"vblt_children" in formik.errors}
-                  isDisabled={haveChildrenEnabled}
-                >
-                  <FormControl.Label>Tem Filhos?</FormControl.Label>
-                  <Radio.Group
-                    value={formik.values.vblt_children + ""}
-                    onChange={(itemValue) => {
-                      formik.setFieldValue("vblt_children", itemValue);
-                    }}
-                    name="rg7"
-                    accessibilityLabel="pick a size"
+                        <Radio
+                          key="merb1"
+                          value="1"
+                          colorScheme="green"
+                          size="md"
+                          my={1}
+                        >
+                          Sim
+                        </Radio>
+                        <Radio
+                          key="merb2"
+                          value="0"
+                          colorScheme="green"
+                          size="md"
+                          my={1}
+                        >
+                          Não
+                        </Radio>
+                      </Stack>
+                    </Radio.Group>
+                    <FormControl.ErrorMessage>
+                      {formik.errors.vblt_idp}
+                    </FormControl.ErrorMessage>
+                  </FormControl>
+                  <FormControl
+                    key="vblt_tested_hiv"
+                    isRequired
+                    isInvalid={"vblt_tested_hiv" in formik.errors}
                   >
-                    <Stack
-                      direction={{ base: "row", md: "row" }}
-                      alignItems={{
-                        base: "flex-start",
-                        md: "center",
+                    <FormControl.Label>Já fez Teste de HIV?</FormControl.Label>
+                    <Picker
+                      style={styles.textBlack}
+                      selectedValue={formik.values.vblt_tested_hiv}
+                      onValueChange={(itemValue, itemIndex) => {
+                        if (itemIndex !== 0) {
+                          formik.setFieldValue("vblt_tested_hiv", itemValue);
+                        }
                       }}
-                      space={4}
-                      w="75%"
-                      maxW="300px"
                     >
-                      <Radio
-                        key="chi1"
-                        value="1"
-                        colorScheme="green"
-                        size="md"
-                        my={1}
-                      >
-                        Sim
-                      </Radio>
-                      <Radio
-                        key="chi2"
-                        value="0"
-                        colorScheme="green"
-                        size="md"
-                        my={1}
-                      >
-                        Não
-                      </Radio>
-                    </Stack>
-                  </Radio.Group>
-                  <FormControl.ErrorMessage>
-                    {formik.errors.vblt_children}
-                  </FormControl.ErrorMessage>
-                </FormControl>
-                <FormControl
-                  key="vblt_pregnant_or_breastfeeding"
-                  isRequired
-                  isInvalid={"vblt_pregnant_or_breastfeeding" in formik.errors}
-                >
-                  <FormControl.Label>
-                    Está Grávida ou a amamentar?
-                  </FormControl.Label>
-                  <Radio.Group
-                    value={formik.values.vblt_pregnant_or_breastfeeding + ""}
-                    onChange={(itemValue) => {
-                      formik.setFieldValue(
-                        "vblt_pregnant_or_breastfeeding",
-                        itemValue
-                      );
-                    }}
-                    name="rg8"
-                    accessibilityLabel="pick a size"
-                  >
-                    <Stack
-                      direction={{ base: "row", md: "row" }}
-                      alignItems={{
-                        base: "flex-start",
-                        md: "center",
-                      }}
-                      space={4}
-                      w="75%"
-                      maxW="300px"
-                    >
-                      <Radio
-                        key="preg1"
-                        value="1"
-                        colorScheme="green"
-                        size="md"
-                        my={1}
-                      >
-                        Sim
-                      </Radio>
-                      <Radio
-                        key="preg2"
-                        value="0"
-                        colorScheme="green"
-                        size="md"
-                        my={1}
-                      >
-                        Não
-                      </Radio>
-                    </Stack>
-                  </Radio.Group>
-                  <FormControl.ErrorMessage>
-                    {formik.errors.vblt_pregnant_or_breastfeeding}
-                  </FormControl.ErrorMessage>
-                </FormControl>
-                <FormControl
-                  key="vblt_is_employed"
-                  isRequired
-                  isInvalid={"vblt_is_employed" in formik.errors}
-                >
-                  <FormControl.Label>Trabalha?</FormControl.Label>
-                  <Picker
-                    style={styles.textBlack}
-                    selectedValue={formik.values.vblt_is_employed}
-                    onValueChange={(itemValue, itemIndex) => {
-                      if (itemIndex !== 0) {
-                        formik.setFieldValue("vblt_is_employed", itemValue);
-                      }
-                    }}
-                  >
-                    <Picker.Item label="-- Seleccione --" value="0" />
-                    {[
-                      "Não Trabalha",
-                      "Empregada Doméstica",
-                      "Babá (Cuida das Crianças)",
-                      "Outros",
-                    ].map((item) => (
-                      <Picker.Item key={item} label={"" + item} value={item} />
-                    ))}
-                  </Picker>
-                  <FormControl.ErrorMessage>
-                    {formik.errors.vblt_is_employed}
-                  </FormControl.ErrorMessage>
-                </FormControl>
-                <FormControl
-                  key="vblt_tested_hiv"
-                  isRequired
-                  isInvalid={"vblt_tested_hiv" in formik.errors}
-                >
-                  <FormControl.Label>Já fez Teste de HIV?</FormControl.Label>
-                  <Picker
-                    style={styles.textBlack}
-                    selectedValue={formik.values.vblt_tested_hiv}
-                    onValueChange={(itemValue, itemIndex) => {
-                      if (itemIndex !== 0) {
-                        formik.setFieldValue("vblt_tested_hiv", itemValue);
-                      }
-                    }}
-                  >
-                    <Picker.Item label="-- Seleccione --" value="0" />
-                    {["Não", "SIM ( + 3 meses)", "SIM ( - 3 meses)"].map(
-                      (item) => (
-                        <Picker.Item
-                          key={item}
-                          label={"" + item}
-                          value={item}
-                        />
-                      )
-                    )}
-                  </Picker>
-                  <FormControl.ErrorMessage>
-                    {formik.errors.vblt_tested_hiv}
-                  </FormControl.ErrorMessage>
-                </FormControl>
-              </VStack>
+                      <Picker.Item label="-- Seleccione --" value="0" />
+                      {["Não", "SIM ( + 3 meses)", "SIM ( - 3 meses)"].map(
+                        (item) => (
+                          <Picker.Item
+                            key={item}
+                            label={"" + item}
+                            value={item}
+                          />
+                        )
+                      )}
+                    </Picker>
+                    <FormControl.ErrorMessage>
+                      {formik.errors.vblt_tested_hiv}
+                    </FormControl.ErrorMessage>
+                  </FormControl>
+                </VStack>
+              )}
             </View>
           </ProgressStep>
           <ProgressStep
@@ -2228,6 +2028,55 @@ const BeneficiaryForm: React.FC = ({
                 </FormControl>
                 <FormControl
                   isRequired
+                  isInvalid={"vblt_pregnant_or_has_children" in formik.errors}
+                >
+                  <FormControl.Label>Está ou Já esteve Grávida ou Tem filhos?</FormControl.Label>
+                  <Radio.Group
+                    focusable={true}
+                    key="vblt_pregnant_or_has_children"
+                    value={formik.values.vblt_pregnant_or_has_children + ""}
+                    onChange={(itemValue) => {
+                      formik.setFieldValue("vblt_pregnant_or_has_children", itemValue);
+                    }}
+                    name="ex1"
+                    accessibilityLabel="pick a size"
+                  >
+                    <Stack
+                      direction={{ base: "row", md: "row" }}
+                      alignItems={{
+                        base: "flex-start",
+                        md: "center",
+                      }}
+                      space={4}
+                      w="75%"
+                      maxW="300px"
+                    >
+                      <Radio
+                        key="sexact1"
+                        value="1"
+                        colorScheme="green"
+                        size="md"
+                        my={1}
+                      >
+                        Sim
+                      </Radio>
+                      <Radio
+                        key="sexact2"
+                        value="0"
+                        colorScheme="green"
+                        size="md"
+                        my={1}
+                      >
+                        Não
+                      </Radio>
+                    </Stack>
+                  </Radio.Group>
+                  <FormControl.ErrorMessage>
+                    {formik.errors.vblt_pregnant_or_has_children}
+                  </FormControl.ErrorMessage>
+                </FormControl>
+                <FormControl
+                  isRequired
                   isInvalid={"vblt_multiple_partners" in formik.errors}
                 >
                   <FormControl.Label>
@@ -2263,54 +2112,6 @@ const BeneficiaryForm: React.FC = ({
                   </Radio.Group>
                   <FormControl.ErrorMessage>
                     {formik.errors.vblt_multiple_partners}
-                  </FormControl.ErrorMessage>
-                </FormControl>
-                <FormControl
-                  isRequired
-                  isInvalid={"vblt_is_migrant" in formik.errors}
-                >
-                  <FormControl.Label>Migrante?</FormControl.Label>
-                  <Radio.Group
-                    key="vblt_is_migrant"
-                    value={formik.values.vblt_is_migrant + ""}
-                    onChange={(itemValue) => {
-                      formik.setFieldValue("vblt_is_migrant", itemValue);
-                    }}
-                    name="ex3"
-                    accessibilityLabel="pick a size"
-                  >
-                    <Stack
-                      direction={{ base: "row", md: "row" }}
-                      alignItems={{
-                        base: "flex-start",
-                        md: "center",
-                      }}
-                      space={4}
-                      w="75%"
-                      maxW="300px"
-                    >
-                      <Radio
-                        key="ismig1"
-                        value="1"
-                        colorScheme="green"
-                        size="md"
-                        my={1}
-                      >
-                        Sim
-                      </Radio>
-                      <Radio
-                        key="ismig2"
-                        value="0"
-                        colorScheme="green"
-                        size="md"
-                        my={1}
-                      >
-                        Não
-                      </Radio>
-                    </Stack>
-                  </Radio.Group>
-                  <FormControl.ErrorMessage>
-                    {formik.errors.vblt_is_migrant}
                   </FormControl.ErrorMessage>
                 </FormControl>
                 <FormControl
@@ -2686,14 +2487,10 @@ const BeneficiaryForm: React.FC = ({
           </ProgressStep>
         </ProgressSteps>
       </View>
-      {loading ? (
+      {(beneficiarie && loading) ? (
         <Spinner
           visible={true}
-          textContent={
-            beneficiarie
-              ? "Actualizando Beneficiária..."
-              : "Registando Beneficiária..."
-          }
+          textContent={"Actualizando Beneficiária..."}
           textStyle={styles.spinnerTextStyle}
         />
       ) : undefined}

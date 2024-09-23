@@ -1,127 +1,202 @@
 {
   "release": {
-    "version": "1.2.0",
-    "date": "20/03/2024",
+    "version": "1.4.0",
+    "date": "20/09/2024",
     "changelogs": [
       {
         "id": 1,
-        "changelog": "Beneficiary Management Module / Módulo de Gestão de Beneficiários:"
+        "changelog": "Beneficiary Management Module / Módulo de Gestão de Beneficiários:",
+        "items": [
+          {
+            "id": 1.1,
+            "item": "Beneficiary Registration / Registo de Beneficiária:",
+            "subitems": [
+              {
+                "id": 1.11,
+                "subitem": "Updated General Vulnerabilities according to the new SOP / Actualização das Vulnerabilidades Gerais de acordo com o novo POP:",
+                "subsubitems": [
+                  {
+                    "id": 1.111,
+                    "subsubitem": "Removed the vulnerabilities 'is orphan', 'has ever been pregnant', 'has kids', 'is pregnant or breastfeeding' and 'works' / Removidas as vulnerabilidades: 'é órfã', 'já esteve grávida' ,  'tem filhos', 'está grávida  ou amamentar' e 'trabalha'"
+                  },
+                  {
+                    "id": 1.112,
+                    "subsubitem": "Included the vulnerability 'IDP' / Incluída a vulnerabilidade 'deslocado interno'"
+                  }
+                ]
+              },
+              {
+                "id": 1.12,
+                "subitem": "Updated Specific Vulnerabilities according to the new SOP / Actualização das Vulnerabilidades Específicas de acordo com o novo POP:",
+                "subsubitems": [
+                  {
+                    "id": 1.121,
+                    "subsubitem": "Removed the vulnerability 'migrant' / Removida a Vulnerabilidade 'migrante'"
+                  },
+                  {
+                    "id": 1.122,
+                    "subsubitem": "Included the vulnerability  'Is or Has ever been Pregnant or Has kids' as a single vulnerability / Incluída a vulnerabilidade 'Está ou Já esteve Grávida ou Tem filhos' como uma única vulnerabilidade"
+                  }
+                ]
+              },
+              {
+                "id": 1.13,
+                "subitem": "Improvement in the mobile interface to block the screen during registration process to avoid duplicate entries / Melhoria na interface móvel para bloquear a tela durante o processo de registo para evitar duplicidade de registos",
+                "subsubitems": []
+              },
+              {
+                "id": 1.14,
+                "subitem": "Improvement in the intervention counter to accurately count the beneficiary’s interventions / Melhoria no contador de intervenções para contabilizar correctamente as intervenções de um beneficiário",
+                "subsubitems": []
+              }
+            ]
+          }
+        ]
       },
       {
         "id": 2,
-        "changelog": "Beneficiary Registration / Registo de Beneficiária:"
+        "changelog": "Referral Management Module / Módulo de Gestão de Referências",
+        "items": [
+          {
+            "id": 2.1,
+            "item": "Manage Service Referral / Gestão de Referência de Serviço:",
+            "subitems": [
+              {
+                "id": 2.11,
+                "subitem": "Improvement in the mobile interface to block the screen during registration process to avoid duplicate entries / Melhoria na interface móvel para bloquear a tela durante o processo de registo para evitar duplicidade de registos",
+                "subsubitems": []
+              },
+              {
+                "id": 2.12,
+                "subitem": "Included the global filters start and end date to the referrals list (Ticket #3528) / Incluídos na lista de referências os filtros globais data de início e fim (Ticket #3528)",
+                "subsubitems": []
+              }
+            ]
+          }
+        ]
       },
       {
         "id": 3,
-        "changelog": "Feature to identify possible matches with existing beneficiaries to avoid beneficiary duplication / Funcionalidade para identificar possíveis correspondências com beneficiários existentes para evitar a duplicação de beneficiários"
+        "changelog": "User Management Module / Módulo de Gestão de Utilizadores:",
+        "items": [
+          {
+            "id": 3.1,
+            "item": "User synchronization Report / Relatório de Sincronização do Utilizador:",
+            "subitems": [
+              {
+                "id": 3.11,
+                "subitem": "Included a feature to export the report to Excel file / Incluída a funcionalidade  de exportação do relatório para uma ficheiro em Excel",
+                "subsubitems": []
+              },
+              {
+                "id": 3.12,
+                "subitem": "Included a new column to show the installed app version (Ticket #3533) / Incluída nova coluna para apresentar a versão instalada do aplicativo",
+                "subsubitems": []
+              },
+              {
+                "id": 3.13,
+                "subitem": "Included  Entry point to global filters (Ticket #3563) / Incluído  o ponto de entrada nos filtros globais",
+                "subsubitems": []
+              },
+              {
+                "id": 3.14,
+                "subitem": "Removed the hours in the date of last sync (Ticket #3576) / Removidas as horas na data de última sincronização",
+                "subsubitems": []
+              }
+            ]
+          }
+        ]
       },
       {
         "id": 4,
-        "changelog": "Beneficiary Service Provision / Provisão de Serviços aos Beneficiários:"
+        "changelog": "Reports Module / Módulo de Relatórios",
+        "items": [
+          {
+            "id": 4.1,
+            "item": "Simplified AGYW_PREV Indicator Report/ Relatório Simplificado do Indicador AGYW_PREV:",
+            "subitems": [
+              {
+                "id": 4.11,
+                "subitem": "Removed the services Aflatoun and Provision and Promotion of Contraceptives / Removidos os serviços Aflatoun e Promoção e Provisão de Contraceptivos",
+                "subsubitems": []
+              }
+            ]
+          },
+          {
+            "id": 4.2,
+            "item": "AGYW_PREV Indicator Report/ Relatório do Indicador AGYW_PREV:",
+            "subitems": [
+              {
+                "id": 4.21,
+                "subitem": "Included the primary package completion flag / Incluída a flag de completude do pacote primário",
+                "subsubitems": []
+              }
+            ]
+          },
+          {
+            "id": 4.3,
+            "item": "List of Beneficiaries without Primary Package Completion (New List) / Lista de Beneficiárias que não completaram o Pacote Primário (Nova Lista):",
+            "subitems": [
+              {
+                "id": 4.31,
+                "subitem": "New List to monitor the DREAMS Beneficiaries that did not complete the Primary Package and the services pending to complete the package (Ticket #1666) / Nova Lista para monitorar Beneficiárias DREAMS que não completaram o Pacote Primário e os serviços pendentes para sua completude",
+                "subsubitems": []
+              }
+            ]
+          }
+        ]
       },
       {
         "id": 5,
-        "changelog": "Enhancement to restrict service editing by partner type; clinical services can only be edited by clinical partners, and community services by community partners / Melhoria para restringir a edição de serviços por tipo de parceiro; serviços clínicos só podem ser editados por parceiros clínicos e serviços comunitários por parceiros comunitários"
-      },
-      {
-        "id": 6,
-        "changelog": "Disable Sub-service Consulta Pós Parto (CPP) from Outros Serviços SAAJ sub-services list / Desabilitar o sub-serviço Consulta Pós Parto (CPP) da lista de sub-serviços Outros Serviços SAAJ"
-      },
-      {
-        "id": 7,
-        "changelog": "Referral Management Module / Módulo de Gestão de Referências:"
-      },
-      {
-        "id": 8,
-        "changelog": "Manage Service Referral / Gestão de Referência de Serviço:"
-      },
-      {
-        "id": 9,
-        "changelog": "Inclusion of validation for the referral code field to ensure adherence to the defined format / Inclusão de validação para o campo de código de referência para garantir conformidade com o formato definido"
-      },
-      {
-        "id": 10,
-        "changelog": "Change in the 'Notify To' field: enable the issuance of referrals to supervisors with access to the administrative post linked to the selected location. / Alteração no campo 'Notificar Ao': habilitar a emissão  de referências para supervisores com acesso ao posto administrativo vinculado à localização selecionada"
-      },
-      {
-        "id": 11,
-        "changelog": "Change in the location field to list the user 's administrative post instead of the beneficiary /  Alteração no campo de localização para listar o posto administrativo do usuário em vez do beneficiário"
-      },
-      {
-        "id": 12,
-        "changelog": "Update the sorting order to display referrals by status first, followed by referral date (in descending order), and then received date (most recent first) / Atualização na ordem de classificação para exibir as referências por status primeiro, seguido pela data de emissão da referência (em ordem decrescente), e depois pela data de registo (mais recente primeiro)"
-      },
-      {
-        "id": 13,
-        "changelog": "Enhancement in referrals list on mobile devices: received and issued referrals are differentiated by color / Melhoria na listagem de referências em dispositivos móveis: as referências recebidas e emitidas são diferenciadas por cor"
-      },
-      {
-        "id": 14,
-        "changelog": "Reports Module:"
-      },
-      {
-        "id": 15,
-        "changelog": "List of Beneficiaries and Services  / Lista de Beneficiários e Serviços"
-      },
-      {
-        "id": 16,
-        "changelog": "Inclusion of access to the Administrator Profile / Inclusão de acesso ao Perfil de Administrador"
-      },
-      {
-        "id": 17,
-        "changelog": "Update in the filename to include the DG (Report creation date) / Atualização no nome do arquivo para incluir a DG (Data de Criação do Relatório)"
-      },
-      {
-        "id": 18,
-        "changelog": "Code enhancement for report performance improvement / Optimização de código para melhoria de desempenho do relatório"
-      },
-      {
-        "id": 19,
-        "changelog": "List of Newly Enrolled AGYW and Services/ Lista de Novas RAMJ e Serviços"
-      },
-      {
-        "id": 20,
-        "changelog": "Inclusion of access to the Administrator Profile / Inclusão de acesso ao Perfil de Administrador"
-      },
-      {
-        "id": 21,
-        "changelog": "Update in the filename to include the DG (Report creation date) / Atualização no nome do arquivo para incluir a DG (Data de Criação do Relatório)"
-      },
-      {
-        "id": 22,
-        "changelog": "Code enhancement for report performance improvement / Optimização de código para melhoria de desempenho do relatório"
-      },
-      {
-        "id": 23,
-        "changelog": "List of Beneficiaries Without Specific Vulnerabilities (New Report)/ Lista de Beneficiárias sem Vulnerabilidades Específicas (Novo Relatório)"
-      },
-      {
-        "id": 24,
-        "changelog": "Report on Beneficiaries without specific vulnerabilities registered in the system / Relatório sobre Beneficiários sem vulnerabilidades específicas registadas no sistema"
-      },
-      {
-        "id": 25,
-        "changelog": "Simplified AGYW_PREV Indicator Report (New Report) / Relatório Simplificado do Indicador AGYW_PREV (Novo Relatório)"
-      },
-      {
-        "id": 26,
-        "changelog": "Simplified report for Partners implementing a customized version of DREAMS (Mothers to Mothers) / Relatório simplificado para Parceiros que implementam uma versão customizada do DREAMS (Mothers to Mothers)"
-      },
-      {
-        "id": 27,
-        "changelog": "Others / Outros"
-      },
-      {
-        "id": 28,
-        "changelog": "Performance Improvement: inclusion of an initial load screen on mobile app launch / Melhoria de desempenho: inclusão de uma tela de carregamento inicial na inicialização do aplicativo móvel."
-      },
-      {
-        "id": 29,
-        "changelog": "Bugfix (Ticket #3451): Allow referral issuance to Health Facility (US) for Clinical Partners where the Entry Point is Escola(ES) / Correção de bug: Permitir emissão de referência para Unidade Sanitária para Parceiros Clínicos com Escola (ES) como ponto de entrada."
-      },
-      {
-        "id": 30,
-        "changelog": "Bugfix (Ticket #3448): Beneficiaries listed as included in the AGYW_PREV in the List of Beneficiaries and Services must be aligned with the Beneficiaries in the AGYW_PREV Indicator Report / Correcção de bug:Beneficiárias listadas como incluídas no AGYW_PREV na Lista de Beneficiários e Serviços devem estar alinhadas às Beneficiárias no Relatório do Indicador AGYW_PREV"
+        "changelog": "Others / Outros",
+        "items": [
+          {
+            "id": 5.1,
+            "item": "Bugfixes / Correcção de anomalias:",
+            "subitems": [
+              {
+                "id": 5.11,
+                "subitem": "Synchronization Report(Ticket #3543): fixed the issue  where the report was not displaying all users from the districts the user has access to / Relatório de Sincronização (Ticket #3543): corrigida a anomalia onde o relatório não exibia todos os utilizadores dos distritos aos quais o utilizador tem acesso",
+                "subsubitems": []
+              },
+              {
+                "id": 5.12,
+                "subitem": "Beneficiary Registration (Ticket #3497): fixed the discrepancies between dependent variables: has disability vs type of disability; pregnant vs kids / Registo de Beneficiária (Ticket #3497): resolvidas as discrepâncias encontradas entre as variáveis dependentes: têm deficiência vs tipo de deficiência; grávida vs tem filhos",
+                "subsubitems": []
+              },
+              {
+                "id": 5.13,
+                "subitem": "Referral Management (Ticket #3670): fixed the issue where the referral status was not updating in the mobile app / Gestão de Referência (Ticket #3670): corrigida a anomalia que não permita actualizar o estado da referência no aplicativo móvel",
+                "subsubitems": []
+              },
+              {
+                "id": 5.14,
+                "subitem": "Referral Management (Ticket #3664): fixed the issue where referral status remained pending after the service was provided / Gestão de Referência (Ticket  #3664): corrigida a anomalia onde o estado da referência permanecia pendente após a provisão de serviços",
+                "subsubitems": []
+              },
+              {
+                "id": 5.15,
+                "subitem": "Referral Management (Ticket #3667): fixed the issue that prevented referrals from being attended between clinical partners from ES to US and vice versa / Gestão de Referência (Ticket  #3667): corrigida a anomalia que não permitia o atendimento de referências entre parceiros clínicos da ES para US and Vice-versa",
+                "subsubitems": []
+              },
+              {
+                "id": 5.16,
+                "subitem": "Login (Ticket #3721): fixed the issue to allow password reset in the mobile app for users with expired passwords / Login (Ticket #3721): corrigida a anomalia para permitir a redefinição da senha  no aplicativo móvel para utilizadores como senha expirada",
+                "subsubitems": []
+              },
+              {
+                "id": 5.17,
+                "subitem": "Beneficiary Registration: fixed the issue that automatically sets the first selected date of birth in the calendar to the current date / Registo de Beneficiárias: corrigida a anomalia que define automaticamente a primeira data de nascimento seleccionada no calendário para a data actual",
+                "subsubitems": []
+              },
+              {
+                "id": 5.18,
+                "subitem": "Data Cleanup: Enhancement of the cleanup process to enable offline cleanup, along with displaying an informative message when there are pending synchronizations, ensuring that the cleanup is completed successfully / Limpeza de dados: Melhoria no processo de limpeza para permitir a limpeza offline, com a exibição de uma mensagem informativa quando houver sincronizações pendentes, garantindo que o processo seja concluído com sucesso",
+                "subsubitems": []
+              }
+            ]
+          }
+        ]
       }
     ]
   }

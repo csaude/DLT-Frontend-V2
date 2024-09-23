@@ -274,12 +274,11 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
 
       await ref.update((reference: any) => {
         reference._raw.is_awaiting_sync = parseInt("1");
+        reference._raw.status = 4;
         reference._raw._status = "updated";
       });
     });
 
-    syncronize();
-    await delay(5000);
     syncronize();
 
     navigationRef.reset({
@@ -296,8 +295,6 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
       })
     );
   };
-
-  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   const fetchCounts = async () => {
     const benefNotSynced = await pendingSyncBeneficiaries();
@@ -726,7 +723,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
 };
 const enhance = withObservables([], () => ({
   services: database.collections.get("services").query(),
-  subServices: database.collections.get("sub_services").query(),
+  subServices: database.collections.get("sub_services").query(Q.where("status", 1)),
 }));
 
 export default memo(enhance(ServicesForm));

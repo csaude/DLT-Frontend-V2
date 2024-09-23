@@ -54,7 +54,7 @@ const Profile = () => {
                       Província(s)
                     </strong>
                     <p className="text-muted">
-                      {currentUser?.provinces.map((u) => u.name + ", ")}
+                      {currentUser?.provinces?.map((u) => u.name + ", ")}
                     </p>
                     <hr />
                     <strong>
@@ -62,7 +62,7 @@ const Profile = () => {
                       Distrito(s)
                     </strong>
                     <p className="text-muted">
-                      {currentUser?.districts.map((u) => u.name + ", ")}
+                      {currentUser?.districts?.map((u) => u.name + ", ")}
                     </p>
                     <hr />
                     <strong>
@@ -70,7 +70,7 @@ const Profile = () => {
                       Posto(s) Administrativo(s)
                     </strong>
                     <p className="text-muted">
-                      {currentUser?.localities.map((u) => u.name + ", ")}
+                      {currentUser?.localities?.map((u) => u.name + ", ")}
                     </p>
                     <hr />
                     <strong>
@@ -78,7 +78,7 @@ const Profile = () => {
                       Alocação
                     </strong>
                     <p className="text-muted">
-                      {currentUser?.us.map((u) => u.name + ", ")}
+                      {currentUser?.us?.map((u) => u.name + ", ")}
                     </p>
                   </div>
                   {/* /.card-body */}

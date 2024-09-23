@@ -270,7 +270,8 @@ const ReferenceForm: React.FC = ({ route }: any) => {
       .get("us")
       .query(
         Q.where("entry_point", value),
-        Q.where("locality_id", Number(beneficiary?.locality_id))
+        Q.where("locality_id", Number(beneficiary?.locality_id)),
+        Q.where("status", "1")
       )
       .fetch();
     const usSerialized = getUsList.map((item) => item._raw);
@@ -380,6 +381,9 @@ const ReferenceForm: React.FC = ({ route }: any) => {
   }, [isSync]);
 
   const handleSubmit = async () => {
+  if(loading){
+      return;
+  }else{
     setLoading(true);
 
     const savedR = await database.write(async () => {
@@ -421,9 +425,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
     });
 
     syncronize();
-    await delay(5000);
-    syncronize();
-    await delay(1000);
+    await delay(7000);
 
     const syncedReferences = await database
       .get("references")
@@ -450,7 +452,8 @@ const ReferenceForm: React.FC = ({ route }: any) => {
 
     const benIntervNotSynced = await pendingSyncReferences();
     dispatch(loadPendingsReferencesTotals({pendingSyncReferences:benIntervNotSynced}))
-  };
+  }
+};
 
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -479,6 +482,13 @@ const ReferenceForm: React.FC = ({ route }: any) => {
   const syncronize = () => {
     if (!isOffline) {
       sync({ username: loggedUser.username })
+      .then(()=>{
+        toast.show({
+          placement: "top",
+          render: () => {
+            return <SuccessHandler />;
+          }
+         })})
         .then(() => {setIsSync(true)
           fetchCounts()
         })
@@ -577,13 +587,13 @@ const ReferenceForm: React.FC = ({ route }: any) => {
   return (
     <>
       <View style={{ flex: 1, backgroundColor: "white" }}>
-        {loading ? (
+        {/* {loading ? (
           <Spinner
             visible={true}
             textContent={"Registando a referência..."}
             textStyle={styles.spinnerTextStyle}
           />
-        ) : undefined}
+        ) : undefined} */}
         <ProgressSteps>
           <ProgressStep
             label="Dados da Referencia"
@@ -889,6 +899,8 @@ const ReferenceForm: React.FC = ({ route }: any) => {
             label="Concluir"
             onSubmit={handleSubmit}
             previousBtnText="<< Anterior"
+            nextBtnTextStyle={styles.buttonTextSaveStyle}
+            nextBtnStyle={styles.buttonSaveStyle}
             finishBtnText="Salvar"
           >
             <View style={styles.containerForm}>
@@ -897,51 +909,59 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                 mb="2.5"
                 _text={{ color: "coolGray.800" }}
               >
-                <Box p="2" rounded="lg">
-                  <Heading size="md" color="coolGray.800">
-                    Detalhes da Referência
-                  </Heading>
-                  <Divider />
-                  <Text style={styles.txtLabelInfo}>
-                    <Text style={styles.txtLabel}> NUI da Beneficiária : </Text>
-                    {beneficiary?.nui}
-                  </Text>
-                  <Text style={styles.txtLabelInfo}>
-                    <Text style={styles.txtLabel}> Nota da Referência: </Text>
-                    {refNote}
-                  </Text>
-                  <Text style={styles.txtLabelInfo}>
-                    <Text style={styles.txtLabel}>
-                      {" "}
-                      Código da Referência do Livro:{" "}
+                {loading ? (
+                  <Spinner
+                    visible={true}
+                    textContent={"Registando Referência..."}
+                    textStyle={styles.spinnerTextStyle}
+                  />
+                ) : (
+                  <Box p="2" rounded="lg">
+                    <Heading size="md" color="coolGray.800">
+                      Detalhes da Referência
+                    </Heading>
+                    <Divider />
+                    <Text style={styles.txtLabelInfo}>
+                      <Text style={styles.txtLabel}> NUI da Beneficiária : </Text>
+                      {beneficiary?.nui}
                     </Text>
-                    {formik.values.reference_code}
-                  </Text>
-                  <Text style={styles.txtLabelInfo}>
-                    <Text style={styles.txtLabel}> Referência para: </Text>
-                    {formik.values.refer_to === "1"
-                      ? "Unidade Sanitaria"
-                      : formik.values.refer_to === "2"
-                      ? "Comunidade"
-                      : "Escola"}
-                  </Text>
-                  <Text style={styles.txtLabelInfo}>
-                    <Text style={styles.txtLabel}> Local: </Text>
-                    {getUsName(formik.values.us_id)}
-                  </Text>
-                  <Text style={styles.txtLabelInfo}>
-                    <Text style={styles.txtLabel}> Organização: </Text>
-                    {getPartnersName(formik.values.partner_id)}
-                  </Text>
-                  <Text style={styles.txtLabelInfo}>
-                    <Text style={styles.txtLabel}> Notificar a(o): </Text>
-                    {selectedUser}
-                  </Text>
-                  <Text style={styles.txtLabelInfo}>
-                    <Text style={styles.txtLabel}> Serviços: </Text>
-                    {referServices.length}
-                  </Text>
-                </Box>
+                    <Text style={styles.txtLabelInfo}>
+                      <Text style={styles.txtLabel}> Nota da Referência: </Text>
+                      {refNote}
+                    </Text>
+                    <Text style={styles.txtLabelInfo}>
+                      <Text style={styles.txtLabel}>
+                        {" "}
+                        Código da Referência do Livro:{" "}
+                      </Text>
+                      {formik.values.reference_code}
+                    </Text>
+                    <Text style={styles.txtLabelInfo}>
+                      <Text style={styles.txtLabel}> Referência para: </Text>
+                      {formik.values.refer_to === "1"
+                        ? "Unidade Sanitaria"
+                        : formik.values.refer_to === "2"
+                        ? "Comunidade"
+                        : "Escola"}
+                    </Text>
+                    <Text style={styles.txtLabelInfo}>
+                      <Text style={styles.txtLabel}> Local: </Text>
+                      {getUsName(formik.values.us_id)}
+                    </Text>
+                    <Text style={styles.txtLabelInfo}>
+                      <Text style={styles.txtLabel}> Organização: </Text>
+                      {getPartnersName(formik.values.partner_id)}
+                    </Text>
+                    <Text style={styles.txtLabelInfo}>
+                      <Text style={styles.txtLabel}> Notificar a(o): </Text>
+                      {selectedUser}
+                    </Text>
+                    <Text style={styles.txtLabelInfo}>
+                      <Text style={styles.txtLabel}> Serviços: </Text>
+                      {referServices.length}
+                    </Text>
+                  </Box>
+                )}
               </Flex>
             </View>
           </ProgressStep>

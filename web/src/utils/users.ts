@@ -167,17 +167,44 @@ export async function getPagedUsersLastSync(
   pageSize?: any,
   searchUsername?: any,
   searchUserCreator?: number,
-  searchDistrict?: number
+  searchDistrict?: number,
+  searchEntryPoint?: number
 ) {
   let url: string;
   if (payload.userId) {
     url = `/sync/usersLastSync/paged?${stringify(
       payload
-    )}&pageIndex=${pageIndex}&pageSize=${pageSize}&searchUsername=${searchUsername}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}`;
+    )}&pageIndex=${pageIndex}&pageSize=${pageSize}&searchName=${searchName}&searchUsername=${searchUsername}&searchUserCreator=${searchUserCreator}&searchDistrict=${searchDistrict}&searchEntryPoint=${searchEntryPoint}`;
   } else {
     url = "/sync/usersLastSync" + payload;
   }
 
   const res = await select(url);
   return res;
+}
+
+export async function queryCountByFilters(
+  userId?: any,
+  searchName?: any,
+  searchUsername?: any,
+  searchUserCreator?: number,
+  searchDistrict?: number,
+  searchEntryPoint?: number
+) {
+  const url = `/sync/usersLastSync/countByFilters?userId=${userId}&searchName=${undefinedToEmpty(
+    searchName
+  )}&searchUsername=${undefinedToEmpty(
+    searchUsername
+  )}&searchUserCreator=${undefinedToEmpty(
+    searchUserCreator
+  )}&searchDistrict=${undefinedToEmpty(
+    searchDistrict
+  )}&searchEntryPoint=${undefinedToEmpty(searchEntryPoint)}`;
+
+  const res = await select(url);
+  return res;
+}
+
+function undefinedToEmpty(value: any) {
+  return value == undefined ? "" : value;
 }

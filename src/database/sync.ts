@@ -3,11 +3,16 @@ import { synchronize } from "@nozbe/watermelondb/sync";
 import { database } from "./index";
 import { SYNC_API_URL, CUSTOM_SYNC_URL } from "../services/api";
 import { resolveBeneficiaryOfflineIds } from "../services/beneficiaryService";
+import VersionCheck from "react-native-version-check";
 
 export async function sync({ username }) {
   await doSync({ username });
-  await resolveBeneficiaryOfflineIds();
-  await doSync({ username });
+
+  const foundNewWebBeneficiaries = await resolveBeneficiaryOfflineIds();
+
+  if(foundNewWebBeneficiaries){
+    await doSync({ username });
+  }
 }
 export async function doSync({ username }) {
   await synchronize({
@@ -37,7 +42,7 @@ export async function doSync({ username }) {
             */
     },
     pushChanges: async ({ changes, lastPulledAt }) => {
-      const response = await fetch(`${SYNC_API_URL}?username=${username}`, {
+      const response = await fetch(`${SYNC_API_URL}?username=${username}&appVersion=${VersionCheck.getCurrentVersion()}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ changes, lastPulledAt }),
