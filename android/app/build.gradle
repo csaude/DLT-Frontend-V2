@@ -135,7 +135,7 @@ android {
         applicationId "com.dltfrontend_v2"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 214
+        versionCode 21400
         versionName "1.4.0"
         configurations.all {
             resolutionStrategy { 
