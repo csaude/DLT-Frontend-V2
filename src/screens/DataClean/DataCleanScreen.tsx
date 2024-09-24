@@ -48,6 +48,7 @@ import {
   cleanData,
   destroyBeneficiariesData,
   filterData,
+  benfList,
 } from "../../components/DataClean";
 import { navigate } from "../../routes/NavigationRef";
 
@@ -77,7 +78,7 @@ const DatacleanScreen: React.FC = ({
     const errorsList = validate(formik.values);
     const hasErrors = JSON.stringify(errorsList) !== "{}";
     const isPendingSync = await checkPendingSync();
-
+    
     if (hasErrors) {
       setErrors(true);
       formik.setErrors(errorsList);
@@ -91,6 +92,7 @@ const DatacleanScreen: React.FC = ({
       setLoading(false);
     } else if (isPendingSync){
 
+        setLoading(false);
         setShowCleanModal(true);
 
     }else if (formik.values.data_clean === "0" && !isPendingSync) {
@@ -107,10 +109,10 @@ const DatacleanScreen: React.FC = ({
       const myIDsList = await filterData(referencesCollection);
 
       const allBenfIds = [...myIDsList, ...interventionsCollectionIDsList];
-
       const uniqueBenfIds = await cleanData(allBenfIds);
+      const benfsList = await benfList(uniqueBenfIds);
 
-      await destroyBeneficiariesData(uniqueBenfIds)
+      await destroyBeneficiariesData(benfsList)
         .then(() => {
           toast.show({
             placement: "top",

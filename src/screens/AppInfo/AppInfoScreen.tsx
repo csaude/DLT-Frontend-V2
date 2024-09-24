@@ -33,9 +33,24 @@ const AppInfoScreen: React.FC = () => {
             <Divider />
             <Text style={styles.txtLabel}>Registo de alterações: </Text>
             {data.release.changelogs?.map((item) => (
-              <Text key={item.id}>
-                {"-"} {item.changelog}{" "}
-              </Text>
+              <>
+                <Text key={item.id} style={styles.txtLabel}>{item.changelog}</Text>
+                {item.items?.map((i) => (
+                  <>
+                    <Text key={i.id} style={{color: "black"}}>{`\u25CF ${i.item}`}</Text>
+                      {i.subitems?.map((si) => (
+                        <>
+                          <Text key={si.id}>{`\u25AA ${si.subitem}`}</Text>
+                            {si.subsubitems?.map((ssi) => (
+                              <>
+                                  <Text key={ssi.id}>{`\u2043 ${ssi.subsubitem}`}</Text>
+                              </>
+                            ))}
+                        </>
+                      ))}
+                  </>
+                ))}
+              </>
             ))}
           </View>
         </View>

@@ -15,6 +15,7 @@ import { Q } from "@nozbe/watermelondb";
 import { pendingSyncBeneficiaries } from "../../services/beneficiaryService";
 import { pendingSyncBeneficiariesInterventions } from "../../services/beneficiaryInterventionService";
 import moment from "moment";
+import { pendingSyncReferences } from "../../services/referenceService";
 
 const todayDate = new Date();
 export const sevenDaysLater = todayDate.setFullYear(
@@ -34,35 +35,56 @@ export const cleanData = (myDataIDs: any): any => {
   return uniqueArray;
 };
 
-export const filterData = (array: any): any => {
+export const benfList = async (myDataIds: any): Promise<any> => {
+    
+  const beneficiaries = database.collections.get("beneficiaries");
+  const beneficiariesCollection = await beneficiaries.query().fetch();
+
+  const result = await filterBenfData(beneficiariesCollection, myDataIds);
+
+  return result;
+
+};
+
+export const filterBenfData = (array: any, ids: any): any => {
   const myArray = [];
-  const benfIdsInCOP = [];
 
   const dataFilter = array.filter((e) => {
     if (new Date(e._raw?.date_created) <= new Date(sixMonthsAgo)) {
       return [...myArray, e._raw];
     }
   });
+ 
+  const myDataIDs = dataFilter.map((e: any) => {
+    return [...myArray, e._raw?.online_id];
+  });
+
+  const data = cleanData(myDataIDs);
+  const bendInCOP = ids;
+  const itemsToRemoveSet = new Set(bendInCOP);
+
+  const commonItems = data.filter((item: any) => itemsToRemoveSet.has(item));
+  const resultArray = data.filter((item: any) => !commonItems.includes(item));
+
+  return resultArray;
+};
+
+export const filterData = (array: any): any => {
+  const myArray = [];
+  const benfIdsInCOP = [];
+
   const idsFilter = array.filter((e) => {
     if (new Date(e._raw?.date_created) > new Date(sixMonthsAgo)) {
       return [...benfIdsInCOP, e._raw];
     }
   });
 
-  const myDataIDs = dataFilter.map((e: any) => {
-    return [...myArray, e._raw?.beneficiary_id];
-  });
-
   const cleanBenfIdsInCOP = idsFilter.map((e: any) => {
     return [...benfIdsInCOP, e._raw?.beneficiary_id];
   });
 
-  const data = cleanData(myDataIDs);
   const bendInCOP = cleanData(cleanBenfIdsInCOP);
-  const itemsToRemoveSet = new Set(bendInCOP);
-
-  const commonItems = data.filter((item: any) => itemsToRemoveSet.has(item));
-  const resultArray = data.filter((item: any) => !commonItems.includes(item));
+  const resultArray = new Set(bendInCOP);
 
   return resultArray;
 };
@@ -106,20 +128,13 @@ export const checkPendingSync = async () => {
       "references_services"
     );
 
-    const pendingSyncReferenceItems = await referenceCollection
-      .query(Q.where("is_awaiting_sync", true))
-      .fetchCount();
-    const pendingSyncInterventionsItems =
-      await beneficiariesInterventionsCollection
-        .query(Q.where("is_awaiting_sync", true))
-        .fetchCount();
-
+    const pendingSyncReferenceItems =  await pendingSyncReferences();
     const beneficiariesNotSynced = await pendingSyncBeneficiaries();
     const beneficiariesInterventionsNotSynced =
       await pendingSyncBeneficiariesInterventions();
+
     const result =
       pendingSyncReferenceItems > 0 ||
-      pendingSyncInterventionsItems > 0 ||
       beneficiariesNotSynced > 0 ||
       beneficiariesInterventionsNotSynced > 0
         ? true
