@@ -87,6 +87,10 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
 
+  txtGrey: {
+    color: "grey",
+  },
+
   user: {
     width: Dimensions.get("window").width,
     marginTop: 85,

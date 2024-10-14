@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
   containerForm: {
     padding: 30,
     paddingBottom: 70,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
     backgroundColor: "#fff",
     borderColor: "#CCCCCC",
     borderWidth: 1,
@@ -85,6 +85,9 @@ const styles = StyleSheet.create({
     marginLeft: "1%",
     marginTop: 15,
     marginBottom: 5,
+  },
+  txtGrey: {
+    color: "grey",
   },
 
   user: {
