@@ -68,8 +68,11 @@ const ReportAgyw = () => {
       } else {
         provinces = await queryAll();
       }
+      const sortedProvinces = provinces.sort((prov1, prov2) =>
+        prov1.name.localeCompare(prov2.name)
+      );
       setLogguedUser(loggedUser);
-      setAllProvinces(provinces);
+      setAllProvinces(sortedProvinces);
     };
 
     fetchData().catch((error) => console.log(error));
@@ -110,7 +113,10 @@ const ReportAgyw = () => {
       if (reportType == 2) {
         dataDistricts = dataDistricts.filter((d) => [44, 45].includes(d.id));
       }
-      setDistricts(dataDistricts);
+      const sortedDistricts = dataDistricts.sort((dist1, dist2) =>
+        dist1.name.localeCompare(dist2.name)
+      );
+      setDistricts(sortedDistricts);
     } else {
       setDistricts(undefined);
     }

@@ -98,3 +98,12 @@ export async function getBeneficiariesWithoutPrimaryPackageCompletedReportGenera
   const res = await select(url);
   return res;
 }
+
+export async function getAgywPrevBeneficiariesReportGenerated(
+  beneficiariesIds?: any,
+  username?: any
+) {
+  const url = `/api/agyw-prev/agywPrevBeneficiaries?beneficiariesIds=${beneficiariesIds}&username=${username}`;
+  const res = await select(url);
+  return res;
+}

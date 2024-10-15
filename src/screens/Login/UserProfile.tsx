@@ -73,24 +73,24 @@ const UserProfile: React.FC = ({
               mt="1.5"
               _text={{ color: "coolGray.800" }}
             >
-              <Text>
+              <Text style={styles.txtGrey}>
                 {" "}
                 <Text style={styles.txtLabel}>Perfil: </Text> {profile?.name}
               </Text>
 
-              <Text>
+              <Text style={styles.txtGrey}>
                 {" "}
                 <Text style={styles.txtLabel}>Organização: </Text>{" "}
                 {user?.organization_name}{" "}
               </Text>
 
-              <Text>
+              <Text style={styles.txtGrey}>
                 {" "}
                 <Text style={styles.txtLabel}>Telemóvel: </Text>{" "}
                 {user?.phone_number}
               </Text>
 
-              <Text>
+              <Text style={styles.txtGrey}>
                 {" "}
                 <Text style={styles.txtLabel}>Ponto de Entrada: </Text>
                 {user?.entry_point === "1"
@@ -100,25 +100,25 @@ const UserProfile: React.FC = ({
                   : "Escola"}
               </Text>
 
-              <Text>
+              <Text style={styles.txtGrey}>
                 {" "}
                 <Text style={styles.txtLabel}>Província(s): </Text>{" "}
                 {provinces?.map((p) => p.name + ", ")}{" "}
               </Text>
 
-              <Text>
+              <Text style={styles.txtGrey}>
                 {" "}
                 <Text style={styles.txtLabel}>Distrito(s): </Text>{" "}
                 {districts?.map((d) => d.name + ", ")}{" "}
               </Text>
-              <Text>
+              <Text style={styles.txtGrey}>
                 {" "}
                 <Text style={styles.txtLabel}>
                   Posto(s) Administrativo(s):{" "}
                 </Text>{" "}
                 {userLocalities?.map((d) => d.name + ", ")}{" "}
               </Text>
-              <Text>
+              <Text style={styles.txtGrey}>
                 {" "}
                 <Text style={styles.txtLabel}>Alocação: </Text> {userUs?.map((u) => u.name + ", ")} 
               </Text>
@@ -126,7 +126,7 @@ const UserProfile: React.FC = ({
             </Flex>
             <Divider />
 
-            <Text>
+            <Text style={styles.txtGrey}>
               {" "}
               <Text style={styles.txtLabel}>Estado: </Text>{" "}
               {user?.status === 1 ? "Activo" : "Inactivo"}
