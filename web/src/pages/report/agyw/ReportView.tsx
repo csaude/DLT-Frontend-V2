@@ -24,19 +24,11 @@ import { Title } from "@app/components";
 import { ADMIN, MNE, SUPERVISOR } from "@app/utils/contants";
 import { useDispatch, useSelector } from "react-redux";
 import LoadingModal from "@app/components/modal/LoadingModal";
-import { pagedQueryByBeneficiariesIds } from "@app/utils/beneficiaryIntervention";
+import { getAgeBandByDate, getPackageLabel } from "@app/utils/ageRange";
 import {
-  getAgeAtRegistrationDate,
-  getAgeBandByDate,
-  getAgeByDate,
-  getAgeRangeAtRegistrationDate,
-  getAgeRangeByDate,
-  getPackageLabel,
-} from "@app/utils/ageRange";
-import ExcelJS from "exceljs";
-import { saveAs } from "file-saver";
-import { getVulnerabilitiesCounter } from "@app/utils/vulnerabilitiesCounter";
-import { toast } from "react-toastify";
+  getAgywPrevBeneficiariesReportGenerated,
+  getFileDownloaded,
+} from "@app/utils/report";
 
 const { Text } = Typography;
 
@@ -71,6 +63,7 @@ const ReportView: React.FC = () => {
   const [currentBeneficiariesIds, setCurrentBeneficiariesIds] = useState([]);
 
   const userId = localStorage.getItem("user");
+  const username = localStorage.getItem("username");
   const dispatch = useDispatch();
 
   const getUsernames = (userId) => {
@@ -463,131 +456,39 @@ const ReportView: React.FC = () => {
   };
 
   async function handleGenerateXLSXReport() {
+    const beneficiariesIds = beneficiariesIdsSelector.slice(); // Copy the array
+
+    setDataLoading(true);
     try {
-      setDataLoading(true);
-      const currentUserName = authSelector?.name;
-      const pageElements = 1000;
-
-      const workbook = new ExcelJS.Workbook();
-      const worksheet = workbook.addWorksheet("PEPFAR_MER_2.7_AGYW");
-
-      const headers = [
-        "PROVINCE",
-        "DISTRICT",
-        "NEIGHBORHOOD",
-        "ENTRY POINT",
-        "ORGANIZATION",
-        "DATE REGISTERED",
-        "NUI",
-        "AGE (AT REGISTRATION)",
-        "CURRENT AGE",
-        "AGE GROUP (AT REGISTRATION)",
-        "AGE GROUP (CURRENT)",
-        "DATE OF BIRTH",
-        "NUMBER OF VULNERABILITIES",
-        "TYPE OF SERVICE",
-        "SERVICE",
-        "SUB SERVICE",
-        "SERVICE PACKAGE",
-        "SERVICE ENTRY POINT",
-        "SERVICE LOCATION",
-        "SERVICE DATE",
-        "PROVIDER",
-        "REMARKS",
-      ];
-
-      const headerRow = worksheet.getRow(1);
-      headers.forEach((header, index) => {
-        const cell = headerRow.getCell(index + 1);
-        cell.alignment = { vertical: "middle", horizontal: "center" };
-        cell.value = header;
-      });
-
-      const fetchedBeneficiariesIds = beneficiariesIdsSelector.slice(); // Copy the array
-      const lastPage = Math.ceil(fetchedBeneficiariesIds.length / pageElements);
-
-      for (let i = 0; i < lastPage; i++) {
-        const startIdx = i * pageElements;
-        const endIdx = (i + 1) * pageElements;
-        const beneficiaryIds = fetchedBeneficiariesIds.slice(startIdx, endIdx);
-
-        console.log("startIdx = ", startIdx, "endIdx = ", endIdx);
-
-        if (beneficiaryIds.length === 0) {
-          break;
-        }
-
-        const interventions = await pagedQueryByBeneficiariesIds(
-          beneficiaryIds
-        );
-
-        interventions.forEach((intervention) => {
-          const values = [
-            intervention.beneficiary?.locality?.district?.province.name,
-            intervention.beneficiary?.locality?.district?.name,
-            intervention.beneficiary?.neighborhood?.name,
-            intervention.beneficiary?.entryPoint === "1"
-              ? "US"
-              : intervention.beneficiary?.entryPoint === "2"
-              ? "CM"
-              : "ES",
-            intervention.beneficiary?.partners?.name,
-            moment(intervention.beneficiary.dateCreated).format(
-              "YYYY-MM-DD HH:mm:ss"
-            ),
-            intervention.beneficiary.nui,
-            getAgeAtRegistrationDate(
-              intervention.beneficiary.dateOfBirth,
-              intervention.beneficiary.dateCreated
-            ),
-            getAgeByDate(intervention.beneficiary.dateOfBirth),
-            getAgeRangeAtRegistrationDate(
-              intervention.beneficiary.dateOfBirth,
-              intervention.beneficiary.dateCreated
-            ),
-            getAgeRangeByDate(intervention.beneficiary.dateOfBirth),
-            moment(intervention.beneficiary.dateOfBirth).format("YYYY-MM-DD"),
-            getVulnerabilitiesCounter(intervention.beneficiary),
-            intervention.subServices?.service?.serviceType === "1"
-              ? "Serviços Clinicos"
-              : "Serviços Comunitários",
-            intervention.subServices?.service?.name,
-            intervention.subServices?.name,
-            getServiceBandByServiceIdAndAge(
-              intervention.subServices?.service?.id,
-              intervention.beneficiary.dateOfBirth
-            ),
-            intervention.entryPoint === "1"
-              ? "US"
-              : intervention.entryPoint === "2"
-              ? "CM"
-              : "ES",
-            intervention.us?.name,
-            moment(intervention.id.date).format("YYYY-MM-DD"),
-            intervention.provider,
-            intervention.remarks,
-          ];
-
-          worksheet.addRow(values);
-        });
-      }
-
-      const created = moment().format("YYYYMMDD_hhmmss");
-      const buffer = await workbook.xlsx.writeBuffer();
-      const blob = new Blob([buffer], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      saveAs(blob, `PEPFAR_MER_2.7_AGYW_PREV_Beneficiaries_${created}.xlsx`);
-
+      const response = await getAgywPrevBeneficiariesReportGenerated(
+        beneficiariesIds,
+        username
+      );
+      await downloadFile(response);
       setDataLoading(false);
     } catch (error) {
-      // Handle any errors that occur during report generation
-      console.error("Error generating XLSX report:", error);
       setDataLoading(false);
-      // Display an error message using your preferred method (e.g., toast.error)
-      toast.error("An error occurred during report generation.");
+      console.error("Error downloading the Excel report", error);
     }
   }
+
+  const downloadFile = async (filePath) => {
+    try {
+      setDataLoading(true);
+      const response = await getFileDownloaded(filePath);
+
+      const filename = filePath.substring(filePath.lastIndexOf("/") + 1);
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      setDataLoading(false);
+      console.error("Error downloading file: ", error);
+    }
+  };
 
   return (
     <>
