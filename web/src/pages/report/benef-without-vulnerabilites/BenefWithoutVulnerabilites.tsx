@@ -63,8 +63,11 @@ const BenefWithoutVulnerabilites = () => {
       } else {
         provinces = await queryAll();
       }
+      const sortedProvinces = provinces.sort((prov1, prov2) =>
+        prov1.name.localeCompare(prov2.name)
+      );
       setLogguedUser(loggedUser);
-      setProvinces(provinces);
+      setProvinces(sortedProvinces);
     };
 
     fetchData().catch((error) => console.error(error));
@@ -84,7 +87,10 @@ const BenefWithoutVulnerabilites = () => {
           provinces: Array.isArray(values) ? values : [values],
         });
       }
-      setDistricts(dataDistricts);
+      const sortedDistricts = dataDistricts.sort((dist1, dist2) =>
+        dist1.name.localeCompare(dist2.name)
+      );
+      setDistricts(sortedDistricts);
     } else {
       setDistricts(undefined);
     }
