@@ -206,7 +206,7 @@ const BenefWithoutVulnerabilites = () => {
             color: "#17a2b8",
           }}
         >
-          Beneficiárias sem vulnerabilidades específicas registadas
+          Beneficiárias sem Vulnerabilidades Específicas Registadas
         </Title>
         <Card
           title="Parâmetros"
