@@ -30,6 +30,7 @@ const AppButton = ({
   if (isLoading) {
     spinnerTemplate = (
       <Spinner
+        data-testid="spinner"
         className="ml-2"
         as="span"
         animation="border"
