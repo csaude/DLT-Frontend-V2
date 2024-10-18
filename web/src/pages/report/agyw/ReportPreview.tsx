@@ -112,7 +112,6 @@ const ReportPreview = () => {
   const title = "Total de Beneficiárias no Indicador AGYW_PREV";
 
   const handleOnCLick = (total, districtId) => {
-    console.log("---------districtId-------", districtId);
     dispatch(resetTotalBeneficiariesIds());
     loadCompletedOnlyPrimaryPackage(total, districtId);
     loadCompletedPrimaryPackageAndSecondaryService(total, districtId);

@@ -86,24 +86,70 @@ const CompletedOnlyPrimaryPackage = ({ districtId }) => {
     {
       title: "10-14",
       dataIndex: "range_10_14",
-      render: (text) => <a>{text}</a>,
+      render: (text, record) => (
+        <Link
+          onClick={() =>
+            handleOnFilteredClick(record.enrollmentTime, "9-14", text)
+          }
+          to="/viewAgyw"
+        >
+          {text}
+        </Link>
+      ),
     },
     {
       title: "15-19",
-      className: "column-money",
       dataIndex: "range_15_19",
+      render: (text, record) => (
+        <Link
+          onClick={() =>
+            handleOnFilteredClick(record.enrollmentTime, "15-19", text)
+          }
+          to="/viewAgyw"
+        >
+          {text}
+        </Link>
+      ),
     },
     {
       title: "20-24",
       dataIndex: "range_20_24",
+      render: (text, record) => (
+        <Link
+          onClick={() =>
+            handleOnFilteredClick(record.enrollmentTime, "20-24", text)
+          }
+          to="/viewAgyw"
+        >
+          {text}
+        </Link>
+      ),
     },
     {
       title: "25-29",
       dataIndex: "range_25_29",
+      render: (text, record) => (
+        <Link
+          onClick={() =>
+            handleOnFilteredClick(record.enrollmentTime, "25-29", text)
+          }
+          to="/viewAgyw"
+        >
+          {text}
+        </Link>
+      ),
     },
     {
       title: "SUB-TOTAL",
       dataIndex: "subTotal",
+      render: (text, record) => (
+        <Link
+          onClick={() => handleOnSubTotalClick(record.enrollmentTime, text)}
+          to="/viewAgyw"
+        >
+          {text}
+        </Link>
+      ),
     },
   ];
 
@@ -149,7 +195,7 @@ const CompletedOnlyPrimaryPackage = ({ districtId }) => {
   const title =
     "Beneficiaries that have fully completed the DREAMS primary package of services/interventions but no additional services/interventions";
   const title_pt =
-    " Beneficiárias que completaram o pacote primário completo do DREAMS mas nenhum serviço/intervenção adicional  ";
+    "Beneficiárias que completaram o pacote primário completo do DREAMS mas nenhum serviço/intervenção adicional";
 
   const beneficiaries =
     responseData[districtId]["completed-only-primary-package"].beneficiaries;
@@ -177,6 +223,76 @@ const CompletedOnlyPrimaryPackage = ({ districtId }) => {
     const elements = extractElements(arrBeneficiaries);
     dispatch(
       loadBeneficiariesIds({ ids: elements, title: title_pt, total: total })
+    );
+  };
+
+  function filterByAgeRange(data, param) {
+    if (Object.prototype.hasOwnProperty.call(data.value, param)) {
+      return data.value[param];
+    } else {
+      // Return empty array if the param does not exist
+      return [];
+    }
+  }
+
+  function extractFilteredElements(
+    data: any,
+    enrollmentTime: string,
+    ageRange: string
+  ): number[] {
+    let elements: number[] = [];
+    Object.keys(data).forEach((currentEnrollmentTime) => {
+      if (enrollmentTime == data[currentEnrollmentTime].key) {
+        const ageRanges = data[currentEnrollmentTime];
+        elements = filterByAgeRange(ageRanges, ageRange);
+      }
+    });
+    return elements;
+  }
+
+  const handleOnFilteredClick = (
+    enrollmentTime: string,
+    ageRange: string,
+    total: number
+  ) => {
+    const elements = extractFilteredElements(
+      arrBeneficiaries,
+      enrollmentTime,
+      ageRange
+    );
+    dispatch(
+      loadBeneficiariesIds({
+        ids: elements,
+        title: title_pt,
+        total: total,
+      })
+    );
+  };
+
+  function extractSubTotalElements(
+    data: any,
+    enrollmentTime: string
+  ): number[] {
+    const elements: any = [];
+    Object.keys(data).forEach((currentEnrollmentTime) => {
+      if (enrollmentTime == data[currentEnrollmentTime].key) {
+        const ageRanges = data[currentEnrollmentTime];
+        for (const key in ageRanges.value) {
+          elements.push(...ageRanges.value[key]);
+        }
+      }
+    });
+    return elements;
+  }
+
+  const handleOnSubTotalClick = (enrollmentTime: string, total: number) => {
+    const elements = extractSubTotalElements(arrBeneficiaries, enrollmentTime);
+    dispatch(
+      loadBeneficiariesIds({
+        ids: elements,
+        title: title_pt,
+        total: total,
+      })
     );
   };
 
