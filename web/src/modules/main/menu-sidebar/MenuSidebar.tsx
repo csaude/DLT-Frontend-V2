@@ -148,7 +148,7 @@ export const MENU: IMenuItem[] = [
         level: [0],
       },
       {
-        name: "Beneficiárias sem vulnerabilidades específica",
+        name: "Beneficiárias sem Vulnerabilidades Específicas",
         path: "/benefWithoutVulnerabilites",
       },
       {

@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 export interface CheckboxProps {
   checked: boolean;
   type?: "icheck" | "default" | "custom";
-  onChange?: any;
+  onChange?: (checked: boolean) => void;
   children: any;
 }
 
@@ -17,21 +17,20 @@ const Checkbox = ({
   const [ID] = useState(uuidv4());
   const [value, setValue] = useState(checked);
 
-  const handleOnChange = (event: any) => {
-    setValue(event.target.checked);
+  const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const isChecked = event.target.checked;
+    setValue(isChecked);
+    if (onChange) {
+      onChange(isChecked);
+    }
   };
 
+  // Sync internal state with the `checked` prop
   useEffect(() => {
-    if (value !== checked) {
+    if (checked !== value) {
       setValue(checked);
     }
   }, [checked]);
-
-  useEffect(() => {
-    if (onChange && value !== checked) {
-      onChange(value);
-    }
-  }, [value]);
 
   const getDivClassName = useCallback(() => {
     if (type === "icheck") {
