@@ -24,6 +24,7 @@ import {
   DONOR,
   MANAGER,
   MENTOR,
+  MISAU,
   MNE,
   NURSE,
   SUPERVISOR,
@@ -215,7 +216,12 @@ const UsersForm = ({
   };
 
   const onChangeProfile = async (values: any) => {
-    if (values == MNE || values == DONOR || values == ADMIN) {
+    if (
+      values == MNE ||
+      values == DONOR ||
+      values == ADMIN ||
+      values == MISAU
+    ) {
       setSelectMode("multiple");
       setLocalityMode("multiple");
       setRequired(false);
@@ -413,7 +419,7 @@ const UsersForm = ({
               name="profiles"
               label="Perfil"
               rules={[{ required: true, message: RequiredFieldMessage }]}
-              initialValue={user?.profiles.id.toString()}
+              initialValue={user?.profiles.description}
             >
               <Select
                 id="profiles-selection"

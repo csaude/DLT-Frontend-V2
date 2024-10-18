@@ -34,7 +34,7 @@ import PropTypes from "prop-types";
 const { Text } = Typography;
 const { confirm } = Modal;
 
-const ViewReferencePanel = ({ selectedReference }) => {
+const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
   const [visible, setVisible] = useState<boolean>(false);
   const [reference, setReference] = useState<any>();
   const [user, setUser] = useState<any>();
@@ -516,6 +516,7 @@ const ViewReferencePanel = ({ selectedReference }) => {
                 htmlType="submit"
                 onClick={() => onSubmit()}
                 type="primary"
+                hidden={!allowDataEntry}
               >
                 Atender
               </Button>
@@ -537,10 +538,16 @@ const ViewReferencePanel = ({ selectedReference }) => {
 };
 ViewReferencePanel.propTypes = {
   selectedReference: PropTypes.object.isRequired,
+  allowDataEntry: PropTypes.bool.isRequired,
 };
 export { ViewReferencePanel };
 
-const ViewReferral = ({ reference, modalVisible, handleModalVisible }) => {
+const ViewReferral = ({
+  reference,
+  modalVisible,
+  handleModalVisible,
+  allowDataEntry,
+}) => {
   const dispatch = useDispatch();
 
   const okHandle = () => {
@@ -580,7 +587,10 @@ const ViewReferral = ({ reference, modalVisible, handleModalVisible }) => {
         </Button>
       }
     >
-      <ViewReferencePanel selectedReference={reference} />
+      <ViewReferencePanel
+        selectedReference={reference}
+        allowDataEntry={allowDataEntry}
+      />
     </Modal>
   );
 };
@@ -589,6 +599,7 @@ ViewReferral.propTypes = {
   reference: PropTypes.object.isRequired,
   modalVisible: PropTypes.bool.isRequired,
   handleModalVisible: PropTypes.func.isRequired,
+  allowDataEntry: PropTypes.bool.isRequired,
 };
 
 export default ViewReferral;

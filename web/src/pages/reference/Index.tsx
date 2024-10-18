@@ -40,7 +40,7 @@ import { useNavigate } from "react-router-dom";
 import ViewReferral from "./components/View";
 import FormReference from "../beneficiaries/components/FormReference";
 import { Title } from "@app/components";
-import { ADMIN } from "@app/utils/contants";
+import { ADMIN, DONOR, MISAU, MNE_DONOR } from "@app/utils/contants";
 import LoadingModal from "@app/components/modal/LoadingModal";
 import { useDispatch, useSelector } from "react-redux";
 import { FilterObject } from "@app/models/FilterObject";
@@ -91,6 +91,7 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
   const [userCreator, setUserCreator] = useState<any>();
   const [districts, setDistricts] = useState<any[]>([]);
   const [filters, setFilters] = useState<any>(null);
+  const [allowDataEntry, setAllowDataEntry] = useState(true);
 
   const userSelector = useSelector((state: any) => state?.user);
   const convertedUserData: FilterObject[] = listUsers?.map(
@@ -234,6 +235,10 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
       setUsers(referreds);
       setUs(existingUs);
       setLoggedUser(loggedUser);
+
+      if ([MNE_DONOR].includes(loggedUser.profiles.id)) {
+        setAllowDataEntry(false);
+      }
     };
 
     fetchData()
@@ -1135,6 +1140,7 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
         {...parentMethods}
         reference={reference}
         modalVisible={modalVisible}
+        allowDataEntry={allowDataEntry}
       />
 
       <FormReference
@@ -1144,6 +1150,7 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
         modalVisible={referenceModalVisible}
         handleModalRefVisible={handleModalRefVisible}
         handleRefServicesList={handleRefServicesList}
+        allowDataEntry={allowDataEntry}
       />
     </>
   );

@@ -55,7 +55,7 @@ import {
 } from "../../utils/reference";
 import FormReference from "./components/FormReference";
 import { Title } from "@app/components";
-import { ADMIN, MNE, SUPERVISOR } from "@app/utils/contants";
+import { ADMIN, DONOR, MISAU, MNE, MNE_DONOR, SUPERVISOR } from "@app/utils/contants";
 import { useDispatch, useSelector } from "react-redux";
 import LoadingModal from "@app/components/modal/LoadingModal";
 import { FilterObject } from "@app/models/FilterObject";
@@ -105,6 +105,7 @@ const BeneficiariesList: React.FC = () => {
   const [filters, setFilters] = useState<any>(null);
   const pageSize = 100;
   const [isEditMode, setIsEditMode] = useState(false);
+  const [allowDataEntry, setAllowDataEntry] = useState(true);
 
   const userSelector = useSelector((state: any) => state?.user);
   const beneficiariesTotal = useSelector(
@@ -266,6 +267,10 @@ const BeneficiariesList: React.FC = () => {
 
       if ([ADMIN, MNE, SUPERVISOR].includes(user.profiles.id)) {
         setVisibleName(false);
+      }
+
+      if ([MNE_DONOR].includes(user.profiles.id)) {
+        setAllowDataEntry(false);
       }
     };
 
@@ -1128,6 +1133,7 @@ const BeneficiariesList: React.FC = () => {
               type="primary"
               onClick={() => handleBeneficiaryModalVisible(true)}
               icon={<PlusOutlined />}
+              hidden={!allowDataEntry}
               style={{
                 background: "#00a65a",
                 borderColor: "#00a65a",
@@ -1140,6 +1146,7 @@ const BeneficiariesList: React.FC = () => {
               type="primary"
               onClick={() => handleBeneficiaryPartnerModalVisible(true)}
               icon={<PlusOutlined />}
+              hidden={!allowDataEntry}
               style={{
                 background: "#a69e00",
                 borderColor: "#a69e00",
@@ -1244,6 +1251,7 @@ const BeneficiariesList: React.FC = () => {
                     handleViewModalVisible={handleViewModalVisible}
                     handleModalRefVisible={handleModalRefVisible}
                     user={user}
+                    allowDataEntry={allowDataEntry}
                   />
                 </div>
               ),
@@ -1281,6 +1289,7 @@ const BeneficiariesList: React.FC = () => {
         handleViewModalVisible={handleViewModalVisible}
         handleModalRefVisible={handleModalRefVisible}
         user={user}
+        allowDataEntry={allowDataEntry}
       />
       <FormBeneficiary
         form={form}
@@ -1294,6 +1303,7 @@ const BeneficiariesList: React.FC = () => {
           handleRegisterAnExistingBeneficiary
         }
         isEditMode={isEditMode}
+        allowDataEntry={allowDataEntry}
       />
       <FormBeneficiaryPartner
         form={form}
@@ -1303,6 +1313,7 @@ const BeneficiariesList: React.FC = () => {
         handleUpdateBeneficiary={handleUpdateBeneficiary}
         handleModalVisible={handleBeneficiaryPartnerModalVisible}
         handleViewModalVisible={handleViewModalVisible}
+        allowDataEntry={allowDataEntry}
       />
       <FormReference
         form={form}
@@ -1312,6 +1323,7 @@ const BeneficiariesList: React.FC = () => {
         handleAdd={handleAddRef}
         handleModalRefVisible={handleModalRefVisible}
         handleRefServicesList={handleRefServicesList}
+        allowDataEntry={allowDataEntry}
       />
     </>
   );
