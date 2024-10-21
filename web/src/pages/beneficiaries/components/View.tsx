@@ -55,6 +55,7 @@ const ViewBenefiaryPanel = ({
   handleViewModalVisible,
   handleModalRefVisible,
   user,
+  allowDataEntry,
 }) => {
   const [visible, setVisible] = useState<boolean>(false);
   const [isAdd, setIsAdd] = useState<boolean>(false);
@@ -691,6 +692,7 @@ const ViewBenefiaryPanel = ({
                 onClick={() => onAddReference(true, beneficiary)}
                 type="primary"
                 icon={<ArrowUpOutlined />}
+                hidden={!allowDataEntry}
                 danger
               >
                 Referir Beneficiária
@@ -699,6 +701,7 @@ const ViewBenefiaryPanel = ({
                 onClick={onAddIntervention}
                 type="primary"
                 icon={<PlusOutlined />}
+                hidden={!allowDataEntry}
               >
                 Adicionar Serviço Dreams
               </Button>
@@ -730,7 +733,7 @@ const ViewBenefiaryPanel = ({
                 htmlType="submit"
                 onClick={() => onSubmit()}
                 type="primary"
-                hidden={!isAdd}
+                hidden={!isAdd || !allowDataEntry}
               >
                 Salvar
               </Button>
@@ -764,6 +767,7 @@ ViewBenefiaryPanel.propTypes = {
   handleModalVisible: PropTypes.func.isRequired,
   handleViewModalVisible: PropTypes.func.isRequired,
   handleModalRefVisible: PropTypes.func.isRequired,
+  allowDataEntry: PropTypes.bool.isRequired,
 };
 
 export { ViewBenefiaryPanel };
@@ -775,6 +779,7 @@ const ViewBeneficiary = ({
   handleViewModalVisible,
   handleModalRefVisible,
   user,
+  allowDataEntry,
 }) => {
   const okHandle = () => {
     handleModalVisible();
@@ -813,6 +818,7 @@ const ViewBeneficiary = ({
         handleViewModalVisible={handleViewModalVisible}
         handleModalRefVisible={handleModalRefVisible}
         user={user}
+        allowDataEntry={allowDataEntry}
       />
     </Modal>
   );
@@ -825,6 +831,7 @@ ViewBeneficiary.propTypes = {
   handleViewModalVisible: PropTypes.func.isRequired,
   handleModalRefVisible: PropTypes.func.isRequired,
   modalVisible: PropTypes.bool.isRequired,
+  allowDataEntry: PropTypes.bool.isRequired,
 };
 
 export default ViewBeneficiary;

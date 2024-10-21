@@ -27,6 +27,7 @@ const FormReference = ({
   handleModalRefVisible,
   addStatus,
   handleRefServicesList,
+  allowDataEntry,
 }: any) => {
   const [current, setCurrent] = useState(0);
   const [firstStepValues, setFirstStepValues] = useState<any>();
@@ -169,7 +170,11 @@ const FormReference = ({
             {current === 1 &&
               (beneficiary != undefined || reference != undefined) &&
               (reference != undefined ? (
-                <Button type="primary" onClick={() => onUpdate()}>
+                <Button
+                  type="primary"
+                  hidden={!allowDataEntry}
+                  onClick={() => onUpdate()}
+                >
                   Actualizar
                 </Button>
               ) : (
