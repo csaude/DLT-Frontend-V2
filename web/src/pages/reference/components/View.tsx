@@ -129,6 +129,7 @@ const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
       setReference(selectedReference);
 
       if (
+        !allowDataEntry ||
         (loggedUser.partners.partnerType ==
           selectedReference.referredBy.partners.partnerType &&
           loggedUser.entryPoint == selectedReference.referredBy.entryPoint) ||
@@ -516,7 +517,6 @@ const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
                 htmlType="submit"
                 onClick={() => onSubmit()}
                 type="primary"
-                hidden={!allowDataEntry}
               >
                 Atender
               </Button>

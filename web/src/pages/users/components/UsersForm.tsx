@@ -28,6 +28,7 @@ import {
   MNE,
   NURSE,
   SUPERVISOR,
+  MNE_DONOR,
 } from "@app/utils/contants";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
@@ -220,7 +221,8 @@ const UsersForm = ({
       values == MNE ||
       values == DONOR ||
       values == ADMIN ||
-      values == MISAU
+      values == MISAU ||
+      values == MNE_DONOR
     ) {
       setSelectMode("multiple");
       setLocalityMode("multiple");
