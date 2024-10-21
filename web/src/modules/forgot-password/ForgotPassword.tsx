@@ -69,7 +69,7 @@ const ForgotPassword = () => {
         setAuthLoading(false);
         if (errObj.status == 401) {
           toast.error(
-            "A password foi usada recentimente, escolha uma password diferente!"
+            "A password foi usada recentemente, escolha uma password diferente!"
           );
         } else {
           toast.error(getMessage(errObj.status));
