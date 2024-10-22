@@ -5,6 +5,8 @@ import { Badge, Button, Card, Form, Input, message, Space, Table } from "antd";
 import Highlighter from "react-highlight-words";
 import { SearchOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import LocalityForm from "./components/LocalityForm";
+import { query } from "@app/utils/users";
+import { MNE_DONOR } from "@app/utils/contants";
 
 const LocalityList: React.FC = () => {
   const [locality, setLocality] = useState<any[]>([]);
@@ -14,6 +16,7 @@ const LocalityList: React.FC = () => {
     useState<boolean>(false);
   const [selectedLocality, setSelectedLocality] = useState<any>(undefined);
   const [form] = Form.useForm();
+  const [allowDataEntry, setAllowDataEntry] = useState(true);
 
   let searchInput;
   useEffect(() => {
@@ -23,6 +26,11 @@ const LocalityList: React.FC = () => {
         (ser1, ser2) => ser2.id - ser1.id
       );
       setLocality(sortedLocalities);
+      const loggedUser = await query(localStorage.user);
+
+      if ([MNE_DONOR].includes(loggedUser.profiles.id)) {
+        setAllowDataEntry(false);
+      }
     };
 
     fetchData().catch((error) => console.log(error));
@@ -286,6 +294,7 @@ const LocalityList: React.FC = () => {
               type="primary"
               icon={<PlusOutlined />}
               onClick={() => handleLocalityModalVisible(true)}
+              hidden={!allowDataEntry}
             >
               Adicionar Postos Administrativos
             </Button>
@@ -305,6 +314,7 @@ const LocalityList: React.FC = () => {
         modalVisible={localitiesModalVisible}
         handleModalVisible={handleLocalityModalVisible}
         handleAdd={handleAdd}
+        allowDataEntry={allowDataEntry}
       />
     </>
   );

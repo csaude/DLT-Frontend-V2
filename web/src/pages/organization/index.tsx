@@ -6,6 +6,8 @@ import Highlighter from "react-highlight-words";
 import { SearchOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import OrganizationForm from "./components/OrganizationForm";
 import { allDistrict } from "@app/utils/district";
+import { query } from "@app/utils/users";
+import { MNE_DONOR } from "@app/utils/contants";
 
 const OrganizationList: React.FC = () => {
   const [organizations, setOrganizations] = useState<any[]>([]);
@@ -17,6 +19,7 @@ const OrganizationList: React.FC = () => {
   const [selectedOrganization, setSelectedOrganization] =
     useState<any>(undefined);
   const [form] = Form.useForm();
+  const [allowDataEntry, setAllowDataEntry] = useState(true);
 
   let searchInput;
   useEffect(() => {
@@ -29,6 +32,11 @@ const OrganizationList: React.FC = () => {
 
       setOrganizations(sortedOrganizations);
       setDistrict(districts);
+      const loggedUser = await query(localStorage.user);
+
+      if ([MNE_DONOR].includes(loggedUser.profiles.id)) {
+        setAllowDataEntry(false);
+      }
     };
 
     fetchData().catch((error) => console.log(error));
@@ -308,6 +316,7 @@ const OrganizationList: React.FC = () => {
               type="primary"
               icon={<PlusOutlined />}
               onClick={() => handleOrganizationModalVisible(true)}
+              hidden={!allowDataEntry}
             >
               Adicionar Organização
             </Button>
@@ -327,6 +336,7 @@ const OrganizationList: React.FC = () => {
         modalVisible={organizationModalVisible}
         handleModalVisible={handleOrganizationModalVisible}
         handleAdd={handleAdd}
+        allowDataEntry={allowDataEntry}
       />
     </>
   );

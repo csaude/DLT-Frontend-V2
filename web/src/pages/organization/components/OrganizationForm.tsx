@@ -18,6 +18,7 @@ const OrganizationForm = ({
   modalVisible,
   handleModalVisible,
   handleAdd,
+  allowDataEntry,
 }) => {
   const [statusEnabled, setStatusEnabled] = useState(false);
   const [provinces, setProvinces] = useState<any[]>([]);
@@ -91,7 +92,12 @@ const OrganizationForm = ({
         <Button key="Cancel" onClick={() => showCloseConfirm()}>
           Cancelar
         </Button>,
-        <Button key="OK" onClick={handleAdd} type="primary">
+        <Button
+          key="OK"
+          onClick={handleAdd}
+          hidden={!allowDataEntry}
+          type="primary"
+        >
           Salvar
         </Button>,
       ]}
@@ -222,6 +228,7 @@ OrganizationForm.propTypes = {
   modalVisible: PropTypes.bool.isRequired,
   handleModalVisible: PropTypes.func.isRequired,
   handleAdd: PropTypes.func.isRequired,
+  allowDataEntry: PropTypes.bool.isRequired,
 };
 
 export default OrganizationForm;
