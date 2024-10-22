@@ -16,6 +16,7 @@ const ProvinceForm = ({
   modalVisible,
   handleModalVisible,
   handleAdd,
+  allowDataEntry,
 }) => {
   const [statusEnabled, setStatusEnabled] = useState(false);
 
@@ -54,7 +55,12 @@ const ProvinceForm = ({
         <Button key="Cancel" onClick={() => showCloseConfirm()}>
           Cancelar
         </Button>,
-        <Button key="OK" onClick={handleAdd} type="primary">
+        <Button
+          key="OK"
+          onClick={handleAdd}
+          hidden={!allowDataEntry}
+          type="primary"
+        >
           Salvar
         </Button>,
       ]}
@@ -112,6 +118,7 @@ ProvinceForm.propTypes = {
   modalVisible: PropTypes.bool.isRequired,
   handleModalVisible: PropTypes.func.isRequired,
   handleAdd: PropTypes.func.isRequired,
+  allowDataEntry: PropTypes.bool.isRequired,
 };
 
 export default ProvinceForm;

@@ -16,6 +16,8 @@ import Highlighter from "react-highlight-words";
 import { SearchOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { add, edit, queryAll } from "@app/utils/subservice";
 import SubServiceForm from "./components/SubServiceForm";
+import { query } from "@app/utils/users";
+import { MNE_DONOR } from "@app/utils/contants";
 
 const SubServicesList: React.FC = () => {
   const [subServices, setSubServices] = useState<any[]>([]);
@@ -25,6 +27,7 @@ const SubServicesList: React.FC = () => {
     useState<boolean>(false);
   const [selectedSubService, setSelectedSubService] = useState<any>(undefined);
   const [form] = Form.useForm();
+  const [allowDataEntry, setAllowDataEntry] = useState(true);
 
   let searchInput;
   useEffect(() => {
@@ -32,6 +35,11 @@ const SubServicesList: React.FC = () => {
       const subServices = await queryAll();
       const sortedSubServices = subServices.sort((s1, s2) => s2.id - s1.id);
       setSubServices(sortedSubServices);
+      const loggedUser = await query(localStorage.user);
+
+      if ([MNE_DONOR].includes(loggedUser.profiles.id)) {
+        setAllowDataEntry(false);
+      }
     };
 
     fetchData().catch((error) => console.log(error));
@@ -307,6 +315,7 @@ const SubServicesList: React.FC = () => {
               type="primary"
               icon={<PlusOutlined />}
               onClick={() => handleSubServiceModalVisible(true)}
+              hidden={!allowDataEntry}
             >
               Adicionar Sub-Serviço
             </Button>
@@ -328,6 +337,7 @@ const SubServicesList: React.FC = () => {
         modalVisible={subServiceModalVisible}
         handleModalVisible={handleSubServiceModalVisible}
         handleAdd={handleAdd}
+        allowDataEntry={allowDataEntry}
       />
     </>
   );

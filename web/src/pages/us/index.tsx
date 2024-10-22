@@ -17,6 +17,8 @@ import UsForm from "./components/UsForm";
 import { allUs, add, edit } from "@app/utils/uSanitaria";
 import { useSelector } from "react-redux";
 import ptPT from "antd/lib/locale-provider/pt_PT";
+import { query } from "@app/utils/users";
+import { MNE_DONOR } from "@app/utils/contants";
 
 const UsList: React.FC = () => {
   const [uss, setUss] = useState<any[]>([]);
@@ -28,6 +30,7 @@ const UsList: React.FC = () => {
   const [usModalVisible, setUsModalVisible] = useState<boolean>(false);
   const [selectedUs, setSelectedUs] = useState<any>(undefined);
   const [form] = Form.useForm();
+  const [allowDataEntry, setAllowDataEntry] = useState(true);
 
   const provincesSelector = useSelector(
     (state: any) => state?.province.loadedProvinces
@@ -45,6 +48,11 @@ const UsList: React.FC = () => {
       const uss = await allUs();
       const sortedUss = uss.sort((ser1, ser2) => ser2.id - ser1.id);
       setUss(sortedUss);
+      const loggedUser = await query(localStorage.user);
+
+      if ([MNE_DONOR].includes(loggedUser.profiles.id)) {
+        setAllowDataEntry(false);
+      }
     };
 
     fetchData().catch((error) => console.log(error));
@@ -58,8 +66,6 @@ const UsList: React.FC = () => {
     const sortedLocalities = localitiesSelector?.sort((loc1, loc2) =>
       loc1?.name.localeCompare(loc2.name)
     );
-
-    console.log(sortedLocalities);
 
     setProvinces(sortedProvinces);
     setDistricts(sortedDistricts);
@@ -365,6 +371,7 @@ const UsList: React.FC = () => {
               type="primary"
               icon={<PlusOutlined />}
               onClick={() => handleUsModalVisible(true)}
+              hidden={!allowDataEntry}
             >
               Adicionar Unidade Sanitária
             </Button>
@@ -386,6 +393,7 @@ const UsList: React.FC = () => {
         modalVisible={usModalVisible}
         handleModalVisible={handleUsModalVisible}
         handleAdd={handleAdd}
+        allowDataEntry={allowDataEntry}
       />
     </>
   );
