@@ -715,7 +715,7 @@ const ReferenceList: React.FC = ({ resetModal }: any) => {
             }
             icon={<EditOutlined />}
             onClick={() =>
-              record.status == 0
+              record.status == 0 || record.status == 1
                 ? onEditRefence(record)
                 : message.info({
                     content: "Referência já atendida!",

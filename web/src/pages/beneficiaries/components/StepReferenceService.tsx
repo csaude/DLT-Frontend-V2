@@ -223,6 +223,7 @@ const StepReferenceService = ({
       key: "intervention",
       render: (text, record) => (
         <Button
+          disabled={reference.status == 1}
           type="primary"
           icon={<DeleteFilled />}
           onClick={() => onRemoveServico(record)}
@@ -367,6 +368,7 @@ const StepReferenceService = ({
                 bodyStyle={{ paddingLeft: "10px", paddingRight: "10px" }}
                 extra={
                   <Button
+                    disabled={reference.status == 1}
                     type="primary"
                     onClick={() => showDrawer()}
                     icon={<PlusOutlined />}
