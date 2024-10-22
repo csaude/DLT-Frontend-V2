@@ -15,7 +15,6 @@ import * as Yup from "yup";
 import { Form, InputGroup } from "react-bootstrap";
 import * as AuthService from "../../services/auth";
 import { verifyUserByUsername } from "../../utils/login";
-import { edit } from "@app/utils/users";
 
 const Login = () => {
   const [isAuthLoading, setAuthLoading] = useState(false);
@@ -48,7 +47,6 @@ const Login = () => {
       dispatch(loginUser(data));
       localStorage.setItem("dateCreated", user?.dateCreated);
       user.lastLoginDate = new Date();
-      await edit(user);
       navigate("/");
     } catch (error) {
       const errSt = JSON.stringify(error);
