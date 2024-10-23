@@ -9,7 +9,7 @@ const appTitle = () => {
         marginBottom: "10px",
         textAlign: "center",
         fontWeight: "bold",
-        color: "rgb(23, 162, 184)"
+        color: "rgb(23, 162, 184)",
       }}
     >
       Sistema de Registo e Acompanhamento de Beneficiárias do Programa DREAMS
