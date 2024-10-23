@@ -17,6 +17,8 @@ import { add, allNeighborhoods, edit } from "@app/utils/neighborhoods";
 import { useSelector } from "react-redux";
 import ptPT from "antd/lib/locale-provider/pt_PT";
 import NeighborhoodForm from "./components/NeighborhoodForm";
+import { query } from "@app/utils/users";
+import { MNE_DONOR } from "@app/utils/contants";
 
 const NeighborhoodsList: React.FC = () => {
   const [neighborhoods, setNeighborhoods] = useState<any[]>([]);
@@ -28,6 +30,7 @@ const NeighborhoodsList: React.FC = () => {
   const [selectedNeighborhood, setSelectedNeighborhood] =
     useState<any>(undefined);
   const [form] = Form.useForm();
+  const [allowDataEntry, setAllowDataEntry] = useState(true);
 
   const districtsSelector = useSelector(
     (state: any) => state?.district.loadedDistricts
@@ -42,6 +45,11 @@ const NeighborhoodsList: React.FC = () => {
       const neighborhoods = await allNeighborhoods();
       const sortedNeighborhoods = neighborhoods.sort((n1, n2) => n2.id - n1.id);
       setNeighborhoods(sortedNeighborhoods);
+      const loggedUser = await query(localStorage.user);
+
+      if ([MNE_DONOR].includes(loggedUser.profiles.id)) {
+        setAllowDataEntry(false);
+      }
     };
 
     fetchData().catch((error) => console.log(error));
@@ -350,6 +358,7 @@ const NeighborhoodsList: React.FC = () => {
               type="primary"
               icon={<PlusOutlined />}
               onClick={() => handleModalVisible(true)}
+              hidden={!allowDataEntry}
             >
               Adicionar Bairro Residencial
             </Button>
@@ -371,6 +380,7 @@ const NeighborhoodsList: React.FC = () => {
         modalVisible={modalVisible}
         handleModalVisible={handleModalVisible}
         handleAdd={handleAdd}
+        allowDataEntry={allowDataEntry}
       />
     </>
   );

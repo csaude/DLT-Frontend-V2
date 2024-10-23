@@ -25,6 +25,7 @@ const BeneficiaryForm = ({
   handleModalVisible,
   handleRegisterAnExistingBeneficiary,
   isEditMode,
+  allowDataEntry,
 }: any) => {
   const [current, setCurrent] = useState(0);
   const [firstStepValues, setFirstStepValues] = useState();
@@ -385,7 +386,11 @@ const BeneficiaryForm = ({
               </Button>
             )}
             {current === steps.length - 1 && (
-              <Button type="primary" onClick={() => onUpdate()}>
+              <Button
+                type="primary"
+                hidden={!allowDataEntry}
+                onClick={() => onUpdate()}
+              >
                 Actualizar
               </Button>
             )}

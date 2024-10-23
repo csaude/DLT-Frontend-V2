@@ -42,6 +42,7 @@ import { useDispatch, useSelector } from "react-redux";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import { toast } from "react-toastify";
+import { MNE_DONOR } from "@app/utils/contants";
 
 const { Text } = Typography;
 const { Option } = Select;
@@ -78,6 +79,7 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
   const [districts, setDistricts] = useState<any[]>([]);
   const [cancelReason, setCancelReason] = useState<any>();
   const [otherReason, setOtherReason] = useState<any>();
+  const [allowDataEntry, setAllowDataEntry] = useState(true);
 
   const RequiredFieldMessage = "Obrigatório!";
   const reasons = [
@@ -232,6 +234,10 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
       setReferrers(referrers);
       setUsers(referreds);
       setUs(existingUs);
+
+      if ([MNE_DONOR].includes(loggedUser.profiles.id)) {
+        setAllowDataEntry(false);
+      }
     };
 
     fetchData()
@@ -903,6 +909,7 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
                       type="primary"
                       onClick={handleRefUpdate}
                       htmlType="submit"
+                      hidden={!allowDataEntry}
                     >
                       Salvar
                     </Button>
