@@ -113,7 +113,6 @@ const ResetPassword: React.FC = () => {
           "É necessarrio uma conexão a internet!"
         );
       } else {
-        
         const logguedUser: any = (
           await users
             .query(
@@ -132,30 +131,39 @@ const ResetPassword: React.FC = () => {
             });
           });
         }
-          
-				await fetch(`${UPDATE_PASSWORD_URL}`, {
-					method: "PUT",
-					headers: {
-						Accept: "application/json",
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						username: values.username,
-						recoverPassword: values.password,
-					}),
-				});
 
-        setLoading(false);
-        showToast(
-          "success",
-          "E-mail enviado!!!",
-          "Redefinição de senha submetida com sucesso!"
-        );
-
-        navigationRef.reset({
-          index: 0,
-          routes: [{ name: "Login", params: { resetPassword: "1" } }],
+        const user = await fetch(`${UPDATE_PASSWORD_URL}`, {
+          method: "PUT",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: values.username,
+            recoverPassword: values.password,
+          }),
         });
+
+        if (user.status == 401) {
+          setLoading(false);
+          showToast(
+            "error",
+            "Falha!!!",
+            "A password foi usada recentemente, escolha uma password diferente!"
+          );
+        } else {
+          setLoading(false);
+          showToast(
+            "success",
+            "E-mail enviado!!!",
+            "Redefinição de senha submetida com sucesso!"
+          );
+
+          navigationRef.reset({
+            index: 0,
+            routes: [{ name: "Login", params: { resetPassword: "1" } }],
+          });
+        }
       }
     } catch (error) {
       setLoading(false);
