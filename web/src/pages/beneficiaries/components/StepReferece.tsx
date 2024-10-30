@@ -266,7 +266,7 @@ const StepReference = ({
             name="referenceNote"
             label="Nota Referência"
             rules={[
-              { required: reference.status != 1, message: "Obrigatório" },
+              { required: reference?.status != 1, message: "Obrigatório" },
             ]}
           >
             <Input placeholder="Nota Referência" disabled />
@@ -277,7 +277,7 @@ const StepReference = ({
             name="beneficiary_id"
             label="NUI de Beneficiário"
             rules={[
-              { required: reference.status != 1, message: "Obrigatório" },
+              { required: reference?.status != 1, message: "Obrigatório" },
             ]}
             initialValue={
               reference === undefined
@@ -293,7 +293,7 @@ const StepReference = ({
             name="referredBy"
             label="Referente"
             rules={[
-              { required: reference.status != 1, message: "Obrigatório" },
+              { required: reference?.status != 1, message: "Obrigatório" },
             ]}
             // initialValue={userId}
             initialValue={
@@ -303,7 +303,7 @@ const StepReference = ({
             }
           >
             <Select
-              disabled={reference.status == 1}
+              disabled={reference?.status == 1}
               placeholder="Seleccione o Referente"
             >
               {sortedReferes?.map((item) => (
@@ -319,14 +319,14 @@ const StepReference = ({
             name="referTo"
             label="Referir Para"
             rules={[
-              { required: reference.status != 1, message: "Obrigatório" },
+              { required: reference?.status != 1, message: "Obrigatório" },
             ]}
             initialValue={
               reference === undefined ? "" : reference?.referTo.toString()
             }
           >
             <Radio.Group
-              disabled={reference.status == 1}
+              disabled={reference?.status == 1}
               onChange={onChangeEntryPoint}
               options={entryPoints}
               optionType="button"
@@ -338,11 +338,14 @@ const StepReference = ({
             name="bookNumber"
             label="Nº do Livro"
             rules={[
-              { required: reference.status != 1, message: "Obrigatório" },
+              { required: reference?.status != 1, message: "Obrigatório" },
             ]}
             initialValue={reference === undefined ? "" : reference?.bookNumber}
           >
-            <Input disabled={reference.status == 1} placeholder="Nº do Livro" />
+            <Input
+              disabled={reference?.status == 1}
+              placeholder="Nº do Livro"
+            />
           </Form.Item>
         </Col>
         <Col span={8}>
@@ -358,7 +361,7 @@ const StepReference = ({
               ")"
             }
             rules={[
-              { required: reference.status != 1, message: "Obrigatório" },
+              { required: reference?.status != 1, message: "Obrigatório" },
               {
                 validator(rule, value) {
                   return new Promise((resolve, reject) => {
@@ -398,7 +401,7 @@ const StepReference = ({
             }
           >
             <Input
-              disabled={reference.status == 1}
+              disabled={reference?.status == 1}
               placeholder="Ex: PE-NºPag-Mês-Ano"
             />
           </Form.Item>
@@ -410,7 +413,7 @@ const StepReference = ({
             name="serviceType"
             label="Tipo de Serviço"
             rules={[
-              { required: reference.status != 1, message: "Obrigatório" },
+              { required: reference?.status != 1, message: "Obrigatório" },
             ]}
             initialValue={
               reference === undefined
@@ -423,7 +426,7 @@ const StepReference = ({
             <Select
               placeholder="Seleccione o Tipo de Serviço"
               onChange={onChangeTipoServico}
-              disabled={!serviceTypeEnabled || reference.status == 1}
+              disabled={!serviceTypeEnabled || reference?.status == 1}
             >
               {serviceTypes.map((item) => (
                 <Option key={item.id}>{item.name}</Option>
@@ -436,7 +439,7 @@ const StepReference = ({
             name="partner_id"
             label="Organização"
             rules={[
-              { required: reference.status != 1, message: "Obrigatório" },
+              { required: reference?.status != 1, message: "Obrigatório" },
             ]}
             initialValue={
               reference === undefined
@@ -446,7 +449,7 @@ const StepReference = ({
           >
             <Select
               placeholder="Organização"
-              disabled={partners === undefined || reference.status == 1}
+              disabled={partners === undefined || reference?.status == 1}
             >
               {partners?.map((item) => (
                 <Option key={item.id}>{item.name}</Option>
@@ -459,7 +462,7 @@ const StepReference = ({
             name="local"
             label="Local"
             rules={[
-              { required: reference.status != 1, message: "Obrigatório" },
+              { required: reference?.status != 1, message: "Obrigatório" },
             ]}
             initialValue={
               reference === undefined ? undefined : reference?.us?.id.toString()
@@ -468,7 +471,7 @@ const StepReference = ({
             <Select
               placeholder="Seleccione o Local"
               onChange={onChangeUs}
-              disabled={us === undefined || reference.status == 1}
+              disabled={us === undefined || reference?.status == 1}
             >
               {us?.map((item) => (
                 <Option key={item.id}>{item.name}</Option>
@@ -483,7 +486,7 @@ const StepReference = ({
             name="date"
             label="Data Emissão"
             rules={[
-              { required: reference.status != 1, message: "Obrigatório" },
+              { required: reference?.status != 1, message: "Obrigatório" },
             ]}
             initialValue={
               reference === undefined
@@ -502,7 +505,7 @@ const StepReference = ({
             name="notifyTo"
             label="Notificar ao"
             rules={[
-              { required: reference.status != 1, message: "Obrigatório" },
+              { required: reference?.status != 1, message: "Obrigatório" },
             ]}
             initialValue={
               reference === undefined ? "" : reference?.notifyTo?.id.toString()
@@ -510,7 +513,7 @@ const StepReference = ({
           >
             <Select
               placeholder="Notificar ao"
-              disabled={users === undefined || reference.status == 1}
+              disabled={users === undefined || reference?.status == 1}
             >
               {users?.map((item) => (
                 <Option key={item.id}>{item.name + " " + item.surname}</Option>
@@ -525,7 +528,7 @@ const StepReference = ({
             initialValue={reference === undefined ? "" : reference?.remarks}
           >
             <TextArea
-              disabled={reference.status == 1}
+              disabled={reference?.status == 1}
               rows={2}
               placeholder="Observações"
               maxLength={600}
@@ -539,14 +542,14 @@ const StepReference = ({
             name="status"
             label="Estado"
             rules={[
-              { required: reference.status != 1, message: "Obrigatório" },
+              { required: reference?.status != 1, message: "Obrigatório" },
             ]}
             initialValue={
               reference === undefined ? "0" : reference?.status?.toString()
             }
           >
             <Select
-              disabled={!statusEnabled || reference.status == 1}
+              disabled={!statusEnabled || reference?.status == 1}
               onChange={onChangeStatus}
             >
               {status?.map((item) => (
@@ -561,7 +564,7 @@ const StepReference = ({
             label="Motivo de Cancelamento"
             rules={[
               {
-                required: reference.status != 1 && cancelReasonEnabled,
+                required: reference?.status != 1 && cancelReasonEnabled,
                 message: "Obrigatório",
               },
             ]}
@@ -571,7 +574,7 @@ const StepReference = ({
           >
             <Select
               placeholder="Motivo Cancelamento"
-              disabled={!cancelReasonEnabled || reference.status == 1}
+              disabled={!cancelReasonEnabled || reference?.status == 1}
               onChange={onChangeCancelReason}
             >
               {cancelReasons?.map((item) => (
@@ -586,7 +589,7 @@ const StepReference = ({
             label="Outro Motivo"
             rules={[
               {
-                required: reference.status != 1 || otherReasonEnabled,
+                required: reference?.status != 1 && otherReasonEnabled,
                 message: "Obrigatório",
               },
             ]}
@@ -596,7 +599,7 @@ const StepReference = ({
               rows={2}
               placeholder="Motivo"
               maxLength={600}
-              disabled={!otherReasonEnabled || reference.status == 1}
+              disabled={!otherReasonEnabled || reference?.status == 1}
             />
           </Form.Item>
         </Col>

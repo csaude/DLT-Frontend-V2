@@ -126,55 +126,68 @@ const StepReferenceService = ({
   };
 
   const onAddService = () => {
-    form
-      .validateFields()
-      .then(async () => {
-        const servOther = {
-          servico: selectedService,
-          description: form.getFieldValue("outros"),
-        };
-        const serv = services.filter(
-          (s) => s.servico.id === servOther.servico.id
-        );
-
-        if (serv.length === 0 || services.length === 0) {
-          const newServices = [servOther, ...services];
-
-          handleRefServicesList(newServices);
-          setServices(newServices);
-
-          message.success({
-            content: "Adicionado com Sucesso!",
-            className: "custom-class",
-            style: {
-              marginTop: "10vh",
-            },
-          });
-        } else {
-          message.error({
-            content: "Já existe este Serviço!",
-            className: "custom-class",
-            style: {
-              marginTop: "10vh",
-            },
-          });
-        }
-
-        setVisible(false);
-        form.setFieldValue("outros", "");
-      })
-      .catch(() => {
-        message.error({
-          content: "Nenhum Serviço selecionado!",
-          className: "custom-class",
-          style: {
-            marginTop: "10vh",
-          },
-        });
+    if (
+      selectedService.serviceType == 2 &&
+      interventionsServices.some((service) => service.id === selectedService.id)
+    ) {
+      message.error({
+        content: "Este Serviço já foi provido!",
+        className: "custom-class",
+        style: {
+          marginTop: "10vh",
+        },
       });
+    } else {
+      form
+        .validateFields()
+        .then(async () => {
+          const servOther = {
+            servico: selectedService,
+            description: form.getFieldValue("outros"),
+          };
+          const serv = services.filter(
+            (s) => s.servico.id === servOther.servico.id
+          );
 
-    setSelectedService(undefined);
-    form.setFieldValue("service", undefined);
+          if (serv.length === 0 || services.length === 0) {
+            const newServices = [servOther, ...services];
+
+            handleRefServicesList(newServices);
+            setServices(newServices);
+
+            message.success({
+              content: "Adicionado com Sucesso!",
+              className: "custom-class",
+              style: {
+                marginTop: "10vh",
+              },
+            });
+          } else {
+            message.error({
+              content: "Já existe este Serviço!",
+              className: "custom-class",
+              style: {
+                marginTop: "10vh",
+              },
+            });
+          }
+
+          setVisible(false);
+          form.setFieldValue("outros", "");
+        })
+        .catch(() => {
+          message.error({
+            content: "Nenhum Serviço selecionado!",
+            className: "custom-class",
+            style: {
+              marginTop: "10vh",
+            },
+          });
+        });
+
+      setSelectedService(undefined);
+      form.setFieldValue("service", undefined);
+    }
   };
 
   const onChangeServico = async (value: any) => {
@@ -223,7 +236,7 @@ const StepReferenceService = ({
       key: "intervention",
       render: (text, record) => (
         <Button
-          disabled={reference.status == 1}
+          disabled={reference?.status == 1}
           type="primary"
           icon={<DeleteFilled />}
           onClick={() => onRemoveServico(record)}
@@ -368,7 +381,7 @@ const StepReferenceService = ({
                 bodyStyle={{ paddingLeft: "10px", paddingRight: "10px" }}
                 extra={
                   <Button
-                    disabled={reference.status == 1}
+                    disabled={reference?.status == 1}
                     type="primary"
                     onClick={() => showDrawer()}
                     icon={<PlusOutlined />}
