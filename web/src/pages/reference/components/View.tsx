@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { query as queryUser } from "@app/utils/users";
 import { query as queryBeneficiary } from "@app/utils/beneficiary";
-import { query as queryReferenceService } from "@app/utils/reference-service";
+import {
+  query as queryReferenceService,
+  decline as declineReferenceService,
+} from "@app/utils/reference-service";
 import { query as queryBeneficiaryIntervention } from "@app/utils/beneficiaryIntervention";
 import {
   Button,
@@ -45,6 +48,7 @@ const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
   const [canAddress, setCanAddress] = useState<boolean>(true);
   const [requiredServices, setRequiredServices] = useState<any>([]);
   const [select, setSelect] = useState<any>([]);
+  const [key, setKey] = useState(0);
   const dispatch = useDispatch();
   const index = useSelector((state: any) => state.referenceIntervention.index);
 
@@ -272,6 +276,8 @@ const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
           <Text type="danger">Pendente </Text>
         ) : record.status == 1 ? (
           <Text type="warning">Em curso </Text>
+        ) : record.status == 3 ? (
+          <Text style={{ color: "brown" }}>Recusado </Text>
         ) : (
           <Text type="success">Atendido </Text>
         ),
@@ -329,9 +335,35 @@ const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
     },
   ];
 
+  const forceRemount = () => {
+    setKey((prevKey) => prevKey + 1);
+  };
+
+  const onServiceDecline = async () => {
+    await declineReferenceService(
+      requiredServices[index].id.referenceId,
+      requiredServices[index].id.serviceId
+    );
+
+    message.success({
+      content: "Recusado com Sucesso!",
+      className: "custom-class",
+      style: {
+        marginTop: "10vh",
+      },
+    });
+
+    await queryReferenceService(selectedReference.id).then((reqRefServices) => {
+      setRefServices(reqRefServices);
+      setVisible(false);
+      handleAttendServicesSequence();
+      forceRemount();
+    });
+  };
+
   return (
     <>
-      <div className="site-drawer-render-in-current-wrapper">
+      <div className="site-drawer-render-in-current-wrapper" key={key}>
         <Card
           bordered={false}
           bodyStyle={{ margin: 0, marginBottom: "20px", padding: 0 }}
@@ -519,6 +551,14 @@ const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
                 type="primary"
               >
                 Atender
+              </Button>
+              <Button
+                danger
+                htmlType="submit"
+                onClick={() => onServiceDecline()}
+                type="primary"
+              >
+                Recusar
               </Button>
             </Space>
           }
