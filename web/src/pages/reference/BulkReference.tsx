@@ -833,51 +833,65 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
         bordered={false}
         headStyle={{ color: "#17a2b8" }}
       >
+        <Checkbox
+          checked={selectAll}
+          onChange={(e) => {
+            const checked = e.target.checked;
+            setSelectAll(checked);
+            // setSelectedRowKeys(checked ? data.map((item) => item.key) : []);
+          }}
+        >
+          Cancelar todos pendentes ({allAcrossPagesCounter})
+        </Checkbox>
         <Row gutter={5}>
-          <Col span={12}>
-            <Card
-              title="FILTROS"
-              bordered={true}
-              headStyle={{ background: "#17a2b8", color: "#fff" }}
-            >
-              <Form
-                ref={formFilter}
-                name="fil"
-                initialValues={{ remember: true }}
-                autoComplete="off"
+          {!selectAll && (
+            <Col span={12}>
+              <Card
+                title="FILTROS"
+                bordered={true}
+                headStyle={{ background: "#17a2b8", color: "#fff" }}
               >
-                <Row gutter={30}>
-                  <Col className="gutter-row" span={12}>
-                    <Form.Item name="startDate" label="Data Inicio">
-                      <DatePicker
-                        inputReadOnly={true}
-                        style={{ width: "100%" }}
-                        placeholder="Data Inicio"
-                        onChange={(e) => setStartDate(moment(e, "YYYY-MM-DD"))}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col className="gutter-row" span={12}>
-                    <Form.Item name="endDate" label="Data Fim">
-                      <DatePicker
-                        inputReadOnly={true}
-                        style={{ width: "100%" }}
-                        placeholder="Data Inicio"
-                        onChange={setEndDate}
-                      />
-                    </Form.Item>
-                  </Col>
-                </Row>
-                <Row gutter={50}>
-                  <Col className="gutter-row" span={12}>
-                    <Button type="primary" onClick={handleGlobalSearch}>
-                      Pesquisar
-                    </Button>
-                  </Col>
-                </Row>
-              </Form>
-            </Card>
-          </Col>
+                <Form
+                  ref={formFilter}
+                  name="fil"
+                  initialValues={{ remember: true }}
+                  autoComplete="off"
+                >
+                  <Row gutter={30}>
+                    <Col className="gutter-row" span={12}>
+                      <Form.Item name="startDate" label="Data Inicio">
+                        <DatePicker
+                          inputReadOnly={true}
+                          style={{ width: "100%" }}
+                          placeholder="Data Inicio"
+                          onChange={(e) =>
+                            setStartDate(moment(e, "YYYY-MM-DD"))
+                          }
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col className="gutter-row" span={12}>
+                      <Form.Item name="endDate" label="Data Fim">
+                        <DatePicker
+                          inputReadOnly={true}
+                          style={{ width: "100%" }}
+                          placeholder="Data Inicio"
+                          onChange={setEndDate}
+                        />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                  <Row gutter={50}>
+                    <Col className="gutter-row" span={12}>
+                      <Button type="primary" onClick={handleGlobalSearch}>
+                        Pesquisar
+                      </Button>
+                    </Col>
+                  </Row>
+                </Form>
+              </Card>
+            </Col>
+          )}
           <Col span={12}>
             <Card
               title="Detalhes do cancelamento das Referências"
@@ -957,16 +971,6 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
           </Col>
         </Row>
         <ConfigProvider locale={ptPT}>
-          <Checkbox
-            checked={selectAll}
-            onChange={(e) => {
-              const checked = e.target.checked;
-              setSelectAll(checked);
-              // setSelectedRowKeys(checked ? data.map((item) => item.key) : []);
-            }}
-          >
-            Todos Pendentes ({allAcrossPagesCounter})
-          </Checkbox>
           <Table
             rowKey={(record?) => `${record.id}`}
             rowSelection={rowSelection}
