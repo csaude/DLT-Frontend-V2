@@ -339,14 +339,29 @@ const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
     setKey((prevKey) => prevKey + 1);
   };
 
+  const showDeclineConfirm = () => {
+    confirm({
+      title: "Deseja recusar este(s) serviço(s)?",
+      icon: <ExclamationCircleFilled />,
+      okText: "Sim",
+      okType: "danger",
+      cancelText: "Não",
+      onOk() {
+        onServiceDecline();
+      },
+      onCancel() {
+        /**Its OK */
+      },
+    });
+  };
+
   const onServiceDecline = async () => {
-    await declineReferenceService(
-      requiredServices[index].id.referenceId,
-      requiredServices[index].id.serviceId
-    );
+    for (const item of refServices) {
+      await declineReferenceService(item.id.referenceId, item.id.serviceId);
+    }
 
     message.success({
-      content: "Recusado com Sucesso!",
+      content: "Recusado(s) com Sucesso!",
       className: "custom-class",
       style: {
         marginTop: "10vh",
@@ -355,8 +370,6 @@ const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
 
     await queryReferenceService(selectedReference.id).then((reqRefServices) => {
       setRefServices(reqRefServices);
-      setVisible(false);
-      handleAttendServicesSequence();
       forceRemount();
     });
   };
@@ -490,8 +503,17 @@ const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
                   }
                   onClick={() => attendToRequiredServices(refServices)}
                   type="primary"
+                  style={{ marginRight: "8px" }} // Add spacing to the right
                 >
                   Atender
+                </Button>
+                <Button
+                  danger
+                  htmlType="submit"
+                  onClick={() => showDeclineConfirm()}
+                  type="primary"
+                >
+                  Recusar
                 </Button>
               </Card>
             </Col>
@@ -551,14 +573,6 @@ const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
                 type="primary"
               >
                 Atender
-              </Button>
-              <Button
-                danger
-                htmlType="submit"
-                onClick={() => onServiceDecline()}
-                type="primary"
-              >
-                Recusar
               </Button>
             </Space>
           }
