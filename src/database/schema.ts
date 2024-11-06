@@ -208,6 +208,7 @@ export default appSchema({
         { name: "provider", type: "string" },
         { name: "date_created", type: "string", isOptional: true },
         { name: "remarks", type: "string", isOptional: true },
+        { name: "end_date", type: "string" },
         { name: "status", type: "number" },
         { name: "online_id", type: "string", isOptional: true },
       ],
