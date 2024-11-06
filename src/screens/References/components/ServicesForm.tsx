@@ -65,6 +65,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
   const [isSync, setIsSync] = useState(false);
   const [text, setText] = useState("");
   const [date, setDate] = useState();
+  const [endDate, setEndDate] = useState("");
   const [users, setUsers] = useState<any>([]);
   const [notifyTo, setNotifyTo] = useState<any>(undefined);
   const [us, setUs] = useState<any>([]);
@@ -75,6 +76,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
   const [isClinicalOrCommunityPartner, setClinicalOrCommunityPartner] =
     useState(false);
   const [currentInformedProvider, setCurrentInformedProvider] = useState("");
+  const [isEndDateVisible, setIsEndDateVisible] = useState(false);
   const dispatch = useDispatch();
 
   const service = services.filter(
@@ -107,16 +109,21 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     entry_point: reference?.refer_to,
     provider: notifyTo?.name + "" + notifyTo?.surname,
     remarks: "",
+    end_date: "",
     status: 1,
   };
 
-  const handleDataFromDatePickerComponent = useCallback((selectedDate) => {
+  const handleDataFromDatePickerComponent = useCallback((selectedDate,field) => {
     selectedDate.replaceAll("/", "-");
     const currentDate = selectedDate || date;
     // setShow(false);
-    setDate(currentDate);
-
-    setText(selectedDate);
+    if (field == "date") {
+      setDate(currentDate);
+  
+      setText(selectedDate);
+    } else {
+      setEndDate(selectedDate);
+    }
   }, []);
 
   const onChangeToOutros = (value) => {
@@ -240,6 +247,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
           intervention.entry_point = values.entry_point;
           intervention.provider = "" + values.provider;
           intervention.remarks = values.remarks;
+          intervention.end_date = "" + endDate;
           intervention.date_created = moment(new Date()).format(
             "YYYY-MM-DD HH:mm:ss"
           );
@@ -369,6 +377,12 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
       setCurrentInformedProvider(notifyTo?.name + " " + notifyTo?.surname);
       setClinicalOrCommunityPartner(true);
       onChangeEntryPoint(reference?.refer_to);
+    }
+
+    if([59,60].includes(service.online_id)) {
+      setIsEndDateVisible(true);
+    } else {
+      setIsEndDateVisible(false);
     }
   }, [reference, intervention, organization]);
 
@@ -616,7 +630,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                           <InputLeftAddon>
                             <MyDatePicker
                               onDateSelection={(e) =>
-                                handleDataFromDatePickerComponent(e)
+                                handleDataFromDatePickerComponent(e, "date")
                               }
                               minDate={new Date("2017-01-01")}
                               maxDate={new Date()}
@@ -641,6 +655,42 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                       <FormControl.ErrorMessage>
                         {errors.date}
                       </FormControl.ErrorMessage>
+                    </FormControl>
+
+                    <FormControl style={{display: isEndDateVisible ? "flex" : "none"}}>
+                      <FormControl.Label>Data de Fim do Serviço </FormControl.Label>
+                      <HStack alignItems="center">
+                        <InputGroup
+                          w={{
+                            base: "70%",
+                            md: "285",
+                          }}
+                        >
+                          <InputLeftAddon>
+                            <MyDatePicker
+                              onDateSelection={(e) =>
+                                handleDataFromDatePickerComponent(e, "end_date")
+                              }
+                              minDate={new Date("2017-01-01")}
+                              maxDate={new Date()}
+                              currentDate={
+                                intervention?.end_date
+                                  ? new Date(intervention?.end_date)
+                                  : new Date()
+                              }
+                            />
+                          </InputLeftAddon>
+                          <Input
+                            isDisabled
+                            w={{
+                              base: "70%",
+                              md: "100%",
+                            }}
+                            value={endDate}
+                            placeholder="yyyy-MM-dd"
+                          />
+                        </InputGroup>
+                      </HStack>
                     </FormControl>
 
                     <FormControl isRequired isInvalid={"provider" in errors}>

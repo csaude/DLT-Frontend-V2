@@ -284,9 +284,14 @@ const ReferenceForm: React.FC = ({ route }: any) => {
       .query(Q.where("service_type", value),
              Q.where("status", 1))
       .fetch();
-    let servicesSerialized = getServicesList.map((item) => item._raw);
+    let servicesList = getServicesList.map((item) => item._raw);
     const age = calculateAge(beneficiary.date_of_birth);
     let is15AndStartedAvante = false;
+
+    let servicesSerialized = 
+      age < 15 || age > 19 
+      ? servicesList.filter((item:any) => item.online_id !== 59)
+      : servicesList;
 
     if (age == 15) {
       const interventionsIds = intervs.map(
