@@ -114,6 +114,27 @@ const ViewBenefiaryPanel = ({ record, beneficiary, user }) => {
                 {moment(record?.id.date).format("YYYY-MM-DD")}
               </Col>
             </Row>
+            <Row
+              gutter={8}
+              hidden={![59, 60].includes(record?.subServices?.service?.id)}
+            >
+              <Col
+                className="gutter-row"
+                span={12}
+                style={{ background: "#f3f4f5", fontWeight: "bold" }}
+              >
+                Data Fim Benefício
+              </Col>
+              <Col
+                className="gutter-row"
+                style={{ background: "#f3f4f5" }}
+                span={12}
+              >
+                {record.endDate == null
+                  ? ""
+                  : moment(record?.endDate).format("YYYY-MM-DD")}
+              </Col>
+            </Row>
             <Row gutter={8}>
               <Col
                 className="gutter-row"
