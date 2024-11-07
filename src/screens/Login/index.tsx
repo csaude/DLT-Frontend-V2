@@ -50,7 +50,14 @@ import { loadBeneficiariesInterventionsCounts } from "../../store/beneficiaryInt
 import { beneficiariesInterventionsFetchCount } from "../../services/beneficiaryInterventionService";
 import { updateSyncInProgress } from "../../store/syncSlice";
 import { ErrorHandler, SuccessHandler } from "../../components/SyncIndicator";
-import { benfList, cleanData, destroyBeneficiariesData, ErrorCleanHandler, filterData, InfoHandler } from "../../components/DataClean";
+import {
+  benfList,
+  cleanData,
+  destroyBeneficiariesData,
+  ErrorCleanHandler,
+  filterData,
+  InfoHandler,
+} from "../../components/DataClean";
 
 interface LoginData {
   email?: string | undefined;
@@ -78,7 +85,9 @@ const Login: React.FC = ({ route }: any) => {
   const sequences = database.collections.get("sequences");
   const userDetails = database.collections.get("user_details");
   const references = database.collections.get("references");
-  const beneficiaries_interventions = database.collections.get("beneficiaries_interventions");
+  const beneficiaries_interventions = database.collections.get(
+    "beneficiaries_interventions"
+  );
 
   const dispatch = useDispatch();
   const [passwordExpired, setPasswordExpired] = useState(false);
@@ -88,7 +97,10 @@ const Login: React.FC = ({ route }: any) => {
   ] = useState(false);
   const syncInProgress = useSelector((state: any) => state.sync.syncInProgress);
 
-  const showToast = (message: {} | null | undefined, description: string | undefined) => {
+  const showToast = (
+    message: {} | null | undefined,
+    description: string | undefined
+  ) => {
     return toasty.show({
       placement: "top",
       render: () => {
@@ -125,7 +137,7 @@ const Login: React.FC = ({ route }: any) => {
       .then(async (response) => {
         if (response.status && response.status !== 200) {
           // unauthorized
-          return showToast("Ocorreu um Erro!", getMessage(response.status));
+          return showToast("Ocorreu um Erro", getMessage(response.status,"fetchPrefix"));
         } else {
           await database.write(async () => {
             await sequences.create((sequence: any) => {
@@ -220,7 +232,8 @@ const Login: React.FC = ({ route }: any) => {
     return errors;
   }, []);
 
-  const getMessage = useCallback((status) => {
+  const getMessage = useCallback((status, caller) => {
+    console.log("caller:",caller)
     setLoading(false);
     if (status == 404) {
       return "O utilizador informado não está cadastrado no sistema, para autenticar precisa estar cadastrado no sistema";
@@ -237,30 +250,11 @@ const Login: React.FC = ({ route }: any) => {
 
   const onSubmit = useCallback(async (values: any) => {
     setLoading(true);
-
-    // check if users table is synced
-    const checkSynced = await users
-      .query(Q.where("_status", "synced"))
-      .fetchCount();
-
-    const logguedUser: any = (
-      await users
-        .query(
-          Q.where(
-            "username",
-            Q.like(`${Q.sanitizeLikeString(values.username.trim())}`)
-          )
-        )
-        .fetch()
-    )[0];
-
-    if (
-      checkSynced == 0 ||
-      resetPassword === "1" ||
-      logguedUser?._raw.is_awaiting_sync == 1
-    ) {
-      // checkSynced=0 when db have not synced yet
-
+  
+    const isSynced = await checkIfUsersTableSynced();
+    const logguedUser = await fetchLoggedUser(values.username.trim());
+  
+    if (shouldPerformSyncCheck(isSynced, logguedUser)) {
       if (isOffline) {
         setLoading(false);
         return showToast(
@@ -268,128 +262,163 @@ const Login: React.FC = ({ route }: any) => {
           "Conecte-se a Internet para o primeiro Login!"
         );
       }
-
-      try {
-        await fetch(`${PING_URL}`);
-      } catch (error) {
+  
+      const isSystemAvailable = await checkSystemAvailability();
+      if (!isSystemAvailable) {
         setLoading(false);
         return showToast(
           "Sistema em Manutenção",
-          "Do momento o sistema encontra-se em manutenção, por favor aguarde a disponibilidade do sistema e tente novamente!"
+          "Sistema em manutenção, por favor aguarde e tente novamente."
         );
       }
-
-      try {
-        const response = await axios.get(
-          `${VERIFY_USER_API_URL}/${values.username.trim()}`
+  
+      const hasAccess = await checkUserAccess(values.username.trim());
+      if (!hasAccess) {
+        setLoading(false);
+        return showToast(
+          "Restrição de Acesso",
+          "Apenas Enfermeiras, Conselheiras, Mentoras e Supervisores Podem Aceder ao Aplicativo Móvel!"
         );
-        if (response.data) {
-          const profileId = response.data?.profiles.id;
-
-          if (![MENTOR, NURSE, COUNSELOR, SUPERVISOR].includes(profileId)) {
-            setLoading(false);
-            return showToast(
-              "Restrição de Acesso",
-              "Apenas Enfermeiras, Conselheiras, Mentoras e Supervisores Podem Aceder ao Aplicativo Móvel!"
-            );
-          }
-        }
-      } catch (error: any) {
-        return showToast("Ocorreu um Erro!", getMessage(error.response.status));
       }
-
-      try {
-        const loginResponse = await fetch(
-          `${LOGIN_API_URL}?username=${values.username.trim()}&password=${encodeURIComponent(
-            values.password
-          )}`
-        );
-        const loginJson = await loginResponse.json();
-        const status = loginResponse.status;
-        const account = loginJson.account;
-
-        if (status && status !== 200) {
-          if (
-            resetPassword === "1" ||
-            logguedUser?._raw.is_awaiting_sync == 1
-          ) {
-            setLoading(false);
-            return showToast(
-              "Conta bloqueada",
-              "Contacte o seu supervisor ou vesite seu e-mail!!!"
-            );
-          } else {
-            return showToast("Ocorreu um Erro!", getMessage(status));
-          }
-        } else {
-          await fetchPrefix(values.username.trim());
-          setToken(loginJson.token);
-          setLoggedUser(account);
-          setLocalLoggedUser(account);
-          dispatch(loadUser(account));
-          saveUserDatails(account);
-          isVeryOldPassword(account);
-        }
-      } catch (error: any) {
-        return showToast("Ocorreu um Erro!", getMessage(error?.status));
+  
+      const loginSuccessful = await loginUser(values);
+      if (!loginSuccessful) {
+        setLoading(false);
+        return;
       }
-      setLoading(false);
     } else {
-      try {
-        const authenticated = bcrypt.compareSync(
-          values.password,
-          logguedUser?._raw?.password
-        );
-        const userDetailsQ = await userDetails.query().fetch();
-
-        if (!authenticated) {
-          setIsInvalidCredentials(true);
-        } else if (
-          logguedUser?._raw.online_id !== userDetailsQ[0]?._raw?.["user_id"]
-        ) {
-          setLoggedUserDifferentFromSyncedUser(true);
-        } else {
-          if (logguedUser?._raw._status != "updated") {
-            await database.write(async () => {
-              const now = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
-              await logguedUser.update(
-                (record: any) => {
-                  (record.last_login_date = now),
-                  (record.date_updated = now),
-                  record._status = "updated";
-                }
-              );
-              const userDetailss = await userDetails
-                .query(Q.where("user_id", parseInt(logguedUser.online_id)))
-                .fetch();
-              await userDetailss[0].update(
-                (record: any) => {
-                  (record.last_login_date = now)
-                }
-              );
-              
-            });
-          }
-          setIsInvalidCredentials(false);
-          setLoggedUser(logguedUser?._raw);
-          setLocalLoggedUser(logguedUser?._raw);
-          dispatch(loadUser(logguedUser?._raw));
-          isVeryOldPassword(logguedUser?._raw);
-          navigate({
-            name: "Main",
-            params: {
-              loggedUser: logguedUser?._raw,
-              loading: loggedUser === undefined,
-            },
-          });
-        }
-      } catch (error) {
-        console.log(error);
-        setIsInvalidCredentials(true);
+      const localAuthSuccessful = await authenticateLocally(values, logguedUser);
+      if (!localAuthSuccessful) {
+        setLoading(false);
+        return;
       }
-      setLoading(false);
     }
+  
+    setLoading(false);
   }, []);
+  
+  async function checkIfUsersTableSynced() {
+    return await users.query(Q.where("_status", "synced")).fetchCount();
+  }
+  
+  async function fetchLoggedUser(username: string) {
+    const user = await users.query(
+      Q.where("username", Q.like(`${Q.sanitizeLikeString(username)}`))
+    ).fetch();
+    return user[0];
+  }
+  
+  function shouldPerformSyncCheck(isSynced: number, logguedUser: any) {
+    return isSynced === 0 || resetPassword === "1" || logguedUser?._raw.is_awaiting_sync === 1;
+  }
+  
+  async function checkSystemAvailability() {
+    try {
+      await fetch(`${PING_URL}`);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+  
+  async function checkUserAccess(username: string) {
+    try {
+      const response = await axios.get(`${VERIFY_USER_API_URL}/${username}`);
+      const profileId = response.data?.profiles.id;
+      return [MENTOR, NURSE, COUNSELOR, SUPERVISOR].includes(profileId);
+    } catch (error: any) {
+      showToast("Erro ao verificar acesso", getMessage(error.response.status,"checkUserAccess"));
+      return false;
+    }
+  }
+  
+  async function loginUser(values: any) {
+    try {
+      const response = await fetch(
+        `${LOGIN_API_URL}?username=${values.username.trim()}&password=${encodeURIComponent(values.password)}`
+      );
+      if (response.status !== 200) {
+        handleError(response.status);
+        return false;
+      }
+      const loginJson = await response.json();
+      handleSuccessfulLogin(loginJson);
+      return true;
+    } catch (error: any) {
+      showToast("Erro no login", getMessage(error?.status,"loginUser"));
+      return false;
+    }
+  }
+  
+  function handleError(status: number) {
+    if (resetPassword === "1" || loggedUser?._raw.is_awaiting_sync === 1) {
+      showToast("Conta bloqueada", "Contacte o seu supervisor ou verifique seu e-mail!");
+    } else {
+      showToast("Erro ao efetuar login", getMessage(status,"handleError"));
+    }
+  }
+  
+  function handleSuccessfulLogin(loginJson: any) {
+    const { account } = loginJson;
+    fetchPrefix(loginJson.username.trim());
+    setToken(loginJson.token);
+    setLoggedUser(account);
+    setLocalLoggedUser(account);
+    dispatch(loadUser(account));
+    saveUserDatails(account);
+    isVeryOldPassword(account);
+  }
+  
+  async function authenticateLocally(values: any, logguedUser: any) {
+    try {
+      const isAuthenticated = bcrypt.compareSync(values.password, logguedUser?._raw?.password);
+      if (!isAuthenticated) {
+        setIsInvalidCredentials(true);
+        return false;
+      }
+  
+      const userDetailsQ = await userDetails.query().fetch();
+      if (logguedUser?._raw.online_id !== userDetailsQ[0]?._raw?.["user_id"]) {
+        setLoggedUserDifferentFromSyncedUser(true);
+        return false;
+      }
+  
+      await updateLoginDetails(logguedUser);
+      setLoggedUser(logguedUser?._raw);
+      setLocalLoggedUser(logguedUser?._raw);
+      dispatch(loadUser(logguedUser?._raw));
+      isVeryOldPassword(logguedUser?._raw);
+      navigateToMain(logguedUser?._raw);
+      return true;
+    } catch (error) {
+      console.error(error);
+      setIsInvalidCredentials(true);
+      return false;
+    }
+  }
+  
+  async function updateLoginDetails(logguedUser: any) {
+    await database.write(async () => {
+      const now = moment().format("YYYY-MM-DD HH:mm:ss");
+      await logguedUser.update((record: any) => {
+        record.last_login_date = now;
+        record.date_updated = now;
+        record._status = "updated";
+      });
+  
+      const userDetailss = await userDetails.query(Q.where("user_id", parseInt(logguedUser.online_id))).fetch();
+      await userDetailss[0].update((record: any) => {
+        record.last_login_date = now;
+      });
+    });
+  }
+  
+  function navigateToMain(logguedUser: any) {
+    navigate({
+      name: "Main",
+      params: { loggedUser: logguedUser, loading: loggedUser === undefined },
+    });
+  }  
 
   const isVeryOldPassword = useCallback(async (user) => {
     let passwordLastChangeDate: moment.MomentInput;
@@ -431,59 +460,57 @@ const Login: React.FC = ({ route }: any) => {
     const diff = moment.duration(today.diff(next_clean_date));
 
     if (diff.asDays() >= 7) {
+      const referencesCollection = await references.query().fetch();
+      const interventionsCollection = await beneficiaries_interventions
+        .query()
+        .fetch();
 
-       const referencesCollection = await references.query().fetch();
-       const interventionsCollection = await beneficiaries_interventions.query().fetch();
- 
-       const interventionsCollectionIDsList = await filterData(
-         interventionsCollection
-       );
-       const myIDsList = await filterData(referencesCollection);
- 
-       const allBenfIds = [...myIDsList, ...interventionsCollectionIDsList];
-       const uniqueBenfIds = await cleanData(allBenfIds);
-       const benfsList = await benfList(uniqueBenfIds); 
- 
-       await destroyBeneficiariesData(benfsList)
-         .then(() => {
-           toasty.show({
-             placement: "top",
-             render: () => {
-               setLoading(false);
-               return <InfoHandler />;
-             },
-           });
-         })
-         .catch((error) => {
-           toasty.show({
-             placement: "top",
-             render: () => {
-               setLoading(false);
-               return <ErrorCleanHandler />;
-             },
-           });
- 
-           console.error("Erro ao deletar registros:", error);
-            setLoading(false);
-         });
- 
-     } else if(wasCleaned == null && next_clean_date == null) {
- 
-       // setShowCleanModal(true);
- 
-     }else{
- 
-       await database.write(async () => {
-         const findUser = await userDetails
-         .query(Q.where("user_id", parseInt(userID)))
-         .fetch();
-         await findUser[0].update(
-           (record: any) => {
-             (record.next_clean_date = newDate.toISOString().replace('T', ' ').substring(0, 19)),
-             (record.was_cleaned = 0)
-           }
-         );
-       });
+      const interventionsCollectionIDsList = await filterData(
+        interventionsCollection
+      );
+      const myIDsList = await filterData(referencesCollection);
+
+      const allBenfIds = [...myIDsList, ...interventionsCollectionIDsList];
+      const uniqueBenfIds = await cleanData(allBenfIds);
+      const benfsList = await benfList(uniqueBenfIds);
+
+      await destroyBeneficiariesData(benfsList)
+        .then(() => {
+          toasty.show({
+            placement: "top",
+            render: () => {
+              setLoading(false);
+              return <InfoHandler />;
+            },
+          });
+        })
+        .catch((error) => {
+          toasty.show({
+            placement: "top",
+            render: () => {
+              setLoading(false);
+              return <ErrorCleanHandler />;
+            },
+          });
+
+          console.error("Erro ao deletar registros:", error);
+          setLoading(false);
+        });
+    } else if (wasCleaned == null && next_clean_date == null) {
+      // setShowCleanModal(true);
+    } else {
+      await database.write(async () => {
+        const findUser = await userDetails
+          .query(Q.where("user_id", parseInt(userID)))
+          .fetch();
+        await findUser[0].update((record: any) => {
+          (record.next_clean_date = newDate
+            .toISOString()
+            .replace("T", " ")
+            .substring(0, 19)),
+            (record.was_cleaned = 0);
+        });
+      });
     }
   }, []);
 
@@ -501,16 +528,16 @@ const Login: React.FC = ({ route }: any) => {
   }, [passwordExpired, setPasswordExpired]);
 
   const saveUserDatails = useCallback(async (user) => {
-    const provinces_ids = user.provinces.map((province: { id: any; }) => {
+    const provinces_ids = user.provinces.map((province: { id: any }) => {
       return province.id;
     });
-    const district_ids = user.districts.map((district: { id: any; }) => {
+    const district_ids = user.districts.map((district: { id: any }) => {
       return district.id;
     });
-    const localities_ids = user.localities.map((locality: { id: any; }) => {
+    const localities_ids = user.localities.map((locality: { id: any }) => {
       return locality.id;
     });
-    const uss_ids = user.us.map((us: { id: any; }) => {
+    const uss_ids = user.us.map((us: { id: any }) => {
       return us.id;
     });
     const timestamp =
@@ -518,10 +545,14 @@ const Login: React.FC = ({ route }: any) => {
         ? user.passwordLastChangeDate
         : user.dateCreated;
     const date = new Date(timestamp);
-    const formattedDate = date.toISOString().slice(0, 10) + " " + date.toISOString().slice(11, 19);;
-    
+    const formattedDate =
+      date.toISOString().slice(0, 10) + " " + date.toISOString().slice(11, 19);
+
     const lastLoginDate = new Date();
-    const lastLoginFormatted = lastLoginDate.toISOString().slice(0, 10) + " " + lastLoginDate.toISOString().slice(11, 19);;
+    const lastLoginFormatted =
+      lastLoginDate.toISOString().slice(0, 10) +
+      " " +
+      lastLoginDate.toISOString().slice(11, 19);
 
     await database.write(async () => {
       await userDetails.create((userDetail: any) => {
