@@ -104,15 +104,16 @@ const ResetPassword: React.FC = () => {
   // Inicio Do Reset
   const onSubmit = useCallback(async (values: any) => {
     setLoading(true);
-    try {
-      if (isOffline) {
-        setLoading(false);
-        showToast(
-          "error",
-          "E-mail não enviado!!!",
-          "É necessarrio uma conexão a internet!"
-        );
-      } else {
+
+    if (isOffline) {
+      setLoading(false);
+      showToast(
+        "error",
+        "E-mail não enviado!!!",
+        "É necessarrio uma conexão a internet!"
+      );
+    } else {
+      try {
         const logguedUser: any = (
           await users
             .query(
@@ -164,10 +165,10 @@ const ResetPassword: React.FC = () => {
             routes: [{ name: "Login", params: { resetPassword: "1" } }],
           });
         }
+      } catch (error) {
+        setLoading(false);
+        showToast("error", "Falha!!!", "Erro ao redefinir a senha!");
       }
-    } catch (error) {
-      setLoading(false);
-      showToast("error", "Falha!!!", "Erro ao redefinir a senha!");
     }
   }, []);
 

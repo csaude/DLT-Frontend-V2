@@ -305,7 +305,7 @@ const Login: React.FC = ({ route }: any) => {
           )}`
         );
         const loginJson = await loginResponse.json();
-        const status = loginJson.status;
+        const status = loginResponse.status;
         const account = loginJson.account;
 
         if (status && status !== 200) {
