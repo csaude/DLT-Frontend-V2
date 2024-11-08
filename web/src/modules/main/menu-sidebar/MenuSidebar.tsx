@@ -157,6 +157,10 @@ export const MENU: IMenuItem[] = [
         name: "Acompanhamento Completude Pacote Primário",
         path: "/benefWithoutPrimaryPackageCompleted",
       },
+      {
+        name: "Beneficiárias em Lista de Espera",
+        path: "/beneficiariesInWaitingList",
+      },
     ],
   },
   {

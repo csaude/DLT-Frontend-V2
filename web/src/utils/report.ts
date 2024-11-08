@@ -107,3 +107,15 @@ export async function getAgywPrevBeneficiariesReportGenerated(
   const res = await select(url);
   return res;
 }
+
+export async function getBeneficiariesInWaitingListReportGenerated(
+  province?: string,
+  districts?: any,
+  startDate?: any,
+  endDate?: any,
+  username?: any
+) {
+  const url = `/api/agyw-prev/beneficiaries-in-waiting-list?province=${province}&districts=${districts}&startDate=${startDate}&endDate=${endDate}&username=${username}`;
+  const res = await select(url);
+  return res;
+}
