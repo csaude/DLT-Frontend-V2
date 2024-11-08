@@ -352,7 +352,7 @@ const StepReference = ({
           <Form.Item
             name="referenceCode"
             label={
-              "Cód. Ref. Livro (PE:" +
+              "Número da Guia (PE:" +
               entryPoint +
               "; Pág.; Mês:01-12, Ano:" +
               (currentYear - 1) +
