@@ -361,20 +361,37 @@ const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
   };
 
   const showDeclineConfirm = () => {
-    confirm({
-      title: "Deseja recusar este(s) serviço(s)?",
-      icon: <ExclamationCircleFilled />,
-      okText: "Sim",
-      okType: "danger",
-      cancelText: "Não",
-      onOk() {
-        onServiceDecline();
-      },
-      onCancel() {
-        /**Its OK */
-      },
-    });
+    if (declineReason) {
+      confirm({
+        title: "Deseja recusar este(s) serviço(s)?",
+        icon: <ExclamationCircleFilled />,
+        okText: "Sim",
+        okType: "danger",
+        cancelText: "Não",
+        onOk() {
+          onServiceDecline();
+        },
+        onCancel() {
+          /**Its OK */
+        },
+      });
+    } else {
+      confirm({
+        title: "Nenhuma Razão foi Selecionada",
+        icon: <ExclamationCircleFilled />,
+        okText: "Voltar",
+        okType: "danger",
+        cancelButtonProps: { style: { display: "none" } },
+        onOk() {
+          /**Its OK */
+        },
+      });
+    }
   };
+
+  useEffect(() => {
+    console.log("----Select----", select);
+  }, [select]);
 
   const onServiceDecline = async () => {
     for (const item of requiredServices) {
@@ -392,7 +409,7 @@ const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
         );
       }
     }
-
+    setSelect([]);
     message.success({
       content: "Recusado(s) com Sucesso!",
       className: "custom-class",
@@ -415,6 +432,7 @@ const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
   const onReset = () => {
     formRef.current?.resetFields();
     formFilter.current?.resetFields();
+    setDeclineReason(undefined);
     setOtherReasonEnabled(false);
   };
 
