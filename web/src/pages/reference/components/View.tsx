@@ -389,23 +389,22 @@ const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
     }
   };
 
-  useEffect(() => {
-    console.log("----Select----", select);
-  }, [select]);
-
   const onServiceDecline = async () => {
+    const userId = Number(loggedUser.id);
     for (const item of requiredServices) {
       if (otherReasonEnabled) {
         await declineReferenceService(
           item.id.referenceId,
           item.id.serviceId,
-          otherReason
+          otherReason,
+          userId
         );
       } else {
         await declineReferenceService(
           item.id.referenceId,
           item.id.serviceId,
-          getCancelDescription(declineReason)
+          getCancelDescription(declineReason),
+          userId
         );
       }
     }
