@@ -13,9 +13,14 @@ export async function query(payload?: any) {
   return res;
 }
 
-export async function decline(byReferenceId: number, serviceId: number, userId: number) {
+export async function decline(
+  byReferenceId: number,
+  serviceId: number,
+  declineReason: string,
+  userId: number
+) {
   const res = await update(
-    `/api/reference-service/decline/${byReferenceId}/${serviceId}`
+    `/api/reference-service/decline/${byReferenceId}/${serviceId}?declineReason=${declineReason}&userId=${userId}`
   );
   return res;
 }

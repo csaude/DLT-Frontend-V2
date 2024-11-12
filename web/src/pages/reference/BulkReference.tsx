@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   bulkCancelSelected,
-  bulkCancelAll,
+  // bulkCancelAll,
   BulkReferenceCancel,
   pagedQueryPendingByUser,
   queryCountByPendingFilters,
@@ -290,7 +290,7 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
       } else {
         if (selectAll) {
           const userId = Number(user);
-          const { data } = await bulkCancelAll(payload, userId);
+          // const { data } = await bulkCancelAll(payload, userId);
         } else {
           const { data } = await bulkCancelSelected(payload);
         }
