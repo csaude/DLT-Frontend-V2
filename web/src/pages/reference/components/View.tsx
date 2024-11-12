@@ -356,8 +356,9 @@ const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
   };
 
   const onServiceDecline = async () => {
+    const userId = localStorage.getItem(user);
     for (const item of refServices) {
-      await declineReferenceService(item.id.referenceId, item.id.serviceId);
+      await declineReferenceService(item.id.referenceId, item.id.serviceId, userId);
     }
 
     message.success({

@@ -13,7 +13,7 @@ export async function query(payload?: any) {
   return res;
 }
 
-export async function decline(byReferenceId: number, serviceId: number) {
+export async function decline(byReferenceId: number, serviceId: number, userId: number) {
   const res = await update(
     `/api/reference-service/decline/${byReferenceId}/${serviceId}`
   );

@@ -137,7 +137,10 @@ const Login: React.FC = ({ route }: any) => {
       .then(async (response) => {
         if (response.status && response.status !== 200) {
           // unauthorized
-          return showToast("Ocorreu um Erro", getMessage(response.status,"fetchPrefix"));
+          return showToast(
+            "Ocorreu um Erro",
+            getMessage(response.status, "fetchPrefix")
+          );
         } else {
           await database.write(async () => {
             await sequences.create((sequence: any) => {
@@ -233,7 +236,7 @@ const Login: React.FC = ({ route }: any) => {
   }, []);
 
   const getMessage = useCallback((status, caller) => {
-    console.log("caller:",caller)
+    console.log("caller:", caller);
     setLoading(false);
     if (status == 404) {
       return "O utilizador informado não está cadastrado no sistema, para autenticar precisa estar cadastrado no sistema";
@@ -250,10 +253,10 @@ const Login: React.FC = ({ route }: any) => {
 
   const onSubmit = useCallback(async (values: any) => {
     setLoading(true);
-  
+
     const isSynced = await checkIfUsersTableSynced();
     const logguedUser = await fetchLoggedUser(values.username.trim());
-  
+
     if (shouldPerformSyncCheck(isSynced, logguedUser)) {
       if (isOffline) {
         setLoading(false);
@@ -262,7 +265,7 @@ const Login: React.FC = ({ route }: any) => {
           "Conecte-se a Internet para o primeiro Login!"
         );
       }
-  
+
       const isSystemAvailable = await checkSystemAvailability();
       if (!isSystemAvailable) {
         setLoading(false);
@@ -271,7 +274,7 @@ const Login: React.FC = ({ route }: any) => {
           "Sistema em manutenção, por favor aguarde e tente novamente."
         );
       }
-  
+
       const hasAccess = await checkUserAccess(values.username.trim());
       if (!hasAccess) {
         setLoading(false);
@@ -280,62 +283,82 @@ const Login: React.FC = ({ route }: any) => {
           "Apenas Enfermeiras, Conselheiras, Mentoras e Supervisores Podem Aceder ao Aplicativo Móvel!"
         );
       }
-  
+
       const loginSuccessful = await loginUser(values);
       if (!loginSuccessful) {
         setLoading(false);
         return;
       }
     } else {
-      const localAuthSuccessful = await authenticateLocally(values, logguedUser);
+      const localAuthSuccessful = await authenticateLocally(
+        values,
+        logguedUser
+      );
       if (!localAuthSuccessful) {
         setLoading(false);
         return;
       }
     }
-  
+
     setLoading(false);
   }, []);
-  
+
   async function checkIfUsersTableSynced() {
     return await users.query(Q.where("_status", "synced")).fetchCount();
   }
-  
+
   async function fetchLoggedUser(username: string) {
-    const user = await users.query(
-      Q.where("username", Q.like(`${Q.sanitizeLikeString(username)}`))
-    ).fetch();
+    const user = await users
+      .query(Q.where("username", Q.like(`${Q.sanitizeLikeString(username)}`)))
+      .fetch();
     return user[0];
   }
-  
+
   function shouldPerformSyncCheck(isSynced: number, logguedUser: any) {
-    return isSynced === 0 || resetPassword === "1" || logguedUser?._raw.is_awaiting_sync === 1;
+    return (
+      isSynced === 0 ||
+      resetPassword === "1" ||
+      logguedUser?._raw.is_awaiting_sync === 1
+    );
   }
-  
+
   async function checkSystemAvailability() {
-    try {
-      await fetch(`${PING_URL}`);
-      return true;
-    } catch (error) {
-      return false;
+    if (isOffline) {
+      setLoading(false);
+      return showToast(
+        "Sem Conexão a Internet",
+        "Conecte-se a Internet para o primeiro Login!"
+      );
+    } else {
+      try {
+        await fetch(`${PING_URL}`);
+        return true;
+      } catch (error) {
+        return false;
+      }
     }
   }
-  
+
   async function checkUserAccess(username: string) {
     try {
       const response = await axios.get(`${VERIFY_USER_API_URL}/${username}`);
       const profileId = response.data?.profiles.id;
       return [MENTOR, NURSE, COUNSELOR, SUPERVISOR].includes(profileId);
     } catch (error: any) {
-      showToast("Erro ao verificar acesso", getMessage(error.response.status,"checkUserAccess"));
+      showToast(
+        "Erro ao verificar acesso",
+        getMessage(error.response.status, "checkUserAccess")
+      );
       return false;
     }
   }
-  
+
   async function loginUser(values: any) {
     try {
       const response = await fetch(
-        `${LOGIN_API_URL}?username=${values.username.trim()}&password=${encodeURIComponent(values.password)}`
+        `${LOGIN_API_URL}?username=${values.username.trim()}&password=${encodeURIComponent(
+          values.password
+        )}`
       );
       if (response.status !== 200) {
         handleError(response.status);
@@ -345,19 +368,15 @@ const Login: React.FC = ({ route }: any) => {
       handleSuccessfulLogin(loginJson);
       return true;
     } catch (error: any) {
-      showToast("Erro no login", getMessage(error?.status,"loginUser"));
+      showToast("Erro no login", getMessage(error?.status, "loginUser"));
       return false;
     }
   }
-  
+
   function handleError(status: number) {
-    if (resetPassword === "1" || loggedUser?._raw.is_awaiting_sync === 1) {
-      showToast("Conta bloqueada", "Contacte o seu supervisor ou verifique seu e-mail!");
-    } else {
-      showToast("Erro ao efetuar login", getMessage(status,"handleError"));
-    }
+    showToast("Erro ao efetuar login", getMessage(status, "handleError"));
   }
-  
+
   function handleSuccessfulLogin(loginJson: any) {
     const { account } = loginJson;
     fetchPrefix(loginJson.username.trim());
@@ -368,21 +387,31 @@ const Login: React.FC = ({ route }: any) => {
     saveUserDatails(account);
     isVeryOldPassword(account);
   }
-  
+
   async function authenticateLocally(values: any, logguedUser: any) {
     try {
-      const isAuthenticated = bcrypt.compareSync(values.password, logguedUser?._raw?.password);
+      console.log("--------logguedUser---------", logguedUser);
+      if (logguedUser?._raw?.reset_password === "1") {
+        showToast(
+          "Recuperação de Conta em Andamento",
+          "A sua senha foi alterada recentemente. Para concluir o processo, entre em contato com o seu supervisor ou verifique o seu e-mail para confirmação da sua solicitação."
+        );
+      }
+      const isAuthenticated = bcrypt.compareSync(
+        values.password,
+        logguedUser?._raw?.password
+      );
       if (!isAuthenticated) {
         setIsInvalidCredentials(true);
         return false;
       }
-  
+
       const userDetailsQ = await userDetails.query().fetch();
       if (logguedUser?._raw.online_id !== userDetailsQ[0]?._raw?.["user_id"]) {
         setLoggedUserDifferentFromSyncedUser(true);
         return false;
       }
-  
+
       await updateLoginDetails(logguedUser);
       setLoggedUser(logguedUser?._raw);
       setLocalLoggedUser(logguedUser?._raw);
@@ -396,7 +425,7 @@ const Login: React.FC = ({ route }: any) => {
       return false;
     }
   }
-  
+
   async function updateLoginDetails(logguedUser: any) {
     await database.write(async () => {
       const now = moment().format("YYYY-MM-DD HH:mm:ss");
@@ -405,20 +434,22 @@ const Login: React.FC = ({ route }: any) => {
         record.date_updated = now;
         record._status = "updated";
       });
-  
-      const userDetailss = await userDetails.query(Q.where("user_id", parseInt(logguedUser.online_id))).fetch();
+
+      const userDetailss = await userDetails
+        .query(Q.where("user_id", parseInt(logguedUser.online_id)))
+        .fetch();
       await userDetailss[0].update((record: any) => {
         record.last_login_date = now;
       });
     });
   }
-  
+
   function navigateToMain(logguedUser: any) {
     navigate({
       name: "Main",
       params: { loggedUser: logguedUser, loading: loggedUser === undefined },
     });
-  }  
+  }
 
   const isVeryOldPassword = useCallback(async (user) => {
     let passwordLastChangeDate: moment.MomentInput;
