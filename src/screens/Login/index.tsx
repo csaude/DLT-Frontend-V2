@@ -131,29 +131,28 @@ const Login: React.FC = ({ route }: any) => {
   };
 
   const fetchPrefix = async (username: string): Promise<any> => {
-    // fetch the prefix
-    await fetch(`${SYNC_API_URL_PREFIX}?username=${username}`)
-      .then((response) => response.json())
-      .then(async (response) => {
-        if (response.status && response.status !== 200) {
-          // unauthorized
-          return showToast(
-            "Ocorreu um Erro",
-            getMessage(response.status, "fetchPrefix")
-          );
-        } else {
-          await database.write(async () => {
-            await sequences.create((sequence: any) => {
-              sequence.prefix = response.sequence;
-              sequence.last_nui = "11111";
-            });
-          });
-        }
-      })
-      .catch((error) => {
-        showToast("Por favor contacte o suporte!", error);
-        return undefined;
+    try {
+      const response = await fetch(
+        `${SYNC_API_URL_PREFIX}?username=${username}`
+      );
+      const data = await response.json();
+
+      if (data.status && data.status !== 200) {
+        return showToast(
+          "Ocorreu um Erro",
+          getMessage(data.status, "fetchPrefix")
+        );
+      }
+      await database.write(async () => {
+        await sequences.create((sequence: any) => {
+          sequence.prefix = data.sequence;
+          sequence.last_nui = "11111";
+        });
       });
+    } catch (error: any) {
+      showToast("Por favor contacte o suporte!", error);
+      return undefined;
+    }
   };
 
   useEffect(() => {
@@ -284,7 +283,7 @@ const Login: React.FC = ({ route }: any) => {
         );
       }
 
-      const loginSuccessful = await loginUser(values);
+      const loginSuccessful = await authenticateOnline(values);
       if (!loginSuccessful) {
         setLoading(false);
         return;
@@ -353,7 +352,7 @@ const Login: React.FC = ({ route }: any) => {
     }
   }
 
-  async function loginUser(values: any) {
+  async function authenticateOnline(values: any) {
     try {
       const response = await fetch(
         `${LOGIN_API_URL}?username=${values.username.trim()}&password=${encodeURIComponent(
@@ -361,26 +360,25 @@ const Login: React.FC = ({ route }: any) => {
         )}`
       );
       if (response.status !== 200) {
-        handleError(response.status);
+        showToast(
+          "Erro ao efetuar login",
+          getMessage(response.status, "handleError")
+        );
         return false;
       }
-      const loginJson = await response.json();
-      handleSuccessfulLogin(loginJson);
+      const authJson = await response.json();
+      handleSuccessfulOnlineAuthentication(authJson);
       return true;
     } catch (error: any) {
-      showToast("Erro no login", getMessage(error?.status, "loginUser"));
+      showToast("Erro no login", getMessage(error?.status, "authenticate Online"));
       return false;
     }
   }
 
-  function handleError(status: number) {
-    showToast("Erro ao efetuar login", getMessage(status, "handleError"));
-  }
-
-  function handleSuccessfulLogin(loginJson: any) {
-    const { account } = loginJson;
-    fetchPrefix(loginJson.username.trim());
-    setToken(loginJson.token);
+  async function handleSuccessfulOnlineAuthentication(authJson: any) {
+    const { account } = authJson;
+    await fetchPrefix(account.username.trim());
+    setToken(authJson.token);
     setLoggedUser(account);
     setLocalLoggedUser(account);
     dispatch(loadUser(account));
@@ -390,7 +388,6 @@ const Login: React.FC = ({ route }: any) => {
 
   async function authenticateLocally(values: any, logguedUser: any) {
     try {
-      console.log("--------logguedUser---------", logguedUser);
       if (logguedUser?._raw?.reset_password === "1") {
         showToast(
           "Recuperação de Conta em Andamento",
