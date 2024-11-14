@@ -14,7 +14,6 @@ const DataImport: React.FC = () => {
     fileReader.readAsText(e.target.files[0], "UTF-8");
 
     fileReader.onload = (e: any) => {
-      console.log("----file result---", e?.target?.result);
       setData(JSON.parse(e?.target?.result));
     };
   };
