@@ -157,7 +157,7 @@ const ResetPassword: React.FC = () => {
           showToast(
             "success",
             "E-mail enviado!!!",
-            "Redefinição de senha submetida com sucesso!"
+            "Enviamos um e-mail para redefinição de senha. Por favor, verifique sua caixa e confirme a nova senha."
           );
 
           navigationRef.reset({

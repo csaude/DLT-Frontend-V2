@@ -73,7 +73,6 @@ const Login: React.FC = ({ route }: any) => {
   const [localLoggedUser, setLocalLoggedUser] = useState<any>(undefined);
   const [isInvalidCredentials, setIsInvalidCredentials] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [isOffline, setIsOffline] = useState(false);
   const [show, setShow] = React.useState(false);
   const [showCleanModal, setShowCleanModal] = useState(false);
 
@@ -139,7 +138,7 @@ const Login: React.FC = ({ route }: any) => {
 
       if (data.status && data.status !== 200) {
         return showToast(
-          "Ocorreu um Erro",
+          "Erro na validação de prefixo",
           getMessage(data.status, "fetchPrefix")
         );
       }
@@ -155,13 +154,10 @@ const Login: React.FC = ({ route }: any) => {
     }
   };
 
-  useEffect(() => {
-    const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
-      const offline = !(state.isConnected && state.isInternetReachable);
-      setIsOffline(offline);
-    });
-    return () => removeNetInfoSubscription();
-  }, []);
+  const checkInternetConnection = async () => {
+    const state = await NetInfo.fetch();
+    return state.isConnected && state.isInternetReachable;
+  };
 
   // watch changes to loggedUser, sync
   useEffect(() => {
@@ -242,7 +238,7 @@ const Login: React.FC = ({ route }: any) => {
     } else if (status == 423) {
       return "O utilizador informado encontra-se inactivo, por favor contacte a equipe de suporte para activação do utilizador";
     } else if (status == 401) {
-      return "A password informada não está correcta, por favor corrija a password e tente novamente";
+      return "A sua autenticação não foi autorizada. Verifique se a senha está correta ou se você está aguardando a confirmação do processo de recuperação de senha.";
     } else if (status == 500) {
       return "Ocorreu um Erro na autenticação do seu utilizador, por favor contacte a equipe de suporte para mais detalhes!";
     } else if (status == undefined) {
@@ -255,38 +251,39 @@ const Login: React.FC = ({ route }: any) => {
 
     const isSynced = await checkIfUsersTableSynced();
     const logguedUser = await fetchLoggedUser(values.username.trim());
+    const hasInternet = await checkInternetConnection();
+    const isSystemAvailable = await checkSystemAvailability();
 
     if (shouldPerformSyncCheck(isSynced, logguedUser)) {
-      if (isOffline) {
+      if (!hasInternet) {
         setLoading(false);
         return showToast(
           "Sem Conexão a Internet",
           "Conecte-se a Internet para o primeiro Login!"
         );
-      }
+      } else {
+        if (!isSystemAvailable) {
+          setLoading(false);
+          return showToast(
+            "Sistema em Manutenção",
+            "Sistema em manutenção, por favor aguarde e tente novamente."
+          );
+        }
 
-      const isSystemAvailable = await checkSystemAvailability();
-      if (!isSystemAvailable) {
-        setLoading(false);
-        return showToast(
-          "Sistema em Manutenção",
-          "Sistema em manutenção, por favor aguarde e tente novamente."
-        );
-      }
+        const hasAccess = await checkUserAccess(values.username.trim());
+        if (!hasAccess) {
+          setLoading(false);
+          return showToast(
+            "Restrição de Acesso",
+            "Apenas Enfermeiras, Conselheiras, Mentoras e Supervisores Podem Aceder ao Aplicativo Móvel!"
+          );
+        }
 
-      const hasAccess = await checkUserAccess(values.username.trim());
-      if (!hasAccess) {
-        setLoading(false);
-        return showToast(
-          "Restrição de Acesso",
-          "Apenas Enfermeiras, Conselheiras, Mentoras e Supervisores Podem Aceder ao Aplicativo Móvel!"
-        );
-      }
-
-      const loginSuccessful = await authenticateOnline(values);
-      if (!loginSuccessful) {
-        setLoading(false);
-        return;
+        const loginSuccessful = await authenticateOnline(values);
+        if (!loginSuccessful) {
+          setLoading(false);
+          return;
+        }
       }
     } else {
       const localAuthSuccessful = await authenticateLocally(
@@ -322,19 +319,11 @@ const Login: React.FC = ({ route }: any) => {
   }
 
   async function checkSystemAvailability() {
-    if (isOffline) {
-      setLoading(false);
-      return showToast(
-        "Sem Conexão a Internet",
-        "Conecte-se a Internet para o primeiro Login!"
-      );
-    } else {
-      try {
-        await fetch(`${PING_URL}`);
-        return true;
-      } catch (error) {
-        return false;
-      }
+    try {
+      const ping = await fetch(`${PING_URL}`);
+      return true;
+    } catch (error) {
+      return false;
     }
   }
 
@@ -361,7 +350,7 @@ const Login: React.FC = ({ route }: any) => {
       );
       if (response.status !== 200) {
         showToast(
-          "Erro ao efetuar login",
+          "Erro ao efetuar o primeiro login",
           getMessage(response.status, "handleError")
         );
         return false;
@@ -370,7 +359,10 @@ const Login: React.FC = ({ route }: any) => {
       handleSuccessfulOnlineAuthentication(authJson);
       return true;
     } catch (error: any) {
-      showToast("Erro no login", getMessage(error?.status, "authenticate Online"));
+      showToast(
+        "Erro no processo de login",
+        getMessage(error?.status, "authenticate Online")
+      );
       return false;
     }
   }
