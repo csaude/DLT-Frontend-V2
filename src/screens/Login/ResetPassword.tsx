@@ -154,16 +154,15 @@ const ResetPassword: React.FC = () => {
           );
         } else {
           setLoading(false);
+          navigationRef.reset({
+            index: 0,
+            routes: [{ name: "Login", params: { resetPassword: "1" } }],
+          });
           showToast(
             "success",
             "E-mail enviado!!!",
             "Enviamos um e-mail para redefinição de senha. Por favor, verifique sua caixa e confirme a nova senha."
           );
-
-          navigationRef.reset({
-            index: 0,
-            routes: [{ name: "Login", params: { resetPassword: "1" } }],
-          });
         }
       } catch (error) {
         setLoading(false);
