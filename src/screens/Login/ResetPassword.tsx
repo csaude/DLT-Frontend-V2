@@ -102,9 +102,8 @@ const ResetPassword: React.FC = () => {
   }, []);
 
   // Inicio Do Reset
-  const onSubmit = useCallback(async (values: any) => {
+  const onSubmit = async (values: any) => {
     setLoading(true);
-
     if (isOffline) {
       setLoading(false);
       showToast(
@@ -169,7 +168,7 @@ const ResetPassword: React.FC = () => {
         showToast("error", "Falha!!!", "Erro ao redefinir a senha!");
       }
     }
-  }, []);
+  };
 
   return (
     <KeyboardAvoidingView style={styles.container}>

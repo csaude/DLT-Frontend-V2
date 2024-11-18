@@ -230,7 +230,7 @@ const Login: React.FC = ({ route }: any) => {
     return errors;
   }, []);
 
-  const getMessage = useCallback((status, caller) => {
+  const getMessage = (status, caller) => {
     console.log("caller:", caller);
     setLoading(false);
     if (status == 404) {
@@ -244,9 +244,9 @@ const Login: React.FC = ({ route }: any) => {
     } else if (status == undefined) {
       return "Do momento o sistema encontra-se em manutenção, por favor aguarde a disponibilidade do sistema e tente novamente";
     }
-  }, []);
+  };
 
-  const onSubmit = useCallback(async (values: any) => {
+  const onSubmit = async (values: any) => {
     setLoading(true);
 
     const isSynced = await checkIfUsersTableSynced();
@@ -297,7 +297,7 @@ const Login: React.FC = ({ route }: any) => {
     }
 
     setLoading(false);
-  }, []);
+  };
 
   async function checkIfUsersTableSynced() {
     return await users.query(Q.where("_status", "synced")).fetchCount();
