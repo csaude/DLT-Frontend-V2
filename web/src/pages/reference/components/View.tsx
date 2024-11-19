@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { query as queryUser } from "@app/utils/users";
 import { query as queryBeneficiary } from "@app/utils/beneficiary";
-import { query as queryReferenceService } from "@app/utils/reference-service";
+import {
+  query as queryReferenceService,
+  decline as declineReferenceService,
+} from "@app/utils/reference-service";
 import { query as queryBeneficiaryIntervention } from "@app/utils/beneficiaryIntervention";
 import {
   Button,
@@ -9,9 +12,11 @@ import {
   Col,
   Drawer,
   Form,
+  FormInstance,
   message,
   Modal,
   Row,
+  Select,
   Space,
   Table,
   Typography,
@@ -30,9 +35,11 @@ import {
   loadRemarks,
 } from "@app/store/reducers/referenceIntervention";
 import PropTypes from "prop-types";
+import TextArea from "antd/lib/input/TextArea";
 
 const { Text } = Typography;
 const { confirm } = Modal;
+const { Option } = Select;
 
 const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
   const [visible, setVisible] = useState<boolean>(false);
@@ -45,8 +52,14 @@ const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
   const [canAddress, setCanAddress] = useState<boolean>(true);
   const [requiredServices, setRequiredServices] = useState<any>([]);
   const [select, setSelect] = useState<any>([]);
+  const [key, setKey] = useState(0);
   const dispatch = useDispatch();
   const index = useSelector((state: any) => state.referenceIntervention.index);
+  const [declineReason, setDeclineReason] = useState<any>();
+  const [otherReason, setOtherReason] = useState<any>();
+  const [otherReasonEnabled, setOtherReasonEnabled] = useState(false);
+  const formRef = React.useRef<FormInstance>(null);
+  const formFilter = React.useRef<FormInstance>(null);
 
   const attendToRequiredServices = (reqRefServices) => {
     dispatch(resetNextServiceIndex());
@@ -56,6 +69,18 @@ const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
     setRequiredServices(selectReqServices);
     if (selectReqServices.length > 0) {
       setVisible(true);
+    } else {
+      showSelectServices();
+    }
+  };
+
+  const declineToRequiredServices = (reqRefServices) => {
+    const selectReqServices = reqRefServices?.filter((item) => {
+      return select.includes(item?.id?.serviceId);
+    });
+    setRequiredServices(selectReqServices);
+    if (selectReqServices.length > 0) {
+      setIsOpenServiceDeclineModal(true);
     } else {
       showSelectServices();
     }
@@ -272,6 +297,8 @@ const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
           <Text type="danger">Pendente </Text>
         ) : record.status == 1 ? (
           <Text type="warning">Em curso </Text>
+        ) : record.status == 3 ? (
+          <Text style={{ color: "brown" }}>Recusado </Text>
         ) : (
           <Text type="success">Atendido </Text>
         ),
@@ -329,9 +356,218 @@ const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
     },
   ];
 
+  const forceRemount = () => {
+    setKey((prevKey) => prevKey + 1);
+  };
+
+  const showDeclineConfirm = () => {
+    if (declineReason) {
+      confirm({
+        title: "Deseja recusar este(s) serviço(s)?",
+        icon: <ExclamationCircleFilled />,
+        okText: "Sim",
+        okType: "danger",
+        cancelText: "Não",
+        onOk() {
+          onServiceDecline();
+        },
+        onCancel() {
+          /**Its OK */
+        },
+      });
+    } else {
+      confirm({
+        title: "Nenhuma Razão foi Selecionada",
+        icon: <ExclamationCircleFilled />,
+        okText: "Voltar",
+        okType: "danger",
+        cancelButtonProps: { style: { display: "none" } },
+        onOk() {
+          /**Its OK */
+        },
+      });
+    }
+  };
+
+  const onServiceDecline = async () => {
+    const userId = Number(loggedUser.id);
+    for (const item of requiredServices) {
+      if (otherReasonEnabled) {
+        await declineReferenceService(
+          item.id.referenceId,
+          item.id.serviceId,
+          otherReason,
+          userId
+        );
+      } else {
+        await declineReferenceService(
+          item.id.referenceId,
+          item.id.serviceId,
+          getCancelDescription(declineReason),
+          userId
+        );
+      }
+    }
+    setSelect([]);
+    message.success({
+      content: "Recusado(s) com Sucesso!",
+      className: "custom-class",
+      style: {
+        marginTop: "10vh",
+      },
+    });
+
+    await queryReferenceService(selectedReference.id).then((reqRefServices) => {
+      setRefServices(reqRefServices);
+      forceRemount();
+    });
+
+    setIsOpenServiceDeclineModal(false);
+  };
+
+  const [isOpenServiceDeclineModal, setIsOpenServiceDeclineModal] =
+    useState(false);
+
+  const onReset = () => {
+    formRef.current?.resetFields();
+    formFilter.current?.resetFields();
+    setDeclineReason(undefined);
+    setOtherReasonEnabled(false);
+  };
+
+  const onReasonBeforeChange = (values: any) => {
+    formRef.current?.setFieldsValue({ otherReason: null });
+    values == 3 ? setOtherReasonEnabled(true) : setOtherReasonEnabled(false);
+    setDeclineReason(values);
+  };
+
+  const onOtherReasonBeforeChange = (values: any) => {
+    setOtherReason(values);
+  };
+  const RequiredFieldMessage = "Obrigatório!";
+
+  const reasons = [
+    {
+      id: 1,
+      desc: "Beneficiária recusou o serviço",
+    },
+    {
+      id: 2,
+      desc: "Beneficiária não necessita do serviço",
+    },
+    {
+      id: 3,
+      desc: "Outro Motivo",
+    },
+  ];
+
+  const getCancelDescription = (declineReasonId) => {
+    const result = reasons.filter((item) => item.id == declineReasonId);
+    return result[0].desc;
+  };
+
+  const onCloseServiceRefuse = () => {
+    setIsOpenServiceDeclineModal(false);
+  };
+
+  const okHandle = () => {
+    console.log("okHandle");
+  };
+
   return (
     <>
-      <div className="site-drawer-render-in-current-wrapper">
+      <Modal
+        width={1300}
+        centered
+        destroyOnClose
+        title={"Recusa de Servicos"}
+        visible={isOpenServiceDeclineModal}
+        maskClosable={false}
+        onOk={okHandle}
+        onCancel={() => onCloseServiceRefuse()}
+        footer={
+          <Button
+            type="primary"
+            key="Cancel"
+            onClick={() => onCloseServiceRefuse()}
+          >
+            Sair
+          </Button>
+        }
+      >
+        <Card
+          title="Motivos de recusa de servico"
+          bordered={true}
+          headStyle={{ background: "#3366b8", color: "#fff" }}
+        >
+          <Form
+            ref={formRef}
+            name="ref"
+            initialValues={{ remember: true }}
+            autoComplete="off"
+          >
+            <Row gutter={30}>
+              <Col className="gutter-row" span={12}>
+                <Form.Item
+                  name="declineReason"
+                  label="Motivo de Recusa"
+                  rules={[{ required: true, message: RequiredFieldMessage }]}
+                >
+                  <Select
+                    allowClear
+                    placeholder="Selecione Aqui"
+                    onChange={(e) => onReasonBeforeChange(e)}
+                  >
+                    {reasons.map((item) => (
+                      <Option key={item.id}>{item.desc}</Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col
+                className="gutter-row"
+                span={12}
+                hidden={!otherReasonEnabled}
+              >
+                <Form.Item
+                  name="otherReason"
+                  label="Outro Motivo"
+                  rules={[
+                    {
+                      required: otherReasonEnabled,
+                      message: RequiredFieldMessage,
+                    },
+                  ]}
+                >
+                  <TextArea
+                    rows={2}
+                    placeholder="Outro Motivo"
+                    onChange={(e) => onOtherReasonBeforeChange(e.target.value)}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={0}>
+              <Col className="gutter-row" span={3}>
+                <Button
+                  type="primary"
+                  onClick={() => showDeclineConfirm()}
+                  htmlType="submit"
+                  hidden={!allowDataEntry}
+                >
+                  Confirmar
+                </Button>
+              </Col>
+              <Col className="gutter-row" span={4}>
+                <Button type="primary" onClick={onReset}>
+                  Cancelar
+                </Button>
+              </Col>
+            </Row>
+          </Form>
+        </Card>
+      </Modal>
+      <div className="site-drawer-render-in-current-wrapper" key={key}>
         <Card
           bordered={false}
           bodyStyle={{ margin: 0, marginBottom: "20px", padding: 0 }}
@@ -458,8 +694,18 @@ const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
                   }
                   onClick={() => attendToRequiredServices(refServices)}
                   type="primary"
+                  style={{ marginRight: "8px" }} // Add spacing to the right
                 >
                   Atender
+                </Button>
+                <Button
+                  disabled={!canAddress || reference?.status !== 0}
+                  danger
+                  htmlType="submit"
+                  onClick={() => declineToRequiredServices(refServices)}
+                  type="primary"
+                >
+                  Recusar
                 </Button>
               </Card>
             </Col>
