@@ -654,7 +654,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                   isInvalid={"reference_code" in formik.errors}
                 >
                   <FormControl.Label>
-                    {"Cód. Ref. Livro (PE:" +
+                    {"Número da Guia (PE:" +
                       entryPoint +
                       "; Pág.:01-99; Mês:01-12; Ano:" + (currentYear -1) +"-" + currentYear + ")"}
                   </FormControl.Label>
@@ -937,7 +937,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                     <Text style={styles.txtLabelInfo}>
                       <Text style={styles.txtLabel}>
                         {" "}
-                        Código da Referência do Livro:{" "}
+                        Número da Guia:{" "}
                       </Text>
                       {formik.values.reference_code}
                     </Text>

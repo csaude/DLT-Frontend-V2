@@ -24,7 +24,7 @@ import {
 import { Picker } from "@react-native-picker/picker";
 import withObservables from "@nozbe/with-observables";
 import { database } from "../../../database";
-import { navigationRef } from "../../../routes/NavigationRef";
+import { navigate } from "../../../routes/NavigationRef";
 import ModalSelector from "react-native-modal-selector-searchable";
 import { Q } from "@nozbe/watermelondb";
 import { Formik } from "formik";
@@ -77,6 +77,13 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     useState(false);
   const [currentInformedProvider, setCurrentInformedProvider] = useState("");
   const [isEndDateVisible, setIsEndDateVisible] = useState(false);
+  const [key, setKey] = useState(0);
+
+  const forceRemount = () => {
+    setDate(undefined);
+    setText("");
+    setKey((prevKey) => prevKey + 1);
+  };
   const dispatch = useDispatch();
 
   const service = services.filter(
@@ -190,6 +197,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
   };
 
   const validateBeneficiaryIntervention = async (values: any) => {
+    setLoading(true);
     const benefInterv = await database
       .get("beneficiaries_interventions")
       .query(
@@ -206,6 +214,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
         placement: "top",
         title: "Beneficiário já tem esta intervenção para esta data ! ",
       });
+      setLoading(false);
     } else {
       onSubmit(values);
     }
@@ -220,14 +229,16 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
   }, []);
 
   useEffect(() => {
-    isSync
-      ? toast.show({
-          placement: "top",
-          render: () => {
-            return <SuccessHandler />;
-          },
-        })
-      : "";
+    isSync &&
+      toast.show({
+        placement: "top",
+        render: () => {
+          return <SuccessHandler />;
+        },
+      });
+
+    setLoading(false);
+    forceRemount();
   }, [isSync]);
 
   const onSubmit = async (values: any) => {
@@ -289,19 +300,16 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
 
     syncronize();
 
-    navigationRef.reset({
-      index: 0,
-      routes: [{ name: "ReferencesList", params: {} }],
-    });
-
-    setLoading(false);
-
     const benIntervNotSynced = await pendingSyncBeneficiariesInterventions();
     dispatch(
       loadPendingsBeneficiariesInterventionsTotals({
         pendingSyncBeneficiariesInterventions: benIntervNotSynced,
       })
     );
+
+    navigate({
+      name: "Serviços Solicitados",
+    });
   };
 
   const fetchCounts = async () => {
@@ -336,6 +344,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
               return <ErrorHandler />;
             },
           });
+          setLoading(false);
           fetchCounts();
         });
     }
@@ -426,7 +435,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
   }, []);
 
   return (
-    <KeyboardAvoidingView>
+    <KeyboardAvoidingView key={key}>
       <ScrollView>
         <View style={styles.webStyle}>
           {loading ? (
@@ -773,7 +782,9 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
 };
 const enhance = withObservables([], () => ({
   services: database.collections.get("services").query(),
-  subServices: database.collections.get("sub_services").query(Q.where("status", 1)),
+  subServices: database.collections
+    .get("sub_services")
+    .query(Q.where("status", 1)),
 }));
 
 export default memo(enhance(ServicesForm));

@@ -65,8 +65,16 @@ export async function edit(payload: any) {
   return res;
 }
 
-export async function bulkCancel(payload: BulkReferenceCancel) {
+export async function bulkCancelSelected(payload: BulkReferenceCancel) {
   const res = await update("/api/references/bulkCancel", payload);
+  return res;
+}
+
+export async function bulkCancelAll(
+  payload: BulkReferenceCancel,
+  userId: number
+) {
+  const res = await update(`/api/references/bulkCancelAll/${userId}`, payload);
   return res;
 }
 
