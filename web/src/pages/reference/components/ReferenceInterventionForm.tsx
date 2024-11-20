@@ -43,6 +43,7 @@ const ReferenceInterventionForm = ({ form, reference, refServices }: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [prevRefService, setPrevRefService] = useState<any>();
   const [refService, setRefService] = useState<any>("");
+  const [isEndDateVisible, setIsEndDateVisible] = useState(false);
   const index = useSelector((state: any) => state.referenceIntervention.index);
   const remarks = useSelector(
     (state: any) => state.referenceIntervention.remarks
@@ -88,6 +89,13 @@ const ReferenceInterventionForm = ({ form, reference, refServices }: any) => {
     form.setFieldsValue({ subservice: undefined });
     const data = await querySubServiceByService(value);
     setInterventions(data);
+
+    if ([59, 60].includes(Number(value))) {
+      setIsEndDateVisible(true);
+    } else {
+      setIsEndDateVisible(false);
+      form.setFieldsValue({ endDate: undefined });
+    }
   };
 
   const onChangeSubservice = async (value: any) => {
@@ -299,6 +307,28 @@ const ReferenceInterventionForm = ({ form, reference, refServices }: any) => {
               rows={2}
               placeholder="Insira as Observações"
               maxLength={50}
+            />
+          </Form.Item>
+        </Col>
+        <Col span={7}>
+          <Form.Item
+            id="dataFimBeneficio-control"
+            name="endDate"
+            label="Data de Fim do Serviço"
+            initialValue={
+              selectedIntervention === undefined ||
+              selectedIntervention.endDate === undefined ||
+              selectedIntervention.endDate === null ||
+              selectedIntervention.endDate === ""
+                ? undefined
+                : moment(selectedIntervention?.endDate, "YYYY-MM-DD")
+            }
+            hidden={!isEndDateVisible}
+          >
+            <DatePicker
+              id="dataFimBeneficio-date-picker"
+              style={{ width: "100%" }}
+              disabledDate={(d) => !d || d.isAfter(moment(new Date()))}
             />
           </Form.Item>
         </Col>

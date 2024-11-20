@@ -83,6 +83,7 @@ const BeneficiarieServiceForm: React.FC = ({
   const [checked, setChecked] = useState(false);
   const [isSync, setIsSync] = useState(false);
   const [text, setText] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [uss, setUss] = useState<any>([]);
   const [isClinicalOrCommunityPartner, setClinicalOrCommunityPartner] =
     useState(false);
@@ -93,6 +94,7 @@ const BeneficiarieServiceForm: React.FC = ({
   const [initialValues, setInitialValues] = useState<any>({});
   const [isOffline, setIsOffline] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isEndDateVisible, setIsEndDateVisible] = useState(false);
   const dispatch = useDispatch();
 
   let mounted = true;
@@ -123,13 +125,17 @@ const BeneficiarieServiceForm: React.FC = ({
     return () => removeNetInfoSubscription();
   }, []);
 
-  const handleDataFromDatePickerComponent = useCallback((selectedDate) => {
+  const handleDataFromDatePickerComponent = useCallback((selectedDate,field) => {
     selectedDate.replaceAll("/", "-");
     const currentDate = selectedDate || date;
     // setShow(false);
-    setDate(currentDate);
-
-    setText(selectedDate);
+    if (field == "date") {
+      setDate(currentDate);
+  
+      setText(selectedDate);
+    } else {
+      setEndDate(selectedDate);
+    }
   }, []);
 
   const onChangeEntryPoint = async (value: any) => {
@@ -175,7 +181,12 @@ const BeneficiarieServiceForm: React.FC = ({
       const age = calculateAge(beneficiarie.date_of_birth);
       let is15AndStartedAvante = false;
 
-      setServicesState(activeServices);
+      const servicesList = 
+        age < 15 || age > 19 
+        ? activeServices.filter((item) => item._raw.online_id !== 59)
+        : activeServices;
+
+      setServicesState(servicesList);
       const subServicesListItems = activeSubServices.map((item) => item._raw);
       const subServicesList =
         age <= 14 || age >= 20
@@ -197,7 +208,7 @@ const BeneficiarieServiceForm: React.FC = ({
       }
 
       const disableRapariga = (hasFacilitacao) =>
-        activeServices.filter((service) => {
+        servicesList.filter((service) => {
           if (hasFacilitacao)
             return !avanteRaparigaOnlineIds.includes(service._raw.online_id);
           else
@@ -208,7 +219,7 @@ const BeneficiarieServiceForm: React.FC = ({
         });
 
       const disableEstudante = (hasFacilitacao) =>
-        activeServices.filter((service) => {
+        servicesList.filter((service) => {
           if (hasFacilitacao)
             return !avanteEstudanteOnlineIds.includes(service._raw.online_id);
           else
@@ -218,7 +229,7 @@ const BeneficiarieServiceForm: React.FC = ({
             );
         });
 
-      const disableEstudanteAndRapariga = activeServices.filter((service) => {
+      const disableEstudanteAndRapariga = servicesList.filter((service) => {
         return (
           !avanteRaparigaOnlineIds.includes(service._raw.online_id) &&
           !avanteEstudanteOnlineIds.includes(service._raw.online_id) &&
@@ -284,11 +295,20 @@ const BeneficiarieServiceForm: React.FC = ({
           entry_point: intervention.entry_point,
           provider: intervention.provider,
           remarks: intervention.remarks,
+          end_date: intervention.end_date,
           status: "1",
         };
 
         setText(intervention.date);
         setDate(intervention.date);
+
+        if([59,60].includes(selService?._raw.online_id)) {
+          setIsEndDateVisible(true);
+          setEndDate(intervention.end_date);
+        } else {
+          setIsEndDateVisible(false);
+          setEndDate("");
+        }
       } else {
         initValues = {
           areaServicos_id: "",
@@ -302,6 +322,7 @@ const BeneficiarieServiceForm: React.FC = ({
           entry_point: "",
           provider: "",
           remarks: "",
+          end_date: "",
           status: "1",
         };
       }
@@ -452,6 +473,7 @@ const BeneficiarieServiceForm: React.FC = ({
             intervention.entry_point = values.entry_point;
             intervention.provider = "" + values.provider;
             intervention.remarks = values.remarks;
+            intervention.end_date = "" + endDate;
             intervention.status = 1;
             intervention._status = "updated";
           }
@@ -472,6 +494,7 @@ const BeneficiarieServiceForm: React.FC = ({
             intervention.entry_point = values.entry_point;
             intervention.provider = "" + values.provider;
             intervention.remarks = values.remarks;
+            intervention.end_date = "" + endDate;
             intervention.date_created = moment(new Date()).format(
               "YYYY-MM-DD HH:mm:ss"
             );
@@ -769,6 +792,12 @@ const BeneficiarieServiceForm: React.FC = ({
                           if (itemIndex !== 0) {
                             setFieldValue("service_id", itemValue);
                           }
+                          if([59,60].includes(itemValue)) {
+                            setIsEndDateVisible(true);
+                          } else {
+                            setIsEndDateVisible(false);
+                            setEndDate("");
+                          }
                         }}
                       >
                         <Picker.Item
@@ -896,7 +925,7 @@ const BeneficiarieServiceForm: React.FC = ({
                           <InputLeftAddon>
                             <MyDatePicker
                               onDateSelection={(e) =>
-                                handleDataFromDatePickerComponent(e)
+                                handleDataFromDatePickerComponent(e, "date")
                               }
                               minDate={new Date("2017-01-01")}
                               maxDate={new Date()}
@@ -921,6 +950,42 @@ const BeneficiarieServiceForm: React.FC = ({
                       <FormControl.ErrorMessage>
                         {errors.date}
                       </FormControl.ErrorMessage>
+                    </FormControl>
+
+                    <FormControl style={{display: isEndDateVisible ? "flex" : "none"}}>
+                      <FormControl.Label>Data de Fim do Serviço </FormControl.Label>
+                      <HStack alignItems="center">
+                        <InputGroup
+                          w={{
+                            base: "70%",
+                            md: "285",
+                          }}
+                        >
+                          <InputLeftAddon>
+                            <MyDatePicker
+                              onDateSelection={(e) =>
+                                handleDataFromDatePickerComponent(e, "end_date")
+                              }
+                              minDate={new Date("2017-01-01")}
+                              maxDate={new Date()}
+                              currentDate={
+                                intervention?.end_date
+                                  ? new Date(intervention?.end_date)
+                                  : new Date()
+                              }
+                            />
+                          </InputLeftAddon>
+                          <Input
+                            isDisabled
+                            w={{
+                              base: "70%",
+                              md: "100%",
+                            }}
+                            value={endDate}
+                            placeholder="yyyy-MM-dd"
+                          />
+                        </InputGroup>
+                      </HStack>
                     </FormControl>
 
                     <FormControl isRequired isInvalid={"provider" in errors}>

@@ -63,7 +63,7 @@ export async function generateXlsReport(
       visibility: "visible",
     },
   ];
-  const worksheet = workbook.addWorksheet("PEPFAR_MER_2.7_AGYW");
+  const worksheet = workbook.addWorksheet("PEPFAR_MER_2.8_AGYW");
 
   worksheet.mergeCells("A1:A8");
   const a1 = worksheet.getCell("A1");
@@ -1383,7 +1383,7 @@ export async function generateXlsReport(
     const blob = new Blob([buffer], { type: "applicationi/xlsx" });
     saveAs(
       blob,
-      "PEPFAR_MER_2.7_AGYW_PREV_Semi-Annual_Indicator_" + created + ".xls"
+      "PEPFAR_MER_2.8_AGYW_PREV_Semi-Annual_Indicator_" + created + ".xls"
     );
   });
 }

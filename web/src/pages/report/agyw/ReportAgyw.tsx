@@ -246,7 +246,7 @@ const ReportAgyw = () => {
             color: "#17a2b8",
           }}
         >
-          PEPFAR MER 2.7 Indicador Semi-Annual AGYW_PREV
+          PEPFAR MER 2.8 Indicador Semi-Annual AGYW_PREV
         </Title>
         <Card
           title="Parâmetros do Indicador AGYW_PREV "
