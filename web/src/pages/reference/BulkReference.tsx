@@ -28,7 +28,7 @@ import {
   Select,
   Tag,
   DatePicker,
-  Checkbox,
+  // Checkbox,
 } from "antd";
 import ptPT from "antd/lib/locale-provider/pt_PT";
 import "antd/dist/antd.css";
@@ -833,7 +833,7 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
         bordered={false}
         headStyle={{ color: "#17a2b8" }}
       >
-        <Checkbox
+        {/* <Checkbox
           checked={selectAll}
           onChange={(e) => {
             const checked = e.target.checked;
@@ -842,7 +842,7 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
           }}
         >
           Cancelar todos pendentes ({allAcrossPagesCounter})
-        </Checkbox>
+        </Checkbox> */}
         <Row gutter={5}>
           {!selectAll && (
             <Col span={12}>

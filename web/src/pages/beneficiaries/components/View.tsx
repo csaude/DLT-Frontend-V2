@@ -254,6 +254,9 @@ const ViewBenefiaryPanel = ({
             entryPoint: values.entryPoint,
             provider: values.provider,
             remarks: values.outros,
+            endDate: values.endDate
+              ? moment(values.endDate).format("YYYY-MM-DD")
+              : "",
             status: "1",
             createdBy: localStorage.user,
           };
@@ -284,6 +287,9 @@ const ViewBenefiaryPanel = ({
             entryPoint: values.entryPoint,
             provider: values.provider,
             remarks: values.outros,
+            endDate: values.endDate
+              ? moment(values.endDate).format("YYYY-MM-DD")
+              : "",
             status: selectedIntervention.status,
             updatedBy: localStorage.user,
             createdBy: selectedIntervention.createdBy,

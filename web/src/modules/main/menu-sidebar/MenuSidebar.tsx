@@ -139,7 +139,7 @@ export const MENU: IMenuItem[] = [
     roles: ["ADMIN", "M&E", "SUPERVISOR", "MISAU", "M&E_DOADOR"],
     children: [
       {
-        name: "PEPFAR MER 2.7 AGYW_PREV",
+        name: "PEPFAR MER 2.8 AGYW_PREV",
         path: "/reportAgyw",
       },
       {
@@ -156,6 +156,10 @@ export const MENU: IMenuItem[] = [
       {
         name: "Acompanhamento Completude Pacote Primário",
         path: "/benefWithoutPrimaryPackageCompleted",
+      },
+      {
+        name: "Beneficiárias em Lista de Espera",
+        path: "/beneficiariesInWaitingList",
       },
     ],
   },

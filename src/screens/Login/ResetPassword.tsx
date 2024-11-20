@@ -102,9 +102,8 @@ const ResetPassword: React.FC = () => {
   }, []);
 
   // Inicio Do Reset
-  const onSubmit = useCallback(async (values: any) => {
+  const onSubmit = async (values: any) => {
     setLoading(true);
-
     if (isOffline) {
       setLoading(false);
       showToast(
@@ -154,23 +153,22 @@ const ResetPassword: React.FC = () => {
           );
         } else {
           setLoading(false);
-          showToast(
-            "success",
-            "E-mail enviado!!!",
-            "Redefinição de senha submetida com sucesso!"
-          );
-
           navigationRef.reset({
             index: 0,
             routes: [{ name: "Login", params: { resetPassword: "1" } }],
           });
+          showToast(
+            "success",
+            "E-mail enviado!!!",
+            "Enviamos um e-mail para redefinição de senha. Por favor, verifique sua caixa e confirme a nova senha."
+          );
         }
       } catch (error) {
         setLoading(false);
         showToast("error", "Falha!!!", "Erro ao redefinir a senha!");
       }
     }
-  }, []);
+  };
 
   return (
     <KeyboardAvoidingView style={styles.container}>

@@ -202,6 +202,9 @@ const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
           entryPoint: values.entryPoint,
           provider: values.provider,
           remarks: values.outros,
+          endDate: values.endDate
+            ? moment(values.endDate).format("YYYY-MM-DD")
+            : "",
           status: "1",
           createdBy: localStorage.user,
         };

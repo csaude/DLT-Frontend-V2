@@ -135,7 +135,7 @@ android {
         applicationId "com.dltfrontend_v2"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 21400
+        versionCode 214
         versionName "1.4.0"
         configurations.all {
             resolutionStrategy { 
@@ -209,6 +209,8 @@ dependencies {
     implementation project(':react-native-fs')
     
     implementation project(':react-native-share')
+
+    implementation 'org.jetbrains:annotations:16.0.2'
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.fbjni'
