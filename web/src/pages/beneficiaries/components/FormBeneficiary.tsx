@@ -208,8 +208,8 @@ const BeneficiaryForm = ({
         beneficiary.vbltPregnantOrHasChildren =
           values.vblt_pregnant_or_has_children;
         beneficiary.vbltMultiplePartners = values.vblt_multiple_partners;
-        beneficiary.vbltTraffickingVictim = values.vblt_trafficking_victim;
-        beneficiary.vbltSexualExploitation = values.vblt_sexual_exploitation;
+        beneficiary.vbltSexualExploitationTraffickingVictim =
+          values.vblt_sexual_exploitation_trafficking_victim;
         beneficiary.vbltSexploitationTime = values.vblt_sexploitation_time;
         beneficiary.vbltVbgVictim = values.vblt_vbg_victim;
         beneficiary.vbltVbgType = values.vblt_vbg_type;

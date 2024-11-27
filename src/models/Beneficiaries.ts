@@ -51,6 +51,7 @@ export interface BeneficiariesModel {
   vblt_is_migrant?: any;
   vblt_trafficking_victim?: any;
   vblt_sexual_exploitation?: any;
+  vblt_sexual_exploitation_trafficking_victim?: any;
   vblt_sexploitation_time?: any;
   vblt_vbg_victim?: any;
   vblt_vbg_type?: any;
@@ -113,6 +114,7 @@ export default class Beneficiarie extends Model {
   @field("vblt_is_migrant") vblt_is_migrant;
   @field("vblt_trafficking_victim") vblt_trafficking_victim;
   @field("vblt_sexual_exploitation") vblt_sexual_exploitation;
+  @field("vblt_sexual_exploitation_trafficking_victim") vblt_sexual_exploitation_trafficking_victim;
   @field("vblt_sexploitation_time") vblt_sexploitation_time;
   @field("vblt_vbg_victim") vblt_vbg_victim;
   @field("vblt_vbg_type") vblt_vbg_type;
