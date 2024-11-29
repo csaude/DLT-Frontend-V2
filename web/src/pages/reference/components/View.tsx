@@ -5,6 +5,7 @@ import {
   query as queryReferenceService,
   decline as declineReferenceService,
 } from "@app/utils/reference-service";
+import { queryById } from "@app/utils/reference";
 import { query as queryBeneficiaryIntervention } from "@app/utils/beneficiaryIntervention";
 import {
   Button,
@@ -394,16 +395,17 @@ const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
 
   const onServiceDecline = async () => {
     const userId = Number(loggedUser.id);
+    let res;
     for (const item of requiredServices) {
       if (otherReasonEnabled) {
-        await declineReferenceService(
+        res = await declineReferenceService(
           item.id.referenceId,
           item.id.serviceId,
           otherReason,
           userId
         );
       } else {
-        await declineReferenceService(
+        res = await declineReferenceService(
           item.id.referenceId,
           item.id.serviceId,
           getCancelDescription(declineReason),
@@ -420,11 +422,11 @@ const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
       },
     });
 
-    await queryReferenceService(selectedReference.id).then((reqRefServices) => {
-      setRefServices(reqRefServices);
-      forceRemount();
-    });
-
+    const reqRefServices = await queryReferenceService(selectedReference.id);
+    setRefServices(reqRefServices);
+    const ref = await queryById(selectedReference.id);
+    setReference(ref);
+    forceRemount();
     setIsOpenServiceDeclineModal(false);
   };
 
