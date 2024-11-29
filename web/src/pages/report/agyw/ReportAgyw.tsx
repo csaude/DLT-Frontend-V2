@@ -301,21 +301,35 @@ const ReportAgyw = () => {
                     />
                   </Form.Item>
 
-                  <Form.Item name="initialDate" label="Data Inicial">
+                  <Form.Item
+                    name="initialDate"
+                    label="Data Inicial"
+                    rules={[{ required: true, message: RequiredFieldMessage }]}
+                  >
                     <Space direction="vertical">
                       <DatePicker
                         onChange={(e) => {
                           setInitialDate(e);
+                          form.setFieldsValue({
+                            initialDate: moment(e).format("YYYY-MM-DD"),
+                          });
                         }}
                       />
                     </Space>
                   </Form.Item>
 
-                  <Form.Item name="finalDate" label="Data Final">
+                  <Form.Item
+                    name="finalDate"
+                    label="Data Final"
+                    rules={[{ required: true, message: RequiredFieldMessage }]}
+                  >
                     <Space direction="vertical">
                       <DatePicker
                         onChange={(e) => {
                           setFinalDate(e);
+                          form.setFieldsValue({
+                            finalDate: moment(e).format("YYYY-MM-DD"),
+                          });
                         }}
                       />
                     </Space>
