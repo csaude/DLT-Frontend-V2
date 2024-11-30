@@ -121,27 +121,12 @@ const StepVulnerabilidadesEspecificas = ({
       <Row gutter={24}>
         <Col className="gutter-row" span={8}>
           <Form.Item
-            id="vblt_trafficking_victim-control"
-            name="vblt_trafficking_victim"
-            label="Vítima de Tráfico?"
+            id="vblt_sexual_exploitation-trafficking-victim-control"
+            name="vblt_sexual_exploitation_trafficking_victim"
+            label="Vítima de Exploração Sexual ou de Tráfico?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
-            initialValue={beneficiary?.vbltTraffickingVictim}
-          >
-            <Radio.Group id="vblt_trafficking_victim-options">
-              <Radio.Button value={1}>SIM</Radio.Button>
-              <Radio.Button value={0}>NÃO</Radio.Button>
-            </Radio.Group>
-          </Form.Item>
-        </Col>
-        <Col className="gutter-row" span={8}>
-          <Form.Item
-            id="vblt_sexual_exploitation-control"
-            name="vblt_sexual_exploitation"
-            label="Vítima de Exploração sexual?"
-            rules={[{ required: true, message: RequiredFieldMessage }]}
-            style={{ textAlign: "left" }}
-            initialValue={beneficiary?.vbltSexualExploitation}
+            initialValue={beneficiary?.vbltSexualExploitationTraffickingVictim}
           >
             <Radio.Group
               id="vblt_sexual_exploitation-options"
