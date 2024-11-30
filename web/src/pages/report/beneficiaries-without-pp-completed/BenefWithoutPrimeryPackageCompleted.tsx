@@ -173,10 +173,12 @@ const BenefWithoutPrimeryPackageCompleted = () => {
 
   const onChangeInitialDate = (e) => {
     setInitialDate(e?.toDate().getTime());
+    form.setFieldsValue({ initialDate: moment(e).format("YYYY-MM-DD") });
   };
 
   const onChangeFInalDate = (e) => {
     setFinalDate(e?.toDate().getTime());
+    form.setFieldsValue({ finalDate: moment(e).format("YYYY-MM-DD") });
     setCurrentPage(0);
   };
 
