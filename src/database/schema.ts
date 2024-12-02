@@ -145,6 +145,7 @@ export default appSchema({
         { name: "vblt_is_migrant", type: "number", isOptional: true },
         { name: "vblt_trafficking_victim", type: "number", isOptional: true },
         { name: "vblt_sexual_exploitation", type: "number", isOptional: true },
+        { name: "vblt_sexual_exploitation_trafficking_victim", type: "number", isOptional: true },
         { name: "vblt_sexploitation_time", type: "string", isOptional: true },
         { name: "vblt_vbg_victim", type: "number", isOptional: true },
         { name: "vblt_vbg_type", type: "string", isOptional: true },
