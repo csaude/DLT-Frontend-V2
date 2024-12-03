@@ -125,9 +125,9 @@ export const MENU: IMenuItem[] = [
     level: [0],
   },
   {
-    name: "PEPFAR MER 2.7 AGYW_PREV",
+    name: "PEPFAR MER 2.8 AGYW_PREV",
     path: "/reportAgyw",
-    roles: ["DOADOR"],
+    roles: ["DOADOR", "MISAU"],
     icon: "fas fa-file-alt",
     level: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
   },
@@ -136,7 +136,7 @@ export const MENU: IMenuItem[] = [
     path: "#",
     icon: "fas fa-file-alt",
     level: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-    roles: ["ADMIN", "M&E", "SUPERVISOR", "MISAU", "M&E_DOADOR"],
+    roles: ["ADMIN", "M&E", "SUPERVISOR", "M&E_DOADOR"],
     children: [
       {
         name: "PEPFAR MER 2.8 AGYW_PREV",
