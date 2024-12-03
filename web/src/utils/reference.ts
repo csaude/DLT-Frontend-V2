@@ -206,3 +206,12 @@ export async function getReferencesCountByBeneficiaryQuery(
   );
   return res;
 }
+
+export async function queryById(id: number) {
+  let res: any;
+  if (id) {
+    const url = `/api/references/${id}`;
+    res = await select(url);
+  }
+  return res;
+}
