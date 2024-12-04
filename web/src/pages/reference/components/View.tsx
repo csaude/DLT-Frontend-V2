@@ -436,6 +436,7 @@ const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
     formFilter.current?.resetFields();
     setDeclineReason(undefined);
     setOtherReasonEnabled(false);
+    onCloseServiceRefuse();
   };
 
   const onReasonBeforeChange = (values: any) => {
