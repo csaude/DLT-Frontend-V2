@@ -438,6 +438,7 @@ const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
     formFilter.current?.resetFields();
     setDeclineReason(undefined);
     setOtherReasonEnabled(false);
+    onCloseServiceRefuse();
   };
 
   const onReasonBeforeChange = (values: any) => {
@@ -615,7 +616,7 @@ const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
                     <b>Organização</b>
                   </Col>
                   <Col className="gutter-row" span={3}>
-                    <b>Cod Referências</b>
+                    <b>Número da Guia</b>
                   </Col>
                   <Col className="gutter-row" span={3}>
                     <b>Tipo Serviço</b>
