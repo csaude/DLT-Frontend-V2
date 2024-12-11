@@ -210,7 +210,6 @@ const BeneficiaryForm = ({
         beneficiary.vbltMultiplePartners = values.vblt_multiple_partners;
         beneficiary.vbltSexualExploitationTraffickingVictim =
           values.vblt_sexual_exploitation_trafficking_victim;
-        beneficiary.vbltSexploitationTime = values.vblt_sexploitation_time;
         beneficiary.vbltVbgVictim = values.vblt_vbg_victim;
         beneficiary.vbltVbgType = values.vblt_vbg_type;
         beneficiary.vbltVbgTime = values.vblt_vbg_time;

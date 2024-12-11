@@ -556,12 +556,6 @@ const BeneficiaryForm: React.FC = ({
       if (values.vblt_sexual_exploitation_trafficking_victim == null) {
         errors.vblt_sexual_exploitation_trafficking_victim = errorMessage;
       }
-      if (
-        sexExploitationTimeEnabled &&
-        values.vblt_sexploitation_time == null
-      ) {
-        errors.vblt_sexploitation_time = errorMessage;
-      }
       if (values.vblt_vbg_victim == null) {
         errors.vblt_vbg_victim = errorMessage;
       }
@@ -686,8 +680,6 @@ const BeneficiaryForm: React.FC = ({
               (record.vblt_sexual_exploitation_trafficking_victim = Number(
                 formik.values.vblt_sexual_exploitation_trafficking_victim
               )),
-              (record.vblt_sexploitation_time =
-                formik.values.vblt_sexploitation_time),
               (record.vblt_vbg_victim = Number(formik.values.vblt_vbg_victim)),
               (record.vblt_vbg_type = formik.values.vblt_vbg_type),
               (record.vblt_vbg_time = formik.values.vblt_vbg_time),
@@ -971,11 +963,6 @@ const BeneficiaryForm: React.FC = ({
   const onIsDeficientChange = useCallback(async (value: any) => {
     setDeficiencyTypeEnabled(value == 1);
     formik.setFieldValue("vblt_deficiency_type", null);
-  }, []);
-
-  const sexExploitationChange = useCallback(async (value: any) => {
-    setSexExploitationTimeEnabled(value == 1);
-    formik.setFieldValue("vblt_sexploitation_time", null);
   }, []);
 
   const gbvVictimChange = useCallback(async (value: any) => {
@@ -2173,7 +2160,6 @@ const BeneficiaryForm: React.FC = ({
                         "vblt_sexual_exploitation_trafficking_victim",
                         itemValue
                       );
-                      sexExploitationChange(itemValue);
                     }}
                     name="ex5"
                     accessibilityLabel="pick a size"
@@ -2210,34 +2196,6 @@ const BeneficiaryForm: React.FC = ({
                   </Radio.Group>
                   <FormControl.ErrorMessage>
                     {formik.errors.vblt_sexual_exploitation_trafficking_victim}
-                  </FormControl.ErrorMessage>
-                </FormControl>
-                <FormControl
-                  isRequired={sexExploitationTimeEnabled}
-                  isInvalid={"vblt_sexploitation_time" in formik.errors}
-                >
-                  <FormControl.Label>Tempo</FormControl.Label>
-                  <Picker
-                    style={styles.textBlack}
-                    key="vblt_sexploitation_time"
-                    selectedValue={formik.values.vblt_sexploitation_time}
-                    onValueChange={(itemValue, itemIndex) => {
-                      if (itemIndex !== 0) {
-                        formik.setFieldValue(
-                          "vblt_sexploitation_time",
-                          itemValue
-                        );
-                      }
-                    }}
-                    enabled={sexExploitationTimeEnabled}
-                  >
-                    <Picker.Item label="-- Seleccione --" value="0" />
-                    {["+ 3 Dias", "- 3 Dias"].map((item) => (
-                      <Picker.Item key={item} label={"" + item} value={item} />
-                    ))}
-                  </Picker>
-                  <FormControl.ErrorMessage>
-                    {formik.errors.vblt_sexploitation_time}
                   </FormControl.ErrorMessage>
                 </FormControl>
                 <FormControl
