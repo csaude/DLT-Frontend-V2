@@ -288,10 +288,15 @@ const ReferenceForm: React.FC = ({ route }: any) => {
     const age = calculateAge(beneficiary.date_of_birth);
     let is15AndStartedAvante = false;
 
-    let servicesSerialized = 
-      age < 15 || age > 19 
-      ? servicesList.filter((item:any) => item.online_id !== 59)
-      : servicesList;
+    let servicesSerialized = servicesList;
+  
+    if (age < 15 || age > 19) {
+      servicesSerialized = servicesList.filter((item:any) => item.online_id !== 59)
+
+      if (age < 15) {
+        servicesSerialized = servicesSerialized.filter((item:any) => item.online_id !== 60)
+      }
+    }  
 
     if (age == 15) {
       const interventionsIds = intervs.map(

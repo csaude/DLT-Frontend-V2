@@ -181,10 +181,14 @@ const BeneficiarieServiceForm: React.FC = ({
       const age = calculateAge(beneficiarie.date_of_birth);
       let is15AndStartedAvante = false;
 
-      const servicesList = 
-        age < 15 || age > 19 
-        ? activeServices.filter((item) => item._raw.online_id !== 59)
-        : activeServices;
+      let servicesList = activeServices;
+      if (age < 15 || age > 19) {
+        servicesList = activeServices.filter((item) => item._raw.online_id !== 59)
+
+        if (age < 15) {
+          servicesList = servicesList.filter((item) => item._raw.online_id !== 60)
+        }
+      }
 
       setServicesState(servicesList);
       const subServicesListItems = activeSubServices.map((item) => item._raw);
