@@ -427,28 +427,16 @@ const Login: React.FC = ({ route }: any) => {
   }
 
   async function updateLastLogin(logguedUser: any) {
-    const hasInternet = await checkInternetConnection();
-    if (hasInternet) {
-      const now = moment().format("YYYY-MM-DD HH:mm:ss");
+    const now = moment().format("YYYY-MM-DD HH:mm:ss");
 
-      await database.write(async () => {
-        const user = await database.get("users").find(logguedUser.id);
-        await user.update((record: any) => {
-          record.last_login_date = now;
-          record.date_updated = now;
-          record._status = "updated";
-        });
+    await database.write(async () => {
+      const userDetailss = await userDetails
+        .query(Q.where("user_id", parseInt(logguedUser.online_id)))
+        .fetch();
+      await userDetailss[0].update((record: any) => {
+        record.last_login_date = now;
       });
-
-      await database.write(async () => {
-        const userDetailss = await userDetails
-          .query(Q.where("user_id", parseInt(logguedUser.online_id)))
-          .fetch();
-        await userDetailss[0].update((record: any) => {
-          record.last_login_date = now;
-        });
-      });
-    }
+    });
   }
 
   function navigateToMain(logguedUser: any) {
