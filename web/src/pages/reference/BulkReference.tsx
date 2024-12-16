@@ -821,6 +821,10 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
     }
   };
 
+  useEffect(() => {
+    console.log("----------selectedRowKeys---------", selectedRowKeys);
+  }, [selectedRowKeys]);
+
   return (
     <>
       <Title />

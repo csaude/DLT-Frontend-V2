@@ -161,46 +161,55 @@ const Login: React.FC = ({ route }: any) => {
 
   // watch changes to loggedUser, sync
   useEffect(() => {
-    if (loggedUser) {
-      dispatch(updateSyncInProgress(true));
-      sync({ username: loggedUser.username })
-        .then(() => {
-          toasty.show({
-            placement: "top",
-            render: () => {
-              return <SuccessHandler />;
+    const handleOnUserLog = async () => {
+      const hasInternet = await checkInternetConnection();
+
+      if (loggedUser) {
+        if (hasInternet) {
+          dispatch(updateSyncInProgress(true));
+          sync({ username: loggedUser.username })
+            .then(() => {
+              toasty.show({
+                placement: "top",
+                render: () => {
+                  return <SuccessHandler />;
+                },
+              });
+              getTotals().catch((err) => console.log(err));
+              isDateToCleanData().catch((err) => console.log(err));
+            })
+            .catch(() => {
+              dispatch(updateSyncInProgress(false));
+              toasty.show({
+                placement: "top",
+                render: () => {
+                  return <ErrorHandler />;
+                },
+              });
+            });
+        }
+
+        if (loggedUser.newPassword == "1") {
+          navigate({
+            name: "ChangePassword",
+            params: { loggedUser: loggedUser, token: token },
+          });
+        } else if (loggedUser.isEnabled == "1") {
+          navigate({
+            name: "Main",
+            params: {
+              loggedUser: loggedUser,
+              token: token,
+              passwordExpired: true,
+              loading: true,
             },
           });
-          getTotals().catch((err) => console.log(err));
-          isDateToCleanData().catch((err) => console.log(err));
-        })
-        .catch(() => {
-          dispatch(updateSyncInProgress(false));
-          toasty.show({
-            placement: "top",
-            render: () => {
-              return <ErrorHandler />;
-            },
-          });
-        });
-      if (loggedUser.newPassword == "1") {
-        navigate({
-          name: "ChangePassword",
-          params: { loggedUser: loggedUser, token: token },
-        });
-      } else if (loggedUser.isEnabled == "1") {
-        navigate({
-          name: "Main",
-          params: {
-            loggedUser: loggedUser,
-            token: token,
-            passwordExpired: true,
-            loading: true,
-          },
-        });
+        }
+
+        setLoggedUser(undefined);
       }
-      setLoggedUser(undefined);
-    }
+    };
+    handleOnUserLog();
   }, [loggedUser]);
 
   const getTotals = useCallback(async () => {
@@ -307,14 +316,14 @@ const Login: React.FC = ({ route }: any) => {
     const user = await users
       .query(Q.where("username", Q.like(`${Q.sanitizeLikeString(username)}`)))
       .fetch();
-    return user[0];
+    return user[0]?._raw;
   }
 
   function shouldPerformSyncCheck(isSynced: number, logguedUser: any) {
     return (
       isSynced === 0 ||
       resetPassword === "1" ||
-      logguedUser?._raw.is_awaiting_sync === 1
+      logguedUser?.is_awaiting_sync === 1
     );
   }
 
@@ -380,7 +389,7 @@ const Login: React.FC = ({ route }: any) => {
 
   async function authenticateLocally(values: any, logguedUser: any) {
     try {
-      if (logguedUser?._raw?.reset_password === "1") {
+      if (logguedUser?.reset_password === "1") {
         showToast(
           "Recuperação de Conta em Andamento",
           "A sua senha foi alterada recentemente. Para concluir o processo, entre em contato com o seu supervisor ou verifique o seu e-mail para confirmação da sua solicitação."
@@ -388,7 +397,7 @@ const Login: React.FC = ({ route }: any) => {
       }
       const isAuthenticated = bcrypt.compareSync(
         values.password,
-        logguedUser?._raw?.password
+        logguedUser?.password
       );
       if (!isAuthenticated) {
         setIsInvalidCredentials(true);
@@ -396,17 +405,19 @@ const Login: React.FC = ({ route }: any) => {
       }
 
       const userDetailsQ = await userDetails.query().fetch();
-      if (logguedUser?._raw.online_id !== userDetailsQ[0]?._raw?.["user_id"]) {
+      if (logguedUser?.online_id !== userDetailsQ[0]?._raw?.["user_id"]) {
         setLoggedUserDifferentFromSyncedUser(true);
         return false;
       }
 
-      await updateLoginDetails(logguedUser);
-      setLoggedUser(logguedUser?._raw);
-      setLocalLoggedUser(logguedUser?._raw);
-      dispatch(loadUser(logguedUser?._raw));
-      isVeryOldPassword(logguedUser?._raw);
-      navigateToMain(logguedUser?._raw);
+      await updateLastLogin(logguedUser);
+
+      setLoggedUser(logguedUser);
+      setLocalLoggedUser(logguedUser);
+      dispatch(loadUser(logguedUser));
+      isVeryOldPassword(logguedUser);
+      navigateToMain(logguedUser);
+
       return true;
     } catch (error) {
       console.error(error);
@@ -415,15 +426,10 @@ const Login: React.FC = ({ route }: any) => {
     }
   }
 
-  async function updateLoginDetails(logguedUser: any) {
-    await database.write(async () => {
-      const now = moment().format("YYYY-MM-DD HH:mm:ss");
-      await logguedUser.update((record: any) => {
-        record.last_login_date = now;
-        record.date_updated = now;
-        record._status = "updated";
-      });
+  async function updateLastLogin(logguedUser: any) {
+    const now = moment().format("YYYY-MM-DD HH:mm:ss");
 
+    await database.write(async () => {
       const userDetailss = await userDetails
         .query(Q.where("user_id", parseInt(logguedUser.online_id)))
         .fetch();
