@@ -1,4 +1,4 @@
-import { download, select } from "./crud";
+import { create, download, select } from "./crud";
 
 export async function agywPrevQuery(
   districts?: any,
@@ -103,8 +103,8 @@ export async function getAgywPrevBeneficiariesReportGenerated(
   beneficiariesIds?: any,
   username?: any
 ) {
-  const url = `/api/agyw-prev/agywPrevBeneficiaries?beneficiariesIds=${beneficiariesIds}&username=${username}`;
-  const res = await select(url);
+  const url = `/api/agyw-prev/agywPrevBeneficiaries?username=${username}`;
+  const res = await create(url, beneficiariesIds);
   return res;
 }
 

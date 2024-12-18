@@ -464,7 +464,7 @@ const ReportView: React.FC = () => {
         beneficiariesIds,
         username
       );
-      await downloadFile(response);
+      await downloadFile(response.data);
       setDataLoading(false);
     } catch (error) {
       setDataLoading(false);
