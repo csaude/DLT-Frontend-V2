@@ -421,15 +421,18 @@ const UsersForm = ({
               name="profiles"
               label="Perfil"
               rules={[{ required: true, message: RequiredFieldMessage }]}
-              initialValue={user?.profiles.description}
+              initialValue={user?.profiles.id}
             >
               <Select
                 id="profiles-selection"
                 onChange={onChangeProfile}
                 placeholder="Seleccione o Perfil"
+                value={user?.profiles.id}
               >
                 {profiles?.map((item) => (
-                  <Option key={item.id}>{item.description}</Option>
+                  <Option key={item.id} value={item.id}>
+                    {item.description}
+                  </Option>
                 ))}
               </Select>
             </Form.Item>
