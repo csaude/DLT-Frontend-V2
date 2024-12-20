@@ -118,9 +118,7 @@ const StepVulnerabilidadesEspecificas = ({
             style={{ textAlign: "left" }}
             initialValue={beneficiary?.vbltSexualExploitationTraffickingVictim}
           >
-            <Radio.Group
-              id="vblt_sexual_exploitation-options"
-            >
+            <Radio.Group id="vblt_sexual_exploitation-options">
               <Radio.Button value={1}>SIM</Radio.Button>
               <Radio.Button value={0}>NÃO</Radio.Button>
             </Radio.Group>
