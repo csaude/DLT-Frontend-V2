@@ -270,58 +270,62 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
 
   const handleRefUpdate = async (values: any) => {
     const ref: any = reference;
-    if (values !== undefined) {
-      const payload: BulkReferenceCancel = {
-        ids: selectedRowKeys,
-        status: "3",
-        cancelReason: cancelReason,
-        otherReason: otherReason,
-        updatedBy: localStorage.user,
-      };
+    if (values !== undefined && cancelReason) {
+      if (cancelReason != 5 || otherReason) {
+        const payload: BulkReferenceCancel = {
+          ids: selectedRowKeys,
+          status: "3",
+          cancelReason: cancelReason,
+          otherReason: otherReason,
+          updatedBy: localStorage.user,
+        };
 
-      if (selectedRowKeys.length == 0 && selectAll == false) {
-        message.error({
-          content: "Nenhuma referência selencionada!",
-          className: "custom-class",
-          style: {
-            marginTop: "10vh",
-          },
-        });
-      } else {
-        if (selectAll) {
-          const userId = Number(user);
-          // const { data } = await bulkCancelAll(payload, userId);
+        if (selectedRowKeys.length == 0 && selectAll == false) {
+          message.error({
+            content: "Nenhuma referência selencionada!",
+            className: "custom-class",
+            style: {
+              marginTop: "10vh",
+            },
+          });
         } else {
-          const { data } = await bulkCancelSelected(payload);
+          if (selectAll) {
+            const userId = Number(user);
+            // const { data } = await bulkCancelAll(payload, userId);
+          } else {
+            const { data } = await bulkCancelSelected(payload);
+          }
+          const allReferences: any = await pagedQueryPendingByUser(
+            localStorage.user,
+            currentPageIndex,
+            pageSize,
+            searchStartDate,
+            searchEndDate
+          );
+          const sortedReferences = allReferences.sort(
+            (ref1, ref2) =>
+              ref1.status - ref2.status ||
+              moment(ref2.dateCreated)
+                .format("YYYY-MM-DD HH:mm:ss")
+                .localeCompare(
+                  moment(ref1.dateCreated).format("YYYY-MM-DD HH:mm:ss")
+                )
+          );
+          setReferences(sortedReferences);
+
+          message.success({
+            content: "Referências canceladas com Sucesso!",
+            className: "custom-class",
+            style: {
+              marginTop: "10vh",
+            },
+          });
+
+          onReset();
+          navigate("/bulkReference");
         }
-        const allReferences: any = await pagedQueryPendingByUser(
-          localStorage.user,
-          currentPageIndex,
-          pageSize,
-          searchStartDate,
-          searchEndDate
-        );
-        const sortedReferences = allReferences.sort(
-          (ref1, ref2) =>
-            ref1.status - ref2.status ||
-            moment(ref2.dateCreated)
-              .format("YYYY-MM-DD HH:mm:ss")
-              .localeCompare(
-                moment(ref1.dateCreated).format("YYYY-MM-DD HH:mm:ss")
-              )
-        );
-        setReferences(sortedReferences);
-
-        message.success({
-          content: "Referências canceladas com Sucesso!",
-          className: "custom-class",
-          style: {
-            marginTop: "10vh",
-          },
-        });
-
-        onReset();
-        navigate("/bulkReference");
+        setCancelReason(undefined);
+        setOtherReason(undefined);
       }
     }
   };
