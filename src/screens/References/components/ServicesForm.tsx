@@ -24,7 +24,7 @@ import {
 import { Picker } from "@react-native-picker/picker";
 import withObservables from "@nozbe/with-observables";
 import { database } from "../../../database";
-import { navigationRef } from "../../../routes/NavigationRef";
+import { navigate } from "../../../routes/NavigationRef";
 import ModalSelector from "react-native-modal-selector-searchable";
 import { Q } from "@nozbe/watermelondb";
 import { Formik } from "formik";
@@ -65,6 +65,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
   const [isSync, setIsSync] = useState(false);
   const [text, setText] = useState("");
   const [date, setDate] = useState();
+  const [endDate, setEndDate] = useState("");
   const [users, setUsers] = useState<any>([]);
   const [notifyTo, setNotifyTo] = useState<any>(undefined);
   const [us, setUs] = useState<any>([]);
@@ -75,6 +76,14 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
   const [isClinicalOrCommunityPartner, setClinicalOrCommunityPartner] =
     useState(false);
   const [currentInformedProvider, setCurrentInformedProvider] = useState("");
+  const [isEndDateVisible, setIsEndDateVisible] = useState(false);
+  const [key, setKey] = useState(0);
+
+  const forceRemount = () => {
+    setDate(undefined);
+    setText("");
+    setKey((prevKey) => prevKey + 1);
+  };
   const dispatch = useDispatch();
 
   const service = services.filter(
@@ -107,16 +116,21 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     entry_point: reference?.refer_to,
     provider: notifyTo?.name + "" + notifyTo?.surname,
     remarks: "",
+    end_date: "",
     status: 1,
   };
 
-  const handleDataFromDatePickerComponent = useCallback((selectedDate) => {
+  const handleDataFromDatePickerComponent = useCallback((selectedDate,field) => {
     selectedDate.replaceAll("/", "-");
     const currentDate = selectedDate || date;
     // setShow(false);
-    setDate(currentDate);
-
-    setText(selectedDate);
+    if (field == "date") {
+      setDate(currentDate);
+  
+      setText(selectedDate);
+    } else {
+      setEndDate(selectedDate);
+    }
   }, []);
 
   const onChangeToOutros = (value) => {
@@ -183,6 +197,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
   };
 
   const validateBeneficiaryIntervention = async (values: any) => {
+    setLoading(true);
     const benefInterv = await database
       .get("beneficiaries_interventions")
       .query(
@@ -199,6 +214,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
         placement: "top",
         title: "Beneficiário já tem esta intervenção para esta data ! ",
       });
+      setLoading(false);
     } else {
       onSubmit(values);
     }
@@ -213,14 +229,16 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
   }, []);
 
   useEffect(() => {
-    isSync
-      ? toast.show({
-          placement: "top",
-          render: () => {
-            return <SuccessHandler />;
-          },
-        })
-      : "";
+    isSync &&
+      toast.show({
+        placement: "top",
+        render: () => {
+          return <SuccessHandler />;
+        },
+      });
+
+    setLoading(false);
+    forceRemount();
   }, [isSync]);
 
   const onSubmit = async (values: any) => {
@@ -240,6 +258,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
           intervention.entry_point = values.entry_point;
           intervention.provider = "" + values.provider;
           intervention.remarks = values.remarks;
+          intervention.end_date = "" + endDate;
           intervention.date_created = moment(new Date()).format(
             "YYYY-MM-DD HH:mm:ss"
           );
@@ -281,19 +300,16 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
 
     syncronize();
 
-    navigationRef.reset({
-      index: 0,
-      routes: [{ name: "ReferencesList", params: {} }],
-    });
-
-    setLoading(false);
-
     const benIntervNotSynced = await pendingSyncBeneficiariesInterventions();
     dispatch(
       loadPendingsBeneficiariesInterventionsTotals({
         pendingSyncBeneficiariesInterventions: benIntervNotSynced,
       })
     );
+
+    navigate({
+      name: "Serviços Solicitados",
+    });
   };
 
   const fetchCounts = async () => {
@@ -328,6 +344,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
               return <ErrorHandler />;
             },
           });
+          setLoading(false);
           fetchCounts();
         });
     }
@@ -369,6 +386,12 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
       setCurrentInformedProvider(notifyTo?.name + " " + notifyTo?.surname);
       setClinicalOrCommunityPartner(true);
       onChangeEntryPoint(reference?.refer_to);
+    }
+
+    if([59,60].includes(service.online_id)) {
+      setIsEndDateVisible(true);
+    } else {
+      setIsEndDateVisible(false);
     }
   }, [reference, intervention, organization]);
 
@@ -412,7 +435,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
   }, []);
 
   return (
-    <KeyboardAvoidingView>
+    <KeyboardAvoidingView key={key}>
       <ScrollView>
         <View style={styles.webStyle}>
           {loading ? (
@@ -616,7 +639,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                           <InputLeftAddon>
                             <MyDatePicker
                               onDateSelection={(e) =>
-                                handleDataFromDatePickerComponent(e)
+                                handleDataFromDatePickerComponent(e, "date")
                               }
                               minDate={new Date("2017-01-01")}
                               maxDate={new Date()}
@@ -641,6 +664,42 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                       <FormControl.ErrorMessage>
                         {errors.date}
                       </FormControl.ErrorMessage>
+                    </FormControl>
+
+                    <FormControl style={{display: isEndDateVisible ? "flex" : "none"}}>
+                      <FormControl.Label>Data de Fim do Serviço </FormControl.Label>
+                      <HStack alignItems="center">
+                        <InputGroup
+                          w={{
+                            base: "70%",
+                            md: "285",
+                          }}
+                        >
+                          <InputLeftAddon>
+                            <MyDatePicker
+                              onDateSelection={(e) =>
+                                handleDataFromDatePickerComponent(e, "end_date")
+                              }
+                              minDate={new Date("2017-01-01")}
+                              maxDate={new Date()}
+                              currentDate={
+                                intervention?.end_date
+                                  ? new Date(intervention?.end_date)
+                                  : new Date()
+                              }
+                            />
+                          </InputLeftAddon>
+                          <Input
+                            isDisabled
+                            w={{
+                              base: "70%",
+                              md: "100%",
+                            }}
+                            value={endDate}
+                            placeholder="yyyy-MM-dd"
+                          />
+                        </InputGroup>
+                      </HStack>
                     </FormControl>
 
                     <FormControl isRequired isInvalid={"provider" in errors}>
@@ -723,7 +782,9 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
 };
 const enhance = withObservables([], () => ({
   services: database.collections.get("services").query(),
-  subServices: database.collections.get("sub_services").query(Q.where("status", 1)),
+  subServices: database.collections
+    .get("sub_services")
+    .query(Q.where("status", 1)),
 }));
 
 export default memo(enhance(ServicesForm));

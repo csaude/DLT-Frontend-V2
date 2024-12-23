@@ -74,6 +74,7 @@ export interface SubServiceParams {
   entryPoint: string;
   provider: string;
   remarks: string;
+  endDate: string;
   status: string;
   createdBy: string;
   updatedBy?: string;

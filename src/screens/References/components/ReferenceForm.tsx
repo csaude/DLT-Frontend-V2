@@ -284,9 +284,19 @@ const ReferenceForm: React.FC = ({ route }: any) => {
       .query(Q.where("service_type", value),
              Q.where("status", 1))
       .fetch();
-    let servicesSerialized = getServicesList.map((item) => item._raw);
+    let servicesList = getServicesList.map((item) => item._raw);
     const age = calculateAge(beneficiary.date_of_birth);
     let is15AndStartedAvante = false;
+
+    let servicesSerialized = servicesList;
+  
+    if (age < 15 || age > 19) {
+      servicesSerialized = servicesList.filter((item:any) => item.online_id !== 59)
+
+      if (age < 15) {
+        servicesSerialized = servicesSerialized.filter((item:any) => item.online_id !== 60)
+      }
+    }  
 
     if (age == 15) {
       const interventionsIds = intervs.map(
@@ -649,7 +659,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                   isInvalid={"reference_code" in formik.errors}
                 >
                   <FormControl.Label>
-                    {"Cód. Ref. Livro (PE:" +
+                    {"Número da Guia (PE:" +
                       entryPoint +
                       "; Pág.:01-99; Mês:01-12; Ano:" + (currentYear -1) +"-" + currentYear + ")"}
                   </FormControl.Label>
@@ -932,7 +942,7 @@ const ReferenceForm: React.FC = ({ route }: any) => {
                     <Text style={styles.txtLabelInfo}>
                       <Text style={styles.txtLabel}>
                         {" "}
-                        Código da Referência do Livro:{" "}
+                        Número da Guia:{" "}
                       </Text>
                       {formik.values.reference_code}
                     </Text>

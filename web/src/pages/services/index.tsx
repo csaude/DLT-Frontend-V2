@@ -17,6 +17,8 @@ import ptPT from "antd/lib/locale-provider/pt_PT";
 import Highlighter from "react-highlight-words";
 import { SearchOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import ServiceForm from "./components/ServiceForm";
+import { query } from "@app/utils/users";
+import { MNE_DONOR } from "@app/utils/contants";
 
 const { Text } = Typography;
 
@@ -28,6 +30,7 @@ const ServicesList: React.FC = () => {
     useState<boolean>(false);
   const [selectedService, setSelectedService] = useState<any>(undefined);
   const [form] = Form.useForm();
+  const [allowDataEntry, setAllowDataEntry] = useState(true);
 
   let searchInput;
   useEffect(() => {
@@ -37,6 +40,11 @@ const ServicesList: React.FC = () => {
         (ser1, ser2) => ser1.serviceType - ser2.serviceType
       );
       setServices(sortedServices);
+      const loggedUser = await query(localStorage.user);
+
+      if ([MNE_DONOR].includes(loggedUser.profiles.id)) {
+        setAllowDataEntry(false);
+      }
     };
 
     fetchData().catch((error) => console.log(error));
@@ -316,6 +324,7 @@ const ServicesList: React.FC = () => {
               type="primary"
               icon={<PlusOutlined />}
               onClick={() => handleServiceModalVisible(true)}
+              hidden={!allowDataEntry}
             >
               Adicionar Serviço
             </Button>
@@ -332,6 +341,7 @@ const ServicesList: React.FC = () => {
         modalVisible={serviceModalVisible}
         handleModalVisible={handleServiceModalVisible}
         handleAdd={handleAdd}
+        allowDataEntry={allowDataEntry}
       />
     </>
   );

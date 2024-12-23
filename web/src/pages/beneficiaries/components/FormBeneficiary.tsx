@@ -25,6 +25,7 @@ const BeneficiaryForm = ({
   handleModalVisible,
   handleRegisterAnExistingBeneficiary,
   isEditMode,
+  allowDataEntry,
 }: any) => {
   const [current, setCurrent] = useState(0);
   const [firstStepValues, setFirstStepValues] = useState();
@@ -207,9 +208,8 @@ const BeneficiaryForm = ({
         beneficiary.vbltPregnantOrHasChildren =
           values.vblt_pregnant_or_has_children;
         beneficiary.vbltMultiplePartners = values.vblt_multiple_partners;
-        beneficiary.vbltTraffickingVictim = values.vblt_trafficking_victim;
-        beneficiary.vbltSexualExploitation = values.vblt_sexual_exploitation;
-        beneficiary.vbltSexploitationTime = values.vblt_sexploitation_time;
+        beneficiary.vbltSexualExploitationTraffickingVictim =
+          values.vblt_sexual_exploitation_trafficking_victim;
         beneficiary.vbltVbgVictim = values.vblt_vbg_victim;
         beneficiary.vbltVbgType = values.vblt_vbg_type;
         beneficiary.vbltVbgTime = values.vblt_vbg_time;
@@ -385,7 +385,11 @@ const BeneficiaryForm = ({
               </Button>
             )}
             {current === steps.length - 1 && (
-              <Button type="primary" onClick={() => onUpdate()}>
+              <Button
+                type="primary"
+                hidden={!allowDataEntry}
+                onClick={() => onUpdate()}
+              >
                 Actualizar
               </Button>
             )}

@@ -134,7 +134,6 @@ const BeneficiaryForm: React.FC = ({
   const [age, setAge] = useState<any>(undefined);
   const [schoolInfoEnabled, setSchoolInfoEnabled] = useState<any>(true);
   const [deficiencyTypeEnabled, setDeficiencyTypeEnabled] = useState<any>(true);
-  const [childrenEnabled, setChildrenEnabled] = useState<any>(true);
   const [gbvInfoEnabled, setGbvInfoEnabled] = useState<any>(true);
   const [sexExploitationTimeEnabled, setSexExploitationTimeEnabled] =
     useState<any>(true);
@@ -145,7 +144,6 @@ const BeneficiaryForm: React.FC = ({
   const [isUsVisible, setUsVisible] = useState(false);
   const [isOffline, setIsOffline] = useState(false);
   const [isGoToSpecificVblt, setGoToSpecificVblt] = useState(false);
-  const [haveChildrenEnabled, setHaveChildrenEnabled] = useState<any>(true);
   const [isExistingBeneficiary, setExistingBeneficiary] = useState(false);
   const [beneficiaryState, setBeneficiaryState] = useState<any>();
   const [ignoreExisting, setIgnoreExisting] = useState(false);
@@ -261,7 +259,6 @@ const BeneficiaryForm: React.FC = ({
       setValue(beneficiarie?.vblt_lives_with.split(","));
       setSchoolInfoEnabled(beneficiarie.vblt_is_student == 1);
       setDeficiencyTypeEnabled(beneficiarie.vblt_is_deficient == 1);
-      setChildrenEnabled(beneficiarie.vblt_pregnant_before == 1);
       setGbvInfoEnabled(beneficiarie.vblt_vbg_victim == 1);
       setSexExploitationTimeEnabled(beneficiarie.vblt_sexual_exploitation == 1);
 
@@ -344,26 +341,18 @@ const BeneficiaryForm: React.FC = ({
       neighborhood_id: beneficiarie?.neighborhood_id,
       partner_id: beneficiarie?.partner_id,
       vblt_lives_with: beneficiarie?.vblt_lives_with,
-      vblt_is_orphan: beneficiarie?.vblt_is_orphan,
       vblt_is_student: beneficiarie?.vblt_is_student,
       vblt_school_grade: beneficiarie?.vblt_school_grade,
       vblt_school_name: beneficiarie?.vblt_school_name,
       vblt_is_deficient: beneficiarie?.vblt_is_deficient,
       vblt_deficiency_type: beneficiarie?.vblt_deficiency_type,
       vblt_married_before: beneficiarie?.vblt_married_before,
-      vblt_pregnant_before: beneficiarie?.vblt_pregnant_before,
-      vblt_children: beneficiarie?.vblt_children,
-      vblt_pregnant_or_breastfeeding:
-        beneficiarie?.vblt_pregnant_or_breastfeeding,
-      vblt_is_employed: beneficiarie?.vblt_is_employed,
       vblt_idp: beneficiarie?.vblt_idp,
       vblt_tested_hiv: beneficiarie?.vblt_tested_hiv,
       vblt_sexually_active: beneficiarie?.vblt_sexually_active,
       vblt_pregnant_or_has_children: beneficiarie?.vblt_pregnant_or_has_children,
       vblt_multiple_partners: beneficiarie?.vblt_multiple_partners,
-      vblt_is_migrant: beneficiarie?.vblt_is_migrant,
-      vblt_trafficking_victim: beneficiarie?.vblt_trafficking_victim,
-      vblt_sexual_exploitation: beneficiarie?.vblt_sexual_exploitation,
+      vblt_sexual_exploitation_trafficking_victim: beneficiarie?.vblt_sexual_exploitation_trafficking_victim,
       vblt_sexploitation_time: beneficiarie?.vblt_sexploitation_time,
       vblt_vbg_victim: beneficiarie?.vblt_vbg_victim,
       vblt_vbg_type: beneficiarie?.vblt_vbg_type,
@@ -564,17 +553,8 @@ const BeneficiaryForm: React.FC = ({
       if (values.vblt_multiple_partners == null) {
         errors.vblt_multiple_partners = errorMessage;
       }
-      if (values.vblt_trafficking_victim == null) {
-        errors.vblt_trafficking_victim = errorMessage;
-      }
-      if (values.vblt_sexual_exploitation == null) {
-        errors.vblt_sexual_exploitation = errorMessage;
-      }
-      if (
-        sexExploitationTimeEnabled &&
-        values.vblt_sexploitation_time == null
-      ) {
-        errors.vblt_sexploitation_time = errorMessage;
+      if (values.vblt_sexual_exploitation_trafficking_victim == null) {
+        errors.vblt_sexual_exploitation_trafficking_victim = errorMessage;
       }
       if (values.vblt_vbg_victim == null) {
         errors.vblt_vbg_victim = errorMessage;
@@ -697,14 +677,9 @@ const BeneficiaryForm: React.FC = ({
               (record.vblt_multiple_partners = Number(
                 formik.values.vblt_multiple_partners
               )),
-              (record.vblt_trafficking_victim = Number(
-                formik.values.vblt_trafficking_victim
+              (record.vblt_sexual_exploitation_trafficking_victim = Number(
+                formik.values.vblt_sexual_exploitation_trafficking_victim
               )),
-              (record.vblt_sexual_exploitation = Number(
-                formik.values.vblt_sexual_exploitation
-              )),
-              (record.vblt_sexploitation_time =
-                formik.values.vblt_sexploitation_time),
               (record.vblt_vbg_victim = Number(formik.values.vblt_vbg_victim)),
               (record.vblt_vbg_type = formik.values.vblt_vbg_type),
               (record.vblt_vbg_time = formik.values.vblt_vbg_time),
@@ -800,7 +775,6 @@ const BeneficiaryForm: React.FC = ({
               )),
               (beneficiary.vblt_deficiency_type =
                 formik.values.vblt_deficiency_type),
-              (beneficiary.vblt_is_employed = formik.values.vblt_is_employed),
               (beneficiary.vblt_idp = Number(formik.values.vblt_idp)),
               (beneficiary.vblt_tested_hiv = formik.values.vblt_tested_hiv);
           });
@@ -989,21 +963,6 @@ const BeneficiaryForm: React.FC = ({
   const onIsDeficientChange = useCallback(async (value: any) => {
     setDeficiencyTypeEnabled(value == 1);
     formik.setFieldValue("vblt_deficiency_type", null);
-  }, []);
-
-  const onPregnantBeforeChane = useCallback(async (value: any) => {
-    setChildrenEnabled(value == 1);
-    if (value == 0) {
-      setHaveChildrenEnabled(true);
-    } else {
-      setHaveChildrenEnabled(false);
-    }
-    formik.setFieldValue("vblt_children", null);
-  }, []);
-
-  const sexExploitationChange = useCallback(async (value: any) => {
-    setSexExploitationTimeEnabled(value == 1);
-    formik.setFieldValue("vblt_sexploitation_time", null);
   }, []);
 
   const gbvVictimChange = useCallback(async (value: any) => {
@@ -2188,71 +2147,19 @@ const BeneficiaryForm: React.FC = ({
                 </FormControl>
                 <FormControl
                   isRequired
-                  isInvalid={"vblt_trafficking_victim" in formik.errors}
-                >
-                  <FormControl.Label>Vítima de Tráfico?</FormControl.Label>
-                  <Radio.Group
-                    key="vblt_trafficking_victim"
-                    value={formik.values.vblt_trafficking_victim + ""}
-                    onChange={(itemValue) => {
-                      formik.setFieldValue(
-                        "vblt_trafficking_victim",
-                        itemValue
-                      );
-                    }}
-                    name="ex4"
-                    accessibilityLabel="pick a size"
-                  >
-                    <Stack
-                      direction={{ base: "row", md: "row" }}
-                      alignItems={{
-                        base: "flex-start",
-                        md: "center",
-                      }}
-                      space={4}
-                      w="75%"
-                      maxW="300px"
-                    >
-                      <Radio
-                        key="trav1"
-                        value="1"
-                        colorScheme="green"
-                        size="md"
-                        my={1}
-                      >
-                        Sim
-                      </Radio>
-                      <Radio
-                        key="trav2"
-                        value="0"
-                        colorScheme="green"
-                        size="md"
-                        my={1}
-                      >
-                        Não
-                      </Radio>
-                    </Stack>
-                  </Radio.Group>
-                  <FormControl.ErrorMessage>
-                    {formik.errors.vblt_trafficking_victim}
-                  </FormControl.ErrorMessage>
-                </FormControl>
-                <FormControl
-                  isRequired
-                  isInvalid={"vblt_sexual_exploitation" in formik.errors}
+                  isInvalid={"vblt_sexual_exploitation_trafficking_victim" in formik.errors}
                 >
                   <FormControl.Label>
-                    Vítima de Exploração sexual?
+                    Vítima de Exploração Sexual ou de Tráfico?
                   </FormControl.Label>
                   <Radio.Group
-                    key="vblt_sexual_exploitation"
-                    value={formik.values.vblt_sexual_exploitation + ""}
+                    key="vblt_sexual_exploitation_trafficking_victim"
+                    value={formik.values.vblt_sexual_exploitation_trafficking_victim + ""}
                     onChange={(itemValue) => {
                       formik.setFieldValue(
-                        "vblt_sexual_exploitation",
+                        "vblt_sexual_exploitation_trafficking_victim",
                         itemValue
                       );
-                      sexExploitationChange(itemValue);
                     }}
                     name="ex5"
                     accessibilityLabel="pick a size"
@@ -2288,35 +2195,7 @@ const BeneficiaryForm: React.FC = ({
                     </Stack>
                   </Radio.Group>
                   <FormControl.ErrorMessage>
-                    {formik.errors.vblt_sexual_exploitation}
-                  </FormControl.ErrorMessage>
-                </FormControl>
-                <FormControl
-                  isRequired={sexExploitationTimeEnabled}
-                  isInvalid={"vblt_sexploitation_time" in formik.errors}
-                >
-                  <FormControl.Label>Tempo</FormControl.Label>
-                  <Picker
-                    style={styles.textBlack}
-                    key="vblt_sexploitation_time"
-                    selectedValue={formik.values.vblt_sexploitation_time}
-                    onValueChange={(itemValue, itemIndex) => {
-                      if (itemIndex !== 0) {
-                        formik.setFieldValue(
-                          "vblt_sexploitation_time",
-                          itemValue
-                        );
-                      }
-                    }}
-                    enabled={sexExploitationTimeEnabled}
-                  >
-                    <Picker.Item label="-- Seleccione --" value="0" />
-                    {["+ 3 Dias", "- 3 Dias"].map((item) => (
-                      <Picker.Item key={item} label={"" + item} value={item} />
-                    ))}
-                  </Picker>
-                  <FormControl.ErrorMessage>
-                    {formik.errors.vblt_sexploitation_time}
+                    {formik.errors.vblt_sexual_exploitation_trafficking_victim}
                   </FormControl.ErrorMessage>
                 </FormControl>
                 <FormControl

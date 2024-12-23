@@ -55,6 +55,7 @@ const InterventionForm = ({ record, beneficiary }: any) => {
   const [users, setUsers] = React.useState<any>([]);
   const [name, setName] = useState("");
   const [user, setUser] = React.useState<any>();
+  const [isEndDateVisible, setIsEndDateVisible] = useState(false);
 
   const role = useSelector((state: any) => state.auth?.currentUser.role);
   const isUsVisible = role !== "MENTORA" ? true : false;
@@ -89,6 +90,9 @@ const InterventionForm = ({ record, beneficiary }: any) => {
         entryPoint = record.entryPoint;
         provider = record.provider;
         codeServiceType = record.subServices.service.serviceType;
+        setIsEndDateVisible(
+          [59, 60].includes(Number(record.subServices.service.id))
+        );
       } else {
         entryPoint = user?.entryPoint;
         provider = user.name + " " + user.surname;
@@ -149,6 +153,13 @@ const InterventionForm = ({ record, beneficiary }: any) => {
 
   const onChangeServices = async (value: any) => {
     form.setFieldsValue({ subservice: undefined });
+
+    if ([59, 60].includes(Number(value))) {
+      setIsEndDateVisible(true);
+    } else {
+      setIsEndDateVisible(false);
+      form.setFieldsValue({ endDate: undefined });
+    }
     const data = await querySubServiceByService(value);
     const subServiceList =
       Age <= 14 || Age >= 20 ? data.filter((item) => item.id !== 235) : data;
@@ -396,6 +407,28 @@ const InterventionForm = ({ record, beneficiary }: any) => {
               rows={2}
               placeholder="Insira as Observações"
               maxLength={50}
+            />
+          </Form.Item>
+        </Col>
+        <Col span={7}>
+          <Form.Item
+            id="dataFimBeneficio-control"
+            name="endDate"
+            label="Data de Fim do Serviço"
+            initialValue={
+              selectedIntervention === undefined ||
+              selectedIntervention.endDate === undefined ||
+              selectedIntervention.endDate === null ||
+              selectedIntervention.endDate === ""
+                ? undefined
+                : moment(selectedIntervention?.endDate, "YYYY-MM-DD")
+            }
+            hidden={!isEndDateVisible}
+          >
+            <DatePicker
+              id="dataFimBeneficio-date-picker"
+              style={{ width: "100%" }}
+              disabledDate={(d) => !d || d.isAfter(moment(new Date()))}
             />
           </Form.Item>
         </Col>

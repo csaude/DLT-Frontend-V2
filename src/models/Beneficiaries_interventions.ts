@@ -13,6 +13,7 @@ export interface BeneficiariesInterventionsModel {
   entry_point?: any;
   provider?: any;
   remarks?: string;
+  end_date?: string;
   status?: any;
   online_id?: any;
   date_created: string;
@@ -31,6 +32,7 @@ export default class Beneficiaries_interventions extends Model {
   @field("entry_point") entry_point;
   @field("provider") provider;
   @text("remarks") remarks;
+  @field("end_date") end_date;
   @field("status") status;
   @field("online_id") online_id;
   @text("date_created") date_created;

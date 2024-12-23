@@ -15,7 +15,14 @@ const status = [
   { value: "1", label: "Activo" },
 ];
 
-const UsForm = ({ form, us, modalVisible, handleModalVisible, handleAdd }) => {
+const UsForm = ({
+  form,
+  us,
+  modalVisible,
+  handleModalVisible,
+  handleAdd,
+  allowDataEntry,
+}) => {
   const [statusEnabled, setStatusEnabled] = useState(false);
   const [provinces, setProvinces] = useState<any[]>([]);
   const [districts, setDistricts] = useState<any[]>([]);
@@ -104,7 +111,12 @@ const UsForm = ({ form, us, modalVisible, handleModalVisible, handleAdd }) => {
         <Button key="Cancel" onClick={() => showCloseConfirm()}>
           Cancelar
         </Button>,
-        <Button key="OK" onClick={handleAdd} type="primary">
+        <Button
+          key="OK"
+          onClick={handleAdd}
+          hidden={!allowDataEntry}
+          type="primary"
+        >
           Salvar
         </Button>,
       ]}
@@ -264,6 +276,7 @@ UsForm.propTypes = {
   modalVisible: PropTypes.bool.isRequired,
   handleModalVisible: PropTypes.func.isRequired,
   handleAdd: PropTypes.func.isRequired,
+  allowDataEntry: PropTypes.bool.isRequired,
 };
 
 export default UsForm;

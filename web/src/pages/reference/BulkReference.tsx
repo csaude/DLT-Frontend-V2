@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
-  bulkCancel as cancelAll,
+  bulkCancelSelected,
+  // bulkCancelAll,
   BulkReferenceCancel,
   pagedQueryPendingByUser,
   queryCountByPendingFilters,
@@ -27,6 +28,7 @@ import {
   Select,
   Tag,
   DatePicker,
+  // Checkbox,
 } from "antd";
 import ptPT from "antd/lib/locale-provider/pt_PT";
 import "antd/dist/antd.css";
@@ -42,6 +44,7 @@ import { useDispatch, useSelector } from "react-redux";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import { toast } from "react-toastify";
+import { MNE_DONOR } from "@app/utils/contants";
 
 const { Text } = Typography;
 const { Option } = Select;
@@ -63,11 +66,13 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
   const formFilter = React.useRef<FormInstance>(null);
   const pageSize = 100;
   let data;
-  let countByFilter;
   const [dataLoading, setDataLoading] = useState(false);
   const [otherReasonEnabled, setOtherReasonEnabled] = useState(false);
   const [searchCounter, setSearchCounter] = useState<any>();
+  const [allAcrossPagesCounter, setAllAcrossPagesCounter] = useState<any>();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+
+  const [selectAll, setSelectAll] = useState(false);
 
   const [searchStartDate, setSearchStartDate] = useState<any>();
   const [searchEndDate, setSearchEndDate] = useState<any>();
@@ -78,6 +83,7 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
   const [districts, setDistricts] = useState<any[]>([]);
   const [cancelReason, setCancelReason] = useState<any>();
   const [otherReason, setOtherReason] = useState<any>();
+  const [allowDataEntry, setAllowDataEntry] = useState(true);
 
   const RequiredFieldMessage = "Obrigatório!";
   const reasons = [
@@ -110,12 +116,24 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
   const rowSelection = {
     selectedRowKeys,
     onChange: onSelectChange,
+    // onSelectAll: (selected) => {
+    //   if (selected) {
+    //     // Select all rows across all pages
+    //     const allRowKeys = data.map((item) => item.key);
+    //     setSelectedRowKeys(allRowKeys);
+    //     setSelectAll(true);
+    //   } else {
+    //     // Deselect all rows
+    //     setSelectedRowKeys([]);
+    //     setSelectAll(false);
+    //   }
+    // },
   };
 
   const userSelector = useSelector((state: any) => state?.user);
   const navigate = useNavigate();
 
-  const userId = localStorage.getItem("user");
+  const user = localStorage.getItem("user");
   const dispatch = useDispatch();
   const beneficiariesTotal = useSelector(
     (state: any) => state.beneficiary.total
@@ -133,12 +151,19 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
         searchEndDate
       );
 
-      countByFilter = await queryCountByPendingFilters(
+      const countByFilter = await queryCountByPendingFilters(
         localStorage.user,
         searchStartDate,
         searchEndDate
       );
       setSearchCounter(countByFilter);
+
+      const countAcrossAllPages = await queryCountByPendingFilters(
+        localStorage.user,
+        undefined,
+        undefined
+      );
+      setAllAcrossPagesCounter(countAcrossAllPages);
 
       const loggedUser = await query1(localStorage.user);
       if (loggedUser && loggedUser?.districts.length > 0) {
@@ -232,6 +257,10 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
       setReferrers(referrers);
       setUsers(referreds);
       setUs(existingUs);
+
+      if ([MNE_DONOR].includes(loggedUser.profiles.id)) {
+        setAllowDataEntry(false);
+      }
     };
 
     fetchData()
@@ -241,53 +270,62 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
 
   const handleRefUpdate = async (values: any) => {
     const ref: any = reference;
-    if (values !== undefined) {
-      const payload: BulkReferenceCancel = {
-        ids: selectedRowKeys,
-        status: "3",
-        cancelReason: cancelReason,
-        otherReason: otherReason,
-        updatedBy: localStorage.user,
-      };
+    if (values !== undefined && cancelReason) {
+      if (cancelReason != 5 || otherReason) {
+        const payload: BulkReferenceCancel = {
+          ids: selectedRowKeys,
+          status: "3",
+          cancelReason: cancelReason,
+          otherReason: otherReason,
+          updatedBy: localStorage.user,
+        };
 
-      if (selectedRowKeys.length == 0) {
-        message.error({
-          content: "Nenhuma referência selencionada!",
-          className: "custom-class",
-          style: {
-            marginTop: "10vh",
-          },
-        });
-      } else {
-        const { data } = await cancelAll(payload);
-        const allReferences: any = await pagedQueryPendingByUser(
-          localStorage.user,
-          currentPageIndex,
-          pageSize,
-          searchStartDate,
-          searchEndDate
-        );
-        const sortedReferences = allReferences.sort(
-          (ref1, ref2) =>
-            ref1.status - ref2.status ||
-            moment(ref2.dateCreated)
-              .format("YYYY-MM-DD HH:mm:ss")
-              .localeCompare(
-                moment(ref1.dateCreated).format("YYYY-MM-DD HH:mm:ss")
-              )
-        );
-        setReferences(sortedReferences);
+        if (selectedRowKeys.length == 0 && selectAll == false) {
+          message.error({
+            content: "Nenhuma referência selencionada!",
+            className: "custom-class",
+            style: {
+              marginTop: "10vh",
+            },
+          });
+        } else {
+          if (selectAll) {
+            const userId = Number(user);
+            // const { data } = await bulkCancelAll(payload, userId);
+          } else {
+            const { data } = await bulkCancelSelected(payload);
+          }
+          const allReferences: any = await pagedQueryPendingByUser(
+            localStorage.user,
+            currentPageIndex,
+            pageSize,
+            searchStartDate,
+            searchEndDate
+          );
+          const sortedReferences = allReferences.sort(
+            (ref1, ref2) =>
+              ref1.status - ref2.status ||
+              moment(ref2.dateCreated)
+                .format("YYYY-MM-DD HH:mm:ss")
+                .localeCompare(
+                  moment(ref1.dateCreated).format("YYYY-MM-DD HH:mm:ss")
+                )
+          );
+          setReferences(sortedReferences);
 
-        message.success({
-          content: "Referências canceladas com Sucesso!",
-          className: "custom-class",
-          style: {
-            marginTop: "10vh",
-          },
-        });
+          message.success({
+            content: "Referências canceladas com Sucesso!",
+            className: "custom-class",
+            style: {
+              marginTop: "10vh",
+            },
+          });
 
-        onReset();
-        navigate("/bulkReference");
+          onReset();
+          navigate("/bulkReference");
+        }
+        setCancelReason(undefined);
+        setOtherReason(undefined);
       }
     }
   };
@@ -787,6 +825,10 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
     }
   };
 
+  useEffect(() => {
+    console.log("----------selectedRowKeys---------", selectedRowKeys);
+  }, [selectedRowKeys]);
+
   return (
     <>
       <Title />
@@ -795,51 +837,65 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
         bordered={false}
         headStyle={{ color: "#17a2b8" }}
       >
+        {/* <Checkbox
+          checked={selectAll}
+          onChange={(e) => {
+            const checked = e.target.checked;
+            setSelectAll(checked);
+            // setSelectedRowKeys(checked ? data.map((item) => item.key) : []);
+          }}
+        >
+          Cancelar todos pendentes ({allAcrossPagesCounter})
+        </Checkbox> */}
         <Row gutter={5}>
-          <Col span={12}>
-            <Card
-              title="FILTROS"
-              bordered={true}
-              headStyle={{ background: "#17a2b8", color: "#fff" }}
-            >
-              <Form
-                ref={formFilter}
-                name="fil"
-                initialValues={{ remember: true }}
-                autoComplete="off"
+          {!selectAll && (
+            <Col span={12}>
+              <Card
+                title="FILTROS"
+                bordered={true}
+                headStyle={{ background: "#17a2b8", color: "#fff" }}
               >
-                <Row gutter={30}>
-                  <Col className="gutter-row" span={12}>
-                    <Form.Item name="startDate" label="Data Inicio">
-                      <DatePicker
-                        inputReadOnly={true}
-                        style={{ width: "100%" }}
-                        placeholder="Data Inicio"
-                        onChange={(e) => setStartDate(moment(e, "YYYY-MM-DD"))}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col className="gutter-row" span={12}>
-                    <Form.Item name="endDate" label="Data Fim">
-                      <DatePicker
-                        inputReadOnly={true}
-                        style={{ width: "100%" }}
-                        placeholder="Data Inicio"
-                        onChange={setEndDate}
-                      />
-                    </Form.Item>
-                  </Col>
-                </Row>
-                <Row gutter={50}>
-                  <Col className="gutter-row" span={12}>
-                    <Button type="primary" onClick={handleGlobalSearch}>
-                      Pesquisar
-                    </Button>
-                  </Col>
-                </Row>
-              </Form>
-            </Card>
-          </Col>
+                <Form
+                  ref={formFilter}
+                  name="fil"
+                  initialValues={{ remember: true }}
+                  autoComplete="off"
+                >
+                  <Row gutter={30}>
+                    <Col className="gutter-row" span={12}>
+                      <Form.Item name="startDate" label="Data Inicio">
+                        <DatePicker
+                          inputReadOnly={true}
+                          style={{ width: "100%" }}
+                          placeholder="Data Inicio"
+                          onChange={(e) =>
+                            setStartDate(moment(e, "YYYY-MM-DD"))
+                          }
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col className="gutter-row" span={12}>
+                      <Form.Item name="endDate" label="Data Fim">
+                        <DatePicker
+                          inputReadOnly={true}
+                          style={{ width: "100%" }}
+                          placeholder="Data Inicio"
+                          onChange={setEndDate}
+                        />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                  <Row gutter={50}>
+                    <Col className="gutter-row" span={12}>
+                      <Button type="primary" onClick={handleGlobalSearch}>
+                        Pesquisar
+                      </Button>
+                    </Col>
+                  </Row>
+                </Form>
+              </Card>
+            </Col>
+          )}
           <Col span={12}>
             <Card
               title="Detalhes do cancelamento das Referências"
@@ -903,6 +959,7 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
                       type="primary"
                       onClick={handleRefUpdate}
                       htmlType="submit"
+                      hidden={!allowDataEntry}
                     >
                       Salvar
                     </Button>

@@ -19,7 +19,7 @@ import moment from "moment";
 import dreams from "../../../assets/dreams.png";
 
 import {
-  getBeneficiariesWithoutPrimaryPackageCompletedReportGenerated,
+  getBeneficiariesInWaitingListReportGenerated,
   getFileDownloaded,
 } from "@app/utils/report";
 import { Title as AppTitle } from "@app/components";
@@ -28,7 +28,7 @@ import { useSelectAll } from "@app/hooks/useSelectAll";
 const { Option } = Select;
 const { Title } = Typography;
 
-const BenefWithoutPrimeryPackageCompleted = () => {
+const BeneficiariesInWaintingList = () => {
   const [loggedUser, setLogguedUser] = useState<any>(undefined);
   const [provinces, setProvinces] = useState<any[]>([]);
   const [selectedProvinces, setSelectedProvinces] = useState<any[]>([]);
@@ -42,7 +42,6 @@ const BenefWithoutPrimeryPackageCompleted = () => {
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [lastPage, setLastPage] = useState<number>(0);
   const RequiredFieldMessage = "Obrigatório!";
-  const pageSize = 1000000;
   const username = localStorage.getItem("username");
   const maxDate = moment(initialDate).add(12, "months");
 
@@ -113,7 +112,7 @@ const BenefWithoutPrimeryPackageCompleted = () => {
 
   useEffect(() => {
     if (currentPage != 0 && lastPage != 0 && currentPage < lastPage) {
-      generateExcelBenefWithoutPPCompleted(currentPage); // Iterar
+      generateExcelBeneficiariesInWaitingList(currentPage); // Iterar
     }
   }, [selectedDistricts]);
 
@@ -129,21 +128,20 @@ const BenefWithoutPrimeryPackageCompleted = () => {
         "Para extratir por favor selecione os filtros para relatorio"
       );
     } else {
-      generateExcelBenefWithoutPPCompleted(i);
+      generateExcelBeneficiariesInWaitingList(i);
     }
   };
 
-  const generateExcelBenefWithoutPPCompleted = async (i: any) => {
+  const generateExcelBeneficiariesInWaitingList = async (i: any) => {
     setDataLoading(true);
     try {
-      const response =
-        await getBeneficiariesWithoutPrimaryPackageCompletedReportGenerated(
-          selectedProvinces[0].name,
-          districtsIds,
-          initialDate,
-          finalDate,
-          username
-        );
+      const response = await getBeneficiariesInWaitingListReportGenerated(
+        selectedProvinces[0].name,
+        districtsIds,
+        initialDate,
+        finalDate,
+        username
+      );
       await downloadFile(response);
       setCurrentPage(currentPage + 1);
       setDataLoading(false);
@@ -202,7 +200,7 @@ const BenefWithoutPrimeryPackageCompleted = () => {
             color: "#17a2b8",
           }}
         >
-          Lista de Acompanhamento de Completude de Pacote Primário
+          Lista de Beneficiárias em Lista de Espera (Sem Serviços Comunitários)
         </Title>
         <Card
           title="Parâmetros"
@@ -290,4 +288,4 @@ const BenefWithoutPrimeryPackageCompleted = () => {
   );
 };
 
-export default BenefWithoutPrimeryPackageCompleted;
+export default BeneficiariesInWaintingList;
