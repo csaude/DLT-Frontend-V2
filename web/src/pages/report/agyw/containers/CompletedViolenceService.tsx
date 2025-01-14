@@ -112,7 +112,9 @@ const CompletedViolenceService = ({ districtId }) => {
           onContextMenu={(e) =>
             handleOnFilteredClick(e, record.enrollmentTime, "9-14", text)
           }
-          // to="/viewAgyw"
+          onMouseDown={(e) =>
+            handleOnFilteredClick(e, record.enrollmentTime, "9-14", text)
+          }
         >
           {text}
         </a>
@@ -134,7 +136,9 @@ const CompletedViolenceService = ({ districtId }) => {
           onContextMenu={(e) =>
             handleOnFilteredClick(e, record.enrollmentTime, "15-19", text)
           }
-          // to="/viewAgyw"
+          onMouseDown={(e) =>
+            handleOnFilteredClick(e, record.enrollmentTime, "15-19", text)
+          }
         >
           {text}
         </a>
@@ -155,7 +159,9 @@ const CompletedViolenceService = ({ districtId }) => {
           onContextMenu={(e) =>
             handleOnFilteredClick(e, record.enrollmentTime, "20-24", text)
           }
-          // to="/viewAgyw"
+          onMouseDown={(e) =>
+            handleOnFilteredClick(e, record.enrollmentTime, "20-24", text)
+          }
         >
           {text}
         </a>
@@ -176,7 +182,9 @@ const CompletedViolenceService = ({ districtId }) => {
           onContextMenu={(e) =>
             handleOnFilteredClick(e, record.enrollmentTime, "25-29", text)
           }
-          // to="/viewAgyw"
+          onMouseDown={(e) =>
+            handleOnFilteredClick(e, record.enrollmentTime, "25-29", text)
+          }
         >
           {text}
         </a>
@@ -195,7 +203,9 @@ const CompletedViolenceService = ({ districtId }) => {
           onContextMenu={(e) =>
             handleOnSubTotalClick(e, record.enrollmentTime, text)
           }
-          // to="/viewAgyw"
+          onMouseDown={(e) =>
+            handleOnSubTotalClick(e, record.enrollmentTime, text)
+          }
         >
           {text}
         </a>
@@ -280,6 +290,7 @@ const CompletedViolenceService = ({ districtId }) => {
       navigate("/viewAgyw");
     } else {
       console.log("Right click");
+      e.preventDefault();
       handleGenerateXLSXReport();
     }
   };
@@ -332,6 +343,7 @@ const CompletedViolenceService = ({ districtId }) => {
       navigate("/viewAgyw");
     } else {
       console.log("Right click");
+      e.preventDefault();
       handleGenerateXLSXReport();
     }
   };
@@ -367,6 +379,7 @@ const CompletedViolenceService = ({ districtId }) => {
       navigate("/viewAgyw");
     } else {
       console.log("Right click");
+      e.preventDefault();
       handleGenerateXLSXReport();
     }
   };
@@ -423,7 +436,7 @@ const CompletedViolenceService = ({ districtId }) => {
                 }}
                 onClick={(e) => handleOnCLick(e)}
                 onContextMenu={(e) => handleOnCLick(e)}
-                // to="/viewAgyw"
+                onMouseDown={(e) => handleOnCLick(e)}
               >
                 {total}
               </a>

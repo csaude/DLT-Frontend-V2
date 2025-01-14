@@ -111,7 +111,9 @@ const CompletedSocialEconomicApproaches = ({ districtId }) => {
           onContextMenu={(e) =>
             handleOnFilteredClick(e, record.enrollmentTime, "9-14", text)
           }
-          // to="/viewAgyw"
+          onMouseDown={(e) =>
+            handleOnFilteredClick(e, record.enrollmentTime, "9-14", text)
+          }
         >
           {text}
         </a>
@@ -133,7 +135,9 @@ const CompletedSocialEconomicApproaches = ({ districtId }) => {
           onContextMenu={(e) =>
             handleOnFilteredClick(e, record.enrollmentTime, "15-19", text)
           }
-          // to="/viewAgyw"
+          onMouseDown={(e) =>
+            handleOnFilteredClick(e, record.enrollmentTime, "15-19", text)
+          }
         >
           {text}
         </a>
@@ -154,7 +158,9 @@ const CompletedSocialEconomicApproaches = ({ districtId }) => {
           onContextMenu={(e) =>
             handleOnFilteredClick(e, record.enrollmentTime, "20-24", text)
           }
-          // to="/viewAgyw"
+          onMouseDown={(e) =>
+            handleOnFilteredClick(e, record.enrollmentTime, "20-24", text)
+          }
         >
           {text}
         </a>
@@ -175,7 +181,9 @@ const CompletedSocialEconomicApproaches = ({ districtId }) => {
           onContextMenu={(e) =>
             handleOnFilteredClick(e, record.enrollmentTime, "25-29", text)
           }
-          // to="/viewAgyw"
+          onMouseDown={(e) =>
+            handleOnFilteredClick(e, record.enrollmentTime, "25-29", text)
+          }
         >
           {text}
         </a>
@@ -194,7 +202,9 @@ const CompletedSocialEconomicApproaches = ({ districtId }) => {
           onContextMenu={(e) =>
             handleOnSubTotalClick(e, record.enrollmentTime, text)
           }
-          // to="/viewAgyw"
+          onMouseDown={(e) =>
+            handleOnSubTotalClick(e, record.enrollmentTime, text)
+          }
         >
           {text}
         </a>
@@ -280,6 +290,7 @@ const CompletedSocialEconomicApproaches = ({ districtId }) => {
       navigate("/viewAgyw");
     } else {
       console.log("Right click");
+      e.preventDefault();
       handleGenerateXLSXReport();
     }
   };
@@ -332,6 +343,7 @@ const CompletedSocialEconomicApproaches = ({ districtId }) => {
       navigate("/viewAgyw");
     } else {
       console.log("Right click");
+      e.preventDefault();
       handleGenerateXLSXReport();
     }
   };
@@ -367,6 +379,7 @@ const CompletedSocialEconomicApproaches = ({ districtId }) => {
       navigate("/viewAgyw");
     } else {
       console.log("Right click");
+      e.preventDefault();
       handleGenerateXLSXReport();
     }
   };
@@ -423,7 +436,7 @@ const CompletedSocialEconomicApproaches = ({ districtId }) => {
                 }}
                 onClick={handleOnCLick}
                 onContextMenu={handleOnCLick}
-                // to="/viewAgyw"
+                onMouseDown={handleOnCLick}
               >
                 {total}
               </a>
