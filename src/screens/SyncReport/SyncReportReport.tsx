@@ -63,7 +63,7 @@ const SyncReportScreen: React.FC = () => {
               mt="1.5"
               _text={{ color: "coolGray.800" }}
             >
-              <Text>
+              <Text style={styles.txtGrey}>
                 {" "}
                 <Text style={styles.txtLabel}>
                   Beneficiárias por sincronizar :{" "}
@@ -71,7 +71,7 @@ const SyncReportScreen: React.FC = () => {
                 {beneficiariesNotSynced}
               </Text>
 
-              <Text>
+              <Text style={styles.txtGrey}>
                 {" "}
                 <Text style={styles.txtLabel}>
                   Intervenções por sincronizar:{" "}
@@ -79,7 +79,7 @@ const SyncReportScreen: React.FC = () => {
                 {beneficiariesInterventionsNotSynced}
               </Text>
 
-              <Text>
+              <Text style={styles.txtGrey}>
                 {" "}
                 <Text style={styles.txtLabel}>
                   Referências por sincronizar:{" "}

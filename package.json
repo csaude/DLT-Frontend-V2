@@ -1,6 +1,6 @@
 {
   "name": "dlt-mobile",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -14,7 +14,9 @@
     "depcheck": "depcheck",
     "format": "prettier --write .",
     "lint": "eslint .",
-    "codify": "concurrently \"npm run format\" \"npm run lint\""
+    "codify": "concurrently \"npm run format\" \"npm run lint\"",
+    "prebuild": "npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res",
+    "build": "cd android && ./gradlew clean assembleDebug && cd ../"
   },
   "dependencies": {
     "@native-base/icons": "0.0.11",

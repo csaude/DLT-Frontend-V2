@@ -44,6 +44,7 @@ import SyncReport from "@pages/sync-report/Index";
 import DataImport from "@pages/data-import/index";
 import BenefWithoutVulnerabilites from "./pages/report/benef-without-vulnerabilites/BenefWithoutVulnerabilites";
 import BenefWithoutPrimeryPackageCompleted from "./pages/report/beneficiaries-without-pp-completed/BenefWithoutPrimeryPackageCompleted";
+import BeneficiariesInWaintingList from "./pages/report/beneficiaries-in-waiting-list/BeneficiariesInWaintingList";
 
 const App = () => {
   const windowSize = useWindowSize();
@@ -169,6 +170,10 @@ const App = () => {
             <Route
               path="/benefWithoutPrimaryPackageCompleted"
               element={<BenefWithoutPrimeryPackageCompleted />}
+            />
+            <Route
+              path="/beneficiariesInWaitingList"
+              element={<BeneficiariesInWaintingList />}
             />
             {/* App Inforation */}
             <Route path="/appInfo" element={<AppInfo />} />

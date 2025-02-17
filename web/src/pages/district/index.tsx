@@ -6,6 +6,8 @@ import { Badge, Button, Card, Form, Input, message, Space, Table } from "antd";
 import Highlighter from "react-highlight-words";
 import { SearchOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import DistrictForm from "./components/DistrictForm";
+import { query } from "@app/utils/users";
+import { MNE_DONOR } from "@app/utils/contants";
 
 const DistrictList: React.FC = () => {
   const [districts, setDistricts] = useState<any[]>([]);
@@ -16,6 +18,7 @@ const DistrictList: React.FC = () => {
     useState<boolean>(false);
   const [selectedDistrict, setSelectedDistrict] = useState<any>(undefined);
   const [form] = Form.useForm();
+  const [allowDataEntry, setAllowDataEntry] = useState(true);
 
   let searchInput;
   useEffect(() => {
@@ -29,6 +32,11 @@ const DistrictList: React.FC = () => {
 
       setDistricts(sortedDistricts);
       setProvince(provinces);
+      const loggedUser = await query(localStorage.user);
+
+      if ([MNE_DONOR].includes(loggedUser.profiles.id)) {
+        setAllowDataEntry(false);
+      }
     };
 
     fetchData().catch((error) => console.log(error));
@@ -304,6 +312,7 @@ const DistrictList: React.FC = () => {
               type="primary"
               icon={<PlusOutlined />}
               onClick={() => handleDistrictModalVisible(true)}
+              hidden={!allowDataEntry}
             >
               Adicionar Distrito
             </Button>
@@ -323,6 +332,7 @@ const DistrictList: React.FC = () => {
         modalVisible={districtModalVisible}
         handleModalVisible={handleDistrictModalVisible}
         handleAdd={handleAdd}
+        allowDataEntry={allowDataEntry}
       />
     </>
   );

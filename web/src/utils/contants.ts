@@ -7,3 +7,5 @@ export const ADMIN = 20;
 export const MENTOR = 21;
 export const NURSE = 22;
 export const COUNSELOR = 23;
+export const MISAU = 24;
+export const MNE_DONOR = 25;

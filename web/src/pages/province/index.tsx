@@ -5,6 +5,8 @@ import { Badge, Button, Card, Form, Input, message, Space, Table } from "antd";
 import Highlighter from "react-highlight-words";
 import { SearchOutlined, EditOutlined } from "@ant-design/icons";
 import ProvinceForm from "./components/ProvinceForm";
+import { query } from "@app/utils/users";
+import { MNE_DONOR } from "@app/utils/contants";
 
 const ProvinceList: React.FC = () => {
   const [provinces, setProvinces] = useState<any[]>([]);
@@ -14,6 +16,7 @@ const ProvinceList: React.FC = () => {
     useState<boolean>(false);
   const [selectedProvince, setSelectedProvincia] = useState<any>(undefined);
   const [form] = Form.useForm();
+  const [allowDataEntry, setAllowDataEntry] = useState(true);
 
   let searchInput;
   useEffect(() => {
@@ -23,6 +26,11 @@ const ProvinceList: React.FC = () => {
         (ser1, ser2) => ser2.code - ser1.code
       );
       setProvinces(sortedProvinces);
+      const loggedUser = await query(localStorage.user);
+
+      if ([MNE_DONOR].includes(loggedUser.profiles.id)) {
+        setAllowDataEntry(false);
+      }
     };
 
     fetchData().catch((error) => console.log(error));
@@ -273,6 +281,7 @@ const ProvinceList: React.FC = () => {
         modalVisible={provincesModalVisible}
         handleModalVisible={handleProvinceModalVisible}
         handleAdd={handleAdd}
+        allowDataEntry={allowDataEntry}
       />
     </>
   );

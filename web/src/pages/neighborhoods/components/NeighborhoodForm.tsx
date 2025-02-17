@@ -20,6 +20,7 @@ const NeighborhoodForm = ({
   modalVisible,
   handleModalVisible,
   handleAdd,
+  allowDataEntry,
 }) => {
   const [districts, setDistricts] = useState<any[]>([]);
   const [localities, setLocalities] = useState<any[]>([]);
@@ -105,7 +106,12 @@ const NeighborhoodForm = ({
         <Button key="Cancel" onClick={() => showCloseConfirm()}>
           Cancelar
         </Button>,
-        <Button key="OK" onClick={handleAdd} type="primary">
+        <Button
+          key="OK"
+          onClick={handleAdd}
+          hidden={!allowDataEntry}
+          type="primary"
+        >
           Salvar
         </Button>,
       ]}
@@ -229,6 +235,7 @@ NeighborhoodForm.propTypes = {
   modalVisible: PropTypes.bool.isRequired,
   handleModalVisible: PropTypes.func.isRequired,
   handleAdd: PropTypes.func.isRequired,
+  allowDataEntry: PropTypes.bool.isRequired,
 };
 
 export default NeighborhoodForm;
