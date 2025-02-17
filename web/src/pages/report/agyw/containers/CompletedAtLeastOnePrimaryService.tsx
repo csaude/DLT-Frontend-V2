@@ -99,116 +99,146 @@ const CompletedAtLeastOnePrimaryService = ({ districtId }) => {
     {
       title: "10-14",
       dataIndex: "range_10_14",
-      render: (text, record) => (
-        <a
-          style={{
-            textDecoration: "underline",
-            color: "blue",
-          }}
-          onClick={(e) =>
-            handleOnFilteredClick(e, record.enrollmentTime, "9-14", text)
-          }
-          onContextMenu={(e) =>
-            handleOnFilteredClick(e, record.enrollmentTime, "9-14", text)
-          }
-          onMouseDown={(e) =>
-            handleOnFilteredClick(e, record.enrollmentTime, "9-14", text)
-          }
-        >
-          {text}
-        </a>
-      ),
+      render: (text, record) => {
+        if (text > 0)
+          return (
+            <a
+              style={{
+                textDecoration: "underline",
+                color: "blue",
+              }}
+              onClick={(e) =>
+                handleOnFilteredClick(e, record.enrollmentTime, "9-14", text)
+              }
+              onContextMenu={(e) =>
+                handleOnFilteredClick(e, record.enrollmentTime, "9-14", text)
+              }
+              onMouseDown={(e) =>
+                handleOnFilteredClick(e, record.enrollmentTime, "9-14", text)
+              }
+            >
+              {text}
+            </a>
+          );
+        else {
+          return <span>{text}</span>;
+        }
+      },
     },
     {
       title: "15-19",
       className: "column-money",
       dataIndex: "range_15_19",
-      render: (text, record) => (
-        <a
-          style={{
-            textDecoration: "underline",
-            color: "blue",
-          }}
-          onClick={(e) =>
-            handleOnFilteredClick(e, record.enrollmentTime, "15-19", text)
-          }
-          onContextMenu={(e) =>
-            handleOnFilteredClick(e, record.enrollmentTime, "15-19", text)
-          }
-          onMouseDown={(e) =>
-            handleOnFilteredClick(e, record.enrollmentTime, "15-19", text)
-          }
-        >
-          {text}
-        </a>
-      ),
+      render: (text, record) => {
+        if (text > 0)
+          return (
+            <a
+              style={{
+                textDecoration: "underline",
+                color: "blue",
+              }}
+              onClick={(e) =>
+                handleOnFilteredClick(e, record.enrollmentTime, "15-19", text)
+              }
+              onContextMenu={(e) =>
+                handleOnFilteredClick(e, record.enrollmentTime, "15-19", text)
+              }
+              onMouseDown={(e) =>
+                handleOnFilteredClick(e, record.enrollmentTime, "15-19", text)
+              }
+            >
+              {text}
+            </a>
+          );
+        else {
+          return <span>{text}</span>;
+        }
+      },
     },
     {
       title: "20-24",
       dataIndex: "range_20_24",
-      render: (text, record) => (
-        <a
-          style={{
-            textDecoration: "underline",
-            color: "blue",
-          }}
-          onClick={(e) =>
-            handleOnFilteredClick(e, record.enrollmentTime, "20-24", text)
-          }
-          onContextMenu={(e) =>
-            handleOnFilteredClick(e, record.enrollmentTime, "20-24", text)
-          }
-          onMouseDown={(e) =>
-            handleOnFilteredClick(e, record.enrollmentTime, "20-24", text)
-          }
-        >
-          {text}
-        </a>
-      ),
+      render: (text, record) => {
+        if (text > 0)
+          return (
+            <a
+              style={{
+                textDecoration: "underline",
+                color: "blue",
+              }}
+              onClick={(e) =>
+                handleOnFilteredClick(e, record.enrollmentTime, "20-24", text)
+              }
+              onContextMenu={(e) =>
+                handleOnFilteredClick(e, record.enrollmentTime, "20-24", text)
+              }
+              onMouseDown={(e) =>
+                handleOnFilteredClick(e, record.enrollmentTime, "20-24", text)
+              }
+            >
+              {text}
+            </a>
+          );
+        else {
+          return <span>{text}</span>;
+        }
+      },
     },
     {
       title: "25-29",
       dataIndex: "range_25_29",
-      render: (text, record) => (
-        <a
-          style={{
-            textDecoration: "underline",
-            color: "blue",
-          }}
-          onClick={(e) =>
-            handleOnFilteredClick(e, record.enrollmentTime, "25-29", text)
-          }
-          onContextMenu={(e) =>
-            handleOnFilteredClick(e, record.enrollmentTime, "25-29", text)
-          }
-          onMouseDown={(e) =>
-            handleOnFilteredClick(e, record.enrollmentTime, "25-29", text)
-          }
-        >
-          {text}
-        </a>
-      ),
+      render: (text, record) => {
+        if (text > 0)
+          return (
+            <a
+              style={{
+                textDecoration: "underline",
+                color: "blue",
+              }}
+              onClick={(e) =>
+                handleOnFilteredClick(e, record.enrollmentTime, "25-29", text)
+              }
+              onContextMenu={(e) =>
+                handleOnFilteredClick(e, record.enrollmentTime, "25-29", text)
+              }
+              onMouseDown={(e) =>
+                handleOnFilteredClick(e, record.enrollmentTime, "25-29", text)
+              }
+            >
+              {text}
+            </a>
+          );
+        else {
+          return <span>{text}</span>;
+        }
+      },
     },
     {
       title: "SUB-TOTAL",
       dataIndex: "subTotal",
-      render: (text, record) => (
-        <a
-          style={{
-            textDecoration: "underline",
-            color: "blue",
-          }}
-          onClick={(e) => handleOnSubTotalClick(e, record.enrollmentTime, text)}
-          onContextMenu={(e) =>
-            handleOnSubTotalClick(e, record.enrollmentTime, text)
-          }
-          onMouseDown={(e) =>
-            handleOnSubTotalClick(e, record.enrollmentTime, text)
-          }
-        >
-          {text}
-        </a>
-      ),
+      render: (text, record) => {
+        if (text > 0)
+          return (
+            <a
+              style={{
+                textDecoration: "underline",
+                color: "blue",
+              }}
+              onClick={(e) =>
+                handleOnSubTotalClick(e, record.enrollmentTime, text)
+              }
+              onContextMenu={(e) =>
+                handleOnSubTotalClick(e, record.enrollmentTime, text)
+              }
+              onMouseDown={(e) =>
+                handleOnSubTotalClick(e, record.enrollmentTime, text)
+              }
+            >
+              {text}
+            </a>
+          );
+        else return <span>{text}</span>;
+      },
     },
   ];
 
@@ -428,17 +458,21 @@ const CompletedAtLeastOnePrimaryService = ({ districtId }) => {
           title={() => (
             <React.Fragment>
               {title}:{" "}
-              <a
-                style={{
-                  textDecoration: "underline",
-                  color: "blue",
-                }}
-                onClick={(e) => handleOnCLick(e)}
-                onContextMenu={(e) => handleOnCLick(e)}
-                onMouseDown={(e) => handleOnCLick(e)}
-              >
-                {total}
-              </a>
+              {total > 0 ? (
+                <a
+                  style={{
+                    textDecoration: "underline",
+                    color: "blue",
+                  }}
+                  onClick={(e) => handleOnCLick(e)}
+                  onContextMenu={(e) => handleOnCLick(e)}
+                  onMouseDown={(e) => handleOnCLick(e)}
+                >
+                  {total}
+                </a>
+              ) : (
+                total
+              )}
             </React.Fragment>
           )}
           pagination={false}

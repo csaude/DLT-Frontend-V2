@@ -218,23 +218,27 @@ const ReportPreview = () => {
                             </p>
                             <p>
                               {title}:
-                              <a
-                                style={{
-                                  textDecoration: "underline",
-                                  color: "blue",
-                                }}
-                                onClick={(e) =>
-                                  handleOnCLick(e, total, district.id)
-                                }
-                                onContextMenu={(e) =>
-                                  handleOnCLick(e, total, district.id)
-                                }
-                                onMouseDown={(e) =>
-                                  handleOnCLick(e, total, district.id)
-                                }
-                              >
-                                {" " + total}
-                              </a>
+                              {total > 0 ? (
+                                <a
+                                  style={{
+                                    textDecoration: "underline",
+                                    color: "blue",
+                                  }}
+                                  onClick={(e) =>
+                                    handleOnCLick(e, total, district.id)
+                                  }
+                                  onContextMenu={(e) =>
+                                    handleOnCLick(e, total, district.id)
+                                  }
+                                  onMouseDown={(e) =>
+                                    handleOnCLick(e, total, district.id)
+                                  }
+                                >
+                                  {" " + total}
+                                </a>
+                              ) : (
+                                total
+                              )}
                             </p>
 
                             <p>
