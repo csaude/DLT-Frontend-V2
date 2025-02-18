@@ -1,14 +1,25 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useDispatch, useSelector } from "react-redux";
 import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
 import { loadBeneficiariesIds } from "@app/store/reducers/report";
+import { useNavigate } from "react-router-dom";
+import {
+  getAgywPrevBeneficiariesReportGenerated,
+  getFileDownloaded,
+} from "@app/utils/report";
+import LoadingModal from "@app/components/modal/LoadingModal";
 
 const CompletedOnlyPrimaryPackage = ({ districtId }) => {
   const responseData = useSelector((state: any) => state.report.agyw);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const beneficiariesIdsSelector: [] = useSelector(
+    (state: any) => state?.report.ids
+  );
+  const [dataLoading, setDataLoading] = useState(false);
+  const username = localStorage.getItem("username");
 
   const ages_10_14 = "9-14";
   const ages_15_19 = "15-19";
@@ -86,70 +97,137 @@ const CompletedOnlyPrimaryPackage = ({ districtId }) => {
     {
       title: "10-14",
       dataIndex: "range_10_14",
-      render: (text, record) => (
-        <Link
-          onClick={() =>
-            handleOnFilteredClick(record.enrollmentTime, "9-14", text)
-          }
-          to="/viewAgyw"
-        >
-          {text}
-        </Link>
-      ),
+      render: (text, record) => {
+        if (text > 0)
+          return (
+            <a
+              style={{
+                textDecoration: "underline",
+                color: "blue",
+              }}
+              onClick={(e) =>
+                handleOnFilteredClick(e, record.enrollmentTime, "9-14", text)
+              }
+              onContextMenu={(e) =>
+                handleOnFilteredClick(e, record.enrollmentTime, "9-14", text)
+              }
+              onMouseDown={(e) =>
+                handleOnFilteredClick(e, record.enrollmentTime, "9-14", text)
+              }
+            >
+              {text}
+            </a>
+          );
+        else return <span>{text}</span>;
+      },
     },
     {
       title: "15-19",
       dataIndex: "range_15_19",
-      render: (text, record) => (
-        <Link
-          onClick={() =>
-            handleOnFilteredClick(record.enrollmentTime, "15-19", text)
-          }
-          to="/viewAgyw"
-        >
-          {text}
-        </Link>
-      ),
+      render: (text, record) => {
+        if (text > 0)
+          return (
+            <a
+              style={{
+                textDecoration: "underline",
+                color: "blue",
+              }}
+              onClick={(e) =>
+                handleOnFilteredClick(e, record.enrollmentTime, "15-19", text)
+              }
+              onContextMenu={(e) =>
+                handleOnFilteredClick(e, record.enrollmentTime, "15-19", text)
+              }
+              onMouseDown={(e) =>
+                handleOnFilteredClick(e, record.enrollmentTime, "15-19", text)
+              }
+            >
+              {text}
+            </a>
+          );
+        else return <span>{text}</span>;
+      },
     },
     {
       title: "20-24",
       dataIndex: "range_20_24",
-      render: (text, record) => (
-        <Link
-          onClick={() =>
-            handleOnFilteredClick(record.enrollmentTime, "20-24", text)
-          }
-          to="/viewAgyw"
-        >
-          {text}
-        </Link>
-      ),
+      render: (text, record) => {
+        if (text > 0)
+          return (
+            <a
+              style={{
+                textDecoration: "underline",
+                color: "blue",
+              }}
+              onClick={(e) =>
+                handleOnFilteredClick(e, record.enrollmentTime, "20-24", text)
+              }
+              onContextMenu={(e) =>
+                handleOnFilteredClick(e, record.enrollmentTime, "20-24", text)
+              }
+              onMouseDown={(e) =>
+                handleOnFilteredClick(e, record.enrollmentTime, "20-24", text)
+              }
+            >
+              {text}
+            </a>
+          );
+        else return <span>{text}</span>;
+      },
     },
     {
       title: "25-29",
       dataIndex: "range_25_29",
-      render: (text, record) => (
-        <Link
-          onClick={() =>
-            handleOnFilteredClick(record.enrollmentTime, "25-29", text)
-          }
-          to="/viewAgyw"
-        >
-          {text}
-        </Link>
-      ),
+      render: (text, record) => {
+        if (text > 0)
+          return (
+            <a
+              style={{
+                textDecoration: "underline",
+                color: "blue",
+              }}
+              onClick={(e) =>
+                handleOnFilteredClick(e, record.enrollmentTime, "25-29", text)
+              }
+              onContextMenu={(e) =>
+                handleOnFilteredClick(e, record.enrollmentTime, "25-29", text)
+              }
+              onMouseDown={(e) =>
+                handleOnFilteredClick(e, record.enrollmentTime, "25-29", text)
+              }
+            >
+              {text}
+            </a>
+          );
+        else return <span>{text}</span>;
+      },
     },
     {
       title: "SUB-TOTAL",
       dataIndex: "subTotal",
-      render: (text, record) => (
-        <Link
-          onClick={() => handleOnSubTotalClick(record.enrollmentTime, text)}
-          to="/viewAgyw"
-        >
-          {text}
-        </Link>
-      ),
+      render: (text, record) => {
+        if (text > 0)
+          return (
+            <a
+              style={{
+                textDecoration: "underline",
+                color: "blue",
+              }}
+              onClick={(e) =>
+                handleOnSubTotalClick(e, record.enrollmentTime, text)
+              }
+              onContextMenu={(e) =>
+                handleOnSubTotalClick(e, record.enrollmentTime, text)
+              }
+              onMouseDown={(e) =>
+                handleOnSubTotalClick(e, record.enrollmentTime, text)
+              }
+            >
+              {text}
+            </a>
+          );
+        else return <span>{text}</span>;
+      },
     },
   ];
 
@@ -219,11 +297,20 @@ const CompletedOnlyPrimaryPackage = ({ districtId }) => {
     return elements;
   }
 
-  const handleOnCLick = () => {
+  const handleOnCLick = (e) => {
     const elements = extractElements(arrBeneficiaries);
     dispatch(
       loadBeneficiariesIds({ ids: elements, title: title_pt, total: total })
     );
+
+    if (e.type === "click") {
+      console.log("Left click");
+      navigate("/viewAgyw");
+    } else {
+      console.log("Right click");
+      e.preventDefault();
+      if (e.type !== "contextmenu") handleGenerateXLSXReport();
+    }
   };
 
   function filterByAgeRange(data, param) {
@@ -251,6 +338,7 @@ const CompletedOnlyPrimaryPackage = ({ districtId }) => {
   }
 
   const handleOnFilteredClick = (
+    e,
     enrollmentTime: string,
     ageRange: string,
     total: number
@@ -267,6 +355,15 @@ const CompletedOnlyPrimaryPackage = ({ districtId }) => {
         total: total,
       })
     );
+
+    if (e.type === "click") {
+      console.log("Left click");
+      navigate("/viewAgyw");
+    } else {
+      console.log("Right click");
+      e.preventDefault();
+      if (e.type !== "contextmenu") handleGenerateXLSXReport();
+    }
   };
 
   function extractSubTotalElements(
@@ -285,7 +382,7 @@ const CompletedOnlyPrimaryPackage = ({ districtId }) => {
     return elements;
   }
 
-  const handleOnSubTotalClick = (enrollmentTime: string, total: number) => {
+  const handleOnSubTotalClick = (e, enrollmentTime: string, total: number) => {
     const elements = extractSubTotalElements(arrBeneficiaries, enrollmentTime);
     dispatch(
       loadBeneficiariesIds({
@@ -294,6 +391,50 @@ const CompletedOnlyPrimaryPackage = ({ districtId }) => {
         total: total,
       })
     );
+
+    if (e.type === "click") {
+      console.log("Left click");
+      navigate("/viewAgyw");
+    } else {
+      console.log("Right click");
+      e.preventDefault();
+      if (e.type !== "contextmenu") handleGenerateXLSXReport();
+    }
+  };
+
+  async function handleGenerateXLSXReport() {
+    const beneficiariesIds = beneficiariesIdsSelector.slice(); // Copy the array
+
+    setDataLoading(true);
+    try {
+      const response = await getAgywPrevBeneficiariesReportGenerated(
+        beneficiariesIds,
+        username
+      );
+      await downloadFile(response.data);
+      setDataLoading(false);
+    } catch (error) {
+      setDataLoading(false);
+      console.error("Error downloading the Excel report", error);
+    }
+  }
+
+  const downloadFile = async (filePath) => {
+    try {
+      setDataLoading(true);
+      const response = await getFileDownloaded(filePath);
+
+      const filename = filePath.substring(filePath.lastIndexOf("/") + 1);
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      setDataLoading(false);
+      console.error("Error downloading file: ", error);
+    }
   };
 
   return (
@@ -306,14 +447,27 @@ const CompletedOnlyPrimaryPackage = ({ districtId }) => {
           title={() => (
             <React.Fragment>
               {title}:{" "}
-              <Link onClick={handleOnCLick} to="/viewAgyw">
-                {total}
-              </Link>
+              {total > 0 ? (
+                <a
+                  style={{
+                    textDecoration: "underline",
+                    color: "blue",
+                  }}
+                  onClick={(e) => handleOnCLick(e)}
+                  onContextMenu={(e) => handleOnCLick(e)}
+                  onMouseDown={(e) => handleOnCLick(e)}
+                >
+                  {total}
+                </a>
+              ) : (
+                total
+              )}
             </React.Fragment>
           )}
           pagination={false}
         />
       )}
+      {<LoadingModal modalVisible={dataLoading} />}
     </Fragment>
   );
 };

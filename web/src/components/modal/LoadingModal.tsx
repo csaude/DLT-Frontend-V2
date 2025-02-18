@@ -1,12 +1,11 @@
 import React from "react";
-import { Space, Spin } from "antd";
-import "./styles.css";
-
+import { Spin } from "antd";
 import { Modal } from "antd";
 import "./styles.css";
 
 const LoadingModal = ({ modalVisible, message }: any) => {
-  const tip = message != undefined ? message : "Carregando. Aguarde Por Favor.";
+  const tip =
+    message !== undefined ? message : "Carregando, Por Favor Aguarde!";
   return (
     <>
       <Modal
@@ -17,18 +16,19 @@ const LoadingModal = ({ modalVisible, message }: any) => {
         maskClosable={false}
         footer={null}
         closable={false}
+        bodyStyle={{ backgroundColor: "grey" }} // Set modal body background to transparent
       >
         <div>
-          <Space direction="vertical" style={{ width: "100%" }}>
-            <Space>
-              <Spin tip={message} size="large">
-                <div className="content" />
-              </Spin>
-            </Space>
-          </Space>
+          <Spin
+            className="custom-spin"
+            tip={tip}
+            size="large"
+            style={{ color: "whitesmoke" }}
+          />
         </div>
       </Modal>
     </>
   );
 };
+
 export default LoadingModal;

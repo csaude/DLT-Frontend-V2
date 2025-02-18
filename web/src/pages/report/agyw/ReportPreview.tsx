@@ -1,6 +1,6 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { Collapse } from "antd";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 const { Panel } = Collapse;
 import CompletedOnlyPrimaryPackage from "./containers/CompletedOnlyPrimaryPackage";
 import CompletedPrimaryPackageAndSecondaryService from "./containers/CompletedPrimaryPackageAndSecondaryService";
@@ -14,6 +14,11 @@ import {
   loadTotalBeneficiariesIds,
   resetTotalBeneficiariesIds,
 } from "@app/store/reducers/report";
+import {
+  getAgywPrevBeneficiariesReportGenerated,
+  getFileDownloaded,
+} from "@app/utils/report";
+import LoadingModal from "@app/components/modal/LoadingModal";
 
 const ReportPreview = () => {
   const { state }: any = useLocation();
@@ -22,7 +27,13 @@ const ReportPreview = () => {
   const responseData = useSelector((state: any) => state.report.agyw);
   const totalIds = useSelector((state: any) => state.report.totalIds);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   let currentProvinceId: any;
+  const beneficiariesIdsSelector: [] = useSelector(
+    (state: any) => state?.report.ids
+  );
+  const [dataLoading, setDataLoading] = useState(false);
+  const username = localStorage.getItem("username");
 
   const handeOnExpandProvince = () => {
     /*Collapse on change prov*/
@@ -111,13 +122,58 @@ const ReportPreview = () => {
 
   const title = "Total de Beneficiárias no Indicador AGYW_PREV";
 
-  const handleOnCLick = (total, districtId) => {
+  const handleOnCLick = (e, total, districtId) => {
     dispatch(resetTotalBeneficiariesIds());
     loadCompletedOnlyPrimaryPackage(total, districtId);
     loadCompletedPrimaryPackageAndSecondaryService(total, districtId);
     loadCompletedAtLeastOnePrimaryService(total, districtId);
     loadStartedServiceDidNotComplete(total, districtId);
+
+    if (e.type === "click") {
+      console.log("Left click");
+      navigate("/viewAgyw");
+    } else {
+      console.log("Right click");
+      e.preventDefault();
+      if (e.type !== "contextmenu") handleGenerateXLSXReport();
+    }
   };
+
+  async function handleGenerateXLSXReport() {
+    const beneficiariesIds = beneficiariesIdsSelector.slice(); // Copy the array
+
+    setDataLoading(true);
+    try {
+      const response = await getAgywPrevBeneficiariesReportGenerated(
+        beneficiariesIds,
+        username
+      );
+      await downloadFile(response.data);
+      setDataLoading(false);
+    } catch (error) {
+      setDataLoading(false);
+      console.error("Error downloading the Excel report", error);
+    }
+  }
+
+  const downloadFile = async (filePath) => {
+    try {
+      setDataLoading(true);
+      const response = await getFileDownloaded(filePath);
+
+      const filename = filePath.substring(filePath.lastIndexOf("/") + 1);
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      setDataLoading(false);
+      console.error("Error downloading file: ", error);
+    }
+  };
+
   return (
     <>
       <p>Data Inicial: {initialDate}</p>
@@ -144,65 +200,83 @@ const ReportPreview = () => {
                         responseData[district.id]["total-beneficiaries"].total;
 
                       return (
-                        <Panel header={district.name} key={district.id}>
-                          <p>Distrito: {" " + district.name}</p>
-                          <p>RESUMO DISTRITAL</p>
-                          <p>
-                            Total de Adolescentes e Jovens Registados:
-                            {" " + beneficiariesTotal}
-                          </p>
-                          <p>
-                            Total de Adolescentes e Jovens do Sexo Feminino:
-                            {" " + femaleTotal}
-                          </p>
-                          <p>
-                            Total de Adolescentes e Jovens do Sexo Masculino:
-                            {" " + maleTotal}
-                          </p>
-                          <p>
-                            {title}:
-                            <Link
-                              onClick={() => handleOnCLick(total, district.id)}
-                              to="/viewAgyw"
-                            >
-                              {" " + total}
-                            </Link>
-                          </p>
+                        <>
+                          <Panel header={district.name} key={district.id}>
+                            <p>Distrito: {" " + district.name}</p>
+                            <p>RESUMO DISTRITAL</p>
+                            <p>
+                              Total de Adolescentes e Jovens Registados:
+                              {" " + beneficiariesTotal}
+                            </p>
+                            <p>
+                              Total de Adolescentes e Jovens do Sexo Feminino:
+                              {" " + femaleTotal}
+                            </p>
+                            <p>
+                              Total de Adolescentes e Jovens do Sexo Masculino:
+                              {" " + maleTotal}
+                            </p>
+                            <p>
+                              {title}:
+                              {total > 0 ? (
+                                <a
+                                  style={{
+                                    textDecoration: "underline",
+                                    color: "blue",
+                                  }}
+                                  onClick={(e) =>
+                                    handleOnCLick(e, total, district.id)
+                                  }
+                                  onContextMenu={(e) =>
+                                    handleOnCLick(e, total, district.id)
+                                  }
+                                  onMouseDown={(e) =>
+                                    handleOnCLick(e, total, district.id)
+                                  }
+                                >
+                                  {" " + total}
+                                </a>
+                              ) : (
+                                total
+                              )}
+                            </p>
 
-                          <p>
-                            <CompletedOnlyPrimaryPackage
-                              districtId={district.id}
-                            />
-                          </p>
-                          <p>
-                            <CompletedPrimaryPackageAndSecondaryService
-                              districtId={district.id}
-                            />
-                          </p>
-                          <p>
-                            <CompletedAtLeastOnePrimaryService
-                              districtId={district.id}
-                            />
-                          </p>
-                          <p>
-                            <StartedServiceDidNotComplete
-                              districtId={district.id}
-                            />
-                          </p>
-                          <p>
-                            <CompletedViolenceService
-                              districtId={district.id}
-                            />
-                          </p>
-                          <p>
-                            <HadSchoolAllowance districtId={district.id} />
-                          </p>
-                          <p>
-                            <CompletedSocialEconomicApproaches
-                              districtId={district.id}
-                            />
-                          </p>
-                        </Panel>
+                            <p>
+                              <CompletedOnlyPrimaryPackage
+                                districtId={district.id}
+                              />
+                            </p>
+                            <p>
+                              <CompletedPrimaryPackageAndSecondaryService
+                                districtId={district.id}
+                              />
+                            </p>
+                            <p>
+                              <CompletedAtLeastOnePrimaryService
+                                districtId={district.id}
+                              />
+                            </p>
+                            <p>
+                              <StartedServiceDidNotComplete
+                                districtId={district.id}
+                              />
+                            </p>
+                            <p>
+                              <CompletedViolenceService
+                                districtId={district.id}
+                              />
+                            </p>
+                            <p>
+                              <HadSchoolAllowance districtId={district.id} />
+                            </p>
+                            <p>
+                              <CompletedSocialEconomicApproaches
+                                districtId={district.id}
+                              />
+                            </p>
+                          </Panel>
+                          {<LoadingModal modalVisible={dataLoading} />}
+                        </>
                       );
                     }
                   })}
