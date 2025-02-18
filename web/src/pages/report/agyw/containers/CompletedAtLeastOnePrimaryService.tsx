@@ -321,7 +321,7 @@ const CompletedAtLeastOnePrimaryService = ({ districtId }) => {
     } else {
       console.log("Right click");
       e.preventDefault();
-      handleGenerateXLSXReport();
+      if (e.type !== "contextmenu") handleGenerateXLSXReport();
     }
   };
 
@@ -374,7 +374,7 @@ const CompletedAtLeastOnePrimaryService = ({ districtId }) => {
     } else {
       console.log("Right click");
       e.preventDefault();
-      handleGenerateXLSXReport();
+      if (e.type !== "contextmenu") handleGenerateXLSXReport();
     }
   };
 
@@ -409,7 +409,7 @@ const CompletedAtLeastOnePrimaryService = ({ districtId }) => {
     } else {
       console.log("Right click");
       e.preventDefault();
-      handleGenerateXLSXReport();
+      if (e.type !== "contextmenu") handleGenerateXLSXReport();
     }
   };
 

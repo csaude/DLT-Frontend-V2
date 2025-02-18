@@ -135,7 +135,7 @@ const ReportPreview = () => {
     } else {
       console.log("Right click");
       e.preventDefault();
-      handleGenerateXLSXReport();
+      if (e.type !== "contextmenu") handleGenerateXLSXReport();
     }
   };
 

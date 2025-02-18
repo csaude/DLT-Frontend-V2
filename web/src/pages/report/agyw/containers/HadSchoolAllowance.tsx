@@ -306,7 +306,7 @@ const HadSchoolAllowance = ({ districtId }) => {
     } else {
       console.log("Right click");
       e.preventDefault();
-      handleGenerateXLSXReport();
+      if (e.type !== "contextmenu") handleGenerateXLSXReport();
     }
   };
 
@@ -359,7 +359,7 @@ const HadSchoolAllowance = ({ districtId }) => {
     } else {
       console.log("Right click");
       e.preventDefault();
-      handleGenerateXLSXReport();
+      if (e.type !== "contextmenu") handleGenerateXLSXReport();
     }
   };
 
@@ -395,7 +395,7 @@ const HadSchoolAllowance = ({ districtId }) => {
     } else {
       console.log("Right click");
       e.preventDefault();
-      handleGenerateXLSXReport();
+      if (e.type !== "contextmenu") handleGenerateXLSXReport();
     }
   };
 
