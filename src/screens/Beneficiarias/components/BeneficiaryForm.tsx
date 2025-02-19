@@ -775,6 +775,8 @@ const BeneficiaryForm: React.FC = ({
               )),
               (beneficiary.vblt_deficiency_type =
                 formik.values.vblt_deficiency_type),
+              (beneficiary.vblt_married_before =
+                Number(formik.values.vblt_married_before)),
               (beneficiary.vblt_idp = Number(formik.values.vblt_idp)),
               (beneficiary.vblt_tested_hiv = formik.values.vblt_tested_hiv);
           });
