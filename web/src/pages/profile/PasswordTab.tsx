@@ -29,9 +29,17 @@ const PasswordTab = ({ isActive }: { isActive: boolean }) => {
       dispatch(logoutUser());
       navigate("/login");
     } catch (error) {
+      const errStr = JSON.stringify(error);
+      const errObj = JSON.parse(errStr);
       setAuthLoading(false);
-      toast.error("Erro na alteração da password!");
-      console.log(error);
+      if (errObj.status == 401) {
+        toast.error(
+          "A password foi usada recentemente, escolha uma password diferente!"
+        );
+      } else {
+        toast.error("Erro na alteração da password!");
+        console.log(error);
+      }
     }
   };
 

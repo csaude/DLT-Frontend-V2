@@ -19,6 +19,7 @@ const LocalityForm = ({
   modalVisible,
   handleModalVisible,
   handleAdd,
+  allowDataEntry,
 }) => {
   const [statusEnabled, setStatusEnabled] = useState(false);
   const [enabledDistricts, setEnabledDistricts] = useState(false);
@@ -100,7 +101,12 @@ const LocalityForm = ({
         <Button key="Cancel" onClick={() => showCloseConfirm()}>
           Cancelar
         </Button>,
-        <Button key="OK" onClick={handleAdd} type="primary">
+        <Button
+          key="OK"
+          onClick={handleAdd}
+          hidden={!allowDataEntry}
+          type="primary"
+        >
           Salvar
         </Button>,
       ]}
@@ -196,6 +202,7 @@ LocalityForm.propTypes = {
   modalVisible: PropTypes.bool.isRequired,
   handleModalVisible: PropTypes.func.isRequired,
   handleAdd: PropTypes.func.isRequired,
+  allowDataEntry: PropTypes.bool.isRequired,
 };
 
 export default LocalityForm;

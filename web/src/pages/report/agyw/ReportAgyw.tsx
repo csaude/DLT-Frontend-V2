@@ -68,8 +68,11 @@ const ReportAgyw = () => {
       } else {
         provinces = await queryAll();
       }
+      const sortedProvinces = provinces.sort((prov1, prov2) =>
+        prov1.name.localeCompare(prov2.name)
+      );
       setLogguedUser(loggedUser);
-      setAllProvinces(provinces);
+      setAllProvinces(sortedProvinces);
     };
 
     fetchData().catch((error) => console.log(error));
@@ -110,7 +113,10 @@ const ReportAgyw = () => {
       if (reportType == 2) {
         dataDistricts = dataDistricts.filter((d) => [44, 45].includes(d.id));
       }
-      setDistricts(dataDistricts);
+      const sortedDistricts = dataDistricts.sort((dist1, dist2) =>
+        dist1.name.localeCompare(dist2.name)
+      );
+      setDistricts(sortedDistricts);
     } else {
       setDistricts(undefined);
     }
@@ -240,7 +246,7 @@ const ReportAgyw = () => {
             color: "#17a2b8",
           }}
         >
-          PEPFAR MER 2.7 Indicador Semi-Annual AGYW_PREV
+          PEPFAR MER 2.8 Indicador Semi-Annual AGYW_PREV
         </Title>
         <Card
           title="Parâmetros do Indicador AGYW_PREV "
@@ -295,21 +301,35 @@ const ReportAgyw = () => {
                     />
                   </Form.Item>
 
-                  <Form.Item name="initialDate" label="Data Inicial">
+                  <Form.Item
+                    name="initialDate"
+                    label="Data Inicial"
+                    rules={[{ required: true, message: RequiredFieldMessage }]}
+                  >
                     <Space direction="vertical">
                       <DatePicker
                         onChange={(e) => {
                           setInitialDate(e);
+                          form.setFieldsValue({
+                            initialDate: moment(e).format("YYYY-MM-DD"),
+                          });
                         }}
                       />
                     </Space>
                   </Form.Item>
 
-                  <Form.Item name="finalDate" label="Data Final">
+                  <Form.Item
+                    name="finalDate"
+                    label="Data Final"
+                    rules={[{ required: true, message: RequiredFieldMessage }]}
+                  >
                     <Space direction="vertical">
                       <DatePicker
                         onChange={(e) => {
                           setFinalDate(e);
+                          form.setFieldsValue({
+                            finalDate: moment(e).format("YYYY-MM-DD"),
+                          });
                         }}
                       />
                     </Space>

@@ -65,8 +65,16 @@ export async function edit(payload: any) {
   return res;
 }
 
-export async function bulkCancel(payload: BulkReferenceCancel) {
+export async function bulkCancelSelected(payload: BulkReferenceCancel) {
   const res = await update("/api/references/bulkCancel", payload);
+  return res;
+}
+
+export async function bulkCancelAll(
+  payload: BulkReferenceCancel,
+  userId: number
+) {
+  const res = await update(`/api/references/bulkCancelAll/${userId}`, payload);
   return res;
 }
 
@@ -196,5 +204,14 @@ export async function getReferencesCountByBeneficiaryQuery(
   const res = await select(
     `/api/references/countByBeneficiary/${beneficiaryId}`
   );
+  return res;
+}
+
+export async function queryById(id: number) {
+  let res: any;
+  if (id) {
+    const url = `/api/references/${id}`;
+    res = await select(url);
+  }
   return res;
 }

@@ -11,8 +11,6 @@ const StepVulnerabilidadesEspecificas = ({
 }: any) => {
   const [gbvTypeEnabled, setGbvTypeEnabled] = useState<any>(true);
   const [gbvTimeEnabled, setGbvTimeEnabled] = useState<any>(true);
-  const [sexExploitationTimeEnabled, setSexExploitationTimeEnabled] =
-    useState<any>(true);
   const [minAge, setMinAge] = useState<boolean>();
 
   useEffect(() => {
@@ -31,12 +29,6 @@ const StepVulnerabilidadesEspecificas = ({
 
     setMinAge(!validate);
   };
-
-  const sexExploitationChange = async (values: any) => {
-    form.setFieldsValue({ vblt_sexploitation_time: null });
-    setSexExploitationTimeEnabled(values.target.value != 1);
-  };
-
   const gbvVictimChange = async (values: any) => {
     form.setFieldsValue({ vblt_vbg_type: null });
     form.setFieldsValue({ vblt_vbg_time: null });
@@ -70,8 +62,6 @@ const StepVulnerabilidadesEspecificas = ({
             />
           </Form.Item>
         </Col>
-      </Row>
-      <Row gutter={24}>
         <Col className="gutter-row" span={8}>
           <Form.Item
             id="vblt_sexually_active-control"
@@ -102,6 +92,8 @@ const StepVulnerabilidadesEspecificas = ({
             </Radio.Group>
           </Form.Item>
         </Col>
+      </Row>
+      <Row gutter={24}>
         <Col className="gutter-row" span={8}>
           <Form.Item
             id="vblt_multiple_partners-control"
@@ -117,68 +109,19 @@ const StepVulnerabilidadesEspecificas = ({
             </Radio.Group>
           </Form.Item>
         </Col>
-      </Row>
-      <Row gutter={24}>
         <Col className="gutter-row" span={8}>
           <Form.Item
-            id="vblt_trafficking_victim-control"
-            name="vblt_trafficking_victim"
-            label="Vítima de Tráfico?"
+            id="vblt_sexual_exploitation-trafficking-victim-control"
+            name="vblt_sexual_exploitation_trafficking_victim"
+            label="Vítima de Exploração Sexual ou de Tráfico?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
-            initialValue={beneficiary?.vbltTraffickingVictim}
+            initialValue={beneficiary?.vbltSexualExploitationTraffickingVictim}
           >
-            <Radio.Group id="vblt_trafficking_victim-options">
+            <Radio.Group id="vblt_sexual_exploitation-options">
               <Radio.Button value={1}>SIM</Radio.Button>
               <Radio.Button value={0}>NÃO</Radio.Button>
             </Radio.Group>
-          </Form.Item>
-        </Col>
-        <Col className="gutter-row" span={8}>
-          <Form.Item
-            id="vblt_sexual_exploitation-control"
-            name="vblt_sexual_exploitation"
-            label="Vítima de Exploração sexual?"
-            rules={[{ required: true, message: RequiredFieldMessage }]}
-            style={{ textAlign: "left" }}
-            initialValue={beneficiary?.vbltSexualExploitation}
-          >
-            <Radio.Group
-              id="vblt_sexual_exploitation-options"
-              onChange={sexExploitationChange}
-            >
-              <Radio.Button value={1}>SIM</Radio.Button>
-              <Radio.Button value={0}>NÃO</Radio.Button>
-            </Radio.Group>
-          </Form.Item>
-        </Col>
-        <Col className="gutter-row" span={8}>
-          <Form.Item
-            id="vblt_sexploitation_time-control"
-            name="vblt_sexploitation_time"
-            label="Tempo"
-            rules={[
-              {
-                required: !sexExploitationTimeEnabled,
-                message: RequiredFieldMessage,
-              },
-            ]}
-            style={{ textAlign: "left" }}
-            initialValue={beneficiary?.vbltSexploitationTime}
-          >
-            <Select
-              id="vblt_sexploitation_time-selection"
-              size="middle"
-              placeholder="Please select"
-              disabled={sexExploitationTimeEnabled}
-              //defaultValue={['a10', 'c12']}
-              //onChange={handleChange}
-              style={{ width: "100%" }}
-            >
-              {["+3 Dias", "-3 Dias"].map((item) => (
-                <Option key={item}>{item}</Option>
-              ))}
-            </Select>
           </Form.Item>
         </Col>
       </Row>

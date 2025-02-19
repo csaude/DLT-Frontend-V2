@@ -1,4 +1,4 @@
-import { download, select } from "./crud";
+import { create, download, select } from "./crud";
 
 export async function agywPrevQuery(
   districts?: any,
@@ -95,6 +95,27 @@ export async function getBeneficiariesWithoutPrimaryPackageCompletedReportGenera
   username?: any
 ) {
   const url = `/api/agyw-prev/beneficiariesWithoutPrimaryPackageCompleted?province=${province}&districts=${districts}&startDate=${startDate}&endDate=${endDate}&username=${username}`;
+  const res = await select(url);
+  return res;
+}
+
+export async function getAgywPrevBeneficiariesReportGenerated(
+  beneficiariesIds?: any,
+  username?: any
+) {
+  const url = `/api/agyw-prev/agywPrevBeneficiaries?username=${username}`;
+  const res = await create(url, beneficiariesIds);
+  return res;
+}
+
+export async function getBeneficiariesInWaitingListReportGenerated(
+  province?: string,
+  districts?: any,
+  startDate?: any,
+  endDate?: any,
+  username?: any
+) {
+  const url = `/api/agyw-prev/beneficiaries-in-waiting-list?province=${province}&districts=${districts}&startDate=${startDate}&endDate=${endDate}&username=${username}`;
   const res = await select(url);
   return res;
 }

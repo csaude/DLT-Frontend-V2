@@ -48,7 +48,6 @@ const Login = () => {
       dispatch(loginUser(data));
       localStorage.setItem("dateCreated", user?.dateCreated);
       user.lastLoginDate = new Date();
-      await edit(user);
       navigate("/");
     } catch (error) {
       const errSt = JSON.stringify(error);

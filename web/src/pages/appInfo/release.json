@@ -1,7 +1,7 @@
 {
   "release": {
-    "version": "1.4.0",
-    "date": "20/09/2024",
+    "version": "1.5.0",
+    "date": "20/12/2024",
     "changelogs": [
       {
         "id": 1,
@@ -17,36 +17,37 @@
                 "subsubitems": [
                   {
                     "id": 1.111,
-                    "subsubitem": "Removed the vulnerabilities 'is orphan', 'has ever been pregnant', 'has kids', 'is pregnant or breastfeeding' and 'works' / Removidas as vulnerabilidades: 'é órfã', 'já esteve grávida' ,  'tem filhos', 'está grávida  ou amamentar' e 'trabalha'"
-                  },
-                  {
-                    "id": 1.112,
-                    "subsubitem": "Included the vulnerability 'IDP' / Incluída a vulnerabilidade 'deslocado interno'"
+                    "subsubitem": "Merged 'Sexual Exploitation' and 'Human Trafficking' vulnerabilities / Combinadas as vulnerabilidades: 'Vítima de Exploração Sexual' e 'Vítima de Tráfico'"
                   }
                 ]
-              },
+              }
+            ]
+          },
+          {
+            "id": 1.2,
+            "item": "Beneficiary Service Provision / Provisão de Serviços a Beneficiária:",
+            "subitems": [
               {
-                "id": 1.12,
-                "subitem": "Updated Specific Vulnerabilities according to the new SOP / Actualização das Vulnerabilidades Específicas de acordo com o novo POP:",
+                "id": 1.21,
+                "subitem": "Updated Siyakha Services / Actualização dos Serviços Siyakha:",
                 "subsubitems": [
                   {
-                    "id": 1.121,
-                    "subsubitem": "Removed the vulnerability 'migrant' / Removida a Vulnerabilidade 'migrante'"
+                    "id": 1.211,
+                    "subsubitem": "Moved Siyakha Light and Siyakha Comprehensive to service level / Movidos os pacotes Siyakha Light e Siyakha Comprehensive para o nível de serviços"
                   },
                   {
-                    "id": 1.122,
-                    "subsubitem": "Included the vulnerability  'Is or Has ever been Pregnant or Has kids' as a single vulnerability / Incluída a vulnerabilidade 'Está ou Já esteve Grávida ou Tem filhos' como uma única vulnerabilidade"
+                    "id": 1.212,
+                    "subsubitem": "Included each Siyakha model phases as subservices / Incluídas as fases de cada modelo Siyakha como intervenções"
+                  },
+                  {
+                    "id": 1.213,
+                    "subsubitem": "Included an End Date for each Siyakha phase / Incluída a Data de Fim para cada fase do Siyakha"
                   }
                 ]
               },
               {
-                "id": 1.13,
-                "subitem": "Improvement in the mobile interface to block the screen during registration process to avoid duplicate entries / Melhoria na interface móvel para bloquear a tela durante o processo de registo para evitar duplicidade de registos",
-                "subsubitems": []
-              },
-              {
-                "id": 1.14,
-                "subitem": "Improvement in the intervention counter to accurately count the beneficiary’s interventions / Melhoria no contador de intervenções para contabilizar correctamente as intervenções de um beneficiário",
+                "id": 1.22,
+                "subitem": "Update the service name to be aligned with the physical form / Actualização do nome de serviços em alinhamento com a ficha em papel (Ticket #3557)",
                 "subsubitems": []
               }
             ]
@@ -63,12 +64,12 @@
             "subitems": [
               {
                 "id": 2.11,
-                "subitem": "Improvement in the mobile interface to block the screen during registration process to avoid duplicate entries / Melhoria na interface móvel para bloquear a tela durante o processo de registo para evitar duplicidade de registos",
+                "subitem": "Updated to include the option to decline a service / Incluída a opção para “recusar” serviços (Ticket #3671)",
                 "subsubitems": []
               },
               {
                 "id": 2.12,
-                "subitem": "Included the global filters start and end date to the referrals list (Ticket #3528) / Incluídos na lista de referências os filtros globais data de início e fim (Ticket #3528)",
+                "subitem": "Update the referral fields to be aligned with the physical referral form / Actualização dos campos de referência em alinhamento com a guia de referência física; (Ticket #3557)",
                 "subsubitems": []
               }
             ]
@@ -81,27 +82,44 @@
         "items": [
           {
             "id": 3.1,
-            "item": "User synchronization Report / Relatório de Sincronização do Utilizador:",
+            "item": "User Registration / Registo de Utilizadores:",
             "subitems": [
               {
                 "id": 3.11,
-                "subitem": "Included a feature to export the report to Excel file / Incluída a funcionalidade  de exportação do relatório para uma ficheiro em Excel",
+                "subitem": "Created new profiles: 'MISAU' and 'Donor Monitoring & Evaluation' / Criado novos perfis: para 'MISAU' e 'Monitoria e Avaliação do Doador'",
                 "subsubitems": []
-              },
+              }
+            ]
+          },
+          {
+            "id": 3.2,
+            "item": "Login / Autenticação:",
+            "subitems": [
               {
-                "id": 3.12,
-                "subitem": "Included a new column to show the installed app version (Ticket #3533) / Incluída nova coluna para apresentar a versão instalada do aplicativo",
-                "subsubitems": []
-              },
+                "id": 3.21,
+                "subitem": "Included validation for unique passwords / Incluída validação de unicidade de senhas:",
+                "subsubitems": [
+                  {
+                    "id": 3.211,
+                    "subsubitem": "Validate against the last 3 passwords / Validação das últimas 3 senhas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": 3.3,
+            "item": "Password Reset / Redefinição de Senhas:",
+            "subitems": [
               {
-                "id": 3.13,
-                "subitem": "Included  Entry point to global filters (Ticket #3563) / Incluído  o ponto de entrada nos filtros globais",
-                "subsubitems": []
-              },
-              {
-                "id": 3.14,
-                "subitem": "Removed the hours in the date of last sync (Ticket #3576) / Removidas as horas na data de última sincronização",
-                "subsubitems": []
+                "id": 3.31,
+                "subitem": "Included validation for unique passwords / Incluída validação de unicidade de senhas:",
+                "subsubitems": [
+                  {
+                    "id": 3.311,
+                    "subsubitem": "Validate against the last 3 passwords / Validação das últimas 3 senhas"
+                  }
+                ]
               }
             ]
           }
@@ -113,85 +131,84 @@
         "items": [
           {
             "id": 4.1,
-            "item": "Simplified AGYW_PREV Indicator Report/ Relatório Simplificado do Indicador AGYW_PREV:",
+            "item": "AGYW_PREV and Simplified AGYW_PREV Indicator Report / Relatório do Indicador AGYW_PREV e AGYW_PREV Simplificado:",
             "subitems": [
               {
                 "id": 4.11,
-                "subitem": "Removed the services Aflatoun and Provision and Promotion of Contraceptives / Removidos os serviços Aflatoun e Promoção e Provisão de Contraceptivos",
+                "subitem": "Updated references to MER 2.8 Guide / Actualização de Referência do guião MER para 2.8",
+                "subsubitems": []
+              },
+              {
+                "id": 4.12,
+                "subitem": "Included Siyakha Light and Siyakha Comprehensive service completion rules / Inclusão das regras de completude dos serviços Siyakha Light e Siyakha Comprehensive",
+                "subsubitems": []
+              },
+              {
+                "id": 4.13,
+                "subitem": "Updated Vulnerability assessment according to the new SOP / Actualização das regras de avaliação de vulnerabilidades conforme o novo POP",
+                "subsubitems": []
+              },
+              {
+                "id": 4.14,
+                "subitem": "Added option to export all the indicators in web preview mode to an excel file / Adicionada a opção para exportação de todos os indicadores em modo web",
+                "subsubitems": []
+              },
+              {
+                "id": 4.15,
+                "subitem": "Included Siyakha Light and Siyakha Comprehensive service completion rules / Inclusão das regras de completude dos serviços Siyakha Light e Siyakha Comprehensive",
+                "subsubitems": []
+              },
+              {
+                "id": 4.16,
+                "subitem": "Consider at least one Community Service to count beneficiary for the indicator / Actualização para considerar a existência de pelo menos um serviço comunitário para a contabilização das beneficiárias no indicador",
+                "subsubitems": []
+              },
+              {
+                "id": 4.17,
+                "subitem": "Merged 'Sexual Exploitation' and 'Human Trafficking' vulnerabilities / Combinadas as vulnerabilidades: 'Vítima de Exploração Sexual' e 'Vítima de Tráfico'",
                 "subsubitems": []
               }
             ]
           },
           {
             "id": 4.2,
-            "item": "AGYW_PREV Indicator Report/ Relatório do Indicador AGYW_PREV:",
+            "item": "List of Beneficiaries Without Specific Vulnerabilities Registered / Lista de Beneficiárias sem Registo de Vulnerabilidades Específicas:",
             "subitems": [
               {
                 "id": 4.21,
-                "subitem": "Included the primary package completion flag / Incluída a flag de completude do pacote primário",
+                "subitem": "Updated Vulnerability assessment according to the new SOP / Actualização das regras de avaliação de vulnerabilidades conforme o novo POP",
+                "subsubitems": []
+              },
+              {
+                "id": 4.22,
+                "subitem": "Added Column: Point of Entry Name/ Adição de coluna: Nome do Ponto de Entrada (Ticket#1398)",
+                "subsubitems": []
+              },
+              {
+                "id": 4.23,
+                "subitem": "Merged “Sexual Exploitation” and “Human Trafficking” vulnerabilities / Combinadas as vulnerabilidades: 'Vítima de Exploração Sexual' e 'Vítima de Tráfico'",
                 "subsubitems": []
               }
             ]
           },
           {
             "id": 4.3,
-            "item": "List of Beneficiaries without Primary Package Completion (New List) / Lista de Beneficiárias que não completaram o Pacote Primário (Nova Lista):",
+            "item": "Beneficiaries in Waiting List / Beneficiárias em Lista de Espera (New/Novo):",
             "subitems": [
               {
                 "id": 4.31,
-                "subitem": "New List to monitor the DREAMS Beneficiaries that did not complete the Primary Package and the services pending to complete the package (Ticket #1666) / Nova Lista para monitorar Beneficiárias DREAMS que não completaram o Pacote Primário e os serviços pendentes para sua completude",
+                "subitem": "New List to allow monitoring of beneficiaries who are registered in the system and have vulnerabilities according to their age band, however have not yet received any community services / Nova lista que irá permitir o acompanhamento de beneficiárias registadas no sistema, que tem vulnerabilidades conforme a sua faixa etária mas que no entanto ainda não receberam nenhuma intervenção comunitária",
                 "subsubitems": []
               }
             ]
-          }
-        ]
-      },
-      {
-        "id": 5,
-        "changelog": "Others / Outros",
-        "items": [
+          },
           {
-            "id": 5.1,
-            "item": "Bugfixes / Correcção de anomalias:",
+            "id": 4.4,
+            "item": "Dashboard Integration API / API de Integracão a Dashboard (New/Novo):",
             "subitems": [
               {
-                "id": 5.11,
-                "subitem": "Synchronization Report(Ticket #3543): fixed the issue  where the report was not displaying all users from the districts the user has access to / Relatório de Sincronização (Ticket #3543): corrigida a anomalia onde o relatório não exibia todos os utilizadores dos distritos aos quais o utilizador tem acesso",
-                "subsubitems": []
-              },
-              {
-                "id": 5.12,
-                "subitem": "Beneficiary Registration (Ticket #3497): fixed the discrepancies between dependent variables: has disability vs type of disability; pregnant vs kids / Registo de Beneficiária (Ticket #3497): resolvidas as discrepâncias encontradas entre as variáveis dependentes: têm deficiência vs tipo de deficiência; grávida vs tem filhos",
-                "subsubitems": []
-              },
-              {
-                "id": 5.13,
-                "subitem": "Referral Management (Ticket #3670): fixed the issue where the referral status was not updating in the mobile app / Gestão de Referência (Ticket #3670): corrigida a anomalia que não permita actualizar o estado da referência no aplicativo móvel",
-                "subsubitems": []
-              },
-              {
-                "id": 5.14,
-                "subitem": "Referral Management (Ticket #3664): fixed the issue where referral status remained pending after the service was provided / Gestão de Referência (Ticket  #3664): corrigida a anomalia onde o estado da referência permanecia pendente após a provisão de serviços",
-                "subsubitems": []
-              },
-              {
-                "id": 5.15,
-                "subitem": "Referral Management (Ticket #3667): fixed the issue that prevented referrals from being attended between clinical partners from ES to US and vice versa / Gestão de Referência (Ticket  #3667): corrigida a anomalia que não permitia o atendimento de referências entre parceiros clínicos da ES para US and Vice-versa",
-                "subsubitems": []
-              },
-              {
-                "id": 5.16,
-                "subitem": "Login (Ticket #3721): fixed the issue to allow password reset in the mobile app for users with expired passwords / Login (Ticket #3721): corrigida a anomalia para permitir a redefinição da senha  no aplicativo móvel para utilizadores como senha expirada",
-                "subsubitems": []
-              },
-              {
-                "id": 5.17,
-                "subitem": "Beneficiary Registration: fixed the issue that automatically sets the first selected date of birth in the calendar to the current date / Registo de Beneficiárias: corrigida a anomalia que define automaticamente a primeira data de nascimento seleccionada no calendário para a data actual",
-                "subsubitems": []
-              },
-              {
-                "id": 5.18,
-                "subitem": "Data Cleanup: Enhancement of the cleanup process to enable offline cleanup, along with displaying an informative message when there are pending synchronizations, ensuring that the cleanup is completed successfully / Limpeza de dados: Melhoria no processo de limpeza para permitir a limpeza offline, com a exibição de uma mensagem informativa quando houver sincronizações pendentes, garantindo que o processo seja concluído com sucesso",
+                "id": 4.41,
+                "subitem": "Vulnerability Assessment API to connect with the DREAMS Dashboard / API de Avaliação de Vulnerabilidades para ligação ao Dashboard do DREAMS",
                 "subsubitems": []
               }
             ]

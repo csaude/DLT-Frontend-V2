@@ -63,8 +63,11 @@ const BenefWithoutVulnerabilites = () => {
       } else {
         provinces = await queryAll();
       }
+      const sortedProvinces = provinces.sort((prov1, prov2) =>
+        prov1.name.localeCompare(prov2.name)
+      );
       setLogguedUser(loggedUser);
-      setProvinces(provinces);
+      setProvinces(sortedProvinces);
     };
 
     fetchData().catch((error) => console.error(error));
@@ -84,7 +87,10 @@ const BenefWithoutVulnerabilites = () => {
           provinces: Array.isArray(values) ? values : [values],
         });
       }
-      setDistricts(dataDistricts);
+      const sortedDistricts = dataDistricts.sort((dist1, dist2) =>
+        dist1.name.localeCompare(dist2.name)
+      );
+      setDistricts(sortedDistricts);
     } else {
       setDistricts(undefined);
     }
@@ -173,10 +179,12 @@ const BenefWithoutVulnerabilites = () => {
 
   const onChangeInitialDate = (e) => {
     setInitialDate(e?.toDate().getTime());
+    form.setFieldsValue({ initialDate: moment(e).format("YYYY-MM-DD") });
   };
 
   const onChangeFInalDate = (e) => {
     setFinalDate(e?.toDate().getTime());
+    form.setFieldsValue({ finalDate: moment(e).format("YYYY-MM-DD") });
     setCurrentPage(0);
   };
 
@@ -200,7 +208,7 @@ const BenefWithoutVulnerabilites = () => {
             color: "#17a2b8",
           }}
         >
-          Beneficiárias sem vulnerabilidades específicas registadas
+          Beneficiárias sem Vulnerabilidades Específicas Registadas
         </Title>
         <Card
           title="Parâmetros"

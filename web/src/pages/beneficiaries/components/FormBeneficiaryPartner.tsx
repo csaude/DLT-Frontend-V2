@@ -18,6 +18,7 @@ const BeneficiaryPartnerForm = ({
   handleUpdateBeneficiary,
   handleModalVisible,
   handleViewModalVisible,
+  allowDataEntry,
 }: any) => {
   const [current, setCurrent] = useState(0);
   const [firstStepValues, setFirstStepValues] = useState();
@@ -243,6 +244,7 @@ const BeneficiaryPartnerForm = ({
               <Button
                 type="primary"
                 ref={buttonRef}
+                hidden={!allowDataEntry}
                 onClick={() => (beneficiary ? onUpdate() : onSubmit())}
               >
                 {beneficiary ? "Actualizar" : "Salvar"}
