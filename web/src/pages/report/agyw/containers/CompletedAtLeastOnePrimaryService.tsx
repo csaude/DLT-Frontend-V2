@@ -311,17 +311,17 @@ const CompletedAtLeastOnePrimaryService = ({ districtId }) => {
 
   const handleOnCLick = (e) => {
     const elements = extractElements(arrBeneficiaries);
-    dispatch(
-      loadBeneficiariesIds({ ids: elements, title: title_pt, total: total })
-    );
 
-    if (e.type === "click") {
+    if (e.button === 0) {
+      dispatch(
+        loadBeneficiariesIds({ ids: elements, title: title_pt, total: total })
+      );
       console.log("Left click");
       navigate("/viewAgyw");
     } else {
       console.log("Right click");
       e.preventDefault();
-      if (e.type !== "contextmenu") handleGenerateXLSXReport();
+      if (e.type !== "contextmenu") handleGenerateXLSXReport(elements);
     }
   };
 
@@ -360,21 +360,21 @@ const CompletedAtLeastOnePrimaryService = ({ districtId }) => {
       enrollmentTime,
       ageRange
     );
-    dispatch(
-      loadBeneficiariesIds({
-        ids: elements,
-        title: title_pt,
-        total: total,
-      })
-    );
 
-    if (e.type === "click") {
+    if (e.button === 0) {
+      dispatch(
+        loadBeneficiariesIds({
+          ids: elements,
+          title: title_pt,
+          total: total,
+        })
+      );
       console.log("Left click");
       navigate("/viewAgyw");
     } else {
       console.log("Right click");
       e.preventDefault();
-      if (e.type !== "contextmenu") handleGenerateXLSXReport();
+      if (e.type !== "contextmenu") handleGenerateXLSXReport(elements);
     }
   };
 
@@ -396,26 +396,25 @@ const CompletedAtLeastOnePrimaryService = ({ districtId }) => {
 
   const handleOnSubTotalClick = (e, enrollmentTime: string, total: number) => {
     const elements = extractSubTotalElements(arrBeneficiaries, enrollmentTime);
-    dispatch(
-      loadBeneficiariesIds({
-        ids: elements,
-        title: title_pt,
-        total: total,
-      })
-    );
-    if (e.type === "click") {
+
+    if (e.button === 0) {
+      dispatch(
+        loadBeneficiariesIds({
+          ids: elements,
+          title: title_pt,
+          total: total,
+        })
+      );
       console.log("Left click");
       navigate("/viewAgyw");
     } else {
       console.log("Right click");
       e.preventDefault();
-      if (e.type !== "contextmenu") handleGenerateXLSXReport();
+      if (e.type !== "contextmenu") handleGenerateXLSXReport(elements);
     }
   };
 
-  async function handleGenerateXLSXReport() {
-    const beneficiariesIds = beneficiariesIdsSelector.slice(); // Copy the array
-
+  async function handleGenerateXLSXReport(beneficiariesIds) {
     setDataLoading(true);
     try {
       const response = await getAgywPrevBeneficiariesReportGenerated(
