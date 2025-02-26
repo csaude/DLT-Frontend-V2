@@ -129,18 +129,19 @@ const ReportPreview = () => {
     loadCompletedAtLeastOnePrimaryService(total, districtId);
     loadStartedServiceDidNotComplete(total, districtId);
 
-    if (e.type === "click") {
+    if (e.button === 0) {
       console.log("Left click");
       navigate("/viewAgyw");
     } else {
       console.log("Right click");
       e.preventDefault();
-      if (e.type !== "contextmenu") handleGenerateXLSXReport();
+      if (e.type !== "contextmenu") handleGenerateXLSXReport(districtId);
     }
   };
 
-  async function handleGenerateXLSXReport() {
-    const beneficiariesIds = beneficiariesIdsSelector.slice(); // Copy the array
+  async function handleGenerateXLSXReport(districtId) {
+    const beneficiariesIds =
+      responseData[districtId]["all-disaggregations-total"].beneficiariesIds;
 
     setDataLoading(true);
     try {
