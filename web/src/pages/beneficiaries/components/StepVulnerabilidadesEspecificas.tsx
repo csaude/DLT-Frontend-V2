@@ -130,7 +130,7 @@ const StepVulnerabilidadesEspecificas = ({
           <Form.Item
             id="vblt_vbg_victim-control"
             name="vblt_vbg_victim"
-            label="Vítima de Violéncia Baseada no Gênero?"
+            label="Vítima de Violência?"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
             initialValue={beneficiary?.vbltVbgVictim}
@@ -148,7 +148,7 @@ const StepVulnerabilidadesEspecificas = ({
           <Form.Item
             id="vblt_vbg_type-control"
             name="vblt_vbg_type"
-            label="Tipo de Violéncia"
+            label="Tipo de Violência"
             rules={[
               { required: !gbvTypeEnabled, message: RequiredFieldMessage },
             ]}
