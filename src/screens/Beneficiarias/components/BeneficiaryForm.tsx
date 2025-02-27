@@ -2205,7 +2205,7 @@ const BeneficiaryForm: React.FC = ({
                   isInvalid={"vblt_vbg_victim" in formik.errors}
                 >
                   <FormControl.Label>
-                    Vítima de Violéncia Baseada no Gênero?
+                    Vítima de Violência?
                   </FormControl.Label>
                   <Radio.Group
                     key="vblt_vbg_victim"
@@ -2255,7 +2255,7 @@ const BeneficiaryForm: React.FC = ({
                   isRequired={gbvInfoEnabled}
                   isInvalid={"vblt_vbg_type" in formik.errors}
                 >
-                  <FormControl.Label>Tipo de Violéncia</FormControl.Label>
+                  <FormControl.Label>Tipo de Violência</FormControl.Label>
                   <Picker
                     style={styles.textBlack}
                     key="vblt_vbg_type"
