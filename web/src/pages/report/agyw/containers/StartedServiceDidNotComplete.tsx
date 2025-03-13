@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useDispatch, useSelector } from "react-redux";
@@ -433,6 +433,15 @@ const StartedServiceDidNotComplete = ({ districtId }) => {
       console.error("Error downloading file: ", error);
     }
   };
+
+  useEffect(() => {
+    const disableContextMenu = (event) => event.preventDefault();
+    document.addEventListener("contextmenu", disableContextMenu);
+
+    return () => {
+      document.removeEventListener("contextmenu", disableContextMenu);
+    };
+  }, []);
 
   return (
     <Fragment>
