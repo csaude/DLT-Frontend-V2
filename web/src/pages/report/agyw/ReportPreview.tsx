@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Collapse } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 const { Panel } = Collapse;
@@ -174,6 +174,15 @@ const ReportPreview = () => {
       console.error("Error downloading file: ", error);
     }
   };
+
+  useEffect(() => {
+    const disableContextMenu = (event) => event.preventDefault();
+    document.addEventListener("contextmenu", disableContextMenu);
+
+    return () => {
+      document.removeEventListener("contextmenu", disableContextMenu);
+    };
+  }, []);
 
   return (
     <>
