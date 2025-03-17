@@ -1,7 +1,7 @@
 {
   "release": {
-    "version": "1.5.0",
-    "date": "20/12/2024",
+    "version": "1.6.0",
+    "date": "20/03/2025",
     "changelogs": [
       {
         "id": 1,
@@ -13,11 +13,21 @@
             "subitems": [
               {
                 "id": 1.11,
-                "subitem": "Updated General Vulnerabilities according to the new SOP / Actualização das Vulnerabilidades Gerais de acordo com o novo POP:",
+                "subitem": "Included the Vulnerability Flag / Incluída Flag de Vulnerabilidade:",
                 "subsubitems": [
                   {
                     "id": 1.111,
-                    "subsubitem": "Merged 'Sexual Exploitation' and 'Human Trafficking' vulnerabilities / Combinadas as vulnerabilidades: 'Vítima de Exploração Sexual' e 'Vítima de Tráfico'"
+                    "subsubitem": "The system will evaluate and mark vulnerability flag upon beneficiary registration or update / O sistema passará a marcar a flag de vulnerabilidade no processo de registo e actualização de beneficiária"
+                  }
+                ]
+              },
+              {
+                "id": 1.12,
+                "subitem": "Applied changes in compliance with EO 14168:",
+                "subsubitems": [
+                  {
+                    "id": 1.121,
+                    "subsubitem": "Renamed “GBV” Vulnerability to “Violence”/ Renomeada a vulnerabilidade “VBG” para “Violência”"
                   }
                 ]
               }
@@ -29,26 +39,41 @@
             "subitems": [
               {
                 "id": 1.21,
-                "subitem": "Updated Siyakha Services / Actualização dos Serviços Siyakha:",
+                "subitem": "Applied changes in compliance with EO 14168:",
                 "subsubitems": [
                   {
                     "id": 1.211,
-                    "subsubitem": "Moved Siyakha Light and Siyakha Comprehensive to service level / Movidos os pacotes Siyakha Light e Siyakha Comprehensive para o nível de serviços"
+                    "subsubitem": "Renamed Services referring 'Gender' to 'Sex' / Renomeados Serviços com referência a “Género” para “Sexo”:"
                   },
                   {
                     "id": 1.212,
-                    "subsubitem": "Included each Siyakha model phases as subservices / Incluídas as fases de cada modelo Siyakha como intervenções"
+                    "subsubitem": "\tGuia de facilitação para clubes de jovens sobre a prevenção do HIV/Violência:"
                   },
                   {
                     "id": 1.213,
-                    "subsubitem": "Included an End Date for each Siyakha phase / Incluída a Data de Fim para cada fase do Siyakha"
+                    "subsubitem": "\t\tGénero -> Sexo"
+                  },
+                  {
+                    "id": 1.214,
+                    "subsubitem": "Rename Services referring to 'GBV' to 'Violence'/ Renomeados Serviços com referência a “VBG” para “Violência”:"
+                  },
+                  {
+                    "id": 1.215,
+                    "subsubitem": "\tGuia de facilitação para clubes de jovens sobre a prevenção do HIV/Violência:"
+                  },
+                  {
+                    "id": 1.216,
+                    "subsubitem": "\t\tViolência Baseada no Género -> Violência"
+                  },
+                  {
+                    "id": 1.217,
+                    "subsubitem": "\tSessões Educativas Incluindo Saúde Sexual e Reprodutiva (No SAAJ):"
+                  },
+                  {
+                    "id": 1.218,
+                    "subsubitem": "\t\tEducação para Prevenção de VBG -> Educação para Prevenção de Violência"
                   }
                 ]
-              },
-              {
-                "id": 1.22,
-                "subitem": "Update the service name to be aligned with the physical form / Actualização do nome de serviços em alinhamento com a ficha em papel (Ticket #3557)",
-                "subsubitems": []
               }
             ]
           }
@@ -56,20 +81,85 @@
       },
       {
         "id": 2,
-        "changelog": "Referral Management Module / Módulo de Gestão de Referências",
+        "changelog": "Reports Module / Módulo de Relatórios",
         "items": [
           {
             "id": 2.1,
-            "item": "Manage Service Referral / Gestão de Referência de Serviço:",
+            "item": "AGYW_PREV and Simplified AGYW_PREV Indicator Report / Relatório do Indicador AGYW_PREV e AGYW_PREV Simplificado:",
             "subitems": [
               {
                 "id": 2.11,
-                "subitem": "Updated to include the option to decline a service / Incluída a opção para “recusar” serviços (Ticket #3671)",
+                "subitem": "Included the Vulnerability Flag / Incluída Flag de Vulnerabilidade",
                 "subsubitems": []
               },
               {
                 "id": 2.12,
-                "subitem": "Update the referral fields to be aligned with the physical referral form / Actualização dos campos de referência em alinhamento com a guia de referência física; (Ticket #3557)",
+                "subitem": "Added the option to download each disaggregation on the web preview mode to an excel file / Adicionada a possibilidade de baixar cada desagregação do web preview para um ficheiro excel",
+                "subsubitems": []
+              }
+            ]
+          },
+          {
+            "id": 2.2,
+            "item": "List of Beneficiaries and Services / Lista de Beneficiárias e Serviços AND List of Newly Enrolled AGYW and Services / Lista de Novas Beneficiárias e Serviços:",
+            "subitems": [
+              {
+                "id": 2.21,
+                "subitem": "Included the Vulnerability Flag / Incluída Flag de Vulnerabilidade",
+                "subsubitems": []
+              },
+              {
+                "id": 2.22,
+                "subitem": "Code correction applied on the query for start date, end date and included in AGYW_PREV column / Correção de código aplicada na query para busca nas datas de início e fim e preenchimento da coluna Incluída no AGYW_PREV",
+                "subsubitems": []
+              },
+              {
+                "id": 2.23,
+                "subitem": "Applied changes in compliance with EO 14168:",
+                "subsubitems": [
+                  {
+                    "id": 2.231,
+                    "subsubitem": "Renamed “GBV” Vulnerability to “Violence”/ Renomeada a vulnerabilidade “VBG” para “Violência”",
+                    "subsubsubitems": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": 2.3,
+            "item": "List of Beneficiaries Without Primary Package Completion / Lista de Acompanhamento de Beneficiárias sem Completude de Pacote Primário:",
+            "subitems": [
+              {
+                "id": 2.31,
+                "subitem": "Applied changes in compliance with EO 14168:",
+                "subsubitems": [
+                  {
+                    "id": 2.311,
+                    "subsubitem": "Renamed “GBV” Vulnerability to “Violence”/ Renomeada a vulnerabilidade “VBG” para “Violência”",
+                    "subsubsubitems": []
+                  }
+                ]
+              },
+              {
+                "id": 2.32,
+                "subitem": "Ticket #1666: Improved the output report template to add finer disaggregations for Social Assets sessions (Violence, HIV, Social Assets). /Melhorado o template do relatório por forma a adicionar desagregações detalhadas para as sessões de Recursos Sociais Sociais (Violência, HIV, Recursos Sociais)",
+                "subsubitems": []
+              },
+              {
+                "id": 2.33,
+                "subitem": "Included Simplified AGYW_PREV Primary Package Completion Rules / Incluídas as regras de completude de pacote primário do AGYW_PREV simplificado",
+                "subsubitems": []
+              }
+            ]
+          },
+          {
+            "id": 2.4,
+            "item": "Dashboard Integration API / API de Integracão a Dashboard (New/Novo):",
+            "subitems": [
+              {
+                "id": 2.41,
+                "subitem": "Vulnerability Assessment API to connect with the DREAMS Dashboard / API de Avaliação de Vulnerabilidades para ligação ao Dashboard do DREAMS",
                 "subsubitems": []
               }
             ]
@@ -78,137 +168,15 @@
       },
       {
         "id": 3,
-        "changelog": "User Management Module / Módulo de Gestão de Utilizadores:",
+        "changelog": "Others / Outros:",
         "items": [
           {
             "id": 3.1,
-            "item": "User Registration / Registo de Utilizadores:",
+            "item": "Audit Logs / Logs de Auditoría:",
             "subitems": [
               {
                 "id": 3.11,
-                "subitem": "Created new profiles: 'MISAU' and 'Donor Monitoring & Evaluation' / Criado novos perfis: para 'MISAU' e 'Monitoria e Avaliação do Doador'",
-                "subsubitems": []
-              }
-            ]
-          },
-          {
-            "id": 3.2,
-            "item": "Login / Autenticação:",
-            "subitems": [
-              {
-                "id": 3.21,
-                "subitem": "Included validation for unique passwords / Incluída validação de unicidade de senhas:",
-                "subsubitems": [
-                  {
-                    "id": 3.211,
-                    "subsubitem": "Validate against the last 3 passwords / Validação das últimas 3 senhas"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "id": 3.3,
-            "item": "Password Reset / Redefinição de Senhas:",
-            "subitems": [
-              {
-                "id": 3.31,
-                "subitem": "Included validation for unique passwords / Incluída validação de unicidade de senhas:",
-                "subsubitems": [
-                  {
-                    "id": 3.311,
-                    "subsubitem": "Validate against the last 3 passwords / Validação das últimas 3 senhas"
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "id": 4,
-        "changelog": "Reports Module / Módulo de Relatórios",
-        "items": [
-          {
-            "id": 4.1,
-            "item": "AGYW_PREV and Simplified AGYW_PREV Indicator Report / Relatório do Indicador AGYW_PREV e AGYW_PREV Simplificado:",
-            "subitems": [
-              {
-                "id": 4.11,
-                "subitem": "Updated references to MER 2.8 Guide / Actualização de Referência do guião MER para 2.8",
-                "subsubitems": []
-              },
-              {
-                "id": 4.12,
-                "subitem": "Included Siyakha Light and Siyakha Comprehensive service completion rules / Inclusão das regras de completude dos serviços Siyakha Light e Siyakha Comprehensive",
-                "subsubitems": []
-              },
-              {
-                "id": 4.13,
-                "subitem": "Updated Vulnerability assessment according to the new SOP / Actualização das regras de avaliação de vulnerabilidades conforme o novo POP",
-                "subsubitems": []
-              },
-              {
-                "id": 4.14,
-                "subitem": "Added option to export all the indicators in web preview mode to an excel file / Adicionada a opção para exportação de todos os indicadores em modo web",
-                "subsubitems": []
-              },
-              {
-                "id": 4.15,
-                "subitem": "Included Siyakha Light and Siyakha Comprehensive service completion rules / Inclusão das regras de completude dos serviços Siyakha Light e Siyakha Comprehensive",
-                "subsubitems": []
-              },
-              {
-                "id": 4.16,
-                "subitem": "Consider at least one Community Service to count beneficiary for the indicator / Actualização para considerar a existência de pelo menos um serviço comunitário para a contabilização das beneficiárias no indicador",
-                "subsubitems": []
-              },
-              {
-                "id": 4.17,
-                "subitem": "Merged 'Sexual Exploitation' and 'Human Trafficking' vulnerabilities / Combinadas as vulnerabilidades: 'Vítima de Exploração Sexual' e 'Vítima de Tráfico'",
-                "subsubitems": []
-              }
-            ]
-          },
-          {
-            "id": 4.2,
-            "item": "List of Beneficiaries Without Specific Vulnerabilities Registered / Lista de Beneficiárias sem Registo de Vulnerabilidades Específicas:",
-            "subitems": [
-              {
-                "id": 4.21,
-                "subitem": "Updated Vulnerability assessment according to the new SOP / Actualização das regras de avaliação de vulnerabilidades conforme o novo POP",
-                "subsubitems": []
-              },
-              {
-                "id": 4.22,
-                "subitem": "Added Column: Point of Entry Name/ Adição de coluna: Nome do Ponto de Entrada (Ticket#1398)",
-                "subsubitems": []
-              },
-              {
-                "id": 4.23,
-                "subitem": "Merged “Sexual Exploitation” and “Human Trafficking” vulnerabilities / Combinadas as vulnerabilidades: 'Vítima de Exploração Sexual' e 'Vítima de Tráfico'",
-                "subsubitems": []
-              }
-            ]
-          },
-          {
-            "id": 4.3,
-            "item": "Beneficiaries in Waiting List / Beneficiárias em Lista de Espera (New/Novo):",
-            "subitems": [
-              {
-                "id": 4.31,
-                "subitem": "New List to allow monitoring of beneficiaries who are registered in the system and have vulnerabilities according to their age band, however have not yet received any community services / Nova lista que irá permitir o acompanhamento de beneficiárias registadas no sistema, que tem vulnerabilidades conforme a sua faixa etária mas que no entanto ainda não receberam nenhuma intervenção comunitária",
-                "subsubitems": []
-              }
-            ]
-          },
-          {
-            "id": 4.4,
-            "item": "Dashboard Integration API / API de Integracão a Dashboard (New/Novo):",
-            "subitems": [
-              {
-                "id": 4.41,
-                "subitem": "Vulnerability Assessment API to connect with the DREAMS Dashboard / API de Avaliação de Vulnerabilidades para ligação ao Dashboard do DREAMS",
+                "subitem": "Included audit log mechanism to track any changes made to the beneficiaries interventions / Incluído mecanismo de logs de auditoria para rastrear qualquer actualização a nível de intervenções da beneficiária",
                 "subsubitems": []
               }
             ]

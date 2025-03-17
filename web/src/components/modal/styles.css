@@ -28,7 +28,10 @@
 
 .content {
   padding: 50px;
-  background: rgba(0, 0, 0, 0.05);
-  border-radius: 4px;
+  background:transparent;
+  border-radius: 0px;
 }
 
+.custom-spin .ant-spin-dot i {
+  background-color: whitesmoke !important;
+}

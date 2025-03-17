@@ -92,9 +92,10 @@ export async function getBeneficiariesWithoutPrimaryPackageCompletedReportGenera
   districts?: any,
   startDate?: any,
   endDate?: any,
-  username?: any
+  username?: any,
+  reportType?: any
 ) {
-  const url = `/api/agyw-prev/beneficiariesWithoutPrimaryPackageCompleted?province=${province}&districts=${districts}&startDate=${startDate}&endDate=${endDate}&username=${username}`;
+  const url = `/api/agyw-prev/beneficiariesWithoutPrimaryPackageCompleted?province=${province}&districts=${districts}&startDate=${startDate}&endDate=${endDate}&username=${username}&reportType=${reportType}`;
   const res = await select(url);
   return res;
 }
