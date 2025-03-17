@@ -775,6 +775,8 @@ const BeneficiaryForm: React.FC = ({
               )),
               (beneficiary.vblt_deficiency_type =
                 formik.values.vblt_deficiency_type),
+              (beneficiary.vblt_married_before =
+                Number(formik.values.vblt_married_before)),
               (beneficiary.vblt_idp = Number(formik.values.vblt_idp)),
               (beneficiary.vblt_tested_hiv = formik.values.vblt_tested_hiv);
           });
@@ -2203,7 +2205,7 @@ const BeneficiaryForm: React.FC = ({
                   isInvalid={"vblt_vbg_victim" in formik.errors}
                 >
                   <FormControl.Label>
-                    Vítima de Violéncia Baseada no Gênero?
+                    Vítima de Violência?
                   </FormControl.Label>
                   <Radio.Group
                     key="vblt_vbg_victim"
@@ -2253,7 +2255,7 @@ const BeneficiaryForm: React.FC = ({
                   isRequired={gbvInfoEnabled}
                   isInvalid={"vblt_vbg_type" in formik.errors}
                 >
-                  <FormControl.Label>Tipo de Violéncia</FormControl.Label>
+                  <FormControl.Label>Tipo de Violência</FormControl.Label>
                   <Picker
                     style={styles.textBlack}
                     key="vblt_vbg_type"
