@@ -30,9 +30,17 @@ const RenewPassword = () => {
       setAuthLoading(false);
       navigate("/");
     } catch (error) {
+      const errSt = JSON.stringify(error);
+      const errObj = JSON.parse(errSt);
       setAuthLoading(false);
-      toast.error("Failed");
-      console.log(error);
+      if (errObj.status == 401) {
+        toast.error(
+          "A password foi usada recentemente, escolha uma password diferente!"
+        );
+      } else {
+        toast.error("Failed");
+        console.log(error);
+      }
     }
   };
 

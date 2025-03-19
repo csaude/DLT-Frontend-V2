@@ -23,13 +23,8 @@
               },
               {
                 "id": 1.12,
-                "subitem": "Applied changes in compliance with EO 14168:",
-                "subsubitems": [
-                  {
-                    "id": 1.121,
-                    "subsubitem": "Renamed “GBV” Vulnerability to “Violence”/ Renomeada a vulnerabilidade “VBG” para “Violência”"
-                  }
-                ]
+                "subitem": "Applied changes in compliance with EO 14168* / Alterações aplicadas em conformidade com a Ordem Executiva 14168*",
+                "subsubitems": []
               }
             ]
           },
@@ -39,41 +34,8 @@
             "subitems": [
               {
                 "id": 1.21,
-                "subitem": "Applied changes in compliance with EO 14168:",
-                "subsubitems": [
-                  {
-                    "id": 1.211,
-                    "subsubitem": "Renamed Services referring 'Gender' to 'Sex' / Renomeados Serviços com referência a “Género” para “Sexo”:"
-                  },
-                  {
-                    "id": 1.212,
-                    "subsubitem": "\tGuia de facilitação para clubes de jovens sobre a prevenção do HIV/Violência:"
-                  },
-                  {
-                    "id": 1.213,
-                    "subsubitem": "\t\tGénero -> Sexo"
-                  },
-                  {
-                    "id": 1.214,
-                    "subsubitem": "Rename Services referring to 'GBV' to 'Violence'/ Renomeados Serviços com referência a “VBG” para “Violência”:"
-                  },
-                  {
-                    "id": 1.215,
-                    "subsubitem": "\tGuia de facilitação para clubes de jovens sobre a prevenção do HIV/Violência:"
-                  },
-                  {
-                    "id": 1.216,
-                    "subsubitem": "\t\tViolência Baseada no Género -> Violência"
-                  },
-                  {
-                    "id": 1.217,
-                    "subsubitem": "\tSessões Educativas Incluindo Saúde Sexual e Reprodutiva (No SAAJ):"
-                  },
-                  {
-                    "id": 1.218,
-                    "subsubitem": "\t\tEducação para Prevenção de VBG -> Educação para Prevenção de Violência"
-                  }
-                ]
+                "subitem": "Applied changes in compliance with EO 14168* / Alterações aplicadas em conformidade com a Ordem Executiva 14168*",
+                "subsubitems": []
               }
             ]
           }
@@ -115,14 +77,8 @@
               },
               {
                 "id": 2.23,
-                "subitem": "Applied changes in compliance with EO 14168:",
-                "subsubitems": [
-                  {
-                    "id": 2.231,
-                    "subsubitem": "Renamed “GBV” Vulnerability to “Violence”/ Renomeada a vulnerabilidade “VBG” para “Violência”",
-                    "subsubsubitems": []
-                  }
-                ]
+                "subitem": "Applied changes in compliance with EO 14168* / Alterações aplicadas em conformidade com a Ordem Executiva 14168*",
+                "subsubitems": []
               }
             ]
           },
@@ -132,14 +88,8 @@
             "subitems": [
               {
                 "id": 2.31,
-                "subitem": "Applied changes in compliance with EO 14168:",
-                "subsubitems": [
-                  {
-                    "id": 2.311,
-                    "subsubitem": "Renamed “GBV” Vulnerability to “Violence”/ Renomeada a vulnerabilidade “VBG” para “Violência”",
-                    "subsubsubitems": []
-                  }
-                ]
+                "subitem": "Applied changes in compliance with EO 14168* / Alterações aplicadas em conformidade com a Ordem Executiva 14168*",
+                "subsubitems": []
               },
               {
                 "id": 2.32,
