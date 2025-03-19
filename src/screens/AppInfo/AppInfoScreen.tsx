@@ -52,6 +52,18 @@ const AppInfoScreen: React.FC = () => {
                 ))}
               </>
             ))}
+            <Text style={styles.txtGrey}>
+              {" "}
+            </Text>
+            <Text style={styles.txtGrey}>
+              *For additional details about the changes made to comply with EO 14168, please refer to the corresponding requirements documentation.
+            </Text>
+            <Text style={styles.txtGrey}>
+              {" "}
+            </Text>
+            <Text style={styles.txtGrey}>
+              *Para mais detalhes sobre as alterações realizadas em conformidade com a Ordem Executiva 14168, consulte a documentação de requisitos correspondente.
+            </Text>
           </View>
         </View>
       </ScrollView>
