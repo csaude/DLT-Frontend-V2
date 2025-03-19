@@ -119,7 +119,10 @@ const ChangePassword: React.FC = ({ route }: any) => {
         .fetch();
 
       const date = new Date();
-      const formattedDate = date.toISOString().slice(0, 10) + " " + date.toISOString().slice(11, 19);
+      const formattedDate =
+        date.toISOString().slice(0, 10) +
+        " " +
+        date.toISOString().slice(11, 19);
 
       await database.write(async () => {
         const uDetail = await database
@@ -138,10 +141,23 @@ const ChangePassword: React.FC = ({ route }: any) => {
         });
       });
 
-      navigate({ name: "Main", params: { loggedUser: loggedUser, loading: true } });
+      navigate({
+        name: "Main",
+        params: { loggedUser: loggedUser, loading: true },
+      });
     } catch (error) {
-      console.log(error);
-      showToast("error", "Erro!!!", "Erro a alterar a senha!");
+      const errSt = JSON.stringify(error);
+      const errObj = JSON.parse(errSt);
+      if (errObj.status == 401) {
+        showToast(
+          "error",
+          "Erro!!!",
+          "A password foi usada recentemente, escolha uma password diferente!"
+        );
+      } else {
+        console.log(error);
+        showToast("error", "Erro!!!", "Erro a alterar a senha!");
+      }
     }
   };
 

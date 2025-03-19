@@ -77,6 +77,16 @@ const AppInfo = () => {
                       </ul>
                     </Space>
                   </Form.Item>
+                  <Space direction="vertical">
+                    *For additional details about the changes made to comply
+                    with EO 14168, please refer to the corresponding
+                    requirements documentation.
+                  </Space>
+                  <Space direction="vertical">
+                    *Para mais detalhes sobre as alterações realizadas em
+                    conformidade com a Ordem Executiva 14168, consulte a
+                    documentação de requisitos correspondente.
+                  </Space>
                 </Col>
               </Row>
             </Form>
