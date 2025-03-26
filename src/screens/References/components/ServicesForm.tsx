@@ -331,15 +331,13 @@ const ServicesForm: React.FC = ({
     });
 
     navigate({
-      name: "Beneficiaries", // Parent screen
+      name: "Beneficiaries",
       params: {
-        screen: "BeneficiariesView", // First level of nesting
+        screen: "BeneficiariesView",
         params: {
-          screen: "Serviços", // Second level of nesting
-          params: {
-            beneficiary: beneficiarie,
-            interventions: interventionObjects,
-          },
+          beneficiary: beneficiarie,
+          interventions: interventionObjects,
+          initialScreen: "Serviços",
         },
       },
     });
