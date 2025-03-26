@@ -30,10 +30,12 @@ const { Title } = Typography;
 
 const BenefWithoutPrimeryPackageCompleted = () => {
   const [loggedUser, setLogguedUser] = useState<any>(undefined);
+  const [allProvinces, setAllProvinces] = useState<any[]>([]);
   const [provinces, setProvinces] = useState<any[]>([]);
   const [selectedProvinces, setSelectedProvinces] = useState<any[]>([]);
   const [districts, setDistricts] = useState<any>(undefined);
   const [selectedDistricts, setSelectedDistricts] = useState<any[]>([]);
+  const [reportType, setReportType] = useState();
   const [initialDate, setInitialDate] = useState<any>();
   const [finalDate, setFinalDate] = useState<any>();
   const [form] = Form.useForm();
@@ -45,6 +47,17 @@ const BenefWithoutPrimeryPackageCompleted = () => {
   const pageSize = 1000000;
   const username = localStorage.getItem("username");
   const maxDate = moment(initialDate).add(12, "months");
+
+  const reportOptions = [
+    {
+      id: 1,
+      name: "Completo",
+    },
+    {
+      id: 2,
+      name: "Simplificado",
+    },
+  ];
 
   const disabledDate = (current) => {
     return current && current > maxDate;
@@ -63,15 +76,35 @@ const BenefWithoutPrimeryPackageCompleted = () => {
       } else {
         provinces = await queryAll();
       }
+      const sortedProvinces = provinces.sort((prov1, prov2) =>
+        prov1.name.localeCompare(prov2.name)
+      );
       setLogguedUser(loggedUser);
-      setProvinces(provinces);
+      setAllProvinces(sortedProvinces);
     };
 
-    fetchData().catch((error) => console.error(error));
+    fetchData().catch((error) => console.log(error));
   }, []);
 
+  const onChangeReportOption = async (option) => {
+    if (option != reportType) {
+      if (option == 1) {
+        setProvinces(allProvinces);
+      } else if (option == 2) {
+        setProvinces(allProvinces.filter((p) => p.id == 10));
+      } else {
+        setProvinces([]);
+      }
+      setReportType(option);
+
+      form.setFieldsValue({ province: [] });
+      form.setFieldsValue({ districts: [] });
+      setDistricts(undefined);
+    }
+  };
+
   const onChangeProvinces = async (values: any) => {
-    if (values.length > 0) {
+    if (values && values.length > 0) {
       const provs = provinces.filter((item) => values == item.id.toString());
       setSelectedProvinces(provs);
       let dataDistricts;
@@ -84,7 +117,13 @@ const BenefWithoutPrimeryPackageCompleted = () => {
           provinces: Array.isArray(values) ? values : [values],
         });
       }
-      setDistricts(dataDistricts);
+      if (reportType == 2) {
+        dataDistricts = dataDistricts.filter((d) => [44, 45].includes(d.id));
+      }
+      const sortedDistricts = dataDistricts.sort((dist1, dist2) =>
+        dist1.name.localeCompare(dist2.name)
+      );
+      setDistricts(sortedDistricts);
     } else {
       setDistricts(undefined);
     }
@@ -95,7 +134,12 @@ const BenefWithoutPrimeryPackageCompleted = () => {
   const onChangeDistricts = async (values: any) => {
     if (values.length > 0) {
       const distrs = districts.filter((item) => values.includes(item.id));
-      setSelectedDistricts(distrs);
+      const sortedDistricts = distrs.sort(
+        (dist1, dist2) =>
+          dist1.province.id - dist2.province.id ||
+          dist1.name.localeCompare(dist2.name)
+      );
+      setSelectedDistricts(sortedDistricts);
       form.setFieldsValue({ districts: values });
     }
   };
@@ -142,7 +186,8 @@ const BenefWithoutPrimeryPackageCompleted = () => {
           districtsIds,
           initialDate,
           finalDate,
-          username
+          username,
+          reportType
         );
       await downloadFile(response);
       setCurrentPage(currentPage + 1);
@@ -215,13 +260,30 @@ const BenefWithoutPrimeryPackageCompleted = () => {
               <Row gutter={24}>
                 <Col span={12}>
                   <Form.Item
+                    name="reportType"
+                    label="Tipo de Relatório"
+                    rules={[{ required: true, message: RequiredFieldMessage }]}
+                  >
+                    <Select
+                      placeholder="Seleccione o Tipo de Relatório"
+                      onChange={onChangeReportOption}
+                      allowClear
+                    >
+                      {reportOptions?.map((item) => (
+                        <Option key={item.id}>{item.name}</Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                  <Form.Item
                     name="province"
                     label="Provincia"
                     rules={[{ required: true, message: RequiredFieldMessage }]}
                   >
                     <Select
+                      disabled={provinces.length == 0}
                       placeholder="Seleccione a Província"
                       onChange={onChangeProvinces}
+                      allowClear
                     >
                       {provinces?.map((item) => (
                         <Option key={item.id}>{item.name}</Option>
