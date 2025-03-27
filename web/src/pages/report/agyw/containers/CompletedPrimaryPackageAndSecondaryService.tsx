@@ -158,23 +158,25 @@ const CompletedPrimaryPackageAndSecondaryService = ({ districtId }) => {
       dataIndex: "range_20_24",
       render: (text, record) => {
         if (text > 0)
-          <a
-            style={{
-              textDecoration: "underline",
-              color: "blue",
-            }}
-            onClick={(e) =>
-              handleOnFilteredClick(e, record.enrollmentTime, "20-24", text)
-            }
-            onContextMenu={(e) =>
-              handleOnFilteredClick(e, record.enrollmentTime, "20-24", text)
-            }
-            onMouseDown={(e) =>
-              handleOnFilteredClick(e, record.enrollmentTime, "20-24", text)
-            }
-          >
-            {text}
-          </a>;
+          return (
+            <a
+              style={{
+                textDecoration: "underline",
+                color: "blue",
+              }}
+              onClick={(e) =>
+                handleOnFilteredClick(e, record.enrollmentTime, "20-24", text)
+              }
+              onContextMenu={(e) =>
+                handleOnFilteredClick(e, record.enrollmentTime, "20-24", text)
+              }
+              onMouseDown={(e) =>
+                handleOnFilteredClick(e, record.enrollmentTime, "20-24", text)
+              }
+            >
+              {text}
+            </a>
+          );
         else return <span>{text}</span>;
       },
     },
