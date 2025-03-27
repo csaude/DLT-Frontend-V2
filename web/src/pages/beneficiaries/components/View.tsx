@@ -323,14 +323,25 @@ const ViewBenefiaryPanel = ({
 
         getInterventionsCount(beneficiary);
       })
-      .catch(() => {
-        message.error({
-          content: "Não foi possivel associar a Intervenção!",
-          className: "custom-class",
-          style: {
-            marginTop: "10vh",
-          },
-        });
+      .catch((e) => {
+        if (e.response?.status == 400) {
+          message.error({
+            content:
+              "A data da Intervenção deve ser superior a data da Inscrição!",
+            className: "custom-class",
+            style: {
+              marginTop: "10vh",
+            },
+          });
+        } else {
+          message.error({
+            content: "Não foi possivel associar a Intervenção!",
+            className: "custom-class",
+            style: {
+              marginTop: "10vh",
+            },
+          });
+        }
       });
   };
 
