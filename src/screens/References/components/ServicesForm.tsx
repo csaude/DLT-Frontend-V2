@@ -24,7 +24,7 @@ import {
 import { Picker } from "@react-native-picker/picker";
 import withObservables from "@nozbe/with-observables";
 import { database } from "../../../database";
-import { navigate } from "../../../routes/NavigationRef";
+import { navigate, resetTo } from "../../../routes/NavigationRef";
 import ModalSelector from "react-native-modal-selector-searchable";
 import { Q } from "@nozbe/watermelondb";
 import { Formik } from "formik";
@@ -330,6 +330,8 @@ const ServicesForm: React.FC = ({
       };
     });
 
+    resetTo("Beneficiaries")
+    
     navigate({
       name: "Beneficiaries",
       params: {
