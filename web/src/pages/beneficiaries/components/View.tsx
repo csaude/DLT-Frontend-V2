@@ -327,7 +327,7 @@ const ViewBenefiaryPanel = ({
         if (e.response?.status == 400) {
           message.error({
             content:
-              "A data da Intervenção deve ser superior a data da Inscrição!",
+              "A Data de Provisão do Serviço não deve ser inferior a Data da Inscrição!",
             className: "custom-class",
             style: {
               marginTop: "10vh",
