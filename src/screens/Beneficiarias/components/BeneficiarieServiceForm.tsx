@@ -432,7 +432,13 @@ const BeneficiarieServiceForm: React.FC = ({
       }
     }
 
-    if (benefIntervSerialied.length > 0 && (recordAlreadyExists || !isEdit)) {
+    if(date && beneficiarie.enrollment_date > date){
+      setLoading(false)
+      toast.show({
+        placement: "top",
+        title: "A data do Benefício não deve ser inferior a data da Inscrição!",
+      });
+    } else if (benefIntervSerialied.length > 0 && (recordAlreadyExists || !isEdit)) {
       toast.show({
         placement: "top",
         title: "Beneficiária já tem esta intervenção para esta data!",
