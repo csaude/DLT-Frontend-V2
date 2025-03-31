@@ -330,8 +330,17 @@ const ServicesForm: React.FC = ({
       };
     });
 
-    resetTo("Beneficiaries")
-    
+    const references = await database
+      .get("references")
+      .query(Q.where("beneficiary_offline_id", beneficiarie.offline_id))
+      .fetch();
+
+    const beneficiaryReferencesSerializable = references.map((e) => {
+      return e._raw;
+    });
+
+    resetTo("Beneficiaries");
+
     navigate({
       name: "Beneficiaries",
       params: {
@@ -339,6 +348,7 @@ const ServicesForm: React.FC = ({
         params: {
           beneficiary: beneficiarie,
           interventions: interventionObjects,
+          references: beneficiaryReferencesSerializable,
           initialScreen: "Serviços",
         },
       },
