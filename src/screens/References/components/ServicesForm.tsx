@@ -24,7 +24,7 @@ import {
 import { Picker } from "@react-native-picker/picker";
 import withObservables from "@nozbe/with-observables";
 import { database } from "../../../database";
-import { navigate } from "../../../routes/NavigationRef";
+import { navigate, resetTo } from "../../../routes/NavigationRef";
 import ModalSelector from "react-native-modal-selector-searchable";
 import { Q } from "@nozbe/watermelondb";
 import { Formik } from "formik";
@@ -51,7 +51,12 @@ import { useDispatch } from "react-redux";
 import { pendingSyncBeneficiaries } from "../../../services/beneficiaryService";
 import { pendingSyncReferences } from "../../../services/referenceService";
 
-const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
+const ServicesForm: React.FC = ({
+  route,
+  services,
+  subServices,
+  beneficiaries_interventions,
+}: any) => {
   const { reference, beneficiarie, intervention } = route.params;
 
   const loggedUser: any = useContext(Context);
@@ -120,18 +125,21 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
     status: 1,
   };
 
-  const handleDataFromDatePickerComponent = useCallback((selectedDate,field) => {
-    selectedDate.replaceAll("/", "-");
-    const currentDate = selectedDate || date;
-    // setShow(false);
-    if (field == "date") {
-      setDate(currentDate);
-  
-      setText(selectedDate);
-    } else {
-      setEndDate(selectedDate);
-    }
-  }, []);
+  const handleDataFromDatePickerComponent = useCallback(
+    (selectedDate, field) => {
+      selectedDate.replaceAll("/", "-");
+      const currentDate = selectedDate || date;
+      // setShow(false);
+      if (field == "date") {
+        setDate(currentDate);
+
+        setText(selectedDate);
+      } else {
+        setEndDate(selectedDate);
+      }
+    },
+    []
+  );
 
   const onChangeToOutros = (value) => {
     setChecked(value);
@@ -307,8 +315,33 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
       })
     );
 
+    const interventions = beneficiaries_interventions.filter((e) => {
+      return e._raw.beneficiary_offline_id == beneficiarie.offline_id;
+    });
+
+    const interventionObjects = interventions.map((e) => {
+      const subservice = subServices.filter((item) => {
+        return item._raw.online_id == e._raw.sub_service_id;
+      })[0];
+      return {
+        id: subservice?._raw.online_id + e?._raw.date,
+        name: subservice?._raw.name,
+        intervention: e._raw,
+      };
+    });
+
+    resetTo("Beneficiaries")
+    
     navigate({
-      name: "Serviços Solicitados",
+      name: "Beneficiaries",
+      params: {
+        screen: "BeneficiariesView",
+        params: {
+          beneficiary: beneficiarie,
+          interventions: interventionObjects,
+          initialScreen: "Serviços",
+        },
+      },
     });
   };
 
@@ -388,7 +421,7 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
       onChangeEntryPoint(reference?.refer_to);
     }
 
-    if([59,60].includes(service.online_id)) {
+    if ([59, 60].includes(service.online_id)) {
       setIsEndDateVisible(true);
     } else {
       setIsEndDateVisible(false);
@@ -666,8 +699,12 @@ const ServicesForm: React.FC = ({ route, services, subServices }: any) => {
                       </FormControl.ErrorMessage>
                     </FormControl>
 
-                    <FormControl style={{display: isEndDateVisible ? "flex" : "none"}}>
-                      <FormControl.Label>Data de Fim do Serviço </FormControl.Label>
+                    <FormControl
+                      style={{ display: isEndDateVisible ? "flex" : "none" }}
+                    >
+                      <FormControl.Label>
+                        Data de Fim do Serviço{" "}
+                      </FormControl.Label>
                       <HStack alignItems="center">
                         <InputGroup
                           w={{
@@ -785,6 +822,9 @@ const enhance = withObservables([], () => ({
   subServices: database.collections
     .get("sub_services")
     .query(Q.where("status", 1)),
+  beneficiaries_interventions: database.collections
+    .get("beneficiaries_interventions")
+    .query(),
 }));
 
 export default memo(enhance(ServicesForm));

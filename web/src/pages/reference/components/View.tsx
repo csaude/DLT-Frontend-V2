@@ -705,7 +705,10 @@ const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
                   Atender
                 </Button>
                 <Button
-                  disabled={!canAddress || reference?.status !== 0}
+                  disabled={
+                    !canAddress ||
+                    (reference?.status !== 0 && reference?.status !== 1)
+                  }
                   danger
                   htmlType="submit"
                   onClick={() => declineToRequiredServices(refServices)}
