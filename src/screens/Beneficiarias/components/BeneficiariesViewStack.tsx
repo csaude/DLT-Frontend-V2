@@ -26,7 +26,7 @@ function BeneficiariesViewStack({ route }) {
   );
   return (
     <Tab.Navigator
-      initialRouteName="Dados Pessoais"
+      initialRouteName={route.params?.initialScreen||"Dados Pessoais"}
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;

@@ -204,7 +204,7 @@ const InterventionsView: React.FC = ({ route }: any) => {
 
   return (
     <>
-      {interventions.length > 0 ? (
+      {interventions?.length > 0 ? (
         <View style={styles.containerForm}>
           <SwipeListView
             data={interventions}
