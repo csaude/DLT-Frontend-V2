@@ -208,23 +208,25 @@ const StartedServiceDidNotComplete = ({ districtId }) => {
       dataIndex: "subTotal",
       render: (text, record) => {
         if (text > 0)
-          <a
-            style={{
-              textDecoration: "underline",
-              color: "blue",
-            }}
-            onClick={(e) =>
-              handleOnSubTotalClick(e, record.enrollmentTime, text)
-            }
-            onContextMenu={(e) =>
-              handleOnSubTotalClick(e, record.enrollmentTime, text)
-            }
-            onMouseDown={(e) =>
-              handleOnSubTotalClick(e, record.enrollmentTime, text)
-            }
-          >
-            {text}
-          </a>;
+          return (
+            <a
+              style={{
+                textDecoration: "underline",
+                color: "blue",
+              }}
+              onClick={(e) =>
+                handleOnSubTotalClick(e, record.enrollmentTime, text)
+              }
+              onContextMenu={(e) =>
+                handleOnSubTotalClick(e, record.enrollmentTime, text)
+              }
+              onMouseDown={(e) =>
+                handleOnSubTotalClick(e, record.enrollmentTime, text)
+              }
+            >
+              {text}
+            </a>
+          );
         else return <span>{text}</span>;
       },
     },
