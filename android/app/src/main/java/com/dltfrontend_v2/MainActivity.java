@@ -1,6 +1,7 @@
 package com.dltfrontend_v2;
 
 import android.os.Bundle;
+import android.view.WindowManager;
 import com.facebook.react.ReactActivity;
 
 public class MainActivity extends ReactActivity {
@@ -8,6 +9,8 @@ public class MainActivity extends ReactActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(null);
+
+    getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
   }
 
   /**
