@@ -28,7 +28,9 @@ import {
   CheckCircleIcon,
   WarningTwoIcon,
   InfoIcon,
+  QuestionIcon,
 } from "native-base";
+import Tooltip from "react-native-walkthrough-tooltip";
 import { ProgressSteps, ProgressStep } from "react-native-progress-steps";
 import { Ionicons } from "@native-base/icons";
 import { useFormik } from "formik";
@@ -71,6 +73,7 @@ import {
   loadPendingsReferencesTotals,
 } from "../../../store/syncSlice";
 import { pendingSyncBeneficiariesInterventions } from "../../../services/beneficiaryInterventionService";
+import { TouchableOpacity } from "react-native";
 
 const BeneficiaryForm: React.FC = ({
   route,
@@ -147,6 +150,11 @@ const BeneficiaryForm: React.FC = ({
   const [isExistingBeneficiary, setExistingBeneficiary] = useState(false);
   const [beneficiaryState, setBeneficiaryState] = useState<any>();
   const [ignoreExisting, setIgnoreExisting] = useState(false);
+  const [toolTipVisible, setToolTipVisible] = useState(false);
+  const [exploitationToolTipVisible, setExploitationToolTipVisible] = useState(false);
+  const [alcoolToolTipVisible, setAlcoolToolTipVisible] = useState(false);
+  const [stiToolTipVisible, setStiToolTipVisible] = useState(false);
+  const [sexWorkerToolTipVisible, setSexWorkerToolTipVisible] = useState(false);
 
   const minBirthYear = new Date();
   minBirthYear.setFullYear(new Date().getFullYear() - 24);
@@ -350,9 +358,11 @@ const BeneficiaryForm: React.FC = ({
       vblt_idp: beneficiarie?.vblt_idp,
       vblt_tested_hiv: beneficiarie?.vblt_tested_hiv,
       vblt_sexually_active: beneficiarie?.vblt_sexually_active,
-      vblt_pregnant_or_has_children: beneficiarie?.vblt_pregnant_or_has_children,
+      vblt_pregnant_or_has_children:
+        beneficiarie?.vblt_pregnant_or_has_children,
       vblt_multiple_partners: beneficiarie?.vblt_multiple_partners,
-      vblt_sexual_exploitation_trafficking_victim: beneficiarie?.vblt_sexual_exploitation_trafficking_victim,
+      vblt_sexual_exploitation_trafficking_victim:
+        beneficiarie?.vblt_sexual_exploitation_trafficking_victim,
       vblt_sexploitation_time: beneficiarie?.vblt_sexploitation_time,
       vblt_vbg_victim: beneficiarie?.vblt_vbg_victim,
       vblt_vbg_type: beneficiarie?.vblt_vbg_type,
@@ -775,8 +785,9 @@ const BeneficiaryForm: React.FC = ({
               )),
               (beneficiary.vblt_deficiency_type =
                 formik.values.vblt_deficiency_type),
-              (beneficiary.vblt_married_before =
-                Number(formik.values.vblt_married_before)),
+              (beneficiary.vblt_married_before = Number(
+                formik.values.vblt_married_before
+              )),
               (beneficiary.vblt_idp = Number(formik.values.vblt_idp)),
               (beneficiary.vblt_tested_hiv = formik.values.vblt_tested_hiv);
           });
@@ -1751,7 +1762,11 @@ const BeneficiaryForm: React.FC = ({
                     >
                       <Picker.Item label="-- Seleccione --" value="0" />
                       {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((item) => (
-                        <Picker.Item key={item} label={"" + item} value={item} />
+                        <Picker.Item
+                          key={item}
+                          label={"" + item}
+                          value={item}
+                        />
                       ))}
                     </Picker>
                     <FormControl.ErrorMessage>
@@ -1835,7 +1850,10 @@ const BeneficiaryForm: React.FC = ({
                       selectedValue={formik.values.vblt_deficiency_type}
                       onValueChange={(itemValue, itemIndex) => {
                         if (itemIndex !== 0) {
-                          formik.setFieldValue("vblt_deficiency_type", itemValue);
+                          formik.setFieldValue(
+                            "vblt_deficiency_type",
+                            itemValue
+                          );
                         }
                       }}
                       enabled={deficiencyTypeEnabled}
@@ -1849,7 +1867,11 @@ const BeneficiaryForm: React.FC = ({
                         "Membro Amputado ou Deformado",
                         "Tem Algum Atraso Mental",
                       ].map((item) => (
-                        <Picker.Item key={item} label={"" + item} value={item} />
+                        <Picker.Item
+                          key={item}
+                          label={"" + item}
+                          value={item}
+                        />
                       ))}
                     </Picker>
                     <FormControl.ErrorMessage>
@@ -1909,7 +1931,26 @@ const BeneficiaryForm: React.FC = ({
                     isRequired
                     isInvalid={"vblt_idp" in formik.errors}
                   >
-                    <FormControl.Label>Deslocado Interno?/IDP?</FormControl.Label>
+                    <FormControl.Label>
+                      <Text>Deslocado Interno?/IDP?</Text>
+                      <Tooltip
+                        isVisible={toolTipVisible}
+                        content={
+                          <Text>
+                            Forçada a se deslocar dentro do país devido a
+                            conflitos/desastres naturais (cheias, secas,
+                            ciclones ou outros)
+                          </Text>
+                        }
+                        onClose={() => setToolTipVisible(false)}
+                      >
+                        <TouchableOpacity
+                          onPress={() => setToolTipVisible(true)}
+                        >
+                          <QuestionIcon />
+                        </TouchableOpacity>
+                      </Tooltip>
+                    </FormControl.Label>
                     <Radio.Group
                       value={formik.values.vblt_idp + ""}
                       onChange={(itemValue) => {
@@ -2063,13 +2104,18 @@ const BeneficiaryForm: React.FC = ({
                   isRequired
                   isInvalid={"vblt_pregnant_or_has_children" in formik.errors}
                 >
-                  <FormControl.Label>Está ou Já esteve Grávida ou Tem filhos?</FormControl.Label>
+                  <FormControl.Label>
+                    Está ou Já esteve Grávida ou Tem filhos?
+                  </FormControl.Label>
                   <Radio.Group
                     focusable={true}
                     key="vblt_pregnant_or_has_children"
                     value={formik.values.vblt_pregnant_or_has_children + ""}
                     onChange={(itemValue) => {
-                      formik.setFieldValue("vblt_pregnant_or_has_children", itemValue);
+                      formik.setFieldValue(
+                        "vblt_pregnant_or_has_children",
+                        itemValue
+                      );
                     }}
                     name="ex1"
                     accessibilityLabel="pick a size"
@@ -2113,7 +2159,21 @@ const BeneficiaryForm: React.FC = ({
                   isInvalid={"vblt_multiple_partners" in formik.errors}
                 >
                   <FormControl.Label>
-                    Relações Múltiplas e Concorrentes?
+                    <Text>Relações Múltiplas e Concorrentes?"</Text>
+                    <Tooltip
+                      isVisible={toolTipVisible}
+                      content={
+                        <Text>
+                          Envolvimento simultâneo com mais de um parceiro
+                          sexual, aumentando o risco de infecções
+                        </Text>
+                      }
+                      onClose={() => setToolTipVisible(false)}
+                    >
+                      <TouchableOpacity onPress={() => setToolTipVisible(true)}>
+                        <QuestionIcon />
+                      </TouchableOpacity>
+                    </Tooltip>
                   </FormControl.Label>
                   <Radio.Group
                     key="vblt_multiple_partners"
@@ -2149,14 +2209,36 @@ const BeneficiaryForm: React.FC = ({
                 </FormControl>
                 <FormControl
                   isRequired
-                  isInvalid={"vblt_sexual_exploitation_trafficking_victim" in formik.errors}
+                  isInvalid={
+                    "vblt_sexual_exploitation_trafficking_victim" in
+                    formik.errors
+                  }
                 >
                   <FormControl.Label>
-                    Vítima de Exploração Sexual ou de Tráfico?
+                    <Text>Vítima de Exploração Sexual ou de Tráfico?</Text>
+                    <Tooltip
+                      isVisible={exploitationToolTipVisible}
+                      content={
+                        <Text>
+                          Sujeita a abuso ou tráfico para fins de exploração
+                          sexual (sexo em troca de dinheiro e/ou favores com
+                          menores de 18 anos é sempre considerado exploração
+                          sexual)
+                        </Text>
+                      }
+                      onClose={() => setExploitationToolTipVisible(false)}
+                    >
+                      <TouchableOpacity onPress={() => setExploitationToolTipVisible(true)}>
+                        <QuestionIcon />
+                      </TouchableOpacity>
+                    </Tooltip>
                   </FormControl.Label>
                   <Radio.Group
                     key="vblt_sexual_exploitation_trafficking_victim"
-                    value={formik.values.vblt_sexual_exploitation_trafficking_victim + ""}
+                    value={
+                      formik.values
+                        .vblt_sexual_exploitation_trafficking_victim + ""
+                    }
                     onChange={(itemValue) => {
                       formik.setFieldValue(
                         "vblt_sexual_exploitation_trafficking_victim",
@@ -2204,9 +2286,7 @@ const BeneficiaryForm: React.FC = ({
                   isRequired
                   isInvalid={"vblt_vbg_victim" in formik.errors}
                 >
-                  <FormControl.Label>
-                    Vítima de Violência?
-                  </FormControl.Label>
+                  <FormControl.Label>Vítima de Violência?</FormControl.Label>
                   <Radio.Group
                     key="vblt_vbg_victim"
                     value={formik.values.vblt_vbg_victim + ""}
@@ -2305,7 +2385,26 @@ const BeneficiaryForm: React.FC = ({
                   isRequired
                   isInvalid={"vblt_alcohol_drugs_use" in formik.errors}
                 >
-                  <FormControl.Label>Uso de Álcool e Drogas?</FormControl.Label>
+                  <FormControl.Label>
+                    <Text>Uso de Álcool e Drogas?"</Text>
+                    <Tooltip
+                      isVisible={alcoolToolTipVisible}
+                      content={
+                        <Text>
+                          Consumo de substâncias que podem impactar a saúde e o
+                          comportamento (10-17 anos é elegível a este critério
+                          se consumir álcool ou drogas uma vez por semana, 18-24
+                          anos é elegível a este critério se consumir álcool ou
+                          drogas mais de quatro vezes por semana)
+                        </Text>
+                      }
+                      onClose={() => setAlcoolToolTipVisible(false)}
+                    >
+                      <TouchableOpacity onPress={() => setAlcoolToolTipVisible(true)}>
+                        <QuestionIcon />
+                      </TouchableOpacity>
+                    </Tooltip>
+                  </FormControl.Label>
                   <Radio.Group
                     key="vblt_alcohol_drugs_use"
                     value={formik.values.vblt_alcohol_drugs_use + ""}
@@ -2353,7 +2452,24 @@ const BeneficiaryForm: React.FC = ({
                   isRequired
                   isInvalid={"vblt_sti_history" in formik.errors}
                 >
-                  <FormControl.Label>Histórico de ITS?</FormControl.Label>
+                  <FormControl.Label>
+                    <Text>Histórico de ITS?</Text>
+                    <Tooltip
+                      isVisible={stiToolTipVisible}
+                      content={
+                        <Text>
+                          Registos anteriores de infecções sexualmente
+                          transmissíveis identificadas por um provedor de saúde
+                          na US
+                        </Text>
+                      }
+                      onClose={() => setStiToolTipVisible(false)}
+                    >
+                      <TouchableOpacity onPress={() => setStiToolTipVisible(true)}>
+                        <QuestionIcon />
+                      </TouchableOpacity>
+                    </Tooltip>
+                  </FormControl.Label>
                   <Radio.Group
                     key="vblt_sti_history"
                     value={formik.values.vblt_sti_history + ""}
@@ -2391,7 +2507,23 @@ const BeneficiaryForm: React.FC = ({
                   isInvalid={"vblt_sex_worker" in formik.errors}
                   style={{ display: sexWorkerEnable ? "flex" : "none" }}
                 >
-                  <FormControl.Label>Trabalhadora do Sexo?</FormControl.Label>
+                  <FormControl.Label>
+                    <Text>Trabalhadora do Sexo?</Text>
+                    <Tooltip
+                      isVisible={sexWorkerToolTipVisible}
+                      content={
+                        <Text>
+                          Pessoa que oferece serviços sexuais em troca de
+                          favores ou dinheiro
+                        </Text>
+                      }
+                      onClose={() => setSexWorkerToolTipVisible(false)}
+                    >
+                      <TouchableOpacity onPress={() => setSexWorkerToolTipVisible(true)}>
+                        <QuestionIcon />
+                      </TouchableOpacity>
+                    </Tooltip>
+                  </FormControl.Label>
                   <Radio.Group
                     key="vblt_sex_worker"
                     value={formik.values.vblt_sex_worker + ""}
@@ -2440,7 +2572,7 @@ const BeneficiaryForm: React.FC = ({
           </ProgressStep>
         </ProgressSteps>
       </View>
-      {(beneficiarie && loading) ? (
+      {beneficiarie && loading ? (
         <Spinner
           visible={true}
           textContent={"Actualizando Beneficiária..."}
