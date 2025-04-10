@@ -119,6 +119,9 @@ const styles = StyleSheet.create({
     fontSize: 40,
     color: "white",
   },
+  spinnerTextStyle: {
+    color: "#FFF",
+  },
 });
 
 export default styles;
