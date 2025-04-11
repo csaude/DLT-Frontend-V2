@@ -1,6 +1,6 @@
 // const URL = "https://prod.dreams.co.mz/dlt-api-1.4.0"
 // const URL = "https://testes.dreams.co.mz/dlt-api-1.4.0"
-const URL = "http://10.10.12.50:8083"
+const URL = "http://10.10.12.101:8083"
 export const LOGIN_API_URL = `${URL}/api/login`;
 export const VERIFY_USER_API_URL = `${URL}/api/users/username`;
 export const SYNC_API_URL = `${URL}/sync`;
@@ -10,3 +10,8 @@ export const UPDATE_PASSWORD_URL = `${URL}/users/update-password`;
 export const BENEFICIARY_TO_SYNC_URL = `${URL}/api/beneficiaries/findByNui`;
 export const CUSTOM_SYNC_URL = `${URL}/custom/sync`;
 export const PING_URL = `${URL}/ping`;
+export const MOBILE_DUMPS_GENERATE_UPLOAD_LINK_URL=`${URL}/mobile-dump/generate-upload-link`;
+export const MOBILE_DUMPS_RELATIVE_PATH ="DREAMS/mobile_dumps"
+export const SEA_FILE_USERNAME="xxxxxxxxxxx@domain.org.mz"
+export const SEA_FILE_PASSWORD="yyyyyyyyyyy"
+export const EXPORT_DUMP_AUTHORIZE_URL=`${URL}/mobile-dump/is-supervisor-authorized`;

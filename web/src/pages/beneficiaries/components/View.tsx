@@ -176,6 +176,22 @@ const ViewBenefiaryPanel = ({
     });
   };
 
+  const showConfirmDuplicate = () => {
+    confirm({
+      title: "Esta intervenção já foi provida. Deseja prover novamente?",
+      icon: <ExclamationCircleFilled />,
+      okText: "Sim",
+      okType: "danger",
+      cancelText: "Não",
+      onOk() {
+        handleSaveIntervention();
+      },
+      onCancel() {
+        /**Its OK */
+      },
+    });
+  };
+
   const getInterventionsCount = async (beneficiary) => {
     const ageBand: any = getAgeBandByDate(beneficiary.dateOfBirth);
 
@@ -230,7 +246,19 @@ const ViewBenefiaryPanel = ({
     );
   };
 
-  const onSubmit = async () => {
+  const onSubmit = () => {
+    const interventionsIds = interventions.map((i) => i.id.subServiceId);
+
+    const subServiceId = form.getFieldValue("subservice");
+
+    if (interventionsIds.includes(Number(subServiceId))) {
+      showConfirmDuplicate();
+    } else {
+      handleSaveIntervention();
+    }
+  };
+
+  const handleSaveIntervention = async () => {
     form
       .validateFields()
       .then(async (values) => {

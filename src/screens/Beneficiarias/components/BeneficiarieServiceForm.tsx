@@ -22,6 +22,8 @@ import {
   InputLeftAddon,
   IconButton,
   CloseIcon,
+  Modal,
+  InfoIcon,
 } from "native-base";
 import {
   SuccessHandler,
@@ -95,6 +97,9 @@ const BeneficiarieServiceForm: React.FC = ({
   const [isOffline, setIsOffline] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isEndDateVisible, setIsEndDateVisible] = useState(false);
+  const [isExistingIntervention, setExistingIntervention] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+  const [values, setValues] = useState(undefined);
   const dispatch = useDispatch();
 
   let mounted = true;
@@ -467,6 +472,18 @@ const BeneficiarieServiceForm: React.FC = ({
   }, [isSync]);
 
   const onSubmit = async (values: any, isEdit: boolean) => {
+    const subServicesIds = intervs.map((i) => i.intervention.sub_service_id);
+    
+    if (subServicesIds.includes(Number(values.sub_service_id))) {
+      setExistingIntervention(true);
+      setValues(values);
+      setIsEdit(isEdit);
+    } else {
+      handleSaveIntervention(values, isEdit);
+    }
+  }
+
+  const handleSaveIntervention = async (values: any, isEdit: boolean) => {
     const newObject = await database.write(async () => {
       if (isEdit) {
         const interventionToUpdate = await database
@@ -718,362 +735,410 @@ const BeneficiarieServiceForm: React.FC = ({
   }, []);
 
   return (
-    <KeyboardAvoidingView>
-      <ScrollView>
-        <View style={styles.webStyle}>
-          <Center w="100%" bgColor="white">
-            {loading ? (
-              <Spinner
-                visible={true}
-                textContent={"Provendo o serviço..."}
-                textStyle={styles.spinnerTextStyle}
-              />
-            ) : undefined}
-            <Box safeArea p="2" w="90%" py="8">
-              <Alert status="info" colorScheme="info">
-                <HStack flexShrink={1} space={2} alignItems="center">
-                  <Alert.Icon />
-                  <Text fontSize="xs" fontWeight="medium" color="coolGray.800">
-                    Preencha os campos abaixo para prover um serviço a
-                    Beneficiária!
-                  </Text>
-                </HStack>
-              </Alert>
+    <>
+      <Center>
+        <Modal
+          isOpen={isExistingIntervention}
+          onClose={() => setExistingIntervention(false)}
+        >
+          <Modal.Content maxWidth="400px">
+            <Modal.CloseButton />
+            <Modal.Header>Intervenção já provida</Modal.Header>
+            <Modal.Body>
+              <ScrollView>
+                <Box alignItems="center">
+                  <Alert w="100%" status="success">
+                    <VStack space={2} flexShrink={1}>
+                      <HStack>
+                        <InfoIcon mt="1" />
+                        <Text fontSize="sm" color="coolGray.800">
+                          {`Esta intervenção já foi provida. Deseja prover novamente?`}
+                        </Text>
+                      </HStack>
 
-              <Formik
-                initialValues={initialValues}
-                onSubmit={validateBeneficiaryIntervention}
-                validate={validate}
-                enableReinitialize={true}
-                validateOnChange={false}
-                validateOnBlur={false}
-              >
-                {({
-                  handleChange,
-                  handleBlur,
-                  handleSubmit,
-                  setFieldValue,
-                  values,
-                  errors,
-                }) => (
-                  <VStack space={3} mt="5">
-                    <FormControl
-                      isRequired
-                      isInvalid={"areaServicos_id" in errors}
-                    >
-                      <FormControl.Label>Área de Serviços</FormControl.Label>
-                      <Picker
-                        enabled={
-                          (isNewIntervention &&
-                            !isClinicalOrCommunityPartner) ||
-                          initialValues.areaServicos_id == undefined
-                        }
-                        style={styles.dropDownPickerDisabled}
-                        selectedValue={values.areaServicos_id}
-                        onValueChange={(itemValue, itemIndex) => {
-                          if (itemIndex !== 0) {
-                            setFieldValue("areaServicos_id", itemValue);
-                          }
+                      <Button
+                        onPress={() => {
+                          setExistingIntervention(false);
+                          handleSaveIntervention(values, isEdit);
                         }}
                       >
-                        <Picker.Item
-                          label="-- Seleccione a Área do Serviço --"
-                          value="0"
-                        />
-                        {areaServicos.map((item) => (
+                        SIM
+                      </Button>
+
+                      <Button
+                        onPress={() => {
+                          setExistingIntervention(false);
+                          setLoading(false);
+                        }}
+                      >
+                        NÃO
+                      </Button>
+                    </VStack>
+                  </Alert>
+                  <Text></Text>
+                </Box>
+              </ScrollView>
+            </Modal.Body>
+          </Modal.Content>
+        </Modal>
+      </Center>
+      <KeyboardAvoidingView>
+        <ScrollView>
+          <View style={styles.webStyle}>
+            <Center w="100%" bgColor="white">
+              {loading ? (
+                <Spinner
+                  visible={true}
+                  textContent={"Provendo o serviço..."}
+                  textStyle={styles.spinnerTextStyle}
+                />
+              ) : undefined}
+              <Box safeArea p="2" w="90%" py="8">
+                <Alert status="info" colorScheme="info">
+                  <HStack flexShrink={1} space={2} alignItems="center">
+                    <Alert.Icon />
+                    <Text fontSize="xs" fontWeight="medium" color="coolGray.800">
+                      Preencha os campos abaixo para prover um serviço a
+                      Beneficiária!
+                    </Text>
+                  </HStack>
+                </Alert>
+
+                <Formik
+                  initialValues={initialValues}
+                  onSubmit={validateBeneficiaryIntervention}
+                  validate={validate}
+                  enableReinitialize={true}
+                  validateOnChange={false}
+                  validateOnBlur={false}
+                >
+                  {({
+                    handleChange,
+                    handleBlur,
+                    handleSubmit,
+                    setFieldValue,
+                    values,
+                    errors,
+                  }) => (
+                    <VStack space={3} mt="5">
+                      <FormControl
+                        isRequired
+                        isInvalid={"areaServicos_id" in errors}
+                      >
+                        <FormControl.Label>Área de Serviços</FormControl.Label>
+                        <Picker
+                          enabled={
+                            (isNewIntervention &&
+                              !isClinicalOrCommunityPartner) ||
+                            initialValues.areaServicos_id == undefined
+                          }
+                          style={styles.dropDownPickerDisabled}
+                          selectedValue={values.areaServicos_id}
+                          onValueChange={(itemValue, itemIndex) => {
+                            if (itemIndex !== 0) {
+                              setFieldValue("areaServicos_id", itemValue);
+                            }
+                          }}
+                        >
                           <Picker.Item
-                            key={item.id}
-                            label={item.name}
-                            value={item.id}
+                            label="-- Seleccione a Área do Serviço --"
+                            value="0"
                           />
-                        ))}
-                      </Picker>
-                      <FormControl.ErrorMessage>
-                        {errors.areaServicos_id}
-                      </FormControl.ErrorMessage>
-                    </FormControl>
-
-                    <FormControl isRequired isInvalid={"service_id" in errors}>
-                      <FormControl.Label>Serviço</FormControl.Label>
-                      <Picker
-                        style={styles.dropDownPicker}
-                        selectedValue={values.service_id}
-                        onValueChange={(itemValue, itemIndex) => {
-                          if (itemIndex !== 0) {
-                            setFieldValue("service_id", itemValue);
-                          }
-                          if([59,60].includes(itemValue)) {
-                            setIsEndDateVisible(true);
-                          } else {
-                            setIsEndDateVisible(false);
-                            setEndDate("");
-                          }
-                        }}
-                      >
-                        <Picker.Item
-                          label="-- Seleccione o Serviço --"
-                          value="0"
-                        />
-                        {servicesState
-                          .filter((e) => {
-                            return e.service_type == values.areaServicos_id;
-                          })
-                          .map((item) => (
+                          {areaServicos.map((item) => (
                             <Picker.Item
-                              key={item._raw.online_id}
-                              label={item._raw.name}
-                              value={parseInt(item._raw.online_id)}
+                              key={item.id}
+                              label={item.name}
+                              value={item.id}
                             />
                           ))}
-                      </Picker>
-                      <FormControl.ErrorMessage>
-                        {errors.service_id}
-                      </FormControl.ErrorMessage>
-                    </FormControl>
+                        </Picker>
+                        <FormControl.ErrorMessage>
+                          {errors.areaServicos_id}
+                        </FormControl.ErrorMessage>
+                      </FormControl>
 
-                    <FormControl
-                      isRequired
-                      isInvalid={"sub_service_id" in errors}
-                    >
-                      <FormControl.Label>
-                        Sub-Serviço/Intervenção
-                      </FormControl.Label>
-                      <Picker
-                        style={styles.dropDownPicker}
-                        selectedValue={values.sub_service_id}
-                        onValueChange={(itemValue, itemIndex) => {
-                          if (itemIndex !== 0) {
-                            setFieldValue("sub_service_id", itemValue);
-                          }
-                        }}
+                      <FormControl isRequired isInvalid={"service_id" in errors}>
+                        <FormControl.Label>Serviço</FormControl.Label>
+                        <Picker
+                          style={styles.dropDownPicker}
+                          selectedValue={values.service_id}
+                          onValueChange={(itemValue, itemIndex) => {
+                            if (itemIndex !== 0) {
+                              setFieldValue("service_id", itemValue);
+                            }
+                            if([59,60].includes(itemValue)) {
+                              setIsEndDateVisible(true);
+                            } else {
+                              setIsEndDateVisible(false);
+                              setEndDate("");
+                            }
+                          }}
+                        >
+                          <Picker.Item
+                            label="-- Seleccione o Serviço --"
+                            value="0"
+                          />
+                          {servicesState
+                            .filter((e) => {
+                              return e.service_type == values.areaServicos_id;
+                            })
+                            .map((item) => (
+                              <Picker.Item
+                                key={item._raw.online_id}
+                                label={item._raw.name}
+                                value={parseInt(item._raw.online_id)}
+                              />
+                            ))}
+                        </Picker>
+                        <FormControl.ErrorMessage>
+                          {errors.service_id}
+                        </FormControl.ErrorMessage>
+                      </FormControl>
+
+                      <FormControl
+                        isRequired
+                        isInvalid={"sub_service_id" in errors}
                       >
-                        <Picker.Item
-                          label="-- Seleccione o Sub-Serviço --"
-                          value={0}
-                        />
-                        {subServicesState
-                          .filter((e) => {
-                            return e.service_id == values.service_id;
-                          })
-                          .map((item) => (
+                        <FormControl.Label>
+                          Sub-Serviço/Intervenção
+                        </FormControl.Label>
+                        <Picker
+                          style={styles.dropDownPicker}
+                          selectedValue={values.sub_service_id}
+                          onValueChange={(itemValue, itemIndex) => {
+                            if (itemIndex !== 0) {
+                              setFieldValue("sub_service_id", itemValue);
+                            }
+                          }}
+                        >
+                          <Picker.Item
+                            label="-- Seleccione o Sub-Serviço --"
+                            value={0}
+                          />
+                          {subServicesState
+                            .filter((e) => {
+                              return e.service_id == values.service_id;
+                            })
+                            .map((item) => (
+                              <Picker.Item
+                                key={item.online_id}
+                                label={item.name}
+                                value={parseInt(item.online_id)}
+                              />
+                            ))}
+                        </Picker>
+                        <FormControl.ErrorMessage>
+                          {errors.sub_service_id}
+                        </FormControl.ErrorMessage>
+                      </FormControl>
+
+                      <FormControl isRequired isInvalid={"entry_point" in errors}>
+                        <FormControl.Label>Ponto de Entrada</FormControl.Label>
+                        <Picker
+                          style={styles.dropDownPicker}
+                          selectedValue={values.entry_point}
+                          onValueChange={(itemValue, itemIndex) => {
+                            if (itemIndex !== 0) {
+                              setFieldValue("entry_point", itemValue);
+                              onChangeEntryPoint(itemValue);
+                            }
+                          }}
+                        >
+                          <Picker.Item
+                            label="-- Seleccione o ponto de Entrada --"
+                            value=""
+                          />
+                          {entryPoints.map((item) => (
+                            <Picker.Item
+                              key={item.id}
+                              label={item.name}
+                              value={item.id}
+                            />
+                          ))}
+                        </Picker>
+                        <FormControl.ErrorMessage>
+                          {errors.entry_point}
+                        </FormControl.ErrorMessage>
+                      </FormControl>
+
+                      <FormControl isRequired isInvalid={"us_id" in errors}>
+                        <FormControl.Label>Localização</FormControl.Label>
+                        <Picker
+                          style={styles.dropDownPicker}
+                          selectedValue={values.us_id}
+                          onValueChange={(itemValue, itemIndex) => {
+                            if (itemIndex !== 0) {
+                              setFieldValue("us_id", itemValue);
+                              onChangeUs(itemValue);
+                            }
+                          }}
+                        >
+                          <Picker.Item label="-- Seleccione a US --" value="0" />
+                          {uss.map((item) => (
                             <Picker.Item
                               key={item.online_id}
                               label={item.name}
                               value={parseInt(item.online_id)}
                             />
                           ))}
-                      </Picker>
-                      <FormControl.ErrorMessage>
-                        {errors.sub_service_id}
-                      </FormControl.ErrorMessage>
-                    </FormControl>
+                        </Picker>
+                        <FormControl.ErrorMessage>
+                          {errors.us_id}
+                        </FormControl.ErrorMessage>
+                      </FormControl>
 
-                    <FormControl isRequired isInvalid={"entry_point" in errors}>
-                      <FormControl.Label>Ponto de Entrada</FormControl.Label>
-                      <Picker
-                        style={styles.dropDownPicker}
-                        selectedValue={values.entry_point}
-                        onValueChange={(itemValue, itemIndex) => {
-                          if (itemIndex !== 0) {
-                            setFieldValue("entry_point", itemValue);
-                            onChangeEntryPoint(itemValue);
-                          }
-                        }}
-                      >
-                        <Picker.Item
-                          label="-- Seleccione o ponto de Entrada --"
-                          value=""
-                        />
-                        {entryPoints.map((item) => (
-                          <Picker.Item
-                            key={item.id}
-                            label={item.name}
-                            value={item.id}
-                          />
-                        ))}
-                      </Picker>
-                      <FormControl.ErrorMessage>
-                        {errors.entry_point}
-                      </FormControl.ErrorMessage>
-                    </FormControl>
-
-                    <FormControl isRequired isInvalid={"us_id" in errors}>
-                      <FormControl.Label>Localização</FormControl.Label>
-                      <Picker
-                        style={styles.dropDownPicker}
-                        selectedValue={values.us_id}
-                        onValueChange={(itemValue, itemIndex) => {
-                          if (itemIndex !== 0) {
-                            setFieldValue("us_id", itemValue);
-                            onChangeUs(itemValue);
-                          }
-                        }}
-                      >
-                        <Picker.Item label="-- Seleccione a US --" value="0" />
-                        {uss.map((item) => (
-                          <Picker.Item
-                            key={item.online_id}
-                            label={item.name}
-                            value={parseInt(item.online_id)}
-                          />
-                        ))}
-                      </Picker>
-                      <FormControl.ErrorMessage>
-                        {errors.us_id}
-                      </FormControl.ErrorMessage>
-                    </FormControl>
-
-                    <FormControl isRequired isInvalid={"date" in errors}>
-                      <FormControl.Label>Data Benefício</FormControl.Label>
-                      <HStack alignItems="center">
-                        <InputGroup
-                          w={{
-                            base: "70%",
-                            md: "285",
-                          }}
-                        >
-                          <InputLeftAddon>
-                            <MyDatePicker
-                              onDateSelection={(e) =>
-                                handleDataFromDatePickerComponent(e, "date")
-                              }
-                              minDate={new Date("2017-01-01")}
-                              maxDate={new Date()}
-                              currentDate={
-                                intervention?.date
-                                  ? new Date(intervention?.date)
-                                  : new Date()
-                              }
-                            />
-                          </InputLeftAddon>
-                          <Input
-                            isDisabled
+                      <FormControl isRequired isInvalid={"date" in errors}>
+                        <FormControl.Label>Data Benefício</FormControl.Label>
+                        <HStack alignItems="center">
+                          <InputGroup
                             w={{
                               base: "70%",
-                              md: "100%",
+                              md: "285",
                             }}
-                            value={text}
-                            placeholder="yyyy-MM-dd"
-                          />
-                        </InputGroup>
-                      </HStack>
-                      <FormControl.ErrorMessage>
-                        {errors.date}
-                      </FormControl.ErrorMessage>
-                    </FormControl>
-
-                    <FormControl style={{display: isEndDateVisible ? "flex" : "none"}}>
-                      <FormControl.Label>Data de Fim do Serviço </FormControl.Label>
-                      <HStack alignItems="center">
-                        <InputGroup
-                          w={{
-                            base: "70%",
-                            md: "285",
-                          }}
-                        >
-                          <InputLeftAddon>
-                            <MyDatePicker
-                              onDateSelection={(e) =>
-                                handleDataFromDatePickerComponent(e, "end_date")
-                              }
-                              minDate={new Date("2017-01-01")}
-                              maxDate={new Date()}
-                              currentDate={
-                                intervention?.end_date
-                                  ? new Date(intervention?.end_date)
-                                  : new Date()
-                              }
+                          >
+                            <InputLeftAddon>
+                              <MyDatePicker
+                                onDateSelection={(e) =>
+                                  handleDataFromDatePickerComponent(e, "date")
+                                }
+                                minDate={new Date("2017-01-01")}
+                                maxDate={new Date()}
+                                currentDate={
+                                  intervention?.date
+                                    ? new Date(intervention?.date)
+                                    : new Date()
+                                }
+                              />
+                            </InputLeftAddon>
+                            <Input
+                              isDisabled
+                              w={{
+                                base: "70%",
+                                md: "100%",
+                              }}
+                              value={text}
+                              placeholder="yyyy-MM-dd"
                             />
-                          </InputLeftAddon>
-                          <Input
-                            isDisabled
+                          </InputGroup>
+                        </HStack>
+                        <FormControl.ErrorMessage>
+                          {errors.date}
+                        </FormControl.ErrorMessage>
+                      </FormControl>
+
+                      <FormControl style={{display: isEndDateVisible ? "flex" : "none"}}>
+                        <FormControl.Label>Data de Fim do Serviço </FormControl.Label>
+                        <HStack alignItems="center">
+                          <InputGroup
                             w={{
                               base: "70%",
-                              md: "100%",
+                              md: "285",
                             }}
-                            value={endDate}
-                            placeholder="yyyy-MM-dd"
-                          />
-                        </InputGroup>
-                      </HStack>
-                    </FormControl>
+                          >
+                            <InputLeftAddon>
+                              <MyDatePicker
+                                onDateSelection={(e) =>
+                                  handleDataFromDatePickerComponent(e, "end_date")
+                                }
+                                minDate={new Date("2017-01-01")}
+                                maxDate={new Date()}
+                                currentDate={
+                                  intervention?.end_date
+                                    ? new Date(intervention?.end_date)
+                                    : new Date()
+                                }
+                              />
+                            </InputLeftAddon>
+                            <Input
+                              isDisabled
+                              w={{
+                                base: "70%",
+                                md: "100%",
+                              }}
+                              value={endDate}
+                              placeholder="yyyy-MM-dd"
+                            />
+                          </InputGroup>
+                        </HStack>
+                      </FormControl>
 
-                    <FormControl isRequired isInvalid={"provider" in errors}>
-                      <FormControl.Label>Provedor do Serviço</FormControl.Label>
+                      <FormControl isRequired isInvalid={"provider" in errors}>
+                        <FormControl.Label>Provedor do Serviço</FormControl.Label>
 
-                      {checked === false ? (
-                        <ModalSelector
-                          data={users}
-                          keyExtractor={(item) => item.online_id}
-                          labelExtractor={(item) =>
-                            `${item.name} ${item.surname}`
-                          }
-                          renderItem={undefined}
-                          initValue=""
-                          accessible={true}
-                          cancelText={"Cancelar"}
-                          searchText={"Pesquisar"}
-                          cancelButtonAccessibilityLabel={"Cancel Button"}
-                          onChange={(option) => {
-                            setSelectedUser(`${option.name} ${option.surname}`);
-                            setFieldValue(
-                              "provider",
-                              `${option.name} ${option.surname}`
-                            );
-                          }}
-                        >
+                        {checked === false ? (
+                          <ModalSelector
+                            data={users}
+                            keyExtractor={(item) => item.online_id}
+                            labelExtractor={(item) =>
+                              `${item.name} ${item.surname}`
+                            }
+                            renderItem={undefined}
+                            initValue=""
+                            accessible={true}
+                            cancelText={"Cancelar"}
+                            searchText={"Pesquisar"}
+                            cancelButtonAccessibilityLabel={"Cancel Button"}
+                            onChange={(option) => {
+                              setSelectedUser(`${option.name} ${option.surname}`);
+                              setFieldValue(
+                                "provider",
+                                `${option.name} ${option.surname}`
+                              );
+                            }}
+                          >
+                            <Input
+                              type="text"
+                              onBlur={handleBlur("provider")}
+                              placeholder={currentInformedProvider}
+                              onChangeText={handleChange("provider")}
+                              value={selectedUser}
+                            />
+                          </ModalSelector>
+                        ) : (
                           <Input
-                            type="text"
                             onBlur={handleBlur("provider")}
-                            placeholder={currentInformedProvider}
+                            placeholder="Insira o Nome do Provedor"
                             onChangeText={handleChange("provider")}
-                            value={selectedUser}
+                            value={values.provider}
                           />
-                        </ModalSelector>
-                      ) : (
+                        )}
+                        <Checkbox value="one" onChange={onChangeToOutros}>
+                          Outro
+                        </Checkbox>
+
+                        <FormControl.ErrorMessage>
+                          {errors.provider}
+                        </FormControl.ErrorMessage>
+                      </FormControl>
+
+                      <FormControl>
+                        <FormControl.Label>Outras Observações</FormControl.Label>
+
                         <Input
-                          onBlur={handleBlur("provider")}
-                          placeholder="Insira o Nome do Provedor"
-                          onChangeText={handleChange("provider")}
-                          value={values.provider}
+                          onBlur={handleBlur("remarks")}
+                          placeholder=""
+                          onChangeText={handleChange("remarks")}
+                          value={values.remarks}
                         />
-                      )}
-                      <Checkbox value="one" onChange={onChangeToOutros}>
-                        Outro
-                      </Checkbox>
-
-                      <FormControl.ErrorMessage>
-                        {errors.provider}
-                      </FormControl.ErrorMessage>
-                    </FormControl>
-
-                    <FormControl>
-                      <FormControl.Label>Outras Observações</FormControl.Label>
-
-                      <Input
-                        onBlur={handleBlur("remarks")}
-                        placeholder=""
-                        onChangeText={handleChange("remarks")}
-                        value={values.remarks}
-                      />
-                    </FormControl>
-                    <Button
-                      isLoading={loading}
-                      isLoadingText="Cadastrando"
-                      onPress={handleSubmit}
-                      my="10"
-                      colorScheme="primary"
-                    >
-                      Salvar
-                    </Button>
-                  </VStack>
-                )}
-              </Formik>
-            </Box>
-          </Center>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+                      </FormControl>
+                      <Button
+                        isLoading={loading}
+                        isLoadingText="Cadastrando"
+                        onPress={handleSubmit}
+                        my="10"
+                        colorScheme="primary"
+                      >
+                        Salvar
+                      </Button>
+                    </VStack>
+                  )}
+                </Formik>
+              </Box>
+            </Center>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </>
   );
 };
 const enhance = withObservables([], () => ({

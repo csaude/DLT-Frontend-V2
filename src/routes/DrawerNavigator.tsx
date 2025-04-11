@@ -337,7 +337,7 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
             ),
           }}
         />
-        {/* <Drawer.Screen
+        <Drawer.Screen
           name="DataExport"
           component={DataExportScreen}
           options={{
@@ -347,7 +347,7 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
               <ItemBadge label="Exportar Dados do Dispositivo" total={-1} />
             ),
           }}
-        /> */}
+        />
         <Drawer.Screen
           name="Info"
           component={AppInfoScreen}
