@@ -5,7 +5,14 @@ import React, {
   useCallback,
   memo,
 } from "react";
-import { View, KeyboardAvoidingView, ScrollView } from "react-native";
+import {
+  View,
+  KeyboardAvoidingView,
+  ScrollView,
+  FlatList,
+  TouchableOpacity,
+  Modal as RNModal,
+} from "react-native";
 import {
   Center,
   Box,
@@ -24,6 +31,7 @@ import {
   CloseIcon,
   Modal,
   InfoIcon,
+  CheckCircleIcon,
 } from "native-base";
 import {
   SuccessHandler,
@@ -99,8 +107,10 @@ const BeneficiarieServiceForm: React.FC = ({
   const [isEndDateVisible, setIsEndDateVisible] = useState(false);
   const [isExistingIntervention, setExistingIntervention] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
-  const [values, setValues] = useState(undefined);
+  const [values, setValues] = useState({});
   const dispatch = useDispatch();
+  const [visible, setVisible] = useState(false);
+  const [selected, setSelected] = useState(null);
 
   let mounted = true;
   const loggedUser: any = useContext(Context);
@@ -130,18 +140,21 @@ const BeneficiarieServiceForm: React.FC = ({
     return () => removeNetInfoSubscription();
   }, []);
 
-  const handleDataFromDatePickerComponent = useCallback((selectedDate,field) => {
-    selectedDate.replaceAll("/", "-");
-    const currentDate = selectedDate || date;
-    // setShow(false);
-    if (field == "date") {
-      setDate(currentDate);
-  
-      setText(selectedDate);
-    } else {
-      setEndDate(selectedDate);
-    }
-  }, []);
+  const handleDataFromDatePickerComponent = useCallback(
+    (selectedDate, field) => {
+      selectedDate.replaceAll("/", "-");
+      const currentDate = selectedDate || date;
+      // setShow(false);
+      if (field == "date") {
+        setDate(currentDate);
+
+        setText(selectedDate);
+      } else {
+        setEndDate(selectedDate);
+      }
+    },
+    []
+  );
 
   const onChangeEntryPoint = async (value: any) => {
     const uss = await database
@@ -188,10 +201,14 @@ const BeneficiarieServiceForm: React.FC = ({
 
       let servicesList = activeServices;
       if (age < 15 || age > 19) {
-        servicesList = activeServices.filter((item) => item._raw.online_id !== 59)
+        servicesList = activeServices.filter(
+          (item) => item._raw.online_id !== 59
+        );
 
         if (age < 15) {
-          servicesList = servicesList.filter((item) => item._raw.online_id !== 60)
+          servicesList = servicesList.filter(
+            (item) => item._raw.online_id !== 60
+          );
         }
       }
 
@@ -311,7 +328,7 @@ const BeneficiarieServiceForm: React.FC = ({
         setText(intervention.date);
         setDate(intervention.date);
 
-        if([59,60].includes(selService?._raw.online_id)) {
+        if ([59, 60].includes(selService?._raw.online_id)) {
           setIsEndDateVisible(true);
           setEndDate(intervention.end_date);
         } else {
@@ -437,13 +454,16 @@ const BeneficiarieServiceForm: React.FC = ({
       }
     }
 
-    if(date && beneficiarie.enrollment_date > date){
-      setLoading(false)
+    if (date && beneficiarie.enrollment_date > date) {
+      setLoading(false);
       toast.show({
         placement: "top",
         title: "A data do Benefício não deve ser inferior a data da Inscrição!",
       });
-    } else if (benefIntervSerialied.length > 0 && (recordAlreadyExists || !isEdit)) {
+    } else if (
+      benefIntervSerialied.length > 0 &&
+      (recordAlreadyExists || !isEdit)
+    ) {
       toast.show({
         placement: "top",
         title: "Beneficiária já tem esta intervenção para esta data!",
@@ -473,7 +493,7 @@ const BeneficiarieServiceForm: React.FC = ({
 
   const onSubmit = async (values: any, isEdit: boolean) => {
     const subServicesIds = intervs.map((i) => i.intervention.sub_service_id);
-    
+
     if (subServicesIds.includes(Number(values.sub_service_id))) {
       setExistingIntervention(true);
       setValues(values);
@@ -481,7 +501,7 @@ const BeneficiarieServiceForm: React.FC = ({
     } else {
       handleSaveIntervention(values, isEdit);
     }
-  }
+  };
 
   const handleSaveIntervention = async (values: any, isEdit: boolean) => {
     const newObject = await database.write(async () => {
@@ -797,7 +817,11 @@ const BeneficiarieServiceForm: React.FC = ({
                 <Alert status="info" colorScheme="info">
                   <HStack flexShrink={1} space={2} alignItems="center">
                     <Alert.Icon />
-                    <Text fontSize="xs" fontWeight="medium" color="coolGray.800">
+                    <Text
+                      fontSize="xs"
+                      fontWeight="medium"
+                      color="coolGray.800"
+                    >
                       Preencha os campos abaixo para prover um serviço a
                       Beneficiária!
                     </Text>
@@ -857,39 +881,80 @@ const BeneficiarieServiceForm: React.FC = ({
                         </FormControl.ErrorMessage>
                       </FormControl>
 
-                      <FormControl isRequired isInvalid={"service_id" in errors}>
+                      <FormControl
+                        isRequired
+                        isInvalid={"service_id" in errors}
+                      >
                         <FormControl.Label>Serviço</FormControl.Label>
-                        <Picker
-                          style={styles.dropDownPicker}
-                          selectedValue={values.service_id}
-                          onValueChange={(itemValue, itemIndex) => {
-                            if (itemIndex !== 0) {
-                              setFieldValue("service_id", itemValue);
-                            }
-                            if([59,60].includes(itemValue)) {
-                              setIsEndDateVisible(true);
-                            } else {
-                              setIsEndDateVisible(false);
-                              setEndDate("");
-                            }
-                          }}
+
+                        <TouchableOpacity
+                          style={styles.myDropDownPicker}
+                          onPress={() => setVisible(true)}
                         >
-                          <Picker.Item
-                            label="-- Seleccione o Serviço --"
-                            value="0"
-                          />
-                          {servicesState
-                            .filter((e) => {
-                              return e.service_type == values.areaServicos_id;
-                            })
-                            .map((item) => (
-                              <Picker.Item
-                                key={item._raw.online_id}
-                                label={item._raw.name}
-                                value={parseInt(item._raw.online_id)}
+                          <Text style={styles.selectedItemText}>
+                            {servicesState.find(
+                              (e) => e._raw.online_id === values.service_id
+                            )
+                              ? servicesState.find(
+                                  (e) => e._raw.online_id === values.service_id
+                                )._raw.name
+                              : "-- Seleccione o Serviço --"}
+                          </Text>
+                        </TouchableOpacity>
+
+                        <RNModal
+                          visible={visible}
+                          transparent
+                          animationType="slide"
+                        >
+                          <View style={styles.modalContainer}>
+                            <View style={styles.modalContent}>
+                              <FlatList
+                                data={servicesState.filter(
+                                  (e) =>
+                                    e.service_type === values.areaServicos_id
+                                )}
+                                keyExtractor={(item) =>
+                                  item._raw.online_id.toString()
+                                }
+                                renderItem={({ item }) => (
+                                  <TouchableOpacity
+                                    style={styles.item}
+                                    onPress={() => {
+                                      setSelected(item._raw.online_id);
+                                      setFieldValue(
+                                        "service_id",
+                                        item._raw.online_id
+                                      );
+                                      setVisible(false);
+
+                                      if (
+                                        [59, 60].includes(item._raw.online_id)
+                                      ) {
+                                        setIsEndDateVisible(true);
+                                      } else {
+                                        setIsEndDateVisible(false);
+                                        setEndDate("");
+                                      }
+                                    }}
+                                  >
+                                    {selected === item._raw.online_id && (
+                                      <CheckCircleIcon
+                                        size="5"
+                                        mt="0.5"
+                                        color="emerald.500"
+                                      />
+                                    )}
+                                    <Text style={styles.itemText}>
+                                      {item._raw.name}
+                                    </Text>
+                                  </TouchableOpacity>
+                                )}
                               />
-                            ))}
-                        </Picker>
+                            </View>
+                          </View>
+                        </RNModal>
+
                         <FormControl.ErrorMessage>
                           {errors.service_id}
                         </FormControl.ErrorMessage>
@@ -932,7 +997,10 @@ const BeneficiarieServiceForm: React.FC = ({
                         </FormControl.ErrorMessage>
                       </FormControl>
 
-                      <FormControl isRequired isInvalid={"entry_point" in errors}>
+                      <FormControl
+                        isRequired
+                        isInvalid={"entry_point" in errors}
+                      >
                         <FormControl.Label>Ponto de Entrada</FormControl.Label>
                         <Picker
                           style={styles.dropDownPicker}
@@ -973,7 +1041,10 @@ const BeneficiarieServiceForm: React.FC = ({
                             }
                           }}
                         >
-                          <Picker.Item label="-- Seleccione a US --" value="0" />
+                          <Picker.Item
+                            label="-- Seleccione a US --"
+                            value="0"
+                          />
                           {uss.map((item) => (
                             <Picker.Item
                               key={item.online_id}
@@ -1026,8 +1097,12 @@ const BeneficiarieServiceForm: React.FC = ({
                         </FormControl.ErrorMessage>
                       </FormControl>
 
-                      <FormControl style={{display: isEndDateVisible ? "flex" : "none"}}>
-                        <FormControl.Label>Data de Fim do Serviço </FormControl.Label>
+                      <FormControl
+                        style={{ display: isEndDateVisible ? "flex" : "none" }}
+                      >
+                        <FormControl.Label>
+                          Data de Fim do Serviço{" "}
+                        </FormControl.Label>
                         <HStack alignItems="center">
                           <InputGroup
                             w={{
@@ -1038,7 +1113,10 @@ const BeneficiarieServiceForm: React.FC = ({
                             <InputLeftAddon>
                               <MyDatePicker
                                 onDateSelection={(e) =>
-                                  handleDataFromDatePickerComponent(e, "end_date")
+                                  handleDataFromDatePickerComponent(
+                                    e,
+                                    "end_date"
+                                  )
                                 }
                                 minDate={new Date("2017-01-01")}
                                 maxDate={new Date()}
@@ -1063,7 +1141,9 @@ const BeneficiarieServiceForm: React.FC = ({
                       </FormControl>
 
                       <FormControl isRequired isInvalid={"provider" in errors}>
-                        <FormControl.Label>Provedor do Serviço</FormControl.Label>
+                        <FormControl.Label>
+                          Provedor do Serviço
+                        </FormControl.Label>
 
                         {checked === false ? (
                           <ModalSelector
@@ -1079,7 +1159,9 @@ const BeneficiarieServiceForm: React.FC = ({
                             searchText={"Pesquisar"}
                             cancelButtonAccessibilityLabel={"Cancel Button"}
                             onChange={(option) => {
-                              setSelectedUser(`${option.name} ${option.surname}`);
+                              setSelectedUser(
+                                `${option.name} ${option.surname}`
+                              );
                               setFieldValue(
                                 "provider",
                                 `${option.name} ${option.surname}`
@@ -1112,7 +1194,9 @@ const BeneficiarieServiceForm: React.FC = ({
                       </FormControl>
 
                       <FormControl>
-                        <FormControl.Label>Outras Observações</FormControl.Label>
+                        <FormControl.Label>
+                          Outras Observações
+                        </FormControl.Label>
 
                         <Input
                           onBlur={handleBlur("remarks")}
