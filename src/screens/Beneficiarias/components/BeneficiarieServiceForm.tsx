@@ -111,6 +111,7 @@ const BeneficiarieServiceForm: React.FC = ({
   const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
   const [selected, setSelected] = useState(null);
+  const [subServiceVisible, setSubServiceVisible] = useState(false);
 
   let mounted = true;
   const loggedUser: any = useContext(Context);
@@ -967,31 +968,65 @@ const BeneficiarieServiceForm: React.FC = ({
                         <FormControl.Label>
                           Sub-Serviço/Intervenção
                         </FormControl.Label>
-                        <Picker
-                          style={styles.dropDownPicker}
-                          selectedValue={values.sub_service_id}
-                          onValueChange={(itemValue, itemIndex) => {
-                            if (itemIndex !== 0) {
-                              setFieldValue("sub_service_id", itemValue);
-                            }
-                          }}
+
+                        <TouchableOpacity
+                          style={styles.myDropDownPicker}
+                          onPress={() => setSubServiceVisible(true)}
                         >
-                          <Picker.Item
-                            label="-- Seleccione o Sub-Serviço --"
-                            value={0}
-                          />
-                          {subServicesState
-                            .filter((e) => {
-                              return e.service_id == values.service_id;
-                            })
-                            .map((item) => (
-                              <Picker.Item
-                                key={item.online_id}
-                                label={item.name}
-                                value={parseInt(item.online_id)}
+                          <Text style={styles.selectedItemText}>
+                            {subServicesState.find(
+                              (e) => e.online_id === values.sub_service_id
+                            )
+                              ? subServicesState.find(
+                                  (e) => e.online_id === values.sub_service_id
+                                ).name
+                              : "-- Seleccione o Sub-Serviço --"}
+                          </Text>
+                        </TouchableOpacity>
+
+                        <RNModal
+                          visible={subServiceVisible}
+                          transparent
+                          animationType="slide"
+                        >
+                          <View style={styles.modalContainer}>
+                            <View style={styles.modalContent}>
+                              <FlatList
+                                data={subServicesState.filter(
+                                  (e) => e.service_id === values.service_id
+                                )}
+                                keyExtractor={(item) =>
+                                  item.online_id.toString()
+                                }
+                                renderItem={({ item }) => (
+                                  <TouchableOpacity
+                                    style={styles.item}
+                                    onPress={() => {
+                                      setFieldValue(
+                                        "sub_service_id",
+                                        item.online_id
+                                      );
+                                      setSubServiceVisible(false);
+                                    }}
+                                  >
+                                    {values.sub_service_id ===
+                                      item.online_id && (
+                                      <CheckCircleIcon
+                                        size="5"
+                                        mt="0.5"
+                                        color="emerald.500"
+                                      />
+                                    )}
+                                    <Text style={styles.itemText}>
+                                      {item.name}
+                                    </Text>
+                                  </TouchableOpacity>
+                                )}
                               />
-                            ))}
-                        </Picker>
+                            </View>
+                          </View>
+                        </RNModal>
+
                         <FormControl.ErrorMessage>
                           {errors.sub_service_id}
                         </FormControl.ErrorMessage>

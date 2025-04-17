@@ -5,7 +5,14 @@ import React, {
   useCallback,
   memo,
 } from "react";
-import { View, KeyboardAvoidingView, ScrollView } from "react-native";
+import {
+  View,
+  KeyboardAvoidingView,
+  ScrollView,
+  TouchableOpacity,
+  FlatList,
+  Modal as RNModal,
+} from "react-native";
 import {
   Center,
   Box,
@@ -20,6 +27,7 @@ import {
   InputGroup,
   InputLeftAddon,
   Checkbox,
+  CheckCircleIcon,
 } from "native-base";
 import { Picker } from "@react-native-picker/picker";
 import withObservables from "@nozbe/with-observables";
@@ -83,6 +91,7 @@ const ServicesForm: React.FC = ({
   const [currentInformedProvider, setCurrentInformedProvider] = useState("");
   const [isEndDateVisible, setIsEndDateVisible] = useState(false);
   const [key, setKey] = useState(0);
+  const [subInterventionVisible, setSubInterventionVisible] = useState(false);
 
   const forceRemount = () => {
     setDate(undefined);
@@ -585,31 +594,66 @@ const ServicesForm: React.FC = ({
                       <FormControl.Label>
                         Sub-Serviço/Intervenção
                       </FormControl.Label>
-                      <Picker
-                        style={styles.dropDownPicker}
-                        selectedValue={values.sub_service_id}
-                        onValueChange={(itemValue, itemIndex) => {
-                          if (itemIndex !== 0) {
-                            setFieldValue("sub_service_id", itemValue);
-                          }
-                        }}
+
+                      <TouchableOpacity
+                        style={styles.myDropDownPicker}
+                        onPress={() => setSubInterventionVisible(true)}
                       >
-                        <Picker.Item
-                          label="-- Seleccione o SubServiço --"
-                          value="0"
-                        />
-                        {subServices
-                          .filter((e) => {
-                            return e.service_id == values.service_id;
-                          })
-                          .map((item) => (
-                            <Picker.Item
-                              key={item._raw.online_id}
-                              label={item._raw.name}
-                              value={parseInt(item._raw.online_id)}
+                        <Text style={styles.selectedItemText}>
+                          {subServices.find(
+                            (e) => e._raw.online_id === values.sub_service_id
+                          )
+                            ? subServices.find(
+                                (e) =>
+                                  e._raw.online_id === values.sub_service_id
+                              )._raw.name
+                            : "-- Seleccione o SubServiço --"}
+                        </Text>
+                      </TouchableOpacity>
+
+                      <RNModal
+                        visible={subInterventionVisible}
+                        transparent
+                        animationType="slide"
+                      >
+                        <View style={styles.modalContainer}>
+                          <View style={styles.modalContent}>
+                            <FlatList
+                              data={subServices.filter(
+                                (e) => e.service_id === values.service_id
+                              )}
+                              keyExtractor={(item) =>
+                                item._raw.online_id.toString()
+                              }
+                              renderItem={({ item }) => (
+                                <TouchableOpacity
+                                  style={styles.item}
+                                  onPress={() => {
+                                    setFieldValue(
+                                      "sub_service_id",
+                                      item._raw.online_id
+                                    );
+                                    setSubInterventionVisible(false);
+                                  }}
+                                >
+                                  {values.sub_service_id ===
+                                    item._raw.online_id && (
+                                    <CheckCircleIcon
+                                      size="5"
+                                      mt="0.5"
+                                      color="emerald.500"
+                                    />
+                                  )}
+                                  <Text style={styles.itemText}>
+                                    {item._raw.name}
+                                  </Text>
+                                </TouchableOpacity>
+                              )}
                             />
-                          ))}
-                      </Picker>
+                          </View>
+                        </View>
+                      </RNModal>
+
                       <FormControl.ErrorMessage>
                         {errors.sub_service_id}
                       </FormControl.ErrorMessage>
