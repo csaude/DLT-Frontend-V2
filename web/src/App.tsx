@@ -45,6 +45,7 @@ import DataImport from "@pages/data-import/index";
 import BenefWithoutVulnerabilites from "./pages/report/benef-without-vulnerabilites/BenefWithoutVulnerabilites";
 import BenefWithoutPrimeryPackageCompleted from "./pages/report/beneficiaries-without-pp-completed/BenefWithoutPrimeryPackageCompleted";
 import BeneficiariesInWaintingList from "./pages/report/beneficiaries-in-waiting-list/BeneficiariesInWaintingList";
+import Documents from "./pages/documents";
 
 const App = () => {
   const windowSize = useWindowSize();
@@ -179,6 +180,7 @@ const App = () => {
             <Route path="/appInfo" element={<AppInfo />} />
             <Route path="/syncReport" element={<SyncReport />} />
             <Route path="/dataImport" element={<DataImport />} />
+            <Route path="/documents" element={<Documents />} />
           </Route>
         </Route>
       </Routes>
