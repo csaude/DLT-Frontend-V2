@@ -212,6 +212,52 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  inputBox: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    padding: 10,
+    borderRadius: 6,
+  },
+  inputText: {
+    color: "#333",
+  },
+  selectedItemText: {
+    fontSize: 16,
+    color: '#333',
+  },
+  
+  myDropDownPicker: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    padding: 12,
+    backgroundColor: '#fff',
+  },
+  
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 16,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    maxHeight: '60%',
+  },
+  
+  item: {
+    paddingVertical: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  
+  itemText: {
+    fontSize: 16,
+    marginLeft: 8,
+  },
 });
 
 export default styles;
