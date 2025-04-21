@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   FlatList,
   Modal as RNModal,
+  TouchableWithoutFeedback,
 } from "react-native";
 import {
   Center,
@@ -616,42 +617,48 @@ const ServicesForm: React.FC = ({
                         transparent
                         animationType="slide"
                       >
-                        <View style={styles.modalContainer}>
-                          <View style={styles.modalContent}>
-                            <FlatList
-                              data={subServices.filter(
-                                (e) => e.service_id === values.service_id
-                              )}
-                              keyExtractor={(item) =>
-                                item._raw.online_id.toString()
-                              }
-                              renderItem={({ item }) => (
-                                <TouchableOpacity
-                                  style={styles.item}
-                                  onPress={() => {
-                                    setFieldValue(
-                                      "sub_service_id",
-                                      item._raw.online_id
-                                    );
-                                    setSubInterventionVisible(false);
-                                  }}
-                                >
-                                  {values.sub_service_id ===
-                                    item._raw.online_id && (
-                                    <CheckCircleIcon
-                                      size="5"
-                                      mt="0.5"
-                                      color="emerald.500"
-                                    />
+                        <TouchableWithoutFeedback
+                          onPress={() => setSubInterventionVisible(false)}
+                        >
+                          <View style={styles.modalContainer}>
+                            <TouchableWithoutFeedback onPress={() => {}}>
+                              <View style={styles.modalContent}>
+                                <FlatList
+                                  data={subServices.filter(
+                                    (e) => e.service_id === values.service_id
                                   )}
-                                  <Text style={styles.itemText}>
-                                    {item._raw.name}
-                                  </Text>
-                                </TouchableOpacity>
-                              )}
-                            />
+                                  keyExtractor={(item) =>
+                                    item._raw.online_id.toString()
+                                  }
+                                  renderItem={({ item }) => (
+                                    <TouchableOpacity
+                                      style={styles.item}
+                                      onPress={() => {
+                                        setFieldValue(
+                                          "sub_service_id",
+                                          item._raw.online_id
+                                        );
+                                        setSubInterventionVisible(false);
+                                      }}
+                                    >
+                                      {values.sub_service_id ===
+                                        item._raw.online_id && (
+                                        <CheckCircleIcon
+                                          size="5"
+                                          mt="0.5"
+                                          color="emerald.500"
+                                        />
+                                      )}
+                                      <Text style={styles.itemText}>
+                                        {item._raw.name}
+                                      </Text>
+                                    </TouchableOpacity>
+                                  )}
+                                />
+                              </View>
+                            </TouchableWithoutFeedback>
                           </View>
-                        </View>
+                        </TouchableWithoutFeedback>
                       </RNModal>
 
                       <FormControl.ErrorMessage>

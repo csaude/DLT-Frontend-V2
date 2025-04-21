@@ -12,6 +12,7 @@ import {
   FlatList,
   TouchableOpacity,
   Modal as RNModal,
+  TouchableWithoutFeedback,
 } from "react-native";
 import {
   Center,
@@ -908,52 +909,62 @@ const BeneficiarieServiceForm: React.FC = ({
                           transparent
                           animationType="slide"
                         >
-                          <View style={styles.modalContainer}>
-                            <View style={styles.modalContent}>
-                              <FlatList
-                                data={servicesState.filter(
-                                  (e) =>
-                                    e.service_type === values.areaServicos_id
-                                )}
-                                keyExtractor={(item) =>
-                                  item._raw.online_id.toString()
-                                }
-                                renderItem={({ item }) => (
-                                  <TouchableOpacity
-                                    style={styles.item}
-                                    onPress={() => {
-                                      setSelected(item._raw.online_id);
-                                      setFieldValue(
-                                        "service_id",
-                                        item._raw.online_id
-                                      );
-                                      setVisible(false);
-
-                                      if (
-                                        [59, 60].includes(item._raw.online_id)
-                                      ) {
-                                        setIsEndDateVisible(true);
-                                      } else {
-                                        setIsEndDateVisible(false);
-                                        setEndDate("");
-                                      }
-                                    }}
-                                  >
-                                    {selected === item._raw.online_id && (
-                                      <CheckCircleIcon
-                                        size="5"
-                                        mt="0.5"
-                                        color="emerald.500"
-                                      />
+                          <TouchableWithoutFeedback
+                            onPress={() => setVisible(false)}
+                          >
+                            <View style={styles.modalContainer}>
+                              <TouchableWithoutFeedback onPress={() => {}}>
+                                <View style={styles.modalContent}>
+                                  <FlatList
+                                    data={servicesState.filter(
+                                      (e) =>
+                                        e.service_type ===
+                                        values.areaServicos_id
                                     )}
-                                    <Text style={styles.itemText}>
-                                      {item._raw.name}
-                                    </Text>
-                                  </TouchableOpacity>
-                                )}
-                              />
+                                    keyExtractor={(item) =>
+                                      item._raw.online_id.toString()
+                                    }
+                                    renderItem={({ item }) => (
+                                      <TouchableOpacity
+                                        style={styles.item}
+                                        onPress={() => {
+                                          setFieldValue("sub_service_id", null);
+                                          setSelected(item._raw.online_id);
+                                          setFieldValue(
+                                            "service_id",
+                                            item._raw.online_id
+                                          );
+                                          setVisible(false);
+
+                                          if (
+                                            [59, 60].includes(
+                                              item._raw.online_id
+                                            )
+                                          ) {
+                                            setIsEndDateVisible(true);
+                                          } else {
+                                            setIsEndDateVisible(false);
+                                            setEndDate("");
+                                          }
+                                        }}
+                                      >
+                                        {selected === item._raw.online_id && (
+                                          <CheckCircleIcon
+                                            size="5"
+                                            mt="0.5"
+                                            color="emerald.500"
+                                          />
+                                        )}
+                                        <Text style={styles.itemText}>
+                                          {item._raw.name}
+                                        </Text>
+                                      </TouchableOpacity>
+                                    )}
+                                  />
+                                </View>
+                              </TouchableWithoutFeedback>
                             </View>
-                          </View>
+                          </TouchableWithoutFeedback>
                         </RNModal>
 
                         <FormControl.ErrorMessage>
@@ -989,42 +1000,48 @@ const BeneficiarieServiceForm: React.FC = ({
                           transparent
                           animationType="slide"
                         >
-                          <View style={styles.modalContainer}>
-                            <View style={styles.modalContent}>
-                              <FlatList
-                                data={subServicesState.filter(
-                                  (e) => e.service_id === values.service_id
-                                )}
-                                keyExtractor={(item) =>
-                                  item.online_id.toString()
-                                }
-                                renderItem={({ item }) => (
-                                  <TouchableOpacity
-                                    style={styles.item}
-                                    onPress={() => {
-                                      setFieldValue(
-                                        "sub_service_id",
-                                        item.online_id
-                                      );
-                                      setSubServiceVisible(false);
-                                    }}
-                                  >
-                                    {values.sub_service_id ===
-                                      item.online_id && (
-                                      <CheckCircleIcon
-                                        size="5"
-                                        mt="0.5"
-                                        color="emerald.500"
-                                      />
+                          <TouchableWithoutFeedback
+                            onPress={() => setSubServiceVisible(false)}
+                          >
+                            <View style={styles.modalContainer}>
+                              <TouchableWithoutFeedback onPress={() => {}}>
+                                <View style={styles.modalContent}>
+                                  <FlatList
+                                    data={subServicesState.filter(
+                                      (e) => e.service_id === values.service_id
                                     )}
-                                    <Text style={styles.itemText}>
-                                      {item.name}
-                                    </Text>
-                                  </TouchableOpacity>
-                                )}
-                              />
+                                    keyExtractor={(item) =>
+                                      item.online_id.toString()
+                                    }
+                                    renderItem={({ item }) => (
+                                      <TouchableOpacity
+                                        style={styles.item}
+                                        onPress={() => {
+                                          setFieldValue(
+                                            "sub_service_id",
+                                            item.online_id
+                                          );
+                                          setSubServiceVisible(false);
+                                        }}
+                                      >
+                                        {values.sub_service_id ===
+                                          item.online_id && (
+                                          <CheckCircleIcon
+                                            size="5"
+                                            mt="0.5"
+                                            color="emerald.500"
+                                          />
+                                        )}
+                                        <Text style={styles.itemText}>
+                                          {item.name}
+                                        </Text>
+                                      </TouchableOpacity>
+                                    )}
+                                  />
+                                </View>
+                              </TouchableWithoutFeedback>
                             </View>
-                          </View>
+                          </TouchableWithoutFeedback>
                         </RNModal>
 
                         <FormControl.ErrorMessage>
