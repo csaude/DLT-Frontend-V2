@@ -666,6 +666,7 @@ const Login: React.FC = ({ route }: any) => {
                       <FormControl.Label>Nome do utilizador</FormControl.Label>
 
                       <Input
+                        id="username"
                         onBlur={handleBlur("username")}
                         placeholder="Insira o Utilizador"
                         onChangeText={handleChange("username")}
@@ -679,6 +680,7 @@ const Login: React.FC = ({ route }: any) => {
                     <FormControl isRequired isInvalid={"password" in errors}>
                       <FormControl.Label>Senha</FormControl.Label>
                       <Input
+                        id="password"
                         type={show ? "text" : "password"}
                         onBlur={handleBlur("password")}
                         InputRightElement={
@@ -711,6 +713,7 @@ const Login: React.FC = ({ route }: any) => {
                       />
                     ) : undefined}
                     <Button
+                      id="Autenticando"
                       isLoading={loading}
                       isLoadingText="Autenticando"
                       onPress={handleSubmit}
