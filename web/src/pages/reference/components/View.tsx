@@ -81,7 +81,17 @@ const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
     });
     setRequiredServices(selectReqServices);
     if (selectReqServices.length > 0) {
-      setIsOpenServiceDeclineModal(true);
+      if (selectReqServices.some((serv) => serv.status === 1)) {
+        message.error({
+          content: "Não é possível recusar serviços que já estão em curso !",
+          className: "custom-class",
+          style: {
+            marginTop: "10vh",
+          },
+        });
+      } else {
+        setIsOpenServiceDeclineModal(true);
+      }
     } else {
       showSelectServices();
     }
