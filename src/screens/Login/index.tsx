@@ -713,7 +713,7 @@ const Login: React.FC = ({ route }: any) => {
                       />
                     ) : undefined}
                     <Button
-                      id="Autenticando"
+                      id="autenticando"
                       isLoading={loading}
                       isLoadingText="Autenticando"
                       onPress={handleSubmit}

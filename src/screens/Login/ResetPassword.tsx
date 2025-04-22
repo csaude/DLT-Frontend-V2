@@ -239,6 +239,7 @@ const ResetPassword: React.FC = () => {
                     <FormControl isRequired isInvalid={"username" in errors}>
                       <FormControl.Label>Nome do utilizador</FormControl.Label>
                       <Input
+                        id="username"
                         onBlur={handleBlur("username")}
                         placeholder="Insira o nome do utilizador"
                         onChangeText={handleChange("username")}
@@ -252,6 +253,7 @@ const ResetPassword: React.FC = () => {
                     <FormControl isRequired isInvalid={"password" in errors}>
                       <FormControl.Label>Nova Senha</FormControl.Label>
                       <Input
+                        id="password"
                         type={showPass ? "text" : "password"}
                         onBlur={handleBlur("password")}
                         placeholder="Insira a nova senha"
@@ -284,6 +286,7 @@ const ResetPassword: React.FC = () => {
                         Repetir a nova Senha
                       </FormControl.Label>
                       <Input
+                        id="rePassword"
                         type={show ? "text" : "password"}
                         onBlur={handleBlur("rePassword")}
                         placeholder="Repita a nova senha"
@@ -316,6 +319,7 @@ const ResetPassword: React.FC = () => {
                       />
                     ) : undefined}
                     <Button
+                      id="solicitar"
                       onPress={handleSubmit}
                       // onPress={() => {
                       // 	updatePassword(values.username, values.password);
