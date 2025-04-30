@@ -151,7 +151,8 @@ const BeneficiaryForm: React.FC = ({
   const [beneficiaryState, setBeneficiaryState] = useState<any>();
   const [ignoreExisting, setIgnoreExisting] = useState(false);
   const [toolTipVisible, setToolTipVisible] = useState(false);
-  const [exploitationToolTipVisible, setExploitationToolTipVisible] = useState(false);
+  const [exploitationToolTipVisible, setExploitationToolTipVisible] =
+    useState(false);
   const [alcoolToolTipVisible, setAlcoolToolTipVisible] = useState(false);
   const [stiToolTipVisible, setStiToolTipVisible] = useState(false);
   const [sexWorkerToolTipVisible, setSexWorkerToolTipVisible] = useState(false);
@@ -1006,6 +1007,9 @@ const BeneficiaryForm: React.FC = ({
 
     return (
       <Picker
+        accessible={true}
+        accessibilityLabel="selectedAge"
+        testID="selectedAge"
         enabled={!isDateRequired}
         onValueChange={onchangeAge}
         selectedValue={age}
@@ -1094,6 +1098,10 @@ const BeneficiaryForm: React.FC = ({
                       </HStack>
 
                       <Button
+                        id="editarRegistoExistente"
+                        accessible={true}
+                        accessibilityLabel="editarRegistoExistente"
+                        testID="editarRegistoExistente"
                         onPress={() => {
                           setExistingBeneficiary(false);
                           setBeneficairie(beneficiaryState);
@@ -1110,6 +1118,10 @@ const BeneficiaryForm: React.FC = ({
                       </Button>
 
                       <Button
+                        id="continuarComNovoRegisto"
+                        accessible={true}
+                        accessibilityLabel="continuarComNovoRegisto"
+                        testID="continuarComNovoRegisto"
                         onPress={() => {
                           setExistingBeneficiary(false);
                           setIgnoreExisting(true);
@@ -1129,6 +1141,10 @@ const BeneficiaryForm: React.FC = ({
       <View style={{ flex: 1, backgroundColor: "white" }}>
         <ProgressSteps>
           <ProgressStep
+            id="dadosPessoais"
+            accessible={true}
+            accessibilityLabel="dadosPessoais"
+            testID="dadosPessoais"
             label="Dados Pessoais"
             onNext={onNextStep}
             errors={errors}
@@ -1146,6 +1162,9 @@ const BeneficiaryForm: React.FC = ({
               ) : (
                 <VStack space={3} w="90%">
                   <FormControl
+                    accessible={true}
+                    accessibilityLabel="nui"
+                    testID="nui"
                     style={{
                       display: beneficiarie === undefined ? "none" : "flex",
                     }}
@@ -1156,6 +1175,9 @@ const BeneficiaryForm: React.FC = ({
                     </Text>
                   </FormControl>
                   <FormControl
+                   accessible={true}
+                   accessibilityLabel="surname"
+                   testID="surname"
                     isRequired
                     isInvalid={"surname" in formik.errors}
                     style={{
@@ -1164,6 +1186,10 @@ const BeneficiaryForm: React.FC = ({
                   >
                     <FormControl.Label>Apelido</FormControl.Label>
                     <Input
+                      id="apelido"
+                      accessible={true}
+                      accessibilityLabel="apelido"
+                      testID="apelido"
                       autoFocus={true}
                       onBlur={formik.handleBlur("surname")}
                       placeholder="Insira o Apelido"
@@ -1183,6 +1209,10 @@ const BeneficiaryForm: React.FC = ({
                   >
                     <FormControl.Label>Nome</FormControl.Label>
                     <Input
+                      id="name"
+                      accessible={true}
+                      accessibilityLabel="name"
+                      testID="name"
                       onBlur={formik.handleBlur("name")}
                       placeholder="Insira o Nome"
                       onChangeText={(name) => onChangeName(name)}
@@ -1200,7 +1230,7 @@ const BeneficiaryForm: React.FC = ({
                     <HStack w="100%" flex={1} space={5} alignItems="center">
                       <InputGroup w={{ base: "70%", md: "285" }}>
                         <InputLeftAddon>
-                          <MyDatePicker
+                          <MyDatePicker                    
                             onDateSelection={(e) =>
                               handleDataFromDatePickerComponent(
                                 e,
@@ -1217,6 +1247,10 @@ const BeneficiaryForm: React.FC = ({
                           />
                         </InputLeftAddon>
                         <Input
+                          id="date_of_birth"
+                          accessible={true}
+                          accessibilityLabel="date_of_birth"
+                          testID="date_of_birth"
                           isDisabled
                           w={{ base: "70%", md: "100%" }}
                           onPressIn={() => {
@@ -1237,6 +1271,10 @@ const BeneficiaryForm: React.FC = ({
                   </FormControl>
                   <FormControl>
                     <Checkbox
+                      id="dont_know_the_age"
+                      accessible={true}
+                      accessibilityLabel="dont_know_the_age"
+                      testID="dont_know_the_age"
                       isInvalid
                       value="invalid"
                       onChange={onChangeCheckbox}
@@ -1260,6 +1298,9 @@ const BeneficiaryForm: React.FC = ({
                   >
                     <FormControl.Label>Nacionalidade</FormControl.Label>
                     <Picker
+                      accessible={true}
+                      accessibilityLabel="nationality"
+                      testID="nationality"
                       enabled={false}
                       style={styles.dropDownPickerDisabled}
                       selectedValue={formik.values.nationality}
@@ -1304,6 +1345,10 @@ const BeneficiaryForm: React.FC = ({
                           />
                         </InputLeftAddon>
                         <Input
+                          id="enrollment_date"
+                          accessible={true}
+                          accessibilityLabel="enrollment_date"
+                          testID="enrollment_date"
                           isDisabled
                           w={{ base: "70%", md: "100%" }}
                           onPressIn={() => {
@@ -1329,6 +1374,9 @@ const BeneficiaryForm: React.FC = ({
                   >
                     <FormControl.Label>Provincia</FormControl.Label>
                     <Picker
+                      accessible={true}
+                      accessibilityLabel="province"
+                      testID="province"
                       enabled={isProvEnable}
                       style={styles.dropDownPickerDisabled}
                       selectedValue={formik.values.province}
@@ -1362,6 +1410,9 @@ const BeneficiaryForm: React.FC = ({
                   >
                     <FormControl.Label>Distrito</FormControl.Label>
                     <Picker
+                      accessible={true}
+                      accessibilityLabel="district"
+                      testID="district"
                       enabled={isDisEnable}
                       style={styles.dropDownPickerDisabled}
                       selectedValue={formik.values.district}
@@ -1395,6 +1446,9 @@ const BeneficiaryForm: React.FC = ({
                   >
                     <FormControl.Label>Posto Administrativo</FormControl.Label>
                     <Picker
+                      accessible={true}
+                      accessibilityLabel="locality"
+                      testID="locality"
                       enabled={isEnable}
                       style={styles.dropDownPickerDisabled}
                       selectedValue={formik.values.locality}
@@ -1428,6 +1482,9 @@ const BeneficiaryForm: React.FC = ({
                   >
                     <FormControl.Label>Ponto de Entrada</FormControl.Label>
                     <Picker
+                      accessible={true}
+                      accessibilityLabel="entry_point"
+                      testID="entry_point"
                       style={styles.textBlack}
                       selectedValue={
                         formik.values.entry_point
@@ -1457,6 +1514,9 @@ const BeneficiaryForm: React.FC = ({
                   <FormControl isRequired isInvalid={"us_id" in formik.errors}>
                     <FormControl.Label>Local</FormControl.Label>
                     <Picker
+                      accessible={true}
+                      accessibilityLabel="us_id"
+                      testID="us_id"
                       style={styles.textBlack}
                       selectedValue={formik.values.us_id}
                       onValueChange={(itemValue, itemIndex) => {
@@ -1485,6 +1545,9 @@ const BeneficiaryForm: React.FC = ({
                   >
                     <FormControl.Label>Alcunha</FormControl.Label>
                     <Input
+                     accessible={true}
+                     accessibilityLabel="nick_name"
+                     testID="nick_name"
                       onBlur={formik.handleBlur("nick_name")}
                       placeholder="Insira a Alcunha"
                       onChangeText={formik.handleChange("nick_name")}
@@ -1496,6 +1559,9 @@ const BeneficiaryForm: React.FC = ({
                       Endereço (Ponto de Referência)
                     </FormControl.Label>
                     <Input
+                     accessible={true}
+                     accessibilityLabel="address"
+                     testID="address"
                       onBlur={formik.handleBlur("address")}
                       placeholder="Insira o Endereço"
                       onChangeText={formik.handleChange("address")}
@@ -1505,6 +1571,9 @@ const BeneficiaryForm: React.FC = ({
                   <FormControl isInvalid={"phone_number" in formik.errors}>
                     <FormControl.Label>Telemóvel</FormControl.Label>
                     <Input
+                      accessible={true}
+                      accessibilityLabel="phone_number"
+                      testID="phone_number"
                       onBlur={formik.handleBlur("phone_number")}
                       keyboardType="number-pad"
                       maxLength={9}
@@ -1519,6 +1588,9 @@ const BeneficiaryForm: React.FC = ({
                   <FormControl isInvalid={"e_mail" in formik.errors}>
                     <FormControl.Label>E-mail</FormControl.Label>
                     <Input
+                    accessible={true}
+                    accessibilityLabel="e_mail"
+                    testID="e_mail"
                       onBlur={formik.handleBlur("e_mail")}
                       placeholder="Insira o E-mail"
                       onChangeText={formik.handleChange("e_mail")}
@@ -1534,6 +1606,9 @@ const BeneficiaryForm: React.FC = ({
                   >
                     <FormControl.Label>Bairro</FormControl.Label>
                     <Picker
+                      accessible={true}
+                      accessibilityLabel="neighborhood_id"
+                      testID="neighborhood_id"
                       style={styles.textBlack}
                       selectedValue={formik.values.neighborhood_id}
                       onValueChange={(itemValue, itemIndex) => {
@@ -1572,6 +1647,9 @@ const BeneficiaryForm: React.FC = ({
                     </FormControl.Label>
                     <FormControl>
                       <Input
+                          accessible={true}
+                          accessibilityLabel="searchPartner"
+                          testID="searchPartner"
                         onBlur={() => {
                           /**Its OK */
                         }}
@@ -1586,6 +1664,9 @@ const BeneficiaryForm: React.FC = ({
             </View>
           </ProgressStep>
           <ProgressStep
+              accessible={true}
+              accessibilityLabel="eligibilidade"
+              testID="eligibilidade"
             label="Critérios de Eligibilidade Gerais"
             onPrevious={onPreviousStep}
             onNext={onNextStep2}
@@ -1627,6 +1708,8 @@ const BeneficiaryForm: React.FC = ({
                   >
                     <FormControl.Label>Com quem mora?</FormControl.Label>
                     <Checkbox.Group
+                     accessible={true}
+                     testID="vblt_lives_with"
                       focusable={true}
                       onChange={setValue}
                       value={value}
@@ -1655,6 +1738,8 @@ const BeneficiaryForm: React.FC = ({
                   >
                     <FormControl.Label>Sustenta a Casa?</FormControl.Label>
                     <Radio.Group
+                       accessible={true}
+                       testID="vblt_house_sustainer"
                       value={formik.values.vblt_house_sustainer + ""}
                       onChange={(itemValue) => {
                         formik.setFieldValue("vblt_house_sustainer", itemValue);
@@ -1703,6 +1788,8 @@ const BeneficiaryForm: React.FC = ({
                   >
                     <FormControl.Label>Vai a Escola?</FormControl.Label>
                     <Radio.Group
+                     accessible={true}
+                       testID="vblt_is_student"
                       value={formik.values.vblt_is_student + ""}
                       onChange={(itemValue) => {
                         formik.setFieldValue("vblt_is_student", itemValue);
@@ -1752,6 +1839,9 @@ const BeneficiaryForm: React.FC = ({
                   >
                     <FormControl.Label>Classe</FormControl.Label>
                     <Picker
+                      accessible={true}
+                      accessibilityLabel="vblt_school_grade"
+                      testID="vblt_school_grade"
                       style={styles.textBlack}
                       selectedValue={formik.values.vblt_school_grade}
                       onValueChange={(itemValue, itemIndex) => {
@@ -1781,6 +1871,9 @@ const BeneficiaryForm: React.FC = ({
                       Nome da Instituição de Ensino
                     </FormControl.Label>
                     <Input
+                       accessible={true}
+                       accessibilityLabel="vblt_school_name"
+                       testID="vblt_school_name"
                       onBlur={formik.handleBlur("vblt_school_name")}
                       placeholder="Insira o nome da Instituição"
                       onChangeText={formik.handleChange("vblt_school_name")}
@@ -1797,6 +1890,8 @@ const BeneficiaryForm: React.FC = ({
                   >
                     <FormControl.Label>Tem Deficiência?</FormControl.Label>
                     <Radio.Group
+                      accessible={true}
+                      testID="vblt_is_deficient"
                       value={formik.values.vblt_is_deficient + ""}
                       onChange={(itemValue) => {
                         formik.setFieldValue("vblt_is_deficient", itemValue);
@@ -1846,6 +1941,9 @@ const BeneficiaryForm: React.FC = ({
                   >
                     <FormControl.Label>Tipo de Deficiência</FormControl.Label>
                     <Picker
+                      accessible={true}
+                      accessibilityLabel="vblt_deficiency_type"
+                      testID="vblt_deficiency_type"
                       style={styles.textBlack}
                       selectedValue={formik.values.vblt_deficiency_type}
                       onValueChange={(itemValue, itemIndex) => {
@@ -1885,6 +1983,8 @@ const BeneficiaryForm: React.FC = ({
                   >
                     <FormControl.Label>É ou Já foi Casada?</FormControl.Label>
                     <Radio.Group
+                        accessible={true}
+                        testID="vblt_married_before"
                       value={formik.values.vblt_married_before + ""}
                       onChange={(itemValue) => {
                         formik.setFieldValue("vblt_married_before", itemValue);
@@ -1927,6 +2027,9 @@ const BeneficiaryForm: React.FC = ({
                     </FormControl.ErrorMessage>
                   </FormControl>
                   <FormControl
+                     accessible={true}
+                     accessibilityLabel="vblt_idp"
+                     testID="vblt_idp"
                     key="vblt_idp"
                     isRequired
                     isInvalid={"vblt_idp" in formik.errors}
@@ -1952,6 +2055,8 @@ const BeneficiaryForm: React.FC = ({
                       </Tooltip>
                     </FormControl.Label>
                     <Radio.Group
+                      accessible={true}
+                      testID="vblt_idp"
                       value={formik.values.vblt_idp + ""}
                       onChange={(itemValue) => {
                         formik.setFieldValue("vblt_idp", itemValue);
@@ -2000,6 +2105,9 @@ const BeneficiaryForm: React.FC = ({
                   >
                     <FormControl.Label>Já fez Teste de HIV?</FormControl.Label>
                     <Picker
+                      accessible={true}
+                      accessibilityLabel="vblt_tested_hiv"
+                      testID="vblt_tested_hiv"
                       style={styles.textBlack}
                       selectedValue={formik.values.vblt_tested_hiv}
                       onValueChange={(itemValue, itemIndex) => {
@@ -2028,6 +2136,9 @@ const BeneficiaryForm: React.FC = ({
             </View>
           </ProgressStep>
           <ProgressStep
+           accessible={true}
+           accessibilityLabel="eligibilidade"
+           testID="eligibilidade"
             label="Critérios de Eligibilidade Específicos"
             onPrevious={onPreviousStep2}
             onSubmit={handleSubmit}
@@ -2057,6 +2168,8 @@ const BeneficiaryForm: React.FC = ({
                 >
                   <FormControl.Label>Sexualmente Activa?</FormControl.Label>
                   <Radio.Group
+                   accessible={true}
+                   testID="vblt_sexually_active"
                     focusable={true}
                     key="vblt_sexually_active"
                     value={formik.values.vblt_sexually_active + ""}
@@ -2108,6 +2221,8 @@ const BeneficiaryForm: React.FC = ({
                     Está ou Já esteve Grávida ou Tem filhos?
                   </FormControl.Label>
                   <Radio.Group
+                    accessible={true}
+                    testID="vblt_pregnant_or_has_children"
                     focusable={true}
                     key="vblt_pregnant_or_has_children"
                     value={formik.values.vblt_pregnant_or_has_children + ""}
@@ -2176,6 +2291,8 @@ const BeneficiaryForm: React.FC = ({
                     </Tooltip>
                   </FormControl.Label>
                   <Radio.Group
+                       accessible={true}
+                       testID="vblt_multiple_partners"
                     key="vblt_multiple_partners"
                     value={formik.values.vblt_multiple_partners + ""}
                     onChange={(itemValue) => {
@@ -2228,12 +2345,16 @@ const BeneficiaryForm: React.FC = ({
                       }
                       onClose={() => setExploitationToolTipVisible(false)}
                     >
-                      <TouchableOpacity onPress={() => setExploitationToolTipVisible(true)}>
+                      <TouchableOpacity
+                        onPress={() => setExploitationToolTipVisible(true)}
+                      >
                         <QuestionIcon />
                       </TouchableOpacity>
                     </Tooltip>
                   </FormControl.Label>
                   <Radio.Group
+                   accessible={true}
+                   testID="vblt_sexual_exploitation_trafficking_victim"
                     key="vblt_sexual_exploitation_trafficking_victim"
                     value={
                       formik.values
@@ -2288,6 +2409,8 @@ const BeneficiaryForm: React.FC = ({
                 >
                   <FormControl.Label>Vítima de Violência?</FormControl.Label>
                   <Radio.Group
+                                accessible={true}
+                                                       testID="vblt_vbg_victim"
                     key="vblt_vbg_victim"
                     value={formik.values.vblt_vbg_victim + ""}
                     onChange={(itemValue) => {
@@ -2337,6 +2460,9 @@ const BeneficiaryForm: React.FC = ({
                 >
                   <FormControl.Label>Tipo de Violência</FormControl.Label>
                   <Picker
+                    accessible={true}
+                    accessibilityLabel="vblt_vbg_type"
+                    testID="vblt_vbg_type"
                     style={styles.textBlack}
                     key="vblt_vbg_type"
                     selectedValue={formik.values.vblt_vbg_type}
@@ -2362,6 +2488,9 @@ const BeneficiaryForm: React.FC = ({
                 >
                   <FormControl.Label>Tempo</FormControl.Label>
                   <Picker
+                    accessible={true}
+                    accessibilityLabel="vblt_vbg_time"
+                    testID="vblt_vbg_time"
                     style={styles.textBlack}
                     key="vblt_vbg_time"
                     selectedValue={formik.values.vblt_vbg_time}
@@ -2400,12 +2529,17 @@ const BeneficiaryForm: React.FC = ({
                       }
                       onClose={() => setAlcoolToolTipVisible(false)}
                     >
-                      <TouchableOpacity onPress={() => setAlcoolToolTipVisible(true)}>
+                      <TouchableOpacity
+                        onPress={() => setAlcoolToolTipVisible(true)}
+                      >
                         <QuestionIcon />
                       </TouchableOpacity>
                     </Tooltip>
                   </FormControl.Label>
                   <Radio.Group
+                   accessible={true}
+                   accessibilityLabel="vblt_alcohol_drugs_use"
+                   testID="vblt_alcohol_drugs_use"
                     key="vblt_alcohol_drugs_use"
                     value={formik.values.vblt_alcohol_drugs_use + ""}
                     onChange={(itemValue) => {
@@ -2465,12 +2599,16 @@ const BeneficiaryForm: React.FC = ({
                       }
                       onClose={() => setStiToolTipVisible(false)}
                     >
-                      <TouchableOpacity onPress={() => setStiToolTipVisible(true)}>
+                      <TouchableOpacity
+                        onPress={() => setStiToolTipVisible(true)}
+                      >
                         <QuestionIcon />
                       </TouchableOpacity>
                     </Tooltip>
                   </FormControl.Label>
                   <Radio.Group
+                    accessible={true}
+                    testID="vblt_sti_history"
                     key="vblt_sti_history"
                     value={formik.values.vblt_sti_history + ""}
                     onChange={(itemValue) => {
@@ -2519,12 +2657,16 @@ const BeneficiaryForm: React.FC = ({
                       }
                       onClose={() => setSexWorkerToolTipVisible(false)}
                     >
-                      <TouchableOpacity onPress={() => setSexWorkerToolTipVisible(true)}>
+                      <TouchableOpacity
+                        onPress={() => setSexWorkerToolTipVisible(true)}
+                      >
                         <QuestionIcon />
                       </TouchableOpacity>
                     </Tooltip>
                   </FormControl.Label>
                   <Radio.Group
+                      accessible={true}
+                      testID="vblt_sex_worker"
                     key="vblt_sex_worker"
                     value={formik.values.vblt_sex_worker + ""}
                     onChange={(itemValue) => {
@@ -2621,6 +2763,9 @@ const BeneficiaryForm: React.FC = ({
             <Modal.Footer>
               <Button.Group space={2}>
                 <Button
+                 accessible={true}
+                 accessibilityLabel="concluir2"
+                 testID="concluir2"
                   onPress={() => {
                     handleOk(beneficiarie);
                   }}
@@ -2675,6 +2820,9 @@ const BeneficiaryForm: React.FC = ({
             <Modal.Footer>
               <Button.Group space={2} style={{ marginHorizontal: 5 }}>
                 <Button
+                   accessible={true}
+                   accessibilityLabel="concluir"
+                   testID="concluir"
                   onPress={() => {
                     handleOk(beneficiarie);
                   }}
@@ -2684,7 +2832,11 @@ const BeneficiaryForm: React.FC = ({
               </Button.Group>
 
               <Button.Group space={2}>
-                <Button onPress={() => setGoToSpecificVblt(false)}>
+                <Button
+                  accessible={true}
+                  accessibilityLabel="continuar"
+                  testID="continuar"
+                   onPress={() => setGoToSpecificVblt(false)}>
                   Continuar
                 </Button>
               </Button.Group>
