@@ -667,6 +667,9 @@ const Login: React.FC = ({ route }: any) => {
 
                       <Input
                         id="username"
+                        accessible={true}
+                        accessibilityLabel="username"
+                        testID="username"
                         onBlur={handleBlur("username")}
                         placeholder="Insira o Utilizador"
                         onChangeText={handleChange("username")}
@@ -714,6 +717,9 @@ const Login: React.FC = ({ route }: any) => {
                     ) : undefined}
                     <Button
                       id="autenticando"
+                      accessible={true}
+                      accessibilityLabel="autenticando"
+                      testID="autenticando"
                       isLoading={loading}
                       isLoadingText="Autenticando"
                       onPress={handleSubmit}
