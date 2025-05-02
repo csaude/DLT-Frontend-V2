@@ -779,6 +779,10 @@ const BeneficiarieServiceForm: React.FC = ({
                       </HStack>
 
                       <Button
+                        id="confirmToProvideExistingIntervention"
+                        accessible={true}
+                        accessibilityLabel="confirmToProvideExistingIntervention"
+                        testID="confirmToProvideExistingIntervention"
                         onPress={() => {
                           setExistingIntervention(false);
                           handleSaveIntervention(values, isEdit);
@@ -788,6 +792,10 @@ const BeneficiarieServiceForm: React.FC = ({
                       </Button>
 
                       <Button
+                        id="notConfirmToProvideExistingIntervention"
+                        accessible={true}
+                        accessibilityLabel="notConfirmToProvideExistingIntervention"
+                        testID="notConfirmToProvideExistingIntervention"
                         onPress={() => {
                           setExistingIntervention(false);
                           setLoading(false);
@@ -853,6 +861,9 @@ const BeneficiarieServiceForm: React.FC = ({
                       >
                         <FormControl.Label>Área de Serviços</FormControl.Label>
                         <Picker
+                          accessible={true}
+                          accessibilityLabel="areaServicos_id"
+                          testID="areaServicos_id"
                           enabled={
                             (isNewIntervention &&
                               !isClinicalOrCommunityPartner) ||
@@ -890,6 +901,9 @@ const BeneficiarieServiceForm: React.FC = ({
                         <FormControl.Label>Serviço</FormControl.Label>
 
                         <TouchableOpacity
+                          accessible={true}
+                          accessibilityLabel="service_id"
+                          testID="service_id"
                           style={styles.myDropDownPicker}
                           onPress={() => setVisible(true)}
                         >
@@ -913,7 +927,12 @@ const BeneficiarieServiceForm: React.FC = ({
                             onPress={() => setVisible(false)}
                           >
                             <View style={styles.modalContainer}>
-                              <TouchableWithoutFeedback onPress={() => {}}>
+                              <TouchableWithoutFeedback
+                                accessible={true}
+                                accessibilityLabel="sub_service_id"
+                                testID="sub_service_id"
+                                onPress={() => {}}
+                              >
                                 <View style={styles.modalContent}>
                                   <FlatList
                                     data={servicesState.filter(
@@ -926,6 +945,9 @@ const BeneficiarieServiceForm: React.FC = ({
                                     }
                                     renderItem={({ item }) => (
                                       <TouchableOpacity
+                                        accessible={true}
+                                        accessibilityLabel="sub_service_id"
+                                        testID="sub_service_id"
                                         style={styles.item}
                                         onPress={() => {
                                           setFieldValue("sub_service_id", null);
@@ -981,6 +1003,9 @@ const BeneficiarieServiceForm: React.FC = ({
                         </FormControl.Label>
 
                         <TouchableOpacity
+                          accessible={true}
+                          accessibilityLabel="sub_service_id"
+                          testID="sub_service_id"
                           style={styles.myDropDownPicker}
                           onPress={() => setSubServiceVisible(true)}
                         >
@@ -1001,6 +1026,9 @@ const BeneficiarieServiceForm: React.FC = ({
                           animationType="slide"
                         >
                           <TouchableWithoutFeedback
+                            accessible={true}
+                            accessibilityLabel="sub_service_id"
+                            testID="sub_service_id"
                             onPress={() => setSubServiceVisible(false)}
                           >
                             <View style={styles.modalContainer}>
@@ -1015,6 +1043,9 @@ const BeneficiarieServiceForm: React.FC = ({
                                     }
                                     renderItem={({ item }) => (
                                       <TouchableOpacity
+                                        accessible={true}
+                                        accessibilityLabel="sub_service_id"
+                                        testID="sub_service_id"
                                         style={styles.item}
                                         onPress={() => {
                                           setFieldValue(
@@ -1055,6 +1086,9 @@ const BeneficiarieServiceForm: React.FC = ({
                       >
                         <FormControl.Label>Ponto de Entrada</FormControl.Label>
                         <Picker
+                          accessible={true}
+                          accessibilityLabel="entry_point"
+                          testID="entry_point"
                           style={styles.dropDownPicker}
                           selectedValue={values.entry_point}
                           onValueChange={(itemValue, itemIndex) => {
@@ -1084,6 +1118,9 @@ const BeneficiarieServiceForm: React.FC = ({
                       <FormControl isRequired isInvalid={"us_id" in errors}>
                         <FormControl.Label>Localização</FormControl.Label>
                         <Picker
+                          accessible={true}
+                          accessibilityLabel="us_id"
+                          testID="us_id"
                           style={styles.dropDownPicker}
                           selectedValue={values.us_id}
                           onValueChange={(itemValue, itemIndex) => {
@@ -1134,6 +1171,10 @@ const BeneficiarieServiceForm: React.FC = ({
                               />
                             </InputLeftAddon>
                             <Input
+                              id="dateDisplay"
+                              accessible={true}
+                              accessibilityLabel="dateDisplay"
+                              testID="dateDisplay"
                               isDisabled
                               w={{
                                 base: "70%",
@@ -1180,6 +1221,10 @@ const BeneficiarieServiceForm: React.FC = ({
                               />
                             </InputLeftAddon>
                             <Input
+                              id="end_date"
+                              accessible={true}
+                              accessibilityLabel="end_date"
+                              testID="end_date"
                               isDisabled
                               w={{
                                 base: "70%",
@@ -1221,6 +1266,10 @@ const BeneficiarieServiceForm: React.FC = ({
                             }}
                           >
                             <Input
+                              id="provider"
+                              accessible={true}
+                              accessibilityLabel="provider"
+                              testID="provider"
                               type="text"
                               onBlur={handleBlur("provider")}
                               placeholder={currentInformedProvider}
@@ -1230,6 +1279,10 @@ const BeneficiarieServiceForm: React.FC = ({
                           </ModalSelector>
                         ) : (
                           <Input
+                            id="provider"
+                            accessible={true}
+                            accessibilityLabel="provider"
+                            testID="provider"
                             onBlur={handleBlur("provider")}
                             placeholder="Insira o Nome do Provedor"
                             onChangeText={handleChange("provider")}
@@ -1251,6 +1304,10 @@ const BeneficiarieServiceForm: React.FC = ({
                         </FormControl.Label>
 
                         <Input
+                          id="remarks"
+                          accessible={true}
+                          accessibilityLabel="remarks"
+                          testID="remarks"
                           onBlur={handleBlur("remarks")}
                           placeholder=""
                           onChangeText={handleChange("remarks")}
@@ -1258,6 +1315,10 @@ const BeneficiarieServiceForm: React.FC = ({
                         />
                       </FormControl>
                       <Button
+                        id="salvar"
+                        accessible={true}
+                        accessibilityLabel="salvar"
+                        testID="salvar"
                         isLoading={loading}
                         isLoadingText="Cadastrando"
                         onPress={handleSubmit}
