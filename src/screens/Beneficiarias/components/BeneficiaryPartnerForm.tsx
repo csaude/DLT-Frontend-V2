@@ -758,6 +758,9 @@ const BeneficiaryPartnerForm: React.FC = ({
 
     return (
       <Picker
+        accessible={true}
+        accessibilityLabel="age"
+        testID="age"
         style={styles.textBlack}
         enabled={!isDateRequired}
         onValueChange={onchangeAge}
@@ -792,6 +795,9 @@ const BeneficiaryPartnerForm: React.FC = ({
       <View style={{ flex: 1, backgroundColor: "white" }}>
         <ProgressSteps>
           <ProgressStep
+            accessible={true}
+            accessibilityLabel="dados_pessoais"
+            testID="dados_pessoais"
             label="Dados Pessoais"
             onNext={onNextStep}
             errors={errors}
@@ -825,6 +831,8 @@ const BeneficiaryPartnerForm: React.FC = ({
                   >
                     <FormControl.Label>Sexo</FormControl.Label>
                     <Radio.Group
+                      accessible={true}
+                      testID="gender"
                       value={formik.values.gender + ""}
                       onChange={(itemValue) => {
                         formik.setFieldValue("gender", itemValue);
@@ -860,6 +868,9 @@ const BeneficiaryPartnerForm: React.FC = ({
                   >
                     <FormControl.Label>Apelido</FormControl.Label>
                     <Input
+                      accessible={true}
+                      accessibilityLabel="surname"
+                      testID="surname"
                       onBlur={formik.handleBlur("surname")}
                       placeholder="Insira o Apelido"
                       onChangeText={formik.handleChange("surname")}
@@ -878,6 +889,9 @@ const BeneficiaryPartnerForm: React.FC = ({
                   >
                     <FormControl.Label>Nome</FormControl.Label>
                     <Input
+                      accessible={true}
+                      accessibilityLabel="name"
+                      testID="name"
                       onBlur={formik.handleBlur("name")}
                       placeholder="Insira o Nome"
                       onChangeText={(name) => onChangeName(name)}
@@ -913,6 +927,9 @@ const BeneficiaryPartnerForm: React.FC = ({
                           />
                         </InputLeftAddon>
                         <Input
+                          accessible={true}
+                          accessibilityLabel="date_of_birth"
+                          testID="date_of_birth"
                           isDisabled
                           w={{ base: "70%", md: "100%" }}
                           onPressIn={() => {
@@ -956,6 +973,9 @@ const BeneficiaryPartnerForm: React.FC = ({
                   >
                     <FormControl.Label>Nacionalidade</FormControl.Label>
                     <Picker
+                      accessible={true}
+                      accessibilityLabel="nationality"
+                      testID="nationality"
                       enabled={false}
                       style={styles.dropDownPickerDisabled}
                       selectedValue={formik.values.nationality}
@@ -1025,6 +1045,9 @@ const BeneficiaryPartnerForm: React.FC = ({
                   >
                     <FormControl.Label>Provincia</FormControl.Label>
                     <Picker
+                      accessible={true}
+                      accessibilityLabel="province"
+                      testID="province"
                       enabled={isProvEnable}
                       style={styles.dropDownPickerDisabled}
                       selectedValue={formik.values.province}
@@ -1058,6 +1081,9 @@ const BeneficiaryPartnerForm: React.FC = ({
                   >
                     <FormControl.Label>Distrito</FormControl.Label>
                     <Picker
+                      accessible={true}
+                      accessibilityLabel="district"
+                      testID="district"
                       enabled={isDisEnable}
                       style={styles.dropDownPickerDisabled}
                       selectedValue={formik.values.district}
@@ -1091,6 +1117,9 @@ const BeneficiaryPartnerForm: React.FC = ({
                   >
                     <FormControl.Label>Posto Administrativo</FormControl.Label>
                     <Picker
+                      accessible={true}
+                      accessibilityLabel="locality"
+                      testID="locality"
                       enabled={isEnable}
                       style={styles.dropDownPickerDisabled}
                       selectedValue={formik.values.locality}
@@ -1124,6 +1153,9 @@ const BeneficiaryPartnerForm: React.FC = ({
                   >
                     <FormControl.Label>Ponto de Entrada</FormControl.Label>
                     <Picker
+                      accessible={true}
+                      accessibilityLabel="entry_point"
+                      testID="entry_point"
                       style={styles.textBlack}
                       selectedValue={
                         formik.values.entry_point
@@ -1153,6 +1185,9 @@ const BeneficiaryPartnerForm: React.FC = ({
                   <FormControl isRequired isInvalid={"us_id" in formik.errors}>
                     <FormControl.Label>Local</FormControl.Label>
                     <Picker
+                      accessible={true}
+                      accessibilityLabel="us_id"
+                      testID="us_id"
                       style={styles.textBlack}
                       selectedValue={formik.values.us_id}
                       onValueChange={(itemValue, itemIndex) => {
@@ -1181,6 +1216,9 @@ const BeneficiaryPartnerForm: React.FC = ({
                   >
                     <FormControl.Label>Alcunha</FormControl.Label>
                     <Input
+                      accessible={true}
+                      accessibilityLabel="nick_name"
+                      testID="nick_name"
                       onBlur={formik.handleBlur("nick_name")}
                       placeholder="Insira a Alcunha"
                       onChangeText={formik.handleChange("nick_name")}
@@ -1192,6 +1230,9 @@ const BeneficiaryPartnerForm: React.FC = ({
                       Endereço (Ponto de Referência)
                     </FormControl.Label>
                     <Input
+                      accessible={true}
+                      accessibilityLabel="address"
+                      testID="address"
                       onBlur={formik.handleBlur("address")}
                       placeholder="Insira o Endereço"
                       onChangeText={formik.handleChange("address")}
@@ -1201,6 +1242,9 @@ const BeneficiaryPartnerForm: React.FC = ({
                   <FormControl isInvalid={"phone_number" in formik.errors}>
                     <FormControl.Label>Telemóvel</FormControl.Label>
                     <Input
+                      accessible={true}
+                      accessibilityLabel="phone_number"
+                      testID="phone_number"
                       onBlur={formik.handleBlur("phone_number")}
                       keyboardType="number-pad"
                       maxLength={9}
@@ -1215,6 +1259,9 @@ const BeneficiaryPartnerForm: React.FC = ({
                   <FormControl isInvalid={"e_mail" in formik.errors}>
                     <FormControl.Label>E-mail</FormControl.Label>
                     <Input
+                      accessible={true}
+                      accessibilityLabel="e_mail"
+                      testID="e_mail"
                       onBlur={formik.handleBlur("e_mail")}
                       placeholder="Insira o E_mail"
                       onChangeText={formik.handleChange("e_mail")}
@@ -1230,6 +1277,9 @@ const BeneficiaryPartnerForm: React.FC = ({
                   >
                     <FormControl.Label>Bairro</FormControl.Label>
                     <Picker
+                      accessible={true}
+                      accessibilityLabel="neighborhood_id"
+                      testID="neighborhood_id"
                       style={styles.textBlack}
                       selectedValue={formik.values.neighborhood_id}
                       onValueChange={(itemValue, itemIndex) => {
@@ -1259,6 +1309,9 @@ const BeneficiaryPartnerForm: React.FC = ({
             </View>
           </ProgressStep>
           <ProgressStep
+            accessible={true}
+            accessibilityLabel="eligibilidade_gerais"
+            testID="eligibilidade_gerais"
             label="Critérios de Eligibilidade Gerais"
             onPrevious={onPreviousStep}
             onSubmit={onNextStep2}
@@ -1295,6 +1348,8 @@ const BeneficiaryPartnerForm: React.FC = ({
                   >
                     <FormControl.Label>Com quem mora?</FormControl.Label>
                     <Checkbox.Group
+                      accessible={true}
+                      testID="vblt_lives_with"
                       onChange={setValue}
                       value={value}
                       accessibilityLabel="choose numbers"
@@ -1322,6 +1377,8 @@ const BeneficiaryPartnerForm: React.FC = ({
                   >
                     <FormControl.Label>Sustenta a Casa?</FormControl.Label>
                     <Radio.Group
+                      accessible={true}
+                      testID="vblt_house_sustainer"
                       value={formik.values.vblt_house_sustainer + ""}
                       onChange={(itemValue) => {
                         formik.setFieldValue("vblt_house_sustainer", itemValue);
@@ -1369,6 +1426,8 @@ const BeneficiaryPartnerForm: React.FC = ({
                   >
                     <FormControl.Label>Vai a Escola?</FormControl.Label>
                     <Radio.Group
+                      accessible={true}
+                      testID="vblt_is_student"
                       value={formik.values.vblt_is_student + ""}
                       onChange={(itemValue) => {
                         formik.setFieldValue("vblt_is_student", itemValue);
@@ -1405,6 +1464,9 @@ const BeneficiaryPartnerForm: React.FC = ({
                   >
                     <FormControl.Label>Classe</FormControl.Label>
                     <Picker
+                      accessible={true}
+                      accessibilityLabel="vblt_school_grade"
+                      testID="vblt_school_grade"
                       style={styles.textBlack}
                       selectedValue={formik.values.vblt_school_grade}
                       onValueChange={(itemValue, itemIndex) => {
@@ -1415,7 +1477,11 @@ const BeneficiaryPartnerForm: React.FC = ({
                     >
                       <Picker.Item label="-- Seleccione --" value="0" />
                       {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((item) => (
-                        <Picker.Item key={item} label={"" + item} value={item} />
+                        <Picker.Item
+                          key={item}
+                          label={"" + item}
+                          value={item}
+                        />
                       ))}
                     </Picker>
                     <FormControl.ErrorMessage>
@@ -1430,6 +1496,9 @@ const BeneficiaryPartnerForm: React.FC = ({
                       Nome da Instituição de Ensino
                     </FormControl.Label>
                     <Input
+                      accessible={true}
+                      accessibilityLabel="vblt_school_name"
+                      testID="vblt_school_name"
                       onBlur={formik.handleBlur("vblt_school_name")}
                       placeholder="Insira o nome da Instituição"
                       onChangeText={formik.handleChange("vblt_school_name")}
@@ -1445,6 +1514,8 @@ const BeneficiaryPartnerForm: React.FC = ({
                   >
                     <FormControl.Label>Tem Deficiência?</FormControl.Label>
                     <Radio.Group
+                      accessible={true}
+                      testID="vblt_is_deficient"
                       value={formik.values.vblt_is_deficient + ""}
                       onChange={(itemValue) => {
                         formik.setFieldValue("vblt_is_deficient", itemValue);
@@ -1481,11 +1552,17 @@ const BeneficiaryPartnerForm: React.FC = ({
                   >
                     <FormControl.Label>Tipo de Deficiência</FormControl.Label>
                     <Picker
+                      accessible={true}
+                      accessibilityLabel="vblt_deficiency_type"
+                      testID="vblt_deficiency_type"
                       style={styles.textBlack}
                       selectedValue={formik.values.vblt_deficiency_type}
                       onValueChange={(itemValue, itemIndex) => {
                         if (itemIndex !== 0) {
-                          formik.setFieldValue("vblt_deficiency_type", itemValue);
+                          formik.setFieldValue(
+                            "vblt_deficiency_type",
+                            itemValue
+                          );
                         }
                       }}
                       enabled={deficiencyTypeEnabled}
@@ -1499,7 +1576,11 @@ const BeneficiaryPartnerForm: React.FC = ({
                         "Membro Amputado ou Deformado",
                         "Tem Algum Atraso Mental",
                       ].map((item) => (
-                        <Picker.Item key={item} label={"" + item} value={item} />
+                        <Picker.Item
+                          key={item}
+                          label={"" + item}
+                          value={item}
+                        />
                       ))}
                     </Picker>
                     <FormControl.ErrorMessage>
@@ -1557,6 +1638,10 @@ const BeneficiaryPartnerForm: React.FC = ({
             <Modal.Footer>
               <Button.Group space={2}>
                 <Button
+                  id="concluir"
+                  accessible={true}
+                  accessibilityLabel="concluir"
+                  testID="concluir"
                   variant="ghost"
                   colorScheme="blueGray"
                   onPress={() => {

@@ -74,6 +74,9 @@ const StapperButton: React.FC<any> = ({
                 size="6"
                 name="refresh"
                 color="warmGray.50"
+                accessible={true}
+                accessibilityLabel="handleRefresh"
+                testID="handleRefresh"
                 onPress={handleRefresh}
               />
             }
@@ -94,6 +97,9 @@ const StapperButton: React.FC<any> = ({
                   color: "warmGray.50",
                 }}
                 color="warmGray.50"
+                accessible={true}
+                accessibilityLabel="onAdd"
+                testID="onAdd"
                 onPress={onAdd}
               />
             }
@@ -107,6 +113,8 @@ const StapperButton: React.FC<any> = ({
           variant="solid"
           borderRadius="full"
           size="lg"
+          accessibilityLabel="onToggle"
+          testID="onToggle"
           onPress={onToggle}
           bg="#17a2b8"
           icon={
