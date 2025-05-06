@@ -118,6 +118,17 @@ const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
   };
   const [form] = Form.useForm();
 
+  const setUniqueFilteredServices = (interventions) => {
+    const services = interventions.map((s) => s.subServices.service);
+    const uniqueServices: any = [
+      ...new Map(services.map((item) => [item["id"], item])).values(),
+    ];
+    const sortedServices = uniqueServices.sort((ser1, ser2) =>
+      ser1.name.localeCompare(ser2.name)
+    );
+    setServices(sortedServices);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       const loggedUser = await queryUser(localStorage.user);
@@ -132,28 +143,10 @@ const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
 
       if (data1.beneficiariesInterventionses !== undefined) {
         setInterventions(data1.beneficiariesInterventionses);
-        const services = data1.beneficiariesInterventionses.map(
-          (s) => s.subServices.service
-        );
-        const uniqueServices: any = [
-          ...new Map(services.map((item) => [item["id"], item])).values(),
-        ];
-        const sortedServices = uniqueServices.sort((ser1, ser2) =>
-          ser1.name.localeCompare(ser2.name)
-        );
-        setServices(sortedServices);
+        setUniqueFilteredServices(data1.beneficiariesInterventionse);
       } else {
         setInterventions(beneficiaryInterventions);
-        const services = beneficiaryInterventions.map(
-          (s) => s.subServices.service
-        );
-        const uniqueServices: any = [
-          ...new Map(services.map((item) => [item["id"], item])).values(),
-        ];
-        const sortedServices = uniqueServices.sort((ser1, ser2) =>
-          ser1.name.localeCompare(ser2.name)
-        );
-        setServices(sortedServices);
+        setUniqueFilteredServices(beneficiaryInterventions);
       }
 
       if (selectedReference.referencesServiceses !== undefined) {
@@ -223,10 +216,11 @@ const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
         dispatch(loadRemarks(values.outros));
         const { data } = await addSubService(payload);
 
-        setInterventions((interventions) => [
-          ...interventions,
-          data.intervention,
-        ]);
+        const interventionses = [...interventions, data.intervention];
+
+        setInterventions(interventionses);
+        setUniqueFilteredServices(interventionses);
+
         const ref = data.references.filter((r) => r.id == selectedReference.id);
 
         if (ref.length > 0) {
@@ -245,6 +239,8 @@ const ViewReferencePanel = ({ selectedReference, allowDataEntry }) => {
         setVisible(false);
 
         handleAttendServicesSequence();
+        setSelect([]);
+        forceRemount();
       })
       .catch(() => {
         message.error({
