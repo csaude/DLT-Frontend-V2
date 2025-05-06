@@ -263,17 +263,23 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
 
   return (
     <Context.Provider value={loggedUser}>
-      <SpinnerModal
-        open={syncInProgress}
-        title={"Sincronização em Curso"}
-        message={
-          "O dispositivo está atualmente em processo de sincronização. Por favor, aguarde até que a sincronização seja concluída para continuar. Agradecemos sua paciência!"
-        }
-      />
+      <View
+        accessible={true}
+        accessibilityLabel="spinner-modal"
+        testID="spinner-modal"
+      >
+        <SpinnerModal
+          open={syncInProgress}
+          title={"Sincronização em Curso"}
+          message={
+            "O dispositivo está atualmente em processo de sincronização. Por favor, aguarde até que a sincronização seja concluída para continuar. Agradecemos sua paciência!"
+          }
+        />
+      </View>
       <Drawer.Navigator
         screenOptions={{
           headerStyle: {
-            backgroundColor: "#17a2b8", //'#0c4a6e',
+            backgroundColor: "#17a2b8",
           },
           headerTintColor: "#fff",
           headerTitleStyle: {
@@ -281,10 +287,7 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
           },
         }}
         drawerContent={(props) => (
-          <CustomDrawer
-            {...props}
-            onLogout={onLogout} /*loggedUser={loggedUser}*/
-          />
+          <CustomDrawer {...props} onLogout={onLogout} />
         )}
       >
         <Drawer.Screen
@@ -302,7 +305,13 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
             title: "",
             headerTitle: "",
             drawerIcon: () => (
-              <ItemBadge label="Beneficiárias" total={beneficiariesTotal} />
+              <View
+                accessible={true}
+                accessibilityLabel="drawer-beneficiaries"
+                testID="drawer-beneficiaries"
+              >
+                <ItemBadge label="Beneficiárias" total={beneficiariesTotal} />
+              </View>
             ),
           }}
         />
@@ -313,7 +322,13 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
             title: "",
             headerTitle: "",
             drawerIcon: () => (
-              <ItemBadge label="Referências" total={referencesTotal} />
+              <View
+                accessible={true}
+                accessibilityLabel="drawer-references"
+                testID="drawer-references"
+              >
+                <ItemBadge label="Referências" total={referencesTotal} />
+              </View>
             ),
           }}
         />
@@ -323,7 +338,15 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
           options={{
             title: "",
             headerTitle: "",
-            drawerIcon: () => <ItemBadge label="Perfil" total={-1} />,
+            drawerIcon: () => (
+              <View
+                accessible={true}
+                accessibilityLabel="drawer-users"
+                testID="drawer-users"
+              >
+                <ItemBadge label="Perfil" total={-1} />
+              </View>
+            ),
           }}
         />
         <Drawer.Screen
@@ -333,7 +356,13 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
             title: "",
             headerTitle: "",
             drawerIcon: () => (
-              <ItemBadge label="Relatório de Sincronização" total={-1} />
+              <View
+                accessible={true}
+                accessibilityLabel="drawer-sync-report"
+                testID="drawer-sync-report"
+              >
+                <ItemBadge label="Relatório de Sincronização" total={-1} />
+              </View>
             ),
           }}
         />
@@ -344,7 +373,13 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
             title: "",
             headerTitle: "",
             drawerIcon: () => (
-              <ItemBadge label="Exportar Dados do Dispositivo" total={-1} />
+              <View
+                accessible={true}
+                accessibilityLabel="drawer-data-export"
+                testID="drawer-data-export"
+              >
+                <ItemBadge label="Exportar Dados do Dispositivo" total={-1} />
+              </View>
             ),
           }}
         />
@@ -355,7 +390,13 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
             title: "",
             headerTitle: "",
             drawerIcon: () => (
-              <ItemBadge label="Detalhes da Aplicação" total={-1} />
+              <View
+                accessible={true}
+                accessibilityLabel="drawer-info"
+                testID="drawer-info"
+              >
+                <ItemBadge label="Detalhes da Aplicação" total={-1} />
+              </View>
             ),
           }}
         />
@@ -366,7 +407,13 @@ const DrawerNavigation: React.FC = ({ route }: any) => {
             title: "",
             headerTitle: "",
             drawerIcon: () => (
-              <ItemBadge label="Limpeza de Dados" total={-1} />
+              <View
+                accessible={true}
+                accessibilityLabel="drawer-clean-data"
+                testID="drawer-clean-data"
+              >
+                <ItemBadge label="Limpeza de Dados" total={-1} />
+              </View>
             ),
           }}
         />
