@@ -1,7 +1,7 @@
 {
   "homepage": "http://localhost:8081/dreams",
   "name": "dlt-web",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "private": true,
   "scripts": {
     "start": "craco start",
