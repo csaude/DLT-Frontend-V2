@@ -70,11 +70,8 @@ export async function bulkCancelSelected(payload: BulkReferenceCancel) {
   return res;
 }
 
-export async function bulkCancelAll(
-  payload: BulkReferenceCancel,
-  userId: number
-) {
-  const res = await update(`/api/references/bulkCancelAll/${userId}`, payload);
+export async function bulkCancelAll(payload: BulkReferenceCancel) {
+  const res = await update("/api/references/bulkCancelAll", payload);
   return res;
 }
 
@@ -213,5 +210,23 @@ export async function queryById(id: number) {
     const url = `/api/references/${id}`;
     res = await select(url);
   }
+  return res;
+}
+
+export async function queryIdsByPendingFilters(
+  id?: any,
+  searchStartDate?: any,
+  searchEndDate?: any
+) {
+  if (searchStartDate === undefined || searchEndDate === undefined) {
+    searchStartDate = 1483252734;
+    searchEndDate = dateTotimestamp(new Date());
+  } else {
+    searchStartDate = dateTotimestamp(searchStartDate);
+    searchEndDate = dateTotimestamp(searchEndDate);
+  }
+  const res = await select(
+    `/api/references/byPeddingUser/${id}/queryIdsByPendingFilters?searchStartDate=${searchStartDate}&searchEndDate=${searchEndDate}`
+  );
   return res;
 }

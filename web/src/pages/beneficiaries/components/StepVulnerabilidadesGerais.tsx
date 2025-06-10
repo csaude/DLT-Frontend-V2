@@ -225,6 +225,7 @@ const StepVulnerabilidadesGerais = ({ form, beneficiary }: any) => {
             id="vblt_idp-control"
             name="vblt_idp"
             label="Deslocado Interno?/IDP?"
+            tooltip="Forçada a se deslocar dentro do país devido a conflitos/desastres naturais (cheias, secas, ciclones ou outros)"
             rules={[{ required: true, message: RequiredFieldMessage }]}
             style={{ textAlign: "left" }}
             initialValue={beneficiary?.vbltIdp}

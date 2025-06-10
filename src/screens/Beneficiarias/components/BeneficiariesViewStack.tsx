@@ -26,7 +26,7 @@ function BeneficiariesViewStack({ route }) {
   );
   return (
     <Tab.Navigator
-      initialRouteName="Dados Pessoais"
+      initialRouteName={route.params?.initialScreen || "Dados Pessoais"}
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
@@ -55,7 +55,11 @@ function BeneficiariesViewStack({ route }) {
       <Tab.Screen
         name="Dados Pessoais"
         component={DadosPessoaisView}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+          tabBarAccessibilityLabel: "Dados Pessoais",
+          tabBarTestID: "tab-dados-pessoais",
+        }}
         initialParams={{
           beneficiary: route.params?.beneficiary,
           interventions: route.params?.interventions,
@@ -67,7 +71,11 @@ function BeneficiariesViewStack({ route }) {
       <Tab.Screen
         name="Serviços"
         component={InterventionsView}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+          tabBarAccessibilityLabel: "Serviços",
+          tabBarTestID: "tab-servicos",
+        }}
         initialParams={{
           beneficiary: route.params?.beneficiary,
           interventions: route.params?.interventions,
@@ -76,7 +84,11 @@ function BeneficiariesViewStack({ route }) {
       <Tab.Screen
         name="Referencias"
         component={ReferenceView}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+          tabBarAccessibilityLabel: "Referencias",
+          tabBarTestID: "tab-referencias",
+        }}
         initialParams={{
           beneficiary: route.params?.beneficiary,
           interventions: route.params?.interventions,

@@ -666,6 +666,10 @@ const Login: React.FC = ({ route }: any) => {
                       <FormControl.Label>Nome do utilizador</FormControl.Label>
 
                       <Input
+                        id="username"
+                        accessible={true}
+                        accessibilityLabel="username"
+                        testID="username"
                         onBlur={handleBlur("username")}
                         placeholder="Insira o Utilizador"
                         onChangeText={handleChange("username")}
@@ -679,10 +683,19 @@ const Login: React.FC = ({ route }: any) => {
                     <FormControl isRequired isInvalid={"password" in errors}>
                       <FormControl.Label>Senha</FormControl.Label>
                       <Input
+                        id="password"
                         type={show ? "text" : "password"}
+                        accessible={true}
+                        accessibilityLabel="password"
+                        testID="password"
                         onBlur={handleBlur("password")}
                         InputRightElement={
-                          <Pressable onPress={() => setShow(!show)}>
+                          <Pressable
+                            accessible={true}
+                            accessibilityLabel="visibility"
+                            testID="visibility"
+                            onPress={() => setShow(!show)}
+                          >
                             <Icon
                               as={
                                 <MaterialIcons
@@ -711,6 +724,10 @@ const Login: React.FC = ({ route }: any) => {
                       />
                     ) : undefined}
                     <Button
+                      id="autenticando"
+                      accessible={true}
+                      accessibilityLabel="autenticando"
+                      testID="autenticando"
                       isLoading={loading}
                       isLoadingText="Autenticando"
                       onPress={handleSubmit}
@@ -721,6 +738,9 @@ const Login: React.FC = ({ route }: any) => {
                     </Button>
                     <Link
                       // href="https://nativebase.io"
+                      accessible={true}
+                      accessibilityLabel="ResetPassword"
+                      testID="ResetPassword"
                       onPress={() => navigate({ name: "ResetPassword" })}
                       isExternal
                       _text={{
@@ -746,6 +766,9 @@ const Login: React.FC = ({ route }: any) => {
             onClose={() => {
               setLoggedUserDifferentFromSyncedUser(false);
             }}
+            accessible={true}
+            accessibilityLabel="loggedUserDifferentFromSyncedUser"
+            testID="loggedUserDifferentFromSyncedUser"
           >
             <Modal.Content maxWidth="400px">
               <Modal.CloseButton />

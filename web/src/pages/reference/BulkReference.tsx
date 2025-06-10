@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import {
   bulkCancelSelected,
-  // bulkCancelAll,
+  bulkCancelAll,
   BulkReferenceCancel,
   pagedQueryPendingByUser,
   queryCountByPendingFilters,
+  queryIdsByPendingFilters,
 } from "@app/utils/reference";
 import { allDistrict, allDistrictsByIds } from "@app/utils/district";
 import {
@@ -28,7 +29,7 @@ import {
   Select,
   Tag,
   DatePicker,
-  // Checkbox,
+  Checkbox,
 } from "antd";
 import ptPT from "antd/lib/locale-provider/pt_PT";
 import "antd/dist/antd.css";
@@ -69,7 +70,6 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
   const [dataLoading, setDataLoading] = useState(false);
   const [otherReasonEnabled, setOtherReasonEnabled] = useState(false);
   const [searchCounter, setSearchCounter] = useState<any>();
-  const [allAcrossPagesCounter, setAllAcrossPagesCounter] = useState<any>();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   const [selectAll, setSelectAll] = useState(false);
@@ -116,18 +116,6 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
   const rowSelection = {
     selectedRowKeys,
     onChange: onSelectChange,
-    // onSelectAll: (selected) => {
-    //   if (selected) {
-    //     // Select all rows across all pages
-    //     const allRowKeys = data.map((item) => item.key);
-    //     setSelectedRowKeys(allRowKeys);
-    //     setSelectAll(true);
-    //   } else {
-    //     // Deselect all rows
-    //     setSelectedRowKeys([]);
-    //     setSelectAll(false);
-    //   }
-    // },
   };
 
   const userSelector = useSelector((state: any) => state?.user);
@@ -157,13 +145,6 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
         searchEndDate
       );
       setSearchCounter(countByFilter);
-
-      const countAcrossAllPages = await queryCountByPendingFilters(
-        localStorage.user,
-        undefined,
-        undefined
-      );
-      setAllAcrossPagesCounter(countAcrossAllPages);
 
       const loggedUser = await query1(localStorage.user);
       if (loggedUser && loggedUser?.districts.length > 0) {
@@ -272,14 +253,6 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
     const ref: any = reference;
     if (values !== undefined && cancelReason) {
       if (cancelReason != 5 || otherReason) {
-        const payload: BulkReferenceCancel = {
-          ids: selectedRowKeys,
-          status: "3",
-          cancelReason: cancelReason,
-          otherReason: otherReason,
-          updatedBy: localStorage.user,
-        };
-
         if (selectedRowKeys.length == 0 && selectAll == false) {
           message.error({
             content: "Nenhuma referência selencionada!",
@@ -290,9 +263,27 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
           });
         } else {
           if (selectAll) {
-            const userId = Number(user);
-            // const { data } = await bulkCancelAll(payload, userId);
+            const queryIdsByFilter = await queryIdsByPendingFilters(
+              localStorage.user,
+              searchStartDate,
+              searchEndDate
+            );
+            const payload: BulkReferenceCancel = {
+              ids: queryIdsByFilter,
+              status: "3",
+              cancelReason: cancelReason,
+              otherReason: otherReason,
+              updatedBy: localStorage.user,
+            };
+            const { data } = await bulkCancelAll(payload);
           } else {
+            const payload: BulkReferenceCancel = {
+              ids: selectedRowKeys,
+              status: "3",
+              cancelReason: cancelReason,
+              otherReason: otherReason,
+              updatedBy: localStorage.user,
+            };
             const { data } = await bulkCancelSelected(payload);
           }
           const allReferences: any = await pagedQueryPendingByUser(
@@ -326,6 +317,8 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
         }
         setCancelReason(undefined);
         setOtherReason(undefined);
+        setSearchCounter(undefined);
+        setSelectAll(false);
       }
     }
   };
@@ -833,7 +826,7 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
         bordered={false}
         headStyle={{ color: "#17a2b8" }}
       >
-        {/* <Checkbox
+        <Checkbox
           checked={selectAll}
           onChange={(e) => {
             const checked = e.target.checked;
@@ -841,57 +834,53 @@ const BulkReference: React.FC = ({ resetModal }: any) => {
             // setSelectedRowKeys(checked ? data.map((item) => item.key) : []);
           }}
         >
-          Cancelar todos pendentes ({allAcrossPagesCounter})
-        </Checkbox> */}
+          Cancelar todos pendentes ({searchCounter})
+        </Checkbox>
         <Row gutter={5}>
-          {!selectAll && (
-            <Col span={12}>
-              <Card
-                title="FILTROS"
-                bordered={true}
-                headStyle={{ background: "#17a2b8", color: "#fff" }}
+          <Col span={12}>
+            <Card
+              title="FILTROS"
+              bordered={true}
+              headStyle={{ background: "#17a2b8", color: "#fff" }}
+            >
+              <Form
+                ref={formFilter}
+                name="fil"
+                initialValues={{ remember: true }}
+                autoComplete="off"
               >
-                <Form
-                  ref={formFilter}
-                  name="fil"
-                  initialValues={{ remember: true }}
-                  autoComplete="off"
-                >
-                  <Row gutter={30}>
-                    <Col className="gutter-row" span={12}>
-                      <Form.Item name="startDate" label="Data Inicio">
-                        <DatePicker
-                          inputReadOnly={true}
-                          style={{ width: "100%" }}
-                          placeholder="Data Inicio"
-                          onChange={(e) =>
-                            setStartDate(moment(e, "YYYY-MM-DD"))
-                          }
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col className="gutter-row" span={12}>
-                      <Form.Item name="endDate" label="Data Fim">
-                        <DatePicker
-                          inputReadOnly={true}
-                          style={{ width: "100%" }}
-                          placeholder="Data Inicio"
-                          onChange={setEndDate}
-                        />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                  <Row gutter={50}>
-                    <Col className="gutter-row" span={12}>
-                      <Button type="primary" onClick={handleGlobalSearch}>
-                        Pesquisar
-                      </Button>
-                    </Col>
-                  </Row>
-                </Form>
-              </Card>
-            </Col>
-          )}
+                <Row gutter={30}>
+                  <Col className="gutter-row" span={12}>
+                    <Form.Item name="startDate" label="Data Inicio">
+                      <DatePicker
+                        inputReadOnly={true}
+                        style={{ width: "100%" }}
+                        placeholder="Data Inicio"
+                        onChange={(e) => setStartDate(moment(e, "YYYY-MM-DD"))}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col className="gutter-row" span={12}>
+                    <Form.Item name="endDate" label="Data Fim">
+                      <DatePicker
+                        inputReadOnly={true}
+                        style={{ width: "100%" }}
+                        placeholder="Data Inicio"
+                        onChange={setEndDate}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row gutter={50}>
+                  <Col className="gutter-row" span={12}>
+                    <Button type="primary" onClick={handleGlobalSearch}>
+                      Pesquisar
+                    </Button>
+                  </Col>
+                </Row>
+              </Form>
+            </Card>
+          </Col>
           <Col span={12}>
             <Card
               title="Detalhes do cancelamento das Referências"
