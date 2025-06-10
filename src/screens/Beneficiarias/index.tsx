@@ -291,6 +291,9 @@ const BeneficiariesMain: React.FC = ({
 
   const renderItem = (data: any) => (
     <TouchableHighlight
+      accessible={true}
+      accessibilityLabel="viewBeneficiaries"
+      testID="viewBeneficiaries"
       onPress={() => viewBeneficiaries(data)}
       style={styles.rowFront}
       underlayColor={"#AAA"}
@@ -373,6 +376,9 @@ const BeneficiariesMain: React.FC = ({
         ml="auto"
         bg="lightBlue.700"
         justifyContent="center"
+        accessible={true}
+        accessibilityLabel="viewHidenBeneficiaries"
+        testID="viewHidenBeneficiaries"
         onPress={() => viewBeneficiaries(data)}
         _pressed={{ opacity: 0.5 }}
       >
@@ -387,6 +393,9 @@ const BeneficiariesMain: React.FC = ({
         px={4}
         bg="lightBlue.800"
         justifyContent="center"
+        accessible={true}
+        accessibilityLabel="navigateToFOrm"
+        testID="navigateToFOrm"
         onPress={() =>
           navigate({
             name:
@@ -679,6 +688,9 @@ const BeneficiariesMain: React.FC = ({
 
   const renderServerItem = (data: any) => (
     <TouchableHighlight
+      accessible={true}
+      accessibilityLabel="renderServerItem"
+      testID="renderServerItem"
       onPress={() => console.log(data)}
       style={styles.rowFront}
       underlayColor={"#AAA"}
@@ -836,6 +848,9 @@ const BeneficiariesMain: React.FC = ({
               ref={inputRef}
               w="100%" // Set the width to 100% on all screen sizes
               mx={{ base: "2", md: "0" }} // Add some horizontal margin on smaller screens, none on larger screens
+              accessible={true}
+              accessibilityLabel="search"
+              testID="search"
               onChangeText={handleChange}
               InputLeftElement={
                 <Icon
@@ -862,7 +877,13 @@ const BeneficiariesMain: React.FC = ({
             previewOpenDelay={3000}
             onRowDidOpen={onRowDidOpen}
             refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              <RefreshControl
+                refreshing={refreshing}
+                accessible={true}
+                accessibilityLabel="onRefresh"
+                testID="onRefresh"
+                onRefresh={onRefresh}
+              />
             }
           />
         )}
@@ -883,8 +904,22 @@ const BeneficiariesMain: React.FC = ({
                     Buscar do servidor ?
                   </Text>
                 </HStack>
-                <Button onPress={() => getAuth()}>Sim</Button>
-                <Button onPress={() => setSearchField("")}>Não</Button>
+                <Button
+                  accessible={true}
+                  accessibilityLabel="getOnServer"
+                  testID="getOnServer"
+                  onPress={() => getAuth()}
+                >
+                  Sim
+                </Button>
+                <Button
+                  accessible={true}
+                  accessibilityLabel="dontGetOnServer"
+                  testID="dontGetOnServer"
+                  onPress={() => setSearchField("")}
+                >
+                  Não
+                </Button>
               </VStack>
             </Center>
           )}
@@ -903,12 +938,18 @@ const BeneficiariesMain: React.FC = ({
                   onRowDidOpen={onRowDidOpen}
                   refreshControl={
                     <RefreshControl
+                      accessible={true}
+                      accessibilityLabel="onRefreshServerBeneficiaries"
+                      testID="onRefreshServerBeneficiaries"
                       refreshing={refreshing}
                       onRefresh={onRefresh}
                     />
                   }
                 />
                 <Button
+                  accessible={true}
+                  accessibilityLabel="customSyncBeneficiary"
+                  testID="customSyncBeneficiary"
                   onPress={() => handleSyncCustomBeneficiary()}
                   colorScheme="primary"
                 >
@@ -922,6 +963,9 @@ const BeneficiariesMain: React.FC = ({
         <Center>
           <Modal
             isOpen={showAuthModal && token === ""}
+            accessible={true}
+            accessibilityLabel="showSyncModal"
+            testID="showSyncModal"
             onClose={() => setShowAuthModal(false)}
           >
             <Modal.Content maxWidth="400px">
@@ -932,6 +976,9 @@ const BeneficiariesMain: React.FC = ({
                   refreshControl={
                     <RefreshControl
                       refreshing={true}
+                      accessible={true}
+                      accessibilityLabel="onRefreshSyncBeneficiary"
+                      testID="onRefreshSyncBeneficiary"
                       onRefresh={() => {
                         <Alert
                           w="100%"
@@ -977,6 +1024,9 @@ const BeneficiariesMain: React.FC = ({
                             username: loggedUser.username,
                             password: "",
                           }}
+                          accessible={true}
+                          accessibilityLabel="handleAuthorization"
+                          testID="handleAuthorization"
                           onSubmit={(values) => {
                             handleAuthorization(values);
                           }}
@@ -992,9 +1042,17 @@ const BeneficiariesMain: React.FC = ({
                                 <FormControl.Label>Password</FormControl.Label>
                                 <Input
                                   type={show ? "text" : "password"}
+                                  accessible={true}
+                                  accessibilityLabel="password"
+                                  testID="password"
                                   onBlur={handleBlur("password")}
                                   InputRightElement={
-                                    <Pressable onPress={() => setShow(!show)}>
+                                    <Pressable
+                                      accessible={true}
+                                      accessibilityLabel="visibility"
+                                      testID="visibility"
+                                      onPress={() => setShow(!show)}
+                                    >
                                       <Icon
                                         as={
                                           <MaterialIcons
@@ -1021,6 +1079,9 @@ const BeneficiariesMain: React.FC = ({
                               )}
                               <Button
                                 isLoadingText="Autenticando"
+                                accessible={true}
+                                accessibilityLabel="autorizar"
+                                testID="autorizar"
                                 onPress={handleSubmit}
                                 my="10"
                                 colorScheme="primary"
@@ -1042,6 +1103,9 @@ const BeneficiariesMain: React.FC = ({
 
         <Center flex={1} px="3">
           <StepperButton
+            accessible={true}
+            accessibilityLabel="showModalRegisto"
+            testID="showModalRegisto"
             onAdd={() => setShowModal(true)}
             onRefresh={syncronize}
             isPrincipal={1}
@@ -1049,7 +1113,13 @@ const BeneficiariesMain: React.FC = ({
         </Center>
       </View>
       <Center>
-        <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+        <Modal
+          isOpen={showModal}
+          accessible={true}
+          accessibilityLabel="registoModal"
+          testID="registoModal"
+          onClose={() => setShowModal(false)}
+        >
           <Modal.Content maxWidth="400px">
             <Modal.CloseButton />
             <Modal.Header>Registo de Beneficiária(o)</Modal.Header>
@@ -1066,6 +1136,9 @@ const BeneficiariesMain: React.FC = ({
                         </Text>
                       </HStack>
                       <Button
+                        accessible={true}
+                        accessibilityLabel="Registar Beneficiária"
+                        testID="registar-beneficiaria"
                         onPress={() => {
                           setShowModal(false);
                           navigate({ name: "BeneficiaryForm", params: {} });
@@ -1074,6 +1147,9 @@ const BeneficiariesMain: React.FC = ({
                         Registar Beneficiária
                       </Button>
                       <Button
+                        accessible={true}
+                        accessibilityLabel="Registar Parceiro"
+                        testID="registar-parceiro"
                         onPress={() => {
                           setShowModal(false);
                           navigate({

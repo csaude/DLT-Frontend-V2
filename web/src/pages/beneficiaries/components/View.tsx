@@ -176,6 +176,22 @@ const ViewBenefiaryPanel = ({
     });
   };
 
+  const showConfirmDuplicate = () => {
+    confirm({
+      title: "Esta intervenção já foi provida. Deseja prover novamente?",
+      icon: <ExclamationCircleFilled />,
+      okText: "Sim",
+      okType: "danger",
+      cancelText: "Não",
+      onOk() {
+        handleSaveIntervention();
+      },
+      onCancel() {
+        /**Its OK */
+      },
+    });
+  };
+
   const getInterventionsCount = async (beneficiary) => {
     const ageBand: any = getAgeBandByDate(beneficiary.dateOfBirth);
 
@@ -230,7 +246,19 @@ const ViewBenefiaryPanel = ({
     );
   };
 
-  const onSubmit = async () => {
+  const onSubmit = () => {
+    const interventionsIds = interventions.map((i) => i.id.subServiceId);
+
+    const subServiceId = form.getFieldValue("subservice");
+
+    if (interventionsIds.includes(Number(subServiceId))) {
+      showConfirmDuplicate();
+    } else {
+      handleSaveIntervention();
+    }
+  };
+
+  const handleSaveIntervention = async () => {
     form
       .validateFields()
       .then(async (values) => {
@@ -323,14 +351,25 @@ const ViewBenefiaryPanel = ({
 
         getInterventionsCount(beneficiary);
       })
-      .catch(() => {
-        message.error({
-          content: "Não foi possivel associar a Intervenção!",
-          className: "custom-class",
-          style: {
-            marginTop: "10vh",
-          },
-        });
+      .catch((e) => {
+        if (e.response?.status == 400) {
+          message.error({
+            content:
+              "A Data de Provisão do Serviço não deve ser inferior a Data da Inscrição!",
+            className: "custom-class",
+            style: {
+              marginTop: "10vh",
+            },
+          });
+        } else {
+          message.error({
+            content: "Não foi possivel associar a Intervenção!",
+            className: "custom-class",
+            style: {
+              marginTop: "10vh",
+            },
+          });
+        }
       });
   };
 

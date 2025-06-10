@@ -5,7 +5,15 @@ import React, {
   useCallback,
   memo,
 } from "react";
-import { View, KeyboardAvoidingView, ScrollView } from "react-native";
+import {
+  View,
+  KeyboardAvoidingView,
+  ScrollView,
+  FlatList,
+  TouchableOpacity,
+  Modal as RNModal,
+  TouchableWithoutFeedback,
+} from "react-native";
 import {
   Center,
   Box,
@@ -22,6 +30,9 @@ import {
   InputLeftAddon,
   IconButton,
   CloseIcon,
+  Modal,
+  InfoIcon,
+  CheckCircleIcon,
 } from "native-base";
 import {
   SuccessHandler,
@@ -95,7 +106,13 @@ const BeneficiarieServiceForm: React.FC = ({
   const [isOffline, setIsOffline] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isEndDateVisible, setIsEndDateVisible] = useState(false);
+  const [isExistingIntervention, setExistingIntervention] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+  const [values, setValues] = useState({});
   const dispatch = useDispatch();
+  const [visible, setVisible] = useState(false);
+  const [selected, setSelected] = useState(null);
+  const [subServiceVisible, setSubServiceVisible] = useState(false);
 
   let mounted = true;
   const loggedUser: any = useContext(Context);
@@ -125,18 +142,21 @@ const BeneficiarieServiceForm: React.FC = ({
     return () => removeNetInfoSubscription();
   }, []);
 
-  const handleDataFromDatePickerComponent = useCallback((selectedDate,field) => {
-    selectedDate.replaceAll("/", "-");
-    const currentDate = selectedDate || date;
-    // setShow(false);
-    if (field == "date") {
-      setDate(currentDate);
-  
-      setText(selectedDate);
-    } else {
-      setEndDate(selectedDate);
-    }
-  }, []);
+  const handleDataFromDatePickerComponent = useCallback(
+    (selectedDate, field) => {
+      selectedDate.replaceAll("/", "-");
+      const currentDate = selectedDate || date;
+      // setShow(false);
+      if (field == "date") {
+        setDate(currentDate);
+
+        setText(selectedDate);
+      } else {
+        setEndDate(selectedDate);
+      }
+    },
+    []
+  );
 
   const onChangeEntryPoint = async (value: any) => {
     const uss = await database
@@ -183,10 +203,14 @@ const BeneficiarieServiceForm: React.FC = ({
 
       let servicesList = activeServices;
       if (age < 15 || age > 19) {
-        servicesList = activeServices.filter((item) => item._raw.online_id !== 59)
+        servicesList = activeServices.filter(
+          (item) => item._raw.online_id !== 59
+        );
 
         if (age < 15) {
-          servicesList = servicesList.filter((item) => item._raw.online_id !== 60)
+          servicesList = servicesList.filter(
+            (item) => item._raw.online_id !== 60
+          );
         }
       }
 
@@ -306,7 +330,7 @@ const BeneficiarieServiceForm: React.FC = ({
         setText(intervention.date);
         setDate(intervention.date);
 
-        if([59,60].includes(selService?._raw.online_id)) {
+        if ([59, 60].includes(selService?._raw.online_id)) {
           setIsEndDateVisible(true);
           setEndDate(intervention.end_date);
         } else {
@@ -432,7 +456,16 @@ const BeneficiarieServiceForm: React.FC = ({
       }
     }
 
-    if (benefIntervSerialied.length > 0 && (recordAlreadyExists || !isEdit)) {
+    if (date && beneficiarie.enrollment_date > date) {
+      setLoading(false);
+      toast.show({
+        placement: "top",
+        title: "A data do Benefício não deve ser inferior a data da Inscrição!",
+      });
+    } else if (
+      benefIntervSerialied.length > 0 &&
+      (recordAlreadyExists || !isEdit)
+    ) {
       toast.show({
         placement: "top",
         title: "Beneficiária já tem esta intervenção para esta data!",
@@ -461,6 +494,18 @@ const BeneficiarieServiceForm: React.FC = ({
   }, [isSync]);
 
   const onSubmit = async (values: any, isEdit: boolean) => {
+    const subServicesIds = intervs.map((i) => i.intervention.sub_service_id);
+
+    if (subServicesIds.includes(Number(values.sub_service_id))) {
+      setExistingIntervention(true);
+      setValues(values);
+      setIsEdit(isEdit);
+    } else {
+      handleSaveIntervention(values, isEdit);
+    }
+  };
+
+  const handleSaveIntervention = async (values: any, isEdit: boolean) => {
     const newObject = await database.write(async () => {
       if (isEdit) {
         const interventionToUpdate = await database
@@ -712,362 +757,585 @@ const BeneficiarieServiceForm: React.FC = ({
   }, []);
 
   return (
-    <KeyboardAvoidingView>
-      <ScrollView>
-        <View style={styles.webStyle}>
-          <Center w="100%" bgColor="white">
-            {loading ? (
-              <Spinner
-                visible={true}
-                textContent={"Provendo o serviço..."}
-                textStyle={styles.spinnerTextStyle}
-              />
-            ) : undefined}
-            <Box safeArea p="2" w="90%" py="8">
-              <Alert status="info" colorScheme="info">
-                <HStack flexShrink={1} space={2} alignItems="center">
-                  <Alert.Icon />
-                  <Text fontSize="xs" fontWeight="medium" color="coolGray.800">
-                    Preencha os campos abaixo para prover um serviço a
-                    Beneficiária!
-                  </Text>
-                </HStack>
-              </Alert>
+    <>
+      <Center>
+        <Modal
+          isOpen={isExistingIntervention}
+          onClose={() => setExistingIntervention(false)}
+        >
+          <Modal.Content maxWidth="400px">
+            <Modal.CloseButton />
+            <Modal.Header>Intervenção já provida</Modal.Header>
+            <Modal.Body>
+              <ScrollView>
+                <Box alignItems="center">
+                  <Alert w="100%" status="success">
+                    <VStack space={2} flexShrink={1}>
+                      <HStack>
+                        <InfoIcon mt="1" />
+                        <Text fontSize="sm" color="coolGray.800">
+                          {`Esta intervenção já foi provida. Deseja prover novamente?`}
+                        </Text>
+                      </HStack>
 
-              <Formik
-                initialValues={initialValues}
-                onSubmit={validateBeneficiaryIntervention}
-                validate={validate}
-                enableReinitialize={true}
-                validateOnChange={false}
-                validateOnBlur={false}
-              >
-                {({
-                  handleChange,
-                  handleBlur,
-                  handleSubmit,
-                  setFieldValue,
-                  values,
-                  errors,
-                }) => (
-                  <VStack space={3} mt="5">
-                    <FormControl
-                      isRequired
-                      isInvalid={"areaServicos_id" in errors}
+                      <Button
+                        id="confirmToProvideExistingIntervention"
+                        accessible={true}
+                        accessibilityLabel="confirmToProvideExistingIntervention"
+                        testID="confirmToProvideExistingIntervention"
+                        onPress={() => {
+                          setExistingIntervention(false);
+                          handleSaveIntervention(values, isEdit);
+                        }}
+                      >
+                        SIM
+                      </Button>
+
+                      <Button
+                        id="notConfirmToProvideExistingIntervention"
+                        accessible={true}
+                        accessibilityLabel="notConfirmToProvideExistingIntervention"
+                        testID="notConfirmToProvideExistingIntervention"
+                        onPress={() => {
+                          setExistingIntervention(false);
+                          setLoading(false);
+                        }}
+                      >
+                        NÃO
+                      </Button>
+                    </VStack>
+                  </Alert>
+                  <Text></Text>
+                </Box>
+              </ScrollView>
+            </Modal.Body>
+          </Modal.Content>
+        </Modal>
+      </Center>
+      <KeyboardAvoidingView>
+        <ScrollView>
+          <View style={styles.webStyle}>
+            <Center w="100%" bgColor="white">
+              {loading ? (
+                <Spinner
+                  visible={true}
+                  textContent={"Provendo o serviço..."}
+                  textStyle={styles.spinnerTextStyle}
+                />
+              ) : undefined}
+              <Box safeArea p="2" w="90%" py="8">
+                <Alert status="info" colorScheme="info">
+                  <HStack flexShrink={1} space={2} alignItems="center">
+                    <Alert.Icon />
+                    <Text
+                      fontSize="xs"
+                      fontWeight="medium"
+                      color="coolGray.800"
                     >
-                      <FormControl.Label>Área de Serviços</FormControl.Label>
-                      <Picker
-                        enabled={
-                          (isNewIntervention &&
-                            !isClinicalOrCommunityPartner) ||
-                          initialValues.areaServicos_id == undefined
-                        }
-                        style={styles.dropDownPickerDisabled}
-                        selectedValue={values.areaServicos_id}
-                        onValueChange={(itemValue, itemIndex) => {
-                          if (itemIndex !== 0) {
-                            setFieldValue("areaServicos_id", itemValue);
-                          }
-                        }}
-                      >
-                        <Picker.Item
-                          label="-- Seleccione a Área do Serviço --"
-                          value="0"
-                        />
-                        {areaServicos.map((item) => (
-                          <Picker.Item
-                            key={item.id}
-                            label={item.name}
-                            value={item.id}
-                          />
-                        ))}
-                      </Picker>
-                      <FormControl.ErrorMessage>
-                        {errors.areaServicos_id}
-                      </FormControl.ErrorMessage>
-                    </FormControl>
+                      Preencha os campos abaixo para prover um serviço a
+                      Beneficiária!
+                    </Text>
+                  </HStack>
+                </Alert>
 
-                    <FormControl isRequired isInvalid={"service_id" in errors}>
-                      <FormControl.Label>Serviço</FormControl.Label>
-                      <Picker
-                        style={styles.dropDownPicker}
-                        selectedValue={values.service_id}
-                        onValueChange={(itemValue, itemIndex) => {
-                          if (itemIndex !== 0) {
-                            setFieldValue("service_id", itemValue);
-                          }
-                          if([59,60].includes(itemValue)) {
-                            setIsEndDateVisible(true);
-                          } else {
-                            setIsEndDateVisible(false);
-                            setEndDate("");
-                          }
-                        }}
+                <Formik
+                  initialValues={initialValues}
+                  onSubmit={validateBeneficiaryIntervention}
+                  validate={validate}
+                  enableReinitialize={true}
+                  validateOnChange={false}
+                  validateOnBlur={false}
+                >
+                  {({
+                    handleChange,
+                    handleBlur,
+                    handleSubmit,
+                    setFieldValue,
+                    values,
+                    errors,
+                  }) => (
+                    <VStack space={3} mt="5">
+                      <FormControl
+                        isRequired
+                        isInvalid={"areaServicos_id" in errors}
                       >
-                        <Picker.Item
-                          label="-- Seleccione o Serviço --"
-                          value="0"
-                        />
-                        {servicesState
-                          .filter((e) => {
-                            return e.service_type == values.areaServicos_id;
-                          })
-                          .map((item) => (
+                        <FormControl.Label>Área de Serviços</FormControl.Label>
+                        <Picker
+                          accessible={true}
+                          accessibilityLabel="areaServicos_id"
+                          testID="areaServicos_id"
+                          enabled={
+                            (isNewIntervention &&
+                              !isClinicalOrCommunityPartner) ||
+                            initialValues.areaServicos_id == undefined
+                          }
+                          style={styles.dropDownPickerDisabled}
+                          selectedValue={values.areaServicos_id}
+                          onValueChange={(itemValue, itemIndex) => {
+                            if (itemIndex !== 0) {
+                              setFieldValue("areaServicos_id", itemValue);
+                            }
+                          }}
+                        >
+                          <Picker.Item
+                            label="-- Seleccione a Área do Serviço --"
+                            value="0"
+                          />
+                          {areaServicos.map((item) => (
                             <Picker.Item
-                              key={item._raw.online_id}
-                              label={item._raw.name}
-                              value={parseInt(item._raw.online_id)}
+                              key={item.id}
+                              label={item.name}
+                              value={item.id}
                             />
                           ))}
-                      </Picker>
-                      <FormControl.ErrorMessage>
-                        {errors.service_id}
-                      </FormControl.ErrorMessage>
-                    </FormControl>
+                        </Picker>
+                        <FormControl.ErrorMessage>
+                          {errors.areaServicos_id}
+                        </FormControl.ErrorMessage>
+                      </FormControl>
 
-                    <FormControl
-                      isRequired
-                      isInvalid={"sub_service_id" in errors}
-                    >
-                      <FormControl.Label>
-                        Sub-Serviço/Intervenção
-                      </FormControl.Label>
-                      <Picker
-                        style={styles.dropDownPicker}
-                        selectedValue={values.sub_service_id}
-                        onValueChange={(itemValue, itemIndex) => {
-                          if (itemIndex !== 0) {
-                            setFieldValue("sub_service_id", itemValue);
-                          }
-                        }}
+                      <FormControl
+                        isRequired
+                        isInvalid={"service_id" in errors}
                       >
-                        <Picker.Item
-                          label="-- Seleccione o Sub-Serviço --"
-                          value={0}
-                        />
-                        {subServicesState
-                          .filter((e) => {
-                            return e.service_id == values.service_id;
-                          })
-                          .map((item) => (
+                        <FormControl.Label>Serviço</FormControl.Label>
+
+                        <TouchableOpacity
+                          accessible={true}
+                          accessibilityLabel="service_id"
+                          testID="service_id"
+                          style={styles.myDropDownPicker}
+                          onPress={() => setVisible(true)}
+                        >
+                          <Text style={styles.selectedItemText}>
+                            {servicesState.find(
+                              (e) => e._raw.online_id === values.service_id
+                            )
+                              ? servicesState.find(
+                                  (e) => e._raw.online_id === values.service_id
+                                )._raw.name
+                              : "-- Seleccione o Serviço --"}
+                          </Text>
+                        </TouchableOpacity>
+
+                        <RNModal
+                          visible={visible}
+                          transparent
+                          animationType="slide"
+                        >
+                          <TouchableWithoutFeedback
+                            onPress={() => setVisible(false)}
+                          >
+                            <View style={styles.modalContainer}>
+                              <TouchableWithoutFeedback
+                                accessible={true}
+                                accessibilityLabel="sub_service_id"
+                                testID="sub_service_id"
+                                onPress={() => {}}
+                              >
+                                <View style={styles.modalContent}>
+                                  <FlatList
+                                    data={servicesState.filter(
+                                      (e) =>
+                                        e.service_type ===
+                                        values.areaServicos_id
+                                    )}
+                                    keyExtractor={(item) =>
+                                      item._raw.online_id.toString()
+                                    }
+                                    renderItem={({ item }) => (
+                                      <TouchableOpacity
+                                        accessible={true}
+                                        accessibilityLabel="sub_service_id"
+                                        testID="sub_service_id"
+                                        style={styles.item}
+                                        onPress={() => {
+                                          setFieldValue("sub_service_id", null);
+                                          setSelected(item._raw.online_id);
+                                          setFieldValue(
+                                            "service_id",
+                                            item._raw.online_id
+                                          );
+                                          setVisible(false);
+
+                                          if (
+                                            [59, 60].includes(
+                                              item._raw.online_id
+                                            )
+                                          ) {
+                                            setIsEndDateVisible(true);
+                                          } else {
+                                            setIsEndDateVisible(false);
+                                            setEndDate("");
+                                          }
+                                        }}
+                                      >
+                                        {selected === item._raw.online_id && (
+                                          <CheckCircleIcon
+                                            size="5"
+                                            mt="0.5"
+                                            color="emerald.500"
+                                          />
+                                        )}
+                                        <Text style={styles.itemText}>
+                                          {item._raw.name}
+                                        </Text>
+                                      </TouchableOpacity>
+                                    )}
+                                  />
+                                </View>
+                              </TouchableWithoutFeedback>
+                            </View>
+                          </TouchableWithoutFeedback>
+                        </RNModal>
+
+                        <FormControl.ErrorMessage>
+                          {errors.service_id}
+                        </FormControl.ErrorMessage>
+                      </FormControl>
+
+                      <FormControl
+                        isRequired
+                        isInvalid={"sub_service_id" in errors}
+                      >
+                        <FormControl.Label>
+                          Sub-Serviço/Intervenção
+                        </FormControl.Label>
+
+                        <TouchableOpacity
+                          accessible={true}
+                          accessibilityLabel="sub_service_id"
+                          testID="sub_service_id"
+                          style={styles.myDropDownPicker}
+                          onPress={() => setSubServiceVisible(true)}
+                        >
+                          <Text style={styles.selectedItemText}>
+                            {subServicesState.find(
+                              (e) => e.online_id === values.sub_service_id
+                            )
+                              ? subServicesState.find(
+                                  (e) => e.online_id === values.sub_service_id
+                                ).name
+                              : "-- Seleccione o Sub-Serviço --"}
+                          </Text>
+                        </TouchableOpacity>
+
+                        <RNModal
+                          visible={subServiceVisible}
+                          transparent
+                          animationType="slide"
+                        >
+                          <TouchableWithoutFeedback
+                            accessible={true}
+                            accessibilityLabel="sub_service_id"
+                            testID="sub_service_id"
+                            onPress={() => setSubServiceVisible(false)}
+                          >
+                            <View style={styles.modalContainer}>
+                              <TouchableWithoutFeedback onPress={() => {}}>
+                                <View style={styles.modalContent}>
+                                  <FlatList
+                                    data={subServicesState.filter(
+                                      (e) => e.service_id === values.service_id
+                                    )}
+                                    keyExtractor={(item) =>
+                                      item.online_id.toString()
+                                    }
+                                    renderItem={({ item }) => (
+                                      <TouchableOpacity
+                                        accessible={true}
+                                        accessibilityLabel="sub_service_id"
+                                        testID="sub_service_id"
+                                        style={styles.item}
+                                        onPress={() => {
+                                          setFieldValue(
+                                            "sub_service_id",
+                                            item.online_id
+                                          );
+                                          setSubServiceVisible(false);
+                                        }}
+                                      >
+                                        {values.sub_service_id ===
+                                          item.online_id && (
+                                          <CheckCircleIcon
+                                            size="5"
+                                            mt="0.5"
+                                            color="emerald.500"
+                                          />
+                                        )}
+                                        <Text style={styles.itemText}>
+                                          {item.name}
+                                        </Text>
+                                      </TouchableOpacity>
+                                    )}
+                                  />
+                                </View>
+                              </TouchableWithoutFeedback>
+                            </View>
+                          </TouchableWithoutFeedback>
+                        </RNModal>
+
+                        <FormControl.ErrorMessage>
+                          {errors.sub_service_id}
+                        </FormControl.ErrorMessage>
+                      </FormControl>
+
+                      <FormControl
+                        isRequired
+                        isInvalid={"entry_point" in errors}
+                      >
+                        <FormControl.Label>Ponto de Entrada</FormControl.Label>
+                        <Picker
+                          accessible={true}
+                          accessibilityLabel="entry_point"
+                          testID="entry_point"
+                          style={styles.dropDownPicker}
+                          selectedValue={values.entry_point}
+                          onValueChange={(itemValue, itemIndex) => {
+                            if (itemIndex !== 0) {
+                              setFieldValue("entry_point", itemValue);
+                              onChangeEntryPoint(itemValue);
+                            }
+                          }}
+                        >
+                          <Picker.Item
+                            label="-- Seleccione o ponto de Entrada --"
+                            value=""
+                          />
+                          {entryPoints.map((item) => (
+                            <Picker.Item
+                              key={item.id}
+                              label={item.name}
+                              value={item.id}
+                            />
+                          ))}
+                        </Picker>
+                        <FormControl.ErrorMessage>
+                          {errors.entry_point}
+                        </FormControl.ErrorMessage>
+                      </FormControl>
+
+                      <FormControl isRequired isInvalid={"us_id" in errors}>
+                        <FormControl.Label>Localização</FormControl.Label>
+                        <Picker
+                          accessible={true}
+                          accessibilityLabel="us_id"
+                          testID="us_id"
+                          style={styles.dropDownPicker}
+                          selectedValue={values.us_id}
+                          onValueChange={(itemValue, itemIndex) => {
+                            if (itemIndex !== 0) {
+                              setFieldValue("us_id", itemValue);
+                              onChangeUs(itemValue);
+                            }
+                          }}
+                        >
+                          <Picker.Item
+                            label="-- Seleccione a US --"
+                            value="0"
+                          />
+                          {uss.map((item) => (
                             <Picker.Item
                               key={item.online_id}
                               label={item.name}
                               value={parseInt(item.online_id)}
                             />
                           ))}
-                      </Picker>
-                      <FormControl.ErrorMessage>
-                        {errors.sub_service_id}
-                      </FormControl.ErrorMessage>
-                    </FormControl>
+                        </Picker>
+                        <FormControl.ErrorMessage>
+                          {errors.us_id}
+                        </FormControl.ErrorMessage>
+                      </FormControl>
 
-                    <FormControl isRequired isInvalid={"entry_point" in errors}>
-                      <FormControl.Label>Ponto de Entrada</FormControl.Label>
-                      <Picker
-                        style={styles.dropDownPicker}
-                        selectedValue={values.entry_point}
-                        onValueChange={(itemValue, itemIndex) => {
-                          if (itemIndex !== 0) {
-                            setFieldValue("entry_point", itemValue);
-                            onChangeEntryPoint(itemValue);
-                          }
-                        }}
-                      >
-                        <Picker.Item
-                          label="-- Seleccione o ponto de Entrada --"
-                          value=""
-                        />
-                        {entryPoints.map((item) => (
-                          <Picker.Item
-                            key={item.id}
-                            label={item.name}
-                            value={item.id}
-                          />
-                        ))}
-                      </Picker>
-                      <FormControl.ErrorMessage>
-                        {errors.entry_point}
-                      </FormControl.ErrorMessage>
-                    </FormControl>
-
-                    <FormControl isRequired isInvalid={"us_id" in errors}>
-                      <FormControl.Label>Localização</FormControl.Label>
-                      <Picker
-                        style={styles.dropDownPicker}
-                        selectedValue={values.us_id}
-                        onValueChange={(itemValue, itemIndex) => {
-                          if (itemIndex !== 0) {
-                            setFieldValue("us_id", itemValue);
-                            onChangeUs(itemValue);
-                          }
-                        }}
-                      >
-                        <Picker.Item label="-- Seleccione a US --" value="0" />
-                        {uss.map((item) => (
-                          <Picker.Item
-                            key={item.online_id}
-                            label={item.name}
-                            value={parseInt(item.online_id)}
-                          />
-                        ))}
-                      </Picker>
-                      <FormControl.ErrorMessage>
-                        {errors.us_id}
-                      </FormControl.ErrorMessage>
-                    </FormControl>
-
-                    <FormControl isRequired isInvalid={"date" in errors}>
-                      <FormControl.Label>Data Benefício</FormControl.Label>
-                      <HStack alignItems="center">
-                        <InputGroup
-                          w={{
-                            base: "70%",
-                            md: "285",
-                          }}
-                        >
-                          <InputLeftAddon>
-                            <MyDatePicker
-                              onDateSelection={(e) =>
-                                handleDataFromDatePickerComponent(e, "date")
-                              }
-                              minDate={new Date("2017-01-01")}
-                              maxDate={new Date()}
-                              currentDate={
-                                intervention?.date
-                                  ? new Date(intervention?.date)
-                                  : new Date()
-                              }
-                            />
-                          </InputLeftAddon>
-                          <Input
-                            isDisabled
+                      <FormControl isRequired isInvalid={"date" in errors}>
+                        <FormControl.Label>Data Benefício</FormControl.Label>
+                        <HStack alignItems="center">
+                          <InputGroup
                             w={{
                               base: "70%",
-                              md: "100%",
+                              md: "285",
                             }}
-                            value={text}
-                            placeholder="yyyy-MM-dd"
-                          />
-                        </InputGroup>
-                      </HStack>
-                      <FormControl.ErrorMessage>
-                        {errors.date}
-                      </FormControl.ErrorMessage>
-                    </FormControl>
-
-                    <FormControl style={{display: isEndDateVisible ? "flex" : "none"}}>
-                      <FormControl.Label>Data de Fim do Serviço </FormControl.Label>
-                      <HStack alignItems="center">
-                        <InputGroup
-                          w={{
-                            base: "70%",
-                            md: "285",
-                          }}
-                        >
-                          <InputLeftAddon>
-                            <MyDatePicker
-                              onDateSelection={(e) =>
-                                handleDataFromDatePickerComponent(e, "end_date")
-                              }
-                              minDate={new Date("2017-01-01")}
-                              maxDate={new Date()}
-                              currentDate={
-                                intervention?.end_date
-                                  ? new Date(intervention?.end_date)
-                                  : new Date()
-                              }
+                          >
+                            <InputLeftAddon>
+                              <MyDatePicker
+                                onDateSelection={(e) =>
+                                  handleDataFromDatePickerComponent(e, "date")
+                                }
+                                minDate={new Date("2017-01-01")}
+                                maxDate={new Date()}
+                                currentDate={
+                                  intervention?.date
+                                    ? new Date(intervention?.date)
+                                    : new Date()
+                                }
+                              />
+                            </InputLeftAddon>
+                            <Input
+                              id="dateDisplay"
+                              accessible={true}
+                              accessibilityLabel="dateDisplay"
+                              testID="dateDisplay"
+                              isDisabled
+                              w={{
+                                base: "70%",
+                                md: "100%",
+                              }}
+                              value={text}
+                              placeholder="yyyy-MM-dd"
                             />
-                          </InputLeftAddon>
-                          <Input
-                            isDisabled
+                          </InputGroup>
+                        </HStack>
+                        <FormControl.ErrorMessage>
+                          {errors.date}
+                        </FormControl.ErrorMessage>
+                      </FormControl>
+
+                      <FormControl
+                        style={{ display: isEndDateVisible ? "flex" : "none" }}
+                      >
+                        <FormControl.Label>
+                          Data de Fim do Serviço{" "}
+                        </FormControl.Label>
+                        <HStack alignItems="center">
+                          <InputGroup
                             w={{
                               base: "70%",
-                              md: "100%",
+                              md: "285",
                             }}
-                            value={endDate}
-                            placeholder="yyyy-MM-dd"
-                          />
-                        </InputGroup>
-                      </HStack>
-                    </FormControl>
+                          >
+                            <InputLeftAddon>
+                              <MyDatePicker
+                                onDateSelection={(e) =>
+                                  handleDataFromDatePickerComponent(
+                                    e,
+                                    "end_date"
+                                  )
+                                }
+                                minDate={new Date("2017-01-01")}
+                                maxDate={new Date()}
+                                currentDate={
+                                  intervention?.end_date
+                                    ? new Date(intervention?.end_date)
+                                    : new Date()
+                                }
+                              />
+                            </InputLeftAddon>
+                            <Input
+                              id="end_date"
+                              accessible={true}
+                              accessibilityLabel="end_date"
+                              testID="end_date"
+                              isDisabled
+                              w={{
+                                base: "70%",
+                                md: "100%",
+                              }}
+                              value={endDate}
+                              placeholder="yyyy-MM-dd"
+                            />
+                          </InputGroup>
+                        </HStack>
+                      </FormControl>
 
-                    <FormControl isRequired isInvalid={"provider" in errors}>
-                      <FormControl.Label>Provedor do Serviço</FormControl.Label>
+                      <FormControl isRequired isInvalid={"provider" in errors}>
+                        <FormControl.Label>
+                          Provedor do Serviço
+                        </FormControl.Label>
 
-                      {checked === false ? (
-                        <ModalSelector
-                          data={users}
-                          keyExtractor={(item) => item.online_id}
-                          labelExtractor={(item) =>
-                            `${item.name} ${item.surname}`
-                          }
-                          renderItem={undefined}
-                          initValue=""
-                          accessible={true}
-                          cancelText={"Cancelar"}
-                          searchText={"Pesquisar"}
-                          cancelButtonAccessibilityLabel={"Cancel Button"}
-                          onChange={(option) => {
-                            setSelectedUser(`${option.name} ${option.surname}`);
-                            setFieldValue(
-                              "provider",
-                              `${option.name} ${option.surname}`
-                            );
-                          }}
-                        >
+                        {checked === false ? (
+                          <ModalSelector
+                            data={users}
+                            keyExtractor={(item) => item.online_id}
+                            labelExtractor={(item) =>
+                              `${item.name} ${item.surname}`
+                            }
+                            renderItem={undefined}
+                            initValue=""
+                            accessible={true}
+                            cancelText={"Cancelar"}
+                            searchText={"Pesquisar"}
+                            cancelButtonAccessibilityLabel={"Cancel Button"}
+                            onChange={(option) => {
+                              setSelectedUser(
+                                `${option.name} ${option.surname}`
+                              );
+                              setFieldValue(
+                                "provider",
+                                `${option.name} ${option.surname}`
+                              );
+                            }}
+                          >
+                            <Input
+                              id="provider"
+                              accessible={true}
+                              accessibilityLabel="provider"
+                              testID="provider"
+                              type="text"
+                              onBlur={handleBlur("provider")}
+                              placeholder={currentInformedProvider}
+                              onChangeText={handleChange("provider")}
+                              value={selectedUser}
+                            />
+                          </ModalSelector>
+                        ) : (
                           <Input
-                            type="text"
+                            id="provider"
+                            accessible={true}
+                            accessibilityLabel="provider"
+                            testID="provider"
                             onBlur={handleBlur("provider")}
-                            placeholder={currentInformedProvider}
+                            placeholder="Insira o Nome do Provedor"
                             onChangeText={handleChange("provider")}
-                            value={selectedUser}
+                            value={values.provider}
                           />
-                        </ModalSelector>
-                      ) : (
+                        )}
+                        <Checkbox value="one" onChange={onChangeToOutros}>
+                          Outro
+                        </Checkbox>
+
+                        <FormControl.ErrorMessage>
+                          {errors.provider}
+                        </FormControl.ErrorMessage>
+                      </FormControl>
+
+                      <FormControl>
+                        <FormControl.Label>
+                          Outras Observações
+                        </FormControl.Label>
+
                         <Input
-                          onBlur={handleBlur("provider")}
-                          placeholder="Insira o Nome do Provedor"
-                          onChangeText={handleChange("provider")}
-                          value={values.provider}
+                          id="remarks"
+                          accessible={true}
+                          accessibilityLabel="remarks"
+                          testID="remarks"
+                          onBlur={handleBlur("remarks")}
+                          placeholder=""
+                          onChangeText={handleChange("remarks")}
+                          value={values.remarks}
                         />
-                      )}
-                      <Checkbox value="one" onChange={onChangeToOutros}>
-                        Outro
-                      </Checkbox>
-
-                      <FormControl.ErrorMessage>
-                        {errors.provider}
-                      </FormControl.ErrorMessage>
-                    </FormControl>
-
-                    <FormControl>
-                      <FormControl.Label>Outras Observações</FormControl.Label>
-
-                      <Input
-                        onBlur={handleBlur("remarks")}
-                        placeholder=""
-                        onChangeText={handleChange("remarks")}
-                        value={values.remarks}
-                      />
-                    </FormControl>
-                    <Button
-                      isLoading={loading}
-                      isLoadingText="Cadastrando"
-                      onPress={handleSubmit}
-                      my="10"
-                      colorScheme="primary"
-                    >
-                      Salvar
-                    </Button>
-                  </VStack>
-                )}
-              </Formik>
-            </Box>
-          </Center>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+                      </FormControl>
+                      <Button
+                        id="salvar"
+                        accessible={true}
+                        accessibilityLabel="salvar"
+                        testID="salvar"
+                        isLoading={loading}
+                        isLoadingText="Cadastrando"
+                        onPress={handleSubmit}
+                        my="10"
+                        colorScheme="primary"
+                      >
+                        Salvar
+                      </Button>
+                    </VStack>
+                  )}
+                </Formik>
+              </Box>
+            </Center>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </>
   );
 };
 const enhance = withObservables([], () => ({

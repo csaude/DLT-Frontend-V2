@@ -178,9 +178,9 @@ export const MENU: IMenuItem[] = [
   //   roles: ["ADMIN"],
   // },
   {
-    name: "menusidebar.label.appInfo",
-    path: "/appInfo",
-    icon: "fas fa-info-circle", // icon set: https://fontawesome.com/v5/search
+    name: "menusidebar.label.help",
+    path: "#",
+    icon: "fas fa-question-circle", // icon set: https://fontawesome.com/v5/search
     level: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
     roles: [
       "ADMIN",
@@ -193,6 +193,17 @@ export const MENU: IMenuItem[] = [
       "MISAU",
       "DOADOR",
       "M&E_DOADOR",
+    ],
+    children: [
+      {
+        name: "menusidebar.label.appInfo",
+        icon: "fas fa-info-circle", // icon set: https://fontawesome.com/v5/search
+        path: "/appInfo",
+      },
+      {
+        name: "menusidebar.label.documents",
+        path: "/documents",
+      },
     ],
   },
 ];

@@ -1,7 +1,7 @@
 {
   "release": {
-    "version": "1.6.0",
-    "date": "20/03/2025",
+    "version": "1.7.0",
+    "date": "20/06/2025",
     "changelogs": [
       {
         "id": 1,
@@ -13,17 +13,7 @@
             "subitems": [
               {
                 "id": 1.11,
-                "subitem": "Included the Vulnerability Flag / Incluída Flag de Vulnerabilidade:",
-                "subsubitems": [
-                  {
-                    "id": 1.111,
-                    "subsubitem": "The system will evaluate and mark vulnerability flag upon beneficiary registration or update / O sistema passará a marcar a flag de vulnerabilidade no processo de registo e actualização de beneficiária"
-                  }
-                ]
-              },
-              {
-                "id": 1.12,
-                "subitem": "Applied changes in compliance with EO 14168* / Alterações aplicadas em conformidade com a Ordem Executiva 14168*",
+                "subitem": "Added a brief description that appears when the user hovers over certain vulnerabilities, to provide more details about what it represents / Adicionada uma breve descrição que aparece quando o utilizador passa o cursor sobre determinadas vulnerabilidades, para fornecer mais detalhes sobre o que elas representam",
                 "subsubitems": []
               }
             ]
@@ -34,7 +24,17 @@
             "subitems": [
               {
                 "id": 1.21,
-                "subitem": "Applied changes in compliance with EO 14168* / Alterações aplicadas em conformidade com a Ordem Executiva 14168*",
+                "subitem": "Added validation to prevent registering services with a service date earlier than the enrolment date / Incluída validação para evitar o registo de serviços com data de provisão anterior à data de inscrição",
+                "subsubitems": []
+              },
+              {
+                "id": 1.22,
+                "subitem": "Improved the service list display on mobile devices to prevent text from being cut off / Melhorada a apresentação da lista de serviços em dispositivos móveis para evitar que os textos apareçam cortados",
+                "subsubitems": []
+              },
+              {
+                "id": 1.23,
+                "subitem": "Added an alert message for duplicate services when the same service is being registered more than once. The system allows the provider to confirm and proceed, or cancel and return to make corrections / Incluída uma mensagem de alerta para serviços duplicados no acto de registo. O sistema permite que o provedor confirme ou retorne à tela de provisão de serviços para efetuar correções",
                 "subsubitems": []
               }
             ]
@@ -43,73 +43,52 @@
       },
       {
         "id": 2,
-        "changelog": "Reports Module / Módulo de Relatórios",
+        "changelog": "Referral Management Module / Módulo de Gestão de Referências:",
         "items": [
           {
             "id": 2.1,
-            "item": "AGYW_PREV and Simplified AGYW_PREV Indicator Report / Relatório do Indicador AGYW_PREV e AGYW_PREV Simplificado:",
+            "item": "Beneficiary Referral Management / Gestão de Referências:",
             "subitems": [
               {
                 "id": 2.11,
-                "subitem": "Included the Vulnerability Flag / Incluída Flag de Vulnerabilidade",
+                "subitem": "Ticket #3893: Improved to allow users to “decline” services that are not applicable to the beneficiary for referrals in the “Partially Attended” status / Melhorada para permitir “recusar” serviços não aplicáveis à beneficiária quando a referência se encontra no estado “Parcialmente Atendida”",
                 "subsubitems": []
               },
               {
                 "id": 2.12,
-                "subitem": "Added the option to download each disaggregation on the web preview mode to an excel file / Adicionada a possibilidade de baixar cada desagregação do web preview para um ficheiro excel",
+                "subitem": "Ticket #3668: Improved “Attend Service Referral” mobile screen to redirect to the Beneficiary Dashboard after attending a service referral allowing additional services to be provided / Melhorada a tela de “atendimento da referência” no dispositivo móvel por forma a redireccionar para o painel da beneficiária, permitindo a provisão de serviços adicionais",
                 "subsubitems": []
               }
             ]
           },
           {
             "id": 2.2,
-            "item": "List of Beneficiaries and Services / Lista de Beneficiárias e Serviços AND List of Newly Enrolled AGYW and Services / Lista de Novas Beneficiárias e Serviços:",
+            "item": "Beneficiary Service Provision / Provisão de Serviços a Beneficiária:",
             "subitems": [
               {
                 "id": 2.21,
-                "subitem": "Included the Vulnerability Flag / Incluída Flag de Vulnerabilidade",
+                "subitem": "Added validation to prevent registering services with a service date earlier than the enrolment date / Incluída validação para evitar o registo de serviços com data de provisão anterior à data de inscrição",
                 "subsubitems": []
               },
               {
                 "id": 2.22,
-                "subitem": "Code correction applied on the query for start date, end date and included in AGYW_PREV column / Correção de código aplicada na query para busca nas datas de início e fim e preenchimento da coluna Incluída no AGYW_PREV",
+                "subitem": "Improved the service list display on mobile devices to prevent text from being cut off / Melhorada a apresentação da lista de serviços em dispositivos móveis para evitar que os textos apareçam cortados",
                 "subsubitems": []
               },
               {
                 "id": 2.23,
-                "subitem": "Applied changes in compliance with EO 14168* / Alterações aplicadas em conformidade com a Ordem Executiva 14168*",
+                "subitem": "Added an alert message for duplicate services when the same service is being registered more than once. The system allows the provider to confirm and proceed, or cancel and return to make corrections / Incluída uma mensagem de alerta para serviços duplicados no acto de registo. O sistema permite que o provedor confirme ou retorne à tela de provisão de serviços para efetuar correções",
                 "subsubitems": []
               }
             ]
           },
           {
             "id": 2.3,
-            "item": "List of Beneficiaries Without Primary Package Completion / Lista de Acompanhamento de Beneficiárias sem Completude de Pacote Primário:",
+            "item": "Bulk Cancellation of Service Referrals / Cancelamento Massivo de Referências:",
             "subitems": [
               {
                 "id": 2.31,
-                "subitem": "Applied changes in compliance with EO 14168* / Alterações aplicadas em conformidade com a Ordem Executiva 14168*",
-                "subsubitems": []
-              },
-              {
-                "id": 2.32,
-                "subitem": "Ticket #1666: Improved the output report template to add finer disaggregations for Social Assets sessions (Violence, HIV, Social Assets). /Melhorado o template do relatório por forma a adicionar desagregações detalhadas para as sessões de Recursos Sociais Sociais (Violência, HIV, Recursos Sociais)",
-                "subsubitems": []
-              },
-              {
-                "id": 2.33,
-                "subitem": "Included Simplified AGYW_PREV Primary Package Completion Rules / Incluídas as regras de completude de pacote primário do AGYW_PREV simplificado",
-                "subsubitems": []
-              }
-            ]
-          },
-          {
-            "id": 2.4,
-            "item": "Dashboard Integration API / API de Integracão a Dashboard (New/Novo):",
-            "subitems": [
-              {
-                "id": 2.41,
-                "subitem": "Vulnerability Assessment API to connect with the DREAMS Dashboard / API de Avaliação de Vulnerabilidades para ligação ao Dashboard do DREAMS",
+                "subitem": "Improved the bulk cancellation screen to allow users to select all pending referrals for cancellation at once, instead of page by page / Melhorada a tela de cancelamento massivo para permitir que os utilizadores seleccionem todas as referências pendentes de uma só vez, em vez de página por página",
                 "subsubitems": []
               }
             ]
@@ -118,16 +97,48 @@
       },
       {
         "id": 3,
-        "changelog": "Others / Outros:",
+        "changelog": "Reports Module / Módulo de Relatórios",
         "items": [
           {
             "id": 3.1,
-            "item": "Audit Logs / Logs de Auditoría:",
+            "item": "AGYW_PREV and Simplified AGYW_PREV Indicator Report / Relatório do Indicador AGYW_PREV e AGYW_PREV Simplificado:",
             "subitems": [
               {
                 "id": 3.11,
-                "subitem": "Included audit log mechanism to track any changes made to the beneficiaries interventions / Incluído mecanismo de logs de auditoria para rastrear qualquer actualização a nível de intervenções da beneficiária",
+                "subitem": "Ticket #3993: Fixed issue where the web preview mode displayed empty columns for certain disaggregations / Corrigido erro em que o modo de pré-visualização web exibia colunas vazias em algumas desagregações",
                 "subsubitems": []
+              },
+              {
+                "id": 3.12,
+                "subitem": "Ticket #3999: Fixed issue where the vulnerability assessment flag was not pre-populated for beneficiaries registered in the current COP / Corrigido erro em que a flag de vulnerabilidade não estava a ser pré-populada para beneficiárias registadas no COP actual",
+                "subsubitems": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "changelog": "Others / Outros:",
+        "items": [
+          {
+            "id": 4.1,
+            "item": "Documents in DLT / Documentos no DLT:",
+            "subitems": [
+              {
+                "id": 4.11,
+                "subitem": "Added a link in the DLT that redirects users to the Knowledge Base Portal / Adicionado um link no DLT que redireciona os utilizadores para o Portal Knowledge Base",
+                "subsubitems": []
+              }
+            ]
+          },
+          {
+            "id": 4.2,
+            "item": "Mobile Security / Segurança no Mobile:",
+            "subitems": [
+              {
+                "id": 4.21,
+                "subitem": "Disabled the screenshot feature on the DLT Mobile app / Desactivada a funcionalidade de captura de ecrã na aplicação móvel do DLT"
               }
             ]
           }
