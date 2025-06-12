@@ -227,7 +227,13 @@ const ServicesForm: React.FC = ({
 
     const benefIntervSerialied = benefInterv.map((item) => item._raw);
 
-    if (benefIntervSerialied.length > 0) {
+    if (date && beneficiarie.enrollment_date > date) {
+      setLoading(false);
+      toast.show({
+        placement: "top",
+        title: "A data do Benefício não deve ser inferior a data da Inscrição!",
+      });
+    } else if (benefIntervSerialied.length > 0) {
       toast.show({
         placement: "top",
         title: "Beneficiário já tem esta intervenção para esta data ! ",
